@@ -1,0 +1,703 @@
+<!-- http://www.unicode.org/reports/tr21/tr21-5.html -->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+       "http://www.w3.org/TR/REC-html40/loose.dtd"> 
+<html>
+
+<head>
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" href="../reports.css" type="text/css">
+<title>UTR#21: Case Mappings</title>
+</head>
+
+<body>
+
+<table class="header" width="100%" cellspacing="0" cellpadding="0">
+  <tr>
+    <td class="icon"><a href="http://www.unicode.org"><img align="middle" alt="[Unicode]" border="0" src="http://www.unicode.org/webscripts/logo60s2.gif" width="34" height="33"></a>&nbsp;&nbsp;<a class="bar" href="http://www.unicode.org/unicode/reports">Technical 
+      Reports</a></td>
+  </tr>
+  <tr>
+    <td class="gray">&nbsp;</td>
+  </tr>
+</table>
+<div class="body">
+  <h2 align="center">Unicode Standard Annex #21</h2>
+  <h1 align="center">Case Mappings</h1>
+  <table class="wide" border="1" width="100%">
+    <tr>
+      <td>Version</td>
+      <td>3.2.0</td>
+    </tr>
+    <tr>
+      <td>Authors</td>
+      <td>Mark Davis (<a href="mailto:mark.davis@us.ibm.com">mark.davis@us.ibm.com</a>, 
+        <a href="http://www.macchiato.com">home</a>)</td>
+    </tr>
+    <tr>
+      <td>Date</td>
+      <td>2001.03.26</td>
+    </tr>
+    <tr>
+      <td>This Version</td>
+      <td><a href="http://www.unicode.org/unicode/reports/tr21/tr21-5">http://www.unicode.org/unicode/reports/tr21/tr21-5</a></td>
+    </tr>
+    <tr>
+      <td>Previous Version</td>
+      <td><a href="http://www.unicode.org/unicode/reports/tr21/tr21-4.3">http://www.unicode.org/unicode/reports/tr21/tr21-4.3</a></td>
+    </tr>
+    <tr>
+      <td>Latest Version</td>
+      <td><a href="http://www.unicode.org/unicode/reports/tr21">http://www.unicode.org/unicode/reports/tr21</a></td>
+    </tr>
+    <tr>
+      <td>Tracking Number</td>
+      <td><a href="#TrackingNumber5">5</a></td>
+    </tr>
+  </table>
+  <br>
+  <h3><i>Summary</i></h3>
+  <p><i><em>This document p</em>resents requirements for default case 
+  operations: case conversion, case detection, and caseless matching. These are 
+  the default definitions to be used in the absence of tailoring for particular 
+  languages and environments.</i></p>
+  <h3><em><strong>Status</strong></em></h3>
+  <p><i>This document has been reviewed by Unicode members and other interested 
+  parties, and has been approved by the Unicode Technical Committee as a <b>Unicode 
+  Standard Annex</b>. It is a stable document and may be used as reference 
+  material or cited as a normative reference from another document.</i></p>
+  <!-- -->
+  <!-- PROPOSED UPDATE
+<p><i><font color="#FF0000">This document is a proposed update of a previously 
+approved <b>Unicode Standard Annex</b>. Publication does not imply endorsement 
+by the Unicode Consortium. This is a draft document which may be updated, 
+replaced, or superseded by other documents at any time. This is not a stable 
+document; it is inappropriate to cite this document as other than a work in 
+progress. The links in this document to the data files do not work. Preliminary 
+datafiles for the proposed update are available at <a href="http://www.unicode.org/Public/BETA">http://www.unicode.org/Public/BETA</a>.</font></i></p>
+-->
+  <blockquote>
+    <p><i><b>A Unicode Standard Annex (UAX)</b> forms an integral part of the 
+    Unicode Standard, but is published as a separate document. Note that 
+    conformance to a version of the Unicode Standard includes conformance to its 
+    Unicode Standard Annexes. The version number of a UAX document corresponds 
+    to the version number of the Unicode Standard at the last point that the UAX 
+    document was updated.</i></p>
+    <p><i>A list of current Unicode Technical Reports is found on <a href="http://www.unicode.org/unicode/reports/">http://www.unicode.org/unicode/reports/</a>. 
+    For more information about versions of the Unicode Standard, see <a href="http://www.unicode.org/unicode/standard/versions/">http://www.unicode.org/unicode/standard/versions/</a>.</i></p>
+  </blockquote>
+  <p><i>The <a href="#References">References</a> provide related information 
+  that is useful in understanding this document. Please mail corrigenda and 
+  other comments to the author(s).</i></p>
+  <h3><b><i>Contents</i></b></h3>
+  <h3><i>Contents</i></h3>
+  <ul>
+    <li><a href="#Introduction">1 Introduction</a>
+      <ul>
+        <li><a href="#UnicodeData">1.1 Reversibility</a></li>
+        <li><a href="#UnicodeData">1.2 Data</a></li>
+        <li><a href="#Caseless_Matching">1.3 Caseless Matching</a></li>
+      </ul>
+    </li>
+    <li><a href="#Operations">2 Operations</a>
+      <ul>
+        <li><a href="#Conformance">2.1 Conformance</a></li>
+        <li><a href="#Definitions">2.2 Definitions</a></li>
+        <li><a href="#Case_Conversion_of_Strings">2.3 Case Conversion of Strings</a></li>
+        <li><a href="#Case_Detection_for_Strings">2.4 Case Detection for Strings</a></li>
+        <li><a href="#Caseless_Matching">2.5 Caseless Matching</a></li>
+      </ul>
+    </li>
+    <li><a href="#References">References</a></li>
+    <li><a href="#Modifications">Modifications</a></li>
+  </ul>
+  <hr align="LEFT">
+  <h2>1 <a name="Introduction">Introduction</a></h2>
+  <p class="Body" style="page-break-after:avoid">Case is a normative property of 
+  characters in specific alphabets (Latin, Greek, Cyrillic, Armenian, and 
+  archaic Georgian) whereby characters are considered to be variants of a single 
+  letter. These variants, which may differ markedly in shape and size, are 
+  called the uppercase letter (also known as capital or majuscule) and the lower­case 
+  letter (also known as small or minuscule). The uppercase letter is generally 
+  larger than the lowercase letter. Alphabets with case differences are called <i>bicameral;</i> 
+  those without are called <i>unicameral.</i></p>
+  <blockquote>
+    <p><b>Note:&nbsp; </b>while the archaic Georgian script contained uppercase 
+    and lowercase pairs, they are not used as such in modern Georgian.</p>
+  </blockquote>
+  Because of the inclusion of certain composite characters for compatibility, 
+  such as U+01F1 &quot;DZ&quot; LATIN CAPITAL LETTER DZ, there is a third case, 
+  called <i>titlecase</i>, which is used where the first character of a word is 
+  to be capitalized. An example of such a character is: U+01F2 &quot;Dz&quot; 
+  LATIN CAPITAL LETTER D WITH SMALL LETTER Z.
+  <p>Thus the three case forms for characters are UPPERCASE, Titlecase, and 
+  lowercase.</p>
+  <blockquote>
+    <p><b><a name="TitlecaseCaveats">Note: </a></b>The term titlecase can also 
+    be used to refer to words where the first letter is an uppercase or 
+    titlecase letter, and the rest of the letters are lowercase. However, not 
+    all words in the title of a document or first words in a sentence will be 
+    titlecase.</p>
+    <p>The choice of which words to titlecase is language-dependent. For 
+    example, &quot;Taming of the Shrew&quot; would be the appropriate 
+    capitalization in English, not &quot;Taming Of The Shrew&quot;. Moreover, 
+    the determination of what actually constitutes a word is also 
+    language-dependent. For example, <i>l'arbre</i> might be considered two 
+    words in French, while <i>can't</i> is considered one word in English.</p>
+  </blockquote>
+  <p>There are a number of complications to case mappings that occur once the 
+  repertoire of characters is expanded beyond ASCII.
+  <ul>
+    <li>In most cases, the titlecase is the same as the uppercase, but not 
+      always. For example, the titlecase of U+01F1 &quot;DZ&quot; <i>capital dz</i> 
+      is U+01F2 &quot;Dz&quot; <i>capital d with small z</i>.</li>
+    <li>Case mappings may produce strings of different length than the original.
+      <ul>
+        <li>For example, the German character U+00DF &quot;ß&quot; <i>small 
+          letter sharp&nbsp;s</i> expands when uppercased to the sequence of two 
+          characters &quot;SS&quot;. This also occurs where there is no 
+          precomposed character corresponding to a case mapping, such as with 
+          U+0149 &quot;ŉ&quot; <i>latin small letter n preceded by apostrophe.</i></li>
+      </ul>
+    </li>
+    <li>There are some characters that require special handling, such as U+0345 <i>combining 
+      iota subscript.</i></li>
+    <li>Characters may also have different case mappings, depending on the 
+      context.
+      <ul>
+        <li>For example, U+03A3 &quot;Σ&quot; <i>capital sigma</i> lowercases 
+          to U+03C3 &quot;σ&quot; <i>small sigma</i> if it is followed by 
+          another letter, but lowercases to U+03C2 &quot;ς&quot; <i>small final 
+          sigma</i> if it is not.</li>
+      </ul>
+    </li>
+    <li>Characters may have case mappings that depend on the locale.
+      <ul>
+        <li>For example, in Turkish the letter U+0049 &quot;I&quot; <i>capital 
+          letter i</i> lowercases to U+0131 &quot;ı&quot; <i>small dotless i</i>.</li>
+      </ul>
+    </li>
+    <li>Since many characters are really caseless (most of the IPA block, for 
+      example) and have no matching uppercase, the process of uppercasing a 
+      string does <i>not</i> mean that it will no longer contain any lowercase 
+      letters.</li>
+  </ul>
+  <h3>1.1 <a name="Reversibility">Reversibility</a></h3>
+  <p class="Body" style="page-break-after:avoid">It is important to note that no 
+  casing operations on strings are reversible. For example,</p>
+  <blockquote>
+    <p class="ItemExample">toUppercase(toLowercase(“John Brown”)) → 
+    “JOHN BROWN”</p>
+    <p class="ItemExample">toLowercase(toUppercase(“John Brown”)) → 
+    “john brown”.</p>
+  </blockquote>
+  <p class="Body">There are even single words like <i>vederLa</i> in Italian or 
+  the name <i>McGowan</i> in English, which are neither upper, lower, nor 
+  titlecase. This format is sometimes called <i>innerCaps,</i> and is often used 
+  in programming and in Web names. Once the string &quot;McGowan&quot; has been 
+  uppercased, lowercased or titlecased, the original cannot be recovered by 
+  applying another uppercase, lowercase, or titlecase operation. There are also 
+  single characters that do not have reversible mappings, such as the Greek 
+  sigmas above.</p>
+  <p class="Body">For word processors that use a single command-key sequence to 
+  toggle the selection through different casings, it is recommended to save the 
+  original string, and return to it in the sequence of keys. The user interface 
+  would produce the following results in response to a series of command-keys. 
+  Notice that the original string is restored every fourth time.</p>
+  <blockquote>
+    <ol>
+      <li>
+        <p class="ItemExample">The quick brown</li>
+      <li>
+        <p class="ItemExample">THE QUICK BROWN</li>
+      <li>
+        <p class="ItemExample">the quick brown</li>
+      <li>
+        <p class="ItemExample">The Quick Brown</li>
+      <li>
+        <p class="ItemExample">The quick brown<i> (repeating from here on)</i></li>
+    </ol>
+  </blockquote>
+  <p class="Body">Uppercase, titlecase, and lowercase can be represented in a 
+  word processor by using a character style. Removing the character style 
+  restores the text to its original state. However, if this approach is taken, 
+  any spell-checking software needs to be aware of the case style so that it can 
+  check the spelling according to the actual appearance.</p>
+  <h3>1.2 <a name="Data">Data</a></h3>
+  <p>The Unicode Character Database contains four files with information that is 
+  relevant to case mapping:</p>
+  <table>
+    <tr>
+      <td>[<a href="#UnicodeData">UnicodeData</a>]</td>
+      <td>Contains the case mappings that map to a single character. These do 
+        not increase the length of strings, and do not contain context-dependent 
+        mappings.
+        <p><i>Only legacy implementations that cannot handle case mappings that 
+        increase string lengths use UnicodeData case mappings alone. The 
+        single-character mappings are insufficient for languages such as German.</i></td>
+    </tr>
+    <tr>
+      <td>[<a href="#SpecialCasing">SpecialCasing</a>]</td>
+      <td>Contains additional case mappings that map to more than one character, 
+        such as &quot;ß&quot; to &quot;SS&quot;. It also contains 
+        context-dependent mappings, with flags to distinguish them from the 
+        normal mappings. There are some characters that have a &quot;best&quot; 
+        single-character mapping in UnicodeData and also have a full mapping in 
+        SpecialCasing.</td>
+    </tr>
+    <tr>
+      <td>[<a href="#CaseFolding">CaseFolding</a>]</td>
+      <td>Contains data for performing locale-independent case-folding, as 
+        described in <a href="#Caseless_Matching">2.3 Caseless Matching</a>.</td>
+    </tr>
+    <tr>
+      <td>[<a href="#CoreProps">CoreProps</a>]</td>
+      <td>Contains definitions of the properties Lowercase and Uppercase.</td>
+    </tr>
+  </table>
+  <blockquote>
+    <p>A set of <a href="charts/">charts</a> that show the latest case mappings 
+    in are also available online.</p>
+  </blockquote>
+  <p>In addition, <a href="http://www.unicode.org/glossary/#Normalization_Form_D">Normalization 
+  Form D</a> (NFD) from <a href="http://www.unicode.org/unicode/reports/tr15/">UAX 
+  #15, &quot;Unicode Normalization Forms</a> is used in the definitions for case 
+  mapping.</p>
+  <p>The full case mappings for Unicode characters are obtained by using the 
+  mappings from SpecialCasing <i>plus</i> the mappings from UnicodeData, 
+  excluding any latter mappings that would conflict. Any character that does not 
+  have a mapping in these files is considered to map to itself. In this 
+  document, the full case mappings of a character C are referred to as <b>UCD_lower(C)</b>, 
+  <b>UCD_title(C)</b>, and <b>UCD_upper(C)</b>. The full case folding of a 
+  character C is referred to as <b>UCD_fold(C)</b>.</p>
+  <p>When used in case operations, these mappings may depend on the context 
+  around each character in the original string. There are very few mappings that 
+  require the context, but they are required for correct operation. Because 
+  there are very few context-dependent case mappings, implementations may choose 
+  to hard-code the treatment of these characters rather than use data-driven 
+  code based on the UCD. When this is done, every time the implementation is 
+  upgraded to a new version of Unicode, the code must be checked for consistency 
+  with the updated data.</p>
+  <h3>1.3 <a name="Caseless_Matching">Caseless Matching</a></h3>
+  <p>Caseless matching is implemented using <i>case-folding.</i> The latter is 
+  the process of mapping strings to a canonical form where case differences are 
+  erased. Case-folding allows for fast caseless matches in lookups, since only 
+  binary comparison is required. Case-folding is more than just conversion to 
+  lowercase. For example, it handles cases such as the Greek sigma, so that&nbsp; 
+  &quot;Μάϊος&quot; and &quot;ΜΆΪΟΣ&quot; will match correctly.</p>
+  <blockquote>
+    <p><b>Note: </b>normally the original source string is not replaced by the 
+    folded string, since that may erase important information. For example, the 
+    name &quot;Marco di Silva&quot; would be folded to &quot;marco di silva&quot;, 
+    losing the information as to which letters are capitalized. What is 
+    typically done is that the original string is stored along with a 
+    case-folded version for fast comparisons.</p>
+  </blockquote>
+  <p>The [<a href="#CaseFolding">CaseFolding</a>] file in the Unicode Character 
+  Database is used for performing locale-independent case-folding. This file is 
+  generated from the case mappings in the Unicode Character Database, using both 
+  the single-character mappings and the multi-character mappings. It folds all 
+  characters having different case forms together into a common form. To compare 
+  two strings for caseless matching, you can fold each string using this data, 
+  and then use a binary comparison.</p>
+  <blockquote>
+    <p><i>For those concerned with the details. </i>Case-folding logically 
+    involves a set of equivalence classes, constructed from the Unicode 
+    Character Database case mappings as follows.</p>
+    <p>For each character X in Unicode:</p>
+    <ol>
+      <li>If X is already in an equivalence class, continue to next character.</li>
+      <li>Otherwise, form a new equivalence class, and add X.</li>
+      <li>Then add whatever upper-, lower- or titlecases to anything in the set.</li>
+      <li>Then add whatever anything in the set upper-, lower- or titlecases to.</li>
+      <li>Repeat #3 and #4 until nothing further is added.</li>
+    </ol>
+    <p>Each equivalence class is completely disjoint from all the others, and 
+    together they form a partition of the entire Unicode code space. From each 
+    class, one representative element (a single lowercase letter where possible) 
+    is chosen to be the common form. [<a href="#CaseFolding">CaseFolding</a>] 
+    thus contains the mappings from other characters in the equivalence 
+    characters to their common forms.</p>
+  </blockquote>
+  <p>Generally, where case distinctions are not important, other distinctions 
+  between Unicode characters (in particular, compatibility distinctions) are 
+  ignored as well. In such circumstances, text can be normalized to 
+  Normalization Form KC or KD after case-folding, to produce a normalized form 
+  that erases both compatibility distinctions and case distinctions. (See <a href="http://www.unicode.org/unicode/reports/tr15/">UTR 
+  #15: Unicode Normalization Forms</a> for more information.) However, such 
+  normalization should generally only be done on a restricted repertoire, such 
+  as identifiers (alphanumerics).</p>
+  <blockquote>
+    <p>Caseless matching itself is only an approximation to the 
+    language-specific rules governing the strength of comparisons. Where 
+    language-specific case matching is used, this information can be derived 
+    from the collation data for the language, where only the first and second 
+    level differences are used. For more information, see <a href="http://www.unicode.org/unicode/reports/tr10/">UTR 
+    #10: Unicode Collation Algorithm</a>.</p>
+    <p>However, in most environments, such as in file systems, text is not and 
+    cannot be tagged with language-specific information. In such cases, the 
+    language-specific mappings <i>must not</i> be used. Otherwise data 
+    structures such as B-trees, might be <i>built</i> based on one set of case-foldings, 
+    and <i>used</i> based on a different set. This will cause those data 
+    structures to become corrupt. For such environments, a constant, 
+    language-independent, default case-folding is required.</p>
+  </blockquote>
+  <h3>1.4 <a name="Normalization">Normalization</a></h3>
+  <p>Casing operations as defined below do not preserve normalization form. That 
+  is, there are strings in a particular normalization form (e.g. NFC) that will 
+  no longer be in that form after the casing operation is performed. For 
+  example: consider the following strings</p>
+  <table border="1" width="100%">
+    <tr>
+      <td>Original (NFC)</td>
+      <td>ǰ<font size="3">◌̱</font></td>
+      <td>U+01F0 LATIN SMALL LETTER J WITH CARON,<br>
+        U+0323 COMBINING DOT BELOW</td>
+    </tr>
+    <tr>
+      <td>Uppercased</td>
+      <td>J<font size="3">◌</font><font size="3">̌◌</font><font size="3">̱</font></td>
+      <td>U+004A LATIN CAPITAL LETTER J,<br>
+        U+030C COMBINING CARON,<br>
+        U+0323 COMBINING DOT BELOW</td>
+    </tr>
+    <tr>
+      <td>Uppercased NFC</td>
+      <td>J<font size="3">◌̱◌̌</font></td>
+      <td>U+004A LATIN CAPITAL LETTER J,<br>
+        U+0323 COMBINING DOT BELOW,<br>
+        U+030C COMBINING CARON,</td>
+    </tr>
+  </table>
+  <p>The original string is in NFC format. When uppercased, the <i>small j with 
+  caron</i> turns into an <i>uppercase J</i> with a separate <i>caron.</i> If 
+  followed by a BELOW combining mark, it is denormalized. The combining marks 
+  have to be put in canonical order for it to be normalized.</p>
+  <p>If text in a particular system is to be consistently normalized to a 
+  particular form such as NFC, then the casing operators should be modified to 
+  normalize after performing their core function. The actual process can be 
+  optimized; there are only a few instances where a casing operation causes a 
+  string to become denormalized. If those instances are specifically checked 
+  for, then normalization can be avoided where not needed.</p>
+  <p>Normalization also interacts with case folding. For any string X, let Q(X) 
+  = NFC(toCasefold(X)). In other words, Q is the result of casefolding X, then 
+  putting the result into NFC format. Because of the way normalization and case 
+  folding are defined, Q(Q(X)) = Q(X). Thus repeatedly applying Q does not 
+  change the result; case folding is <i>closed</i> under canonical normalization 
+  (either NFC or NFD).</p>
+  <p>Case folding is not, however, closed under compatibility normalization 
+  (either NFKD or NFKC). That is, given R(X) = NFC(toCasefold(X)), there are 
+  some strings such that R(R(X)) != R(X). There is a derived property, 
+  FC_NFKC_Closure, that contains the additional mappings that can be used to 
+  produce a compatibility-closed case folding. This set of mappings is found in 
+  [<a href="#DNormProps">DNormProps</a>].</p>
+  <h2>2 <a name="Operations">Operations</a></h2>
+  <p>The following section specifies the default operations for case conversion, 
+  case detection, and caseless matching.
+  <h3>2.1 <a name="Conformance">Conformance</a></h3>
+  <table border="1" width="100%" class="noborder">
+    <tr>
+      <td class="noborder">C1</td>
+      <td class="noborder">An implementation that purports to support the 
+        default casing operations of case conversion, case detection, and 
+        caseless mapping shall do so in accordance with the definitions and 
+        specifications below.</td>
+    </tr>
+  </table>
+  <p>The default casing operations are to be used in the absence of tailoring 
+  for particular languages and environments. Where a particular environment 
+  (such as a Slovak locale) requires tailoring, that can be done without 
+  breaking conformance.</p>
+  <p>All the specifications are <i>logical</i> specifications; particular 
+  implementations can optimize the processes as long as the provide the same 
+  results.</p>
+  <h3>2.2 <a name="Definitions">Definitions</a></h3>
+  <p>Detection of case and case mapping requires more than just the general 
+  category values (Lu, Lt, Ll). The following definitions are used:</p>
+  <p><b>D1. </b>A character C is defined to be <i>cased</i> if it meets any of 
+  the following criteria:</p>
+  <ul>
+    <li>The general category of C is
+      <ul>
+        <li>Titlecase Letter (Lt)</li>
+      </ul>
+    </li>
+    <li>In [<a href="#CoreProps">CoreProps</a>], C has one of the properties
+      <ul>
+        <li>Uppercase, or</li>
+        <li>Lowercase</li>
+      </ul>
+    </li>
+    <li>Given D = NFD(C), then it is not the case that:
+      <ul>
+        <li>D = UCD_lower(D) = UCD_upper(D) = UCD_title(D)</li>
+      </ul>
+    </li>
+  </ul>
+  <p><b>D2.</b> A character C is defined to be <i>case-ignorable</i> if it meets 
+  either of the following criteria:</p>
+  <ul>
+    <li>The general category of C is
+      <ul>
+        <li>Nonspacing Mark (Mn), or</li>
+        <li>Enclosing Mark (Me), or</li>
+        <li>Format Control (Cf), or</li>
+        <li>Letter Modifier (Lm), or</li>
+        <li>Symbol Modifier (Sk)</li>
+      </ul>
+    </li>
+    <li>C is one of the following characters
+      <ul>
+        <li>U+0027 APOSTROPHE</li>
+        <li>U+00AD SOFT HYPHEN (SHY)</li>
+        <li>U+2019 RIGHT SINGLE QUOTATION MARK<br>
+          (the preferred character for apostrophe)</li>
+      </ul>
+    </li>
+  </ul>
+  <p><b>D3. </b>A <i>case-ignorable</i> sequence is a sequence of <i>zero</i> or 
+  more case-ignorable characters.</p>
+  <p><b>D3. </b>A character C is in a particular casing context just in case it 
+  matches the corresponding specification given by the following table:</p>
+  <table border="1" width="100%">
+    <caption><a name="context-dependent">Context Specification</a></caption>
+    <tr>
+      <th>Context</th>
+      <th>Specification</th>
+      <th colspan="2">Regular Expression</th>
+    </tr>
+    <tr>
+      <th rowspan="2">Final_Sigma</th>
+      <td rowspan="2">C is preceded by a sequence consisting of a cased letter 
+        and a case-ignorable sequence, and C is not followed by a sequence 
+        consisting of an ignorable sequence and then a cased letter.</td>
+      <td><i>Before</i></td>
+      <td>&lt;cased&gt; &lt;case-ignorable&gt;*</td>
+    </tr>
+    <tr>
+      <td><i>After</i></td>
+      <td>!(&lt;case-ignorable&gt;* &lt;cased&gt;)</td>
+    </tr>
+    <tr>
+      <th>More_Above</th>
+      <td>C is followed by one or more characters of combining class 230 (ABOVE) 
+        in the combining character sequence.</td>
+      <td><i>After</i></td>
+      <td>&lt;cc!=0&gt;* &lt;cc=230&gt;</td>
+    </tr>
+    <tr>
+      <th>After_Soft_Dotted</th>
+      <td>The last preceding character with combining class of zero before C was 
+        Soft_Dotted, and there is no intervening combining character class 230 
+        (ABOVE).</td>
+      <td><i>Before</i></td>
+      <td>&lt;Soft_Dotted&gt; (&lt;cc!=230&gt; &amp; &lt;cc!=0&gt;)*</td>
+    </tr>
+    <tr>
+      <th>Before_Dot</th>
+      <td>C is followed by combining dot above (U+0307). Any sequence of 
+        characters with a combining class that is neither 0 nor 230 may 
+        intervene between the current character and the combining dot above.</td>
+      <td><i>After</i></td>
+      <td>(&lt;cc!=230&gt; &amp; &lt;cc!=0&gt;)* U+0307</td>
+    </tr>
+  </table>
+  <blockquote>
+    The regular expression column provides an equivalent formulation to the 
+    specification for those who find it more clear. The syntax uses &lt;...&gt; 
+    to indicate a character that matches the specified property.
+  </blockquote>
+  <h3>2.3 <a name="Case_Conversion_of_Strings">Case Conversion of Strings</a></h3>
+  <p>The following specify the default case conversion operations for Unicode 
+  strings, in the absence of tailoring. In each instance, there are two 
+  variants: simple case conversion and full case conversion. In the full case 
+  conversion, the <a href="#context-dependent">context-dependent</a> mappings 
+  mentioned above must be used.</p>
+  <h4>S1. toUppercase(X)</h4>
+  <ul>
+    <li>Map each character C in X to UCD_upper(C)</li>
+  </ul>
+  <h4>S2. toLowercase(X)</h4>
+  <ul>
+    <li>
+      <p align="left">Map each character C to UCD_lower(C)</li>
+  </ul>
+  <h4>S3. toTitlecase(X)</h4>
+  <ul>
+    <li>For each character C, find the preceding character B.
+      <ul>
+        <li>ignore any intervening <i>case-ignorable</i> characters when finding 
+          B.</li>
+      </ul>
+    </li>
+    <li>If B exists, and is <i>cased</i>
+      <ul>
+        <li>map C to UCD_lower(C)</li>
+      </ul>
+    </li>
+    <li>Otherwise,
+      <ul>
+        <li>map C to UCD_title(C)</li>
+      </ul>
+    </li>
+  </ul>
+  <h4>toCasefold(X)</h4>
+  <ul>
+    <li>Map each character C to UCD_fold(C).</li>
+  </ul>
+  <h3>2.4 <a name="Case_Detection_for_Strings">Case Detection for Strings</a></h3>
+  <p>The specification of the case of a string is based upon the case conversion 
+  operations.</p>
+  <p><i>Given a string X, and a string Y = NFD(X), then:</i></p>
+  <ul>
+    <li><i>isLowercase(X)</i> if and only if toLowercase(Y) = Y</li>
+    <li><i>isUppercase(X) </i>if and only if toUppercase(Y) = Y</li>
+    <li><i>isTitlecase(X) </i>if and only if toTitlecase(Y) = Y</li>
+    <li><i>isCasefolded(X)</i> if and only if toCasefold(Y) = Y</li>
+    <li><i>isCased(X)</i> if and only if it is not the case that:
+      <ul>
+        <li>Y = lower(Y) = upper(Y) = title(Y)</li>
+      </ul>
+    </li>
+  </ul>
+  <p><i>Examples:</i></p>
+  <table class="example">
+    <tr>
+      <th>Lowercase</th>
+      <td>a</td>
+      <td>john smith</td>
+      <td>a2</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>Uppercase</th>
+      <td>A</td>
+      <td>JOHN SMITH</td>
+      <td>A2</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>Titlecase</th>
+      <td>A</td>
+      <td>John Smith</td>
+      <td>A2</td>
+      <td>3</td>
+    </tr>
+  </table>
+  <p>As seen from the examples, these conditions are not exclusive. 
+  &quot;A2&quot; is both uppercase and titlecase; &quot;3&quot; is uncased, so 
+  it is lowercase, uppercase and titlecase.</p>
+  <h3>2.5 <a name="Caseless_Matching">Caseless Matching</a></h3>
+  <p>Default caseless matching is specified by the following:</p>
+  <ul>
+    <li>A string X is a caseless match for a string Y if and only toCasefold(X) 
+      = toCasefold(Y)</li>
+  </ul>
+  <p>As described above, normally caseless matching should also use 
+  normalization, thus one of the following operations:</p>
+  <ul>
+    <li>A string X is a canonical caseless match for a string Y if and only if<br>
+      NFD(toCasefold(X)) = NFD(toCasefold(Y))</li>
+  </ul>
+  <ul>
+    <li>A string X is a compatibility caseless match for a string Y if and only 
+      if<br>
+      NFKD(toCasefold(NFKD(toCasefold(X)))) = NFKD(toCasefold(NFKD(toCasefold(Y))))</li>
+  </ul>
+  <h2><a name="References">References</a></h2>
+  <table class="noborder">
+    <tr>
+      <td valign="top" width="1" class="noborder">[<a name="UnicodeData">UnicodeData</a>]</td>
+      <td valign="top" class="noborder">The data file version at the time of 
+        this publication is: <a href="http://www.unicode.org/Public/3.2-Update/UnicodeData-3.2.0.txt">http://www.unicode.org/Public/3.2-Update/UnicodeData-3.2.0.txt<br>
+        </a>The latest version of the data file is:<br>
+        <a href="http://www.unicode.org/Public/UNIDATA/UnicodeData.txt">http://www.unicode.org/Public/UNIDATA/UnicodeData.txt</a></td>
+    <tr>
+      <td valign="top" width="1" class="noborder">[<a name="SpecialCasing">SpecialCasing</a>]</td>
+      <td valign="top" class="noborder">The data file version at the time of 
+        this publication is:<a href="http://www.unicode.org/Public/UNIDATA/SpecialCasing.txt"><br>
+        </a><a href="http://www.unicode.org/Public/3.2-Update/SpecialCasing-3.2.0.txt">http://www.unicode.org/Public/3.2-Update/SpecialCasing-3.2.0.txt</a><a href="http://www.unicode.org/Public/3.2-Update/UnicodeData-3.2.0.txt"><br>
+        </a>The latest version of the data file is:<br>
+        <a href="http://www.unicode.org/Public/UNIDATA/SpecialCasing.txt">http://www.unicode.org/Public/UNIDATA/SpecialCasing.txt</a></td>
+    <tr>
+      <td valign="top" width="1" class="noborder">[<a name="CaseFolding">CaseFolding</a>]</td>
+      <td valign="top" class="noborder">The data file version at the time of 
+        this publication is:<a href="http://www.unicode.org/Public/UNIDATA/SpecialCasing.txt"><br>
+        </a><a href="http://www.unicode.org/Public/3.2-Update/CaseFolding-3.2.0.txt">http://www.unicode.org/Public/3.2-Update/CaseFolding-3.2.0.txt<br>
+        </a>The latest version of the data file is:<br>
+        <a href="http://www.unicode.org/Public/UNIDATA/CaseFolding.txt">http://www.unicode.org/Public/UNIDATA/CaseFolding.txt</a></td>
+    <tr>
+      <td valign="top" width="1" class="noborder">[<a name="CoreProps">CoreProps</a>]</td>
+      <td valign="top" class="noborder">The data file version at the time of 
+        this publication is:<br>
+        <a href="http://www.unicode.org/Public/UNIDATA/DerivedCoreProperties.txt">http://www.unicode.org/Public/UNIDATA/DerivedCoreProperties.txt<br>
+        </a>The latest version of the data file is:<br>
+        <a href="http://www.unicode.org/Public/3.2-Update/DerivedCoreProperties-3.2.0.txt">http://www.unicode.org/Public/3.2-Update/DerivedCoreProperties-3.2.0.txt</a></td>
+    <tr>
+      <td valign="top" width="1" class="noborder">[<a name="DNormProps">DNormProps</a>]</td>
+      <td valign="top" class="noborder">The data file version at the time of 
+        this publication is:<br>
+        <a href="http://www.unicode.org/Public/UNIDATA/DerivedNormalizationProps.txt">http://www.unicode.org/Public/UNIDATA/DerivedNormalizationProps.txt<br>
+        </a>The latest version of the data file is:<br>
+        <a href="http://www.unicode.org/Public/3.2-Update/DerivedNormalizationProps-3.2.0.txt">http://www.unicode.org/Public/3.2-Update/DerivedNormalizationProps-3.2.0.txt</a></td>
+  </table>
+  <br>
+  <h2><a name="Modifications">Modifications</a></h2>
+  <p>The following summarizes modifications from the previous versions of this 
+  document.</p>
+  <table class="noborder">
+    <tbody>
+      <tr>
+        <td width="1" class="noborder"><a name="TrackingNumber5">5</a></td>
+        <td class="noborder">
+          <ul>
+            <li>Expanded definitions to take the new Lowercase and Titlecase 
+              properties into account. This also allowed the definitions to be 
+              simplified.</li>
+            <li>Added conformance and definitions sections</li>
+            <li>Moved conditions in from SpecialCasing.txt</li>
+            <li>Added a discussion of Normalization</li>
+            <li>Minor editing</li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td width="1" class="noborder"><a name="TrackingNumber4.3">4.3</a></td>
+        <td class="noborder">
+          <ul>
+            <li>Defined the sets <b>lower</b>, <b>title</b>, <b>upper</b>, and <b>uniqueUpper</b> 
+              instead of relying on the general category.</li>
+            <li>Introduced UCD_title, UCD_upper, UCD_lower notation.</li>
+            <li>Reordered sections of text for clarity</li>
+            <li>Minor editing</li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td width="1" class="noborder"><a name="TrackingNumber4.2">4.2</a></td>
+        <td class="noborder">
+          <ul>
+            <li>Fixed pointer for CaseFolding.txt to point to the UCD
+            <li>Added text to describe the CaseFolding.txt generation in terms 
+              of equivalence classes</li>
+            <li>Added Modification section</li>
+            <li>Minor editing</li>
+          </ul>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <p><font size="-1">Copyright © 1999-2002 Unicode, Inc. All Rights Reserved. 
+  The Unicode Consortium makes no expressed or implied warranty of any kind, and 
+  assumes no liability for errors or omissions. No liability is assumed for 
+  incidental and consequential damages in connection with or arising out of the 
+  use of the information or programs contained or accompanying this technical 
+  report.</font></p>
+  <p><font size="-1">Unicode and the Unicode logo are trademarks of Unicode, 
+  Inc., and are registered in some jurisdictions.</font></p>
+</div>
+
+</body>
+
+</html>

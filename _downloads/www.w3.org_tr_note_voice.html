@@ -1,0 +1,701 @@
+<!-- http://www.w3.org/TR/NOTE-voice -->
+<!DOCTYPE PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>Voice Browsers</title>
+</head>
+<body bgcolor="#FFFFFF" text="#000000">
+<h4 align="right"><a href="http://www.w3.org/"><img align="left"
+alt="W3C" border="0" src=
+"http://www.w3.org/pub/WWW/Icons/WWW/w3c_home.gif" width="72"
+height="48"></a> NOTE-voice-19980128</h4>
+
+<br clear="left">
+ 
+
+<h1 align="center">Voice Browsers</h1>
+
+<p align="Center"><strong>W3C NOTE 28th January 1998</strong></p>
+
+<dl>
+  <DT>
+    This version:
+  <DD>
+    <A HREF="http://www.w3.org/TR/1998/NOTE-voice-0128">http://www.w3.org/TR/1998/NOTE-voice-0128</A>
+  <DT>
+    Latest Version:
+  <DD>
+    <A HREF="http://www.w3.org/TR/NOTE-voice">http://www.w3.org/TR/NOTE-voice</A>
+</DL>
+
+<dl> 
+<dt>Authors:</dt>
+
+<dd><a href="mailto:dsr@w3.org">Dave Raggett</a>, W3C/HP<br>
+ <a href="mailto:orben@microsoft.com">Or Ben-Natan</a>,
+Microsoft</dd>
+</dl>
+
+<hr>
+<h2>Status of this document</h2>
+
+<p>This document is a NOTE made available by the W3 Consortium for
+discussion only. This indicates no endorsement of its content, nor
+that the Consortium has, is, or will be allocating any resources to
+the issues addressed by the NOTE.</p>
+
+<p>This note describes features needed for effective interaction
+with Web browsers that are based upon voice input and output.
+Some extensions are proposed to HTML 4.0 and CSS2 to support
+voice browsing, and some work is proposed in the area of speech
+recognition and synthesis to make voice browsers more effective.</p>
+
+<p>The minimal change needed to CSS2 is to allow literal text for
+the cue-before and cue-after properties. For HTML 4.0, The accesskey
+attribute needs to be added to the SELECT, OPTGROUP and OPTION
+elements. This appears to be an oversight in the HTML 4.0
+specification itself. 
+
+<p>A couple of new events OnSelectionTimeout and OnSelectionError
+are proposed to improve the ergnomics of the user interface for
+voice browsers. A number of additional changes are needed for robust
+speech recognition and high quality speech synthesis.
+
+<h2>Introduction</h2>
+
+<p>This note describes features needed for voice browsers. These
+are browsers that exploit voice input and output, using speech
+synthesis and prerecorded sound for output (together with small
+displays when available), and a combination of keyboard and speech
+recognition for input.
+
+<p>The technology will make it practical to browse the Web from any
+telephone. W3C has a major role to play in facilitating the
+development of open standards for voice browsers, which are expected
+to become available during the next year or so.</p>
+
+<p>Voice browsers use speech synthesis and prerecorded material
+to present the contents of Web pages. A variety of aural effects
+can be used to give different emphasis to headings, hypertext
+links, list items and so on.
+
+<p>Users interact with voice browsers by spoken command or by
+pressing a button on a keypad. Some commands interrupt the
+browser. For instance to request a list of hypertext links
+occurring in the current section of the document. Other
+commands are given when the browser prompts for input, for
+example, to select an option from a menu in a form.
+
+<p>To increase the robustness of speech recognition, voice
+browsers take advantage of contextual clues provided by
+the author. This allows the recognition engine to focus on
+likely utterances, improving the chances of a correct match.
+Work is needed to specify how such contextual clues are
+represented.
+
+<p>Speech synthesis is driven by dictionaries, falling back for
+unknown words on rules for regular pronunciation. High quality
+speech synthesis is possible if the author can extend the dictionary
+resident in the browser. 
+
+<p>This should be practical without the author being a qualified
+phonetician with a deep understanding of terms such as
+<em>Labiodental</em>, and <em>Alveolo-palatal fricatives</em>. Work
+is needed to establish a simple means for authors to specify how
+particular words should be spoken.
+
+
+<h3>Alternate Media</h3>
+
+<p>Speech synthesis is not as good as having an actor read the
+text. Content providers will inevitably want to provide prerecorded
+content for some parts of Web pages.</p>
+
+<p>Prerecorded content is analogous to the use of images in visual
+Web pages. The same need for textual fall-backs applies for
+printing, searching and access by users with disabilities.</p>
+
+<p>Note that prerecorded content is likely to include music and
+different speakers (think about radio adverts). These effects can
+be reproduced to some extent via the aural style sheets features in
+CSS<sup>[<a href="#ref-CSS2">CSS2</a>]</sup>.</p>
+
+<h3>Navigation</h3>
+
+<p>Alternatives to using a mouse click:</p>
+
+<p>For an application using a cellular phone, it would be
+cumbersome to have to take the handset away from your ear to press
+a button on the keypad. It therefore makes sense to support voice
+input for navigation as an alternative to keyboard input.</p>
+
+<p>At its simplest the user could speak the word "follow" when she
+hears a hypertext link she wishes to follow. The user could also
+interrupt the browser to request a short list of the relevant
+links, e.g.</p>
+
+<pre>
+    <b>User</b>: <em>links?</em>
+
+    <b>Browser</b>: The links are:
+
+      1   company info
+      2   latest news
+      3   placing an order
+      4   search for product details
+
+    Please say the number now
+
+    <b>User</b>: <em>2</em>
+
+    <b>Browser</b>: Retrieving latest news ...
+</pre>
+
+<p>A more sophistocated voice browser would allow the user to say a
+few words to indicate which link she is interested in. For example:
+<em>I want to place an order</em>. The browser could use simple
+template matching rules to select a matching link, akin to those
+used in the AI program "Eliza" which mimics a conversation with a
+therapist.</p>
+
+<p>For this to work, the author is likely to need some control over
+the speech recognition parameters. This control includes pointers
+to vocabulary, template rules, definition of sensitivity and
+more.</p>
+
+<p class="note"><em>Another command could be used to request a list
+of the document's headings. This would allow users to browse an
+outline form of the document as a means to get to the section that
+interests them.</em></p>
+
+<h3>Forms and Input Fields</h3>
+
+<p>Voice browsers will allow users to move between form fields and
+to enter and review field values, using either the keyboard or
+voice input.</p>
+
+<p>Authors must be able to specify what spoken phrases should be
+used for the selection of links, radio buttons, check boxes, image
+buttons, submit buttons, and selection lists. (Key access is
+already provided by the accesskey attribute in HTML 4 <sup>[<a
+href="#ref-HTML4">HTML4</a>]</sup>).</p>
+
+<h3>Handling Errors and Ambiguities</h3>
+
+<p>In a voice based browser it is easy for the user to enter
+unexpected or ambiguous input, or just to pause, providing no input
+at all. Some examples:</p>
+
+<ul>
+<li>when presented with a numbered list of links, the user enters a
+number that is outside the range presented</li>
+
+<li>the phrase uttered by the user matches more than one template
+rule</li>
+
+<li>the phrase/sound uttered doesn't match a known command</li>
+
+<li>the user looses track and the browser needs to time-out and
+offer assistance</li>
+</ul>
+
+<p>Authors must have control over the browser response to selection
+errors and timeouts</p>
+
+<h3>Aural Style Sheets</h3>
+
+<p>Authors want control over how the document is rendered. Aural
+style sheets (part of CSS2 <sup>[<a href="#ref-CSS2">
+CSS2</a>]</sup>) provide a basis for controlling a range of
+features, including:</p>
+
+<ul>
+<li>Volume</li>
+
+<li>Rate</li>
+
+<li>Pitch</li>
+
+<li>Direction</li>
+
+<li>Suppressing output for specific elements</li>
+
+<li>Spelling out text letter by letter</li>
+
+<li>Speech fonts (male/female, adult/child etc.)</li>
+
+<li>Inserted text before and after element content</li>
+
+<li>Sound effects before, during and after elements, including
+music or prerecorded sounds (e.g. sound of the sea breaking on the
+shore)</li>
+</ul>
+
+<h3>Inserted text</h3>
+
+<p>When a hypertext link is spoken by a speech synthesiser, the
+author may wish to insert text before and after the link's caption,
+to guide the user's response.</p>
+
+<p>For example:</p>
+
+<pre>
+    &lt;A href="driving.html"&gt;Driving instruction&lt;/A&gt;
+</pre>
+
+<p>May be offered by the voice browser using the following
+words:</p>
+
+<pre>
+    For driving instructions press 1
+</pre>
+
+<p>The example shows how the words "For" and "Press 1" were added
+to the text embedded in the anchor element.</p>
+
+<p>On first glance it looks as if this 'wrapper' text should be
+left for the voice browser to generate, but on further examination
+you can easily find problems with this approach.</p>
+
+<p>For example, how would you offer the following anchor
+element?</p>
+
+<pre>
+    &lt;A href="LeaveMessage.html"&gt;Leave us a message&lt;/A&gt;
+</pre>
+
+<p>In the English language you could say</p>
+
+<pre>
+    To leave us a message, press 5
+</pre>
+
+<p>A safe assumption that other languages will have even more
+structures and words which apply to special cases.</p>
+
+<p>The CSS2 draft specification includes the means to provide
+"generated text" before and after element content.</p>
+
+<p>For example:</p>
+
+<pre>
+    H1:before {content: "Chapter" decimal(chapno)
+        display: block}
+</pre>
+
+<p>This relies on :before and :after psuedo elements to name the
+positions, and the content property to provide the text to be
+inserted. Unfortunately, this mechanism doesn't work with the HTML
+style attribute.</p>
+
+<p>You are therefore forced into using the STYLE element in the
+document head:</p>
+
+<pre>
+    &lt;style type="text/css"&gt;
+       #link1 :before {content: "For "}
+       #link1 :after {content: ", press 1"}
+       ...
+       #link5 :before {content: "To "}
+       #link5 :after {content: ", press 5"}
+    &lt;/style&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+       ...
+    &lt;A id="link1" href="driving.html"&gt;Driving instruction&lt;/Agt;
+       ...
+    &lt;A id="link5" href="LeaveMessage.html"&gt;Leave us a message&lt;/A&gt;
+</pre>
+
+<p>It would be much more convenient if you could specify the text
+to insert in a style attribute on the link itself. The <b>
+cue-before</b> and <b>cue-after</b> properties in CSS2 as part of
+the aural style sheet proposal seem ideal for this purpose:</p>
+
+<pre>
+    &lt;A style='cue-before: "To"; cue-after: ", press 5"'
+         href=LeaveMessage.html&gt;Leave us a message&lt;/A&gt;
+</pre>
+
+<p>If you want to autonumber links include <b>%</b> in the cue
+text. The % is expanded to "1", "2" or "3", and so on, according to
+the order in which the link appears in the markup. The previous
+example could be re-written as:</p>
+
+<pre>
+    &lt;A style='cue-before: "To"; cue-after: ", press %"'
+         href=LeaveMessage.html&gt;Leave us a message&lt;/A&gt;
+</pre>
+
+<p class="note"><em>We need to get CSS2 revised to extend
+cue-before and cue-after to support literal text. They currently
+can only be used with URLs for auditory icons.</em></p>
+
+<table class="propinfo" summary="used to layout definition">
+<tr valign="top">
+<th align="right">Property name:</th>
+<td>'cue-after'</td>
+</tr>
+
+<tr valign="top">
+<th align="right">Value:</th>
+<td>&lt;url&gt; | "quoted string" | none</td>
+</tr>
+
+<tr valign="top">
+<th align="right">Initial:</th>
+<td>none</td>
+</tr>
+
+<tr valign="top">
+<th align="right">Applies to:</th>
+<td>all elements</td>
+</tr>
+
+<tr valign="top">
+<th align="right">Inherited:</th>
+<td>no</td>
+</tr>
+
+<tr valign="top">
+<th align="right">Percentage values:</th>
+<td>N/A</td>
+</tr>
+</table>
+
+<p>and</p>
+
+<table class="propinfo" summary="used to layout definition">
+<tr valign="top">
+<th align="right">Property name:</th>
+<td>'cue-after'</td>
+</tr>
+
+<tr valign="top">
+<th align="right">Value:</th>
+<td>&lt;url&gt; | "quoted string" | none</td>
+</tr>
+
+<tr valign="top">
+<th align="right">Initial:</th>
+<td>none</td>
+</tr>
+
+<tr valign="top">
+<th align="right">Applies to:</th>
+<td>all elements</td>
+</tr>
+
+<tr valign="top">
+<th align="right">Inherited:</th>
+<td>no</td>
+</tr>
+
+<tr valign="top">
+<th align="right">Percentage values:</th>
+<td>N/A</td>
+</tr>
+</table>
+
+<p>URLs are written in a functional notation <b>url(</b> <em>
+url</em> <b>)</b>. This avoids any ambiguity with quoted
+strings.</p>
+
+<h3>Access Keys</h3>
+
+<p>The HTML 4 accesskey attribute can in principle be used to
+identify which key to press for a given link, for instance:</p>
+
+<pre>
+    &lt;A accesskey="5"
+          style='cue-before: "To"; cue-after: ", press 5"'
+          href=LeaveMessage.html&gt;Leave us a message&lt;/A&gt;
+</pre>
+
+<p>To ensure that the spoken cue matches the access key, the
+accesskey attribute supports the same autonumbering mechanism as
+cue-before and cue-after, for instance:</p>
+
+<pre>
+    &lt;A accesskey="%"
+          style='cue-before: "To"; cue-after: ", press %"'
+          href=LeaveMessage.html&gt;Leave us a message&lt;/A&gt;
+</pre>
+
+<p>The accesskey attribute needs to be added to the SELECT,
+OPTGROUP and OPTION elements. This appears to be an oversight in
+the HTML 4.0 specification itself.</p>
+
+<p class="note"><em>What is missing is a media dependent way to
+bind keys to particular links or form fields etc. Whether or not
+this is an important omission needs to be resolved.</em></p>
+
+<h3>Text to Speech</h3>
+
+<p>Text to speech dictionaries contain information on how each word
+is to be spoken by a speech synthesiser. This covers both phonemes
+and prosody (stress). The pronunciation may depend on the context
+in which a word occurs. As a result limited linguistic analysis may
+be needed to determine which pronunciation applies.</p>
+
+<p>For instance, in the example below, the word "read" is
+pronounced as "red" in the first line and as "reed" in the second
+line:</p>
+
+<ul>
+<li>I have <em>read</em> the first chapter.</li>
+
+<li>I will <em>read</em> some more after lunch.</li>
+</ul>
+
+<p>Standard dictionaries for each language are likely to be
+incomplete, missing irregular words for personal names, place
+names, technical terms and abbreviations. For this reason, authors
+need a way to provide supplementary text to speech information and
+to indicate when it applies.</p>
+
+<p>Specialized representations for phonemic and prosodic
+information can be off putting for non-specialist users. For this
+reason it is common to see simplified ways to write down
+pronunciation, for instance, the word "station" can be defined
+as:</p>
+
+<p align="center"><big><b>station: stay-shun</b></big></p>
+
+<p>This kind of approach is likely to encourage users to add
+pronunciation information, leading to an increase in the quality of
+spoken documents, as compared with more complex and harder to learn
+approaches.</p>
+
+<p>A language independent representation must cope with the full
+range of sounds and stress patterns found in the world's languages.
+A promising starting point is the International Phonetic Alphabet
+<sup>[<a href="#ref-IPA">IPA</a>]</sup>. For greater flexibility in
+representing prosodic information, it may be appropriate to define
+a markup notation, based upon XML <sup>[<a href="#ref-XML">
+XML</a>]</sup>.</p>
+
+<p>There is a strong case for W3C to facilitate the development of
+a standard way to encode such information, bring together experts
+from industry and academia. This will maximise the chances of
+interoperability, and create a market for speech fonts and speech
+synthesis software based upon open standards.</p>
+
+<h2>Detailed Proposals</h2>
+
+<h3>Voice Files</h3>
+
+<p>One way to handle this is to use the OBJECT element to reference
+the voice file with the content of the OBJECT element providing the
+textual fall-back e.g.</p>
+
+<pre>
+    &lt;object data="advert.au" type="audio/basic"&gt;
+      Hey there buddy, have you heard of the fantastic
+      offers on cruises in the Carribean this winter?
+      Get 50% off now from &lt;a href=horizon&gt;Horizon
+      vacations and leave the big freeze behind!&lt;/a&gt;
+    &lt;/object&gt;
+</pre>
+
+<p>The author might want to use an image for graphical browsers.
+This could be represented as an outer OBJECT element for the image,
+wrapping the audio object:</p>
+
+<pre>
+    &lt;object data="advert.jpeg" type="image/jpeg"&gt;
+      &lt;object data="advert.au" type="audio/basic"&gt;
+        Hey there buddy, have you heard of the fantastic
+        offers on cruises in the Carribean this winter?
+        Get 50% off now from &lt;a href=horizon&gt;Horizon
+        vacations and leave the big freeze behind!&lt;/a&gt;
+      &lt;/object&gt;
+    &lt;/object&gt;
+</pre>
+
+<p>The spoken word is generally as important as the written word.
+This justifies a simple mechanism for speech as opposed to a more
+general and inevitably more complex mechanism based upon metadata.
+With this in mind, a particularly simple approach is to add an
+attribute to HTML elements, that links to a voice file for use in
+place of the element's content. This attribute could be used on
+elements such as DIV, TABLE, and OBJECT. For instance:</p>
+
+<pre>
+    &lt;div voicefile="advert.au""&gt;
+      Heh there buddy, have you heard of the fantastic
+      offers on cruises in the Carribean this winter?
+      Get 50% off now from &lt;a href=horiz&gt;Horizon
+      vacations and leave the big freeze behind!&lt;/a&gt;
+    &lt;/div&gt;
+</pre>
+
+<h3>Speech Recognition Grammar</h3>
+
+<pre>
+    Attibute name: grammar
+    Value: <em>CDATA</em>
+    Applies to: All elements
+</pre>
+
+<p>The "grammar" attribute allows the inclusion of a grammar block
+with an input tag. The grammar block allows a speech recognition
+engine to analyze different type of speech in a better way. At the
+present, the proposal does not include the format of the block.
+This will have to be done in coordination with the speech
+recognition industry.</p>
+
+<p>An HTML page may include a check box. The title of the check box
+may be "Are you an American Citizen". A voice based user agent may
+ask the user, with the help of a text to speech engine, "Are you an
+American Citizen" The possible answers may be "Yes" or "No" but it
+could also be any other word used for negative or positive response
+in the caller's language. It could be "Ya," "you batch'ya," "sure,"
+"of course" and many other expressions. It is necessary to feed the
+speech recognition engine with likely utterances representing the
+desired response.</p>
+
+<p>When the page includes a sequence of hypertext links, a grammar
+attribute supplied with an enclosing element (e.g. P, UL, LI or
+DIV) can be used to provide recognition templates. This technique
+can also be used together with the SELECT element for menus, and
+for the FIELDSET element for groups of radio buttons and checkboxes
+etc.</p>
+
+<p class="note"><em>A template is a string with tagged slots that
+either match any substring or which match a restricted set of
+substrings. The approach offers much greater flexibility than
+simple string matching.</em></p>
+
+<h3>Error Handling</h3>
+
+<p>An error response is an event generated by a element which
+solicits input by talking to the user and waiting for input. Two
+types of error response are proposed. An error for a situation
+where no selection is made or no input is entered, and an error for
+a case where a selection is made for something which is not
+offered.</p>
+
+<h4>OnSelectionTimeout</h4>
+
+<p>The browser may generate an OnSelectionTimeout event when the
+user is asked to provide input of any kind, such as a selection
+from a list of anchors or an text input box and fails to do so
+within a browser dependent time-out (settable via scripts).</p>
+
+<p>For example, the following block may be offered the user for
+navigation.</p>
+
+<pre>
+    &lt;P onselecttimeout='document.speak("You have
+        not entered any selection, please enter your
+        selection now")'&gt;
+        &lt;A href=Instructions.html&gt;Directions&lt;/A&gt; |
+        &lt;A href=Todo&gt;List of things to do&lt;/A&gt;
+    &lt;/P&gt;
+</pre>
+
+<p>The OnSelectionTimeout event is processed by the browser
+according to the browser own definition of timeout for input entry
+or selection of anchor tags. The OnSelectTimeout event applies to
+all block tags as well as form elements.</p>
+
+<h4>OnSelectionError</h4>
+
+<p>When the user selects an option not offered by the browser the
+user must be notified that an error occurred. The notification and
+the resulting action is to be performed by a script associated with
+OnSelectionError event.</p>
+
+<p>Example:</p>
+
+<pre>
+    &lt;P onselectionerror='document.speak("The selection
+         you have entered is invalid, please enter your
+         selection again now")'&gt;
+        &lt;A href=Instructions.html&gt;Directions&lt;/A&gt; |
+        &lt;A href=Todo&gt;List of things to do&lt;/A&gt;
+    &lt;/P&gt;
+</pre>
+
+<h2>Next Steps</h2>
+
+<p>The format for the grammar block and for text to speech
+information needs to be defined in consulation with experts from the
+speech synthesis and recognition industry and centers of academic
+research in this area. Perhaps the best way to move forward is to
+discuss the issues presented in this Note in the W3C workshop on
+Mobile Devices scheduled for April in Tokyo.</p>
+
+<p>The workshop could be followed by setting up one or more
+working groups. Another possibility would be to issue a briefing
+package and a call for participation in working groups prior to
+holding the workshop.</p>
+
+<p>In the meantime, it may be practical for the proposals for
+inserted text, voicefiles and error responses to be reviewed in the
+existing W3C groups, in particular, the Web Accessibility
+Initiative, the CSS &amp; FP working group and the HTML
+coordination group.</p>
+
+<h2>References</h2>
+
+<dl>
+<dt><strong><a name="ref-CSS1">[CSS1]</a></strong></dt>
+
+<dd>"Cascading Style Sheets, level 1", H&aring;kon Wium Lie and
+Bert Bos, December 1996.<br>
+ Available at <a href="http://www.w3.org/TR/REC-CSS1-961217.html">
+http://www.w3.org/TR/REC-CSS1-961217.html</a></dd>
+
+<dt><strong><a name="ref-CSS2">[CSS2]</a></strong></dt>
+
+<dd>"Cascading Style Sheets, level 2", H&aring;kon Wium Lie, Bert
+Bos and Ian Jacobs.<br>
+Available at <a href="http://www.w3.org/TR/WD-CSS2/">
+http://www.w3.org/TR/WD-CSS2/</a></dd>
+
+<dt><strong><a name="ref-HTML4">[HTML4]</a></strong></dt>
+
+<dd>"Hypertext Markup Language (HTML) Version 4.0", Dave Raggett,
+Arnaud Le Hors and Ian Jacobs. December 1998.<br>
+Available at <a href="http://www.w3.org/TR/REC-html40/">
+http://www.w3.org/TR/REC-html40/</a></dd>
+
+<dt><strong><a name="ref-ipa">[IPA]</a></strong></dt>
+
+<dd>The International Phonetic Alphabet is defined by the
+International Phonetic Association, see: <a href=
+"http://www.arts.gla.ac.uk/IPA/ipa.html">
+http://www.arts.gla.ac.uk/IPA/ipa.html</a></dd>
+
+<dt><strong><a name="ref-XML">[XML]</a></strong></dt>
+
+<dd>The Extensible Markup Language (XML). Information about XML is
+available at <a href="http://www.w3.org/XML/">
+http://www.w3.org/XML/</a></dd>
+</dl>
+
+<hr>
+<p><small><a href=
+"http://www.w3.org/Consortium/Legal/ipr-notice.html#Copyright">
+Copyright</a> &nbsp;&copy;&nbsp; 1997 <a href="http://www.w3.org">
+W3C</a> (<a href="http://www.lcs.mit.edu">MIT</a>, <a href=
+"http://www.inria.fr/">INRIA</a>, <a href="http://www.keio.ac.jp/">
+Keio</a> ), All Rights Reserved. W3C <a href=
+"http://www.w3.org/Consortium/Legal/ipr-notice.html#Legal
+Disclaimer">liability,</a> <a href=
+"http://www.w3.org/Consortium/Legal/ipr-notice.html#W3C
+Trademarks">trademark</a>, <a href=
+"http://www.w3.org/Consortium/Legal/copyright-documents.html">
+document use</a> and <a href=
+"http://www.w3.org/Consortium/Legal/copyright-software.html">
+software licensing</a> rules apply. Your interactions with this
+site are in accordance with our <a href=
+"http://www.w3.org/Consortium/Legal/privacy-
+statement.html#Public">public</a> and <a href=
+"http://www.w3.org/Consortium/Legal/privacy-
+statement.html#Members">Member</a> privacy statements.</small></p>
+</body>
+</html>
+

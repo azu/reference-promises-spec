@@ -1,0 +1,1088 @@
+<!-- http://www.w3.org/TR/sparql11-entailment/ -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="EN" xml:lang="EN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>SPARQL 1.1 Entailment Regimes</title><style type="text/css">
+ 
+@import url("local.css");
+
+code           { font-family: monospace; }
+
+div.constraint,
+div.issue,
+div.note,
+div.notice     { margin-left: 2em; }
+
+ol.enumar      { list-style-type: decimal; }
+ol.enumla      { list-style-type: lower-alpha; }
+ol.enumlr      { list-style-type: lower-roman; }
+ol.enumua      { list-style-type: upper-alpha; }
+ol.enumur      { list-style-type: upper-roman; }
+
+
+div.exampleInner pre { margin-left: 1em;
+                       margin-top: 0em; margin-bottom: 0em}
+div.exampleOuter {border: 4px double gray;
+                  margin: 0em; padding: 0em}
+div.exampleInner { background-color: #d5dee3;
+                   border-top-width: 4px;
+                   border-top-style: double;
+                   border-top-color: #d3d3d3;
+                   border-bottom-width: 4px;
+                   border-bottom-style: double;
+                   border-bottom-color: #d3d3d3;
+                   padding: 4px; margin: 0em }
+div.exampleWrapper { margin: 4px }
+div.exampleHeader { font-weight: bold;
+                    margin: 4px}
+
+em.rfc2119 { text-transform: lowercase;
+             font-variant: small-caps;
+             font-style: normal; }
+</style><link rel="stylesheet" type="text/css" href="http://www.w3.org/StyleSheets/TR/W3C-REC.css" /></head><body><div class="head"><p><a href="http://www.w3.org/"><img src="http://www.w3.org/Icons/w3c_home" alt="W3C" height="48" width="72" /></a></p>
+<h1><a name="title" id="title"></a>SPARQL 1.1 Entailment Regimes</h1>
+<h2><a name="w3c-doctype" id="w3c-doctype"></a>W3C Recommendation 21 March 2013</h2><dl><dt>This version:</dt><dd>
+            <a href="http://www.w3.org/TR/2013/REC-sparql11-entailment-20130321/">http://www.w3.org/TR/2013/REC-sparql11-entailment-20130321/</a>
+        </dd><dt>Latest version:</dt><dd>
+            <a href="http://www.w3.org/TR/sparql11-entailment/">http://www.w3.org/TR/sparql11-entailment/</a>
+        </dd><dt>Previous version:</dt><dd><a href="http://www.w3.org/TR/2013/PR-sparql11-entailment-20130129/">http://www.w3.org/TR/2013/PR-sparql11-entailment-20130129/</a></dd><dt>Editors:</dt><dd>Birte Glimm, Universität Ulm</dd><dd>Chimezie Ogbuji, Invited Expert</dd><dt>Contributors:</dt><dd>Sandro Hawke, W3C</dd><dd>Ivan Herman, W3C</dd><dd>Bijan Parsia, University of Manchester</dd><dd>Axel Polleres, Siemens AG</dd><dd>Andy Seaborne, The Apache Software Foundation</dd></dl><p>Please refer to the <a href="http://www.w3.org/2013/sparql-errata#sparql11-entailment"><strong>errata</strong></a> for this document, which may
+      include some normative corrections.</p><p>See also <a href="http://www.w3.org/2003/03/Translations/byTechnology?technology=sparql11-entailment"><strong>translations</strong></a>.</p><p class="copyright"><a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2013 <a href="http://www.w3.org/"><acronym title="World Wide Web Consortium">W3C</acronym></a><sup>®</sup> (<a href="http://www.csail.mit.edu/"><acronym title="Massachusetts Institute of Technology">MIT</acronym></a>, <a href="http://www.ercim.eu/"><acronym title="European Research Consortium for Informatics and Mathematics">ERCIM</acronym></a>, <a href="http://www.keio.ac.jp/">Keio</a>, <a href="http://ev.buaa.edu.cn/">Beihang</a>), All Rights Reserved. W3C <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply.</p></div><hr /><div>
+<h2><a name="abstract" id="abstract"></a>Abstract</h2><p>SPARQL is a query language and a protocol for data that is stored natively
+    as RDF or viewed as RDF via middleware. 
+
+    The main mechanism for computing query results in SPARQL is subgraph 
+    matching: RDF triples in both the queried RDF data and the query 
+    pattern are interpreted as nodes and edges of directed graphs, and 
+    the resulting query graph is matched to the data graph using variables 
+    as wild cards. Various W3C standards, including <a href="http://www.w3.org/TR/rdf-mt/">RDF</a> and <a href="http://www.w3.org/TR/owl2-mapping-to-rdf/">OWL</a>, provide 
+    semantic interpretations for RDF graphs that allow additional RDF 
+    statements to be inferred from explicitly given assertions. Many 
+    applications that rely on these semantics require a query language 
+    such as SPARQL, but in order to use SPARQL, basic graph pattern 
+    matching has to be defined using semantic entailment relations instead 
+    of explicitly given graph structures. There are different possible ways 
+    of defining a basic graph pattern matching extension for an entailment 
+    relation. This document specifies one such way for a range of standard 
+    semantic web entailment relations. 
+    
+    Such extensions of the SPARQL semantics are called   
+    <em>entailment regimes</em> within this document. An entailment regime 
+    defines not only which entailment relation is used, but also which 
+    queries and graphs are well-formed for the regime, how the entailment 
+    is used (since there are potentially different meaningful ways to use 
+    the same entailment relation), and what kinds of errors 
+    can arise. The entailment relations used in this document are standard 
+    entailment relations in the semantic web: RDF entailment, RDFS entailment, D-entailment, OWL Direct and RDF-Based Semantics entailment, and RIF Core entailment. </p></div><div>
+<h2><a name="status" id="status"></a>Status of this Document</h2><h4 id="may-be">May Be Superseded</h4><p><em>This section describes the status of this document at the time of its publication. Other documents may supersede this document. A list of current W3C publications and the latest revision of this technical report can be found in the <a href="http://www.w3.org/TR/">W3C technical reports index</a> at http://www.w3.org/TR/.</em></p><h4 id="related">Set of Documents</h4><p>This document is one of eleven SPARQL 1.1 Recommendations produced by the <a href="http://www.w3.org/2001/sw/DataAccess/">SPARQL Working Group</a>: </p><ol><li><a href="http://www.w3.org/TR/2013/REC-sparql11-overview-20130321">SPARQL 1.1 Overview</a></li><li><a href="http://www.w3.org/TR/2013/REC-sparql11-query-20130321">SPARQL 1.1 Query Language</a></li><li><a href="http://www.w3.org/TR/2013/REC-sparql11-update-20130321">SPARQL 1.1 Update</a></li><li><a href="http://www.w3.org/TR/2013/REC-sparql11-service-description-20130321">SPARQL1.1 Service Description</a></li><li><a href="http://www.w3.org/TR/2013/REC-sparql11-federated-query-20130321">SPARQL 1.1 Federated Query</a></li><li><a href="http://www.w3.org/TR/2013/REC-sparql11-results-json-20130321">SPARQL 1.1 Query Results JSON Format</a></li><li><a href="http://www.w3.org/TR/2013/REC-sparql11-results-csv-tsv-20130321">SPARQL 1.1 Query Results CSV and TSV Formats</a></li><li><a href="http://www.w3.org/TR/2013/REC-rdf-sparql-XMLres-20130321">SPARQL Query Results XML Format (Second Edition)</a></li><li><a href="http://www.w3.org/TR/2013/REC-sparql11-entailment-20130321">SPARQL 1.1 Entailment Regimes</a>  (this document)</li><li><a href="http://www.w3.org/TR/2013/REC-sparql11-protocol-20130321">SPARQL 1.1 Protocol</a></li><li><a href="http://www.w3.org/TR/2013/REC-sparql11-http-rdf-update-20130321">SPARQL 1.1 Graph Store HTTP Protocol</a></li></ol><h4 class="no-toc no-num" id="status-changes">No Substantive Changes</h4><p>There have been no substantive changes to this document since the <a href="http://www.w3.org/TR/2013/PR-sparql11-entailment-20130129/">previous version</a>.   Minor editorial changes, if any, are detailed in the <a href="#changes-since-pr">change log</a> and visible in the <a href="diff">color-coded diff</a>.</p><h4 class="no-toc no-num" id="please">Please Send Comments</h4><p>Please send any comments to <a class="mailto" href="mailto:public-rdf-dawg-comments@w3.org">public-rdf-dawg-comments@w3.org</a>
+    (<a class="http" href="http://lists.w3.org/Archives/Public/public-rdf-dawg-comments/">public
+    archive</a>).  Although work on this document by the <a href="http://www.w3.org/2009/sparql/">SPARQL Working Group</a> is complete, comments may be addressed in the <a href="http://www.w3.org/2013/sparql-errata">errata</a> or in future revisions.  Open discussion is welcome at <a class="mailto" href="mailto:public-sparql-dev@w3.org">public-sparql-dev@w3.org</a> (<a class="http" href="http://lists.w3.org/Archives/Public/public-sparql-dev/">public archive</a>).</p><h4 class="no-toc no-num" id="endorsement">Endorsed By W3C</h4><p><em>This document has been reviewed by W3C Members, by software developers, and by other W3C groups and interested parties, and is endorsed by the Director as a W3C Recommendation. It is a stable document and may be used as reference material or cited from another document. W3C's role in making the Recommendation is to draw attention to the specification and to promote its widespread deployment. This enhances the functionality and interoperability of the Web.</em></p><h4 id="patents">Patents</h4><p><em>This document was produced by a group operating under the <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 W3C Patent Policy</a>. W3C maintains a <a href="http://www.w3.org/2004/01/pp-impl/35463/status" rel="disclosure">public list of any patent disclosures</a> made in connection with the deliverables of the group; that page also includes instructions for disclosing a patent. An individual who has actual knowledge of a patent which the individual believes contains <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential Claim(s)</a> must disclose the information in accordance with <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure"> section 6 of the W3C Patent Policy</a>.</em></p></div><div class="toc">
+<h2><a name="contents" id="contents"></a>Table of Contents</h2><p class="toc">1 <a href="#sec-intro">Introduction</a><br />
+    1.1 <a href="#Conventions">Document Conventions</a><br />
+        1.1.1 <a href="#syntax">Graph Syntax</a><br />
+        1.1.2 <a href="#namespaces">Namespaces</a><br />
+        1.1.3 <a href="#prelims">Preliminary Definitions</a><br />
+        1.1.4 <a href="#resultDesc">Result Descriptions</a><br />
+    1.2 <a href="#entEffects">Effects of Different Entailment Regimes </a><br />
+    1.3 <a href="#bgpMatchingExtensions">Extensions to Basic Graph Pattern Matching</a><br />
+    1.4 <a href="#entRegimeParts">Parts of an Entailment Regime</a><br />
+2 <a href="#RDFEntRegime">RDF Entailment Regime</a><br />
+3 <a href="#GeneralNotes">General Notes on Entailment Regimes (Informative)</a><br />
+    3.1 <a href="#bnodes">Blank Nodes in the Queried Graph</a><br />
+    3.2 <a href="#axiomaticTriples">Answers from Axiomatic Triples</a><br />
+    3.3 <a href="#literalSubjects">Literals in the Subject Position</a><br />
+    3.4 <a href="#booleanQueries">Boolean Queries</a><br />
+    3.5 <a href="#aggregates">Aggregates and Blank Nodes</a><br />
+4 <a href="#RDFSEntRegime">RDFS Entailment Regime</a><br />
+    4.1 <a href="#inconsistencies">Inconsistencies (Informative)</a><br />
+        4.1.1 <a href="#uncheckedInconsistencies">Effects of Unchecked Inconsistencies</a><br />
+5 <a href="#DEntRegime">D-Entailment Regime</a><br />
+    5.1 <a href="#CanonicalLit">The D-Entailment Regime</a><br />
+    5.2 <a href="#canonicalRep">XML Schema Datatypes and Canonical Lexical Representations</a><br />
+6 <a href="#OWLRDFBSEntRegime">OWL 2 RDF-Based Semantics Entailment Regime</a><br />
+    6.1 <a href="#OWLRDFBSEntailments">Entailments under the OWL 2 RDF-Based Semantics (Informative)</a><br />
+    6.2 <a href="#OWLRDFBSRestrictions">Restriction on Solutions</a><br />
+    6.3 <a href="#OWLRDFBSComputing">Computing Query Answers under the RDF-Based Semantics (Informative)</a><br />
+    6.4 <a href="#OWL2-RDFBS-Profiles">OWL 2 Profiles and Entailment Checkers</a><br />
+        6.4.1 <a href="#OWL2DL">OWL 2 DL</a><br />
+        6.4.2 <a href="#OWL2EL">The OWL 2 EL Profile</a><br />
+        6.4.3 <a href="#OWL2QL">The OWL 2 QL Profile</a><br />
+        6.4.4 <a href="#OWL2RLDS">The OWL 2 RL Profile</a><br />
+        6.4.5 <a href="#OWL2RLRDFBSComputing">Computing Query Answers for the OWL 2 RL Profile with RDF-Based Semantics (Informative)</a><br />
+7 <a href="#OWLDSEnRegime">OWL 2 Direct Semantics Entailment Regime</a><br />
+    7.1 <a href="#OWLDSIntro">Introduction</a><br />
+        7.1.1 <a href="#OWLDSImports">OWL Import Directives</a><br />
+        7.1.2 <a href="#OWLDSExtGrammar">Extended Grammar for OWL 2 Direct Semantics BGPs</a><br />
+        7.1.3 <a href="#VarTyping">Variable Typing</a><br />
+    7.2 <a href="#OWLDSEntRegime">The OWL 2 Direct Semantics Entailment Regime</a><br />
+    7.3 <a href="#OWLDSRestrictions">Restrictions on Solutions (Informative)</a><br />
+        7.3.1 <a href="#OWLDSConstraints">BGP Constraints for OWL 2 DL</a><br />
+        7.3.2 <a href="#OWLDSLiteralVars">Queries with Variables in Literal Positions</a><br />
+    7.4 <a href="#OWLDSHigherOrder">Higher-Order Queries (Informative)</a><br />
+    7.5 <a href="#OWL2ProfilesDS">OWL 2 Entailment Checkers and Profiles</a><br />
+8 <a href="#RIFCoreEnt">RIF Core Entailment</a><br />
+    8.1 <a href="#SimpeRIFCoreEntRegime">(Simple) RIF Core Entailment Regime</a><br />
+    8.2 <a href="#RIFCustomRuleSets">Custom Rulesets for Common Vocabulary Interpretations (Informative)</a><br />
+    8.3 <a href="#RIFFiniteAnswers">Finite Answer Set Conditions (Informative)</a><br />
+    8.4 <a href="#RIFDocReferences">Referencing a RIF Document</a><br />
+        8.4.1 <a href="#RIFUsedWithProfile">Semantics of rif:usedWithProfile</a><br />
+        8.4.2 <a href="#RIFDereferencing">Dereferencing RIF Documents (Informative)</a><br />
+            8.4.2.1 <a href="#RIFHTTPDereferencing">HTTP Dereferencing</a><br />
+            8.4.2.2 <a href="#RIFDocsAsNamedGraphs">Encoding RIF documents within named graphs in the dataset</a><br />
+9 <a href="#DataSets">Entailment Regimes and Data Sets (Informative)</a><br />
+10 <a href="#PropertyPaths">Entailment Regimes and Property Paths (Informative)</a><br />
+    10.1 <a href="#PropertyPathsLimitations">Limitations of Property Paths in Combination with Entailment Regimes</a><br />
+11 <a href="#Updates">Entailment Regimes and Updates (Informative)</a><br />
+</p>
+<h3><a name="appendices" id="appendices"></a>Appendices</h3><p class="toc">A <a href="#sec-bibliography">References</a><br />
+    A.1 <a href="#sec-existing-stds">Normative References</a><br />
+    A.2 <a href="#null">Other References</a><br />
+B <a href="#AppendixMapping">Appendix: Mapping from BGPs to the extended OWL 2 Structural Specification</a><br />
+    B.1 <a href="#OWLParsing">Parsing BGPs into Objects of the Extended OWL 2 Structural Specification</a><br />
+C <a href="#AppendixProofs">Appendix: Proofs</a><br />
+D <a href="#changelog">Change Summary</a><br />
+</p></div><hr /><div class="body"><div class="div1">
+<h2><a name="sec-intro" id="sec-intro"></a>1 Introduction</h2><p>The SPARQL 1.1 Query specification <a href="#SPARQL11">[SPARQL 1.1 Query]</a> defines the evaluation of a basic graph pattern by 
+        means of subgraph matching. This form of basic graph pattern evaluation is also called simple entailment since it can equally be defined in terms of the 
+        <a href="http://www.w3.org/TR/rdf-mt/#entail">simple entailment relation between RDF graphs</a>. In order to use more elaborate entailment relations, 
+        which also allow for retrieving solutions that implicitly follow from the queried graph, this document defines several <em>entailment regimes</em>.
+        An entailment regime specifies how an entailment relation such as RDF Schema entailment can be used to redefine the evaluation of basic graph 
+        patterns from a SPARQL query making use of SPARQL's extension point for basic graph pattern matching. In order to satisfy the conditions that SPARQL 
+        places on extensions to basic graph pattern matching, an entailment regime specifies conditions that limit the number of entailments that contribute 
+        solutions for a basic graph pattern. For example, only a finite number of the infinitely many axiomatic triples can contribute solutions under the RDF Schema entailment regime. 
+        The entailment relations used in this document are common semantic web entailment relations: <a href="http://www.w3.org/TR/rdf-mt/#rdf_entail">RDF entailment</a>, <a href="http://www.w3.org/TR/rdf-mt/#rdfs_entailment">RDF Schema entailment</a>, <a href="http://www.w3.org/TR/rdf-mt/#D_entailment">D-Entailment</a>, 
+        <a href="http://www.w3.org/TR/owl-rdf-based-semantics/#Satisfaction.2C_Consistency_and_Entailment">OWL 2 RDF-Based Semantics entailment</a>, 
+        <a href="http://www.w3.org/TR/owl2-semantics/#Inference_Problems">OWL 2 Direct Semantics entailment</a>, and 
+        <a href="http://www.w3.org/TR/rif-rdf-owl/#def-simple-entails">RIF-Simple entailment</a>. </p><p>References to RDF or RDFS entailment rules from the <a href="http://www.w3.org/TR/rdf-mt/" title="http://www.w3.org/TR/rdf-mt/">RDF Semantics</a> 
+        specification are used in Section <a href="#entEffects">1.2</a>, <a href="#bnodes">3.1</a>, <a href="#axiomaticTriples">3.2</a>, and <a href="#inconsistencies">4.1</a> in an informative way and implementations are not expected to implement these rules as they are used here. </p><div class="div2">
+<h3><a name="Conventions" id="Conventions"></a>1.1 Document Conventions</h3><p>Throughout the document, certain conventions are used, which are outlined below. </p><div class="div3">
+<h4><a name="syntax" id="syntax"></a>1.1.1 Graph Syntax</h4><p>This document uses the Turtle <a href="#TURTLE">[TURTLE]</a> data format to show triples explicitly. This notation uses a node identifier (nodeID) 
+                convention to indicate blank nodes in the triples of a graph. While node identifiers such as <code>_:xxx</code> serve to identify blank nodes in 
+                the surface syntax, these expressions are not considered to be the label of the graph node they identify; they are not names, and do not occur 
+                in the actual graph. In particular, the RDF graphs described by two Turtle  documents which differ only by renaming their blank node 
+                identifiers will be understood to be equivalent. This renaming convention should be understood as applying only to whole documents, since 
+                renaming the node identifiers in part of a document may result in a document describing a different RDF graph. A blank node may also anonymously (without an explicit identifier) be denoted with <code>[]</code>. </p><p>IRIs are written enclosed in <code>&lt;</code> and <code>&gt;</code> and may be absolute RDF IRI References or relative to the current base 
+                IRI. IRIs may also be abbreviated by using Turtle's <code>@prefix</code> directive that allows declaring a short prefix name for a long prefix 
+                of repeated IRIs. Once a prefix such as <code>@prefix foo: &lt;http://example.org/ns#&gt; . </code> is defined, any mention of an IRI later in the 
+                document may use a qualified name that starts <code>foo:</code> to stand for the longer IRI. For example, the qualified name <code>foo:bar</code> is a 
+                shorthand for the IRI <code>&lt;http://example.org/ns#bar&gt;</code>.</p><p>For example, the following triples use prefixes and abbreviated IRIs and also the non-abbreviated IRI <code>&lt;book2&gt;</code>, which 
+                is relative to the base IRI of the document.</p><pre class="data">@prefix dc:   &lt;http://purl.org/dc/elements/1.1/&gt; .
+@prefix :     &lt;http://example.org/book/&gt; .
+:book1  dc:title "SPARQL Tutorial" . 
+&lt;book2&gt; dc:title "Turtle Tutorial" .</pre><p>Standard <a href="http://www.w3.org/TR/turtle/">Turtle abbreviations</a> are taken to be expanded into their full form in 
+            the queried graph and the query. Since the entailment regimes use the vocabulary of the queried graph to constrain the solutions, this means that, 
+            e.g., when <code>a</code> is used in a predicate position it is considered to be expanded to <code>rdf:type</code> before the query is answered. 
+            Similarly, abbreviations for lists etc. in the queried graph are considered to be expanded into their full form. For example, if a Turtle document contains 
+            a list of the form <code>( ex:a ex:b )</code>, it is assumed that vocabulary of the queried graph contains <code>rdf:first</code>, 
+            <code>rdf:rest</code>, and <code>rdf:nil</code> because the expanded form of the list is 
+            <code>[ rdf:first ex:a; rdf:rest [ rdf:first ex:b; rdf:rest rdf:nil ] ]</code>. </p></div><div class="div3">
+<h4><a name="namespaces" id="namespaces"></a>1.1.2 Namespaces</h4><p>Examples assume the following namespace prefix bindings unless otherwise stated:</p><div style="text-align: left;"><table style="border-color: rgb(0, 0, 0); border-collapse: collapse;" border="1" cellpadding="5"><tbody><tr><th>Prefix</th><th>IRI</th></tr><tr><td><code>rdf:</code></td><td><code>&lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;</code></td></tr><tr><td><code>rdfs:</code></td><td><code>&lt;http://www.w3.org/2000/01/rdf-schema#&gt;</code></td></tr><tr><td><code>owl:</code></td><td><code>&lt;http://www.w3.org/2002/07/owl#&gt;</code></td></tr><tr><td><code>xsd:</code></td><td><code>&lt;http://www.w3.org/2001/XMLSchema#&gt;</code></td></tr><tr><td><code>rif:</code></td><td><code>&lt;www.w3.org/2007/rif#&gt;</code></td></tr></tbody></table></div><p>In the interests of brevity, the prefix <code>ex:</code> is also used in the examples. The prefix is assumed to be bound to an exemplary IRI 
+                such as <code>&lt;http://www.example.org/&gt;</code>. </p></div><div class="div3">
+<h4><a name="prelims" id="prelims"></a>1.1.3 Preliminary Definitions</h4><p>This document uses the same <a href="http://www.w3.org/TR/sparql11-query/#sparqlBasicTerms">definitions</a> as the 
+                <a href="http://www.w3.org/TR/sparql11-query/">SPARQL Query Language</a> specification. Important terms are recaptured below for clarity. 
+                In the case of any differences, the SPARQL Query Language definitions are the normative ones. </p><p>The term <em>I</em> denotes the set of all IRIs, <em>RDF-L</em> the set of all <a class="norm" href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-literal">RDF Literals</a>, and <em>RDF-B</em> the set of all <a class="norm" href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-blank-node">blank nodes</a> in RDF graphs. </p><p>The set of <span class="definedTerm">RDF Terms</span>, <em>RDF-T</em>, is <em>I ∪ RDF-L ∪ RDF-B</em>.</p><p>The set of query variables is denoted as <em>V</em> and <em>V</em> is assumed to be countable, infinite, and disjoint from <em>RDF-T</em>. 
+                A triple pattern is a member of the set:</p><dl><dd><em>(RDF-T ∪ V) x (I ∪ V) x (RDF-T ∪ V),</em></dd></dl><p>A basic graph pattern (BGP) is a set of triple patterns. </p><p>A <em>pattern instance mapping</em> P is the combination of an RDF instance mapping σ and solution mapping μ. For a BGP <code>x</code>, <em>P</em>(<code>x</code>) 
+                denotes the result of replacing blank nodes <code>b</code> in <code>x</code> for which σ is defined with σ(<code>b</code>) and all variables <code>v</code> in <code>x</code> for which μ is 
+                defined with μ(<code>v</code>), denoted <em>P</em>(<code>x</code>) = μ(σ(<code>x</code>)). </p></div><div class="div3">
+<h4><a name="resultDesc" id="resultDesc"></a>1.1.4 Result Descriptions</h4><p>Result sets are illustrated in tabular form. </p><div class="result"><a name="table0" id="table0"></a><table class="resultTable"><tr><th>x</th><th>y</th><th>z</th></tr><tr><td>"Alice"</td><td><code>&lt;http://example/a&gt;</code></td><td>      </td></tr></table></div><p>A 'binding' is a pair (<a href="http://www.w3.org/TR/sparql11-query/#defn_QueryVariable">variable</a>, <a href="http://www.w3.org/TR/sparql11-query/#defn_RDFTerm">RDF term</a>). In this result set, there are three
+                variables: <code>x</code>, <code>y</code>, and <code>z</code> (shown as column headers). Each solution is shown as one row in the body of the 
+                table. Here, there is a single solution, in which variable <code>x</code> is bound to <code>"Alice"</code>, variable <code>y</code> is 
+                bound to <code>&lt;http://example/a&gt;</code>, and variable <code>z</code> is not bound to an RDF term. Variables are not required to be bound 
+                in a solution.</p><p>Sometimes solutions are annotated with the name of a solution mapping so that the explanatory text can refer to the solution mapping and 
+                explain or justify certain solutions. For example, in the results table below, the only solution is given by the solution mapping 
+                μ<sub>1</sub>: </p><div class="result"><a name="table01" id="table01"></a><table class="resultTable"><tr><th class="annotation"></th><th>x</th><th>y</th><th>z</th></tr><tr><td class="annotation">μ<sub>1</sub></td><td>"Alice"</td><td><code>&lt;http://example/a&gt;</code></td><td>      </td></tr></table></div></div></div><div class="div2">
+<h3><a name="entEffects" id="entEffects"></a>1.2 Effects of Different Entailment Regimes </h3><p>The SPARQL Query specification already envisages that SPARQL can be used with entailment regimes other than simple entailment. To illustrate the 
+            differences between simple, RDF, and RDFS entailment, consider the following data:</p><pre class="data">(1) ex:book1 rdf:type ex:Publication .
+(2) ex:book2 rdf:type ex:Article .
+(3) ex:Article rdfs:subClassOf ex:Publication .
+(4) ex:publishes rdfs:range ex:Publication .
+(5) ex:MITPress ex:publishes ex:book3 .</pre><p><img src="semantics.png" alt="RDF graph for the example on effects of different entailment regimes" /><br />
+            <strong>Figure 1</strong>: A graphical representation of the RDF graph for the example where green dashed lines indicate RDF-entailed triples and red dashed lines indicate triples that are also RDFS-entailed.</p><p>Consider, for example, the following query:</p><pre class="query">SELECT ?prop WHERE { ?prop rdf:type rdf:Property }</pre><p>Under simple entailment the query has an empty answer when querying the above graph. Under RDF entailment, the 
+            <a href="http://www.w3.org/TR/rdf-mt/#RDFRules" title="http://www.w3.org/TR/rdf-mt/#RDFRules">RDF rule</a> <em>rdf1</em> can be used on (5) to 
+            derive the triple <code>ex:publishes rdf:type rdf:Property</code> which means that <code>ex:publishes</code> is a valid binding for 
+            <code>?prop</code> and will be returned as an answer for the query from a system that uses RDF entailment. </p><p>The following query asks for a list of all publications:</p><pre class="query">SELECT ?pub WHERE { ?pub rdf:type ex:Publication }</pre><p>Clearly, <code>ex:book1</code> is an answer due to triple (1). Intuitively, we can expect that <code>ex:book2</code> is also a publication 
+            because it is an article (2) and all articles are publications (3). Even <code>ex:book3</code> is a publication because it is published by MIT Press 
+            (5) and everything that is published is a publication (4). Under simple and RDF entailment, <code>ex:book1</code> is the only answer because a 
+            system that uses simple entailment will not perform any of the reasoning steps that were required to find that <code>ex:book2</code> and 
+            <code>ex:book3</code> are publications. Under simple entailment, the basic graph pattern <code>?pub rdf:type ex:Publication</code> is 
+            mapped to the queried graph and variables act as a kind of wild-card, e.g., by mapping <code>?pub</code> to <code>ex:book1</code> the BGP matches. 
+            RDF already supports a few inferences, but not those that are required to derive that <code>ex:book2</code> and <code>ex:book3</code> are 
+            publications. In order to retrieve <code>ex:book2</code> and <code>ex:book3</code>, one would need a system that supports at least RDFS entailment.  
+            <a href="http://www.w3.org/TR/rdf-mt/#RDFSRules" title="http://www.w3.org/TR/rdf-mt/#RDFSRules">RDFS entailment rules</a> can be used to 
+            illustrate which new consequences can be derived from the given data. For example, the rule <em>rdfs9</em> can be applied to the triples (3) and (2) to 
+            derive</p><pre class="data">(6) ex:book2 rdf:type ex:Publication .</pre><p>The rule <em>rdfs3</em> can be applied to (4) and (5) to derive </p><pre class="data">(7) ex:book3 rdf:type ex:Publication .</pre><p>The triples (6) and (7) can then be used to find that <code>ex:book2</code> and <code>ex:book3</code> are also answers to the query under an RDFS 
+            entailment regime. 
+
+The <a href="http://www.w3.org/TR/owl2-overview/">OWL 2 Web Ontology Language</a> allows for even more inferences and the Rule Interchange Format RIF 
+            allows for customizing the inferences by specifying custom rule sets. The remainder of this document specifies correct answers for different entailment regimes using SPARQL's extension mechanism for Basic Graph Pattern Matching. </p></div><div class="div2">
+<h3><a name="bgpMatchingExtensions" id="bgpMatchingExtensions"></a>1.3 Extensions to Basic Graph Pattern Matching</h3><p>The SPARQL Query specification <a href="#SPARQL11">[SPARQL 1.1 Query]</a> gives a set of <a href="http://www.w3.org/TR/sparql11-query/#sparqlBGPExtend">conditions</a> that have to be met 
+            when extending the basic graph pattern matching beyond simple entailment: </p><p>An entailment regime specifies</p><ol class="enumar"><li>A subset of RDF graphs called well-formed for the regime</li><li>An entailment relation between subsets of well-formed graphs and well-formed graphs.</li></ol><p>Since the OWL 2 Direct Semantics is, for example, only defined for certain well-formed RDF graphs, the first condition can be used to define 
+            an OWL 2 Direct Semantics entailment regime only over those RDF graphs that represent an OWL 2 DL ontology. For the entailment relations mentioned 
+            in the second condition, this specification uses entailment relations that are already specified and used on the semantic web such as RDF(S) 
+            entailment or OWL Direct Semantics entailment. </p><p>SPARQL Query further defines <a href="http://www.w3.org/TR/sparql11-query/#sparqlBGPExtend">a set of conditions</a> for extensions of the basic 
+            graph pattern matching. These conditions do not cover the case of inconsistent graphs. An inconsistent graph is one for which no interpretation 
+            exists that satisfies all conditions of the semantics that is used. The issue is discussed in more detail in <a href="#inconsistencies">Section 
+            3.1</a>, which also provides an example for an RDFS-inconsistent graph. Since inconsistent graphs entail any triple, special care has to be taken to 
+            address the situation. The effect of a query on an inconsistent graph is covered by the particular entailment regimes and, for each regime, the 
+            relevant details can be found in the corresponding section for that entailment regime. The SPARQL Query conditions for using a logical entailment relation 
+            E, such as RDFS entailment, instead of subgraph matching for the case of a consistent active graph are repeated below for clarity. An overview of 
+            how the different entailment regimes satisfy these conditions follows. 
+            </p><ol class="enumar"><li><a name="condition1" id="condition1"></a>The <a href="http://www.w3.org/TR/sparql11-query/#BGPsparqlBNodes">scoping graph</a>, SG, corresponding to any 
+                E-consistent active graph AG is uniquely specified up to <a href="http://www.w3.org/TR/rdf-concepts/#section-graph-equality">RDF graph equivalence</a> and is E-equivalent to AG.</li><li><a name="condition2" id="condition2"></a>For any basic graph pattern BGP and pattern instance mapping P, P(BGP) is well-formed for E. </li><li><a name="condition3" id="condition3"></a>For any <a href="http://www.w3.org/TR/sparql11-query/#BGPsparqlBNodes">scoping graph</a> SG and answer set 
+                {P<sub>1</sub> ... P<sub>n</sub>} for a basic graph pattern BGP, and where {BGP<sub>1</sub> .... BGP<sub>n</sub>} is a set of basic graph 
+                patterns all equivalent to BGP, none of which share any blank nodes with any other or with SG 
+                <p>       SG E-entails (SG ∪ P<sub>1</sub>(BGP<sub>1</sub>) ∪ ... ∪ P<sub>n</sub>(BGP<sub>n</sub>))</p>
+                These conditions do not fully determine the set of possible answers, since RDF allows unlimited amounts of redundancy. In addition, therefore, 
+                the following must hold.</li><li><a name="condition4" id="condition4"></a>Each SPARQL extension <em class="rfc2119" title="Keyword in RFC 2119 context">MUST</em> provide conditions on answer sets which guarantee that the set of 
+                triples obtained by instantiating BGP with each solution μ is uniquely specified up to RDF graph equivalence, and <em class="rfc2119" title="Keyword in RFC 2119 context">SHOULD</em> 
+                provide further conditions to prevent trivial infinite answers as appropriate to the regime.</li></ol><p>This specification does not change any of the existing entailment relations, but rather defines the vocabulary from which possible answers can be 
+            taken and defines certain conditions which guarantee that query answers are finite for most entailment regimes herein (with the exception of RIF, where finiteness is not always guaranteed, see details below in <a href="#RIFFiniteAnswers">Section 8.3</a>). The set of legal graphs, i.e., graphs that can 
+            be queried, is also unrestricted apart from the restriction to graphs that are legal under the entailment regime in question. For example, under the RDFS 
+            entailment regime, one can query all legal RDF graphs, while under OWL 2 Direct Semantics, one can query all graphs that correspond to legal OWL 2 
+            DL ontologies. Further, it is defined which queries are legal and how illegal queries, illegal graphs, and inconsistencies are handled. All defined 
+            entailment regimes satisfy the above conditions as follows:</p><ol class="enumar"><li>All entailment regimes specified here use the same definition of a <a href="http://www.w3.org/TR/sparql11-query/#BGPsparqlBNodes">scoping 
+                graph as given for simple entailment</a>. Thus, the required equivalence is immediate. 
+                </li><li>Only mappings that, when applied to the BGP, yield a set of RDF triples that are well-formed for E are legal solution mappings and 
+                included in the answer. For example, under RDFS entailment, any SPARQL query is legal, but queries that require literals as a binding for a 
+                variable in a subject position have no answer because all mappings that result in a set of RDFS entailed triples are not well-formed RDF since 
+                RDF forbids literals in the subject position. Similarly, for OWL 2 Direct Semantics entailment, a query might have no answer because all possible bindings 
+                might result in RDF triples that are not well-formed for <a href="http://www.w3.org/TR/owl2-mapping-to-rdf/">OWL 2 DL</a>. 
+                </li><li>This condition prevents the reuse of blank nodes between query answers unless those blank nodes are really the same in the queried 
+                graph. Under this restriction no accidental co-references among blank nodes are introduced. All entailment regimes use the same definition of a 
+                <a href="http://www.w3.org/TR/sparql11-query/#BGPsparqlBNodes">scoping graph</a> as simple entailment. The condition is satisfied since a form 
+                of Skolemization is used to restrict the answers containing blank nodes. </li><li>This point is very important since infinite answers are easily possible under all the considered regimes. For example, already under RDF and 
+               RDFS entailment, even the empty graph entails an infinite number of axiomatic triples such as 
+               <code>rdf:_1 rdf:type rdf:Property</code>, <code>rdf:_2 rdf:type rdf:Property</code>, ... Thus, a query with BGP <code>{ ?x rdf:type 
+               rdf:Property . }</code> would, without further restrictions, have infinitely many answers. Such answers are to be understood as trivial infinite 
+               answers. Other sources of trivial infinite answers are answers that only differ in blank node labels. In order to exclude such sources of 
+               infinity, the entailment regimes will define a (finite) vocabulary from which bindings can be taken. These restrictions are explained in greater 
+               detail in the following sections. 
+               </li></ol></div><div class="div2">
+<h3><a name="entRegimeParts" id="entRegimeParts"></a>1.4 Parts of an Entailment Regime</h3>
+        Each entailment regime is defined in a table describing the following items:
+        <ul><li><strong>Name</strong>: A name for the entailment regime, usually the same as the entailment relation used to define the evaluation of a basic graph pattern. </li><li><strong>IRI</strong>: The IRI for the regime, which can be used in the <a href="http://www.w3.org/TR/sparql11-service-description/">service description</a> of a SPARQL endpoint. The IRI for a SPARQL endpoint can be related via the property <code>sd:defaultEntailmentRegime</code> to the IRI of an entailment regime which applies per default to
+ graphs queried via this endpoint. Additionally, the property <code>sd:entailmentRegime</code> can be used to relate a particular named graph with an entailment regime that is different from the otherwise used default entailment regime. </li><li><strong>Legal Graphs</strong>: Describes which graphs are legal for the regime. </li><li><strong>Legal Queries</strong>: Describes which queries are legal for the regime. </li><li><strong>Illegal Handling</strong>: Describes what happens in case of an illegal graph or query. </li><li><strong>Entailment</strong>: Specifies which entailment relation is used in the evaluation of basic graph patterns. </li><li><strong>Inconsistency</strong>: Defines what happens if the queried graph is inconsistent under the used semantics. </li><li><strong>Query Answers</strong>: Defines how a basic graph pattern is evaluated, i.e., what the solutions are for a given graph and basic graph pattern of a query. </li></ul></div></div><div class="div1">
+<h2><a name="RDFEntRegime" id="RDFEntRegime"></a>2 RDF Entailment Regime</h2><p>RDF entailment is closest to simple entailment in that it provides only few additional answers and RDF is not expressive enough to express 
+        inconsistencies. RDF does, however, entail an infinite set of axiomatic triples and the entailment regime specifies conditions that address the 
+        fourth condition on extensions of basic graph pattern matching. Further explanations are given in the informative sections following the main definition of the regime. </p><div style="text-align: left;"><table style="border-color: rgb(0, 0, 0); border-collapse: collapse;" border="1" cellpadding="5"><tbody><tr><th>Name</th><td>RDF</td></tr><tr><th>IRI</th><td><a href="http://www.w3.org/ns/entailment/RDF">http://www.w3.org/ns/entailment/RDF</a></td></tr><tr><th>Legal Graphs</th><td>Any legal RDF graph.</td></tr><tr><th>Legal Queries</th><td>Any legal SPARQL query.</td></tr><tr><th>Illegal Handling</th><td>In case the query is illegal (syntax errors), the system <em class="rfc2119" title="Keyword in RFC 2119 context">MUST</em> raise a 
+            <a href="http://www.w3.org/TR/2009/WD-sparql11-protocol-20091022/#select-malformed">MalformedQuery</a> fault. In case the queried graph is illegal 
+            (syntax errors), the system <em class="rfc2119" title="Keyword in RFC 2119 context">MUST</em> raise a <a href="http://www.w3.org/TR/sparql11-protocol/#select-refused">QueryRequestRefused</a> fault. </td></tr><tr><th>Entailment</th><td><a href="http://www.w3.org/TR/rdf-mt/#rdf_entail" title="http://www.w3.org/TR/rdf-mt/#rdf_entail">RDF Entailment</a> <a href="#RDFMT">[RDF Semantics]</a></td></tr><tr><th>Inconsistency</th><td>RDF graphs are always RDF consistent and no inconsistency handling is required.</td></tr><tr><th>Query Answers</th><td><p>Let G be the queried RDF graph, BGP be a basic graph pattern, V(BGP) the set of variables in BGP, B(BGP) the set of blank nodes in BGP, SG 
+            the <a href="http://www.w3.org/TR/sparql11-query/#BGPsparqlBNodes">scoping graph</a> for G and BGP, sk(SG) a 
+            <a href="http://www.w3.org/TR/rdf-mt/#glossSkolemization">Skolemization</a> of SG with respect to a vocabulary disjoint from the vocabulary of SG 
+            and BGP. Applying sk to a term t, written sk(t), yields sk(t) if sk is defined for t and t otherwise; applying sk to a BGP, written sk(BGP), 
+            replaces each blank node b in BGP for which sk is defined with sk(b). The set
+            rdfV contains the URI references of the <a href="http://www.w3.org/TR/2004/REC-rdf-mt-20040210/#RDFINTERP">RDF vocabulary</a> and rdfV-Minus is the set of URI 
+            references in rdfV minus URI references of the form <code>rdf:_n</code> with <code>n</code> in <code>{1, 2, ... }</code>. </p>
+            <p>A solution mapping μ is a <em>possible solution for BGP from G under RDF entailment</em> if dom(μ) = V(BGP) and there is an RDF 
+            instance mapping σ from B(BGP) to RDF-T such that dom(σ)=B(BGP) and the pattern instance mapping P=(μ, σ) is such that 
+            P(BGP) are well-formed RDF triples that are RDF entailed by SG. </p>
+            <p>A possible solution μ is a <em>solution for BGP from SG under RDF entailment</em> if:</p>
+            <p>(C1) The RDF triples sk(P(BGP)) are ground and RDF entailed by sk(SG).</p>
+            <p>(C2) For each variable x in V(BGP), μ(x) occurs in SG or in rdfV-Minus.</p>
+            <p>The multiplicity of μ in the multiset of solutions is the maximal number of distinct RDF instance mappings σ that yield a pattern 
+               instance mapping P = (μ, σ) for which μ is a solution.</p>
+            </td></tr></tbody></table></div><p>Please note that legal answers under RDF entailment are defined in a two-stage process. Intuitively, the possible answers are all 
+        answers that one would expect under RDF entailment, i.e., all mappings such that instantiating the basic graph patterns with them results in RDF 
+        triples that are RDF entailed by the queried graph. The set of possible answers is, however, not necessarily finite. The next step defines which of the 
+        possible answers are actually returned as answers to the query. In this step, we restrict answers to those that correspond to ground triples that are 
+        entailed by the Skolemized scoping graph (C1). This limits infinite answers from blank nodes, while still preserving most users' expectations of the 
+        cardinality of the answers. Condition (C2) further makes sure that the query answer contains only finitely many of the axiomatic triples. The two 
+        restrictions are further explained in the next section. </p></div><div class="div1">
+<h2><a name="GeneralNotes" id="GeneralNotes"></a>3 General Notes on Entailment Regimes (Informative)</h2><p>The entailment regimes defined in this document are all defined analogously to the RDF entailment regime above. This section explains, therefore, the 
+        rationale behind the definition and the conditions (C1) and (C2), which are to a large extent shared among all the defined entailment regimes. Possible 
+        differences or additional constraints for the following regimes are defined in the respective sections. 
+        </p><div class="div2">
+<h3><a name="bnodes" id="bnodes"></a>3.1 Blank Nodes in the Queried Graph</h3><a name="C1-Restriction" id="C1-Restriction"></a><p>The <a href="#condition3">third condition for extensions of basic graph pattern matching</a> requires that if blank node names are returned as 
+            bindings for a variable, then the same blank node name occurs in different solutions only if it corresponds to the same blank node in the graph. To 
+            illustrate why this is required, consider the following graphs, which are also illustrated in Figure 2:</p><div style="border: thin solid #88AA88; background-color: #E8F0E8; padding: 1em 1em 1em 1em ; margin: 1em 3em 1em 0em ;"><table style="border-collapse: collapse;"><tr><td style="border-width:0px;font-family:monospace;">G:</td><td style="border-width:0px;font-family:monospace;">ex:a ex:b _:c .   </td><td style="border-width:0px;font-family:monospace;">G<sub>1</sub>:</td><td style="border-width:0px;font-family:monospace;">ex:a ex:b _:b1 .   </td><td style="border-width:0px;font-family:monospace;">G<sub>2</sub>:</td><td style="border-width:0px;font-family:monospace;">ex:a ex:b _:b2 .   </td><td style="border-width:0px;font-family:monospace;">G<sub>3</sub>:</td><td style="border-width:0px;font-family:monospace;">ex:a ex:b _:b1 .</td></tr><tr><td style="border-width:0px;font-family:monospace;"> </td><td style="border-width:0px;font-family:monospace;">_:d ex:e ex:f .</td><td style="border-width:0px;font-family:monospace;"> </td><td style="border-width:0px;font-family:monospace;">_:b2 ex:e ex:f .</td><td style="border-width:0px;font-family:monospace;"> </td><td style="border-width:0px;font-family:monospace;">_:b1 ex:e ex:f .</td><td style="border-width:0px;font-family:monospace;"> </td><td style="border-width:0px;font-family:monospace;">_:b1 ex:e ex:f .</td></tr></table></div><p><img src="bnodeExample.png" alt="RDF graph for the example on bank node handling by entailment regimes" /><br />
+            <strong>Figure 2</strong>: A graphical representation of the RDF graphs for the example on blank nodes in the queried graph.</p><p>The graph <code>G</code> simply entails <code>G<sub>1</sub></code> and <code>G<sub>2</sub></code>, but not <code>G<sub>3</sub></code> where the two blank nodes are identified. Now 
+            consider a basic graph pattern BGP:</p><pre class="query">ex:a ex:b ?x . ?y ex:e ex:f . </pre><p>When taking just the possible answers, without applying condition (C1) and (C2), a solution multiset for BGP would include</p><div class="result"><a name="tablenoc1c2" id="tablenoc1c2"></a><table class="resultTable"><tr><th class="annotation"></th><th>x</th><th>y</th></tr><tr><td class="annotation">μ<sub>1</sub></td><td>_:b1</td><td>_:b2</td></tr><tr><td class="annotation">μ<sub>2</sub></td><td>_:b2</td><td>_:b1</td></tr></table></div><p>Thus, we have μ<sub>1</sub>(BGP)=<code>G<sub>1</sub></code> and μ<sub>2</sub>(BGP)=<code>G<sub>2</sub></code>, and both solutions are entailed 
+            by <code>G</code>. In fact, the set of possible solutions is clearly infinite in this case, which is problematic with respect to <a href="#condition4">condition 4</a> from the SPARQL Query specification since the use of different blank node labels is considered a trivial source 
+            of infinite answers. Furthermore, <a href="#condition3">condition 3</a> requires that <code>G</code> ∪ μ<sub>1</sub>(BGP) ∪ 
+            μ<sub>2</sub>(BGP) is also entailed by <code>G</code>, and this is not the case in the example since this union contains <code>G<sub>3</sub></code>. 
+            The reason is that the solutions have unintended co-references of blank nodes that <a href="#condition3">condition 3</a> does not allow. SPARQL’s basic subgraph matching 
+            semantics respects these conditions by requiring solution mappings to refer to blank nodes that actually occur in the active graph, which essentially 
+            treats blank nodes as (Skolem) constants. </p><p>The use of Skolemization in the definition of an entailment regime makes this understanding of blank nodes explicit while still allowing for 
+            inferred triples that are not necessarily present in the queried graph. For the above example, condition (C1) works as follows: let 
+            <code>skol</code> be a prefix that denotes a fresh IRI not occurring in <code>G</code> and let sk(<code>G</code>) be the following (Skolemized) 
+            graph:</p><pre class="data">ex:a ex:b skol:c .
+skol:d ex:e ex:f .</pre><p>The Skolem function maps <code>_:c</code> to <code>skol:c</code> and <code>_:d</code> to <code>skol:d</code>. In order to satisfy (C1), the only 
+            blank nodes that can be used in the range of μ are <code>_:c</code> and <code>_:d</code>, since other blank nodes will either cause 
+            sk(μ(BGP)) to be non-ground since sk is not defined for the blank nodes or they might be Skolemized to terms not occurring in <code>G</code>, 
+            leading to non-entailed triples sk(μ(BGP)). Furthermore, we can only use a solution mapping that maps <code>x</code> to <code>_:c</code> and 
+            <code>y</code> to <code>_:d</code> because otherwise the entailment does not hold, assuming that <code>G</code> is actually the scoping graph. 
+            Note, however, that the scoping graph <code>SG</code> could equally be a graph that is RDF-equivalent to <code>G</code>, but possibly with renamed 
+            blank nodes. In this case, the solution could contain a blank node other than <code>_:c</code>, but importantly there is just one solution under 
+            condition (C1). 
+            Clearly, the Skolemized blank nodes should not occur in query results themselves, i.e., instead of <code>skol:c</code> it is expected that 
+            <code>_:c</code> is returned in the solution sequence; the Skolemization is just a way of defining conditions on possible solutions. 
+            </p><p>Note that (C1) still permits derived solutions. If we assume <a href="http://www.w3.org/TR/rdf-mt/#rdfs_entailment">RDFS entailment</a> (RDF 
+            entailment is too weak to infer any meaningful consequences) and assume that <code>G</code> additionally contains the triple</p><pre class="data">ex:b rdfs:subPropertyOf ex:b' .</pre><p>the BGP</p><pre class="query">ex:a ex:b' ?x . ?y ex:e ex:f . </pre><p>still yields the same one solution. </p><p>Materialization is a common implementation technique (e.g., for the RDF or RDFS regime) and it is worth pointing out that new blank nodes introduced in the
+  saturation process are not to be returned in the solutions. Consider the following graph and RDFS entailment</p><pre class="data">ex:s ex:p "&lt;a/&gt;"^^rdf:XMLLiteral .</pre><p>If the system were to follow the <a href="http://www.w3.org/TR/rdf-mt/#RDFSRules">RDFS inference rules</a> the saturation process would result in the 
+            triples</p><pre class="data">ex:s ex:p _:lit .
+_:lit rdf:type rdfs:Literal .</pre><p>being added to the graph, where <code>_:lit</code> is a blank node allocated to the literal <code>"&lt;a/&gt;"^^rdf:XMLLiteral</code>. The BGP 
+            <code>?x rdf:type rdfs:Literal</code> would have an empty answer. The blank node <code>_:lit</code> is not returned because it is not part of the 
+            queried graph. The Skolem function is, therefore, not defined for <code>_:lit</code> and a solution that maps <code>x</code> to <code>_:lit</code>
+            will not yield a ground triple as required by (C1). Note, however, that the entailment regimes do not prescribe any particular implementation 
+            technique. Thus, one can use materialization in which the saturated graph contains literals in the subject position of triples or blank nodes in the 
+            predicate position in order to implement complete RDFS reasoning <a href="#RDFSENTAILMENT">[RDFSENTAILMENT]</a>, although only mappings that instantiate the BGP 
+            into well-formed such RDF triples can constitute solutions. Instead of materializing inferences, techniques based on query rewriting are equally 
+            possible to implement the regime.   
+            </p></div><div class="div2">
+<h3><a name="axiomaticTriples" id="axiomaticTriples"></a>3.2 Answers from Axiomatic Triples</h3><p>The following example mainly illustrates the use of condition (C2). Consider the query </p><pre class="query">SELECT ?x WHERE { ?x rdf:type rdf:Property } </pre><p>against a (scoping) graph containing only the triples </p><pre class="data">ex:a ex:b ex:c . 
+ex:d rdf:type rdf:Bag .
+ex:d rdf:_1 ex:a .</pre><p>One of the possible solutions is </p><div class="result"><a name="table3" id="table3"></a><table class="resultTable"><tr><th class="annotation"></th><th>x</th></tr><tr><td class="annotation">μ<sub>1</sub></td><td>ex:b</td></tr></table></div><p>since <code>ex:a ex:b ex:c</code> RDF entails 
+            <code>ex:b a rdf:Property</code> (see also the <a href="http://www.w3.org/TR/rdf-mt/#RDFRules" title="http://www.w3.org/TR/rdf-mt/#RDFRules">RDF entailment rule</a> <em>rdf1</em>). 
+            Further, the axiomatic triples give possible solutions such as </p><div class="result"><a name="table4" id="table4"></a><table class="resultTable"><tr><th class="annotation"></th><th>x</th></tr><tr><td class="annotation">μ<sub>2</sub></td><td>rdf:type</td></tr><tr><td class="annotation">μ<sub>3</sub></td><td>rdf:subject</td></tr><tr><td class="annotation">μ<sub>4</sub></td><td>rdf:_1</td></tr><tr><td class="annotation">μ<sub>5</sub></td><td>rdf:_2</td></tr><tr><td class="annotation"></td><td>...</td></tr></table></div><p>There are even more possible answers since <code>ex:b rdf:type rdf:Property</code> RDF entails <code>_:exb1 rdf:type rdf:Property</code> for 
+            some blank node <code>_:exb1</code> <a href="http://www.w3.org/TR/rdf-mt/#defallocated">allocated</a> to <code>ex:b</code>, i.e., 
+            <code>_:exb1</code> is a possible solution. As shown above, condition (C1) prevents such possible solutions from newly introduced blank nodes to be 
+            returned as solutions. To limit the answers from the axiomatic triples condition (C2) is used:</p><p>(C2) For each variable x in V(BGP), μ(x) occurs in SG or in rdfV-Minus.</p><p>The possible answers μ<sub>2</sub> to μ<sub>5</sub> are considered here in greater detail. Since all these solution mappings 
+            lead to (ground) axiomatic triples when instantiating the BGP, (C1) is trivially satisfied. </p><ol><li>For the possible solution μ<sub>2</sub>, since 
+                μ<sub>2</sub>(x)=<code>rdf:type</code> occurs in SG (and also in rdfV-Minus), condition (C2) is also satisfied and this solution 
+                mapping is a solution. </li><li>For the possible solution μ<sub>3</sub>, although μ<sub>3</sub>(x)=<code>rdf:subject</code> does not occur in SG, it occurs in rdfV-Minus 
+                and this possible solution mapping is, therefore, also returned as an answer. </li><li>For the possible solution μ<sub>4</sub>, since μ<sub>4</sub>(x)=<code>rdf:_1</code> occurs in SG, this is a solution. </li><li>For the possible solution μ<sub>5</sub>, since μ<sub>5</sub>(x)=<code>rdf:_2</code> occurs neither in SG nor in rdfV-Minus, this solution mapping is not a solution. </li></ol><p>Similar arguments as for <code>rdf:_2</code> can be used for <code>rdf:_n</code> with n &gt; 2. Thus the query answer contains <code>ex:b</code>, 
+            <code>rdf:_1</code>, and the subjects of RDF axiomatic triples of the form <code>X rdf:type rdf:Property</code> with <code>X</code> in rdfV-Minus. 
+            </p></div><div class="div2">
+<h3><a name="literalSubjects" id="literalSubjects"></a>3.3 Literals in the Subject Position</h3><p>Please note that solution mappings that map variables that occur in the subject position of the basic graph pattern BGP to literals will not be 
+            returned as solutions. Indeed, although there might be a pattern instance mapping P for the solution mapping such that P(BGP) is RDF entailed by the 
+            queried graph, but P(BGP) is not well-formed as required (see also <a href="http://www.w3.org/TR/sparql11-query/#sparqlTriplePatterns" title="http://www.w3.org/TR/sparql11-query/#sparqlTriplePatterns">the SPARQL triple patterns definition</a>). For example, given a query </p><pre class="query">SELECT ?x WHERE { ?x rdf:type rdf:XMLLiteral }</pre><p>even the empty graph would RDF entail all statements </p><pre class="data">xxx rdf:type rdf:XMLLiteral</pre><p>for <code>xxx</code> a well-formed RDF XML 
+            literal, but any solution that maps <code>x</code> to an XML literal such as <code>"&lt;a&gt;abc&lt;/a&gt;"^^rdf:XMLLiteral</code> would result 
+            in a triple that is not a valid RDF triple. </p><p>Please note that triples with literals in the subject positions are currently not considered well-formed RDF, but this <a href="http://www.w3.org/TR/sparql11-query/#sparqlTriplePatterns" title="http://www.w3.org/TR/sparql11-query/#sparqlTriplePatterns">might change in future versions of RDF</a>. If literals were allowed in the subject position, condition (C2) would still guarantee finite answers. </p></div><div class="div2">
+<h3><a name="booleanQueries" id="booleanQueries"></a>3.4 Boolean Queries</h3><p>The two conditions (C1) and (C2) also have an effect on the answers to Boolean queries. For Boolean queries that contain variables, e.g., </p><pre class="query">ASK { ?x rdf:type rdf:Property }</pre><p>The query answer is <code>yes</code> (true) if there is at least one solution mapping (i.e., a solution that satisfies also conditions (C1) 
+            and (C2)) and it is <code>no</code> (false) otherwise. For example, if the queried graph is the empty graph, the query pattern has four solution 
+            triples from rdfV-Minus and hence the answer is true. For Boolean queries without variables the situation is slightly different. Consider, for 
+            example, the query</p><pre class="query">ASK { rdf:type rdf:type rdf:Property }</pre><p>against the empty graph. Since <code>rdf:type rdf:type rdf:Property</code> is an axiomatic triple, even the empty graph RDF entails the triple. We have 
+            two possible outcomes for such a Boolean query: there is a solution sequence containing a mapping ( μ ) where μ has an empty domain (it 
+            does not map any variable to anything) or there is only an empty solution sequence <code>( )</code>. In the first case, the query answer is 
+            <code>yes</code> (true), whereas in the second case the query answer is <code>no</code> (false). Since (C2) only operates on the variables in the 
+            query, only (C1) is relevant in this case. Since neither the BGP nor the queried (empty) graph contains a blank node, also (C1) holds and the query 
+            answer is <code>yes</code> (true). </p><p>Note that even though <code>rdf:_n</code> is not in rdfV-Minus for any <code>n</code>, this means that queries such as 
+            <code>ASK { rdf:_n a rdf:Property }</code> will always be answered with <code>yes</code> (true) even if <code>rdf:_n</code> does not occur in the 
+            scoping graph. </p></div><div class="div2">
+<h3><a name="aggregates" id="aggregates"></a>3.5 Aggregates and Blank Nodes</h3><p>SPARQL 1.1 Query allows for aggregates in queries such as <code>COUNT</code>, <code>MIN</code>, etc. Aggregates apply expressions over groups of 
+           solutions, e.g., by counting the number of solutions. Thus, aggregation is layered on top of basic graph pattern matching and all solutions computed 
+           for the basic graph pattern of the query and the entailment regime in use are passed on to the algebra functions. For the RDF (and RDFS) entailment 
+           regime this means that since blank nodes are treated as Skolem constants due to condition (C1), each blank node contributes one value for the 
+           aggregates. Assume, for example, the query</p><pre class="query">SELECT ?publication (COUNT(?author) AS ?numAuthors)
+WHERE { ?author ex:writes ?publication . }
+GROUP BY ?publication</pre><p>evaluated over the data: </p><pre class="data">_:a1 ex:writes ex:book1 . 
+ex:author2 ex:writes ex:book1 .
+_:a1 ex:writesBook ex:book2 .
+ex:author3 ex:writesBook ex:book2 .
+_:a4 ex:writesBook ex:book2 .
+ex:writesBook rdfs:subPropertyOf ex:writes .</pre><p>Under simple and RDF entailment, basic graph pattern matching finds two solutions:</p><div class="result"><a name="aggregateExample" id="aggregateExample"></a><table class="resultTable"><tr><th class="annotation"></th><th>author</th><th>publication</th></tr><tr><td class="annotation">μ<sub>1</sub></td><td>_:a1</td><td>ex:book1</td></tr><tr><td class="annotation">μ<sub>2</sub></td><td>ex:author2</td><td>ex:book1</td></tr></table></div><p>The results are then grouped and aggregated by algebra operators. In this case, there is 
+            only one group for <code>ex:book1</code> and the authors for the group are counted due to the <code>COUNT</code> aggregate over 
+            <code>author</code> resulting in the query answer:</p><div class="result"><a name="table3_1" id="table3_1"></a><table class="resultTable"><tr><th>publication</th><th>numAuthors</th></tr><tr><td>ex:book1</td><td>2</td></tr></table></div><p>RDFS further gives semantics to <code>rdfs:subPropertyOf</code> and the basic graph pattern matching under RDFS entailment finds five solution 
+            mappings:</p><div class="result"><a name="aggregateExample2" id="aggregateExample2"></a><table class="resultTable"><tr><th class="annotation"></th><th>author</th><th>publication</th></tr><tr><td class="annotation">μ<sub>1</sub></td><td>_:a1</td><td>ex:book1</td></tr><tr><td class="annotation">μ<sub>2</sub></td><td>ex:author2</td><td>ex:book1</td></tr><tr><td class="annotation">μ<sub>3</sub></td><td>_:a1</td><td>ex:book2</td></tr><tr><td class="annotation">μ<sub>4</sub></td><td>ex:author3</td><td>ex:book2</td></tr><tr><td class="annotation">μ<sub>5</sub></td><td>_:a4</td><td>ex:book2</td></tr></table></div><p>These solutions are then processed by the algebra operators. Again, the authors for each book (now there are two groups) are counted due to the 
+            <code>COUNT</code> aggregate over <code>author</code>, which leads to the following result for the query under RDFS entailment:</p><div class="result"><a name="table3_2" id="table3_2"></a><table class="resultTable"><tr><th>publication</th><th>numAuthors</th></tr><tr><td>ex:book1</td><td>2</td></tr><tr><td>ex:book2</td><td>3</td></tr></table></div><p>Note that the algebra operator just takes the solutions returned by the basic graph pattern matching mechanism. If, for example, blank nodes 
+            should not be counted or counted only once, this would mean that in general the entailment regimes must be modified to return no blank nodes or 
+            collapse blank nodes in results. A consequence of this would be that, for instance, under a such modified entailment regime for RDF(S) one could get less results than with 
+            simple entailment. For example, if no blank nodes were to be returned, then the books would have just one author under non-simple entailment. </p></div></div><div class="div1">
+<h2><a name="RDFSEntRegime" id="RDFSEntRegime"></a>4 RDFS Entailment Regime</h2><p>Under RDFS entailment there are not only more entailments than with just RDF, which result in possibly more query answers, but RDF graphs can also be 
+        inconsistent under RDFS interpretations. Without any restrictions, this can result in infinite solutions since an inconsistent graph RDFS entails any 
+        consequence. The restrictions to guarantee finite query answers are the same as for RDF and they are repeated here so that the description of the 
+        entailment regime is self-contained. Note that, as apposed to the general <a href="#condition1">condition 1</a>, in this entailment regime the definition of the scoping graph also covers the case when the queried graph is RDFS-inconsistent. </p><div style="text-align: left;"><table style="border-color: rgb(0, 0, 0); border-collapse: collapse;" border="1" cellpadding="5"><tbody><tr><th>Name</th><td>RDFS</td></tr><tr><th>IRI</th><td><a href="http://www.w3.org/ns/entailment/RDFS">http://www.w3.org/ns/entailment/RDFS</a></td></tr><tr><th>Legal Graphs</th><td>Any legal RDF graph.</td></tr><tr><th>Legal Queries</th><td>Any legal SPARQL query.</td></tr><tr><th>Illegal Handling</th><td>In case the query is illegal (syntax errors), the system <em class="rfc2119" title="Keyword in RFC 2119 context">MUST</em> raise a 
+            <a href="http://www.w3.org/TR/2009/WD-sparql11-protocol-20091022/#select-malformed">MalformedQuery</a> fault. In case the queried graph is illegal 
+            (syntax errors), the system <em class="rfc2119" title="Keyword in RFC 2119 context">MUST</em> raise a <a href="http://www.w3.org/TR/2009/WD-sparql11-protocol-20091022/#select-refused">QueryRequestRefused</a> fault. </td></tr><tr><th>Entailment</th><td><a href="http://www.w3.org/TR/rdf-mt/#rdfs_entailment" title="http://www.w3.org/TR/rdf-mt/#rdfs_entailment">RDFS 
+            Entailment</a> <a href="#RDFMT">[RDF Semantics]</a></td></tr><tr><th>Inconsistency</th><td>The scoping graph is graph-equivalent to the active graph even if the active graph is 
+            <a href="http://www.w3.org/TR/rdf-mt/#RDFSINTERP">RDFS-inconsistent</a>. If the active graph is 
+            <a href="http://www.w3.org/TR/rdf-mt/#RDFSINTERP">RDFS-inconsistent</a>, an implementation <em class="rfc2119" title="Keyword in RFC 2119 context">MAY</em> raise a <a href="http://www.w3.org/TR/2009/WD-sparql11-protocol-20091022/#select-refused">QueryRequestRefused</a> fault or issue a warning and it 
+            <em class="rfc2119" title="Keyword in RFC 2119 context">SHOULD</em> generate such a fault or warning if, in the course of processing, it determines that the data or query is not compatible 
+            with the request. In the presence of an inconsistency the conditions on solutions still guarantee that answers are finite.
+            </td></tr><tr><th>Query Answers</th><td><p>Let G be the queried RDF graph, BGP be a basic graph pattern, V(BGP) the set of variables in BGP, B(BGP) the set of blank nodes in BGP, SG 
+            the <a href="http://www.w3.org/TR/sparql11-query/#BGPsparqlBNodes">scoping graph</a> for G and BGP, sk(SG) a 
+            <a href="http://www.w3.org/TR/rdf-mt/#glossSkolemization">Skolemization</a> of SG with respect to a vocabulary disjoint from the vocabulary of SG 
+            and BGP. Applying sk to a term t, written sk(t), yields sk(t) if sk is defined for t and t otherwise; applying sk to a BGP, written sk(BGP), 
+            replaces each blank node b in BGP for which sk is defined with sk(b). The set rdfsV contains the URI references of the <a href="http://www.w3.org/TR/2004/REC-rdf-mt-20040210/#RDFSINTERP">RDFS vocabulary</a> and rdfsV-Minus is the set of URI references in rdfsV minus URI 
+            references of the form <code>rdf:_n</code> with <code>n</code> in <code>{1, 2, ... }</code>. </p>
+            <p>A solution mapping μ is a <em>possible solution for BGP from G under RDFS entailment</em> if dom(μ) = V(BGP) and there is an RDF 
+            instance mapping σ from B(BGP) to RDF-T such that dom(σ)=B(BGP) and the pattern instance mapping P=(μ, σ) is such that 
+            P(BGP) are well-formed RDF triples that are RDFS entailed by SG. </p>
+            <p>A possible solution μ is a <em>solution for BGP from SG under RDFS entailment</em> if:</p>
+            <p>(C1) The RDF triples sk(P(BGP)) are ground and RDFS entailed by sk(SG).</p>
+            <p>(C2) For each variable x in V(BGP), μ(x) occurs in SG or in rdfsV-Minus.</p>
+            <p>The multiplicity of μ in the multiset of solutions is the maximal number of distinct RDF instance mappings σ that yield a pattern 
+               instance mapping P = (μ, σ) for which μ is a solution.</p>
+            </td></tr></tbody></table></div><p>As under RDF entailment, answers under RDFS entailment are defined in a two-stage process. Possible answers are all answers that one would expect 
+        under RDFS entailment, i.e., all mappings such that instantiating the basic graph patterns with them results in RDF triples that are RDFS entailed 
+        by the queried graph. To obtain always a finite set of answers, analogous conditions (C1) and (C2) as for the RDF entailment regime are used. </p><div class="div2">
+<h3><a name="inconsistencies" id="inconsistencies"></a>4.1 Inconsistencies (Informative)</h3><p>An RDFS-inconsistent graph <a href="http://www.w3.org/TR/rdf-mt/#rdfs_entailment" title="http://www.w3.org/TR/rdf-mt/#rdfs_entailment">RDFS entails</a> any graph, but there are limited possibilities to express an inconsistency 
+            in RDFS. Every inconsistency is due to a literal of type rdf:XMLLiteral, where the lexical form is a malformed XML string, e.g., </p><pre class="data">ex:a ex:b "&lt;"^^rdf:XMLLiteral .</pre><p>in combination with a range restriction on the property, e.g., </p><pre class="data">ex:b rdfs:range rdf:XMLLiteral .</pre><p>The first triple alone does not cause an inconsistency. It only requires that the literal <code>"&lt;"^^rdf:XMLLiteral</code> is interpreted 
+            as something that is not in the extension of <code>rdfs:Literal</code>. Since <code>rdfs:Literal</code> contains <code>rdf:XMLLiteral</code>, 
+            the second triple together with the first one results in an inconsistency. The following example illustrates that an inconsistency is not always 
+            as directly visible as in the example above and one might need to apply some inference rules to detect it. For example, consider the following triples 
+            (numbers are only given to explain the inferences later):</p><pre class="data">(1) ex:a rdfs:subClassOf rdfs:Literal .
+(2) ex:b rdfs:range ex:a .
+(3) ex:c rdfs:subPropertyOf ex:b.
+(4) ex:d ex:c "&lt;"^^rdf:XMLLiteral .</pre><p>Here we can derive an inconsistency as follows: </p><pre class="data">(5) ex:d ex:b "&lt;"^^rdf:XMLLiteral .    (e.g., by applying <a href="http://www.w3.org/TR/rdf-mt/#RDFSRules">rule rdfs7</a> to (3) and (4))
+(6) "&lt;"^^rdf:XMLLiteral rdf:type ex:a.   (e.g., by applying <a href="http://www.w3.org/TR/rdf-mt/#RDFSRules">rule rdfs3</a> to (2) and (5))
+(7) "&lt;"^^rdf:XMLLiteral rdf:type rdfs:Literal .   (e.g., by applying <a href="http://www.w3.org/TR/rdf-mt/#RDFSRules">rule rdfs9</a> to (1) and (6))</pre><p>At this point, the inconsistency can be detected since <code>"&lt;"</code> is not a valid lexical form for an RDF XML literal and has to be 
+            interpreted as some element that is NOT in <code>rdfs:Literal</code>, but at the same time it should be of type <code>rdfs:Literal</code>. The 
+            triple derived last is characteristic for an RDFS inconsistency. </p><div class="div3">
+<h4><a name="uncheckedInconsistencies" id="uncheckedInconsistencies"></a>4.1.1 Effects of Unchecked Inconsistencies</h4><p>Please note that the above definition of the RDFS entailment regimes does not require that systems <em class="rfc2119" title="Keyword in RFC 2119 context">MUST</em> generate an 
+                error or a warning in the case of an inconsistency, but systems <em class="rfc2119" title="Keyword in RFC 2119 context">MAY</em> generate an error or warning. A system 
+                <em class="rfc2119" title="Keyword in RFC 2119 context">SHOULD</em> generate such an error or warning if, in the course of processing, it determines that the data or query is not 
+                compatible with the request. </p><p>If a system did not raise an error for an inconsistent active graph, it will most likely just return answers that would be answers from a 
+                consistent subgraph of the active graph. Since the scoping graph is taken to be equivalent to the active graph irrespective of inconsistencies, 
+                a query could still have infinitely many possible answers because an inconsistent graph (trivially) entails any RDF triple. Conditions (C1) 
+                and (C2) guarantee, however, finiteness even when a system tries to generate all answers without checking for consistency. In particular condition 
+                (C2) restricts query answers such that only answers over the (finite) vocabulary of the queried graph plus the finite subset of the RDFS 
+                vocabulary in rdfsV-Minus are returned. </p><p>The above definition of the RDFS entailment regime is chosen such that it can be implemented efficiently. Consider, for example, a 
+                default graph containing the following triples</p><pre class="data">ex:b ex:s ex:y1 .
+ex:b ex:s ex:y2 .
+...
+ex:b ex:s ex:y10000 .
+ex:a ex:d "&lt;"^^rdf:XMLLiteral .
+ex:d rdfs:range rdf:XMLLiteral . </pre><p>and a query</p><pre class="query">SELECT * WHERE { ex:b ex:r ?x . ?x ex:s ?y }</pre><p>which requires a join operation in the query processor. This graph is RDFS-inconsistent due to the last two triples, but the query processor 
+                might know (after parsing) that there is no <code>ex:r</code> property at all in the graph. Thus, the processor knows that it does not have to 
+                evaluate the query. However, if a consistency check was required, the processor would have to parse and process the query nevertheless and 
+                return an error. Such a test could be very costly (there could be more than 10,000 <code>ex:b ex:s ex:y<sub>n</sub></code> tuples). </p><p>Another motivation comes from queries that require a union. For example, the query </p><pre class="query">SELECT * WHERE { {BGP1} UNION {BGP2} }</pre><p>can be executed by dispatching BGP1 and BGP2 in parallel to some processing element, streaming results back to the caller from either 
+                side of the UNION as they become available. The use of HTTP for streaming results places some constraints on what can be done, e.g., the error 
+                or success code must be transmitted before starting streaming the results. However, discovering the inconsistency from the dispatched 
+                processors might be too late for the main processor to communicate the error back to the client in a conformant manner.</p></div></div></div><div class="div1">
+<h2><a name="DEntRegime" id="DEntRegime"></a>5 D-Entailment Regime</h2><a name="d-entailment" id="d-entailment"></a><p>The D-entailment regime is defined for datatyped interpretations, which give semantics to datatypes. A 
+        <a href="http://www.w3.org/TR/rdf-concepts/#section-Datatypes">datatype</a> is an entity characterized by a set of character strings called lexical 
+        forms and a mapping from that set to a set of values. Formally, a datatype d is defined by three items:</p><ol class="enumar"><li>a non-empty set of character strings called the lexical space of d;</li><li>a non-empty set called the value space of d;</li><li>a mapping from the lexical space of d to the value space of d, called the lexical-to-value mapping of d.</li></ol><p>Datatyped interpretations for an RDF graph are relativized to a <a href="http://www.w3.org/TR/rdf-mt/#DTYPEINTERP">datatype map</a>: A datatype map 
+        D is a set of pairs consisting of a URI reference and a datatype such that no URI reference appears twice in the set, i.e., D can be regarded as a 
+        function from a set of URI references to a set of datatypes. </p><p>While the datatypes often have a single lexical representation for each data value (i.e., each value in the datatype's value space is denoted by a 
+        single representation in its lexical space), this is not always the case. A <em>canonical mapping</em> is a prescribed subset of the inverse of a 
+        lexical mapping, which is one-to-one and whose domain (where possible) is the entire range of the lexical mapping (the value space). Thus a canonical 
+        mapping selects one lexical representation for each value in the value space. The <em>canonical representation</em> of a value in the value space of a 
+        datatype is the lexical representation associated with that value by the datatype's canonical mapping.</p><div class="div2">
+<h3><a name="CanonicalLit" id="CanonicalLit"></a>5.1 The D-Entailment Regime</h3><a name="CanonicalLiteral" id="CanonicalLiteral"></a><p>It is possible to define one datatype as a refinement of another one. For example, in the XML Schema Datatypes specification <a href="#XSD">[XML Schema Datatypes]</a>, the datatype 
+        <code>long</code> is derived from the datatype <code>integer</code>, which is itself derived from <code>decimal</code>. The datatype 
+        <code>decimal</code> is a primitive type, i.e., it is not a refinement of another datatype. The canonical representation of 
+        a data value does, however, not define a datatype. For example, the two literals <code>"2"^^xsd:integer</code> and <code>"2"^^xsd:long</code> both 
+        represent the data value 2. This raises the question which literals should be returned in query answers. Let D be a datatype map containing 
+        <code>xsd:decimal</code>, <code>xsd:integer</code> and <code>xsd:long</code>. We further assume the queried graph to contains the triple</p><pre class="data">ex:s ex:p "01"^^xsd:long .</pre><p>and a query</p><pre class="query">SELECT * WHERE { ex:s ex:p ?x }</pre><p>The graph D-entails any triple <code>ex:s ex:p "l"^^dt</code> where <code>dt</code> is a datatype for which the value space contains 1 and where 
+        <code>l</code> is a valid lexical form for the value 1. Thus, even if we restrict to the canonical represenations, we still get at least the 3 solutions 
+        <code>"1.0"^^xsd:decimal</code>, <code>"1"^^xsd:integer</code>, and <code>"1"^^xsd:long</code>. If D contains further datatypes that contain 1 in their 
+        value space, we would get further solutions. </p><p>The D-entailment regime assumes, therefore, that for each literal there is a well-defined canonical literal. For D a datatype map, a canonical 
+       datatype mapping maps each data value <code>v</code> that occurs in the data space of a datatype <code>dt</code> from D to a unique datatype 
+       <code>dc</code> such that the value space of <code>dc</code> contains <code>v</code>. Given a literal <code>"l"^^dt</code>, the canonical literal for 
+       <code>"l"^^dt</code> is <code>"lc"^^dc</code>, where <code>lc</code> is the canonical representation for the data value that <code>"l"</code> represents 
+       and <code>dc</code> is the canonical datatype for the data value. For the XML Schema Datatypes one can, for example, use the primitive type as the 
+       canonical datatype.</p></div><p>Apart from the datatype support, the entailment regime is a straightforward extension of the RDF and RDFS entailment regimes and the same conditions 
+        are used to guarantee the finiteness of the result set, only adapted such that the vocabulary also includes the datatype URIs from the datatype map. 
+        Furthermore, all literals in solutions must be the canonical representation of the corresponding data value. The use of D-entailment means that further 
+        inconsistencies could arise due to datatype clashes and the same mechanisms as for handling inconsistencies as in the RDFS entailment regime are 
+        applied. </p><div style="text-align: left;"><table style="border-color: rgb(0, 0, 0); border-collapse: collapse;" border="1" cellpadding="5"><tbody><tr><th>Name</th><td>D-Entailment</td></tr><tr><th>IRI</th><td><a href="http://www.w3.org/ns/entailment/D">http://www.w3.org/ns/entailment/D</a></td></tr><tr><th>Legal Graphs</th><td>Any legal RDF graph.</td></tr><tr><th>Legal Queries</th><td>Any legal SPARQL query.</td></tr><tr><th>Illegal Handling</th><td>In case the query is illegal (syntax errors), the system <em class="rfc2119" title="Keyword in RFC 2119 context">MUST</em> raise a 
+            <a href="http://www.w3.org/TR/2009/WD-sparql11-protocol-20091022/#select-malformed">MalformedQuery</a> fault. In case the queried graph is illegal 
+            (syntax errors), the system <em class="rfc2119" title="Keyword in RFC 2119 context">MUST</em> raise a <a href="http://www.w3.org/TR/2009/WD-sparql11-protocol-20091022/#select-refused">QueryRequestRefused</a> fault. </td></tr><tr><th>Entailment</th><td><a href="http://www.w3.org/TR/rdf-mt/#D_entailment" title="http://www.w3.org/TR/rdf-mt/#D_entailment">D-Entailment</a> <a href="#RDFMT">[RDF Semantics]</a></td></tr><tr><th>Inconsistency</th><td>The scoping graph is graph-equivalent to the active graph even if the active graph is 
+            <a href="http://www.w3.org/TR/owl2-rdf-based-semantics/#def-owlconsistency">D-inconsistent</a>. If the active graph is 
+            <a href="http://www.w3.org/TR/owl2-rdf-based-semantics/#def-owlconsistency">D-inconsistent</a> with respect to the datatype map D, an implementation 
+            <em class="rfc2119" title="Keyword in RFC 2119 context">MAY</em> raise a <a href="http://www.w3.org/TR/2009/WD-sparql11-protocol-20091022/#select-refused">QueryRequestRefused</a> fault or 
+            issue a warning and it <em class="rfc2119" title="Keyword in RFC 2119 context">SHOULD</em> generate such a fault or warning if, in the course of processing, it determines that the data or 
+            query is not compatible with the request. In the presence of an inconsistency the conditions on solutions still guarantee that answers are finite.
+            </td></tr><tr><th>Query Answers</th><td><p>Systems <em class="rfc2119" title="Keyword in RFC 2119 context">MUST</em> provide a means to determine which datatype map they assume and whether they impose any limits on datatype 
+            lexical forms; such information could, for example, be listed in supporting documentation. A canonical literal <em class="rfc2119" title="Keyword in RFC 2119 context">MUST</em> be 
+            defined for all literals that use a datatype from the datatype map. </p>
+            <p>Let D be the supported datatype map, G the queried RDF graph, BGP be a basic graph pattern, 
+            V(BGP) the set of variables in BGP, B(BGP) the set of blank nodes in BGP, SG the <a href="http://www.w3.org/TR/sparql11-query/#BGPsparqlBNodes">scoping graph</a> for G and BGP, sk(SG) a <a href="http://www.w3.org/TR/rdf-mt/#glossSkolemization">Skolemization</a> of SG with respect to a vocabulary disjoint from the vocabulary of SG and 
+            BGP. Applying sk to a term t, written sk(t), yields sk(t) if sk is defined for t and t otherwise; applying sk to a BGP, written sk(BGP), replaces 
+            each blank node b in BGP for which sk is defined with sk(b). The set Lit(SG) is the set of all literals <code>"lc"^^dc</code> such that 
+            <code>"l"^^dt</code> occurs in SG and <code>"lc"^^dc</code> is the canonical literal for <code>"l"^^dt</code>. The set dV contains the URI references of the <a href="http://www.w3.org/TR/2004/REC-rdf-mt-20040210/#RDFSINTERP">RDFS vocabulary</a> plus the datatype names, i.e., the URI references, for the 
+            datatypes in D; dV-Minus is the set of URI references in dV minus URI references of the form <code>rdf:_n</code> with <code>n</code> in <code>{1, 2, 
+            ... }</code>. </p>
+            <p>A solution mapping μ is a <em>possible solution for BGP from G under D-entailment</em> if dom(μ) = V(BGP) and there is an RDF instance 
+            mapping σ from B(BGP) to RDF-T such that dom(σ)=B(BGP) and the pattern instance mapping P=(μ, σ) is such that P(BGP) are 
+            well-formed RDF triples that are D-entailed by SG. </p>
+            <p>A possible solution μ is a <em>solution for BGP from SG under D-entailment</em> if:</p>
+            <p>(C1) The RDF triples sk(P(BGP)) are ground and D-entailed by sk(SG).</p>
+            <p>(C2) For each variable x in V(BGP), if μ(x) is a literal with <code>"lc"^^dc</code> the canonical literal for μ(x), then <code>"lc"^^dc</code> is in Lit(SG) and μ(x) occurs in SG or in dV-Minus otherwise.</p>
+            <p>The multiplicity of μ in the multiset of solutions is the maximal number of distinct RDF instance mappings σ that yield a pattern 
+               instance mapping P = (μ, σ) for which μ is a solution.</p>
+            </td></tr></tbody></table></div><div class="div2">
+<h3><a name="canonicalRep" id="canonicalRep"></a>5.2 XML Schema Datatypes and Canonical Lexical Representations</h3><p>Most XML Schema Datatypes <a href="#XSD">[XML Schema Datatypes]</a> can be used with the D-Entailment regime. The canonical mapping, which is defined 
+            for all XML Schema Datatypes, is used as a means to achive finite answers. Infinite answers can otherwise occur if a datatype has infinitely many 
+            different lexical forms for a data value. For example, in the <a href="http://www.w3.org/TR/xmlschema-2/#decimal">decimal</a> datatype from the XML 
+            Schema Datatypes all of the following lexical forms represent the same value:</p><ul><li>100.5</li><li>+100.5</li><li>0100.5</li><li>100.50</li><li>100.500</li><li>100.5000</li></ul><p>For the above data values, the <a href="http://www.w3.org/TR/xmlschema11-2/#decimal">canonical lexical form</a> 
+            is: 100.5. For the values</p><ul><li>100</li><li>+100</li><li>0100</li><li>100.0</li><li>100.00</li><li>100.000</li></ul><p>the <a href="http://www.w3.org/TR/xmlschema11-2/#decimal">canonical lexical form</a> is: 100 according to <a href="http://www.w3.org/TR/xmlschema11-2/#decimal">XSD 1.1</a>. <a href="http://www.w3.org/TR/xmlschema11-2/#decimal">XSD 
+            1.1</a> defines that, for data values that are integers, the canonical representation has no decimal point and no fractional part. 
+            This is different in <a href="http://www.w3.org/TR/xmlschema-2/#decimal">XSD 1.0</a>. <a href="http://www.w3.org/TR/xmlschema-2/#decimal">XSD 1.0</a> always requires a decimal point for the canonical representation 
+            of a decimal value. Thus, although <code>1.0</code> and <code>1</code> denote the same value, the canonical form would be 
+            <code>1.0</code> for a decimal. For integer, however, <a href="http://www.w3.org/TR/xmlschema-2/#integer">XSD 1.0</a> requires 
+            that the canonical form has no fraction digits and no decimal point. Thus, the canonical representation must be <code>1</code>, 
+            which is strange since <code>1</code> and <code>1.0</code> denote the same value and integers are decimals. For this reason, 
+            <a href="http://www.w3.org/TR/xmlschema11-2/#decimal">XSD 1.1</a> seems better suited for use with SPARQL entailment regimes. </p><p>Non-primitive datatypes in the XSD are always based on some primitive datatype, e.g., integer, byte, and short are all based on decimal 
+            and are obtained by restricting the value space to values without decimal point for integer and by further specifying minimal 
+            and maximal values for byte and short. Thus, if <code>"2"^^xsd:integer</code>, <code>"+02"^^xsd:short</code>, and 
+            <code>"+2"^^xsd:byte</code> occur in SG and we assume that the canonical datatype is the primitive type according to XSD 1.1, then all three 
+            literals contribute <code>"2"^^xsd:decimal</code> to Lit(SG). </p><p>Condition (C2) uses the set Lit(SG) to make sure that only the canonical literals can occur in solutions, which guarantees finiteness of the answers. 
+            For example, if the queried graph contains</p><pre class="data">ex:s ex:p "0100.50"^^xsd:decimal .
+ex:s ex:p "100.00"^^xsd:decimal .
+ex:s ex:p "+100"^^xsd:short .</pre><p>and the BGP is</p><pre class="query">ex:s ex:p ?x</pre><p>then Lit(SG) contains <code>"100.5"^^xsd:decimal</code> (from the first triple) and <code>"100"^^xsd:decimal</code> (from 
+            the second and third triple since the primitive type underlying short is decimal and 100.00 is the same value as 100). The BGP 
+            evaluation yields two answers with <code>?x</code> binding once to <code>"100.5"^^xsd:decimal</code> and once to 
+            <code>"100"^^xsd:decimal</code>. Without such a restriction, one could get infinitely many answers since solutions that bind 
+            <code>?x</code> <code>"0100"^^xsd:decimal</code>, <code>"00100"^^xsd:decimal</code>, etc. or to <code>"100"^^xsd:integer</code> 
+            or<code>"00100"^^xsd:short</code> equally result in entailed triples.</p><p>Implementations will typically achieve the desired behavior by transforming the lexical 
+            forms of data values into a canonicalized form when loading an RDF graph. </p></div></div><div class="div1">
+<h2><a name="OWLRDFBSEntRegime" id="OWLRDFBSEntRegime"></a>6 OWL 2 RDF-Based Semantics Entailment Regime</h2><p>In contrast to the RDF and RDFS semantics, an RDF graph does no longer admit a unique canonical model that can be used to compute answers under the 
+        RDF-Based and Direct Semantics of OWL, i.e., one can no longer imagine queries to act on a unique "completed" version of the active graph. 
+        This affects the reasoning algorithms, but has only little effect on the definition of the OWL entailment regimes. </p><p>The OWL 2 RDF-Based Semantics entailment regime assumes that queries are answered with respect to an 
+        <a href="http://www.w3.org/TR/owl2-rdf-based-semantics/#def-owldatatypemap">OWL 2 RDF-Based datatype map</a> D. </p><div style="text-align: left;"><table style="border-color: rgb(0, 0, 0); border-collapse: collapse;" border="1" cellpadding="5"><tbody><tr><th>Name</th><td>OWL 2 RDF-Based Semantics</td></tr><tr><th>IRI</th><td><a href="http://www.w3.org/ns/entailment/OWL-RDF-Based">http://www.w3.org/ns/entailment/OWL-RDF-Based</a></td></tr><tr><th>Legal Graphs</th><td>Any legal RDF graph.</td></tr><tr><th>Legal Queries</th><td>Any legal SPARQL query.</td></tr><tr><th>Illegal Handling</th><td>In case the query is illegal (syntax errors), the system <em class="rfc2119" title="Keyword in RFC 2119 context">MUST</em> raise a 
+            <a href="http://www.w3.org/TR/2009/WD-sparql11-protocol-20091022/#select-malformed">MalformedQuery</a> fault. In case the queried graph is illegal 
+            (syntax errors), the system <em class="rfc2119" title="Keyword in RFC 2119 context">MUST</em> raise a <a href="http://www.w3.org/TR/2009/WD-sparql11-protocol-20091022/#select-refused">QueryRequestRefused</a> fault. </td></tr><tr><th>Entailment</th><td><a href="http://www.w3.org/TR/owl2-rdf-based-semantics/#Satisfaction.2C_Consistency_and_Entailment">OWL 2 RDF-Based Entailment</a> <a href="#OWL2RDFBS">[OWL 2 RDF-Based Semantics]</a></td></tr><tr><th>Inconsistency</th><td>The scoping graph is graph-equivalent to the active graph even if the active graph is 
+            <a href="http://www.w3.org/TR/owl2-rdf-based-semantics/#def-owlconsistency">OWL 2 RDF-Based inconsistent</a>. If the active graph is 
+            <a href="http://www.w3.org/TR/owl2-rdf-based-semantics/#def-owlconsistency">OWL 2 RDF-Based inconsistent</a> with respect to D, an implementation 
+            <em class="rfc2119" title="Keyword in RFC 2119 context">MAY</em> raise a <a href="http://www.w3.org/TR/2009/WD-sparql11-protocol-20091022/#select-refused">QueryRequestRefused</a> fault or 
+            issue a warning and it <em class="rfc2119" title="Keyword in RFC 2119 context">SHOULD</em> generate such a fault or warning if, in the course of processing, it determines that the data or 
+            query is not compatible with the request. In the presence of an inconsistency the conditions on solutions still guarantee that answers are finite.
+            </td></tr><tr><th>Query Answers</th><td><p>Systems <em class="rfc2119" title="Keyword in RFC 2119 context">MUST</em> provide a means to determine which datatype map they assume and whether they impose any limits on datatype 
+            lexical forms; such information could, for example, be listed in supporting documentation. A canonical literal <em class="rfc2119" title="Keyword in RFC 2119 context">MUST</em> be 
+            defined for all literals that use a datatype from the
+            datatype map. </p>
+            <p>Let D be a finite <a href="http://www.w3.org/TR/owl2-rdf-based-semantics/#def-owldatatypemap">OWL 2 RDF-Based datatype map</a>, G the queried 
+            RDF graph, BGP be a basic graph pattern, V(BGP) the set of variables in BGP, B(BGP) the set of blank nodes in BGP, SG the 
+            <a href="http://www.w3.org/TR/sparql11-query/#BGPsparqlBNodes">scoping graph</a> for G and BGP, sk(SG) a 
+            <a href="http://www.w3.org/TR/rdf-mt/#glossSkolemization">Skolemization</a> of SG with respect to a vocabulary disjoint from the vocabulary of SG 
+            and BGP. Applying sk to a term t, written sk(t), yields sk(t) if sk is defined for t and t otherwise; applying sk to a BGP, written sk(BGP), 
+            replaces each blank node b in BGP for which sk is defined with sk(b). The set Lit(SG) is the set of all literals <code>"lc"^^dc</code> such that 
+            <code>"l"^^dt</code> occurs in SG and <code>"lc"^^dc</code> is the canonical literal for <code>"l"^^dt</code>. The set owl2V contains the URI references of the <a href="http://www.w3.org/TR/owl2-rdf-based-semantics/#table-vocab-owl">OWL 2 RDF-based vocabulary</a>, which is taken to 
+            include the RDF and RDFS vocabularies and the OWL 2 <a href="http://www.w3.org/TR/owl2-rdf-based-semantics/#Datatype_Names">datatype names</a> and 
+            <a href="http://www.w3.org/TR/owl2-rdf-based-semantics/#Facet_Names">facet names</a>; owl2V-Minus is 
+            the set of URI references in owl2V minus URI references of the form <code>rdf:_n</code> with <code>n</code> in <code>{1, 2, ... }</code>. </p>
+            <p>A solution mapping μ is a <em>possible solution for BGP from G under OWL 2 RDF-Based entailment</em> if dom(μ) = V(BGP) and there is an 
+            RDF instance mapping σ from B(BGP) to RDF-T such that dom(σ)=B(BGP) and the pattern instance mapping P=(μ, σ) is such that 
+            P(BGP) are well-formed RDF triples that are OWL 2 RDF-Based entailed by SG with respect to owl2V and D. </p>
+            <p>A possible solution μ is a <em>solution for BGP from SG under OWL 2 RDF-Based entailment with respect owl2V and D</em> if:</p>
+            <p>(C1) The RDF triples sk(P(BGP)) are ground and OWL 2 RDF-Based entailed by sk(SG) with respect to D.</p>
+            <p>(C2) For each variable x in V(BGP), if μ(x) is a literal, then μ(x) is in Lit(SG) and μ(x) occurs in SG or in owl2V-Minus otherwise.</p> 
+            <p>The multiplicity of μ in the multiset of solutions is the maximal number of distinct RDF instance mappings σ that yield a pattern 
+               instance mapping P = (μ, σ) for which μ is a solution.</p>
+            </td></tr></tbody></table></div><p>The OWL 2 RDF-Based entailment regime is a straightforward extension of the RDF, RDFS, and D-entailment regimes and the same conditions (adapted to work 
+        with the a finite subset of the OWL 2 RDF-Based vocabulary) are used to guarantee the finiteness of the result set. </p><div class="div2">
+<h3><a name="OWLRDFBSEntailments" id="OWLRDFBSEntailments"></a>6.1 Entailments under the OWL 2 RDF-Based Semantics (Informative)</h3><p>Before the restrictions on solutions are explained, a general note about the RDF-Based Semantics is given. The OWL 2 RDF-Based Semantics treats classes as individuals that refer to elements of the domain. Each such element is then associated with a subset 
+        of the domain, called the class extension. This means that semantic conditions on class extensions are only applicable to those classes that are 
+        actually represented by an element of the domain which can lead to less consequences than expected. An example is given by the following graph G</p><pre class="data">ex:a rdf:type ex:C</pre><p>and basic graph pattern BGP</p><pre class="query">?x a [ rdf:type owl:Class ; owl:unionOf ( ex:C ex:D ) ]</pre><p>The graph G states that <code>ex:a</code> has type <code>ex:C</code>, while the BGP asks for instances of the complex class denoting the union of 
+        <code>ex:C</code> and <code>ex:D</code>. One might expect that a solution mapping μ that maps <code>x</code> to <code>ex:a</code> is a solution, but this 
+        is not the case under the OWL 2 RDF-Based Semantics (see also <a href="#OWL2RDFBS">[OWL 2 RDF-Based Semantics]</a>, <a href="http://www.w3.org/TR/owl-rdf-based-semantics/#Example_on_Semantic_Differences">Sec. 7.1</a>). It is guaranteed that the union of the class 
+        extensions for <code>ex:C</code> and <code>ex:D</code> exists as a subset of the domain; no statement in G implies, however, that this union is the 
+        class extension of any domain element. Thus, μ(BGP) is not entailed by G. The entailment holds, however, when the statement</p><pre class="data">ex:E owl:unionOf ( ex:C ex:D ) </pre><p>is added to G. In the OWL 2 Direct Semantics, in contrast, classes denote sets and not domain elements, so G entails μ(BGP) under the Direct 
+        Semantics where, formally, G must first be extended with an ontology header to become well-formed. </p></div><div class="div2">
+<h3><a name="OWLRDFBSRestrictions" id="OWLRDFBSRestrictions"></a>6.2 Restriction on Solutions</h3><a name="C2-RDF-Based" id="C2-RDF-Based"></a><p>In this section the restrictions on solutions are explained. As the previously defined regimes, a Skolemization of the queried graph and the BGP 
+            is used to limit answers that just differ in blank node labels (C1). An explanation for this restriction is given in the <a href="#C1-Restriction">General Notes</a> section. Under OWL 2 RDF-Based Semantics the axiomatic triples are not included and owl2V-Minus 
+            could equally be replaced by owl2V. The lexical representation for data values are restricted as explained for the case of <a href="#canonicalRep">D-entailment</a>. Infiniteness can, however, not only arise due to different lexical representations of one and the same data 
+            value as in the case of the D-entailment regime. Consider, for example, an ontology containing the following axiom:</p><pre class="data">ex:x owl:sameAs "5"^^xsd:decimal .</pre><p>A query, which asks for all things that are different to <code>ex:x</code> then has infinitely 
+            many possible answers since any literal different from 5 will satisfy the constraints. This can be formulated by the following query: </p><pre class="query">SELECT ?l WHERE { ex:x owl:differentFrom ?l .}</pre><p>Note that triples which are seemingly unrelated to the query can still influence the query results. For example, if we add to the queried ontology the triple:</p><pre class="data">ex:Mary ex:hasAge "6"^^xsd:int .</pre><p>Then the query no longer has an empty answer but returns one answer with binding <code>"6"^^xsd:int</code> for <code>l</code>. </p></div><div class="div2">
+<h3><a name="OWLRDFBSComputing" id="OWLRDFBSComputing"></a>6.3 Computing Query Answers under the RDF-Based Semantics (Informative)</h3><p>The standard reasoning problems in OWL under the OWL 2 RDF-Based Semantics are semidecidable, which means that although the query answers are 
+          guaranteed to be finite, it cannot be guaranteed that the computation of the query results will finish in a finite amount of time. Guaranteed 
+          termination might be achieved by returning an incomplete solution sequence for certain queries. </p></div><div class="div2">
+<h3><a name="OWL2-RDFBS-Profiles" id="OWL2-RDFBS-Profiles"></a>6.4 OWL 2 Profiles and Entailment Checkers</h3><p>The OWL 2 Profiles specification <a href="#OWL2Profiles">[OWL 2 Profiles]</a> describes several syntactic restrictions for OWL ontologies. For ontologies that fall into these fragments, specialized implementation techniques can be used, which often result in a better performance. </p><div class="div3">
+<h4><a name="OWL2DL" id="OWL2DL"></a>6.4.1 OWL 2 DL</h4><p>OWL 2 DL describes the largest subset of RDF graphs for which the OWL 2 Direct Semantics is defined. Systems that support OWL 2 DL can also 
+              handle ontologies that satisfy the restrictions of the OWL 2 EL, QL, and RL profiles because these profiles are even more restrictive. 
+              </p></div><div class="div3">
+<h4><a name="OWL2EL" id="OWL2EL"></a>6.4.2 The OWL 2 EL Profile</h4><p>OWL 2 EL is particularly useful in applications employing ontologies that contain very large numbers of properties and/or classes. The profile 
+              captures the expressive power used by many ontologies and is a subset of OWL 2 DL for which the basic reasoning problems can be performed in 
+              time that is polynomial with respect to the size of the ontology. </p></div><div class="div3">
+<h4><a name="OWL2QL" id="OWL2QL"></a>6.4.3 The OWL 2 QL Profile</h4><p>OWL 2 QL is aimed at applications that use very large volumes of instance data, and where query answering is the most important reasoning task. 
+              In OWL 2 QL, conjunctive query answering can be implemented using conventional relational database systems. Using a suitable reasoning technique, 
+              sound and complete conjunctive query answering can be performed in LOGSPACE with respect to the size of the data (assertions). As in OWL 2 EL, 
+              polynomial time algorithms can be used to implement the ontology consistency and class expression subsumption reasoning problems. </p></div><div class="div3">
+<h4><a name="OWL2RLDS" id="OWL2RLDS"></a>6.4.4 The OWL 2 RL Profile</h4><a name="OWL2RL" id="OWL2RL"></a><p>OWL 2 RL defines a syntactic subset of OWL 2 DL, which is amenable to 
+              <a href="http://www.w3.org/TR/owl2-profiles/#Profile_Specification_3">implementation using rule-based technologies</a>.</p></div><p>The OWL 2 RDF-Based Semantics can, in general, be used with arbitrary RDF graphs (OWL 2 Full ontologies) and, therefore, with all above described profiles. Taking this into account, the OWL 2 Conformance <a href="#OWL2Conformance">[OWL 2 Conformance]</a> document specifies five different kinds of <a href="http://www.w3.org/TR/owl2-test/#Entailment_Checker">entailment checkers</a>, which can all be used with the RDF-Based Semantics: </p><ol><li>OWL 2 Full entailment checkers, which take OWL 2 Full ontology documents as input; </li><li>OWL 2 DL entailment checkers, which takes OWL 2 DL ontology documents as input; </li><li>OWL 2 EL entailment checkers, which takes OWL 2 EL ontology documents as input; </li><li>OWL 2 QL entailment checkers, which takes OWL 2 QL ontology documents as input; </li><li>OWL 2 RL entailment checkers, which takes OWL 2 Full ontology documents as input. </li></ol><p>The OWL 2 RL entailment checker is slightly different in that OWL 2 RL entailment checkers work, as OWL 2 Full entailment checkers, on OWL 2 Full Ontologies, whereas the others make restrictions on the allowed input. The first four entailment checkers should not return <code>Unknown</code> when checking entailment on the respective allowed inputs. OWL 2 RL entailment checkers should not return <code>Unknown</code> under the RDF-Based Semantics if it is possible to derive <code>True</code> using the OWL 2 RL/RDF rules. </p><p><a href="http://www.w3.org/TR/sparql11-service-description/">SPARQL 1.1 Service Descriptions</a> can be used to describe what kind of entailment checker is used in the backgroud to answer SPARQL queries. In addition to specifying the used semantics by relating the IRI of the endpoint via the property <code>sd:defaultEntailmentRegime</code> or <code>sd:entailmentRegime</code> to the IRI of the entailment regime, one can relate the endpoint IRI via the property <code>sd:defaultSupportedEntailmentProfile</code> or <code>sd:supportedEntailmentProfile</code> to one of the following profile IRIs:</p><ol><li><a href="http://www.w3.org/ns/owl-profile/DL">http://www.w3.org/ns/owl-profile/Full</a> for OWL 2 Full entailment checkers; </li><li><a href="http://www.w3.org/ns/owl-profile/DL">http://www.w3.org/ns/owl-profile/DL</a> for OWL 2 DL entailment checkers; </li><li><a href="http://www.w3.org/ns/owl-profile/EL">http://www.w3.org/ns/owl-profile/EL</a> for OWL 2 EL entailment checkers; </li><li><a href="http://www.w3.org/ns/owl-profile/QL">http://www.w3.org/ns/owl-profile/QL</a> for OWL 2 QL entailment checkers; </li><li><a href="http://www.w3.org/ns/owl-profile/RL">http://www.w3.org/ns/owl-profile/RL</a> for OWL 2 RL entailment checkers. </li></ol><p>The property <code>sd:supportedEntailmentProfile</code> is used to indicate that a different profile applies to a certain named graph. Together with the semantics, this indictaes which type of OWL entailment checker is used to answer the queries. </p><div class="div3">
+<h4><a name="OWL2RLRDFBSComputing" id="OWL2RLRDFBSComputing"></a>6.4.5 Computing Query Answers for the OWL 2 RL Profile with RDF-Based Semantics (Informative)</h4><p>For the OWL 2 RL profile, the OWL 2 RL/RDF rules can be used to compute the answers to a query. In this case, the above definition of query 
+             answers can be simplified:</p><p>Let G be the queried RDF graph, BGP a basic graph pattern, SG the scoping graph for G and BGP, R the OWL 2 RL/RDF rules 
+             <a href="#OWL2Profiles">[OWL 2 Profiles]</a>, and FO(SG) the translation of SG into a first-order theory according to the OWL 2 Profiles specification 
+             <a href="#OWL2Profiles">[OWL 2 Profiles]</a>, i.e., each triple <code>s p o</code> in SG is represented by a predicate <code>T(s, p, o)</code> in FO(SG). Let 
+             P=(μ, σ) a pattern instance mapping. The solution mapping μ is a <em>possible solution for BGP from G</em> if dom(μ) = V(BGP), 
+             dom(σ)=B(BGP) and FO(SG) union R entails FO(P(BGP)) under the standard first-order semantics. </p><p>Condition (C1) does not need to be applied in this case because blank nodes are treated as constants under the first-order semantics anyway.
+             OWL 2 RL implementations are not required to include the axiomatic triples of RDF and RDFS, but they may do so. Thus, in most cases, condition (C2) 
+             does not have to be applied. Imposing (C2) does not, however, do any harm and guarantees finiteness should the problematic axiomatic triples be 
+             inferred and also guards the behavior on inconsistent ontologies. </p><p>The fact that (C2) also takes the OWL 2 RDF-Based vocabulary into account means that query answers that use terms not present in the scoping graph 
+             may be returned, too. Consider, for example, an ontology containing only the triples: </p><pre class="data">_:o1 rdf:type owl:ontology .
+ex:C rdf:type owl:Class . 
+ex:D rdf:type owl:Class .
+ex:C rdfs:subClassOf ex:D .
+ex:D rdfs:subClassOf ex:C .</pre><p>The first three triples are required for a valid OWL 2 RL ontology and introduce an identifier for the ontology (<code>_:o1</code>) and 
+            typing information (<code>ex:C</code> and <code>ex:D</code> are classes). The ontology entails <code>ex:C owl:equivalentClass ex:D</code> and the 
+            <a href="http://www.w3.org/TR/owl2-profiles/#Reasoning_in_OWL_2_RL_and_RDF_Graphs_using_Rules">OWL RL rule</a> <code>scm-eqc2</code> derives 
+            this consequence from the ontology. Since <code>owl:equivalentClass</code> is in owl2V-Minus, the query</p><pre class="query">SELECT ?rel WHERE { ex:C ?rel ex:D . }</pre><p>has the answers:</p><div class="result"><a name="table10" id="table10"></a><table class="resultTable"><tr><th>rel</th></tr><tr><td>rdfs:subClassOf</td></tr><tr><td>owl:equivalentClass</td></tr></table></div></div></div></div><div class="div1">
+<h2><a name="OWLDSEnRegime" id="OWLDSEnRegime"></a>7 OWL 2 Direct Semantics Entailment Regime</h2><p>Intuitively, in the OWL 2 Direct Semantics entailment regime the queried graph must correspond to an OWL 2 DL ontology. The basic graph pattern of 
+        the query must correspond to an extended OWL 2 DL ontology, allowing variables in place of class names, object property names, datatype property names, 
+        individual names, or literals. Solutions are mappings of variables into IRIs, blank nodes, or literals for which the instantiated basic graph pattern 
+        corresponds to a set of OWL 2 DL axioms or an OWL 2 DL ontology that is compatible with the queried ontology and also entailed by it under the OWL 2 
+        Direct Semantics.</p><div class="div2">
+<h3><a name="OWLDSIntro" id="OWLDSIntro"></a>7.1 Introduction</h3><p>For the OWL 2 Direct Semantics entailment regime, semantic conditions are defined with respect to ontology structures (i.e., instances of the 
+        <strong>Ontology</strong> class as defined in the OWL 2 structural specification <a href="#OWL2">[OWL 2 Structural Specification]</a>). Given an RDF graph G, the ontology structure for G, 
+        denoted O(G), is obtained by <a href="http://www.w3.org/TR/owl2-mapping-to-rdf/#Mapping_from_RDF_Graphs_to_the_Structural_Specification">mapping the 
+        queried RDF graph into an OWL 2 ontology</a> <a href="#RDF2OWLMAPPING">[OWL 2 Mapping to RDF Graphs]</a>. This mapping is only defined for OWL 2 DL ontologies, i.e., ontologies 
+        that satisfy certain syntactic conditions. </p><p>An OWL 2 DL ontology contains a set of axioms. In this section, OWL axioms are stated both in Turtle and in the functional-style syntax (FSS) that is 
+        used in the OWL 2 structural specification <a href="#OWL2">[OWL 2 Structural Specification]</a>. A FSS axiom can correspond to several RDF triples, and the RDF triples might contain 
+        auxiliary blank nodes that are not part of the corresponding OWL objects and are not visible in the corresponding FSS axiom. For example, the triples</p><pre class="data">ex:Peter rdf:type _:x . 
+_:x rdf:type owl:Restriction ;
+    owl:onProperty ex:hasFather ;
+    owl:someValuesFrom ex:Person . 
+</pre><p>corresponds to FSS syntax axiom</p><pre class="data">ClassAssertion(ObjectSomeValuesFrom(ex:hasFather ex:Person) ex:Peter)</pre><p>The FSS may still contain blank nodes, but these correspond to OWL individuals 
+        that have no explicit names and are called <a href="http://www.w3.org/TR/2009/CR-owl2-syntax-20090611/#Anonymous_Individuals">anonymous 
+        individuals</a>. For example, the triple</p><pre class="data">ex:Peter ex:hasBrother _:y . </pre><p>corresponds to the FSS axiom</p><pre class="data">ObjectPropertyAssertion(ex:hasBrother ex:Peter _:y)</pre><p>While parsing an input document (containing RDF triples) into an OWL ontology, it can be necessary to rename 
+        blank nodes/anonymous individuals and there is no guarantee that the blank node identifier <code>_:y</code> from the above triple is used as an 
+        identifier for Peter's brother in the ontology structure. Thus, the above RDF triple could also be represented by the OWL axiom</p><pre class="data">ObjectPropertyAssertion(ex:hasBrother ex:Peter _:somethingelse)</pre><p>Some RDF triples that are well-formed for OWL 2 DL are mapped to OWL 2 DL axioms that carry no semantics. Axioms (triples) that carry no semantics 
+        are </p><ol class="enumar"><li>Annotations, </li><li>Entity Declarations, </li><li>Ontology Properties (imports, ontology IRIs).</li></ol><p>Such axioms are called <em>non-logical axioms</em>, whereas axioms that do carry semantics under OWL 2 Direct Semantics are called <em>logical 
+        axioms</em>. </p><div class="div3">
+<h4><a name="OWLDSImports" id="OWLDSImports"></a>7.1.1 OWL Import Directives</h4><a name="OWLImports" id="OWLImports"></a><p>OWL provides an import directive, which allows one ontology to incorporate axioms from another ontology. Thus, if the queried RDF graph G contains 
+          a triple of the form</p><pre class="data">ont owl:imports imported .</pre><p>where <code>ont</code> is the ontology IRI or a blank node that identifies the ontology, and <code>imported</code> is the IRI of the imported 
+          ontology, then the <a href="http://www.w3.org/TR/owl2-mapping-to-rdf/#Extracting_Declarations_and_the_IRIs_of_the_Directly_Imported_Ontology_Documents">canonical parsing 
+          process</a> defined for OWL 2 ontologies makes sure that the axioms from directly and indirectly imported ontologies are taken into account.</p><p>As said above, an import directive is a non-logical statement under the OWL 2 Direct Semantics, i.e., whether the statement is present in the 
+          ontology obtained by the parsing process or not has no effect on the logical consequences of the ontology. The statement does, however, influence the 
+          outcome of mapping an RDF graph into an OWL ontology. In the process of mapping a graph G into the ontology structure O(G) the directly and 
+          indirectly imported axioms are taken into account. </p></div><div class="div3">
+<h4><a name="OWLDSExtGrammar" id="OWLDSExtGrammar"></a>7.1.2 Extended Grammar for OWL 2 Direct Semantics BGPs</h4><a name="extendedStructuralSpec" id="extendedStructuralSpec"></a><p>SPARQL 1.1 Query <a href="#SPARQL11">[SPARQL 1.1 Query]</a> is only defined for basic graph patterns using a triple-based syntax. For OWL 2 Direct Semantics, an 
+            alternative syntax for BGPs based on the functional-style syntax or other popular OWL syntaxes seems natural, but is not part of this 
+            specification.</p><p>Since the OWL 2 Direct Semantics is defined in terms of OWL objects, it is necessary to map from the triple-based BGP representation into an OWL 
+            object representation that additionally allows for variables. The <a href="#OWL2parsingBGPs">appendix</a> precisely specifies how the OWL 2 mapping 
+            from RDF graphs <a href="#RDF2OWLMAPPING">[OWL 2 Mapping to RDF Graphs]</a> can be extended to basic graph patterns. The 
+            result of this mapping is an instance of an extended OWL 2 DL grammar, where the productions for <strong>Class</strong>, <strong>ObjectProperty</strong>, 
+            <strong>DataProperty</strong>, <strong>Individual</strong>, and <strong>Literal</strong> of the <a href="http://www.w3.org/TR/owl2-syntax/#Appendix:_Complete_Grammar_.28Normative.29">OWL 2 
+            functional-style syntax grammar</a> <a href="#OWL2">[OWL 2 Structural Specification]</a> are extended to alternatively produce variables, i.e., instances of the <a href="http://www.w3.org/TR/sparql11-query/#rVar">Var</a> production from the <a href="http://www.w3.org/TR/sparql11-query/#grammar">SPARQL 
+            grammar</a>. </p><div><p>
+                <strong>Class</strong> := <strong>IRI</strong> | <strong>Var</strong><br /><br />
+                <strong>ObjectProperty</strong> := <strong>IRI</strong> | <strong>Var</strong><br /><br />
+                <strong>DataProperty</strong> := <strong>IRI</strong> | <strong>Var</strong><br /><br />
+                <strong>Individual</strong> := <strong>NamedIndividual</strong> | <strong>AnonymousIndividual</strong> | <strong>Var</strong><br /><br />
+                <strong>Literal</strong> := <strong>typedLiteral</strong> | <strong>stringLiteralNoLanguage</strong> | <strong>stringLiteralWithLanguage</strong> | <strong>Var</strong><br />
+                </p></div></div><div class="div3">
+<h4><a name="VarTyping" id="VarTyping"></a>7.1.3 Variable Typing</h4><p>The Direct Semantics entailment regime requires extra triples in a basic graph pattern that give typing information for the variables. Let 
+            <code>x</code> be a variable from BGP. If BGP contains a triple <code>?x rdf:type TYPE</code>, where <code>TYPE</code> is one of 
+            <code>owl:Class</code>, <code>owl:ObjectProperty</code>, <code>owl:DatatypeProperty</code>, or <code>owl:NamedIndividual</code>, <code>?x</code> is 
+            declared to be of type <code>TYPE</code>. BGP satisfies the <em>typing constraints</em> of the entailment regime if no variable is declared as being 
+            of more than one type. Without type declarations for variables, parsing a BGP into ontology structures would be very difficult. 
+            Consider the following query</p><pre class="query">SELECT ?s ?p ?o WHERE { ?s ?p ?o }</pre><p>Without any restrictions this query could be a query for </p><ol class="enumar"><li>object property assertions of the form <code>ObjectPropertyAssertion(?p ?s ?o)</code></li><li>data property assertions of the form <code>DataPropertyAssertion(?p ?s ?o)</code></li><li>inverse object properties, i.e., the BGP maps to <code>ObjectInverseOf(?o)</code> where <code>s</code> maps to a blank node and 
+           <code>p</code> to <code>owl:inverseOf</code>, </li><li>subclasses, i.e., the BGP maps to <code>SubClassOf( ?s ?o )</code> where <code>p</code> binds to <code>rdfs:subClassOf</code>, </li><li>equivalent classes, i.e., the BGP maps to <code>EquivalentClasses(?s ?o)</code> where <code>p</code> binds to 
+           <code>owl:equivalentClass</code>, </li><li>disjoint classes, i.e., the BGP maps to <code>DisjointClasses(?s ?o)</code> where <code>p</code> binds to <code>owl:disjointWith</code>, 
+           </li><li>...</li></ol><p>In order to answer the query without any typing constraints, all possible ways of mapping the BGP into ontology structures have to be considered. 
+           Even if variables can only occur in the position of function parameters of the functional-style syntax, the BGP from the above query can still be 
+           mapped to <code>ObjectPropertyAssertion(?p ?s ?o)</code>, <code>DataPropertyAssertion(?p ?s ?o)</code>, or 
+           <code>AnnotationAssertion(?p ?s ?o)</code> without variable typing information. </p><p>The inclusion of type declarations from the queried ontology means that at least the non-variable terms in the query can be disambiguated 
+           without additional typing information in the query. For example, the BGP of the query </p><pre class="query">SELECT ?x WHERE { ?x ex:p ?y }</pre><p>is parsed into</p><pre class="query">ObjectPropertyAssertion(ex:p ?x ?y)</pre><p>if <code>ex:p</code> is declared as an object property in the queried ontology and into</p><pre class="query">DataPropertyAssertion(ex:p ?x ?y)</pre><p>if <code>ex:p</code> is declared as a data property. </p><p>Note that variable declarations are local to a basic graph pattern, i.e., a declaration in one BGP is not visible within another BGP and, within different BGPs, variables can also be declared to be of different types. </p></div></div><div class="div2">
+<h3><a name="OWLDSEntRegime" id="OWLDSEntRegime"></a>7.2 The OWL 2 Direct Semantics Entailment Regime</h3><div style="text-align: left;"><table style="border-color: rgb(0, 0, 0); border-collapse: collapse;" border="1" cellpadding="5"><tbody><tr><th>Name</th><td>OWL 2 Direct Semantics</td></tr><tr><th>IRI</th><td><a href="http://www.w3.org/ns/entailment/OWL-Direct">http://www.w3.org/ns/entailment/OWL-Direct</a></td></tr><tr><th>Legal Graphs</th><td>Any RDF graph which can be mapped into an <a href="http://www.w3.org/TR/2009/CR-owl2-conformance-20090611/#Syntactic_Conformance">OWL 2 DL ontology document</a>. </td></tr><tr><th>Legal Queries</th><td>Let Q be a legal SPARQL query, BGP a basic graph pattern in Q, G the queried graph, and O(G) the ontology for G. A basic graph pattern is legal 
+            for O(G) if it satisfies the typing constraints of the entailment regime and can be <a href="#OWL2parsingBGPs">mapped</a> into an OWL ontology or a 
+            set of OWL axioms from the <a href="#extendedStructuralSpec">extended OWL structural specification</a> using the declarations from O(G). The query Q 
+            is legal for the regime and O(G) if all basic graph patterns in Q are legal for O(G). 
+            </td></tr><tr><th>Illegal Handling</th><td>In case the query is illegal due to syntax errors, the system <em class="rfc2119" title="Keyword in RFC 2119 context">MUST</em> raise a 
+            <a href="http://www.w3.org/TR/2009/WD-sparql11-protocol-20091022/#select-malformed">MalformedQuery</a> fault. In case the queried graph is illegal 
+            due to syntax errors, the system <em class="rfc2119" title="Keyword in RFC 2119 context">MUST</em> raise a <a href="http://www.w3.org/TR/2009/WD-sparql11-protocol-20091022/#select-refused">QueryRequestRefused</a> fault. If the queried ontology is not an OWL 
+            2 DL ontology or the query is not legal for the ontology, the system <em class="rfc2119" title="Keyword in RFC 2119 context">MAY</em> refuse the query and raise a 
+            <a href="http://www.w3.org/TR/2009/WD-sparql11-protocol-20091022/#select-refused">QueryRequestRefused</a> error. </td></tr><tr><th>Entailment</th><td><a href="http://www.w3.org/TR/owl2-direct-semantics/#Inference_Problems">OWL 2 Direct Semantics</a> <a href="#OWL2DS">[OWL 2 Direct Semantics]</a></td></tr><tr><th>Inconsistency</th><td>If the queried ontology is inconsistent under OWL 2 Direct Semantics, the system <em class="rfc2119" title="Keyword in RFC 2119 context">MUST</em> raise an 
+            error. </td></tr><tr><th>Query Answers</th><td><p>Systems <em class="rfc2119" title="Keyword in RFC 2119 context">MUST</em> provide a means to determine which datatype map they assume and whether they impose any limits on datatype 
+            lexical forms; such information could, for example, be listed in supporting documentation. A canonical literal <em class="rfc2119" title="Keyword in RFC 2119 context">MUST</em> be 
+            defined for all literals that use a datatype from the
+            datatype map. </p>
+              <p>Let G be a legal RDF graph for the entailment regime, BGP a legal basic graph pattern, V(BGP) the set of variables in BGP, SG the <a href="http://www.w3.org/TR/sparql11-query/#BGPsparqlBNodes">scoping graph</a> for G and BGP, O(SG) the ontology for SG, sk a total mapping from 
+              anonymous individuals in O(SG) to IRIs from a vocabulary disjoint from the vocabulary of O(SG) and BGP, sk(O(SG)) the resulting 
+              <a href="http://www.w3.org/TR/rdf-mt/#glossSkolemization">Skolemization</a> of O(SG). Applying sk to a term t, written sk(t), yields sk(t) if sk 
+              is defined for t and t otherwise; applying sk to a BGP, written sk(BGP), replaces each blank node b in BGP for which sk is defined with sk(b). 
+              The set Lit(SG) is the set of all literals <code>"lc"^^dc</code> such that 
+            <code>"l"^^dt</code> occurs in SG and <code>"lc"^^dc</code> is the canonical literal for <code>"l"^^dt</code>. </p>
+              
+              <p>Let O<sub>E</sub>(BGP) be the ontology obtained by <a href="#OWL2parsingBGPs">mapping BGP into the extension of the OWL 2 structural 
+              specification</a>. Let Ax be a function that takes an ontology O from the extended structural specification and returns all axioms in O. Let 
+              Ax(BGP) be the axioms in O<sub>E</sub>(BGP), and AI(BGP) the set of anonymous individuals in O<sub>E</sub>(BGP). The set owl2V contains the URI references of the <a href="http://www.w3.org/TR/owl2-rdf-based-semantics/#table-vocab-owl">OWL 2 RDF-Based vocabulary</a>, which is taken to include the RDF and RDFS 
+              vocabularies and the OWL 2 <a href="http://www.w3.org/TR/owl2-rdf-based-semantics/#Datatype_Names">datatype names</a> and <a href="http://www.w3.org/TR/owl2-rdf-based-semantics/#Facet_Names">facet names</a>; owl2V-Minus is the set of URI references in owl2V minus URI 
+              references of the form <code>rdf:_n</code> with <code>n</code> in <code>{1, 2, ... }</code>. </p> 
+              
+              <p>A solution mapping μ is a <em>possible solution for BGP from G under the OWL 2 Direct Semantics</em> if dom(μ) = V(BGP) and there is 
+              an RDF instance mapping σ from AI(BGP) to RDF-T such that dom(σ)=AI(BGP) and the pattern instance mapping P=(μ, σ) is such 
+              that P(BGP) are well-formed RDF triples that are legal for the regime (i.e., P(BGP) is a variable-free and legal basic graph pattern for O(SG)) 
+              and OWL 2 Direct Semantics entailed by O(SG). </p>
+
+              <p>A possible solution μ is a <em>solution for BGP from SG under OWL 2 Direct Semantics</em> if:</p>
+              
+                <p>(C1) Each logical axiom ax in sk(O<sub>E</sub>(P(BGP))) is ground and entailed by sk(O(SG)) under the OWL 2 Direct Semantics. </p>
+                <p>(C2) For each variable x in V(BGP), if μ(x) is a literal, then μ(x) is in Lit(SG) and μ(x) occurs in O(SG) or in 
+                owl2V-Minus otherwise.</p>            
+                <p>(C3) Adding all axioms in O<sub>E</sub>(P(BGP)) to O(SG) results in a valid OWL 2 DL ontology. </p>
+                
+                
+                  
+                <p>The multiplicity of μ in the multiset of solutions is the maximal number of distinct RDF instance mappings σ that yield a pattern 
+               instance mapping P = (μ, σ) for which μ is a solution.</p>
+            </td></tr></tbody></table></div></div><div class="div2">
+<h3><a name="OWLDSRestrictions" id="OWLDSRestrictions"></a>7.3 Restrictions on Solutions (Informative)</h3><p>In this section the restrictions on solutions are explained. As the previously defined regimes, a Skolemization of the queried graph and the BGP 
+          is used to limit answers that just differ in blank node labels (C1). An explanation for this restriction is given in the <a href="#C1-Restriction">RDF 
+          entailment regime</a> section. </p><p>Condition (C2) is also applied as in the previously defined regimes and guarantees finite answers. The use of owl2V-Minus is purely for consistency 
+          with the other regimes, but could be omitted completely since under the Direct Semantics there are no axiomatic triples and variables can only bind to 
+          built-in terms that are also built-in entities. Built-in entities such as <code>owl:Thing</code> are assumed to be present in any ontology (see <a href="http://www.w3.org/TR/owl2-syntax/#Entity_Declarations_and_Typing">Table 5</a> <a href="#OWL2">[OWL 2 Structural Specification]</a>), i.e., O(SG) automatically includes declarations 
+          for these built-in entities. As under the OWL 2 RDF-Based Semantics, (C2) prevents infinite answers that could otherwise 
+          come from the very powerful datatype reasoning. An example that illustrates this is given in the <a href="#C2-RDF-Based">OWL 2 RDF-Based 
+          Semantics entailment regime</a> section. An explanation for the restriction to canonical forms of literals is given in the <a href="#canonicalRep">D-entailment regime</a>. </p><div class="div3">
+<h4><a name="OWLDSConstraints" id="OWLDSConstraints"></a>7.3.1 BGP Constraints for OWL 2 DL</h4><p>Condition (C3) requires that the axioms from the instantiated BGP satisfy the restrictions for OWL 2 DL ontologies, i.e., if they where added to 
+               the queried ontology, then the resulting ontology satisfies the restrictions of OWL 2 DL. These restrictions are in place to guarantee that the 
+               key reasoning tasks in OWL 2 with Direct Semantics are decidable. For example, for <em>owl:topDataProperty</em>, the <a href="http://www.w3.org/TR/owl2-syntax/#The_Restrictions_on_the_Axiom_Closure">following requirement</a> has to be met in OWL 2 DL:</p><dl><dd>The <em>owl:topDataProperty</em> property occurs in Ax only in the <strong>superDataPropertyExpression</strong> part of <strong>SubDataPropertyOf</strong> 
+               axioms.</dd></dl><p>(C3) guarantees that the restrictions that are applied to the queried ontology are equally applied to the query. Since an OWL reasoner for the 
+               Direct Semantics might have to work with the axioms in O(SG) and the axioms from O(BGP) simultaneously, this condition also prevents that, for 
+               example, a non-simple property from O(SG) is used in a FunctionalObjectProperty axioms or within a cardinality restriction in O(BGP). This would 
+               violate the restrictions on non-simple properties. </p></div><div class="div3">
+<h4><a name="OWLDSLiteralVars" id="OWLDSLiteralVars"></a>7.3.2 Queries with Variables in Literal Positions</h4><p>Individuals can be related to a data value although this is not explicitly stated and the actual value might not occur in any axiom of the 
+                ontology. Although the <a href="#OWLRDFBSRestrictions">example given for the RDF-Based Semantics</a> cannot be used under the Direct Semantics, other examples can cause infinite answers without condition (C2). For example, consider an ontology with a data property 
+                <code>ex:dp</code> containing the axiom</p><pre class="data">ClassAssertion(DataExactCardinality(2 ex:dp DatatypeRestriction(xsd:int xsd:minExclusive "5"^^xsd:int xsd:maxExclusive "8"^^xsd:int)) ex:Peter)</pre><p>The axiom states that Peter has exactly 2 <code>ex:dp</code> successors and these successors have to be integers greater than 5 and less than 8, 
+                which means that one successor must have the value 6 and the other one the value 7. This axiom  can be expressed in Turtle as</p><pre class="data">
+ex:Peter a [
+    a owl:Restriction ;
+    owl:onProperty ex:dp ;
+    owl:qualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+    owl:onDataRange [
+        a rdfs:Datatype ;
+        owl:onDatatype xsd:int ;
+        owl:withRestrictions (
+            [ xsd:minExclusive "5"^^xsd:int ]
+            [ xsd:maxExclusive "8"^^xsd:int ]
+        )
+    ]
+]</pre><p>Under OWL 2 Direct Semantics, an ontology containing the above axiom entails <code>DataPropertyAssertion(ex:dp ex:Peter "6"^^xsd:int)</code> 
+                and <code>DataPropertyAssertion(ex:dp ex:Peter "7"^^xsd:int)</code>, which is <code>ex:Peter ex:dp "6"^^xsd:int</code> and 
+                <code>ex:Peter ex:dp "7"^^xsd:int</code> in Turtle, respectively. If the values 6 and 7 do not occur in other axioms, then restriction (C2) 
+                prevents such possible answers from actually being part of the 
+                solutions since the values occur neither in the ontology nor in the vocabulary owl2V-Minus. Consider, for example, the following query against 
+                the above ontology:  </p><pre class="query">SELECT ?s ?d WHERE { ?s ex:dp ?d }</pre> 
+                where the BGP is mapped to the following FSS element:
+<pre class="query">DataPropertyAssertion(ex:dp ?s ?d)</pre><p>This query has an empty answer. Assume now, that the ontology is extended with the assertion:</p><pre class="data">DataPropertyAssertion(ex:dp ex:Mary "6"^^xsd:int)</pre><p>in Turtle:</p><pre class="data">ex:Mary ex:dp "6"^^xsd:int .</pre><p>The same query has now two answers:</p><div class="result"><a name="table11" id="table11"></a><table class="resultTable"><tr><th>s</th><th>d</th></tr><tr><td><code>ex:Peter</code></td><td><code>"6"^^xsd:int</code></td></tr><tr><td><code>ex:Mary</code></td><td><code>"6"^^xsd:int</code></td></tr></table></div><p>Adding an assertion that is not related to the assertion regarding <code>ex:Peter</code>, causes <code>ex:Peter</code> to also appears among 
+                the answers since <code>"6"^^xsd:int</code> occurs now in the queried ontology and (C2) is satisfied for both answers.</p><p>Since there are infinitely many data values, (C2) has the advantage that a SPARQL endpoint can compute the 
+                answers to a query with BGP <code>ex:Peter ex:dp ?x</code> by replacing all possible data values for <code>x</code> with values that occur in 
+                the ontology. Since there still might be many literals that have to be tested and no goal directed procedure is currently known, systems might 
+                choose to use incomplete reasoning regarding literals and only return explicitly asserted literal values (such as 
+                <code>DataPropertyAssertion(ex:dp ex:Mary "6"^^xsd:int)</code> above) or enrich the explicitly asserted values with subproperty reasoning and 
+                sameAs individual reasoning. Systems <em class="rfc2119" title="Keyword in RFC 2119 context">SHOULD</em> state in their accompanying documentation when incomplete reasoning is used. </p></div></div><div class="div2">
+<h3><a name="OWLDSHigherOrder" id="OWLDSHigherOrder"></a>7.4 Higher-Order Queries (Informative)</h3><p>OWL's Direct Semantics is rooted in standard First-Order Logic, but it might seem as if the OWL Direct Semantics entailment regime goes beyond First-Order queries. 
+            For example, one can use the BGP 
+            <code>?x rdfs:subClassOf ?y</code> to query for pairs of sub and superclasses. This is, variables can bind to classes (representing sets of 
+            individuals) and not just to individuals or data values. Queries in which variables are used in positions of a First-Order Logic quantifier, will, 
+            however, be illegal since such queries cannot be mapped to OWL objects as required. For example, the following (illegal) query 
+            asks whether <em>some</em> or <em>all</em> brothers of Peter are persons:</p><pre class="query">SELECT ?x WHERE {
+    ex:Peter rdf:type [ 
+        rdf:type owl:Restriction ;
+        owl:onProperty ex:hasBrother ;
+        ?x ex:Person . 
+   ]
+} 
+</pre><p>In functional-style syntax the BGP of the query corresponds to the axiom </p><pre class="query">ClassAssertion( ?x(ex:hasBrother ex:Person) ex:Peter )</pre><p>Here the variable occurs in the position of a quantifier and not just in the position of OWL entities such as class names or individual names. 
+            </p><p>Due to the restriction that variables can only bind to terms from a finite vocabulary, any query can be reduced to a finite set of Boolean queries 
+            that can be answered under OWL's First-Order semantics. For example, the subclass query above can be answered, by asking for all pairs of class names 
+            from the queried ontology, whether the instantiated (hence, variable-free) pattern is entailed by the queried ontology under the OWL Direct Semantics. 
+            Thus, the SPARQL queries in the entailment regime still have a First-Order semantics. </p></div><div class="div2">
+<h3><a name="OWL2ProfilesDS" id="OWL2ProfilesDS"></a>7.5 OWL 2 Entailment Checkers and Profiles</h3><p>The OWL 2 Direct Semantics is not defined for arbitrary RDF graphs, but only for graphs that satisfy the OWL 2 DL constraints. The OWL 2 profiles 
+            further restrict the allowed inputs. <a href="#OWL2-RDFBS-Profiles">As for the RDF-Based Semantics</a>, <a href="http://www.w3.org/TR/sparql11-service-description/">SPARQL 1.1 Service Descriptions</a> can be used to describe what kind of <a href="http://www.w3.org/TR/owl2-test/#Entailment_Checker">entailment checkers</a> is used in the backgroud to answer SPARQL queries. In addition to specifying the used semantics by relating the IRI of the endpoint via the property <code>sd:defaultEntailmentRegime</code> or <code>sd:entailmentRegime</code> to the IRI of the entailment regime, one can relate the endpoint IRI via the property <code>sd:defaultSupportedEntailmentProfile</code> or <code>sd:supportedEntailmentProfile</code> to one of the following profile IRIs:</p><ol><li><a href="http://www.w3.org/ns/owl-profile/DL">http://www.w3.org/ns/owl-profile/DL</a> for OWL 2 DL entailment checkers; </li><li><a href="http://www.w3.org/ns/owl-profile/EL">http://www.w3.org/ns/owl-profile/EL</a> for OWL 2 EL entailment checkers; </li><li><a href="http://www.w3.org/ns/owl-profile/QL">http://www.w3.org/ns/owl-profile/QL</a> for OWL 2 QL entailment checkers; </li><li><a href="http://www.w3.org/ns/owl-profile/RL">http://www.w3.org/ns/owl-profile/RL</a> for OWL 2 RL entailment checkers. </li></ol><p>The profile IRI together with the semantics then indicates what kind of <a href="http://www.w3.org/TR/owl2-test/#Entailment_Checker">entailment checker</a> is used in the backgroud and what syntactic restrictions this tool makes.</p></div></div><div class="div1">
+<h2><a name="RIFCoreEnt" id="RIFCoreEnt"></a>8 RIF Core Entailment</h2><p>The RIF RDF Compatibility document <a href="#RIF-RDF">[RIF RDF]</a> specifies the interoperation between RIF and the data and ontology languages RDF, 
+            RDF Schema, and OWL.  Interoperation is defined with respect to the semantics of RIF-RDF combinations.  RIF-RDF combinations (or simply, 
+            combinations) consist of a RIF document and a set of RDF graphs.  For the purpose of RIF Core entailment, we will only be concerned 
+            with combinations involving the single RDF graph comprised of the Skolemization of the merge of the scoping graph and any graphs imported from the RIF document. 
+            The scoping graph considered does not include the statement that refers to the RIF document (more on this in <a href="#RIFDocReferences">8.4</a>).  The semantics of combinations are defined in terms of pairs of RIF and RDF interpretations.  Each pairing is governed by a number of 
+            conditions that maintain a correspondence between RIF semantic structures (interpretations) and RDF interpretations.  This maintained 
+            correspondence ensures the proper interpretation of names.  It also maintains a correspondence between RDF triples of the form <code>s p o</code>, RIF frames of the 
+            form <code>s[p-&gt;o]</code>, and their respective terms.</p><p>These conditions are enforced on a <em><a href="http://www.w3.org/TR/2009/CR-rif-rdf-owl-20091001/#def-common-rif-rdf-interpretation">
+        common RIF-RDF interpretation</a></em> that is the basis for the standard model-theoretic notions of satisfiability and entailment with 
+            respect to common RIF-RDF interpretations, and when they are a model of a combination.  A common RIF-RDF interpretation 
+            <a href="http://www.w3.org/TR/2009/CR-rif-rdf-owl-20091001/#def-rif-rdf-satisfies">satisfies</a> a combination if the semantic multi-structure
+            (the first component of the common interpretation) is a RIF BLD <a href="http://www.w3.org/TR/2009/CR-rif-bld-20091001/#def-bld-model-formula">
+            model</a> of the RIF document <em>and</em> the simple interpretation satisfies the RDF graph(s) in the combination.  Such a common RIF-RDF 
+            interpretation can also be said to satisfy <a href="http://www.w3.org/TR/2009/CR-rif-rdf-owl-20091001/#def-generalized-rdf-graph">generalized 
+            RDF graphs</a> that are (intuitively) those RDF graphs satisfied by the simple interpretation modified to correspond with the 
+            interpretation of the RIF document.  The <em>RIF-Simple-entails</em> relationship builds on this and is the basis for the semantics of
+            answers to queries using this entailment regime.  Other similar RIF entailment relationships can be built for profiles such as those that 
+            have already been defined in this document as entailment regimes (RDF, RDFS, OWL Direct and RDF-Based Semantics, etc.).  In addition and as described in <a href="#OWL2-RL-RIF">[OWL2-RL-RIF]</a>, 
+            an OWL 2 RL ontology can be mapped to a customized RIF Core rule set.</p><p>The compatibility document defines 3 additional notions of RIF satisfiability with respect to a combination that builds on simple entailment: RIF-RDF, RIF-RDFS, and RIF-D satisfiability.  We define answers with respect to RDF graphs that are <em>RIF-Simple-entailed</em> by the combination formed from the (Skolemized) scoping graph and a referenced <em>RIF-Core</em> <a href="#RIF-Core">[RIF Core]</a> document.  These additional notions of RIF satisfiability can similarly be used as the basis for more expressive RIF Core entailment regimes.</p><div class="div2">
+<h3><a name="SimpeRIFCoreEntRegime" id="SimpeRIFCoreEntRegime"></a>8.1 (Simple) RIF Core Entailment Regime</h3><table style="border-color: rgb(0, 0, 0); border-collapse: collapse;" border="1" cellpadding="5"><tbody><tr><th>Name</th><td>(Simple) RIF Core Entailment Regime</td></tr><tr><th>IRI</th><td><a href="http://www.w3.org/ns/entailment/RIF">http://www.w3.org/ns/entailment/RIF</a>
+            </td></tr><tr><th>Legal Graphs</th><td>RDF graphs containing a triple with <code>rif:usedWithProfile</code> as predicate (see <a href="#RIFDocReferences">8.4</a>) and
+                where the imported RIF document is safe and does not include a binary Import statement with a profile other than Simple.  
+                If the RIF document imports RDF graphs, they must also use the Simple profile and these graphs are considered along with a version of the scoping graph formed without this single triple.</td></tr><tr><th>Legal Queries</th><td>Any legal SPARQL query.</td></tr><tr><th>Illegal Handling</th><td>In case the query is illegal (syntax errors), the system <em class="rfc2119" title="Keyword in RFC 2119 context">MUST</em> raise a 
+            <a href="http://www.w3.org/TR/2009/WD-sparql11-protocol-20091022/#select-malformed">MalformedQuery</a> fault. In case the queried graph is illegal 
+            (syntax errors), the system <em class="rfc2119" title="Keyword in RFC 2119 context">MUST</em> raise a <a href="http://www.w3.org/TR/2009/WD-sparql11-protocol-20091022/#select-refused">QueryRequestRefused</a> fault. </td></tr><tr><th>Entailment</th><td><a href="http://www.w3.org/TR/rif-rdf-owl/#def-simple-entails">RIF-Simple entailment</a> <a href="#RIF-RDF">[RIF RDF]</a></td></tr><tr><th>Inconsistency</th><td>As with the RDF entailment regime, any legal RDF graph (by itself) is satisfiable; no explicit inconsistency handling is required.</td></tr><tr><th>Query Answers</th><td><p>Let G be the merge of the queried RDF graph (without the <code>rif:usedWithProfile</code> statement) along with any RDF graphs included in the referenced RIF Core document, BGP be a basic graph pattern, V(BGP) the set of variables in BGP, B(BGP) the set of blank nodes in BGP, SG the 
+            <a href="http://www.w3.org/TR/sparql11-query/#BGPsparqlBNodes">scoping graph</a> for G and BGP, and sk(SG) a <a href="http://www.w3.org/TR/rdf-mt/#glossSkolemization">Skolemization</a> of SG with respect to a vocabulary disjoint from the vocabulary of SG and BGP. 
+            Applying sk to a term t, written sk(t), yields sk(t) if sk is defined for t and t 
+            otherwise; applying sk to a BGP, written sk(BGP), replaces each blank node b in BGP for which sk is defined with sk(b). </p>
+                <p>A solution mapping μ is a <em>solution for BGP from G under RIF-Simple entailment</em> if dom(μ) = V(BGP) and there is an RDF 
+                    instance mapping σ from B(BGP) to RDF-T such that dom(σ)=B(BGP) and the pattern instance mapping P=(μ, σ) is such 
+                    that sk(P(BGP)) are ground, well-formed RDF triples that are RIF-Simple entailed by the 
+                    <a href="http://www.w3.org/TR/2009/CR-rif-rdf-owl-20091001/#def-rif-rdf-combination">RIF-RDF combination</a> formed with 
+                    the safe RIF Core document referenced from SG via the object of the <code>rif:usedWithProfile</code> statement.</p>
+                    <p>The multiplicity of μ in the multiset of solutions is the maximal number of distinct RDF instance mappings σ that yield a pattern 
+               instance mapping P = (μ, σ) for which μ is a solution.</p>
+            </td></tr></tbody></table><p>For example, consider the <a href="http://www.w3.org/2005/rules/wiki/Class_Membership">Class_Membership</a> 
+                test case from the RIF test cases repository comprised of the following RDF graph and imported RIF Core document (in the 
+                <a href="http://www.w3.org/TR/rif-bld/#EBNF_Grammar_for_the_Presentation_Syntax_of_RIF-BLD_.28Informative.29">presentation syntax</a>):</p><pre class="data">(1) ex:Adrian ex:isChildOf ex:Uwe .
+(2) ex:Adrian rdf:type ex:Male .
+(3) ex:Uwe rdf:type ex:Male  .
+(4) &lt;Class_Membership_rule.rifps&gt; rif:usedWithProfile &lt;http://www.w3.org/ns/entailment/Simple&gt; . 
+            </pre><pre class="query">
+Group ( 
+        Forall ?X ?Y ( 
+               ?Y [ ex:isFatherOf -&gt; ?X ] :- And( ?X [ ex:isChildOf -&gt; ?Y  ] 
+                                                  ?Y [ rdf:type -&gt; ex:Male ] 
+        )  
+    )
+)               </pre><p>The SPARQL query below can be dispatched against the graph using the (Simple) RIF Core Entailment Regime:</p><pre class="query">SELECT ?father ?child WHERE { ?father ex:isFatherOf ?child . }</pre><p>producing the single solution:</p><div class="result"><a name="table11RIF" id="table11RIF"></a><table class="resultTable"><tr><th class="annotation"></th><th>father</th><th>child</th></tr><tr><td class="annotation">μ<sub>1</sub></td><td><code>ex:Uwe</code></td><td><code>ex:Adrian</code></td></tr></table></div><p>This follows from the fact that the result of applying a pattern instance mapping comprised of the solution μ<sub>1</sub> above and an empty mapping
+                for blank nodes against the BGP in the query, i.e., sk(P(?father ex:isFatherOf ?child)), is RIF-Simple entailed by the RIF-RDF combination formed
+from the RIF Core document and a graph comprised of just statements (1)-(3).</p></div><div class="div2">
+<h3><a name="RIFCustomRuleSets" id="RIFCustomRuleSets"></a>8.2 Custom Rulesets for Common Vocabulary Interpretations (Informative)</h3><p>RDF vocabulary such as RDFS and OWL 2 RL can be interpreted within this entailment regime through the use of custom
+                rulesets. For example, RDFS entailment can be implemented by using the <em>R<sup>RDFS</sup></em> ruleset specified in <a href="#RIF-RDF">[RIF RDF]</a>.  
+                Similarly, the RIF Core rules in <a href="#OWL2-RL-RIF">[OWL2-RL-RIF]</a> can be used to capture an axiomatization of OWL 2 RL.</p></div><div class="div2">
+<h3><a name="RIFFiniteAnswers" id="RIFFiniteAnswers"></a>8.3 Finite Answer Set Conditions (Informative)</h3><p>Traditionally, one of the ways to ensure that the underlying decision problems associated with a Horn clause 
+                knowledge representation are decidable is to prevent the use of function symbols. RIF-Core's
+                syntax permits built-in functions in the body of 
+                a rule.  A Horn Clause query is said to be safe it it has a finite set of answers.  In order to ensure 
+                that a Horn Clause logic programming language is complete (i.e., it guarantees all answers to every query) 
+                it is necessary to test whether a given query is safe <a href="#SAFETY">[SAFETY]</a>.</p><p>Certain <a href="http://www.w3.org/TR/rif-core/#Safeness"><strong>safety conditions</strong></a> on logic programs 
+                permit the use of cyclic references between built-in function symbols defined by an external procedure.  
+                RIF-Core's notion of strong safety facilitates the ability to construct a 
+                <em>finite grounding</em> which addresses both components of condition C4 regarding 
+                 SPARQL extensions and their solution sets: uniqueness and finiteness. 
+            </p><p>Consider the following strongly safe RIF Core document, scoping graph, and query, for which an answer set can be determined from the unique, minimal, and finite RIF-RDF model of the combination (despite the use of a built-in predicate).  In this query, the user asks for all hospital episodes (or visits) and the various health care events they subsume (as indicated by the <em>ex:hasHospitalization</em> predicate).  The <em>ex:hasHospitalization</em> predicate is defined (in the strongly safe RIF Core document) as a relation between a health care event with the larger hospital encounter event it is a part of based on the ordering of the dates associated with the events.  The ordering constraint is enforced through the use of the pred:dateTime-greater-than and pred:dateTime-less-than external built-in predicates.</p><pre class="query">
+Forall ?x ?y ?z ?u
+  ( ?EVT[ ex:hasHospitalization -&gt; ?HOSP] 
+     :- And( ?HOSP # ex:HospitalEncounter
+             ?HOSP [ ex:startsNoEarlierThan -&gt; ?ENCOUNTER_START
+                     ex:stopsNoLaterThan    -&gt; ?ENCOUNTER_STOP  ]
+             ?EVT # ex:HealthCareEvent
+             ?EVT [ ex:startsNoEarlierThan -&gt; ?EVT_START_MIN ]
+             pred:dateTime-greater-than(xsd:dateTime(?EVT_START_MIN) xsd:dateTime(?ENCOUNTER_START))
+             pred:dateTime-less-than(xsd:dateTime(?EVT_START_MIN) xsd:dateTime(?ENCOUNTER_STOP)))
+  )
+        </pre><pre class="data">(1) &lt;.. path to above document ..&gt; rif:usedWithProfile &lt;http://www.w3.org/ns/entailment/Simple&gt;.
+(2) ex:Operation1 rdf:type ex:HealthCareEvent;
+(3)               ex:startsNoEarlierThan "2000-12-01T05:00:00"^^xsd:dateTime ;
+(4)               ex:startsNoEarlierThan "2000-12-11T16:31:00"^^xsd:dateTime .
+(5) ex:Episode1   rdf:type ex:HospitalEncounter;
+(6)               ex:startsNoEarlierThan "2000-11-31T12:00:00"^^xsd:dateTime ;
+(7)               ex:stopsNoEarlierThan  "2000-12-26T05:36:00"^^xsd:dateTime .
+(8) ex:XRay1      rdf:type ex:HealthCareEvent;
+(9)               ex:startsNoEarlierThan "1960-01-10T03:00:00"^^xsd:dateTime ;
+(10)              ex:stopsNoEarlierThan  "1960-01-11T07:00:00"^^xsd:dateTime .</pre><pre class="query">SELECT ?EVT ?HOSP WHERE { ?EVT ex:hasHospitalization ?HOSP }</pre><p>This should result in the following bindings as a result of the rules and the triples (2)-(7) from a SPARQL service that implements the RIF Core entailment regime:</p><div class="result"><table class="resultTable"><tr><th>EVT</th><th>HOSP</th></tr><tr><td>ex:Operation1</td><td>ex:Episode1</td></tr></table></div></div><div class="div2">
+<h3><a name="RIFDocReferences" id="RIFDocReferences"></a>8.4 Referencing a RIF Document</h3><p>RIF RDF and OWL Compatibility <a href="#RIF-RDF">[RIF RDF]</a> defines the entailments of combinations (R, G) where R (a RIF rule set) includes an import of G (an RDF graph).</p><p>For the inverse of such a reference, i.e., the import of a RIF document into an RDF graph the designated RDF predicate <code>rif:usedWithProfile</code> enables an import to be specified from the graph G instead of from R.</p><p>In the simple usage the graph G is a plain RDF graph and <code>rif:usedWithProfile</code>  is used to combine that graph with one or more externally defined RIF rule sets. In this usage each subject of a <code>rif:usedWithProfile</code>  assertion should be the URI for a RIF rule set (which may be encoded in RIF-XML or RIF-in-RDF) and the object should be an import profile as defined in RIF RDF and OWL Compatibility <a href="#RIF-RDF">[RIF RDF]</a>.</p><p>The semantics of <code>rif:usedWithProfile</code> is explained in the following subsection.</p><div class="div3">
+<h4><a name="RIFUsedWithProfile" id="RIFUsedWithProfile"></a>8.4.1 Semantics of <code>rif:usedWithProfile</code></h4><p>A RIF-aware processor shall treat any RDF graph <strong>G</strong> as a RIF-RDF or RIF-OWL combination (see <a href="#RIF-RDF">[RIF RDF]</a>) as follows:</p><p>Let <strong>G'</strong> be the graph obtained from <strong>G</strong> by removing all triples with predicate <code>rif:usedWithProfile</code>. Then <strong>G</strong> is to be treated by a RIF-aware processor as the ruleset <strong>R</strong>:</p><pre class="query">
+   Document (
+     Imports(<code>R<sub>1</sub>'</code>) 
+     ...
+     Imports(<code>R<sub>n</sub>'</code>)
+     Imports(G' <code>P<sub>1</sub></code>)
+     ...
+     Imports(G' <code>P<sub>n</sub></code>)
+   )
+</pre><p>where <code>R<sub>i</sub></code> and <code>P<sub>i</sub></code> are the subjects/objects respectively of triples of form:</p><pre class="data">
+  <code>R<sub>i</sub></code> rif:usedWithProfile <code>P<sub>i</sub></code> .</pre><p>and <code>R<sub>i</sub>'</code> is the RIF document corresponding to an IRI Reference <code>R<sub>i</sub></code>.</p><p><strong>Remark:</strong> Note that the fact that <strong>G'</strong> is treated as being imported with all profiles <code>P<sub>1</sub></code> ... <code>P<sub>n</sub></code> enforces <strong>G'</strong> to be treated according to the highest profiles among <code>P<sub>1</sub></code> ... <code>P<sub>n</sub></code>, see also Section 5.2 of <a href="#RIF-RDF">[RIF RDF]</a>.</p></div><div class="div3">
+<h4><a name="RIFDereferencing" id="RIFDereferencing"></a>8.4.2 Dereferencing RIF Documents (Informative)</h4><p>Note that this specification does not define how an RDF store refers to or stores the RIF document <code>R<sub>i</sub>'</code> corresponding to a IRI Reference <code>R<sub>i</sub></code>. Alternative methods include, but are not limited to:</p><ol><li>HTTP dereferencing</li><li>Encoding RIF documents within named graphs within the dataset</li></ol><p>We will sketch both methods in the following.</p><div class="div4">
+<h5><a name="RIFHTTPDereferencing" id="RIFHTTPDereferencing"></a>8.4.2.1 HTTP Dereferencing</h5><p>This method assumes that <code>R<sub>i</sub></code> is an HTTP dereferenceable IRI which returns a RIF/XML document <code>R<sub>i</sub>'</code>.</p></div><div class="div4">
+<h5><a name="RIFDocsAsNamedGraphs" id="RIFDocsAsNamedGraphs"></a>8.4.2.2 Encoding RIF documents within named graphs in the dataset</h5><p>In some scenarios, one may want to access RIF rulesets from the same RDF store where the queried RDF graphs are stored.</p><p>This method therefore needs an encoding of RIF documents into an RDF graph, such as for instance the one sketched in <a href="#RIF-in-RDF">[RIF-in-RDF]</a>, which allows to store RIF documents as RDF graphs within the data store and retrieve the RIF ruleset encoded in an RDF graph by a respective mapping (such as the inverse mapping XTr described in Section 6 of <a href="#RIF-in-RDF">[RIF-in-RDF]</a>). Since <a href="http://www.w3.org/TR/sparql11-query/#rdfDataset">RDF datasets</a> already provide a mechanism for accessing an RDF graph by an identifying IRI, in this setting, RDF encoded RIF documents <code>R<sub>i</sub>'</code> can simply be made available as named graphs with graph name <code>R<sub>i</sub></code> within the dataset.</p><p>For instance, assuming that the IRI reference <code>&lt;http://example.org/r1&gt;</code> denotes an RDF encoded RIF document consisting of the single RIF rule as follows</p><pre class="query">
+  Document(
+   Prefix(foaf &lt;http://xmlns.com/foaf/0.1/&gt;)
+   Prefix(rel &lt;http://purl.org/vocab/relationship/&gt;)
+
+   Group
+   (
+     Forall ?S ?O (
+         ?S [ foaf:knows ?O ] :- ?S [ rel:worksWith ?O ]
+     )
+   )
+  )
+</pre><p>which can be encoded in RDF according to <a href="#RIF-in-RDF">[RIF-in-RDF]</a> as follows:</p><pre class="data">
+  @prefix : &lt;http://www.w3.org/2007/rif#&gt; .
+  @prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+  @prefix rel: &lt;http://purl.org/vocab/relationship/&gt; .
+
+  &lt;http://example.org/r1&gt; a :Document;
+   :directives () ;
+   :payload [  rdf:type :Group ;
+      :sentences  ( 
+         [ rdf:type :Forall; 
+           :formula  [ a :Implies ;
+            :if  [ rdf:type :Frame ; 
+                   :object [ rdf:type :Var; :varname "S" ] ; 
+                   :slots  ( [ rdf:type :Slot; :slotkey   [ 
+                                   rdf:type :Const ; 
+                                   :constIRI "http://purl.org/vocab/relationship/worksWith" ];
+                               :slotvalue [ rdf:type :Var; :varname "O" ] ] )
+                 ];
+            :then [ rdf:type :Frame ; 
+                   :object [ rdf:type :Var; :varname "S" ] ; 
+                   :slots  ( [ rdf:type :Slot; :slotkey   [  
+                                   rdf:type :Const ; 
+                                   :constIRI "http://xmlns.com/foaf/0.1/knows" ];
+                               :slotvalue [ rdf:type :Var; :varname "O" ] ] )
+                 ] ] ;
+            :vars  ( [rdf:type :Var;  :varname "S" ] [ rdf:type :Var; :varname "O" ] ) ] ) 
+  ] .
+</pre><p>Let the dataset consist of the single named graph <code>&lt;http://example.org/r1&gt;</code>
+and the default graph consist of the two triples</p><pre class="data">
+  @prefix : &lt;http://www.example.org/&gt; . 
+  @prefix rel: &lt;http://purl.org/vocab/relationship/&gt; . 
+  @prefix rif: &lt;http://www.w3.org/2007/rif#&gt; .
+
+  :bob rel:worksWith :alice .
+  &lt;http://example.org/r1&gt; rif:usedWithProfile &lt;http://www.w3.org/ns/entailment/Simple&gt; .
+</pre><p>then the SPARQL query</p><pre class="query">
+  SELECT * 
+  WHERE { ?S ?P ?O }
+</pre><p>returns</p><div class="result"><a name="tableRESULTRIF" id="tableRESULTRIF"></a><table class="resultTable"><tr><th>S</th><th>P</th><th>O</th></tr><tr><td><code>:bob</code></td><td><code>foaf:knows</code></td><td><code>:alice</code></td></tr><tr><td><code>:bob</code></td><td><code>rel:worksWith</code></td><td><code>:alice</code></td></tr></table></div>            
+Note that in such a setting, where the RDF-encoded RIF rulesets are stored as named graphs in the dataset, one can also pose queries against the RDF encoding of the RIF ruleset itself, e.g. asking for variable names used in the ruleset <code>&lt;r1&gt;</code>:
+<pre class="query">
+  PREFIX rif:  &lt;http://www.example.org/&gt;
+  SELECT DISTINCT ?N 
+  WHERE { GRAPH &lt;r1&gt; {  [ rif:varname ?N ] } }
+</pre><div class="result"><a name="tableRESULTRIFmeta" id="tableRESULTRIFmeta"></a><table class="resultTable"><tr><th>N</th></tr><tr><td><code>"S"</code></td></tr><tr><td><code>"O"</code></td></tr></table></div></div></div></div></div><div class="div1">
+<h2><a name="DataSets" id="DataSets"></a>9 Entailment Regimes and Data Sets (Informative)</h2><p>Many RDF data stores hold multiple RDF graphs and applications can make queries that involve information from more than one graph. This section 
+        clarifies how entailment regimes behave in the presence of named graphs. </p><p>As defined in the SPARQL specification, a SPARQL query is executed against an <a href="http://www.w3.org/TR/sparql11-query/#rdfDataset">RDF 
+        Dataset</a> which represents a collection of graphs. An RDF Dataset comprises one graph, the default graph, which does not have a name, and zero or more 
+        named graphs, where each named graph is identified by an IRI. The graph that is used for matching a basic graph pattern is the active graph. Under an 
+        entailment regime E other than simple entailment, we do not only consider the triples that are in the graph, but also triples that are E-entailed by the 
+        graph. The entailed triples must, however, be E-entailed by the active graph and not by a merge of the triples in all graphs. This follows from 
+        conditions  1 and 3 of the <a href="http://www.w3.org/TR/sparql11-query/#sparqlBGPExtend">conditions on extensions for basic graph matching</a>. </p><p>For example, we consider a data set which consists of an empty default graph, a named graph graphA with IRI <code>http://example.org/a.rdf</code>, 
+        and a named graph graphB with IRI <code>http://example.org/b.rdf</code>. The named graphs contain the following data:</p><p><code>http://example.org/a.rdf:</code></p><pre class="data">ex:p rdfs:domain ex:A .</pre><p><code>http://example.org/b.rdf:</code></p><pre class="data">ex:x ex:p ex:y .</pre><p>If we ask the following query under RDFS entailment</p><pre class="query">SELECT ?g WHERE { GRAPH ?g { ?inst rdf:type ex:A } }</pre><p>the answer sequence is empty because neither the default graph, nor the named graphs on their own entail a triple that would provide the required 
+        binding for ?inst. </p><p>In order to evaluate a query over the merge of the triples in the named graphs, one can use several <code>FROM</code> clauses, which result in the 
+        creation of a fresh default graph for the query that contains a merge of the triples, e.g., </p><pre class="query">SELECT ?inst FROM &lt;http://example.org/a.rdf&gt; FROM &lt;http://example.org/b.rdf&gt; WHERE { ?inst rdf:type ex:A } </pre><p>has the answer <code>{ (inst, ex:x) }</code>. One cannot merge triples from several sources into a named graph (they will always be merged into a fresh 
+        default graph) and such an extension would require changes to the conditions for extensions of basic graph pattern matching in the existing SPARQL query 
+        language specification.</p></div><div class="div1">
+<h2><a name="PropertyPaths" id="PropertyPaths"></a>10 Entailment Regimes and Property Paths (Informative)</h2><a name="property-path" id="property-path"></a><p>SPARQL 1.1 introduces <a href="http://www.w3.org/TR/sparql11-query/#propertypaths">property paths</a>, which allow for using path expressions in 
+        place of the predicate of a triple pattern. Such path expressions describe a possible route through the active graph. For an example, assume the 
+        following data in the default graph:</p><pre class="data">ex:a rdf:type ex:C .
+ex:C rdfs:subClassOf ex:D .
+ex:a ex:p1 ex:b . 
+ex:b ex:p2 ex:c .
+ex:p2 rdfs:subPropertyOf ex:p3 .</pre><p>and the following query:</p><pre class="query">SELECT ?type ?c WHERE { ex:a rdf:type ?x . ?x rdfs:subClassOf* ?type . ex:a ex:p1/ex:p3 ?c }</pre><p>The WHERE clause of the above query contains one triple pattern and two property path patterns. For the query processing, the property path patterns are 
+        first <a href="http://www.w3.org/TR/sparql11-query/#sparqlTranslatePathExpressions">translated to algebra objects</a> and then, where possible,  
+        <a href="http://www.w3.org/TR/sparql11-query/#sparqlTranslatePathPatterns">simplified</a>, i.e., they are rewritten with the purpose of eliminating path 
+        expressions in a semantics preserving way. For the above query, the algebra translation of the two property path expressions 
+        <code>rdfs:subClassOf*</code> and <code>ex:p1/ex:p3</code> yields:</p><pre class="query">ZeroOrMorePath(link(rdfs:subClassOf))</pre>
+        and
+<pre class="query">seq(link(ex:p1), link(ex:p3))</pre>
+        the translation and simplification then yields:
+<pre class="query">Path(?x, ZeroOrMorePath(link(rdfs:subClassOf)), ?type)</pre>
+        and the triple pattern
+<pre class="query">ex:a ex:p1 ?tmp1 . ?tmp1 ex:p3 ?c .</pre><p>with <code>?tmp1</code> a fresh variable. The latter property path has been simplified into two triples patterns, whereas the first one remained a 
+        property path pattern. Since the extension point for redefining basic graph pattern matching is only for basic graph 
+        patterns, the entailment regimes do not specify any behavior for property path algebra objects such as <code>Path(.)</code> and the specific operators 
+        such as <code>ZeroOrMorePath(.)</code>. Thus, systems that employ an entailment regime can either reject 
+        queries with property path expressions that cannot be eliminated or employ the evaluation as defined in the <a href="http://www.w3.org/TR/sparql11-query/#sparqlAlgebraEval">evaluation semantics</a> of the SPARQL 1.1 Query specification. For the latter case, 
+        evaluating <code>Path(?x, ZeroOrMorePath(link(rdfs:subClassOf)), ?type)</code> yields</p><div class="result"><a name="resultUnion" id="resultUnion"></a><table class="resultTable"><tr><th>x</th><th>type</th></tr><tr><td><code>ex:a</code></td><td><code>ex:a</code></td></tr><tr><td><code>ex:b</code></td><td><code>ex:b</code></td></tr><tr><td><code>ex:c</code></td><td><code>ex:c</code></td></tr><tr><td><code>ex:C</code></td><td><code>ex:C</code></td></tr><tr><td><code>ex:D</code></td><td><code>ex:D</code></td></tr><tr><td><code>ex:C</code></td><td><code>ex:D</code></td></tr></table></div><p>The evaluation of <code>Bgp(ex:a rdf:type ?x)</code> now depends on the entailment regime that is used. We assume, for this example, that 
+        RDFS entailment is used. Thus, the evaluation yields</p><div class="result"><a name="resultBgpOne" id="resultBgpOne"></a><table class="resultTable"><tr><th>x</th></tr><tr><td><code>ex:C</code></td></tr><tr><td><code>ex:D</code></td></tr></table></div><p>We can now compute the join to obtain</p><div class="result"><a name="firstJoin" id="firstJoin"></a><table class="resultTable"><tr><th>x</th><th>type</th></tr><tr><td><code>ex:C</code></td><td><code>ex:C</code></td></tr><tr><td><code>ex:D</code></td><td><code>ex:D</code></td></tr><tr><td><code>ex:C</code></td><td><code>ex:D</code></td></tr></table></div><p>Evaluating <code>Bgp(ex:a ex:p1 ?tmp1 . ?tmp1 ex:p3 ?c)</code> would yield an empty solution set under simple entailment (i.e., standard subgraph 
+        matching). Under RDFS entailment we get, however, </p><div class="result"><a name="bgp2" id="bgp2"></a><table class="resultTable"><tr><th>tmp1</th><th>c</th></tr><tr><td><code>ex:b</code></td><td><code>ex:c</code></td></tr></table></div><p>We can now compute the final result for the query pattern under RDFS entailment by joining the last two solution sets:</p><div class="result"><a name="secondJoin" id="secondJoin"></a><table class="resultTable"><tr><th>x</th><th>type</th><th>tmp1</th><th>c</th></tr><tr><td><code>ex:C</code></td><td><code>ex:C</code></td><td><code>ex:b</code></td><td><code>ex:c</code></td></tr><tr><td><code>ex:D</code></td><td><code>ex:D</code></td><td><code>ex:b</code></td><td><code>ex:c</code></td></tr><tr><td><code>ex:C</code></td><td><code>ex:D</code></td><td><code>ex:b</code></td><td><code>ex:c</code></td></tr></table></div><p>The overall query result can then be obtained by projecting <code>x</code> and <code>tmp1</code> away. </p><div class="result"><a name="project" id="project"></a><table class="resultTable"><tr><th>type</th><th>c</th></tr><tr><td><code>ex:C</code></td><td><code>ex:c</code></td></tr><tr><td><code>ex:D</code></td><td><code>ex:c</code></td></tr><tr><td><code>ex:D</code></td><td><code>ex:c</code></td></tr></table></div><p>In the presence of a particular entailment regime, path expressions are sometimes redundant as their semantics is already captured by the entailment 
+        relation. This is 
+        often the case when applying path expressions to terms of the special vocabulary for the entailment regime that is used. In the above example, 
+        <code>rdfs:subClassOf</code> is already treated as a reflexive and transitive relation under RDFS entailment. Thus, the first BGP 
+        <code>Bgp(ex:a rdf:type ?x)</code> already yields both the explicitly stated type <code>ex:C</code> as well as the RDFS entailed type <code>ex:D</code>. 
+        For this reason, the solution that binds <code>type</code> to <code>D</code> occurs twice, whereas under simple entailment, it would only occur once 
+        disregarding the fact that the second property path from the query has no solutions under simple entailment. In order to avoid the additional solution 
+        the query pattern</p><pre class="query">ex:a rdf:type ?x . ex:a ex:p1/ex:p3 ?c </pre><p>can be used. This also avoids the computation of several intermediate results. </p><div class="div2">
+<h3><a name="PropertyPathsLimitations" id="PropertyPathsLimitations"></a>10.1 Limitations of Property Paths in Combination with Entailment Regimes</h3><p>Since property paths are evaluated without entailment, the evaluation 
+        under an entailment regime can yield counter-intuitive results. Assuming the use of the RDFS entailment regime and the query</p><pre class="query">SELECT * WHERE { ?s (ex:p3+) ?o }</pre><p>over the above given example data, the result is empty. Although the data contains <code>ex:b ex:p2 ex:c</code> and 
+        <code>ex:p2 rdfs:subPropertyOf ex:p3</code>, which under RDFS entailment implies <code>ex:b ex:p3 ex:c</code>, this fact is not used since the arbitrary 
+        length path expression <code>ex:p+</code> is evaluated with simple entailment, i.e., via subgraph matching on the input data. </p><p>Since property path evaluation works directly on the active graph, the OWL Direct Semantics entailment regime is unlikely to support queries where 
+        the query pattern contains path expressions since systems that apply the Direct Semantics of OWL do not work with the graph directly, but translate the 
+        triples into OWL structural objects. Combining the other entailment regimes with property path expressions is, however, relatively straightforward. </p><p>Future versions of SPARQL may define further extensions to the handling of property paths together with entailment regimes that handle property paths 
+        in a specific way, which is why the present section is kept informative. </p></div></div><div class="div1">
+<h2><a name="Updates" id="Updates"></a>11 Entailment Regimes and Updates (Informative)</h2><p>SPARQL 1.1 also describes an update language (see <a href="http://www.w3.org/TR/sparql11-update/">SPARQL 1.1/Update</a> and 
+        <a href="http://www.w3.org/TR/sparql11-http-rdf-update/">SPARQL 1.1/HTTP RDF Update</a>), which can be used to add, modify, or delete data in an RDF 
+        graph. Support for SPARQL 1.1/Update and SPARQL 1.1/HTTP RDF Update is optional. SPARQL endpoints that use an entailment regime other than simple 
+        entailment may support update queries, but the exact behavior of the system for such queries is not covered by this specification. SPARQL endpoints 
+        that use an entailment regime other than simple entailment and that do support update queries should describe the system behavior in the system's documentation. </p></div></div><div class="back"><div class="div1">
+<h2><a name="sec-bibliography" id="sec-bibliography"></a>A References</h2><div class="div2">
+<h3><a name="sec-existing-stds" id="sec-existing-stds"></a>A.1 Normative References</h3><dl><dt class="label"><a name="OWL2Conformance" id="OWL2Conformance"></a>OWL 2 Conformance</dt><dd>
+                      <a href="http://www.w3.org/TR/2009/REC-owl2-conformance-20091027/"><cite>OWL 2 Web Ontology Language Conformance</cite></a>, eds. Michael Smith, Ian Horrocks, Markus Krötzsch, Birte Glimm. W3C Recommendation 27 October 2009. 
+                      (See http://www.w3.org/TR/2009/REC-owl2-conformance-20091027/.)</dd><dt class="label"><a name="OWL2DS" id="OWL2DS"></a>OWL 2 Direct Semantics</dt><dd>
+                      <a href="http://www.w3.org/TR/2009/REC-owl2-direct-semantics-20091027/"><cite>OWL 2 Web Ontology Language Direct Semantics</cite></a>, eds. Boris Motik, Peter F. Patel-Schneider, Bernardo Cuenca Grau. W3C Recommendation 27 October 2009. 
+                      (See http://www.w3.org/TR/2009/REC-owl2-direct-semantics-20091027/.)</dd><dt class="label"><a name="RDF2OWLMAPPING" id="RDF2OWLMAPPING"></a>OWL 2 Mapping to RDF Graphs</dt><dd>
+                      <a href="http://www.w3.org/TR/2009/REC-owl2-mapping-to-rdf-20091027/"><cite>OWL 2 Web Ontology Language Mapping to RDF Graphs</cite></a>, eds. Peter F. Patel-Schneider, Boris Motik. W3C Recommendation 27 October 2009. 
+                      (See http://www.w3.org/TR/2009/REC-owl2-mapping-to-rdf-20091027/.)</dd><dt class="label"><a name="OWL2Profiles" id="OWL2Profiles"></a>OWL 2 Profiles</dt><dd>
+                      <a href="http://www.w3.org/TR/2009/REC-owl2-profiles-20091027/"><cite>OWL 2 Web Ontology Language Profiles</cite></a>, eds. Boris Motik, Bernardo Cuenca Grau, Ian Horrocks, Zhe Wu, Achille Fokoue, Carsten Lutz. W3C Recommendation 27 October 2009. 
+                      (See http://www.w3.org/TR/2009/REC-owl2-profiles-20091027/.)</dd><dt class="label"><a name="OWL2RDFBS" id="OWL2RDFBS"></a>OWL 2 RDF-Based Semantics</dt><dd>
+                      <a href="http://www.w3.org/TR/2009/REC-owl2-rdf-based-semantics-20091027/"><cite>OWL 2 Web Ontology Language RDF-Based Semantics</cite></a>, ed. Michael Schneider. W3C Recommendation 27 October 2009. 
+                      (See http://www.w3.org/TR/2009/REC-owl2-rdf-based-semantics-20091027/.)</dd><dt class="label"><a name="OWL2" id="OWL2"></a>OWL 2 Structural Specification</dt><dd>
+                      <a href="http://www.w3.org/TR/2009/REC-owl2-syntax-20091027/"><cite>OWL 2 Web Ontology Language Structural Specification and Functional-Style Syntax</cite></a>, eds. Boris Motik, Peter F. Patel-Schneider, Bijan Parsia. W3C Recommendation 27 October 2009. 
+                      (See http://www.w3.org/TR/2009/REC-owl2-syntax-20091027/.)</dd><dt class="label"><a name="RDF-Concepts" id="RDF-Concepts"></a>RDF Concepts</dt><dd>
+                      <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/"><cite>Resource Description Framework (RDF): Concepts and Abstract Syntax</cite></a>, eds. Graham Klyne and Jeremy J. Carroll. W3C Recommendation 10 February 2004. 
+                      (See http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/.)</dd><dt class="label"><a name="RDF-PlainLiteral" id="RDF-PlainLiteral"></a>RDF Plain Literal</dt><dd>
+                      <a href="http://www.w3.org/TR/2009/REC-rdf-plain-literal-20091027/"><cite>rdf:PlainLiteral: A Datatype for RDF Plain Literals</cite></a>, eds. Jie Bao, Sandro Hawke, Boris Motik, Peter F. Patel-Schneider, Axel Polleres. W3C Recommendation 27 October 2009. 
+                      (See http://www.w3.org/TR/2009/REC-rdf-plain-literal-20091027/.)</dd><dt class="label"><a name="RDFMT" id="RDFMT"></a>RDF Semantics</dt><dd>
+                      <a href="http://www.w3.org/TR/2004/REC-rdf-mt-20040210/"><cite>RDF Semantics</cite></a>, ed. Patrick Hayes. W3C Recommendation 10 February 2004. 
+                      (See http://www.w3.org/TR/2004/REC-rdf-mt-20040210/.)</dd><dt class="label"><a name="RIF-Core" id="RIF-Core"></a>RIF Core</dt><dd>  
+                      <a href="http://www.w3.org/TR/rif-core/"><cite>RIF Core Dialect (Second Edition)</cite></a>, eds. Harold Boley, Gary Hallmark, Michael Kifer, Adrian Paschke, Axel Polleres, and Dave Reynolds. W3C Recommendation 5 February 2013
+                      (See http://www.w3.org/TR/rif-core/.)</dd><dt class="label"><a name="RIF-RDF" id="RIF-RDF"></a>RIF RDF</dt><dd> 
+                      <a href="http://www.w3.org/TR/rif-rdf-owl/"><cite>RIF RDF and OWL Compatibility (Second Edition)</cite></a>, ed. Jos de Bruijn. W3C Recommendation 5 February 2013
+                      (See http://www.w3.org/TR/rif-rdf-owl/.)</dd><dt class="label"><a name="SPARQL11" id="SPARQL11"></a>SPARQL 1.1 Query</dt><dd><cite><a href="http://www.w3.org/TR/2013/REC-sparql11-query-20130321">SPARQL 1.1 Query Language</a></cite>, S. Harris, A. Seaborne, Editors, W3C Recommendation, 21 March 2013, http://www.w3.org/TR/2013/REC-sparql11-query-20130321. <a href="http://www.w3.org/TR/sparql11-query/" title="Latest version of SPARQL 1.1 Query Language">Latest version</a> available at http://www.w3.org/TR/sparql11-query.</dd><dt class="label"><a name="XSD" id="XSD"></a>XML Schema Datatypes</dt><dd>
+                      <a href="http://www.w3.org/TR/2012/REC-xmlschema11-2-20120405/"><cite>W3C XML Schema Definition Language (XSD) 1.1 Part 2: Datatypes</cite></a>, eds. David Peterson, Shudi (Sandy) Gao 高殊镝, Ashok Malhotra, C. M. Sperberg-McQueen, Henry S. Thompson. W3C Recommendation 5 April 2012. 
+                      (See http://www.w3.org/TR/2012/REC-xmlschema11-2-20120405/.)</dd></dl></div><div class="div2">
+<h3><a name="null" id="null"></a>A.2 Other References</h3><dl><dt class="label"><a name="ANSWERSET-SW" id="ANSWERSET-SW"></a>ANSWERSET-SW</dt><dd>
+                        <a href="http://www.kr.tuwien.ac.at/staff/former_staff/roman/papers/thesis.pdf"><cite>Answer-Set Programming for the Semantic Web. PhD thesis</cite></a>, Roman Schindlauer. Vienna University of Technology, Austria, December 2006.
+                      (See http://www.kr.tuwien.ac.at/staff/former_staff/roman/papers/thesis.pdf.)</dd><dt class="label"><a name="OWL2-RL-RIF" id="OWL2-RL-RIF"></a>OWL2-RL-RIF</dt><dd>  
+                        <a href="http://www.w3.org/TR/2010/NOTE-rif-owl-rl-20100622/"><cite>OWL 2 RL in RIF</cite></a>, eds. Dave Reynolds. W3C Working Group Note 22 June 2010
+                      (See http://www.w3.org/TR/2010/NOTE-rif-owl-rl-20100622/.)</dd><dt class="label"><a name="RDFSENTAILMENT" id="RDFSENTAILMENT"></a>RDFSENTAILMENT</dt><dd>
+                      <cite>Completeness, decidability and complexity of entailment for RDF Schema and a semantic extension involving the OWL vocabulary</cite>, ed. Herman J. ter Horst. Journal of Web Semantics, 3(2-3):79-115, 2005.
+                    </dd><dt class="label"><a name="RIF-in-RDF" id="RIF-in-RDF"></a>RIF-in-RDF</dt><dd> 
+                      <a href="http://www.w3.org/TR/2011/NOTE-rif-in-rdf-20110512/"><cite>RIF In RDF</cite></a>, eds. Sandro Hawke, Axel Polleres. W3C Working Group Note 12 May 2011. 
+                      (See http://www.w3.org/TR/2011/NOTE-rif-in-rdf-20110512/.)</dd><dt class="label"><a name="SAFETY" id="SAFETY"></a>SAFETY</dt><dd>
+                        <a href="http://portal.acm.org/citation.cfm?doid=28659.28694"><cite>Safety of recursive Horn clauses with infinite relations</cite></a>, R. Ramakrishnan, F. Bancilhon, and A. Silberschatz.  ACM  New York, NY 1987.
+                      (See http://portal.acm.org/citation.cfm?doid=28659.28694.)</dd><dt class="label"><a name="STABLEMODEL" id="STABLEMODEL"></a>STABLEMODEL</dt><dd>
+                      <a href="http://arxiv.org/abs/cs.LO/9809032"><cite>Stable models and an alternative logic programming paradigm</cite></a>, eds. Victor W. Marek, Miroslaw Truszczynski. Arxiv preprint / Citeseer, 1998.
+                      (See http://arxiv.org/abs/cs.LO/9809032.)</dd><dt class="label"><a name="TURTLE" id="TURTLE"></a>TURTLE</dt><dd><cite><a href="http://www.w3.org/TR/2013/CR-turtle-20130219/">Turtle:
+Terse RDF Triple Language</a></cite>, E Prud'hommeaux, G Carothers, Editors, W3C Candidate Recommendation, 19 February 2013, http://www.w3.org/TR/2013/CR-turtle-20130219/. <a href="http://www.w3.org/TR/turtle/" title="Latest version of Turtle">Latest version</a> available at http://www.w3.org/TR/turtle/.  (See http://www.w3.org/TR/turtle/.)</dd></dl></div></div><div class="div1">
+<h2><a name="AppendixMapping" id="AppendixMapping"></a>B Appendix: Mapping from BGPs to the extended OWL 2 Structural Specification</h2><a name="OWL2parsingBGPs" id="OWL2parsingBGPs"></a><p>This appendix specifies how a legal basic graph pattern BGP of a SPARQL query can be parsed into the extension of the OWL 2 Structural 
+            specification <a href="#OWL2">[OWL 2 Structural Specification]</a>. Let <code>x</code> be a variable from BGP. If BGP contains a triple <code>?x rdf:type TYPE</code> or <code>$x rdf:type TYPE</code>, where 
+            <code>TYPE</code> is one of <code>owl:Class</code>, <code>owl:ObjectProperty</code>, <code>owl:DatatypeProperty</code>, or 
+            <code>owl:NamedIndividual</code>, <code>x</code> is declared to be of type <code>TYPE</code>. BGP satisfies the <em>typing constraints</em> of 
+            the entailment regime if no variable is declared as being of more than one type.</p><p>For the purpose of this parsing process, we assume that BGP is seen as an RDF graph G which may also contain variables in any 
+            position. A tool <em class="rfc2119" title="Keyword in RFC 2119 context">MAY</em> implement these steps in any way it chooses; however, the results <em class="rfc2119" title="Keyword in RFC 2119 context">MUST</em> be <a href="http://www.w3.org/TR/owl2-syntax/#Structural_Specification">structurally equivalent</a> to the ones defined in the following sections, where 
+            structural equivalence is taken to be extended in the natural way to also allow for variables, i.e., the definition of structural equivalence is 
+            as follows:</p><p>Objects <em>o<sub>1</sub></em> and <em>o<sub>2</sub></em> from the extended structural specification are <em>structurally 
+            equivalent</em> if the following conditions hold:</p><ul><li> If <em>o<sub>1</sub></em> and <em>o<sub>2</sub></em> are atomic values, such as strings or integers, they are structurally equivalent if they are equal according to the notion of equality of the respective UML type.</li><li> If <em>o<sub>1</sub></em> and <em>o<sub>2</sub></em> are variables, they are structurally equivalent if they are equal according to the notion of string equality.</li><li> If <em>o<sub>1</sub></em> and <em>o<sub>2</sub></em> are unordered associations without repetitions, they are structurally equivalent if each element of <em>o<sub>1</sub></em> is structurally equivalent to some element of <em>o<sub>2</sub></em> and vice versa.</li><li> If <em>o<sub>1</sub></em> and <em>o<sub>2</sub></em> are ordered associations with repetitions, they are structurally equivalent if they contain the same number of elements and each element of <em>o<sub>1</sub></em> is structurally equivalent to the element of <em>o<sub>2</sub></em> with the same index.</li><li> If <em>o<sub>1</sub></em> and <em>o<sub>2</sub></em> are instances of UML classes from the structural specification, they are structurally equivalent if
+                <ul><li> both <em>o<sub>1</sub></em> and <em>o<sub>2</sub></em> are instances of the same UML class, and</li><li> each association of <em>o<sub>1</sub></em> is structurally equivalent to the corresponding association of <em>o<sub>2</sub></em> and vice versa.</li></ul>
+            </li></ul><p>The following table defines the steps that are involved in the mapping process from basic graph patterns to extended OWL objects.</p><table><tr><td> <strong>CP 1</strong></td><td> If BGP contains no triple of the form <code>x rdf:type owl:Ontology</code> for <code>x</code> an IRI or a blank node, then extend BGP with  
+            <code>_:x rdf:type owl:Ontology</code> for <code>_:x</code> a fresh blank node not occurring in BGP and SG. </td></tr><tr><td> <strong>CP 2</strong></td><td> Compute Decl(BGP) as specified in <a href="http://www.w3.org/TR/owl2-mapping-to-rdf/#Extracting_Declarations_and_the_IRIs_of_the_Directly_Imported_Ontology_Documents">Section 3.1</a> 
+            of the OWL 2 Mapping to RDF graphs specification with the difference that import statements do not result in the addition of triples. Initialize 
+            AllDecl(BGP) as the union of Decl(BGP) and declarations from O(SG), i.e., AllDecl(D<sub>SG</sub>) where D<sub>SG</sub> is the ontology document from 
+            which O(SG) is obtained. 
+            </td></tr><tr><td> <strong>CP 3</strong></td><td> Create an instance O<sub>E</sub>(BGP) that corresponds to an instance of the <a href="http://www.w3.org/TR/owl2-syntax/#def_ontology"><strong>Ontology</strong></a> class from the extended grammar for the OWL 2 Direct Semantics. That is, the UML 
+            classes are taken to be extended such that entities can also be variables. </td></tr><tr><td> <strong>CP 4</strong></td><td> Analyze BGP and populate O<sub>E</sub>(BGP) by instantiating appropriate classes from the extended structural specification. Use the 
+            declarations in AllDecl(BGP) to disambiguate IRIs and variables if needed. It <em class="rfc2119" title="Keyword in RFC 2119 context">MUST</em> be possible to 
+            disambiguate all IRIs and variables. Variables that are not declared as being of some type occur either only in individual positions or only in 
+            literal positions; otherwise BGP is not legal for the regime. </td></tr></table><p>A canonical definition for Step <strong>CP 4</strong> is given in the following section. </p><div class="div2">
+<h3><a name="OWLParsing" id="OWLParsing"></a>B.1 Parsing BGPs into Objects of the Extended OWL 2 Structural Specification</h3><p>Parsing BGPs into OWL objects as required in <strong>CP 4</strong> follows closely the parsing process described in <a href="http://www.w3.org/TR/owl2-mapping-to-rdf/#Populating_an_Ontology">Section 3.2</a> of <a href="#RDF2OWLMAPPING">[OWL 2 Mapping to RDF Graphs]</a>. This document only 
+                states where the parsing differs from the mapping as defined by OWL 2. The main 
+                difference is that IRIs, anonymous individuals, and literals can also be variables. Thus, the notation used in the mapping specification is 
+                taken to be extended as follows:</p><ul><li> <code>*:x</code> denotes an IRI <em>or a variable</em>;</li><li> <code>_:x</code> denotes a blank node;</li><li> <code>x</code> denotes a blank node, an IRI <em>or a variable</em>;</li><li> <code>lt</code> denotes a literal <em>or a variable</em>; and</li><li> <code>xlt</code> denotes a blank node, an IRI, a literal, <em>or a variable</em>.</li></ul><p>Note that as for the OWL 2 mapping, variations of the above scheme are also taken to be defined as above, e.g., <code>*:y</code> or 
+                <code>*:x<sub>i</sub></code> instead of <code>*:x</code> also denote an IRIs or a variables. Further, <code>_:x</code> remains unchanged and 
+                does not represent a variable. </p><p>The functions <code>CE(x)</code>, <code>DR(x)</code>, <code>OPE(x)</code>, and <code>DPE(x)</code> extend the respective functions in the 
+                section <a href="http://www.w3.org/TR/owl2-mapping-to-rdf/#Mapping_from_RDF_Graphs_to_the_Structural_Specification">Mapping to 
+                RDF graphs</a> <a href="#RDF2OWLMAPPING">[OWL 2 Mapping to RDF Graphs]</a> to map into instances of the extended grammar for OWL 2 Direct Semantics BGPs, i.e., 
+                the functions also take variables as input and they map to objects that correspond to the extended structural specification for BGPs. The 
+                functions are initialized as in Table 9 of <a href="#RDF2OWLMAPPING">[OWL 2 Mapping to RDF Graphs]</a> for non-variable declarations (*:x is not a variable)
+                and extended for the case where *:x is a variable as follows:</p><div><table style="text-align: left;" border="2" cellpadding="5"><tbody><tr><th> If <em>AllDecl(G)</em> contains this declaration...
+                </th><th> ...then perform this assignment.
+                </th></tr><tr><td> Declaration( Class( *:x ) )
+                </td><td> CE(*:x) := <em>a class variable with name *:x</em>
+                
+                </td></tr><tr><td> Declaration( Datatype( *:x ) )
+                </td><td> DR(*:x) := <em>a datatype variable with name *:x</em>
+                </td></tr><tr><td> Declaration( ObjectProperty( *:x ) )
+                </td><td> OPE(*:x) := <em>an object property variable with name *:x</em>
+                </td></tr><tr><td> Declaration( DataProperty( *:x ) )
+                </td><td> DPE(*:x) := <em>a data property variable with name *:x</em>
+                </td></tr><tr><td> Declaration( AnnotationProperty( *:x ) )
+                </td><td> AP(*:x) := <em>an annotation property with name *:x</em>
+                </td></tr></tbody></table></div><p>Parsing then continues as described in <a href="#RDF2OWLMAPPING">[OWL 2 Mapping to RDF Graphs]</a> with the modification that objects can contain variables. Variables are 
+                not allowed in the mapping for facet restrictions in the last column of <a href="http://www.w3.org/TR/owl2-mapping-to-rdf/#Parsing_of_Expressions">Table 12</a> for <code>*:w<sub>i</sub></code> and the <code>n</code> 
+                that denotes a non-negative integer in cardinality restrictions is not redefined, i.e., it cannot be replaced by a variable.</p></div></div><div class="div1">
+<h2><a name="AppendixProofs" id="AppendixProofs"></a>C Appendix: Proofs</h2><p>The SPARQL Query specification <a href="#SPARQL11">[SPARQL 1.1 Query]</a> lists four conditions that entailment regimes that extend the standard simple entailment must 
+        satisfy. The different conditions are considered below for all entailment regimes in this document. </p><p>1 -- The <a href="http://www.w3.org/TR/sparql11-query/#BGPsparqlBNodes">scoping graph</a>, SG, corresponding to any consistent active graph AG is 
+                uniquely specified up to RDF graph equivalence and is E-equivalent to AG.</p><p>All entailment regimes use the same definition of scoping graph as simple entailment, i.e., the scoping graph is graph-equivalent to the active graph 
+        AG of the data set DS for the query but shares no blank nodes with DS or with the basic graph pattern of the query. The same scoping graph is used for 
+        all solutions to a single query. Thus, E-equivalence to AG up to RDF graph equivalence is immediate. In case AG is inconsistent, it is not required that 
+        a scoping graph is defined and although most of the regimes define SG also in the presence of an inconsistency, it is not required that the above 
+        condition is satisfied. </p><p>2 -- For any basic graph pattern BGP and pattern instance mapping P, P(BGP) is well-formed for E.</p><p>BGPs that can only be instantiated into malformed triples, e.g., because they require a literal in the subject position, do not have a valid pattern 
+        instance mapping and the condition is satisfied. Only the OWL 2 Direct Semantics regimes restricts the well-formedness of the queried graph and the 
+        basic graph patterns further. Since graphs and queries that are malformed for OWL 2 Direct Semantics are rejected with errors and, thus, do not have 
+        pattern instance mappings, the condition is satisfied. </p><p>3 -- For any <a href="http://www.w3.org/TR/sparql11-query/#BGPsparqlBNodes">scoping graph</a> SG and answer set {P<sub>1</sub> ... P<sub>n</sub>} 
+                for a basic graph pattern BGP, and where {BGP<sub>1</sub> .... BGP<sub>n</sub>} is a set of basic graph patterns all equivalent to BGP, none of 
+                which share any blank nodes with any other or with SG</p><dl><dd>   SG E-entails (SG union P<sub>1</sub>(BGP<sub>1</sub>) union ... union P<sub>n</sub>(BGP<sub>n</sub>))</dd></dl><p>Before giving a proof, the following example illustrates how this condition could be violated. Assume SG contains the triples:</p><pre class="data">ex:s ex:p _:b1 .
+_:b2 ex:p ex:o</pre>
+        and the BGP of the query is 
+<pre class="query">?x ex:p ?y</pre><p>The graph (even simply) entails the triple <code>ex:s ex:p _:1</code> and also the triple <code>_:1 ex:p ex:o</code>. If we were to take 
+        P<sub>1</sub>: ?x/<code>ex:s</code>, ?y/<code>_:1</code> and P<sub>2</sub>: ?x/<code>_:1</code>, ?y/<code>ex:o</code>, then, since BGP does not contain 
+        blank nodes, we can take any two copies BGP<sub>1</sub>, BGP<sub>2</sub> of BGP and we would have to show (only considering the two example solutions):</p><blockquote><p>SG E-entails (SG union P<sub>1</sub>(BGP<sub>1</sub>) union P<sub>2</sub>(BGP<sub>2</sub>)) = </p></blockquote><blockquote><p>
+        { <code>ex:s ex:p _:b1 . _:b2 ex:p ex:o </code> } E-entails { <code>ex:s ex:p _:b1 . _:b2 ex:p ex:o . ex:s ex:p _:1 . _:1 ex:p ex:o</code> }
+        </p></blockquote><p>This is clearly not the case because SG does not entail <code>ex:s ex:p _:1 . _:1 ex:p ex:o</code>. The use of the same blank node identifier across 
+        several solutions is only valid if also the corresponding blank nodes in SG are identical. </p><p>All the entailment regimes satisfy this restriction since blank nodes are treated as Skolem constants, i.e., although both of the triples in the 
+        above example are <em>possible</em> solutions, these are not part of the actual solutions. </p><p>4 -- Each SPARQL extension <em class="rfc2119" title="Keyword in RFC 2119 context">MUST</em> provide conditions on answer sets which guarantee that the set of triples obtained by 
+                instantiating BGP with each solution μ is uniquely specified up to RDF graph equivalence, and <em class="rfc2119" title="Keyword in RFC 2119 context">SHOULD</em> provide further 
+                conditions to prevent trivial infinite answers as appropriate to the regime.</p><p>All entailment regimes, but the RIF entailment regime, require that bindings are only taken from a vocabulary defined for the regime. Since the defined vocabularies are finite, it is immediate 
+        that any BGP over any AG results in finite answers. The answer set is unique up to RDF graph equivalence since the entailed answers can only vary in 
+        their blank node identifiers, which still preserves graph equivalence. For the RIF entailment regime finiteness and uniqueness follows from the <a href="#RIFFiniteAnswers">safety conditions</a>.</p></div><div class="div1">
+<h2><a name="changelog" id="changelog"></a>D Change Summary</h2><h3 id="changes-since-pr">Changes since Proposed Recommendation</h3><ul><li>Updated RIF references, given publication of RIF Second Edition</li></ul><h3 id="changes-since-lc">Changes since Last Call</h3><p>Since  last call, the following changes have been made: </p><ol class="enumar"><li>Since XML Schema Definition Language (XSD) 1.1 Part 2: Datatypes <a href="#XSD">[XML Schema Datatypes]</a> now has recommendation status, the reference to XML 
+                Schema Part 2: Datatypes Second Edition, eds. Paul V. Biron, Ashok Malhotra (W3C Recommendation 28 October 2004) becomes obsolete as previously 
+                announced. </li><li>In the informative section "Entailment Regimes and Property Paths", the link to the property path translation in SPARQL Query 1.1 has been fixed and the example has been updated to reflect the new algebra operators that SPARQL 1.1 Query introduced for property path expressions. </li></ol><p id="changes-since-cr">Since Candidate Recommendation, the only change has been to remove the "At Risk" notes, which labeled sections of the text which might potentially have been removed during Candidate Recommendation (but were not).</p></div></div></body></html>

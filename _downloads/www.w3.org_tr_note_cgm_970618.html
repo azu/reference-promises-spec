@@ -1,0 +1,449 @@
+<!-- http://www.w3.org/TR/NOTE-cgm-970618 -->
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta name="generator" content=
+"HTML Tidy for Linux/x86 (vers 12 April 2005), see www.w3.org" />
+ <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<title>Use of CGM as a Scalable Graphics Format</title>
+
+<style type="text/css">
+/*<![CDATA[*/
+ body {
+  background-color: #FFFFFF;
+  color: #000000;
+ }
+ h3.c3 {text-align: center}
+ h1.c2 {text-align: center}
+ h3.c1 {text-align: right}
+/*]]>*/
+</style>
+ <link rel="stylesheet" type="text/css" href="http://www.w3.org/StyleSheets/TR/W3C-WG-NOTE.css" />
+
+</head>
+<body>
+ <div class="head"><p><a href="http://www.w3.org/"><img height="48" width="72" alt="W3C" src="http://www.w3.org/Icons/w3c_home" /></a></p>
+  
+<h1>Use of CGM as a Scalable Graphics Format</h1>
+  <h2 >W3C NOTE <i>18-June-1997</i> (Format and markup errors corrected 31  
+   Jan 2007)</h2>
+<dl>
+<dt>This version:</dt>
+ <dd><a href="http://www.w3.org/pub/WWW/TR/NOTE-cgm-970618">http://www.w3.org/pub/WWW/TR/NOTE-cgm-970618</a></dd>
+<dt>Editor:</dt>
+<dd><a href="mailto:chris@w3c.org">Chris Lilley</a>, <a href=
+"http://www.w3.org/">W3C</a></dd>
+<dt>Author:</dt>
+<dd><a href="mailto:r.t.platon@rl.ac.uk">Roy Platon</a>, <a href=
+"http://www.clrc.ac.uk/Rutherford/">Rutherford Appleton
+Laboratory</a></dd>
+</dl>
+<hr />
+<h2>Status of this document</h2>
+<p>This document is a NOTE made available by the W3 Consortium for
+discussion only. This indicates no endorsement of its content, nor
+that the Consortium has, is, or will be allocating any resources to
+the issues addressed by the NOTE.</p>
+<p>This document shows how the Computer Graphics Metafile (CGM)
+<a href="#cgmstd">[1]</a> meets the requirements raised in <a href=
+"#scalablereq">[4]</a> and proposes solutions to come of the
+problems of use raised by the general nature of the CGM format.</p>
+  <p><em>On 31 January 2007 this note was converted to well formed and
+   valid XHTML  (previously claimed HTML 2.0, but invalid) and to use the current CSS
+  styling for W3C NOTEs. The technical content is unchanged.</em></p>
+</div>
+<h2><a name="intro" id="intro">Introduction</a></h2>
+<p>There has been a long-term requirement in the World Wide Web for
+an additional type of graphics object to display scalable or vector
+graphics. These are particularly useful for showing technical
+drawings and maps, where much detail can be lost in a raster image
+and it is useful to zoom in on details, but can also be useful for
+the display of other schematic data (ie histograms).</p>
+<p>A detailed comparison of CGM against the Scalable Graphics
+Requirement is given in the <a href="#scaleref">next section</a>.
+The authors believe that CGM fulfills most of the requirements in
+<a href="#scalablereq">[4]</a>, but there is a danger that
+unconstrained use of CGM would cause problems with portability and
+interoperability. This paper is an attempt to address some of the
+portability issues and to recommend how to use CGM on the World
+Wide Web. This will include the use of parameters to the OBJECT
+tag, how add links to CGM and the possible definition of a Web
+profile.</p>
+<p>This paper does not attempt to describe CGM, which is fully
+described in the ISO Standard <a href="#cgmstd">[1]</a> and its two
+amendments <a href="#cgmprofile">[2]</a> and <a href=
+"#cgmaps">[3]</a>. The standard defines 3 versions of CGM which
+have different capabilities:</p>
+<ul>
+<li>Version 1 is the original 1992 standard,</li>
+<li>Version 2 added elements to support GKS, the most important was
+SEGMENTS.</li>
+<li>Version 3 added many new drawing primitives, including curves,
+and more colour models.</li>
+<li>Version 4 is defined in <a href="#cgmaps">[3]</a> and adds
+support for APPLICATION STRUCTURES.</li>
+</ul>
+<hr />
+<h2><a name="scalereq" id="scalereq">Scalable Graphics
+Requirements</a></h2>
+<p>This section compares CGM against the requirements raised in
+<a href="#scalablereq">[4]</a>.</p>
+<dl>
+<dt>Open Specification</dt>
+<dd>The specification is published in the ISO Standard <a href=
+"#cgmstd">[1]</a>.</dd>
+<dt>Ready Availability to casual implementor</dt>
+<dd>W3C is discussing with ISO the availability of a HTML version
+of the standard. There is also a book on CGM written by the Authors
+of the standard <a href="#handbook">[7]</a>.</dd>
+<dt>Extensible to cope with changing requirements</dt>
+<dd>CGM has evolved over the last few years fairly rapidly, through
+the normal ISO procedures.</dd>
+<dt>Widely implemented</dt>
+<dd>There are many packages which support the import or export of
+CGM version 1 and it has been adopted as the standard means of
+transferring pictures in some industries.</dd>
+<dt>Reference code desirable</dt>
+<dd>Most viewers and interpreters are commercial products, but it
+is hoped to make some reference code available as part of
+Amaya.</dd>
+<dt>Lack of subset problems</dt>
+<dd>There are still problems with interoperability of CGMs with
+different vendors. This should be reduced by the acceptance of a
+Web Profile <a href="#profile">(see below)</a>.</dd>
+<dt>Vector graphics elements</dt>
+<dd>CGM has a full set of Vector drawing elements, including
+POLYLINE, POLYMARKER, POLYGON SET and RECTANGLE.</dd>
+<dt>Curved elements</dt>
+<dd>CGM version 1 has CIRCULAR and ELLIPTICAL ARCS, which may be
+filled as either pies or sectors. CGM Version 3 adds PARABOLIC,
+HYPERBOLIC, POLYBEZIER, Non-Uniform B-Splines and Non-Uniform
+Rational B-Splines to give a rich set of curve drawing
+options.</dd>
+<dt>Text and Font selection</dt>
+<dd>Text and Font selection is in accordance with ISO Standards,
+including a provision for UniCode characters.</dd>
+<dt>Truecolour mode</dt>
+<dd>CGM version 1 supports both Indexed and RGB colours. CGM
+Version 3 additionally supports CIELAB, CIELUV and CMYK colour
+definitions as well as COLOUR CALIBRATION.</dd>
+<dt>Transparency/Alpha</dt>
+<dd>CGM does not support Transparency, as it must always have a
+BACKGROUND colour associated with each picture. It is possible for
+an Interpreter to ignore this element in order to allow
+transparency or opaqueness (via an Alpha value). It is also
+possible in CGM version 3 to specify TRANSPARENCY for individual
+colours within a CELL ARRAY, TILE ARRAY or PATTERN TABLE, but not
+Alpha values.</dd>
+<dt>Layering, stenciling/masking</dt>
+<dd>CGM version 2 and up support FIGURES and SEGMENTS, which may be
+used for stenciling/masking and layering.</dd>
+<dt>Control of line termination and mitering</dt>
+<dd>This is supported in CGM version 3.</dd>
+<dt>Levels of detail</dt>
+<dd>This is not directly supported, but can be achieved by
+selection within a CGM file using the APPLICATION STRUCTURE
+elements.</dd>
+<dt>Include Raster data</dt>
+<dd>Raster data can be included internally as CELL ARRAYS, which
+uses an internal run length encoding. With CGM version 3 the TILE
+ARRAY element supports additional compression schemes including
+CCITT T4, CCITT T6 and JPEG.</dd>
+<dt>Zoom and Pan</dt>
+<dd>This possible through the Interpreter/Viewer. Each picture is
+defined in its own World Coordinate system, which has an Aspect
+Ratio but not absolute dimensions.</dd>
+<dt>Pick single elements</dt>
+<dd>This is possible, either by associating a PICK IDENTIFIER with
+SEGMENT or by using the APPLICATION STRUCTURE elements. This does
+require that the viewer can handle this.</dd>
+<dt>Switchable layers</dt>
+<dd>This is possible using SEGMENTS and/or APPLICATION STRUCTURES.
+Again it needs to cooperate with the viewing software.</dd>
+<dt>Element grouping into semantic structure</dt>
+<dd>The APPLICATION STRUCTURE elements were designed to add
+Metadata to a group of primitives.</dd>
+<dt>Active menus on Pick</dt>
+<dd>This is a function of the viewing software, but is is possible
+to use the APPLICATION STRUCTURE PARAMETER in CGM version 4 to add
+menu options to a group of primitives.</dd>
+<dt>Link to other views</dt>
+<dd>See <a href="#links">below</a> for details on how both internal
+and external linking can be achieved.</dd>
+<dt>Link to external media</dt>
+<dd>See <a href="#links">below</a> for details on how both internal
+and external linking can be achieved.</dd>
+<dt>Linkable from external media(#)</dt>
+<dd>See <a href="#links">below</a> for details on how both internal
+and external linking can be achieved.</dd>
+<dt>Extractable Metadata</dt>
+<dd>There are many elements which can be used for Metadata.</dd>
+</dl>
+<hr />
+<h2><a name="Mime" id="Mime">Internet Media type</a></h2>
+<p>CGM was registered as an Internet Media type in November 1995
+<a href="#cgmmime">[5]</a>. Only the Binary encoding is registered
+and the registration includes two required parameters,
+<em>version=n</em> and <em>ProfileId=name</em>. The addition of
+these 2 parameters may cause problems to some servers, as the
+proper mime type for most CGMs available today should be
+<em>'image/cgm;version=1;ProfileId=None'</em>. If the
+<em>ProfileId</em> does not appear in the MFDESC element,as
+required, it is assumed to have the value ProfileId=None.</p>
+<hr />
+<h2><a name="Object" id="Object">OBJECT tag</a></h2>
+<p>The only standard way to add in-line CGMs to a HTML documents is
+through the proposed OBJECT tag, using the DATA attribute for the
+CGM file and the TYPE attribute to specify the full Mime Type.
+<a href="#objects">[6]</a>. So that the minimal tag for adding CGM
+into a document would be:</p>
+<pre>
+&lt;OBJECT DATA="xxx.cgm" TYPE="image/cgm;Version=1;ProfileId=None"
+    WIDTH=200 HEIGHT=100&gt;
+</pre>
+Other attributes which may be used in the OBJECT tag are ID,
+DECLARE, ALIGN, BORDER, HSPACE, VSPACE, USEMAP, SHAPES. The use of
+CLASSID and CODEBASE are not recommended, as these are system
+dependent attributes for accessing single implementations The
+OBJECT tag also has an additional PARAM element, which allows the
+HTML to pass additional data to the OBJECT. To use CGM the names of
+these PARAM name/value pairs need to be specified The question of
+which PARAMs CGM should use is open for discussion. The following
+are proposed:
+<dl>
+<dt>SCALABLE <em>Yes|No</em></dt>
+<dd>States whether the CGM is fixed or can be looked at in detail.
+This is useful to divide icons, logos etc from browseable
+diagrams.</dd>
+<dt>TRANSPARENT <em>On|Off</em></dt>
+<dd>States whether the CGM should be drawn on the existing
+Background.</dd>
+<dt>OPAQUENESS <em>Alpha value</em></dt>
+<dd>Give an Alpha value for the opaqueness of the picture in the
+range 0.0 to 1.0.</dd>
+<dt>VIEWPORT <em>topx topy botx boty</em></dt>
+<dd>Gives a viewport of the CGM (a part of the picture) to display.
+The values are the top-left and bottom-right corners of the
+sub-picture either in the World Coordinates of the CGM or as a
+percentage of the picture, if the value is followed by a percent
+sign (%). This facility will allow for parts of a CGM Picture to be
+displayed at different scales in different places in the
+document.</dd>
+<dt>HALIGN <em>top|middle|bottom</em></dt>
+<dt>VALIGN <em>left|middle|right</em></dt>
+<dd>Each CGM picture has a fixed aspect ratio, determined by the
+VDCEXTENT element, which may not agree with the HEIGHT and WIDTH
+specified by the OBJECT tag. These parameter can be used to specify
+where to place the CGM within the window specified by the OBJECT
+tag, ie. the gravity of the window This is different to the ALIGN
+attribute to OBJECT, which is used to specify where the OBJECT is
+placed in the document. The default value should be MIDDLE &amp;
+MIDDLE. This could be expressed using the PARAM tag as:
+<pre>
+&lt;PARAM name="halign" data value="middle"&gt;
+&lt;PARAM name="valign" data value="middle"&gt;
+</pre>
+Note: the data attribute is optional and could be omitted.</dd>
+</dl>
+<hr />
+<h2><a name="Refer" id="Refer">Referring to pictures within a
+CGM</a></h2>
+<p>As a CGM can contain many pictures, it is desirable to be able
+to refer to individual pictures within a CGM in a URL
+specification. It is proposed that the same mechanism is used as
+within HTML files. therefore <em>picture.cgm#picture%202</em> or
+<em>picture.cgm#2</em> should both be allowed to refer to the
+second picture in file <em>picture.cgm</em>. use This will the
+first in the following priority order:</p>
+<ul>
+<li>The Application Structure ID, if one exists (CGM version
+4).</li>
+<li>The BEGPIC identifier string.</li>
+<li>The absolute picture number, if a number is specified.</li>
+</ul>
+The default value shall be <em>#1</em> ie. the first picture in the
+file. <em>Note</em> that spaces in strings need to URL encoded.
+<hr />
+<h2><a name="Links" id="Links">External Links</a></h2>
+<p>One of the advantages of CGM version 4 is that it is possible to
+enclose a set of graphics primitives within an APPLICATION
+STRUCTURE and attach metadata to this structure. In the Web context
+this makes it easy to associate a URL with a part of a drawing,
+identified as a set of primitives rather than an area on the
+screen. This should be done in a standard way, so that any CGM
+interpreter can handle the link. It is therefore proposed to add
+the following application structure attribute types:</p>
+<dl>
+<dt>LinkURL</dt>
+<dd>The data is a string containing the uncanonical URL, which may
+be a full URL eg.
+"<em>http://www.w3.org/pub/graphics/cgm/example.cgm</em>", a
+relative URL eg. "<em>test/test2.cgm</em>", or even an application
+structure within the current CGM eg. "<em>#fillercap</em>"</dd>
+</dl>
+<p>This would be in addition to the current client-side (using the
+SHAPES attribute in OBJECT) and server-side image maps (using the
+USEMAP attribute in OBJECT), which should still be allowed. These
+have the advantage that the URL is in the HTML Document, so that if
+it changes it is easier to edit than editing the CGM file. Their
+disadvantage is that the shapes can only refer to areas on the
+screen, not to sets of primitives. It may be difficult to describe
+areas using pixels so it is suggested that area are described as
+NDC (Normalized Device Coordinates) in the range 0.0 to 1.0 or
+percentages of the visible area. The advantage of using APPLICATION
+STRUCTUREs is that a set of CGM primitives can be grouped together
+and used to define the link.</p>
+<p>It would be preferable to use both methods by referring to the
+area using the APPLICATION STRUCTURE ID in the document. This is
+not possible with the existing definition of the OBJECT tag, which
+only allows SHAPES to define areas.</p>
+<hr />
+<h2><a name="Transp" id="Transp">Transparency</a></h2>
+<p>There is a requirement within documents to draw a picture on top
+of the existing background. This can be achieved with PNG by
+allocating a transparent colour or using the Alpha values. The CGM
+standard specifies a background colour for each picture, which is
+inconsistent with this requirement. As specified <a href=
+"objects">above</a>, it is proposed that a Parameter to the OBJECT
+tag be used to say whether the background is taken from the CGM or
+the document.</p>
+<hr />
+<h2><a name="Fonts" id="Fonts">Fonts</a></h2>
+<p>In each CGM there should be a FONTLIST element, which lists the
+names of fonts used within the CGM. The CGM Interpreter has to map
+these fonts to ones used internally. It is possible as part of
+defining <a href="Profiles">a Web Profile</a>, that a set of
+permitted fonts are defined in the Profiles definition. The Model
+Profile defines the following permitted fonts <a href=
+"#standprof">[8]</a>:</p>
+<ul>
+<li>Times-Roman</li>
+<li>Times-Bold</li>
+<li>Times-Italic</li>
+<li>Times-BoldItalic</li>
+<li>Helvetica</li>
+<li>Helvetica-Bold</li>
+<li>Helvetica-Oblique</li>
+<li>Helvetica-BoldOblique</li>
+<li>Courier</li>
+<li>Courier-Bold</li>
+<li>Courier-Oblique</li>
+<li>Courier-BoldOblique</li>
+<li>Symbol</li>
+</ul>
+and the Advanced Presentation and Visualization Profile allows the
+following in addition:
+<ul>
+<li>AvantGarde-Book</li>
+<li>AvantGarde-BookOblique</li>
+<li>AvantGarde-Demi</li>
+<li>AvantGarde-DemiOblique</li>
+<li>Bookman-Demi</li>
+<li>Bookman-DemiOblique</li>
+<li>Bookman-Light</li>
+<li>Bookman-LightItalic</li>
+<li>Helvetica-Narrow</li>
+<li>Helvetica-Narrow-Bold</li>
+<li>Helvetica-Narrow-BoldOblique</li>
+<li>Helvetica-Narrow-Oblique</li>
+<li>NewCenturySchlbk-Bold</li>
+<li>NewCenturySchlbk-BoldItalic</li>
+<li>NewCenturySchlbk-Italic</li>
+<li>NewCenturySchlbk-Roman</li>
+<li>Palatino-Bold</li>
+<li>Palatino-BoldItalic</li>
+<li>Palatino-Italic</li>
+<li>Palatino-Roman</li>
+<li>ZapfChancery-MediumItalic</li>
+<li>ZapfDingbats</li>
+</ul>
+It is prefered that CGMs use these fonts, but this is not always
+possible, as they are determined by the generator. In CGM version 3
+an element FONTPROPERTIES was introduced to allow a CGM to provide
+a list of properties of the Fonts used in the CGM. This element
+should be used as it gives a hint to the interpreter about the
+relative importance of each property.
+<p>It would be preferable if the CGM Interpreter used the same
+mechanism for font specification and negotiation as the Browser.
+W3C is currently preparing a proposal for use of fonts on the Web,
+which will include a technique for matching fonts and how to access
+resources for downloading fonts when needed. This technique should
+also be followed in a CGM Interpreter.</p>
+<hr />
+<h2><a name="Style" id="Style">Style Sheets</a></h2>
+<p>In a CGM there are about 18 attributes ie. Line type and colour,
+which may be either BUNDLED or INDIVIDUAL. For INDIVIDUAL
+attributes the value is explicit within the CGM, but when BUNDLED
+the values depend on the media. It is proposed that BUNDLED
+attributes will be determined by the current style, either set in a
+style sheet or by value determined by the cascading.</p>
+<hr />
+<h2><a name="Profiles" id="Profiles">Profiles</a></h2>
+<p>Profiles were introduced in CGM version 3 to aid the
+interoperability of CGM within a fixed community. It was originally
+proposed that the Web used the Model Profile defined in <a href=
+"cgmprofile">[2]</a>, but it is intended to add APPLICATION
+STRUCTURE PARAMETERS, which are not in the model profile.</p>
+<p>CGM version 3 introduced the POLYSYMBOL primitive and a SYMBOL
+LIBRARY element. These could be used to define a set of symbols for
+web use. No symbols are yet proposed, but this facility could be
+useful on the Web by defining a set of commonly used graphics
+objects. The registration of a SYMBOL LIBRARY would become part of
+a Web Profile.</p>
+<p>It will therefore be necessary to submit a proposal for a Web
+Profile. Are the any Restrictions or Additions required for Web
+use?</p>
+<hr />
+<h2><a name="Refs" id="Refs">References</a></h2>
+<dl>
+<dt><a name="cgmstd" id="cgmstd"><strong>1. The CGM
+Standard</strong></a></dt>
+<dd>Metafile for the storage and transfer of picture description
+information. ISO/IEC 8632-1/4:1992</dd>
+<dt><a name="cgmprofile" id="cgmprofile"><strong>2. Rules for
+Profiles</strong></a></dt>
+<dd>CGM Amendment 1 Rules for Profiles. ISO Standard ISO/IEC
+8632-1:1992/Amd.1:1994.</dd>
+<dt><a name="cgmaps" id="cgmaps"><strong>3. Application
+Structures</strong></a></dt>
+<dd>CGM Amendment 2 Application structure extensions. ISO Standard
+ISO/IEC 8632-1:1992/Amd.2:1995.</dd>
+<dt><a name="scalablereq" id="scalablereq"><strong>4. Scalable
+Graphics Requirements</strong></a></dt>
+<dd><a href=
+"http://www.w3.org/pub/WWW/Graphics/ScalableReq.html">"W3C Scalable
+Graphics Requirements"</a> Chris Lilley, May 1996.</dd>
+<dt><a name="cgmmime" id="cgmmime"><strong>5. CGM Mime
+type</strong></a></dt>
+<dd><a href=
+"ftp://venera.isi.edu/in-notes/iana/assignments/media-types/image/cgm">
+CGM Mime type registration</a></dd>
+<dt><a name="objects" id="objects"><strong>6. Objects in
+HTML</strong></a></dt>
+<dd><a href=
+"http://www.w3.org/pub/WWW/TR/WD-object-970218.html">"Inserting
+objects into HTML"</a> Dave Raggett, Feb 1997.</dd>
+<dt><a name="handbook" id="handbook"><strong>7. The CGM
+Handbook</strong></a></dt>
+<dd>"The CGM Handbook" Lofton R Henderson &amp; Anne M Mumford,
+Academic Press, 1993, ISBN 0-12-510560-0.</dd>
+<dt><a name="standprof" id="standprof"><strong>8. International
+Standardized Profiles</strong></a></dt>
+<dd>"International Standardized Profile for CGM" ISO Standard
+ISO/IEC 12071-1:1996.</dd>
+</dl>
+<hr />
+ <p>
+  <a href="http://validator.w3.org/check?uri=referer"><img
+   src="http://www.w3.org/Icons/valid-xhtml10"
+   alt="Valid XHTML 1.0 Transitional" height="31" width="88" /></a>
+ </p>
+<address><a href="mailto:chris@w3.org">Chris Lilley</a>
+(editor)<br />
+<a href="mailto:web-human@w3.org">Webmaster</a><br />
+Date: 1997/06/18 04:27:44 <br />
+ Revised $Date: 2007/01/31 12:55:45 $</address>
+</body>
+</html>

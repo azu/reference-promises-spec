@@ -1,0 +1,1551 @@
+<!-- http://www.w3.org/TR/ldp-primer/ -->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" prefix="bibo: http://purl.org/ontology/bibo/ w3p: http://www.w3.org/2001/02pd/rec54#" lang="en" dir="ltr" typeof="bibo:Document " about="" property="dcterms:language" content="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>  
+  <title>Linked Data Platform 1.0 Primer</title>
+  <style type="text/css">
+    div.syntaxmenu {
+      border: 1px dotted black;
+      padding: 0 0 0 0.5em;
+      margin: 0em;
+    }
+    div.code {
+      font-family: monospace;
+      font-size: 110%;
+    }
+    th {
+      text-align: left;
+    }
+    td {
+      vertical-align: top;
+      padding-right: 2em;
+    }
+    td.col1 {
+      width: 300px;
+    }
+  </style>
+  <script type="text/javascript">
+    var displayed = [];
+    displayed["turtle"] = 1;
+    displayed["jsonld"] = 0;
+
+    function primerOnLoad() {
+      setTimeout(function () {
+        display('turtle', '');
+        set_display_by_id('hide-ts', '');
+        set_display_by_id('show-ts', 'none');
+        display('jsonld', 'none');
+        set_display_by_id('hide-js', 'none');
+        set_display_by_id('show-js', '');
+      }, 500)
+    }
+
+    function display(syntax, status) {
+      var howmany = 0;
+      if (status == 'none') {
+        displayed[syntax] = 0;
+      } else {
+        displayed[syntax] = 1;
+      }
+      for (i in displayed) {
+        howmany = howmany + displayed[i];
+      }
+      set_display_by_class('div', syntax, status);
+      if (howmany == 1) {
+        set_display_by_class('b', 'syntax-head', 'none');
+      } else {
+        set_display_by_class('b', 'syntax-head', '');
+      }
+    }
+
+    function getElementsByClassName(oElm, strTagName, oClassNames) {
+      var arrElements = (!(!(strTagName == "*") || !(oElm.all))) ? oElm.all : oElm.getElementsByTagName(strTagName);
+      var arrReturnElements = new Array();
+      var arrRegExpClassNames = new Array();
+      if (typeof oClassNames == "object") {
+        for (var i = 0; !(i >= oClassNames.length); i++) { /*>*/
+          arrRegExpClassNames.push(new RegExp("(^|\\s)" + oClassNames[i].replace(/\-/g, "\\-") + "(\\s|$)"));
+        }
+      } else {
+        arrRegExpClassNames.push(new RegExp("(^|\\s)" + oClassNames.replace(/\-/g, "\\-") + "(\\s|$)"));
+      }
+      var oElement;
+      var bMatchesAll;
+      for (var j = 0; !(j >= arrElements.length); j++) { /*>*/
+        oElement = arrElements[j];
+        bMatchesAll = true;
+        for (var k = 0; !(k >= arrRegExpClassNames.length); k++) { /*>*/
+          if (!arrRegExpClassNames[k].test(oElement.className)) {
+            bMatchesAll = false;
+            break;
+          }
+        }
+        if (bMatchesAll) {
+          arrReturnElements.push(oElement);
+        }
+      }
+      return (arrReturnElements)
+    }
+
+    function set_display_by_class(el, cls, newValue) {
+      var e = getElementsByClassName(document, el, cls);
+      if (e != null) {
+        for (var i = 0; !(i >= e.length); i++) {
+          e[i].style.display = newValue;
+        }
+      }
+    }
+
+    function set_display_by_id(id, newValue) {
+      var e = document.getElementById(id);
+      if (e != null) {
+        e.style.display = newValue;
+      }
+    }
+  </script>
+  
+  
+<style type="text/css">/*****************************************************************
+ * ReSpec 3 CSS
+ * Robin Berjon - http://berjon.com/
+ *****************************************************************/
+
+/* --- INLINES --- */
+em.rfc2119 { 
+    text-transform:     lowercase;
+    font-variant:       small-caps;
+    font-style:         normal;
+    color:              #900;
+}
+
+h1 acronym, h2 acronym, h3 acronym, h4 acronym, h5 acronym, h6 acronym, a acronym,
+h1 abbr, h2 abbr, h3 abbr, h4 abbr, h5 abbr, h6 abbr, a abbr {
+    border: none;
+}
+
+dfn {
+    font-weight:    bold;
+}
+
+a.internalDFN {
+    color:  inherit;
+    border-bottom:  1px solid #99c;
+    text-decoration:    none;
+}
+
+a.externalDFN {
+    color:  inherit;
+    border-bottom:  1px dotted #ccc;
+    text-decoration:    none;
+}
+
+a.bibref {
+    text-decoration:    none;
+}
+
+cite .bibref {
+    font-style: normal;
+}
+
+code {
+    color:  #ff4500;
+}
+
+/* --- TOC --- */
+.toc a, .tof a {
+    text-decoration:    none;
+}
+
+a .secno, a .figno {
+    color:  #000;
+}
+
+ul.tof, ol.tof {
+    list-style: none outside none;
+}
+
+.caption {
+    margin-top: 0.5em;
+    font-style:   italic;
+}
+
+/* --- TABLE --- */
+table.simple {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    border-bottom:  3px solid #005a9c;
+}
+
+.simple th {
+    background: #005a9c;
+    color:  #fff;
+    padding:    3px 5px;
+    text-align: left;
+}
+
+.simple th[scope="row"] {
+    background: inherit;
+    color:  inherit;
+    border-top: 1px solid #ddd;
+}
+
+.simple td {
+    padding:    3px 10px;
+    border-top: 1px solid #ddd;
+}
+
+.simple tr:nth-child(even) {
+    background: #f0f6ff;
+}
+
+/* --- DL --- */
+.section dd > p:first-child {
+    margin-top: 0;
+}
+
+.section dd > p:last-child {
+    margin-bottom: 0;
+}
+
+.section dd {
+    margin-bottom:  1em;
+}
+
+.section dl.attrs dd, .section dl.eldef dd {
+    margin-bottom:  0;
+}
+
+@media print {
+    .removeOnSave {
+        display: none;
+    }
+}
+</style><style type="text/css" >/* --- EXAMPLES --- */
+div.example-title {
+    min-width: 7.5em;
+    color: #b9ab2d;
+}
+div.example-title span {
+    text-transform: uppercase;   
+}
+aside.example, div.example, div.illegal-example {
+    padding: 0.5em;
+    margin: 1em 0;
+    position: relative;
+    clear: both;
+}
+div.illegal-example { color: red }
+div.illegal-example p { color: black }
+aside.example, div.example {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+    border-color: #e0cb52;
+    background: #fcfaee;    
+}
+
+aside.example div.example {
+    border-left-width: .1em;
+    border-color: #999;
+    background: #fff;
+}
+aside.example div.example div.example-title {
+    color: #999;
+}
+</style><style type="text/css" >/* --- ISSUES/NOTES --- */
+div.issue-title, div.note-title {
+    padding-right:  1em;
+    min-width: 7.5em;
+    color: #b9ab2d;
+}
+div.issue-title { color: #e05252; }
+div.note-title { color: #2b2; }
+div.issue-title span, div.note-title span {
+    text-transform: uppercase;
+}
+div.note, div.issue {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+.note > p:first-child, .issue > p:first-child { margin-top: 0 }
+.issue, .note {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+}
+div.issue, div.note {
+    padding: 1em 1.2em 0.5em;
+    margin: 1em 0;
+    position: relative;
+    clear: both;
+}
+span.note, span.issue { padding: .1em .5em .15em; }
+
+.issue {
+    border-color: #e05252;
+    background: #fbe9e9;
+}
+.note {
+    border-color: #52e052;
+    background: #e9fbe9;
+}
+
+
+</style><link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/W3C-WD" /><!--[if lt IE 9]><script src='https://www.w3.org/2008/site/js/html5shiv.js'></script><![endif]--></head>
+
+<body onload="primerOnLoad()" class="h-entry" style="" role="document" id="respecDocument"><div class="head" role="contentinfo" id="respecHeader">
+  <p>
+    
+      <a href="http://www.w3.org/"><img width="72" height="48" src="http://www.w3.org/Icons/w3c_home" alt="W3C"></a>
+    
+  </p>
+  <h1 class="title p-name" id="title" property="dcterms:title">Linked Data Platform 1.0 Primer</h1>
+  
+  <h2 property="dcterms:issued" datatype="xsd:dateTime" content="2014-06-19T22:00:00.000Z" id="w3c-first-public-working-draft-26-june-2014"><abbr title="World Wide Web Consortium">W3C</abbr> First Public Working Draft <time class="dt-published" datetime="2014-06-26">26 June 2014</time></h2>
+  <dl>
+    
+      <dt>This version:</dt>
+      <dd><a class="u-url" href="http://www.w3.org/TR/2014/WD-ldp-primer-20140626/">http://www.w3.org/TR/2014/WD-ldp-primer-20140626/</a></dd>
+      <dt>Latest published version:</dt>
+      <dd><a href="http://www.w3.org/TR/ldp-primer/">http://www.w3.org/TR/ldp-primer/</a></dd>
+    
+    
+      <dt>Latest editor's draft:</dt>
+      <dd><a href="http://www.w3.org/2012/ldp/hg/ldp-primer/ldp-primer.html">http://www.w3.org/2012/ldp/hg/ldp-primer/ldp-primer.html</a></dd>
+    
+    
+    
+    
+    
+    
+    
+    <dt>Editors:</dt>
+    <dd class="p-author h-card vcard" rel="bibo:editor" inlist=""><span typeof="foaf:Person"><a class="u-url url p-name fn" rel="foaf:homepage" property="foaf:name" content="Nandana Mihindukulasooriya" href="http://mayor2.dia.fi.upm.es/oeg-upm/index.php/en/universitystaff/290-nandana">Nandana Mihindukulasooriya</a>, <a rel="foaf:workplaceHomepage" class="p-org org h-org h-card" href="http://www.oeg-upm.net/">Ontology Engineering Group, Universidad Politécnica de Madrid</a></span>
+</dd>
+<dd class="p-author h-card vcard" rel="bibo:editor" inlist=""><span typeof="foaf:Person"><a class="u-url url p-name fn" rel="foaf:homepage" property="foaf:name" content="Roger Menday" href="#">Roger Menday</a>, <a rel="foaf:workplaceHomepage" class="p-org org h-org h-card" href="#">Fujitsu Laboratories of Europe Limited, London</a></span>
+</dd>
+
+    
+    
+  </dl>
+  
+  
+  
+  
+    
+      <p class="copyright">
+        <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> ©
+        2014
+        
+        <a href="http://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>®</sup>
+        (<a href="http://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>,
+        <a href="http://www.ercim.eu/"><abbr title="European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>,
+        <a href="http://www.keio.ac.jp/">Keio</a>, <a href="http://ev.buaa.edu.cn/">Beihang</a>), 
+        
+        All Rights Reserved.
+        
+        <abbr title="World Wide Web Consortium">W3C</abbr> <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>,
+        <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and
+        
+          <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a>
+        
+        rules apply.
+      </p>
+    
+  
+  <hr>
+</div>
+
+  <section id="abstract" class="introductory" property="dcterms:abstract" datatype="" typeof="bibo:Chapter" resource="#abstract" rel="bibo:Chapter"><h2 aria-level="1" role="heading" id="h2_abstract">Abstract</h2><p>
+    This primer provides an introduction to the Linked Data Platform (LDP), with examples illustrating the principal concepts such as the notion of an LDP resource and the LDP container and how they can be used by Web clients. 
+    Two sample scenarios show how an LDP client can interact with a LDP server in the context of a read-write Linked Data application i.e. how to use HTTP for accessing, updating, creating and deleting resources from servers that expose their resources as Linked Data.
+  </p></section><section id="sotd" class="introductory" typeof="bibo:Chapter" resource="#sotd" rel="bibo:Chapter"><h2 aria-level="1" role="heading" id="h2_sotd">Status of This Document</h2>
+  
+    
+      
+        <p>
+          <em>This section describes the status of this document at the time of its publication.
+          Other documents may supersede this document. A list of current <abbr title="World Wide Web Consortium">W3C</abbr> publications and the
+          latest revision of this technical report can be found in the <a href="http://www.w3.org/TR/"><abbr title="World Wide Web Consortium">W3C</abbr> technical reports index</a> at
+          http://www.w3.org/TR/.</em>
+        </p>
+        
+    <p>
+      This is the first draft of LDP Primer Note from the <a href="http://www.w3.org/2012/ldp"><abbr title="World Wide Web Consortium">W3C</abbr> LDP working group</a>.
+    </p>
+  
+        <p>
+          This document was published by the <a href="http://www.w3.org/2012/ldp">Linked Data Platform Working Group</a> as a First Public Working Draft.
+          
+            This document is intended to become a <abbr title="World Wide Web Consortium">W3C</abbr> Recommendation.
+          
+          
+            If you wish to make comments regarding this document, please send them to 
+            <a href="mailto:public-ldp-comments@w3.org">public-ldp-comments@w3.org</a> 
+            (<a href="mailto:public-ldp-comments-request@w3.org?subject=subscribe">subscribe</a>,
+            <a href="http://lists.w3.org/Archives/Public/public-ldp-comments/">archives</a>).
+          
+          
+          
+          
+            All comments are welcome.
+          
+        </p>
+        
+        
+          <p>
+            Publication as a First Public Working Draft does not imply endorsement by the <abbr title="World Wide Web Consortium">W3C</abbr>
+            Membership. This is a draft document and may be updated, replaced or obsoleted by other
+            documents at any time. It is inappropriate to cite this document as other than work in
+            progress.
+          </p>
+        
+        
+        
+        <p>
+          
+            This document was produced by a group operating under the 
+            <a id="sotd_patent" about="" rel="w3p:patentRules" href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 <abbr title="World Wide Web Consortium">W3C</abbr> Patent
+            Policy</a>.
+          
+          
+          
+            
+              <abbr title="World Wide Web Consortium">W3C</abbr> maintains a <a href="http://www.w3.org/2004/01/pp-impl/55082/status" rel="disclosure">public list of any patent
+              disclosures</a> 
+            
+            made in connection with the deliverables of the group; that page also includes
+            instructions for disclosing a patent. An individual who has actual knowledge of a patent
+            which the individual believes contains
+            <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential
+            Claim(s)</a> must disclose the information in accordance with
+            <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section
+            6 of the <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>.
+          
+          
+        </p>
+        
+      
+    
+  
+</section><section id="toc"><h2 class="introductory" aria-level="1" role="heading" id="h2_toc">Table of Contents</h2><ul class="toc" role="directory" id="respecContents"><li class="tocline"><a href="#intro-section" class="tocxref"><span class="secno">1. </span>Introduction</a></li><li class="tocline"><a href="#docstore" class="tocxref"><span class="secno">2. </span>Online document store example (LDP Basics)</a><ul class="toc"><li class="tocline"><a href="#filelookup" class="tocxref"><span class="secno">2.1 </span>Looking up a basic container (GET on an LDP-BC) </a></li><li class="tocline"><a href="#discovering-the-affordances-options-on-an-ldp-bc" class="tocxref"><span class="secno">2.2 </span> Discovering the affordances (OPTIONS on an LDP-BC) </a></li><li class="tocline"><a href="#creating-a-rdf-resource-post-an-rdf-resource-to-an-ldp-bc" class="tocxref"><span class="secno">2.3 </span> Creating a RDF resource (POST an RDF resource to an LDP-BC) </a></li><li class="tocline"><a href="#creating-a-non-rdf-binary-resource-post-an-image-to-an-ldp-bc" class="tocxref"><span class="secno">2.4 </span> Creating a non-RDF (binary) resource (POST an image to an LDP-BC) </a></li><li class="tocline"><a href="#update-a-rdf-ldp-resource-put-on-an-ldp-rs" class="tocxref"><span class="secno">2.5 </span> Update a RDF LDP resource (PUT on an LDP-RS) </a></li><li class="tocline"><a href="#deleting-a-resource-delete-on-an-ldpr" class="tocxref"><span class="secno">2.6 </span> Deleting a resource (DELETE on an LDPR) </a></li><li class="tocline"><a href="#structural-manipulation-child-containers" class="tocxref"><span class="secno">2.7 </span>Structural Manipulation (Child Containers)</a></li></ul></li><li class="tocline"><a href="#bugtracker" class="tocxref"><span class="secno">3. </span>Bug Tracker Example (LDP Direct containers)</a><ul class="toc"><li class="tocline"><a href="#navandret" class="tocxref"><span class="secno">3.1 </span>Navigation and Retrieval (GET on an LDP-DC)</a></li><li class="tocline"><a href="#creation-post-a-resource-to-an-ldp-dc" class="tocxref"><span class="secno">3.2 </span>Creation (POST a resource to an LDP-DC)</a></li><li class="tocline"><a href="#deletion-delete-on-an-ldpr-associated-with-an-ldp-dc" class="tocxref"><span class="secno">3.3 </span>Deletion (DELETE on an LDPR associated with an LDP-DC)</a></li></ul></li><li class="tocline"><a href="#bugtrackerextd" class="tocxref"><span class="secno">4. </span>Extended Bug Tracker Example (LDP Indirect containers)</a><ul class="toc"><li class="tocline"><a href="#navandretext" class="tocxref"><span class="secno">4.1 </span>Navigation and Retrieval (GET on an LDP-IC) </a></li><li class="tocline"><a href="#creationext" class="tocxref"><span class="secno">4.2 </span>Creation (POST a resource to an LDP-IC) </a></li></ul></li><li class="tocline"><a href="#security" class="tocxref"><span class="secno">5. </span>Security</a></li><li class="tocline"><a href="#ldp-implementations" class="tocxref"><span class="secno">6. </span>LDP Implementations</a></li><li class="tocline"><a href="#what-to-read-next" class="tocxref"><span class="secno">7. </span>What To Read Next</a></li><li class="tocline"><a href="#acknowledgements" class="tocxref"><span class="secno">A. </span>Acknowledgements</a></li><li class="tocline"><a href="#history" class="tocxref"><span class="secno">B. </span>Change History</a></li><li class="tocline"><a href="#references" class="tocxref"><span class="secno">C. </span>References</a><ul class="toc"><li class="tocline"><a href="#informative-references" class="tocxref"><span class="secno">C.1 </span>Informative references</a></li></ul></li></ul></section>
+
+  
+
+  <section id="intro-section" typeof="bibo:Chapter" resource="#intro-section" rel="bibo:Chapter">
+    <!--OddPage--><h2 id="intro" aria-level="1" role="heading"><span class="secno">1. </span>Introduction</h2>
+
+    <p>
+      The term "Linked Data" [<cite><a class="bibref" href="#bib-LINKED-DATA">LINKED-DATA</a></cite>] refers to an approach to publishing data that puts linking at the heart of the notion of data, and uses the linking technologies provided by the Web to enable the weaving of a global distributed database. 
+     By naming real world entities - be they web resources, physical objects such as the Eiffel Tower, or even more abstract things such as relations or concepts - with http(s) URLs, whose meaning can be determined by dereferencing the document at that URL, and by using the relational framework provided by RDF, data can be published and linked in the same way web pages can. 
+    The Linked Data Protocol specifies how web applications can, using the HTTP protocol, find resources and follow links, publish new resources, edit and delete existing ones. 
+    </p>
+    <p>
+   The Primer aims to provide introductory examples and guidance in the use of the LDP protocol, in accordance with best practices [<cite><a class="bibref" href="#bib-LDP-BP">LDP-BP</a></cite>]. 
+  For a systematic description of the protocol the reader should consult the normative LDP reference [<cite><a class="bibref" href="#bib-LDP">LDP</a></cite>]. 
+  For an overview of the use cases for LDP and the elicited requirements that guided its design, the reader should consult the LDP Use Cases and Requirements [<cite><a class="bibref" href="#bib-LDP-UCR">LDP-UCR</a></cite>]; for best practices and guidelines, the reader should consult the LDP Best Practices and Guidelines document [<cite><a class="bibref" href="#bib-LDP-BP">LDP-BP</a></cite>].
+    </p>
+
+    <b id="conventions">Conventions Used in This Document</b>
+
+    <p>The examples in this guide are given as a serialization of RDF graphs using the Turtle [<cite><a class="bibref" href="#bib-turtle">turtle</a></cite>] and JSON-LD [<cite><a class="bibref" href="#bib-json-ld">json-ld</a></cite>] syntaxes of RDF.</p>
+
+    <div class="syntaxmenu">
+      <p>The buttons below can be used to show or hide the available syntaxes.</p>
+      <form>
+        <p>
+          <input id="hide-ts" onclick="display(&#39;turtle&#39;, &#39;none&#39;); set_display_by_id(&#39;hide-ts&#39;, &#39;none&#39;); set_display_by_id(&#39;show-ts&#39;, &#39;&#39;); return false;" type="button" value="Hide Turtle Syntax">
+          <input id="show-ts" onclick="display(&#39;turtle&#39;, &#39;&#39;); set_display_by_id(&#39;hide-ts&#39;, &#39;&#39;); set_display_by_id(&#39;show-ts&#39;, &#39;none&#39;); return false;" style="display: none;" type="button" value="Show Turtle Syntax">
+          <input id="hide-js" onclick="display(&#39;jsonld&#39;,&#39;none&#39;); set_display_by_id(&#39;hide-js&#39;, &#39;none&#39;); set_display_by_id(&#39;show-js&#39;, &#39;&#39;); return false;" type="button" value="Hide JSON-LD Syntax" style="display: none;">
+          <input id="show-js" onclick="display(&#39;jsonld&#39;,&#39;&#39;); set_display_by_id(&#39;hide-js&#39;, &#39;&#39;); set_display_by_id(&#39;show-js&#39;, &#39;none&#39;); return false;" style="" type="button" value="Show JSON-lD Syntax">
+        </p>
+      </form>
+    </div>
+
+    <p>The JSON-LD examples refer to the following (external) context document:</p>
+    <pre style="word-wrap: break-word; white-space: pre-wrap;"> 
+      { 
+       "@context":
+       {
+         "rdf":     "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+         "rdfs":    "http://www.w3.org/2000/01/rdf-schema#",
+         "owl":     "http://www.w3.org/2002/07/owl#",
+         "ldp":     "http://www.w3.org/ns/ldp#",
+         "xsd":     "http://www.w3.org/2001/XMLSchema#",
+         "dcterms": "http://purl.org/dc/terms/",
+         "foaf":    "http://xmlns.com/foaf/0.1/",
+         "wdrs":    "http://www.w3.org/2007/05/powder-s#",
+         "bt":      "http://example.org/vocab/bugtracker#"
+       }  
+      }
+  </pre>
+    <p>
+
+    </p>
+
+     <h2 id="ldp-concepts-in-a-glance">LDP concepts in a glance</h2>
+
+    <p>
+      A server hosting Linked Data Platform Resources (LDPRs) may manage two kinds of LDPRs: those resources whose state is represented using RDF (called LDP RDF Sources (LDP-RSs)), and those using other formats (called LDP Non-RDF Sources (LDP-NRs)) such as HTML files, images, other binary files, etc. Resoures respond to retrieval operations using HTTP GET. Often a description conveyed in the response document will describe a specific domain entity; Status, Friendship, Product, Order, Bug, etc. On the other hand, it might contain a description of a number of different concepts. The links contained in the descriptions lead to the subsequent discovery and processing of other resources. Affordances offered by the server make discoverable the forward paths in the application. Together the resources, links and associated affordances together specify what might be termed the API. 
+    </p>
+	<blockquote>
+    <p>Types of LDPRs:
+      <img src="images/resources.png" alt="LDPR image">
+    </p>
+	</blockquote>
+    <p>
+      The LDP protocol covers read and write interactions with Resources. Writable aspects include creation of new resources (using POST or PUT), updates (using PUT or PATCH), and deletion of resources. Resource creation is an essential feature providing structured creation of resources. Affordances published by the server show that some Resources can be used to create other Resources. This common pattern is often seen in cases where one resource is be made up of a number of others, e.g. a Document Store consists of Documents, a Bug Tracker consists of Bug Reports, a Photo Album consists of Photos, the Net Worth of a person consists of Assets and Liabilities. LDP defines creation for a special kind of Resource called a Container (LDPC), which is able to respond to requests to create new resources, in addition to the general mechanisms HTTP defines. During creation the created resource is added to its Container and a containment link between the Container and the new entry is made.
+    </p>
+    <p>
+      Therefore a LDPC is a specialization of a LDP-RS representing a collection of links to LDPRs or information resources [<cite><a class="bibref" href="#bib-WEBARCH">WEBARCH</a></cite>] that responds to client requests for creation, modification, and/or enumeration of its linked members and documents. The simplest container is the Basic Container (LDP-BC). It defines the basic containment described using a generic vocabulary. This can be used in a generic storage service to manage a containment hierarchy of arbitrary resources.
+    </p>
+    <figure id="fig-bc">
+      <img src="images/bc.png" alt="..">
+      <figcaption>Fig. <span class="figno">1</span> <span class="fig-title">Generic document storage using a Basic Container.</span></figcaption>
+    </figure>
+    <p>
+      Such servers do not impose any restriction on LDPRs and generally act as storage systems without any domain specific application logic and vocabularies. The <a href="#docstore">first scenario in this document</a> concerns a document storage system based on Basic Containers.
+    </p>
+    <p>
+      A Direct Container is a specialisation of a Basic Container. Additional assertions called membership triples which use a domain-specific vocabulary are made by a Direct Container as part of the creation process. The membership triples augment the containment triples maintained by all containers. For example, one aspect of a Product inventory system concerns the how a Direct Container is used for the management of a Product portfolio, where use of existing vocabularly is preferable.  
+    </p>
+    <figure id="fig-dc1">
+      <img src="images/dc1.png" alt="..">
+      <figcaption>Fig. <span class="figno">2</span> <span class="fig-title">Using domain vocabularly with a Direct container.</span></figcaption>
+    </figure>
+    <p>
+      Direct Container membership triples can be about subjects other than the Container resource. An example is a Photo management application where a Photo Container is used for the management of Photos, and where membership triples then express the relationship between a User and a Photo. 
+    </p>
+    <figure id="fig-dc_photos">
+      <img src="images/dc_photos.png" alt="..">
+      <figcaption>Fig. <span class="figno">3</span> <span class="fig-title">Membership triples with a non-Container subject.</span></figcaption>
+    </figure>
+    <p>
+      Another common pattern is where different facets of a Resource be managed using multiple Containers. For example, a Bug Report is has an associated list of Comments as well as supportive media resources.
+    </p>
+    <figure id="fig-dc_bugs">
+      <img src="images/dc_bugs.png" alt="..">
+      <figcaption>Fig. <span class="figno">4</span> <span class="fig-title">Managing multiple facets of a Bug with two Direct Containers.</span></figcaption>
+    </figure>
+    <p>
+      One important usage concerns using LDP to expose the data and services of existing applications. These systems impose restrictions on LDPRs since the LDP interactions should consider the constraints of the underlying business logic and data model. The <a href="#bugtracker">bug tracker example</a> presented in the latter part of this primer is an example of an application specific LDP server.
+    </p>
+
+    <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_1"><span>Note</span></div><p class="">
+      Formal definitions of the terms LDPR, LDPC, and other concepts introduced by LDP can be found in the 'Terminology' section of the Linked Data Platform 1.0 specification [<cite><a class="bibref" href="#bib-LDP">LDP</a></cite>]
+    </p></div>
+
+    <p>
+      The following provide a set of examples to show the Linked Data Platform interactions. Note, this is a primer and should not be considered as a canonical example of ideal LDP modeling.
+    </p>
+
+  </section>
+
+  <section id="docstore" typeof="bibo:Chapter" resource="#docstore" rel="bibo:Chapter">
+    <!--OddPage--><h2 aria-level="1" role="heading" id="h2_docstore"><span class="secno">2. </span>Online document store example (LDP Basics)</h2>
+
+    <p>
+      This section provides a set of examples of using an online document store application. These examples will demonstrate the behaviour of both types of LDPRs and LDP Basic Containers. Registration with the online document store application by a user results in some data storage space (a root Basic Container) where the application's web resources are stored. Using this root Basic Container a user can create new documents and also child containers to further organize her documents stored in this application.
+    </p>
+    <p>
+      APIs of web applications are commonly documented by listing valid operations which can operate on URLs, where the URLs are described as templates. A description of our exemplary LDP based document store is in the following table. We note with emphasis that it is important for servers to use links as the main mechanism to reveal the location of resources. If it would be necessary to encode such templates into client applications, this would be a strong indicator that the design breaches a number of good design principles. </p>
+    <p></p>
+
+    <table class="simple">
+      <thead>
+        <tr><th>Path</th>
+        <th>Method</th>
+        <th>Description</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td rowspan="5">/{username}/</td>
+          <td>GET</td>
+          <td>Lists all the documents in the root container.</td>
+        </tr>
+        <tr>
+          <td>POST</td>
+          <td>Create a new document under the root container.</td>
+        </tr>
+        <tr>
+          <td>PUT</td>
+          <td>Update the description and/or list of files of the root container.</td>
+        </tr>
+        <tr>
+          <td>PATCH</td>
+          <td>Update the description and/or list of files of the root container.</td>
+        </tr>
+        <tr>
+          <td>DELETE</td>
+          <td>Not allowed.</td>
+        </tr>
+        <tr>
+          <td class="col1" rowspan="5">
+            <div class="code">/{username}/{{document}/}*</div>
+          </td>
+          <td>GET</td>
+          <td>Retrieve the document.</td>
+        </tr>
+        <tr>
+          <td>POST</td>
+          <td>Discovered from the resource affordances.</td>
+        </tr>
+        <tr>
+          <td>PUT</td>
+          <td>Update the document.</td>
+        </tr>
+        <tr>
+          <td>PATCH</td>
+          <td>Partial update to the document if PATCH is supported.</td>
+        </tr>
+        <tr>
+          <td>DELETE</td>
+          <td>Delete the document.</td>
+        </tr>
+        <tr>
+          <td rowspan="2">
+            <div class="code">/*/*</div>
+          </td>
+          <td>OPTIONS</td>
+          <td>Discover the allowed operations over a resource</td>
+        </tr>
+        <tr>
+          <td>HEAD</td>
+          <td>Only retrieve meta-information about a resource</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      In this example, we will see how Alice, a user of this system, does read / write management of documents using the LDP protocol. A typical interaction with the system would start with Alice registering as a user. It is likely that registration would be a LDP based interaction, but this aspect is out of scope of this example. A consequence of the registration is allocation of space for the storage of documents, and communication of this URL to the user, e.g. a basic container at http://example.org/alice/. This section describes a typical flow of interactions where Alice firsts reads the root document and discovers its affordances. This is followed by subsequent examples of creation, update and delete, and finishes with how the client is able to create nested structure from the containers.  
+    </p>
+
+    <section id="filelookup" typeof="bibo:Chapter" resource="#filelookup" rel="bibo:Chapter">
+      <h3 aria-level="2" role="heading" id="h3_filelookup"><span class="secno">2.1 </span>Looking up a basic container (GET on an LDP-BC) </h3>
+
+      <p>First Alice looks up her storage by retrieving the LDP Basic Container assigned to her to hold her documents. Alice's LDP client does this by doing a GET request on the URI, http://example.org/alice/. </p>
+
+      <div class="example"><div class="example-title"><span>Example 1</span>: Request - basic container retrieval</div><div class="exxample"><div class="turtle" style="font-family: sans-serif;">Turtle:</div><div class="turtle"><pre>GET /alice/ HTTP/1.1
+Host: example.org
+Accept: text/turtle
+
+</pre></div><div class="jsonld" style="font-family: sans-serif; display: none;">JSON-LD:</div><div class="jsonld" style="display: none;"><pre>GET /alice/ HTTP/1.1
+Host: example.org
+Accept: application/ld+json</pre></div></div></div> 
+      
+      <p>As her document storage was just created, it is an empty container. </p>
+
+      <div class="example"><div class="example-title"><span>Example 2</span>: Response - basic container retrieval</div><div class="exxample"><div class="turtle" style="font-family: sans-serif;">Turtle:</div><div class="turtle"><pre>HTTP/1.1 200 OK 
+Content-Type: text/turtle; charset=UTF-8
+Link: &lt;http://www.w3.org/ns/ldp#BasicContainer&gt;; rel='type', &lt;http://www.w3.org/ns/ldp#Resource&gt;; rel='type'
+Allow: OPTIONS,HEAD,GET,POST,PUT,PATCH
+Content-Length: 250
+ETag: W/'123456789'
+	
+@prefix dcterms: &lt;http://purl.org/dc/terms/&gt;.
+@prefix ldp: &lt;http://www.w3.org/ns/ldp#&gt;.
+	
+&lt;http://example.org/alice/&gt; a ldp:Container, ldp:BasicContainer;
+  dcterms:title 'Alice’s data storage on the Web' .		
+
+</pre></div><div class="jsonld" style="font-family: sans-serif; display: none;">JSON-LD:</div><div class="jsonld" style="display: none;"><pre>HTTP/1.1 200 OK 
+Content-Type: application/ld+json; charset=UTF-8
+Link: &lt;http://www.w3.org/ns/ldp#BasicContainer&gt;; rel='type', &lt;http://www.w3.org/ns/ldp#Resource&gt;; rel='type'
+Allow: OPTIONS,HEAD,GET,POST,PUT,PATCH
+Content-Length: 270
+ETag: W/'123456789'
+	
+{
+  "@context": "https://dvcs.w3.org/hg/ldpwg/raw-file/default/ldp-primer/context.json",
+  "@id": "http://example.org/alice/",
+  "@type": [ "ldp:Container", "ldp:BasicContainer"],
+  "dcterms:title": "Alice’s data storage on the Web",
+}</pre></div></div></div> 
+      
+      <p> As shown in the example, in addition to the RDF representation of the Basic Container using the requested media type the server provides an etag of the resource representation and Link headers advertising that the requested resource is indeed an LDP Basic Container and it will support the LDP interaction model. </p>
+      
+		<p> In addition, the response also contains "Allow" header which advertises which HTTP operations are supported by this LDP Basic Container resource. In this example, it supports OPTIONS,HEAD,GET,POST,PUT,PATCH HTTP verbs.</p>      
+      
+      <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_2"><span>Note</span></div><p class="">The Linked Data Platform 1.0 specification [<cite><a class="bibref" href="#bib-LDP">LDP</a></cite>] says that all LDP servers <em class="rfc2119" title="MUST">MUST</em> support the Turtle media type for LDP-RS resources and <em class="rfc2119" title="SHOULD">SHOULD</em> support JSON-LD media type.</p></div>
+
+    </section>
+
+    <section id="discovering-the-affordances-options-on-an-ldp-bc">
+      <h3 aria-level="2" role="heading" id="h3_discovering-the-affordances-options-on-an-ldp-bc"><span class="secno">2.2 </span> Discovering the affordances (OPTIONS on an LDP-BC) </h3>
+
+      <p>
+		 In the previous example, we saw that Alice can discover what operations are allowed on a resource by doing a GET request on the resource. As an alternative, she can use the OPTIONS operation to learn of the permitted operations on any given resource.
+      </p>
+
+      <div class="example">
+        <div class="example-title"><span>Example 3</span>: Request - retreiving OPTIONS of a basic container</div>
+        <pre class="example">OPTIONS /alice/ HTTP/1.1
+Host: example.org      </pre>
+      </div> 
+
+      <div class="example"><div class="example-title"><span>Example 4</span>: Response - retreiving OPTIONS of a basic container</div><pre class="example">HTTP/1.1 204 OK
+Allow: OPTIONS,HEAD,GET,POST,PUT,PATCH
+Accept-Post: text/turtle, application/ld+json, image/bmp, image/jpeg
+Accept-Patch: example/patch
+Link: &lt;http://www.w3.org/ns/ldp#BasicContainer&gt;; rel='type'     </pre></div> 
+
+      <p>According to the response, HTTP operations {OPTIONS,HEAD, GET,POST,PUT,PATCH} are allowed on her root container. In addition to the allowed operations, Accept-Post and Accept-Patch provides which media types are supported by the respective operations. The rel="type" Link header advertises that this resource supports LDP protocol and it is an LDP Basic Container.</p>
+
+      <p>In this case, the response tells Alice's LDP client that this is an LDP-Basic Container and the container allows her to POST things of both RDF types (text/turtle, application/ld+json) and images (image/bmp and image/jpeg).</p>
+
+    </section>
+
+    <section id="creating-a-rdf-resource-post-an-rdf-resource-to-an-ldp-bc">
+      <h3 aria-level="2" role="heading" id="h3_creating-a-rdf-resource-post-an-rdf-resource-to-an-ldp-bc"><span class="secno">2.3 </span> Creating a RDF resource (POST an RDF resource to an LDP-BC) </h3> 
+
+      <p>
+        Alice can upload a social profile document to her store, by POSTing her FOAF personal profile document to her LDP-BC at the root of her document store. Note, the Slug header offers the server a hint about URL of the resource to be created.  
+      </p>
+      
+      <p> The FOAF document includes statements about the resource to be created and other resources relative to the resource to be created. According the LDP specification
+      Alice can use null relative URI (&lt;&gt;) in the request entity body to refer to resource to be created.
+      
+      </p>
+
+      <div class="example">
+        <div class="example-title"><span>Example 5</span>: Request - creating a RDF resource</div>
+        <div class="exxample">
+          <div class="turtle" style="font-family: sans-serif;">Turtle:</div><div class="turtle"><pre>POST /alice/ HTTP/1.1
+Host: example.org
+Slug: foaf
+Content-Type: text/turtle
+
+@prefix dc: &lt;http://purl.org/dc/terms/&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+
+&lt;&gt; a foaf:PersonalProfileDocument;
+    foaf:primaryTopic &lt;#me&gt; ;
+    dc:title 'Alice’s FOAF file' .
+
+&lt;#me&gt; a foaf:Person;
+    foaf:name 'Alice Smith'  .    
+
+</pre></div><div class="jsonld" style="font-family: sans-serif; display: none;">JSON-LD:</div><div class="jsonld" style="display: none;"><pre>POST /alice/ HTTP/1.1
+Host: example.org
+Slug: foaf
+Content-Type: application/ld+json
+
+{
+  "@context": "https://dvcs.w3.org/hg/ldpwg/raw-file/default/ldp-primer/context.json",
+  "@id": "",
+  "@type": "foaf:PersonalProfileDocument",
+  "foaf:primaryTopic": { 
+    "@id": "#me",
+    "@type": "foaf:Person",
+    "foaf:name" : "Alice Smith"
+  },
+  "dcterms:title": "Alice’s FOAF file"
+}
+</pre></div></div></div> 
+
+    
+
+   <div class="example"><div class="example-title"><span>Example 6</span>: Response - creating a RDF resource</div><pre class="example">HTTP/1.1 201 Created
+Location: http://example.org/alice/foaf
+Link: &lt;http://www.w3.org/ns/ldp#Resource&gt;; rel='type'
+Content-Length: 0 </pre></div>
+      <p> The response to the create request provides a Link to the newly created resource using the Location header. In this case, the server has honored the hint provided by the slug header and created the new resource in the URL http://example.org/alice/foaf. </p>
+      <p>Knowing the URL of the newly created resource, Alice can check the container again to confirm that the container correctly contains the newly created resource.</p>
+
+      <div class="example"><div class="example-title"><span>Example 7</span>: Request - basic container retrieval after resource created</div><pre class="example">GET /alice/ HTTP/1.1
+Host: example.org
+Accept: text/turtle, application/ld+json</pre></div>
+
+     <div class="example"><div class="example-title"><span>Example 8</span>: Response - basic container retrieval after resource created</div><div class="exxample"><div class="turtle" style="font-family: sans-serif;">Turtle:</div><div class="turtle"><pre>HTTP/1.1 200 OK 
+Content-Type: text/turtle; charset=UTF-8
+Link: &lt;http://www.w3.org/ns/ldp#BasicContainer&gt;; rel='type'
+Allow: OPTIONS,HEAD,GET,POST,PUT,PATCH
+Content- Length: 245
+ETag: W/'123456789'
+  
+@prefix dcterms: &lt;http://purl.org/dc/terms/&gt;.
+@prefix ldp: &lt;http://www.w3.org/ns/ldp#&gt;.
+  
+&lt;http://example.org/alice/&gt; a ldp:Container, ldp:BasicContainer;
+   dcterms:title 'Alice’s data storage on the Web' ;
+   ldp:contains &lt;http://example.org/alice/foaf&gt; . 
+
+</pre></div><div class="jsonld" style="font-family: sans-serif; display: none;">JSON-LD:</div><div class="jsonld" style="display: none;"><pre>HTTP/1.1 200 OK 
+Content-Type: application/ld+json; charset=UTF-8
+Link: &lt;http://www.w3.org/ns/ldp#BasicContainer&gt;; rel='type'
+Allow: OPTIONS,HEAD,GET,POST,PUT,PATCH
+Content- Length: 255
+ETag: W/'123456789'
+  
+{
+  "@context": "https://dvcs.w3.org/hg/ldpwg/raw-file/default/ldp-primer/context.json",
+  "@id": "http://example.org/alice/",
+  "@type": [ "ldp:Container", "ldp:BasicContainer"],
+  "dcterms:title": "Alice’s data storage on the Web",
+  "ldp:contains": { "@id": "http://example.org/alice/foaf" }
+}</pre></div></div></div></section>
+
+    <section id="creating-a-non-rdf-binary-resource-post-an-image-to-an-ldp-bc">
+      <h3 aria-level="2" role="heading" id="h3_creating-a-non-rdf-binary-resource-post-an-image-to-an-ldp-bc"><span class="secno">2.4 </span> Creating a non-RDF (binary) resource (POST an image to an LDP-BC) </h3> 
+
+      <p>Next, Alice wants to upload a photo of herself to the document storage. She can create an image by POSTing it in the same way she created the RDF document.</p>
+
+      <div class="example"><div class="example-title"><span>Example 9</span>: Request - creating a non-RDF resource</div><pre class="example">POST /alice/ HTTP/1.1
+Host: example.org
+Slug: avatar
+Link: &lt;http://www.w3.org/ns/ldp#Resource&gt;; rel="type"
+Content-Type: image/png
+Content- Length: 1020
+
+### binary data ###</pre></div> 
+
+      <div class="example"><div class="example-title"><span>Example 10</span>: Response - creating a non-RDF resource</div><pre class="example">HTTP/1.1 201 Created
+Location: http://example.org/alice/avatar
+Link: &lt;http://www.w3.org/ns/ldp#Resource&gt;; rel="type"
+Link: &lt;http://example.org/alice/avatar/meta&gt;; rel="describedby"
+Content-Length: 0   </pre></div> 
+   
+      <p> </p>
+
+      <p>The outcome of creating a non-RDF is similar to creating a RDF resource. If successful, the server will return a 201 success code with a Location header that points to the created resource. Furthermore, in the case of binary resources the server may create an additional file to maintain the metadata about the binary file. In the above example, the server creates a new LDP-RS to maintain metadata about the binary resource such as creation date, owner, etc. and this metadata resource is advertised using a Link header with the relation "describedby". </p>
+      
+      <p> Similar to creating a RDF resource (LDP-RS), a containment triple will be added to the container when a non-RDF (LDP-NR) is created. Thus, the representation of the LDP container after creating the image looks like the following. </p>
+      <div class="example"><div class="example-title"><span>Example 11</span>: Container representation after the non-RDF resource creation</div><div class="exxample"><div class="turtle" style="font-family: sans-serif;">Turtle:</div><div class="turtle"><pre>@prefix dcterms: &lt;http://purl.org/dc/terms/&gt;.
+@prefix ldp: &lt;http://www.w3.org/ns/ldp#&gt;.
+  
+&lt;http://example.org/alice/&gt; a ldp:Container, ldp:BasicContainer;
+   dcterms:title 'Alice’s data storage on the Web' ;
+   ldp:contains &lt;http://example.org/alice/foaf&gt; , &lt;http://example.org/alice/avatar&gt; . 
+
+</pre></div><div class="jsonld" style="font-family: sans-serif; display: none;">JSON-LD:</div><div class="jsonld" style="display: none;"><pre>  
+{
+  "@context": "https://dvcs.w3.org/hg/ldpwg/raw-file/default/ldp-primer/context.json",
+  "@id": "http://example.org/alice/",
+  "@type": [ "ldp:Container", "ldp:BasicContainer"],
+  "dcterms:title": "Alice’s data storage on the Web",
+  "ldp:contains": [{ "@id": "http://example.org/alice/foaf" }, { "@id": "http://example.org/alice/avatar" } ]
+}</pre></div></div></div> 
+    </section>
+
+    <section id="update-a-rdf-ldp-resource-put-on-an-ldp-rs">
+      <h3 aria-level="2" role="heading" id="h3_update-a-rdf-ldp-resource-put-on-an-ldp-rs"><span class="secno">2.5 </span> Update a RDF LDP resource (PUT on an LDP-RS) </h3> 
+
+      <p>After creating the image as shown in the previous example, Alice now wants to update her FOAF profile with a link to the image. After retrieving her FOAF profile using a HTTP GET operation, she uses HTTP PUT to update the document by amending the RDF with a link to her photo.</p>
+      <p> In this example, Alice's LDP client sends the E-tag of the resource representation that it retrieved previously to prevent any lost update problems. </p>
+      <div class="example"><div class="example-title"><span>Example 12</span>: Request - updating a RDF resource</div><div class="exxample"><div class="turtle" style="font-family: sans-serif;">Turtle:</div><div class="turtle"><pre>PUT /alice/foaf HTTP/1.1
+Host: example.org
+If-Match: W/"123454321"
+Content-Type: text/turtle
+
+@prefix dc: &lt;http://purl.org/dc/terms/&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+
+&lt;&gt; a foaf:PersonalProfileDocument;
+    foaf:primaryTopic &lt;#me&gt; ;
+    dc:title "Alice’s FOAF file" .
+
+&lt;#me&gt; a foaf:Person;
+    foaf:name "Alice Smith"  ;
+    foaf:img &lt;http://example.org/alice/avatar&gt; .
+      
+</pre></div><div class="jsonld" style="font-family: sans-serif; display: none;">JSON-LD:</div><div class="jsonld" style="display: none;"><pre>{
+  "@context": "https://dvcs.w3.org/hg/ldpwg/raw-file/default/ldp-primer/context.json",
+  "@id": "",
+  "@type": "foaf:PersonalProfileDocument",
+  "foaf:primaryTopic": { 
+    "@id": "#me",
+    "@type": "foaf:Person",
+    "foaf:name" : "Alice Smith",
+    "foaf:img" : { "@id": "http://example.org/alice/avatar" }
+  },
+  "dcterms:title": "Alice’s FOAF file"
+}</pre></div></div></div> 
+
+      <div class="example"><div class="example-title"><span>Example 13</span>: Response - updating a RDF resource</div><pre class="example">HTTP/1.1 204 No Content 
+Link: &lt;http://www.w3.org/ns/ldp#Resource&gt;; rel="type" </pre></div>
+
+      <p>If the operation is successful as shown above, the document will be updated with new information.</p>
+      
+      <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_3"><span>Note</span></div><p class=""> Alice can also use the PATCH operation to update the resource.</p></div>
+
+    </section>
+
+    <section id="deleting-a-resource-delete-on-an-ldpr">
+      <h3 aria-level="2" role="heading" id="h3_deleting-a-resource-delete-on-an-ldpr"><span class="secno">2.6 </span> Deleting a resource (DELETE on an LDPR) </h3> 
+
+      <p>If Alice decides to delete the image, she can do that with a delete operation.</p>
+      
+      <p>Similar to the previous update operation, Alice uses the etag of the resource representation she retrieved with If-Match header to do a conditional delete to ensure that the resource state
+      was not changed since she decided to delete it. </p>
+
+      <div class="example"><div class="example-title"><span>Example 14</span>: Request - deleting a RDF resource</div><pre class="example">DELETE /alice/avatar HTTP/1.1
+Host: example.org
+If-Match: W/"123454322"        </pre></div> 
+
+      <div class="example"><div class="example-title"><span>Example 15</span>: Response - deleting a RDF resource</div><pre class="example">HTTP/1.1 204 No Content </pre></div>
+   
+     <p> As well as deleting the resource, the server removes the containment triple from the container. For example, a subsequent GET request on the container will return a graph isomorphic to the one shown in the following representation::</p>
+     
+     <div class="example"><div class="example-title"><span>Example 16</span>: Container representation after resource deletion</div><div class="exxample"><div class="turtle" style="font-family: sans-serif;">Turtle:</div><div class="turtle"><pre>@prefix dcterms: &lt;http://purl.org/dc/terms/&gt;.
+@prefix ldp: &lt;http://www.w3.org/ns/ldp#&gt;.
+  
+&lt;http://example.org/alice/&gt; a ldp:Container, ldp:BasicContainer;
+   dcterms:title 'Alice’s data storage on the Web' ;
+   ldp:contains &lt;http://example.org/alice/foaf&gt; . 
+
+</pre></div><div class="jsonld" style="font-family: sans-serif; display: none;">JSON-LD:</div><div class="jsonld" style="display: none;"><pre>  
+{
+  "@context": "https://dvcs.w3.org/hg/ldpwg/raw-file/default/ldp-primer/context.json",
+  "@id": "http://example.org/alice/",
+  "@type": [ "ldp:Container", "ldp:BasicContainer"],
+  "dcterms:title": "Alice’s data storage on the Web",
+  "ldp:contains": { "@id": "http://example.org/alice/foaf" }
+}</pre></div></div></div> 
+     
+     <p> For any subsequent request on the deleted resource, the server will respond with the appropriate HTTP response code. </p>
+      <div class="example"><div class="example-title"><span>Example 17</span>: Request - after deletion</div><pre class="example">GET /alice/avatar HTTP/1.1
+Host: example.org
+Accept: image/png</pre></div>
+     
+      <div class="example"><div class="example-title"><span>Example 18</span>: Response - after deletion</div><pre class="example">HTTP/1.1 410 Gone </pre></div>     
+    </section>
+
+    <section typeof="bibo:Chapter" resource="#meta-structure" rel="bibo:Chapter" id="structural-manipulation-child-containers">
+      <h3 id="meta-structure" aria-level="2" role="heading"><span class="secno">2.7 </span>Structural Manipulation (Child Containers)</h3>
+      <p>In order for the client to introduce hierarchy to the management of documents, the document store allows creation of documents which are containers. That enables Alice to create a container hierarchy to organise her documents. This can be done by POSTing (a child) container representation to a (parent) container. This enables Alice to create a child container which she intends to use for image storage.
+      </p>
+
+    <figure id="fig-bcs">
+      <img src="images/bcs.png" alt="..">
+      <figcaption>Fig. <span class="figno">5</span> <span class="fig-title">Child Containers inside a Basic Container.</span></figcaption>
+    </figure>
+
+      <div class="example"><div class="example-title"><span>Example 19</span>: State of Alice's document store before creating the photo (child) container</div><div class="exxample"><div class="turtle" style="font-family: sans-serif;">Turtle:</div><div class="turtle"><pre>@prefix ldp: &lt;http://www.w3.org/ns/ldp#&gt; .
+@prefix dcterms: &lt;http://purl.org/dc/terms/&gt; .
+
+&lt;http://example.org/alice/&gt; a ldp:Container, ldp:BasicContainer ;
+    dcterms:title "Alice’s data storage on the Web" ;
+    ldp:contains &lt;http://example.org/alice/foaf&gt; .
+    
+</pre></div><div class="jsonld" style="font-family: sans-serif; display: none;">JSON-LD:</div><div class="jsonld" style="display: none;"><pre>{
+  "@context": "https://dvcs.w3.org/hg/ldpwg/raw-file/default/ldp-primer/context.json",
+  "@id": "http://example.org/alice/",
+  "@type": [ "ldp:Container", "ldp:BasicContainer"],
+  "dcterms:title": "Alice’s data storage on the Web",
+  "ldp:contains": { "@id": "http://example.org/alice/foaf" }
+}</pre></div></div></div>  
+
+      <p>To create a new container for managing photos, Alice POSTs a representation of a container (LDP-BC) to the root container. Alice express her intention that the newly created resource should be an LDP Basic Container by including a Link header in the request with the relationship 'type'. </p>
+      <div class="example"><div class="example-title"><span>Example 20</span>: Request - creating a new container</div><div class="exxample"><div class="turtle" style="font-family: sans-serif;">Turtle:</div><div class="turtle"><pre>POST alice/ HTTP/1.1
+Host: example.org
+Content-Type: text/turtle
+Link: &lt;http://www.w3.org/ns/ldp/BasicContainer&gt;; rel='type'
+Slug: photos
+
+@prefix ldp: &lt;http://www.w3.org/ns/ldp#&gt; .
+@prefix dcterms: &lt;http://purl.org/dc/terms/&gt; .
+ 
+&lt;&gt; a ldp:Container, ldp:BasicContainer;
+   dcterms:title "Photos of Alice" ; 
+   dcterms:description "This container will contain photos of Alice." .  
+   
+</pre></div><div class="jsonld" style="font-family: sans-serif; display: none;">JSON-LD:</div><div class="jsonld" style="display: none;"><pre>POST alice/ HTTP/1.1
+Host: example.org
+Content-Type: application/ld+json
+Link: &lt;http://www.w3.org/ns/ldp/BasicContainer&gt;; rel='type'
+Slug: photos
+
+{
+  "@context": "https://dvcs.w3.org/hg/ldpwg/raw-file/default/ldp-primer/context.json",
+  "@id": "",
+  "@type": [ "ldp:Container", "ldp:BasicContainer"],
+  "dcterms:title": "Photos of Alice" ,
+  "dcterms:description": "This container will contain photos of Alice."
+}</pre></div></div></div>  
+      <p>If the create is successful, the server responds with location of the newly created container for the photos.</p>
+      <div class="example"><div class="example-title"><span>Example 21</span>: Response - creating the new container</div><pre class="example">HTTP/1.1 201 Created
+Location: http://example.org/alice/photos/
+Content-Length: 0  </pre></div>  
+
+      <p>After creation of this new container, the parent container will look like</p>
+      <div class="example"><div class="example-title"><span>Example 22</span>: State of Alice's document store after creating the photo (child) container</div><div class="exxample"><div class="turtle" style="font-family: sans-serif;">Turtle:</div><div class="turtle"><pre>@prefix ldp: &lt;http://www.w3.org/ns/ldp#&gt; .
+@prefix dcterms: &lt;http://purl.org/dc/terms/&gt; .
+
+&lt;http://example.org/alice/&gt; a ldp:Container, ldp:BasicContainer ;
+    dcterms:title "Alice’s data storage on the Web";
+    ldp:contains &lt;http://example.org/alice/foaf&gt; , &lt;http://example.org/alice/photos/&gt; .
+    
+</pre></div><div class="jsonld" style="font-family: sans-serif; display: none;">JSON-LD:</div><div class="jsonld" style="display: none;"><pre>{
+  "@context": "https://dvcs.w3.org/hg/ldpwg/raw-file/default/ldp-primer/context.json",
+  "@id": "http://example.org/alice/",
+  "@type": [ ldp:Container, ldp:BasicContainer ],
+  "dcterms:title": "Alice’s data storage on the Web",
+  "ldp:contains": [
+     { "@id": "http://example.org/alice/foaf" },
+     { "@id": "http://example.org/alice/photos/" }
+   ]
+}</pre></div></div></div> 
+      <p>and the photo container will look like the following.</p>
+      <div class="example"><div class="example-title"><span>Example 23</span>: State of Alice's newly created photo container</div><div class="exxample"><div class="turtle" style="font-family: sans-serif;">Turtle:</div><div class="turtle"><pre>@prefix ldp: &lt;http://www.w3.org/ns/ldp#&gt; .
+@prefix dcterms: &lt;http://purl.org/dc/terms/&gt; .
+
+&lt;http://example.org/alice/photos/&gt; a ldp:Container, ldp:BasicContainer;
+  dcterms:title "Photos of Alice" ;
+  dcterms:description "This container will contain photos of Alice." .  
+   
+</pre></div><div class="jsonld" style="font-family: sans-serif; display: none;">JSON-LD:</div><div class="jsonld" style="display: none;"><pre>{
+  "@context": "https://dvcs.w3.org/hg/ldpwg/raw-file/default/ldp-primer/context.json",
+  "@id": "/app/product2/",
+  "@type": [ "ldp:Container", "ldp:BasicContainer"],
+  "dcterms:title": "Photos of Alice",
+  "dcterms:description": "This container will contain photos of Alice."
+}
+
+
+
+  </pre></div></div></div> 
+
+    </section> 
+
+  </section>
+
+  <section id="bugtracker" typeof="bibo:Chapter" resource="#bugtracker" rel="bibo:Chapter">
+    <!--OddPage--><h2 aria-level="1" role="heading" id="h2_bugtracker"><span class="secno">3. </span>Bug Tracker Example (LDP Direct containers)</h2>
+
+    <p>The previous section provided practical examples of basic LDP interactions using LDP Basic Containers. One of the limitations of LDP Basic Containers is that a fixed LDP vocabulary is used to assert the relations between a container and its contained resources. However, some scenarios require domain specific vocabulary to be used to list the members of a container. For example, an application which already used Linked Data and its own vocabulary may like to continue using the same vocabulary when migrating to LDP protocol. LDP Direct containers introduce the concept of membership triples allowing the flexibility to define the form of the membership. One of these flexibility points is the ability to select the predicate of the membership triple which can be from a domain-specific vocabulary. This is done using the ldp:hasMemberRelation or ldp:isMemberOfRelation predicate of the Direct Containers.</p>
+
+    <p>In addition, in some scenarios it is necessary to add relationships between the newly created resource and some other resource (which is not necessarily the container or another document / information resource). This allows to define relationship between any other information resource or non-information resource (real world thing) by defining the membership constant subject or the object URI of the membership triples using ldp:membershipResource predicate of the Direct Container. The usage of the ldp:hasMemberRelation predicate as well as the ldp:membershipResource will be explained in the following examples. </p>
+
+    <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_4"><span>Note</span></div><p class="">For more information on information resources (documents) vs real world entities (things) separation please refer to <a href="http://www.w3.org/TR/webarch/#id-resources">Web Arch (Section 2.2. URI/Resource Relationships) </a>, , <a href="http://www.w3.org/TR/cooluris/#semweb">Cool URIs (Section 3. URIs for Real-World Objects)</a>, <a href="http://www.w3.org/TR/urls-in-data/#landing-pages">URLs in Data (Section 3. Landing Pages and Records)</a>.</p></div>
+
+    <p>
+      The examples in this section will revolve around a very simple Bug Tracker application. Bug Tracker application records the bugs of several products allowing reporting, updating and deleting bugs and products. In contrast to the online document store example, the bug tracker wants to use an existing domain vocabulary, e.g. has_bug, to express membership relationships in the containers. LDP provides the additional interaction capability in the protocol to add the domain specific triples based on the properties defined in the LDP Direct Container.
+    </p>
+
+    <p>A RESTful API for a simple Bug Tracker system might be described as follows.</p>
+
+    <table class="simple">
+      <thead>
+        <tr><th>Path</th>
+        <th>Method</th>
+        <th>Description</th>
+      </tr></thead>
+      <tbody>
+        <!--tr>
+        <td rowspan="5">/tracker/</td>
+        <td>GET</td>
+        <td>Lists all the product descriptions.</td>    
+      </tr>
+      <tr>
+        <td>POST</td>
+        <td>Create a new product description.</td>    
+      </tr>
+      <tr>
+        <td>PUT</td>
+        <td>Update the app description and/or list of product descriptions</td>   
+      </tr>
+      <tr>
+        <td>PATCH</td>
+        <td>Update the app description and/or list of product descriptions</td>   
+      </tr>
+      <tr>
+        <td>DELETE</td>
+        <td>Not allowed.</td>   
+      </tr-->
+        <tr>
+          <td class="col1" rowspan="5">
+            <div class="code">/tracker/{product-id}/</div>
+          </td>
+          <td>GET</td>
+          <td>Lists the product description and bug reports associated with a product.</td>
+        </tr>
+        <tr>
+          <td>POST</td>
+          <td>Create a new bug report associated with a product.</td>
+        </tr>
+        <tr>
+          <td>PUT</td>
+          <td>Update the project description.</td>
+        </tr>
+        <tr>
+          <td>PATCH</td>
+          <td>Not supported.</td>
+        </tr>
+        <tr>
+          <td>DELETE</td>
+          <td>Delete the project description and associated bug reports.</td>
+        </tr>
+        <tr>
+          <td rowspan="5">
+            <div class="code">/tracker/{product-id}/{bug-id}</div>
+          </td>
+          <td>GET</td>
+          <td>Gets the bug report.</td>
+        </tr>
+        <tr>
+          <td>POST</td>
+          <td>Not supported.</td>
+        </tr>
+        <tr>
+          <td>PUT</td>
+          <td>Update the bug report.</td>
+        </tr>
+        <tr>
+          <td>PATCH</td>
+          <td>Not supported.</td>
+        </tr>
+        <tr>
+          <td>DELETE</td>
+          <td>Delete the bug report.</td>
+        </tr>
+        <tr>
+          <td rowspan="2">
+            <div class="code">/tracker/*/*</div>
+          </td>
+          <td>OPTIONS</td>
+          <td>Discover the allowed operations over a resource</td>
+        </tr>
+        <tr>
+          <td>HEAD</td>
+          <td>Only retrieve meta information about a resource</td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <p> In the examples in this section, we will only focus on the container representation, creation and deletion of resources because that is where the Basic Containers, Direct Containers, and Indirect Containers differ. Other operations such as updating a resource would be similar to what was illustrated in the previous example.</p>
+
+    <section id="navandret" typeof="bibo:Chapter" resource="#navandret" rel="bibo:Chapter">
+      <h3 aria-level="2" role="heading" id="h3_navandret"><span class="secno">3.1 </span>Navigation and Retrieval (GET on an LDP-DC)</h3>
+
+      <p>One of the main use cases of the example bug tracker is to list a given product's bugs. Assuming that a user got a URL of a product by out of band means, she can look it up to get more information including the bugs associated with it. To get the description of the product, a user (or her LDP client) can do a GET request on the URI of the known product resource. LDPR servers must provide text/turtle representations of the requested LDPRs and may provide other RDF format representations such as JSON-LD or RDF/XML using standard HTTP content negotiation.</p>
+      <div class="example"><div class="example-title"><span>Example 24</span>: Request - Product Lookup</div><div class="exxample"><div class="turtle" style="font-family: sans-serif;">Turtle:</div><div class="turtle"><pre>GET /tracker/ldp-demo/ HTTP/1.1
+Host: example.org
+Accept: text/turtle; charset=UTF-8
+
+</pre></div><div class="jsonld" style="font-family: sans-serif; display: none;">JSON-LD:</div><div class="jsonld" style="display: none;"><pre>GET /tracker/ldp-demo/ HTTP/1.1
+Host: example.org
+Accept: application/ld+json; charset=UTF-8</pre></div></div></div>
+      <p>If the product resource is available, the server responds with the RDF representation of the Direct Container that corresponds to the given product using the requested media type,
+        <code>text/turtle</code> or <code>application/ld+json</code> in this case.</p>
+      <div class="example"><div class="example-title"><span>Example 25</span>: Response - Product Lookup</div><div class="exxample"><div class="turtle" style="font-family: sans-serif;">Turtle:</div><div class="turtle"><pre>HTTP/1.1 200 OK 
+Content-Type: text/turtle; charset=UTF-8
+Link: &lt;http://www.w3.org/ns/ldp#DirectContainer&gt;; rel="type",  &lt;http://www.w3.org/ns/ldp#Resource&gt;; rel='type'
+Allow: OPTIONS,HEAD,GET,POST,PUT,PATCH
+Content-Length: 246  
+ETag: W/"123456789"
+
+@prefix ldp: &lt;http://www.w3.org/ns/ldp#&gt; .
+@prefix dcterms: &lt;http://purl.org/dc/terms/&gt; .
+@prefix bt: &lt;http://example.org/vocab/bugtracker#&gt; .
+
+&lt; &gt; ldp:DirectContainer;
+  ldp:membershipResource &lt;#it&gt;;
+  ldp:hasMemberRelation bt:hasBug;
+  dcterms:title "Product description of LDP Demo product which is also an LDP-DC";
+  ldp:contains &lt;bug3&gt;, &lt;bug4&gt; .
+  
+&lt;#it&gt; a bt:Product;
+  dcterms:title "LDP Demo";
+  bt:hasBug &lt;bug3&gt;, &lt;bug4&gt; .
+</pre></div><div class="jsonld" style="font-family: sans-serif;">JSON-LD:</div><div class="jsonld"><pre>HTTP/1.1 200 OK 
+Content-Type: application/ld+json; charset=UTF-8
+Link: &lt;http://www.w3.org/ns/ldp#DirectContainer&gt;; rel="type",  &lt;http://www.w3.org/ns/ldp#Resource&gt;; rel='type'
+Allow: OPTIONS,HEAD,GET,POST,PUT,PATCH
+Content-Length: 315
+ETag: W/"123456789"
+
+{
+  "@id": "",
+  "@type": [ "ldp:DirectContainer", "bt:Product"],
+  "@context": "https://dvcs.w3.org/hg/ldpwg/raw-file/default/ldp-primer/context.json",
+  "dc:title": "Product description of LDP Demo product which is also an LDP-DC",
+  "ldp:contains": [{ "@id": "bug3"}, { "@id": "bug4"}],
+  "ldp:hasMemberRelation": "bt:hasBug",
+  "ldp:membershipResource": { "@id": "#it"}
+}
+{
+    "@id": "#it",
+    "@type": "bt:Product",
+    "dc:title": "LDP Demo",
+    "bt:hasBug": [{ "@id": "bug3"}, { "@id": "bug4"} ]
+}</pre></div></div></div>  
+
+      <p>The representation of the product contains both information about the product such as the title and the bugs associated with the product and information about the product description such as the title of the product description and other properties of the LDP Container. </p>
+      
+      <p>As you can see from the Link Header that is returned and the RDF representation of the container, this example uses an LDP Direct Container. LDP-DCs contain both containment triples and membership triples and  provide the flexibility to the applications to use domain specific vocabulary in the membership triples. For example, in the above example the LDP-DC manages the member relationship, (&lt;?productURI&gt;, bt:hasBug, &lt;?bugURI&gt;), using the application-specific vocabulary term, bt:hasBug. This is done by defining the ldp:hasMemberRelation predicate of the Direct Container to bt:hasBug (&lt;?directContainerURI&gt;, ldp:hasMemberRelation, bt:hasbug). </p>
+      
+    <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_5"><span>Note</span></div><p class=""> The Direct Container shown in the above example has the membership triple pattern ( membership-constant-URI , membership-predicate , member-derived-URI ) using ldp:hasMemberRelation where the constant membership resource is in the subject of the triple and the newly created resources will be added as the object of the triple. It is also possible for the Direct Container to have the membership triple pattern ( member-derived-URI , membership-predicate , membership-constant-URI ) using ldp:isMemberOfRelation predicate where the constant member resource will be the object of the triple and the newly created resource will be added as the subject of the triple. </p></div>
+      
+      <p> In addition, in this example the bugs are associated with the product resource (a non-information resource with a # URI) and not with the product description Direct Container itself. This is done by defining the ldp:membershipResource predicate of the LDP Direct Container as the product non-information resource URI (&lt;?directContainerURI&gt;, ldp:membershipResource, &lt;/tracker/product1/#it&gt;). By doing so one can define the subject of the membership triple any resource of interest.
+      </p>
+            
+      <p>The next example illustrates the behaviour of LDP Direct containers when new resources are created and how aforementioned predicates of the Direct Containers affect the interaction model of LDP.</p>
+
+
+      <!-- <p>Looking up a bug is similar to looking up a product. Based on links in the representation of the Product, the client uses GET to navigate to a known Bug resource.</p>
+
+        <pre class="example" title="Bug lookup request" 
+          data-include='bug_look_up_req.txt' data-oninclude='fixCode'></pre>
+        <p>The server responds with the representation of the bug.</p>
+                                <pre title="Bug lookup response"
+          class='example' data-include='bug_look_up_resp.txt'
+          data-oninclude='fixCode'></pre -->
+
+    </section>
+
+    <section typeof="bibo:Chapter" resource="#BugCreate" rel="bibo:Chapter" id="creation-post-a-resource-to-an-ldp-dc">
+      <h3 id="BugCreate" aria-level="2" role="heading"><span class="secno">3.2 </span>Creation (POST a resource to an LDP-DC)</h3>
+      <p>Continuing from the previous example, we can report a Bug against the "LDP Demo" product by creating a Bug report (an LDPR representing the bug) under the "LDP Demo" product description LDPC by posting a RDF representation of the Bug report to the LDPC associated with the product description.  </p>
+
+      <p> The bug report document includes statements about the resource to be created. According the LDP specification, a client can use null relative URI (&lt;&gt;) in the request entity body to refer to resource to be created.
+
+      </p><div class="example"><div class="example-title"><span>Example 26</span>: A request for creating a bug</div><div class="exxample"><div class="turtle" style="font-family: sans-serif;">Turtle:</div><div class="turtle"><pre>POST /tracker/ldp-demo/ HTTP/1.1
+Host: example.org
+Content-Type: text/turtle
+Link: &lt;http://www.w3.org/ns/ldp#Resource&gt;; rel="type"
+
+@prefix dcterms: &lt;http://purl.org/dc/terms/&gt; .
+@prefix bt: &lt;http://example.org/vocab/bugtracker#&gt; .
+ 
+&lt;&gt; a bt:BugReport;
+  dcterms:title "LDP Demo crashes when shutting down.";
+  dcterms:creator &lt;http://example.org/tracker/users/johndoe&gt; . 
+     
+</pre></div><div class="jsonld" style="font-family: sans-serif;">JSON-LD:</div><div class="jsonld"><pre>POST /tracker/ldp-demo/ HTTP/1.1
+Host: example.org
+Content-Type: application/ld+json
+Link: &lt;http://www.w3.org/ns/ldp#Resource&gt;; rel="type"
+
+{
+  "@context": "https://dvcs.w3.org/hg/ldpwg/raw-file/default/ldp-primer/context.json",
+  "@id": "",
+  "@type": "bt:BugReport",
+  "dcterms:title": "LDP Demo crashes when shutting down.",
+  "dcterms:creator": { "@id": "http://example.org/tracker/users/johndoe" }
+}</pre></div></div></div> 
+      <p>If the creation is successful, the server responds with location of the newly created resource.</p>
+      <div class="example"><div class="example-title"><span>Example 27</span>: A response of creating new a bug</div><pre class="example" data-oninclude="fixCode">HTTP/1.1 201 Created
+Location: http://example.org/tracker/ldp-demo/bug67
+Content-Length: 0           </pre></div>  
+
+      <p>If the creation fails, the server will respond with an appropriate status code depending on the error. If successful, the LDP Demo product description LDPC will have the following representation after the creation of new resource.</p>
+      <div class="example"><div class="example-title"><span>Example 28</span>: The state of the product LDPC after the bug creation</div><div class="exxample"><div class="turtle" style="font-family: sans-serif;">Turtle:</div><div class="turtle"><pre>@prefix ldp: &lt;http://www.w3.org/ns/ldp#&gt; .
+@prefix dcterms: &lt;http://purl.org/dc/terms/&gt; .
+@prefix bt: &lt;http://example.org/vocab/bugtracker#&gt; .
+
+&lt;/tracker/ldp-demo/&gt; ldp:DirectContainer;
+  ldp:membershipResource &lt;/tracker/ldp-demo/#it&gt;;
+  ldp:hasMemberRelation bt:hasBug;
+  dcterms:title "Product description of LDP Demo product which is also an LDP-DC";
+  ldp:contains &lt;bug3&gt;, &lt;bug4&gt; , &lt;bug67&gt; .
+  
+&lt;/tracker/ldp-demo/#it&gt; a bt:Product;
+  dcterms:title "LDP Demo";
+  bt:hasbug &lt;bug3&gt;, &lt;bug4&gt;, &lt;bug67&gt; .
+	
+</pre></div><div class="jsonld" style="font-family: sans-serif;">JSON-LD:</div><div class="jsonld"><pre>{
+  "@id": "/tracker/ldp-demo/",
+  "@type": [ "ldp:DirectContainer", "bt#Product"],
+  "@context": "https://dvcs.w3.org/hg/ldpwg/raw-file/default/ldp-primer/context.json",
+  "dc:title": "Product description of LDP Demo product which is also an LDP-DC",
+  "ldp:contains": [{ "@id": "/tracker/ldp-demo/bug3"}, { "@id": "/tracker/ldp-demo/bug4"}, { "@id": "/tracker/ldp-demo/bug67"}],
+  "ldp:hasMemberRelation": "bt:hasbug",
+  "ldp:membershipResource": { "@id": "/tracker/ldp-demo/#it"}
+}
+{
+  "@id": "/tracker/ldp-demo/#it",
+  "@type": "bt:Product",
+  "dc:title": "LDP Demo",
+  "bt:hasbug": [{ "@id": "/tracker/ldp-demo/bug3"}, { "@id": "/tracker/ldp-demo/bug4"}, { "@id": "/tracker/ldp-demo/bug67"} ]
+}</pre></div></div></div>
+      <p> As you can see two new triples are added to the container. That is (&lt;/tracker/ldp-demo/&gt;, &lt;ldp:contains&gt;, &lt;/tracker/ldp-demo/bug67&gt;) and 
+       (&lt;/tracker/ldp-demo/#it&gt;, &lt;bt:hasbug&gt;, &lt;/tracker/ldp-demo/bug67&gt;). The former is added in any type of container and the latter is defined by the direct 
+       container properties. </p>
+      <p>The created Bug resource will have the following representation. Note that server has added a server managed property, creation date (dcterms:created), and a default value for the state (bt:isInState) to the Bug in addition to what was POSTed.</p>
+      <div class="example"><div class="example-title"><span>Example 29</span>: The state of the bug LDPR</div><div class="exxample"><div class="turtle" style="font-family: sans-serif;">Turtle:</div><div class="turtle"><pre>@prefix dcterms: &lt;http://purl.org/dc/terms/&gt; .
+@prefix bt: &lt;http://example.org/vocab/bugtracker#&gt; .
+
+&lt;/tracker/ldp-demo/bug67&gt; a bt:Bug;
+  dcterms:title "Product A crashes when shutting down.";
+  dcterms:creator &lt;/tracker/users/johndoe&gt;;
+  dcterms:created "2013-05-05T10:00"^^xsd:dateTime;
+  bt:isInState "New" .
+     
+</pre></div><div class="jsonld" style="font-family: sans-serif;">JSON-LD:</div><div class="jsonld"><pre>{
+  "@context": "https://dvcs.w3.org/hg/ldpwg/raw-file/default/ldp-primer/context.json",
+  "@id": "/tracker/ldp-demo/bug67",
+  "dcterms:title": "Product A crashes when shutting down.",
+  "dcterms:creator": { "@id": "/tracker/users/johndoe" },
+  "dcterms:created": {
+    "@type": "http://www.w3.org/2001/XMLSchema#dateTime",
+    "@value": "2013-05-05T10:00:00"
+  },
+  "bt:isInState": "New"
+}</pre></div></div></div> 
+
+    </section>
+
+    <section typeof="bibo:Chapter" resource="#BugDelete" rel="bibo:Chapter" id="deletion-delete-on-an-ldpr-associated-with-an-ldp-dc">
+      <h3 id="BugDelete" aria-level="2" role="heading"><span class="secno">3.3 </span>Deletion (DELETE on an LDPR associated with an LDP-DC)</h3>
+      
+     This example illustrates the behaviour of a Direct Container when a resource is deleted.
+      
+      <div class="example"><div class="example-title"><span>Example 30</span></div><pre class="example">DELETE /tracker/ldp-demo/bug3 HTTP/1.1 
+Host: example.org
+If-Match: W/"123454322"</pre></div>
+      <p>If the  delete is successful, the server will respond with a success status code.</p>
+      <div class="example"><div class="example-title"><span>Example 31</span></div><pre class="example">HTTP/1.1 204 No Content</pre></div>  
+        
+       <p> After the deletion, the representation of the container will look like the following</p> 
+       
+       <div class="example"><div class="example-title"><span>Example 32</span>: The state of the product LDPC after the bug deletion</div><div class="exxample"><div class="turtle" style="font-family: sans-serif;">Turtle:</div><div class="turtle"><pre>@prefix ldp: &lt;http://www.w3.org/ns/ldp#&gt; .
+@prefix dcterms: &lt;http://purl.org/dc/terms/&gt; .
+@prefix bt: &lt;http://example.org/vocab/bugtracker#&gt; .
+
+&lt;/tracker/ldp-demo/&gt; a ldp:DirectContainer;
+  ldp:membershipResource &lt;/tracker/ldp-demo/#it&gt;;
+  ldp:hasMemberRelation bt:hasBug;
+  dcterms:title "Product description of LDP Demo product which is also an LDP-DC";
+  ldp:contains &lt;bug4&gt; , &lt;bug67&gt; .
+  
+&lt;/tracker/ldp-demo/#it&gt; a bt:Product;
+  dcterms:title "LDP Demo";
+  bt:hasBug &lt;bug4&gt;, &lt;bug67&gt; .
+	
+</pre></div><div class="jsonld" style="font-family: sans-serif;">JSON-LD:</div><div class="jsonld"><pre>{
+  "@id": "/tracker/ldp-demo/",
+  "@type": [ "ldp:DirectContainer", "bt:Product"],
+  "@context": "https://dvcs.w3.org/hg/ldpwg/raw-file/default/ldp-primer/context.json",
+  "dc:title": "Product A",
+  "ldp:contains": [{ "@id": "/tracker/ldp-demo/bug4"}, { "@id": "/tracker/ldp-demo/bug67"}],
+  "ldp:hasMemberRelation": "bt:hasBug",
+  "ldp:membershipResource": "#it"
+}
+{
+  "@id": "#it",
+  "@type": "bt:Product",
+  "bt:hasBug": [{ "@id": "/tracker/ldp-demo/bug4"}, { "@id": "/tracker/ldp-demo/bug67"} ]
+}
+
+
+</pre></div></div></div>
+       
+       <p> As seen from the LDP Direct Container representation above, both the containment triple (&lt;/tracker/ldp-demo/&gt;, ldp:contains, &lt;/tracker/ldp-demo/bug3&gt;) and the membership triple (&lt;/tracker/ldp-demo/#it&gt;, bt:hasBug, &lt;/tracker/ldp-demo/bug3&gt;) were removed from the container representation. </p>
+
+    </section>
+
+  </section>
+
+  <section id="bugtrackerextd" typeof="bibo:Chapter" resource="#bugtrackerextd" rel="bibo:Chapter">
+    <!--OddPage--><h2 aria-level="1" role="heading" id="h2_bugtrackerextd"><span class="secno">4. </span>Extended Bug Tracker Example (LDP Indirect containers)</h2>
+    
+    <p> In this next example, we will use the same scenario as in the previous example, but change the container type to a LDP Indirect Container to show the differences between LDP Direct Containers and Indirect Containers and when to use LDP Indirect Containers. Though LDP Direct Containers provide the flexibility to define the constant membership URI (the subject of the membership triple when using ldp:hasMemberRelation or the object of the membership triple when using ldp:isMemberOfRelation) and the membership predicate, when creating members the member derived URI is always the newly created document URL. LDP Indirect containers provide more flexibility by allowing the member derived URI to be any resource; it could be either a non-information resource or a document other than the newly created resource. This done by defining the predicate to look for in the representation of the resource to be created by setting the ldp:insertedContentRelation predicate of the LDP Indirect Container. How this done will be explained in the following examples. </p>
+
+    <section id="navandretext" typeof="bibo:Chapter" resource="#navandretext" rel="bibo:Chapter">
+      <h3 aria-level="2" role="heading" id="h3_navandretext"><span class="secno">4.1 </span>Navigation and Retrieval (GET on an LDP-IC) </h3>
+      
+      <p> Similar to the previous LDP-DC example, first we will retrieve the representation of the LDP Indirect Container.</p>
+      
+      <div class="example"><div class="example-title"><span>Example 33</span>: Product lookup request</div><div class="exxample"><div class="turtle" style="font-family: sans-serif;">Turtle:</div><div class="turtle"><pre>GET /tracker/ldp-demo/ HTTP/1.1
+Host: example.org
+Accept: text/turtle; charset=UTF-8
+
+</pre></div><div class="jsonld" style="font-family: sans-serif; display: none;">JSON-LD:</div><div class="jsonld" style="display: none;"><pre>GET /tracker/ldp-demo/ HTTP/1.1
+Host: example.org
+Accept: application/ld+json; charset=UTF-8</pre></div></div></div>
+      <p> As a response to the GET request, the server responds with the representation of the product description container.</p>
+      <div class="example"><div class="example-title"><span>Example 34</span>: HTTP response for product lookup</div><div class="exxample"><div class="turtle" style="font-family: sans-serif;">Turtle:</div><div class="turtle"><pre>HTTP/1.1 200 OK 
+Content-Type: text/turtle; charset=UTF-8
+Link: &lt;http://www.w3.org/ns/ldp#IndirectContainer&gt;; rel="type",  &lt;http://www.w3.org/ns/ldp#Resource&gt;; rel='type'
+Allow: OPTIONS,HEAD,GET,POST,PUT,PATCH
+Content-Length: 256
+ETag: W/"123456789"
+
+@prefix ldp: &lt;http://www.w3.org/ns/ldp#&gt; .
+@prefix dcterms: &lt;http://purl.org/dc/terms/&gt; .
+@prefix bt: &lt;http://example.org/vocab/bugtracker#&gt; .
+
+&lt;/tracker/ldp-demo/&gt; a ldp:IndirectContainer;
+  ldp:membershipResource &lt;#it&gt;;
+  ldp:hasMemberRelation bt:hasBug;
+  ldp:insertedContentRelation foaf:primaryTopic;
+  dcterms:title "Product description of LDP Demo product which is also an LDP-IC";
+  ldp:contains &lt;bug3&gt;, &lt;bug4&gt; .
+  
+&lt;#it&gt; a bt:Product;
+  dcterms:title "LDP Demo";
+  bt:hasBug &lt;bug3#it&gt;, &lt;bug4#it&gt; .
+</pre></div><div class="jsonld" style="font-family: sans-serif;">JSON-LD:</div><div class="jsonld"><pre>HTTP/1.1 200 OK 
+Content-Type: application/ld+json; charset=UTF-8
+Link: &lt;http://www.w3.org/ns/ldp#IndirectContainer&gt;; rel="type",  &lt;http://www.w3.org/ns/ldp#Resource&gt;; rel='type'
+Allow: OPTIONS,HEAD,GET,POST,PUT,PATCH
+Content-Length: 278
+ETag: W/"123456789"
+
+{
+  "@id": "/tracker/ldp-demo/",
+  "@type": [ "ldp:DirectContainer", "bt:Product"],
+  "@context": "https://dvcs.w3.org/hg/ldpwg/raw-file/default/ldp-primer/context.json",
+  "dc:title": "Product description of LDP Demo product which is also an LDP-IC",
+  "ldp:contains": [{ "@id": "/tracker/ldp-demo/bug3"}, { "@id": "/tracker/ldp-demo/bug4"}],
+  "ldp:hasMemberRelation": "bt:hasBug",
+  "ldp:membershipResource": "#it",
+  "ldp:insertedContentRelation": "foaf:primaryTopic",
+  
+}
+{
+    "@id": "#it",
+    "@type": "bt:Product",
+    "dc:title": "LDP Demo",
+    "bt:hasbug": [{ "@id": "/tracker/ldp-demo/bug3#it"}, { "@id": "/tracker/ldp-demo/bug4#it"} ]
+}</pre></div></div></div>  
+      
+    <p> Now the product container is a LDP Indirect container, which has one main difference: the container has an additional predicate called "ldp:insertedContentRelation". Further, the objects of the containment triples and the membership triples are not the same. While the object of the containment triple is the same (e.g. &lt;/tracker/ldp-demo/bug3&gt;, an information resource) the object of the membership triple is now  (e.g. &lt;/tracker/ldp-demo/bug3#it&gt;, a non-information resource or real world thing). This distinction is because of the ldp:insertedContentRelation definition. How this works will be explained in <a href="#creationext">the next example</a> on creating a new resource.  </p>
+
+    </section>
+    <!-- end navandretext -->
+
+    <section id="creationext" typeof="bibo:Chapter" resource="#creationext" rel="bibo:Chapter">
+      <h3 id="IndirectCreate" aria-level="2" role="heading"><span class="secno">4.2 </span>Creation (POST a resource to an LDP-IC) </h3>
+      
+      <p>Continuing from the previous example, we can create a new Bug Report against the 'LDP demo' product by creating a Bug Report LDPR under the 'LDP Demo' product description LDPC.</p>
+
+      <p>The client POSTs a representation of a Bug Report to the Bug Tracker LDPC.</p>
+      <div class="example"><div class="example-title"><span>Example 35</span>: A request for creating a bug</div><div class="exxample"><div class="turtle" style="font-family: sans-serif;">Turtle:</div><div class="turtle"><pre>POST /tracker/ldp-demo/ HTTP/1.1
+Host: example.org
+Content-Type: text/turtle
+
+@prefix dcterms: &lt;http://purl.org/dc/terms/&gt; .
+@prefix bt: &lt;http://example.org/vocab/bugtracker#&gt; .
+ 
+&lt;&gt; a bt:BugReport;
+   foaf:primaryTopic &lt;#it&gt;;
+   dcterms:title "Product A crashes when shutting down.";
+   dcterms:creator &lt;/tracker/ldp-demo/johndoe&gt; .
+     
+&lt;#it&gt; a bt:Bug .     
+     
+</pre></div><div class="jsonld" style="font-family: sans-serif;">JSON-LD:</div><div class="jsonld"><pre>POST /tracker/ldp-demo/ HTTP/1.1
+Host: example.org
+Content-Type: application/ld+json
+
+{
+  "@context": "https://dvcs.w3.org/hg/ldpwg/raw-file/default/ldp-primer/context.json",
+  "@id": "",
+  "@type": "bt:BugReport",
+  "foaf:primaryTopic": { "@id": "#it" },
+  "dcterms:title": "Product A crashes when shutting down.",
+  "dcterms:creator": { "@id": "/tracker/ldp-demo/johndoe" }
+}
+{
+    "@id": "#it",
+    "@type": "bt:Bug"
+}</pre></div></div></div> 
+      <p> One thing to note is that the representation of the resource to be created contains a triple (&lt; &gt;, foaf:primaryTopic , &lt;#it&gt;). If the create request is successful, the server responds with location of the newly created resource.</p>
+      <div class="example"><div class="example-title"><span>Example 36</span>: A response of creating new a bug</div><pre class="example" data-oninclude="fixCode">HTTP/1.1 201 Created
+Location: http://example.org/tracker/ldp-demo/bug67
+Content-Length: 0           </pre></div>        
+
+      <p>If the creation fails, the server will respond with an appropriate status code depending on the error. After the resource is creation, the Product A LDPC will have the following representation.</p>
+      <div class="example"><div class="example-title"><span>Example 37</span>: The state of the product LDPC after the bug creation</div><div class="exxample"><div class="turtle" style="font-family: sans-serif;">Turtle:</div><div class="turtle"><pre>@prefix ldp: &lt;http://www.w3.org/ns/ldp#&gt; .
+@prefix dcterms: &lt;http://purl.org/dc/terms/&gt; .
+@prefix bt: &lt;http://example.org/vocab/bugtracker#&gt; .
+
+&lt;/tracker/ldp-demo/&gt; ldp:IndirectContainer;
+  ldp:membershipResource &lt;/tracker/ldp-demo/#it&gt;;
+  ldp:hasMemberRelation bt:hasBug;
+  dcterms:title "Product description of LDP Demo product which is also an LDP-IC";
+  ldp:contains &lt;bug3&gt;, &lt;bug4&gt; , &lt;bug67&gt; .
+  
+&lt;#it&gt; a bt:Product;
+  dcterms:title "LDP Demo";
+  bt:hasBug &lt;bug3#it&gt;, &lt;bug4#it&gt;, &lt;bug67#it&gt; .
+	
+</pre></div><div class="jsonld" style="font-family: sans-serif;">JSON-LD:</div><div class="jsonld"><pre>{
+  "@id": "/tracker/ldp-demo/",
+  "@type": [ "ldp:IndirectContainer", "bt:Product"],
+  "@context": "https://dvcs.w3.org/hg/ldpwg/raw-file/default/ldp-primer/context.json",
+  "dc:title": "Product description of LDP Demo product which is also an LDP-IC",
+  "ldp:contains": [{ "@id": "/tracker/ldp-demo/bug3"}, { "@id": "/tracker/ldp-demo/bug3"}, { "@id": "/tracker/ldp-demo/bug67"}],
+  "ldp:hasMemberRelation": "bt:hasBug",
+  "ldp:membershipResource": "#it"
+}
+{
+    "@id": "/tracker/ldp-demo/#it",
+    "@type": "bt:Product",
+    "dc:title": "LDP Demo"
+    "bt:hasBug": [{ "@id": "/tracker/ldp-demo/bug3#it"}, { "@id": "/tracker/ldp-demo/bug3#it"}, { "@id": "/tracker/ldp-demo/bug67#it"} ]
+}</pre></div></div></div>
+      <p> As you can see, two new triples are added to the container. That is (&lt;/tracker/ldp-demo/&gt;, &lt;ldp:contains&gt;, &lt;/tracker/ldp-demo/bug67&gt;) and 
+       (&lt;/tracker/ldp-demo/#it&gt;, &lt;bt:hasbug&gt;, &lt;/tracker/ldp-demo/bug67#it&gt;). </p>      
+      
+    </section>
+    <!-- end creationext -->
+
+  </section>
+
+
+  <section id="security">
+    <!--OddPage--><h2 aria-level="1" role="heading" id="h2_security"><span class="secno">5. </span>Security</h2>
+    <p>It is not the focus of the Linked Data Platform WG to provide security mechanisms for read/write Linked Data applications; since LDP builds on HTTP, it can re-use any mechanism defined for HTTP. Though most of the security mechanisms that are applicable to general web applications are equally applicable to Linked Data applications, there is still some space to build security mechanisms specific to Linked Data applications by leveraging the Linked Data technologies and providing concrete security requirements for Linked Data applications. In this context, LDP WG has started to create a WG note on Access Control which aims to produce use cases for security scenarios of LDP applications that can be used as the input to a later initiative that will be focused on developing standard security mechanisms for LDP applications.</p>
+    <!-- TODO: link to Access Control Note -->
+  </section>
+
+  <section typeof="bibo:Chapter" resource="#ldpc" rel="bibo:Chapter" id="ldp-implementations">
+    <!--OddPage--><h2 id="ldpc" aria-level="1" role="heading"><span class="secno">6. </span>LDP Implementations</h2>
+    A list of implementations that plan to be LDP compliant is available in the LDP Implementations <a href="https://www.w3.org/wiki/LDP_Implementations">wiki page</a>. The <a href="http://www.w3.org/2012/ldp/hg/tests/reports/ldp.html">Linked Data Platform 1.0 - Implementation Reports</a> provide the coverage of the specification by each LDP implementation.
+  </section>
+
+  <section typeof="bibo:Chapter" resource="#next" rel="bibo:Chapter" id="what-to-read-next">
+    <!--OddPage--><h2 id="next" aria-level="1" role="heading"><span class="secno">7. </span>What To Read Next</h2>
+    The primer only provide an overview of the Linked Data Platform specifications. LDP WG has produced following documents that contribute to the Linked Data Platform specification.
+
+    <ul>
+      <li><a href="https://dvcs.w3.org/hg/ldpwg/raw-file/default/TR/ldp-ucr.html">Linked Data Platform Use Cases and Requirements</a> [<cite><a class="bibref" href="#bib-LDP-UCR">LDP-UCR</a></cite>]</li>
+      <li><a href="https://dvcs.w3.org/hg/ldpwg/raw-file/default/ldp.html">Linked Data Platform 1.0 specifcation</a> [<cite><a class="bibref" href="#bib-LDP">LDP</a></cite>]</li>
+      <li><a href="https://dvcs.w3.org/hg/ldpwg/raw-file/default/ldp-bp/ldp-bp.html">LDP Best Practices and Guidelines</a> [<cite><a class="bibref" href="#bib-LDP-BP">LDP-BP</a></cite>]</li>
+      <li><a href="https://dvcs.w3.org/hg/ldpwg/raw-file/tip/tests/ldp-testsuite.html">Linked Data Platform 1.0 Test Cases</a>[<cite><a class="bibref" href="#bib-LDP-TESTS">LDP-TESTS</a></cite>]</li>
+    </ul>
+
+  </section>
+  
+  	<section class="appendix" id="acknowledgements">
+		<!--OddPage--><h2 aria-level="1" role="heading" id="h2_acknowledgements"><span class="secno">A. </span>Acknowledgements</h2>
+		<p>Many thanks to John Arwe (IBM), Ashok Malhotra (Oracle), and Henry Story (Apache Software Foundation) for their thorough review on the LDP Primer document and proposed corrections. We also like to thank all members of the Linked Data Platform WG for the valuable feedback. </p>
+	</section>
+
+  <section class="appendix informative" id="history" typeof="bibo:Chapter" resource="#history" rel="bibo:Chapter">
+    <!--OddPage--><h2 aria-level="1" role="heading" id="h2_history"><span class="secno">B. </span>Change History</h2><p><em>This section is non-normative.</em></p>
+    <p>The change history is up to the editors to insert a brief summary of changes, ordered by most recent changes first and with heading from which public draft it has been changed from.
+    </p>
+    <ul>
+      <li>2014-06-16 - Addressing the comments and feedback provided by Ashok, John, and Henry.</li>
+      <li>2013-08-05 - Providing JSON-LD representations of the examples.</li>
+      <li>2013-07-03 - Moving the content from the wiki to the note.</li>
+    </ul>
+  </section>
+
+
+
+
+
+<!-- div id="respec-ui" class="removeOnSave" style="position: fixed; top: 20px; right: 20px; width: 202px; text-align: right;">
+<button style="background-color: rgb(255, 255, 255); font-weight: bold; border: 1px solid rgb(204, 204, 204); border-top-left-radius: 5px; border-top-right-radius: 5px; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px; background-position: initial initial; background-repeat: initial initial;">ReSpec</button>
+<div style="background-color: rgb(255, 255, 255); border: 1px solid rgb(0, 0, 0); width: 200px; display: none; text-align: left; margin-top: 5px; margin-right: 5px; background-position: initial initial; background-repeat: initial initial;">
+<button style="background-color: rgb(255, 255, 255); border-style: none none solid; border-bottom-width: 1px; border-bottom-color: rgb(204, 204, 204); width: 100%; text-align: left; font-size: inherit; background-position: initial initial; background-repeat: initial initial;">Save Snapshot</button>
+<button style="background-color: rgb(255, 255, 255); border-style: none none solid; border-bottom-width: 1px; border-bottom-color: rgb(204, 204, 204); width: 100%; text-align: left; font-size: inherit; background-position: initial initial; background-repeat: initial initial;">About ReSpec</button>
+<button style="background-color: rgb(255, 255, 255); border-style: none none solid; border-bottom-width: 1px; border-bottom-color: rgb(204, 204, 204); width: 100%; text-align: left; font-size: inherit; background-position: initial initial; background-repeat: initial initial;">Search Specref DB</button>
+</div>
+</div -->
+
+<section id="references" class="appendix" typeof="bibo:Chapter" resource="#references" rel="bibo:Chapter"><!--OddPage--><h2 aria-level="1" role="heading" id="h2_references"><span class="secno">C. </span>References</h2><section id="informative-references" typeof="bibo:Chapter" resource="#informative-references" rel="bibo:Chapter"><h3 aria-level="2" role="heading" id="h3_informative-references"><span class="secno">C.1 </span>Informative references</h3><dl class="bibliography" about=""><dt id="bib-LDP">[LDP]</dt><dd rel="dcterms:references">Steve Speicher; John Arwe; Ashok Malhotra. <a href="http://www.w3.org/TR/ldp/"><cite>Linked Data Platform 1.0</cite></a>. 11 March 2014. W3C Last Call Working Draft. URL: <a href="http://www.w3.org/TR/ldp/">http://www.w3.org/TR/ldp/</a>
+</dd><dt id="bib-LDP-BP">[LDP-BP]</dt><dd rel="dcterms:references">Cody Burleson; Miguel Esteban Gutiérrez; Nandana Mihindukulasooriya. <a href="http://www.w3.org/2012/ldp/hg/ldp-bp/ldp-bp.html"><cite>LDP Best Practices and Guidelines</cite></a>. W3C Working Draft. URL: <a href="http://www.w3.org/2012/ldp/hg/ldp-bp/ldp-bp.html">http://www.w3.org/2012/ldp/hg/ldp-bp/ldp-bp.html</a>
+</dd><dt id="bib-LDP-TESTS">[LDP-TESTS]</dt><dd rel="dcterms:references">Raúl García-Castro; Fernando Serena. <a href="http://www.w3.org/2012/ldp/hg/tests/ldp-testsuite.html"><cite>Linked Data Platform 1.0 Test Cases</cite></a>. W3C Working Draft. URL: <a href="http://www.w3.org/2012/ldp/hg/tests/ldp-testsuite.html">http://www.w3.org/2012/ldp/hg/tests/ldp-testsuite.html</a>
+</dd><dt id="bib-LDP-UCR">[LDP-UCR]</dt><dd rel="dcterms:references">Steve Battle; Steve Speicher. <a href="http://www.w3.org/TR/ldp-ucr/"><cite>Linked Data Platform Use Cases and Requirements</cite></a>. 13 March 2014. W3C Note. URL: <a href="http://www.w3.org/TR/ldp-ucr/">http://www.w3.org/TR/ldp-ucr/</a>
+</dd><dt id="bib-LINKED-DATA">[LINKED-DATA]</dt><dd rel="dcterms:references">Tim Berners-Lee. <a href="http://www.w3.org/DesignIssues/LinkedData.html"><cite>Linked Data Design Issues</cite></a>. 27 July 2006. W3C-Internal Document. URL: <a href="http://www.w3.org/DesignIssues/LinkedData.html">http://www.w3.org/DesignIssues/LinkedData.html</a>
+</dd><dt id="bib-WEBARCH">[WEBARCH]</dt><dd rel="dcterms:references">Ian Jacobs; Norman Walsh. <a href="http://www.w3.org/TR/webarch/"><cite>Architecture of the World Wide Web, Volume One</cite></a>. 15 December 2004. W3C Recommendation. URL: <a href="http://www.w3.org/TR/webarch/">http://www.w3.org/TR/webarch/</a>
+</dd><dt id="bib-json-ld">[json-ld]</dt><dd rel="dcterms:references">Manu Sporny; Gregg Kellogg; Markus Lanthaler. <a href="http://www.w3.org/TR/json-ld/"><cite>JSON-LD 1.0</cite></a>. 16 January 2014. W3C Recommendation. URL: <a href="http://www.w3.org/TR/json-ld/">http://www.w3.org/TR/json-ld/</a>
+</dd><dt id="bib-turtle">[turtle]</dt><dd rel="dcterms:references">Eric Prud'hommeaux; Gavin Carothers. <a href="http://www.w3.org/TR/turtle/"><cite>RDF 1.1 Turtle</cite></a>. 25 February 2014. W3C Recommendation. URL: <a href="http://www.w3.org/TR/turtle/">http://www.w3.org/TR/turtle/</a>
+</dd></dl></section></section></body></html>

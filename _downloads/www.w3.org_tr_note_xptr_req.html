@@ -1,0 +1,941 @@
+<!-- http://www.w3.org/TR/NOTE-xptr-req -->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+<TITLE>XML XPointer Requirements</TITLE>
+<LINK rel="stylesheet" type="text/css" media="screen"
+   href="/StyleSheets/TR/W3C-NOTE"> 
+</HEAD>
+
+<BODY>
+
+<DIV class="head">
+  <P><A href="http://www.w3.org/">
+    <IMG height="48" width="72" alt="W3C" 
+    src="http://www.w3.org/Icons/WWW/w3c_home"></A></P>
+    <H1>XML XPointer Requirements<br>Version 1.0</H1>
+    <H2>W3C Note 24-Feb-1999</H2>
+  <TABLE>
+    <TR valign="baseline"><TD>This version:
+      <TD><A href="http://www.w3.org/TR/1999/NOTE-xptr-req-19990224">
+             http://www.w3.org/TR/1999/NOTE-xptr-req-19990224</A>
+    <TR valign="baseline"><TD>Latest version:
+      <TD><A href="http://www.w3.org/TR/NOTE-xptr-req">
+             http://www.w3.org/TR/NOTE-xptr-req</A>
+    <TR valign="baseline"><TD>Editors:
+      <TD>Steven J. DeRose (Inso Corp. & Brown Univ.) &lt;<a
+href="mailto:Steven_DeRose@Brown.edu">Steven_DeRose@Brown.edu</a>&gt;.
+  </TABLE>
+
+<p><small>
+<A HREF="http://www.w3.org/Consortium/Legal/ipr-notice.html#Copyright">Copyright</A>
+&#169;1999 <A HREF="http://www.w3.org">W3C</A> (<A HREF="http://www.lcs.mit.edu">MIT</A>,
+<A HREF="http://www.inria.fr/">INRIA</A>, <A HREF="http://www.keio.ac.jp/">Keio</A>)
+, All Rights Reserved. W3C <A HREF="http://www.w3.org/Consortium/Legal/ipr-notice.html#Lega
+lDisclaimer">liability,</A>
+<A HREF="http://www.w3.org/Consortium/Legal/ipr-notice.html#W3CTrademarks">trademark</A>,
+<A HREF="http://www.w3.org/Consortium/Legal/copyright-documents.html">document
+use</A> and <A HREF="http://www.w3.org/Consortium/Legal/copyright-software.html">software
+licensing</A> rules apply.</small></p>
+</DIV>
+
+<HR>
+
+<H2><A name="status">Status of this document</A></H2>
+<p>This is a W3C Note produced as
+a deliverable of the <a href="http://www.w3.org/XML/Activity#linking-wg">XML
+Linking WG</a> according to its charter. A list of current W3C
+working drafts and notes can be found at <a href="http://www.w3.org/TR">http://www.w3.org/TR
+</a>.</p>
+<p>This document is a work in progress representing the current consensus
+of the W3C XML Linking Working Group. This version of the XML XPointer
+Requirements document has been approved by the XML Linking working group
+and the XML Plenary to be posted for review by W3C members and other interested
+parties. Publication as a Note does not imply endorsement by the W3C membership.
+Comments should be sent to <a href="mailto:www-xml-linking-comments@w3.org">
+www-xml-linking-comments@w3.org</a>, which is an automatically and publicly
+archived email list.</p><p>This document is being processed according to the
+following review schedule:</p><table border="1" frame="border">
+<caption>Review Schedule</caption>
+<tbody>
+<tr><th>Process</th><th>Closing date</th><th>Status</th><th>Contact</th></tr>
+<tr><td>XML Linking WG signoff</td><td>1999/01/21</td><td>done</td><td><a
+href="http://www.w3.org/XML/Activity#linking-wg">XML Linking WG</a></td></tr>
+<tr><td>XML Plenary signoff</td><td>1999/02/03</td><td>done</td><td><a href="mailto:bill.smith@Sun.COM,veillard@w3.org">
+bill.smith@Sun.COM,veillard@w3.org</a></td></tr>
+<tr><td>Publish as W3C Note</td><td>1999/02/23</td><td>accepting comments
+</td><td><a href="mailto:www-xml-linking-comments@w3.org">www-xml-linking-comments@w3.org
+</a></td></tr>
+<tr><td>Checkpoint of comments</td><td>1999/03/23</td><td>&nbsp;</td><td>
+&nbsp;</td></tr>
+</tbody></table><p>Comments about this document should be submitted to the
+"contact" listed above for each process.</p>
+
+<p>Many thanks to Tim Bray, James Clark, Mavis Cournane, David
+Durand, Peter Flynn, Paul Grosso, Chris Maden, Eve Maler, C.&nbsp;M.
+Sperberg-McQueen, and members of the WG and IG in general for
+numerous valuable suggestions and other improvements.</p>
+
+<h2><a name="Abstract">Abstract</a></h2>
+
+<p>This document presents requirements for the XPointer language.
+XPointer provides ways to directly identify any node, data, or
+selection in any XML document by describing its structure and
+context. An identified data location is called a
+&quot;target.&quot; The XPointer specification is particularly
+meant to enable hyperlinks to identify any such data, regardless
+of whether there is (or even could be) an ID on the target or
+not. The XPointer specification is now being developed in the
+XML-Linking Working Group, building on Working Drafts developed
+in the XML Working Group.</p>
+
+<p>Because the XPointer language must refer to structural parts
+of XML documents, those structures must be explicit. Document
+structure specifications such as DOM and the XML Information Set
+may wish to consider the XPointer requirements in order to insure
+interoperability when used with XPointer and XLink.</p>
+
+<h2>Related documents</h2>
+
+<p><a href="http://www.w3.org/XML/Group/Linking">XML Linking
+Working Group Page</a> [member only], for general information about the
+activities of the WG.</p>
+
+<p><a href="http://www.w3.org/TR/1998/WD-xptr-19980303">XML
+Pointer Language (XPointer) Working Draft,</a> prior WDs produced
+by the former XML Working Group, and now under the XML Linking
+WG. Provides a simple yet powerful mechanism for addressing data
+portions in XML documents. It is very closely based on a
+multiply-implemented and widely-used technology, <a
+href="http://etext.virginia.edu/bin/tei-tocs?div=DIV3&amp;id=SAXRS">extended
+pointers,</a> defined in the <a
+href="http://etext.virginia.edu/TEI.html">Text Encoding
+Initiative <i>Guidelines</i></a>.</p>
+
+<p><a
+href="http://www.w3.org/TR/NOTE-xptr-infoset-liaison">XP
+ointer-Information Set Liaison Statement,</a> produced by the
+XML Linking Working Group. This document enumerates perceived
+constraints that work on the XPointer specification has indicated
+may affect the XML Information Set Working Group, since it is
+those information structures that XPointer provides access to.</p>
+
+<p><a href="http://www.w3.org/TR/NOTE-xlink-req">XLink
+Requirements,</a> produced by the XML Linking Working Group. This
+document provides requirements governing the work of this WG on
+the XLink specification.</p>
+
+<p><a href="http://www.w3.org/TR/1998/WD-xlink-19980303">XML
+Linking Language (XLink) Working Draft,</a> prior WDs produced by
+the former XML Working Group, and now under the XML Linking WG.</p>
+
+<p><a
+href="http://www.w3.org/TR/1998/NOTE-xlink-principles-19980303">XML
+Linking Language (XLink) Design Principles,</a> produced by the
+former XML Working Group, and now under the XML Linking WG. This
+document provides general design principles governing the work of
+this WG, involving both the XLink and XPointer specifications.</p>
+
+<h2>Table of Contents</h2>
+
+<ul>
+    <li><a href="#MinReq">Specific (minimalist) XPointer
+        requirements </a><ul>
+            <li><a href="#X.completeness">A: Completeness
+                requirements</a></li>
+            <li><a href="#X.expressiveness">B: Expressiveness
+                requirements</a></li>
+            <li><a href="#X.robustness">C: Robustness
+                requirements</a></li>
+            <li><a href="#X.user">D: General user requirements</a></li>
+            <li><a href="#X.syntax">E: Mechanical and syntactic
+                requirements</a></li>
+            <li><a href="#X.the.princeton.band">F:
+                Non-requirements</a></li>
+        </ul>
+    </li>
+    <li><a href="#Introduction">Background and rationale</a>
+        <ul>
+           <li><a href="#Kinds">Kinds of pointing</a></li>
+            <li><a href="#Lure">The lure of minimalist pointing</a></li>
+            <li><a href="#Nature">The nature of the distinction</a></li>
+            <li><a href="#Robustness">Robustness issues</a></li>
+            <li><a href="#Kinds-Summary">Summary</a></li>
+        </ul>
+    </li>
+    <li><a href="#Bibliography">Bibliography</a> </li>
+</ul>
+
+<h1><a name="MinReq">Specific (minimal) XPointer requirements</a></h1>
+
+<p>This section lays out specific minimal functional requirements
+for the XPointer specification that aim for an appropriate
+balance of completeness, expressiveness, extensibility, and
+simplicity. These requirements also apply to any higher-end
+location-specification language to the extent that it shares some
+of its functionality objectives with XPointer. Following the
+specific requirements is a section on background and rationale
+underlying them.</p>
+
+<h2><a name="X.completeness">A: Completeness requirements</a></h2>
+
+<p>This section of the requirements involves the type and variety
+of data locations, or &quot;targets&quot;, that an XPointer must
+be able to identify.</p>
+
+<p>These requirements make frequent reference to XML information
+objects such as elements, attributes, PIs, and characters. The
+formal definition of these objects, their relationships such as
+ordering, containment, and attribution, and their precise
+correspondence to XML syntax constructs are the domain of the XML
+Information Set Working Group. For more detail on the
+relationship, see the XML Linking Working Group's
+<a href="http://www.w3.org/TR/NOTE-xptr-infoset-liaison">Liaison Statement</a>.</p>
+
+<ol>
+    <li><p>XPointers must identify XML information objects, rather
+        than necessarily their expressions in the raw XML syntax
+        of a given file.</p>
+        <p>For example, an XPointer can identify
+        an element but not a tag, and (potentially) an attribute;
+        but not the equal-sign or quotations that expressed it.</p>
+    </li>
+    <li><p>For any single element, character in content, or PI in an
+        XML document, it must be possible to create at least one
+        XPointer that specifically identifies it.</p>
+        <p>This includes
+        special processing instructions such as the XML
+        declaration and the stylesheet-attachment PI.</p>
+    </li>
+    <li><p>For any single attribute or character in an attribute
+        value in an XML document, it must be possible to create
+        at least one XPointer that specifically identifies it.</p>
+        <p>[There
+        is not consensus on whether identification of attributes
+        is required. DOM does not presently provide a built-in
+        way to get from an attribute to the elements bearing it;
+        on the other hand RDF defines an attribute-based
+        representations for which omitting attributes may pose
+        problems. The WG seeks additional input on this issue.]</p>
+    </li>
+    <li><p>For any contiguous selection such as could be clicked or
+        dragged by a user in a typical view of the document, it
+        must be possible to create at least one XPointer that
+        specifically identifies it. This includes point targets
+        such as typically selected by a mouse click, entire
+        characters, and synchronous and asynchronous spans, as in
+        typical word processors and browsers.</p>
+        <p>This is
+        necessary to model simple everyday user selection, and to
+        support the first interface many applications want to
+        build: the ability for the user to make a selection in
+        the usual way and attach a link to or from it, an
+        annotation or bookmark to it, insert it in a path, and so
+        on. If users could only select or link whole elements,
+        the intuitive &quot;select/act&quot; interface would no
+        longer correspond to the system's actual behavior, and
+        thus become very confusing.</p>
+        <p>[Implementor note: Such a selection may include only
+        part of various elements: this is most obvious with a
+        selection that includes the end of one element and the
+        start of the next, but is also true relative to the
+        ancestors of any element. Such a selection may be
+        considered to include information about attributes and
+        boundary locations for elements that include some but not
+        all of the selected range. In the example just given,
+        there would thus be access to the attributes and boundary
+        locations of both the elements that are partly included,
+        even though neither is fully &quot;in&quot; the span; but
+        not, say, of a containing DIV. See <a href="#Broo88">Brooks
+        (1988)</a> for an extensive analysis of the semantics and
+        user interface requirements for selecting and editing in
+        tree-structured documents.]</p>
+    </li>
+    <li><p>For any point immediately preceding or following any
+        character of content, and for any point immediately
+        inside or outside the beginning or end of any element, or
+        PI, it must be possible to create at least one XPointer
+        that specifically identifies it.</p>
+        <p>This is required
+        because it is a standard part of user selection
+        semantics, and to provide an unambiguous way to express
+        targets for myriad other application purposes: inserting
+        or pasting, recording the scope of change or version
+        information, and so on. For example, one may wish to
+        specify the location in content immediately preceding a
+        given PI or sub-element, not only the PI or sub-element
+        itself (especially small elements such as italicized
+        words), in order to unambiguously specify a cursor
+        location, the end of a user selection, the destination of
+        a link, etc.</p>
+    </li>
+    <li><p>[There is not consensus on whether this is a short-term
+        requirement] the XPointer specification must provide a
+        way to identify targets that include multiple,
+        potentially discontiguous data portions.</p></li>
+</ol>
+
+<h2><a name="X.expressiveness">B: Expressiveness requirements</a></h2>
+
+<p>These requirements involve the type and variety of XPointers
+that can be used to identify a target, which is how the language
+achieves greater robustness, reusability, and clarity to humans,
+as described in more detail below). Fulfilling the completeness
+requirements above does not guarantee fulfilling the
+expressiveness requirements stated here. These are a different
+but equally important class of requirement. Indeed it is easy to
+design a target-rich system, but it would be much more prone to
+breakage, and far less intuitive and readable to humans (even if
+it managed to have fewer constructs or be terser, such as the
+extreme case of a pair of byte offsets into XML source).</p>
+
+<ol>
+    <li><p>The XPointer specification must utilize information
+        structures users can be expected to perceive or
+        understand in documents, such as elements, attributes,
+        PIs, characters, and strings; and to well-known
+        relationships such as containment, siblings, and so on.
+        The XPointer specification is not primarily concerned
+        with machine-oriented concepts such as offsets, absolute
+        nesting depth, and so on.</p></li>
+    <li><p>The XPointer specification must provide for identifying
+        targets of specified names and types, for example by XML
+        IDs, XML PI targets, and element type names. </p></li>
+    <li><p>The XPointer specification must (if Xpointers to
+        attributes are included) provide for identifying an
+        attribute by name, given an element it is on. </p></li>
+    <li><p>The XPointer specification must provide a way for
+        specific XPointers to express that a singleton target is
+        expected. For example, when identifying an element by an
+        XML ID attributes or other potential &quot;key&quot;
+        constructs. </p></li>
+    <li><p>The XPointer specification must provide for identifying
+        elements, PIs, characters, and (if supported) comments,
+        by their ordered position in the document structure
+        relative to other targets that fulfill specified
+        conditions. </p></li>
+    <li><p>The XPointer specification must provide ways to constrain
+        targets by specifying conditions on them, such as element
+        type, attribute values, and the presence of particular
+        content strings.</p>
+        <p>For example, identifying a <tt>SECTION
+        </tt>that contains an <tt>ABSTRACT </tt>with <tt>TYPE=FULL</tt>,
+        rather than merely an <tt>ABSTRACT</tt>; or being unable
+        to test the <tt>ABSTRACT</tt>'s attribute but still
+        identify the <tt>SECTION</tt> as the intended target. Or,
+        constraining a target to be directly or indirectly within
+        a broader target, or to precede or follow it among the
+        children of a common containing element.</p></li>
+    <li><p>The XPointer specification should make clear a way that
+        it can be extended to support testing datatype-specific
+        conditions when XML Datatypes are later available through
+        the work of the XML Schemas Working Group.</p>
+        <p>For example,
+        once it is possible to know which attributes or content
+        strings constitute integers, date, or real numbers, it
+        should be clear how to extend the language to accommodate
+        appropriate comparisons within its conditional
+        constructs. </p></li>
+    <li><p>The XPointer specification must provide a way to specify
+        what version of a target resource is intended to be
+        identified. </p></li>
+    <li><p>The XPointer specification must define how it works in
+        relation to XML namespaces. Since an element or attribute
+        name can be used as part of characterizing locations in
+        an XPointer expression, the meaning of those names must
+        be unambiguous.</p>
+    </li>
+</ol>
+
+<h2><a name="X.robustness">C: Robustness requirements</a></h2>
+
+<ol>
+    <li><p>It must be possible, but not mandatory, to create
+        XPointers that can be tested for whether they identify
+        &quot;the same&quot; target when followed as they did
+        when created.</p><p>For example, this may be accomplished by
+        providing a checksum of the destination data. This
+        massively improves robustness because you can detect when
+        a link has broken (although it cannot prevent link
+        breakage from ever happening). [There is not consensus on
+        whether this requirement should be addressed within
+        XPointer or XLink]. </p></li>
+    <li><p> All XPointers must survive purely mechanical changes to
+        the target resource.</p> <p>For example, changing between
+        single and double quote characters around attributes or
+        between CR, LF, and CRLF for line-ends; inserting
+        extraneous whitespace inside <i>tags</i> (for example,
+        between the element type name and the attributes, or
+        around attribute equal-signs, etc); re-ordering
+        attributes; swapping between CDATA marked sections and
+        entities for escaping tag opens; or rearranging the
+        division between entities.</p>
+        <p>Such change are not considered to change the logical
+        information structure, and should not prevent an XPointer
+        from being interpreted as pointing to the same data.
+        However, any change that touches the structure may change
+        the destination of the XPointer, and can be (see the
+        preceding requirement) caught. Just what changes are
+        considered mechanical, is to be worked out in cooperation
+        with the XML Information Set Working Group. </p></li>
+    <li><p>XPointer must attempt to avoid dependencies on character
+        set and internationalization issues, such as its
+        definition of &quot;character&quot;. </p></li>
+    <li><p>The XPointer specification must enumerate any
+        dependencies on the presence of a DTD or schema, and
+        attempt to minimize such in order to facilitate
+        interoperability of XPointers across DTD-supporting and
+        non-DTD-supporting XML environments.</p>
+        <p>For example, an
+        XPointer that identifies a target in part via an
+        attribute, may not be interpretable if the target is in a
+        non-standalone XML document being processed by a
+        non-DTD-supporting parser. This is inherent in XML, but
+        needs to be made clear in the XPointer specification. </p></li>
+    <li><p>The XPointer specification must be clear about what
+        errors may arise, and what they mean. To that end, it
+        should attempt to enumerate any dependencies on the XML
+        Information Set. <p>In particular, the XPointer
+        specification must clearly define the meaning when a
+        syntactically correct XPointer does not resolve to any
+        data object. [There is no consensus as of this writing on
+        whether that is necessarily an error]. There are security
+        issues to consider in this, such as that distinguishing
+        &quot;data does not exist&quot; from &quot;data access
+        not authorized&quot; may itself compromise security.</p></li>
+</ol>
+
+<h2><a name="X.user">D: General user requirements</a></h2>
+
+<ol>
+    <li><p>XPointers must be reasonably user-readable and
+        user-writable, particularly for cases likely to be
+        commonly needed by beginning and intermediate users.
+        Syntax must scale smoothly, not abruptly with increasing
+        complexity. </p></li>
+    <li><p>The XPointer specification must provide for re-use of
+        XPointers by other XPointers. [There is not consensus
+        that this is a short-term requirement, though there is
+        consensus on its desirability in principle.]</p>
+        <p>For
+        example, it should be possible to express a generic
+        XPointer such as &quot;the following sibling of type
+        T&quot;, and then write other XPointers that re-use it,
+        such as &quot;the first ABSTRACT within whatever (that
+        xpointer) points to. This is particularly useful to
+        create generic pointers to relative rather than absolute
+        targets, and to support functionality like the HTML BASE
+        feature.</p></li>
+</ol>
+
+<h2><a name="X.syntax">E: Mechanical and syntactic requirements</a></h2>
+
+<ol>
+    <li><p>XPointers must identify <i>locations</i> in data, not
+        merely the data <i>at</i> those locations. <p>A user who
+        selects a word or string in a document and attaches a
+        link to it via an XPointer, may be very unhappy if they
+        follow the link and get just the phrase: they want the
+        target data <i>with access to its context.</i> This is
+        why the HTML mechanism of scrolling to a target element
+        by appending &quot;#&quot; and its name to the document's
+        URL is the way it is: literally returning just the anchor
+        is usually not enough. From a location one can get the
+        context data when needed; from data alone one cannot
+        derive a unique location when needed.</p>
+        <p>As an example, a DOM handle to an XML information set
+        object such as an element, would be one way to identify
+        the object in context; while generating a string of
+        content and/or markup that contains no reference to the
+        original context, would not. </p></li>
+    <li><p>XPointer syntax must not require excessive escaping when
+        XPointers are embedded in URLs and external identifiers.
+        That is, XPointer must not go nuts with punctuation
+        marks. This requirement must be balanced with the next
+        one, of course.</p>
+        <p>This is to preserve readability in raw
+        form (which is of minimal importance, as in XML), and to
+        reduce multi-escaping errors such as when pasting between
+        external identifiers and URLs, passing URLs through
+        scripts, typing URLs in raw, etc, etc.</p>
+        <p>Note: There are two kinds of escaping to be
+        considered: XML escaping such as for ampersand, angle
+        brackets, and quotes when XPointers appear within XML
+        documents; and URL escaping such as %20 for space, when
+        they appear in URLS. </p></li>
+    <li><p>When embedded in URLs, XPointers must be correctly
+        processed by current Web software such as servers and
+        user agents.</p>
+        <p>This obviously does not mean that existing
+        software magically becomes XPointer-aware; merely that
+        XPointer syntax must survive generic URL processing such
+        as performed by servers. </p></li>
+    <li><p>XPointers must use syntax in ways that are appropriate
+        and familiar for the constructs we use them for.</p>
+        <p>For
+        example &quot;+&quot;, if used, should mean addition, not
+        variable substitution. For example, operations from
+        languages that deal with XML-like data (ordered trees of
+        repeatable typed objects, with document-scope unique
+        names) would provide applicable syntax, while languages
+        that deal with XML-unlike data (such as unordered sets of
+        non-repeatable or untyped objects and names) would not. </p></li>
+    <li><p>XPointer syntax must be readily generalizable to more
+        powerful specifications needed in the future. This means
+        we can't use up all the syntax now, or take up all the
+        simple syntax for the one or two simplest cases at the
+        cost of a massive increment of complexity to get any
+        further. </p></li>
+</ol>
+
+<h2><a name="X.the.princeton.band">F: Non-requirements</a></h2>
+
+<p>This section collect potential requirements that have been
+considered and rejected, at least for the initial version of the
+XPointer specification.</p>
+
+<ol>
+    <li><p>For any entire comment in an XML document, it must be
+        possible to create at least one XPointer that
+        specifically identifies it. </p></li>
+    <li><p>Comments could be included in order to maintain the
+        ability to identify <i>any</i> node in the information
+        structure, assuming that XML Information Structure can
+        include comments. There do not seem to be compelling use
+        cases; critical information should not, in principle, be
+        embedded in comments. Also, XML does not require that
+        comments be passed back to applications at all, and so
+        including them in XPointer would introduce ambiguity
+        here.</p>
+        <p>If comments were supported, The XPointer
+        specification would have to define counting and perhaps
+        other operations such that XPointers not directly
+        pointing at comments would work regardless of whether the
+        application had gotten comments from the XML parser or
+        not.</p></li>
+</ol>
+<!--
+==========================================================================
+-->
+<h1><a name="Introduction">Background and Rationale</a></h1>
+
+<p>This document defines specific requirements for the XPointer
+specification, beyond necessary but &quot;apple pie&quot;
+requirements such as &quot;completeness&quot;,
+&quot;clarity&quot;, or &quot;brevity&quot;. These more detailed
+functional requirements are intended to facilitate
+decision-making during development of the Proposed Reccomendation
+from the established Working Draft.</p>
+
+<p>For XPointers to interoperate, they must be defined in terms
+of an explicit and consistent conceptual structure. For example,
+any construct involving child numbers breaks badly if one
+application can counts PIs, comments, or some other objects as
+children, while another doesn't: an XPointer interpreted by the
+two would identify different places, which is unacceptable.
+Because a consistent structure is required for XPointers to
+interoperate, constraints on the conceptual information structure
+for XML are discussed in a <a
+href="http://www.w3.org/TR/NOTE-xptr-infoset-liaison">related
+liaison paper</a>.
+
+<h2><a name="Kinds">Kinds of pointing</a></h2>
+
+<p>A system for identifying data locations can be characterized
+along two basic axes: The <i>set of targets</i> it can express,
+versus the <i>set of methods</i> it uses to express them.</p>
+
+<p><a name="#term.range.of.targets"></a>The first axis, the <i>range of
+targets</i>, involves the extent or range of things the system
+can identify at all: just documents as wholes, just elements,
+individual characters, strings, etc. URLs leading to HTML
+generally can identify whole documents (typically files), as well
+as named A elements that the author specifically provided; but
+not other elements, words, or any other kind of selection or
+structure in HTML (unless of course you program via CGI, server
+plug-ins, etc. -- which not surprisingly can do anything any
+computer program can do). </p>
+
+<p><a name="#term. range.of.descriptions"></a>The second axis, the <i>range
+of descriptions</i> available for doing the pointing, involves
+how well a system can express the intent of the pointer as
+distinct from what it pointed to. For example, saying &quot;the
+first footnote with author='Smith' rather than &quot;element
+3735928559&quot;. Weakness of a system on this axis would limits
+the mean of expressing what you actually <i>mean</i>, as opposed
+to just what you <i>got,</i> even if the result happens to be
+identical. This would have the same problems as a human language
+that tried to remove all synonyms, or a mathematical model that
+tried to define &quot;integer&quot; by listing all integers.
+While a grand, even elegant idea at first glance, it is
+inadequate.</p>
+
+<p>This distinction is the most crucial to any data
+identification specification. It is usually quite easy to achieve
+any desired level of target power, and extremely trivial to
+implement. For example, a pair of byte offsets into an HTML file
+has very high target power: it can point to any element, any tag,
+any attribute (name, value, or whole), any character, and any
+string regardless of how it crosses element boundaries.
+Generally, the target power is even too high, because most offset
+pairs point to ill-formed data chunks for which users would
+likely never need a pointer at all (such as &quot;<tt>me='w</tt>&quot;
+in &quot;<tt>&lt;p name='wow'&gt;</tt>&quot;). </p>
+
+<p>At the same time, a pair of byte offsets has almost no
+descriptive power: the offsets to a particular paragraph,
+footnote, citation, or other element instance, give no hint of
+what they are: they're just two numbers. There is nothing in such
+a system that makes such a reference any easier, more robust,
+more readable, or simpler to create than an absurd one (such as
+from the middle of the name of the TYPE attribute of some element
+to the middle of the 27th word of its 946th descendant).
+Low-description systems fail to reflect the important fact that
+some things are ubiquitous, coherent, and highly valuable, but
+others are bizarre, ill-formed, or nearly useless. </p>
+
+<p>Some other models have the opposite characteristics: IDs have
+fairly low target power (you can only link to things that have
+them, and only whole elements can have them), but very high
+descriptive power (you can say exactly what you mean, since IDs
+typically express a notion of objects that have true names). This
+is why they are so highly robust, but not very general. </p>
+
+<p>These two axes are not necessarily a tradeoff: a system can
+also have neither or both. For example, numbering all the
+elements of a document in order and using that number, is low to
+moderate on <i>both</i> kinds of power (though it affords some
+very nice optimizations for implementors). And a system of
+structural identifiers that mirrors the structure of information
+directly can be quite high in both kinds of power. </p>
+
+<p>Systems with high target power but low description power have
+other problems, such as compromising robustness: they break far
+more easily and, even worse, make it is nearly impossible to <i>detect</i>
+failures. They also lack reusability: an identifier created for
+one context can generally be used in other contexts only if it is
+highly descriptive. A common SGML and XML example is a document
+available in multiple languages (or multiple drafts or editions).
+If you assign the same IDs to corresponding elements in each
+version, it is trivial to re-use links with any version, or even
+with several at once (say, for parallel text display or
+comparison); a system that can utilize ancestor, child, and
+sibling relationships can frequently get the same result even
+with few IDs around; a purely target-rich system cannot./p&gt; </p>
+
+<p>Many user comments on the existing WDs and implementations
+have advocated increasing both kinds of power, but especially
+description power: to describe the intended destination in more
+abstract, information-oriented or human-oriented terms, rather
+than only in terms of geometry or tree position. Taking best
+advantage of more descriptive pointing may requires at least very
+slight knowledge of tagging practices, but description helps even
+without such knowledge; for almost any XML it is likely that
+pointing to an ID-less element by pointing to some nearby element
+<i>with</i> an ID, and stepwise from there to the final target
+element, is a good improvement over pointing merely via
+child-numbers all the way down from the document root element. In
+many XML applications schemas and use requirements -- such as a
+transaction record, a bibliography, an RDF file, etc. -- provide
+much more information that enable automatic construction of
+highly clear, descriptive pointers -- if the language allows them
+to exist at all. For example, a pointer to the last transaction
+in a set, or the one with the highest price, is clear and
+unambiguous. In general, finding an element with a given ID, or a
+given kind of element type or context, or elements with certain
+combinations of simple characteristics in terms of types,
+attributes, tree relationships to other characterized targets,
+etc. add robustness.</p>
+
+<h2><a name="Lure">On minimalist pointing</a></h2>
+
+<p>Target-rich pointing may appear at first glance to be all that
+is needed for XPointer. This is probably because
+'select/create-link' is the first interface some applications
+will implement, and because even completely non-descriptive
+pointing can trivially support that interface. However, there are
+many other applications for XPointer. If the criterion is merely
+ability to point somehow, that would logically lead to byte
+offsets as the simplest solution; but this is widely agreed to be
+absurd. While for one specific application scenario that might
+barely suffice, the situation is clearly more complex; it is
+analogous to some other familiar situations: </p>
+
+<ul>
+    <li><p>One-way, single-ended links (like HTML &lt;A&gt;) are
+        sometimes thought to be the sum total of hypertext
+        requirements. They, too, can achieve good power in terms
+        of what they <i>can</i> express, because you can always
+        decompose multi-ended links, bi-directional links, link
+        typing, and other phenomena into more complicated (but
+        non-standardized) structures of lots of &lt;A&gt;s; but
+        they are weak in descriptive power, since you must resort
+        to circuitous ways to accomplish some desired ends. </p></li>
+    <li><p>Word processors typically implement procedural formatting
+        before descriptive: &quot;after all, you can get all the
+        required formatting effects without stylesheets or
+        unpredictable sets of tags, right?&quot; This is
+        precisely the same distinction at issue here.</p></li>
+</ul>
+
+<p>Such &quot;completeness&quot; arguments may be true as far as
+they go, but are not sufficient: much more is required for an
+adequate solution in all these cases. Descriptive power
+requirements matter because human usability requires other
+features such as readability, indirection, re-use, ability to
+change things without countless manual repairs, and generally
+better robustness in the face of change. Thus, more descriptive
+pointing is a vastly better solution.</p>
+
+<p>Radically minimalist pointing has never been contemplated in
+XPointer, and should not be. It is extremely easy to implement,
+and attractive for that reason (although descriptive pointing has
+also been repeatedly shown not to be hard). But at the same time,
+minimalist pointing has a number of inherent limitations that
+taken together make descriptive pointing necessary:</p>
+
+<ol>
+    <li><p>Minimalist pointers are not, in general, easily <b>interpretable
+        </b>by humans. Large precise integers, or vectors of
+        smaller ones, are just not as understandable to humans as
+        &quot;the 5th chapter past here&quot; or &quot;chapter 4
+        section 2 paragraph 5&quot;; the latter are common,
+        familiar notions. </p></li>
+    <li><p>Minimalist pointing decreases the <b>ability to achieve
+        robustness.</b> This is because with
+        minimalist/procedural pointing, you can only refer to
+        what you <i>got,</i> not to what you wanted. This is
+        equivalent so long as nothing changes; but as soon as
+        something changes (as is frequent), minimalist pointers
+        break far more readily than descriptive ones. There is a
+        scale of robustness, and only by providing a range of
+        descriptive pointing techniques can link authors (human
+        or otherwise) take advantage of it. </p></li>
+    <li><p>Minimalist pointing is less appropriate for dealing with
+<b>dynamically-generated
+        HTML</b> or XML, such as database extractions or
+        dynamically-assembled documents (an increasingly common
+        scenario). This is because such information is likely to
+        be changed in small-scale but widespread ways (replacing
+        the stock ticker or visit counter field, etc), and such
+        minor changes will commonly break minimalist pointers to
+        unchanged surrounding data, but not break descriptive
+        pointers. Also, such data typically has systematic
+        regularities that make automated construction of highly
+        descriptive pointers easy and highly robust -- but only
+        if the pointing language lets such pointers exist. </p></li>
+    <li><p>Minimalist pointers have virtually no potential for <b>re-use.</b>
+        They cannot describe relative locations, such as
+        &quot;the next chapter&quot; or &quot;the chapter 5
+        milestones tags earlier&quot;, and so cannot be re-used
+        in multiple contexts (see <a href="#DeRo89">DeRose 1989</a>
+        for more on link reuse). If pointers had too little
+        descriptive power, even a trivial &quot;next slide&quot;
+        link in presentations could not be made generic: only an
+        explicit, separate, tediously different &quot;next
+        slide&quot; link on every slide; which again seems
+        absurd. It is hard to imagine plausible situations where
+        a non-descriptive link could be usefully re-used
+        (&quot;37 elements earlier&quot;???). </p></li>
+    <li><p>Minimalist pointers generally provide no selection of
+        targets consisting of <b>multiple locations,</b> such as
+        the set of all elements of a given type, the set of all
+        characters within a given element, etc.</p>
+        <p>This is a more
+        severe problem than it seems, because it impacts any
+        XPointers that involve stepwise specifications (sometimes
+        called &quot;location ladders&quot;), even simple ones
+        such as &quot;the SEC that contains an ABSTRACT&quot;. If
+        multiple locations are ruled out even for intermediate
+        results in an addressing expression, then such pointers
+        are ruled out even when they would end up at a single
+        node. This is because the evaluator would find a lot of
+        SEC elements first, and only then be able to go on to
+        pick the one that is the final result. If the
+        implementation must support multiple results in
+        intermediate steps, the savings sometimes claimed for
+        ruling them out largely disappears. </p></li>
+    <li><p>Minimalist pointers are commonly limited to identifying a
+        single whole element, a single point or character, or at
+        best a string (offsets can &quot;sort of&quot; point to
+        more, but really only point to byte ranges that may,
+        sometimes, correspond to these units). <b>Normal user
+        selections</b> cannot be modeled.</p></li>
+</ol>
+
+<h2><a name="Nature">The nature of the distinction</a></h2>
+
+<p>Many of these differences arise from a single underlying
+cause: namely, inadequate descriptive power. A non-descriptive or
+trivially descriptive pointer language might in theory be able to
+point to all the same objects as a descriptive language. However,
+linking to &quot;the 3rd child of the 4th child of the root&quot;
+does not mean the same thing as linking to &quot;ID chap5&quot;
+or &quot;the element immediately preceding the ABSTRACT&quot;.
+They may happen to be the same thing on one day, for one version
+of one location in one dataset; but the meaning is not the same.</p>
+
+<p>Note: This fundamental distinction is so important that it has
+names and entire literatures within many fields of study.
+Linguists call such cases de dicto/de re ambiguities; logicians
+and mathematicians call them intensional vs. extensional
+specification; computer scientists call them shallow and deep (or
+weak and strong) equality; markup theorists call them procedural
+and declarative markup. In all these fields, providing formal
+systems that support only one of the two cases is a classic
+error.</p>
+
+<h2><a name="Robustness">Robustness issues</a></h2>
+
+<p>Another example of the difference in power of descriptive over
+minimalist pointing involves robustness (that is, pointers that
+have a good chance of pointing to the same place even after the
+document has been edited in various ways). It has occasionally
+been suggested that depending on usage scenarios, TREELOCs (which
+specify a node by giving the sequence of child-numbers to walk
+down to it) might be just as robust as IDs (unique names), or
+even more so. While this is true in theory, I find it
+unconvincing because</p>
+
+<ol>
+    <li><p>Although one can create such scenarios in theory, they
+        are not at all typical of existing practice. </p></li>
+    <li><p>IDs require a &quot;positive option&quot; (editing the
+        ID) to break them, but TREELOCs break readily (even
+        editing a far-distant part of the document) without the
+        user having to do anything local or specific to break
+        them. </p></li>
+    <li><p>Most crucial: with IDs or other descriptive methods,
+        authors <i>can</i> create a work practice under which
+        they can edit without breaking links. Software can even
+        help, for example by tracking deleted IDs so they are not
+        accidentally re-used. With TREELOC there is <i>no</i>
+        such possibility at all: you cannot manage an editing
+        process so that a given node is always the third child,
+        even after you inserted a child before it. </p></li>
+</ol>
+
+<p>So although it is <i>possible to fail</i> under either
+approach if you make all the worst possible choices, that does
+not make the approaches equally robust. This is because only with
+the ID approach is it <i>possible to protect yourself</i> even if
+you make all the best choices.</p>
+
+<h2><a name="Kinds-Summary">Summary</a></h2>
+
+<p>The many advantages of descriptive pointing are crucial for a
+scalable, generic pointing system. Descriptive pointing is
+crucial for all the same reasons that descriptive markup is
+crucial to documents, and that making links first-class objects
+is crucial to linking. It is also clearly feasible, as shown by
+multiple implementations of the prior WDs from the XML WG, and of
+TEI extended pointers. At the same time, in order to get the
+specification out in the time frame required, we wish to keep a
+bound on the size of the language, and not implement all possible
+constructs, tests, filters, and so on. XPointer thus seeks to
+provide a small but rich set of descriptive pointing mechanisms,
+such as walking around trees in terms of their fundamental
+relationships; without taking on the undue task of a
+full-fledged, multi-purpose tool to express every conceivable
+predicate. To do more would take too long; to do less would
+actually complicate and weaken applications, largely by limiting
+XPointer to human-unclear, less robust, and less re-usable
+pointers.</p>
+
+<p>Some of the features of descriptive pointing bear some
+similarity to querying in general, but that is because the term
+&quot;querying&quot; covers an awful lot of ground: <a
+href="#Yu98">Yu and Meng (1998)</a> note that &quot;the goal of
+query processing and optimization is to find user-desired data
+from an often very large database efficiently&quot; -- where
+&quot;user-desired&quot; is arbitrarily broad; other definitions
+speak of selecting data that &quot;fulfills arbitrary sets of
+constraints&quot; or &quot;has certain characteristics&quot;.
+These all cover a wide range of activities, whose requirements,
+priorities, and consequent design tradeoffs differ greatly. A
+search for an ID is a query (though a very simple one); and there
+are many user and developer requests for XPointer features that
+overlap with what one expects in a full-blown query language
+(among the relevant issues already assigned numbers, are 17-21,
+26, 27, 44, and 46-49). </p>
+
+<p>This similarity is inevitable because <i>any</i> language that
+selects things out of trees requires certain basic operations,
+such as genetic access to nodes of the tree; without such
+operations any language that deals with trees would be utterly
+crippled. However, XPointer has other requirements that are not
+shared by various other mechanisms that may arise for XML for
+other purposes. Among these are robustness, plus a quite
+different user perspective and priority: the purpose with
+XPointer is to point to a known data object (typically a single
+one or a well-defined group to be treated as if it were one),
+rather than to discover whether any data might be out there
+somewhere and how much.</p>
+
+<p>By separating minimalist vs. descriptive pointing models and
+acknowledging our need for both, we can assign our existing
+XPointer issues more clearly into categories that we can deal
+with effectively. This two-level approach allows a natural
+beginning.</p>
+
+<h1><a name="Bibliography">Bibliography</a></h1>
+
+<p><a name="Abit97">Abiteboul, Serge et al.</a> 1997.
+&quot;Querying Documents in Object Databases.&quot; In <i>International
+Journal on Digital Libraries</i> 1(1): 5-19.</p>
+
+<p><a name="Andr89">Andr�, Jacques, Richard Furuta, and Vincent
+Quint (eds).</a> 1989. <i>Structured Documents.</i> Cambridge:
+Cambridge University Press. ISBN 0-521-36554-6.</p>
+
+<p><a name="Broo88">Brooks, Kenneth P.</a> 1988. &quot;A Two-view
+Document Editor with User-definable Document Structure.&quot;
+Dissertation, Stanford University Department of Computer Science.
+Reprinted as <a
+href="http://www.research.digital.com/SRC/publications">Technical
+Report #33</a> by Digital Systems Research Center.</p>
+
+<p><a name="Burk91">Burkowski, Forbes J.</a> 1991. &quot;An
+Algebra for Hierarchically Organized Text-Dominated
+Databases.&quot; Waterloo, Ontario, Canada: Department of
+Computer Science, University of Waterloo. Manuscript: Portions
+&quot;appeared as part of a paper presented at RIAO '91:
+Intelligent Text and Image Handling, Barcelona, Spain, Apr.
+1991.&quot; </p>
+
+<p><a name="Conk87">Conklin, Jeff.</a> 1987. &quot;Hypertext: An
+Introduction and Survey.&quot; <i>IEEE Computer</i> 20 (9):
+17-41.</p>
+
+<p><a name="DeRo89">DeRose, Steven J.</a> 1989. &quot;Expanding
+the Notion of Links.&quot; In <i>Proceedings of Hypertext '89,</i>
+Pittsburgh, PA. Baltimore, MD: Association for Computing
+Machinery Press.</p>
+
+<p><a name="DeRo95">DeRose, Steven J. and David G. Durand.</a>
+1995. &quot;The TEI Hypertext Guidelines.&quot; In <i>Text
+Encoding Initiative: Background and Context.</i> Boston: Kluwer
+Academic Publishers. ISBN 0-7923-3689-5. </p>
+
+<p><a name="DeRo98a">DeRose, Steven and Eve Maler (eds).</a>
+1998. <a href="http://www.w3.org/TR/1998/WD-xlink-19980303">&quot;XML
+Linking Language (XLink).&quot;</a> World Wide Web Consortium
+Working Draft. March 1998. </p>
+
+<p><a name="DeRo98b">DeRose, Steven and Eve Maler (eds). 1998.</a>
+<a href="http://www.w3.org/TR/1998/WD-xptr-19980303">&quot;XML
+Pointer Language (XPointer).&quot;</a> World Wide Web Consortium
+Working Draft. March 1998. </p>
+
+<p><a name="Kahn89">Kahn, Paul.</a> 1989. &quot;Webs, Trees, and
+Stacks: How Hypermedia System Design Affects Hypermedia
+Content.&quot; In <i>Proceedings of the Third International
+Conference on Human-Computer Interaction,</i> Boston, MA,
+September 18-22, 1989.</p>
+
+<p><a name="Liu77">Liu, C. L.</a> 1977. <i>Elements of Discrete
+Mathematics.</i> New York: McGraw-Hill. ISBN 0-07-038131-3.</p>
+
+</body>
+</html>
+

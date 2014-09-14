@@ -1,0 +1,1164 @@
+<!-- http://www.w3.org/TR/CX -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+  <title>Component Extension (CX) API requirements Version 1.0</title>
+  <style type="text/css">
+code           { font-family: monospace; }
+
+div.constraint,
+div.issue,
+div.note,
+div.notice     { margin-left: 2em; }
+
+dt.label       { display: run-in; }
+
+li p           { margin-top: 0.3em;
+                 margin-bottom: 0.3em; }
+      </style>
+  <link type="text/css" rel="stylesheet"
+  href="http://www.w3.org/StyleSheets/TR/W3C-NOTE.css" />
+</head>
+
+<body>
+
+<div class="head">
+<p><a href="http://www.w3.org/"><img width="72" height="48" alt="W3C"
+src="http://www.w3.org/Icons/w3c_home" /></a></p>
+
+<h1>Component Extension (CX) API requirements Version 1.0</h1>
+
+<h2>W3C Note 11 December 2001</h2>
+<dl>
+  <dt>This version:</dt>
+    <dd><a
+      href="http://www.w3.org/TR/2001/NOTE-CX-20011211">http://www.w3.org/TR/2001/NOTE-CX-20011211</a></dd>
+  <dt>Latest version:</dt>
+    <dd><a href="http://www.w3.org/TR/CX">http://www.w3.org/TR/CX</a></dd>
+  <dt>Editors:</dt>
+    <dd>Angel Diaz, IBM</dd>
+    <dd>Jon Ferraiolo, Adobe</dd>
+    <dd>Stein Kulseth, Opera</dd>
+    <dd>Philippe Le H&eacute;garet, W3C</dd>
+    <dd>Chris Lilley, W3C</dd>
+    <dd>Charles McCathieNevile, W3C</dd>
+    <dd>Tapas Roy, Openwave</dd>
+    <dd>Ray Whitmer, Netscape/AOL</dd>
+</dl>
+
+<p class="copyright"><a
+href="http://www.w3.org/Consortium/Legal/ipr-notice-20000612#Copyright">Copyright</a>
+&copy;2001 <a href="http://www.w3.org/"><abbr
+title="World Wide Web Consortium">W3C</abbr></a><sup>&reg;</sup> (<a
+href="http://www.lcs.mit.edu/"><abbr
+title="Massachusetts Institute of Technology">MIT</abbr></a>, <a
+href="http://www.inria.fr/"><abbr
+title="Institut National de Recherche en Informatique et Automatique"
+xml:lang="fr" lang="fr">INRIA</abbr></a>, <a
+href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C <a
+href="http://www.w3.org/Consortium/Legal/ipr-notice-20000612#Legal_Disclaimer">liability</a>,
+<a
+href="http://www.w3.org/Consortium/Legal/ipr-notice-20000612#W3C_Trademarks">trademark</a>,
+<a
+href="http://www.w3.org/Consortium/Legal/copyright-documents-19990405">document
+use</a>, and <a
+href="http://www.w3.org/Consortium/Legal/copyright-software-19980720">software
+licensing</a> rules apply.</p>
+</div>
+<hr />
+
+<div>
+<h2><a name="abstract" id="abstract">Abstract</a></h2>
+
+<p>From the early days of the World Wide Web, Web Agents had been extended to
+support more types of contents. The recent developments of XML and the
+possibility to mix mupltiple XML Namespaces in the document reiterated the
+need to extend implementations and relaying on add-on softwares to accomplish
+tasks not supported by default in the implementation. In other words, we have
+several XML languages to represent different parts of Web pages (XHTML, SVG,
+MathML, XForms, etc.), we now need a well defined mechanism that allow
+different specialized tools to work together and handled these compound
+documents.</p>
+
+<p>This W3C Note contains a non-exhaustive list of requirements to work on a
+<a title="" href="#cx">Component Extension</a> API. The goal of this <a
+title="" href="#api">API</a> is to extend the ability of a Web application.
+Note that the Web application can be either on the server side or on a client
+side, and does not automatically implies interaction with a user or having a
+Web browser.</p>
+</div>
+
+<div>
+<h2><a name="status" id="status">Status of this Document</a></h2>
+
+<p>This document is an early draft resulting from the HyperText Coordination
+Group face to face meeting to discuss standardization of Plug-in and Active
+Component Architecture for the Web. It is anticipated that this will be
+published as a W3C note as soon as it has reached an appropriate state of
+maturity.</p>
+
+<p>This document is a <a
+href="http://www.w3.org/Consortium/Process-20010719/tr.html#Notes">Note</a>
+made available by the W3C for discussion only. Publication of this Note by
+W3C indicates no endorsement by W3C or the W3C Team, or any W3C Members.
+There is no commitment by W3C to invest additional resources in topics
+addressed by this Note.</p>
+
+<p>Comments on this document are invited and are to be sent to the public
+mailing list <a
+href="mailto:www-component-extension@w3.org">www-component-extension@w3.org</a>.
+An archive is available at <a
+href="http://lists.w3.org/Archives/Public/www-component-extension/">http://lists.w3.org/Archives/Public/www-component-extension/</a>.</p>
+
+<p><a href="http://www.w3.org/TR/">W3C Technical reports</a> are published
+online at http://www.w3.org/TR.</p>
+</div>
+
+<div class="toc">
+<h2><a name="contents" id="contents">Table of Contents</a></h2>
+
+<p class="toc">1 <a href="#intro">Requirements</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;1.1 <a href="#N108">Formatting</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.1.1 <a
+href="#N115">baseline and linehight</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.1.2 <a
+href="#size_rect">linebreak, size and rectangle negotiation, multiple
+rectangles</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.1.3 <a href="#N130">DOM
+Views and Formatting</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;1.2 <a href="#N140">Rendering</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.2.1 <a
+href="#N146">freeze/unfreeze</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.2.2 <a
+href="#N175">z-order/painting</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.2.2.1
+<a href="#N186">clipping</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.2.3 <a href="#N194">sharing
+colormap</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.2.4 <a href="#N1A2">sharing
+fonts</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.2.5 <a href="#N1CA">colors
+(accessibility issues)</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.2.6 <a href="#N1D1">Device
+dependent drawing</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.2.7 <a href="#N1DF">forcing
+redraws, invalidate rectangles, invalidate region</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.2.8 <a
+href="#N206">window-less plug-in</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;1.3 <a href="#style">Style</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.3.1 <a href="#DOMCSS">DOM
+CSS</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.3.1.1
+<a href="#N23B">specified values</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.3.1.2
+<a href="#computed">computed values</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.3.2 <a
+href="#actualCSS">actual values</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.3.3 <a
+href="#generic_style">Generic Styler</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.3.4 <a
+href="#local_style">Local Styler</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.3.5 <a
+href="#mobile_profiles">Mobile profiles</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;1.4 <a href="#error">Error handling</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;1.5 <a href="#events">Events</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;1.6 <a href="#DOMCore">DOM Core tree</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;1.7 <a href="#starting">Starting point</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;1.8 <a href="#conn_script">Connecting with
+outside/scripting</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;1.9 <a href="#nesting">Nesting/reetrance</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;1.10 <a href="#abstraction">Abstraction level</a><br
+/>
+&nbsp;&nbsp;&nbsp;&nbsp;1.11 <a href="#timeline">timeline</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;1.12 <a href="#network">network/HTTP</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;1.13 <a href="#editing">Editing</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.13.1 <a
+href="#N50A">Editing mode</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;1.14 <a
+href="#associations">associations/registrations/negociations</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;1.15 <a href="#accessibility">Accessibility</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;1.16 <a href="#versioning">Versioning</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;1.17 <a href="#storage">storage/persistence</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;1.18 <a href="#memory">Memory management</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;1.19 <a href="#N635">Security</a><br />
+</p>
+
+<h3>Appendices</h3>
+
+<p class="toc">A <a href="#N642">Glossary</a><br />
+B <a href="#references">References</a><br />
+C <a href="#N79B">Contributors</a><br />
+</p>
+</div>
+<hr />
+
+<div class="body">
+
+<div class="div1">
+<h2><a name="intro" id="intro"></a>1 Requirements</h2>
+
+<p>This document contains a description of the <a title=""
+href="#cx">Component Extension</a> requirements established during the
+HyperText CG meeting in August 2001. It classifies the <a title=""
+href="#api">Application Programming Interface (API)</a> requirements in 3
+categories:</p>
+<dl>
+  <dt class="label">[1]</dt>
+    <dd><p>The requirement must be addressed by the Component Extension
+      API.</p>
+    </dd>
+  <dt class="label">[2]</dt>
+    <dd><p>The requirement may be addressed by the Component Extension
+      API.</p>
+    </dd>
+  <dt class="label">[3]</dt>
+    <dd><p>The requirement is declared out of the scope of the Component
+      Extension API. It might become in its scope in future versions.</p>
+    </dd>
+</dl>
+
+<p>The description of a Component Extension must be in terms of content that
+is handled, not in terms of a specific piece of software. For example, it is
+appropriate to request a Component Extension that handles SVG <a
+href="#SVG1">[SVG 1.0]</a>, including some set of functionalities (for
+example identified using the SMIL required functionalities mechanism for the
+switch element, or the SVG equivalent).</p>
+
+<p>The list of requirements provided in this document is not exhaustive and
+only reflects the requirements from the HyperText CG meeting.</p>
+
+<div class="div2">
+<h3 class="priority1"><a name="N108" id="N108"></a>1.1 Formatting [1]</h3>
+
+<p>The <a title="" href="#host">Host implementation</a> must provide a
+mechanism for an embedded object to request a region or set of regions for
+displaying content. The formatting interface should be independent of
+platform specific constraints.</p>
+
+<div class="div3">
+<h4 class="priority1"><a name="N115" id="N115"></a>1.1.1 baseline and
+linehight [1]</h4>
+
+<p>The Host implementation and Component Extension need to coordinate the
+linehight and the baseline.</p>
+</div>
+
+<div class="div3">
+<h4 class="priority1"><a name="size_rect" id="size_rect"></a>1.1.2 linebreak,
+size and rectangle negotiation, multiple rectangles [1]</h4>
+
+<p>The Host shall provide means to determine the maximum size of the
+rectangle into which the embedded object may render.  Conceptually, the size
+of this page may be unconstrained in both dimensions given scrolling.  In
+practice, the Host must somehow constrain this in at least one dimension.</p>
+
+<p>For example, the Host may indicate that this rectangle is scrollable in
+the line-stacking direction.  It must fix the other dimension.  Typically, it
+would report the current width of its renderable area.</p>
+
+<p>The embedded object must be permitted to negotiate rectangles and break
+into smaller areas across lines if need be.</p>
+</div>
+
+<div class="div3">
+<h4 class="priority2"><a name="N130" id="N130"></a>1.1.3 DOM Views and
+Formatting [2]</h4>
+
+<p>The <a href="#DOM3VF">[DOM Level 3 Views and Formatting]</a> should be
+considered by the Component Extension API.</p>
+</div>
+</div>
+
+<div class="div2">
+<h3 class="priority1"><a name="N140" id="N140"></a>1.2 Rendering [1]</h3>
+
+<div class="div3">
+<h4 class="priority1"><a name="N146" id="N146"></a>1.2.1 freeze/unfreeze
+[1]</h4>
+
+<p>A <a title="" href="#cx">Component Extension</a> may wish to suspend
+rendering momentarily while for example a succession of changes are made to
+the structure, or the structure is made temporarily invalid, or for some
+other reason whereby the intermediate state of the document is no to be
+displayed. Examples of such methods:</p>
+<dl>
+  <dt class="label">SVG DOM: SVGSVGelement</dt>
+    <dd>
+      <table summary="Example" width="100%" bgcolor="#99ffff" border="1"
+      cellpadding="5" class="eg">
+        <tbody>
+          <tr>
+            <td><pre>  unsigned long suspendRedraw(in unsigned long max_wait_milliseconds);
+  void          unsuspendRedraw(in unsigned long suspend_handle_id)
+                  raises(DOMException);
+  void          unsuspendRedrawAll();
+  void          forceRedraw();
+  void          pauseAnimations();
+  void          unpauseAnimations();
+                </pre>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p>See also section 5.11 in <a href="#">[SVG10]</a>.</p>
+    </dd>
+  <dt class="label">Openwave plugin API</dt>
+    <dd><p>PluginSuspend and PluginResume methods.</p>
+    </dd>
+</dl>
+</div>
+
+<div class="div3">
+<h4 class="priority1"><a name="N175" id="N175"></a>1.2.2 z-order/painting
+[1]</h4>
+
+<p>It should be possible for content which is rendered by <a title=""
+href="#cx">Component Extensions</a> to take its correct place in the z-order
+of the entire document - it can be above other content such as backgrounds,
+which show through transparent areas, and other content later in the document
+or with higher z-order should be able to partially overlap content rendered
+by the <a title="" href="#cx">Component Extension</a>.</p>
+
+<div class="div4">
+<h5 class="priority1"><a name="N186" id="N186"></a>1.2.2.1 clipping [1]</h5>
+
+<p><b>Clipping</b>, which addresses removal of parts of display elements that
+lie outside of a given boundary, must be addrssed by the Component
+Extension.</p>
+</div>
+</div>
+
+<div class="div3">
+<h4 class="priority2"><a name="N194" id="N194"></a>1.2.3 sharing colormap
+[2]</h4>
+
+<p>Implementations which require a colormap will need to allow the <a
+title="" href="#cx">Component Extension</a> to request the allocation of
+colors in the colormap and to find out what colors are already in the
+colormap, and to be notified if the color associated with a particular color
+index has changed.</p>
+</div>
+
+<div class="div3">
+<h4 class="priority2"><a name="N1A2" id="N1A2"></a>1.2.4 sharing fonts
+[2]</h4>
+
+<p>The <a title="" href="#cx">Component Extension</a> should have access to
+system fonts and their properties. The Host implementation provide means for
+querying metrics of the current font.  Metrics of interest could be a subset
+of those provided by <a href="#opentype">[OpenType]</a>. The Host
+implementation should provide methods for determining glyph bounding boxes,
+baselines, and nominal font height.  It should also provide an indication
+whether a given character maps to a glyph in that font. The <a title=""
+href="#cx">Component Extension</a> should be able to find out about
+downloadable fonts that other content on the same page has made available,
+and itself to make available fonts that it has downloaded. The font
+properties in use on the parent of the element whose content is being
+rendered by the <a title="" href="#cx">Component Extension</a> should be made
+available by inheritance over the <a title="" href="#cx">Component
+Extension</a> interface so that the same fonts can be used by the <a title=""
+href="#cx">Component Extension</a>.</p>
+
+<p>Accessibility information about preferred font sizes should be passed
+across the <a title="" href="#cx">Component Extension</a> interface.</p>
+</div>
+
+<div class="div3">
+<h4 class="priority1"><a name="N1CA" id="N1CA"></a>1.2.5 colors
+(accessibility issues) [1]</h4>
+</div>
+
+<div class="div3">
+<h4 class="priority1"><a name="N1D1" id="N1D1"></a>1.2.6 Device dependent
+drawing [1]</h4>
+
+<p><a title="" href="#cx">Component Extension</a> API should provide a
+platform dependent (e.g. XWindow Graphic Context, Microsoft Device Context)
+method for gathering device dependent information for formatting and drawing
+into each of the rectangles (e.g. for optimisation of drawing, such as
+window, device context, fonts). However this must not preclude the ability to
+use device independent methods, and the specification should recommend that
+these are available as a fallback.</p>
+</div>
+
+<div class="div3">
+<h4 class="priority1"><a name="N1DF" id="N1DF"></a>1.2.7 forcing redraws,
+invalidate rectangles, invalidate region [1]</h4>
+
+<p>In the Component Extension-does-compositing model with direct screen
+drawing, a <a title="" href="#cx">Component Extension</a> might damage
+content rendered by something else. This is like the situation in windowing
+systems where a window is iconised and (portions of) other windows that are
+now uncovered have to be told to redraw.</p>
+
+<p>The container-does-compositing model, with rendering being an offscreen
+RGBA pixmap, does not have this problem and need not tell its parents or
+other <a title="" href="#cx">Component Extension</a>s to redraw. Moving or
+update of a <a title="" href="#cx">Component Extension</a> merely requires
+re-composition of the current stack of offscreens without the need for a
+forced redraw, though this can be limited to a particular invalidated
+region.</p>
+
+<div class="issue">
+<p class="prefix"><a name="rectangle-region-1"
+id="rectangle-region-1"></a><b>Issue (rectangle-region-1):</b></p>
+
+<p>These descriptions narrowly miss actually listing a requirement. Make it
+simpler.</p>
+</div>
+
+<p>See also <a href="#Netscape3">[Netscape Plug-ins]</a>.</p>
+</div>
+
+<div class="div3">
+<h4 class="priority1"><a name="N206" id="N206"></a>1.2.8 window-less plug-in
+[1]</h4>
+
+<p><a title="" href="#cx">Component Extension</a> which do not draw at all
+should be addressed by the <a title="" href="#cx">Component Extension</a>
+API.</p>
+
+<p>See also <a href="#Netscape3">[Netscape Plug-ins]</a>.</p>
+</div>
+</div>
+
+<div class="div2">
+<h3 class="priority1"><a name="style" id="style"></a>1.3 Style [1]</h3>
+
+<div class="div3">
+<h4 class="priority1"><a name="DOMCSS" id="DOMCSS"></a>1.3.1 DOM CSS [1]</h4>
+
+<p>This section describes the relation between the <a title=""
+href="#cx">Component Extension</a> API and the Document Object Model (DOM)
+Level 2 CSS specification <a href="#DOM2Style">[DOM Level 2 Style Sheets and
+CSS]</a>.</p>
+
+<div class="div4">
+<h5 class="priority3"><a name="N23B" id="N23B"></a>1.3.1.1 specified values
+[3]</h5>
+
+<p>Unlike the DOM Level 2 CSS specification <a href="#DOM2Style">[DOM Level 2
+Style Sheets and CSS]</a>, this note does not require access to the specified
+CSS values in the style sheets.</p>
+</div>
+
+<div class="div4">
+<h5 class="priority1"><a name="computed" id="computed"></a>1.3.1.2 computed
+values [1]</h5>
+
+<p>If the <a title="" href="#host">Host implementation</a> provides a DOM
+tree to the Component Extension and a CSS Style engine, the <a title=""
+href="#cx">Component Extension</a> API must have access to the computed CSS
+values of its nearest DOM Node ancestor (its parentNode) using the DOM Level
+2 CSS <a href="#DOM2Style">[DOM Level 2 Style Sheets and CSS]</a> ViewCSS
+interface. Depending on the CSS Style engine, the Host Implementation may
+also provide a fully decorated DOM tree for the content addressed by the <a
+title="" href="#cx">Component Extension</a>.</p>
+</div>
+</div>
+
+<div class="div3">
+<h4 class="priority3"><a name="actualCSS" id="actualCSS"></a>1.3.2 actual
+values [3]</h4>
+
+<p>Actual CSS values, as defined in the CSS specification <a
+href="#CSS2">[CSS Level 2]</a>, will not be addressed by the <a title=""
+href="#cx">Component Extension</a> API.</p>
+</div>
+
+<div class="div3">
+<h4 class="priority1"><a name="generic_style" id="generic_style"></a>1.3.3
+Generic Styler [1]</h4>
+
+<p>The <a title="" href="#host">Host implementation</a> should contain a
+Style engine to handle general properties and to provide extension mechanism
+in order to support other properties. This Generic Styler engine has the
+responsibility of decorating the DOM tree with the computed values (see also
+<a href="#computed"><b>1.3.1.2 computed values</b></a>).</p>
+
+<p>Languages, such as CSS, have mechanism to extend the set of style
+properties used in the application. As an example, SVG 1.0 <a
+href="#SVG1">[SVG 1.0]</a> reused some of the properties listed in the CSS 2
+specification <a href="#CSS2">[CSS Level 2]</a> and adds new ones. It is
+expected that the Generic Styler of the <a title="" href="#host">Host
+implementation</a> supports a specific set of properties and some general
+style properties such as color, background or fonts are required to be
+supported. [<a title="foreign      style property" name="foreign"
+id="foreign">Definition</a>: A <b>foreign style property</b> is a style
+property that is not recognized internally by the Generic Styler.] The
+Generic Styler does not know its default value, or if the value could be
+inherited or not. The Generic Styler is expected to support <a
+title="foreign      style property" href="#foreign">foreign style
+properties</a>.</p>
+
+<p>The <a title="" href="#cx">Component Extension</a> should declare
+information on style properties it uses that may be foreign to the Generic
+Styler such as parse, default values, inheritance, ... The Styler is
+responsible for maintaining the information and dealing with duplicate
+declarations between Component Extensions. A Component Extension remove style
+properties or values associated with the style properties. In other words,
+the set of style properties stored by the Generic Styler is the union of the
+set of style properties supported by the <a title="" href="#host">Host
+implementation</a> and its <a title="" href="#cx">Component Extension</a>s.
+If a computed value is not recognized, the Generic Styler can:</p>
+<ul>
+  <li><p>use a default value</p>
+  </li>
+  <li><p>like for colors, always make the computed value have two parts</p>
+    <ol>
+      <li><p>a value in first set of values</p>
+      </li>
+      <li><p>a possible extended value</p>
+      </li>
+    </ol>
+  </li>
+  <li><p>have extended value + callback</p>
+  </li>
+</ul>
+
+<div class="issue">
+<p class="prefix"><a name="generic-style-engine-1"
+id="generic-style-engine-1"></a><b>Issue (generic-style-engine-1):</b></p>
+
+<p>What to do about style sheets when it is not known what Component
+Extension will be loaded?</p>
+</div>
+</div>
+
+<div class="div3">
+<h4 class="priority2"><a name="local_style" id="local_style"></a>1.3.4 Local
+Styler [2]</h4>
+
+<p>The <a title="" href="#cx">Component Extension</a> can also embedded its
+own local Style engine. In this case, the Component Extension does not need
+to declare or get the computed values of the style properties in a DOM tree.
+This model has the advantage to not assume a DOM API between the <a title=""
+href="#host">Host implementation</a> and the <a title="" href="#cx">Component
+Extension</a>, and only applies to the root node of <a title=""
+href="#cx">Component Extension</a> (<code>svg:svg</code>,
+<code>math:math</code>, ...). The local Style engine needs to provide:</p>
+<ul>
+  <li><p>access to style sheets.</p>
+  </li>
+  <li><p>access to containing DOM tree (optional).</p>
+  </li>
+  <li class="priority1"><p>access to the <code>[parent]</code> information
+    item in order to get the computed values of the style properties:
+    <code>propname -&gt; value</code></p>
+    [1]</li>
+  <li class="priority1"><p>access to style properties information:
+    <code>propname -&gt; inherit/initial value</code>.</p>
+    [1]</li>
+</ul>
+</div>
+
+<div class="div3">
+<h4 class="priority1"><a name="mobile_profiles"
+id="mobile_profiles"></a>1.3.5 Mobile profiles [1]</h4>
+
+<p>Mobile profiles are always required to be supported by the Host
+implementation and its <a title="" href="#cx">Component Extensions</a>.</p>
+</div>
+</div>
+
+<div class="div2">
+<h3 class="priority2"><a name="error" id="error"></a>1.4 Error handling
+[2]</h3>
+
+<p>An error handling mechanism should be provided by the Host implementation
+to the <a title="" href="#cx">Component Extension</a> in a future revision of
+the <a title="" href="#cx">Component Extension</a> API. This mechanism may be
+based on, or inspired from, the error handling mechanism provided by the DOM
+Level 3 Core specification <a href="#DOM3Core">[DOM Level 3 Core]</a>.</p>
+</div>
+
+<div class="div2">
+<h3 class="priority1"><a name="events" id="events"></a>1.5 Events [1]</h3>
+
+<p>There must be a way to pass events from the <a title="" href="#host">Host
+implementation</a> to the <a title="" href="#cx">Component Extension</a> and
+from the <a title="" href="#cx">Component Extension</a> to the Host
+implementation. If the <a title="" href="#host">Host implementation</a>
+provides a DOM tree to the component extension and contains an event
+mechanism, the Component Extension API must support the DOM Level 2 Events
+specification. User Interface events, such as window events or system events
+(reload, URI notify events), may be addressed.</p>
+
+<p>Namespace-bound events are events whose propagation is limited to elements
+namespace boundaries, i.e. it propagates until it reaches an element who does
+not use its ancestor's namespace name. Namespace bound events are out of
+scope.</p>
+</div>
+
+<div class="div2">
+<h3 class="priority1"><a name="DOMCore" id="DOMCore"></a>1.6 DOM Core tree
+[1]</h3>
+
+<p>The <a title="" href="#cx">Component Extension</a> API must provide
+programmatic read-only access to HTML and XML content by conforming to the
+following modules of the W3C Document Object Model Level 2 Core Specification
+<a href="#DOM2Core">[DOM Level 2 Core]</a> and exporting the interfaces they
+define:</p>
+<ul>
+  <li><p>the Core module for HTML</p>
+  </li>
+  <li><p>the Core and XML modules for XML.</p>
+  </li>
+</ul>
+</div>
+
+<div class="div2">
+<h3 class="priority1"><a name="starting" id="starting"></a>1.7 Starting point
+[1]</h3>
+
+<p>Features of the existing Netscape Plugin API <a
+href="#Netscape3">[Netscape Plug-ins]</a> should considered as a starting
+point with implementation experience for features of the <a title=""
+href="#cx">Component Extension</a> API, which may be modified, replaced, or
+eliminated as required to address problems and requirements.</p>
+</div>
+
+<div class="div2">
+<h3 class="priority1"><a name="conn_script" id="conn_script"></a>1.8
+Connecting with outside/scripting [1]</h3>
+
+<p>The <a title="" href="#cx">Component Extension</a> will call a <a title=""
+href="#host">Host implementation</a> function to request a connection to one
+of its features.</p>
+
+<p>This feature may be a generic functionality (eg. "copy/paste", whether
+this is selected by button, menu item, keyboard shortcut, drag-drop, or ...) 
+or a specific <a title="" href="#host">Host implementation</a> chrome (eg. 
+toolbar, button, status bar ... ).</p>
+
+<p>The request can be to output data through the feature (eg. status bar,
+title bar, alert, ...), to subscribe to events generated from a browser
+control, or to add a control to the chrome (eg. toolbar, menubar, menu
+...)</p>
+
+<p>The <a title="" href="#host">Host implementation</a> should return a value
+indicating whether it allows the connection or not.</p>
+
+<p>The <a title="" href="#cx">Component Extension</a> API should define how
+the features are selected, and specify a minimal list of connections that the
+browser *should* allow if it does have the requested feature, so that the <a
+title="" href="#cx">Component Extension</a> can reasonably expect such a
+connection request to be granted.</p>
+
+<p>Subscribed-to events can be passed to the <a title="" href="#cx">Component
+Extension</a> using the normal event-passing mechanism (see <a
+href="#events"><b>1.5 Events</b></a>). If the connection needs to pass large
+amounts of data, the <a title="" href="#cx">Component Extension</a>'s stream
+APIs should be used.</p>
+<ul>
+  <li><p class="priority1">chrome <em>[1]</em></p>
+    <ul>
+      <li><p>adding new items/removing new items</p>
+      </li>
+      <li><p>"right-click drop down menu"/main menu bar</p>
+      </li>
+      <li><p>status line</p>
+      </li>
+    </ul>
+  </li>
+  <li><p>copy/paste</p>
+  </li>
+  <li><p>find</p>
+  </li>
+  <li><p>drag/drop</p>
+  </li>
+  <li><p>focus</p>
+  </li>
+  <li><p class="priority1">alert <em>[1]</em></p>
+  </li>
+  <li><p>query user agents capabilities?</p>
+  </li>
+  <li><p>cross plug-in streams</p>
+  </li>
+  <li><p class="priority2">properties <em>[2]</em></p>
+    <ul>
+      <li><p>properties dialog</p>
+      </li>
+      <li><p>system properties: hostname, IP, ...</p>
+      </li>
+    </ul>
+  </li>
+</ul>
+</div>
+
+<div class="div2">
+<h3 class="priority1"><a name="nesting" id="nesting"></a>1.9
+Nesting/reetrance [1]</h3>
+
+<p>It must be possible for a <a title="" href="#cx">Component Extension</a>
+to discover, where available, and integrate the formatting and rendering of
+externally supported content types inserted into the <a title=""
+href="#cx">Component Extension</a> DOM Node's subhierarchy that are not
+internally supported by the <a title="" href="#cx">Component
+Extension</a>.</p>
+</div>
+
+<div class="div2">
+<h3 class="priority1"><a name="abstraction" id="abstraction"></a>1.10
+Abstraction level [1]</h3>
+
+<p>Much like the W3C DOM IDL descriptions and language bindings, the
+Component Extension API must be described independent of programming
+language, operating system and platform.</p>
+</div>
+
+<div class="div2">
+<h3 class="priority2"><a name="timeline" id="timeline"></a>1.11 timeline
+[2]</h3>
+
+<p>SMIL 2.0 <a href="#SMIL20">[SMIL 2.0]</a> is a specification for
+synchronized multimedia and SMIL Animation <a href="#SMILAnimation">[SMIL
+Animation]</a> is a specification for how the timing and animation aspects of
+SMIL 2.0 can be integrated into other languages, such as SVG (see chapter 19
+in <a href="#">[SVG10]</a>).</p>
+
+<p>If the <a title="" href="#host">Host implementation</a> supports
+synchronized playing of media such as audio, video or animations, then the
+Host implementation must support the ability for time-based <a title=""
+href="#cx">Component Extensions</a> to play media on a portion of a Host
+canvas, and the Host-played media and the Component Extension-played media
+must be synchronized. The API for achieving this synchronization must be rich
+enough to permit accurate implementation of the 'syncBehavior' and
+'syncTolerance' attributes defined in the section 10.3.1 in <a
+href="#SMIL20">[SMIL 2.0]</a>.</p>
+
+<p>SMIL 2.0 and SMIL Animation allow content to be started and stopped via
+interactivity, such as User Interface events (e.g., mouse and keyboard). 
+Host-supplied event propagation APIs must be such that time-based <a title=""
+href="#cx">Component Extensions</a> can implement the interactivity
+capabilities defined in the section 10.3.1, "Basic time support", in <a
+href="#SMIL20">[SMIL 2.0]</a>.</p>
+
+<p>If the <a title="" href="#host">Host implementation</a> supports streaming
+media, then the <a title="" href="#host">Host implementation</a> must supply
+APIs that allow <a title="" href="#cx">Component Extensions</a> to receive
+streaming content.</p>
+</div>
+
+<div class="div2">
+<h3 class="priority1"><a name="network" id="network"></a>1.12 network/HTTP
+[1]</h3>
+
+<p>Networking Support will include an API to request the data from a URI
+reference.</p>
+
+<p>The <a title="" href="#cx">Component Extension</a> will call a <a title=""
+href="#host">Host implementation</a> function and pass the URI reference, any
+additional headers (for example, in the case of HTTP, maybe an additional
+accept type), the method (in case of HTTP, GET, PUT, POST or HEAD) and a
+pointer to a notify data. The <a title="" href="#cx">Component Extension</a>
+may tell the <a title="" href="#host">Host implementation</a> to use the
+cache or to override it.</p>
+
+<p>When the request is complete, the <a title="" href="#host">Host
+implementation</a> will call the <a title="" href="#cx">Component
+Extension</a>'s notify function, and pass the data to the <a title=""
+href="#cx">Component Extension</a> using the <a title="" href="#cx">Component
+Extension</a>'s stream APIs.</p>
+
+<p>Example:</p>
+
+<table summary="Example" width="100%" bgcolor="#99ffff" border="1"
+cellpadding="5" class="eg">
+  <tbody>
+    <tr>
+      <td><pre>    kError HostURIRequest(kURIMethod method,
+                          const char *uri,
+                          const char *headers,
+                          const char *entity,
+                          unsigned long entitySize,
+                          void* notifyData,
+                          boolean useCache);
+    void   CXURINotify(const char *uri,
+                       kStatus status,
+                       void* notifyData);
+        </pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="issue">
+<p class="prefix"><a name="networking-1" id="networking-1"></a><b>Issue
+(networking-1):</b></p>
+
+<p>In the Netscape model <a href="#Netscape3">[Netscape Plug-ins]</a>, the
+data corresponding to a network request are sent to the <a title=""
+href="#cx">Component Extension</a> by the <a title="" href="#host">Host
+implementation</a> by creating a stream: it is a callback mechanism.</p>
+
+<p>Should we reused this mechanism or do we want to tie all asynchronous
+requests with one (probably DOM) event model ?</p>
+</div>
+</div>
+
+<div class="div2">
+<h3 class="priority2"><a name="editing" id="editing"></a>1.13 Editing [2]</h3>
+
+<p>Many <a title="" href="#cx">Component Extension</a>s will involve editing
+functions, so the API must provide a method for access to editing
+functionalities - character input, drawing interfaces, etc. These must be
+available in a device independent manner. This requirement also means that
+the available rendering space may need to be dynamically re-sized (see also
+<a href="#size_rect"><b>1.1.2 linebreak, size and rectangle negotiation,
+multiple rectangles</b></a>).</p>
+
+<div class="div3">
+<h4 class="priority1"><a name="N50A" id="N50A"></a>1.13.1 Editing mode
+[1]</h4>
+
+<p>The Component Extension API must provide an interface that allows the
+notification of the toggle between "edit" and "view" modes. This API must be
+present on both the Host implementation and the Component Extension.</p>
+</div>
+</div>
+
+<div class="div2">
+<h3 class="priority1"><a name="associations" id="associations"></a>1.14
+associations/registrations/negociations [1]</h3>
+
+<p>In order for the <a title="" href="#cx">Component Extension</a> to be able
+to extend the Host DOM implementation, there must be a way for the <a
+title="" href="#cx">Component Extension</a> to register its own DOM
+implementation in the Host DOM implementation. In that case, the DOM
+implementation Node factories in Document must create DOM Nodes using the
+registered <a title="" href="#cx">Component Extensions</a> Node for the
+corresponding types. Only the construction of the DOM nodes is affected by
+the registrations, not the building of the DOM tree. If the <a title=""
+href="#cx">Component Extension</a> does not provide a DOM implementation, the
+<a title="" href="#host">Host implementation</a> must build the entire DOM
+tree itself, including for the content addressed by the <a title=""
+href="#cx">Component Extension</a>.</p>
+
+<p>If the <a title="" href="#host">Host implementation</a> provides support
+for XML 1.0 <a href="#XML">[XML]</a> documents, it must also implement the
+namespaces support defined in the Namespaces recommendation <a
+href="#Namespaces">[XML Namespaces]</a>. Namespace conflicts resolution
+between <a title="" href="#cx">Component Extension</a>s must be resolved by
+the <a title="" href="#host">Host implementation</a>. There must be a way for
+the user to choose between <a title="" href="#cx">Component Extension</a>
+implementations in case of conflicts.</p>
+
+<p>The set of functionalities provided by the <a title="" href="#host">Host
+implementation</a> must be accessible to the Component Extension. The same
+applies for the <a title="" href="#cx">Component Extension</a>: the <a
+title="" href="#">Host implementation</a> must have a way to query the set of
+functionalities provided by the <a title="" href="#cx">Component
+Extension</a>.</p>
+
+<p>There are severals ways to extend the Host implementation. Technologies
+such as XBL or IE behaviors must be considered.</p>
+
+<p>The group might decide to come up with a modular architecture for an XML
+parser that will permit some of the XML content to be handled by other
+component. A general stream API should be addressed by the Component
+Extension to gain access to their data.</p>
+</div>
+
+<div class="div2">
+<h3 class="priority2"><a name="accessibility" id="accessibility"></a>1.15
+Accessibility [2]</h3>
+
+<p>The <a title="" href="#cx">Component Extension</a> API must provide for
+accessibility requirements. Substantially, this reinforces the need for
+several of the requirements listed already, such as the ability to specify a
+content-type rather than a plugin, the provision and use of
+device-independent interaction interfaces.</p>
+
+<p>The User Agent Accessibility Guidelines <a href="#">[UUAG]</a> require
+that access is provided for DOM interfaces, and "platform-specific
+interfaces" (for example MSAA, the Java Accessibility API, etc) where they
+exist.</p>
+</div>
+
+<div class="div2">
+<h3 class="priority1"><a name="versioning" id="versioning"></a>1.16
+Versioning [1]</h3>
+
+<p>The <a title="" href="#cx">Component Extension</a> API should have an
+identifiable versioning mechanism. The version information must change each
+time the functionality is changed.</p>
+
+<p>I am not sure it is necessary to discuss techniques here, as is done in
+the following paragraph.</p>
+
+<p>One technique for achieving this is to provide the naming for
+functionalities, and use a mechanism like CC/PP for identifying the available
+functionalities. Although this seems a little heavy for this purpose, and
+seems to be better suited to using various unstandardized systems rather than
+for a standardized system.</p>
+</div>
+
+<div class="div2">
+<h3 class="priority2"><a name="storage" id="storage"></a>1.17
+storage/persistence [2]</h3>
+
+<p>The <a title="" href="#host">Host implementation</a> will allow the <a
+title="" href="#cx">Component Extension</a> to save data in persistent
+storage or a file system. This ability will be governed by the security model
+associated with the <a title="" href="#cx">Component Extension</a>.</p>
+
+<p>For example, a web page has the ability to store cookies in the file
+system of the host. But a sandbox model exists there. Furthermore, the user
+may block web pages from setting cookies.</p>
+
+<p>The storage functionality can be divided into:</p>
+<ol>
+  <li><p>Reading and Writing data specific to the <a title=""
+    href="#cx">Component Extension</a>. ('Private' Storage) Example, saving
+    high scores in a game. Storing cookies is an example in the context of a
+    web page.</p>
+  </li>
+  <li><p class="priority3">Reading and Writing data from the global data.
+    ('Public' Storage). Example, reading list of addresses (or a specific
+    address) from an addressbook. <em>[3]</em></p>
+  </li>
+</ol>
+
+<p>For the first item, the <a title="" href="#host">Host implementation</a>
+may provide the <a title="" href="#cx">Component Extension</a> APIs to get
+and set values.</p>
+
+<p>For example, to set:</p>
+
+<table summary="Example" width="100%" bgcolor="#99ffff" border="1"
+cellpadding="5" class="eg">
+  <tbody>
+    <tr>
+      <td><pre>HostSetAttribute("newscore", itoa(newScore));
+        </pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>to read,</p>
+
+<table summary="Example" width="100%" bgcolor="#99ffff" border="1"
+cellpadding="5" class="eg">
+  <tbody>
+    <tr>
+      <td><pre>length = HostGetDataSize ("highscores");
+if (length &gt; 0)
+{
+    scoreString = memAlloc (length);
+    HostGetAttribute ("highscores", scoreString);
+}
+        </pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>If the security settings of the <a title="" href="#cx">Component
+Extension</a> do not allow these operations, then these operations will fail.
+Or, the user maybe prompted for advice.</p>
+
+<p>See also <a href="#WAP">[WAP Persistent Storage]</a>.</p>
+</div>
+
+<div class="div2">
+<h3 class="priority1"><a name="memory" id="memory"></a>1.18 Memory management
+[1]</h3>
+
+<p>Memory management would include APIs for</p>
+<ul>
+  <li><p>Allocating a block of memory</p>
+  </li>
+  <li><p>Resizing the block of memory</p>
+  </li>
+  <li><p>Releasing the block of memory and</p>
+  </li>
+  <li><p>Flushing memory from the host's space.</p>
+  </li>
+</ul>
+
+<div class="issue">
+<p class="prefix"><a name="memory-1" id="memory-1"></a><b>Issue
+(memory-1):</b></p>
+
+<p>how much memory should a plugin be allowed ?  Probable answer: System
+dependent. If the allocation function fails, an exception will be
+generated.</p>
+</div>
+
+<div class="issue">
+<p class="prefix"><a name="memory-2" id="memory-2"></a><b>Issue
+(memory-2):</b></p>
+
+<p>What about read/write? If the allocate APIs return a pointer, (as the
+Netscape APIs do), what will prevent a plugin to do something like</p>
+
+<table summary="Example" width="100%" bgcolor="#99ffff" border="1"
+cellpadding="5" class="eg">
+  <tbody>
+    <tr>
+      <td><pre>          char* s = MemAlloc (100);
+          s[2000] = 'a';
+          </pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>On a system that doesn't have a memory management unit, this may freeze
+the system.</p>
+</div>
+</div>
+
+<div class="div2">
+<h3><a name="N635" id="N635"></a>1.19 Security</h3>
+
+<p>Security issues must be considered for each of the functionalities of the
+Component Extension API.</p>
+</div>
+</div>
+</div>
+
+<div class="back">
+
+<div class="div1">
+<h2><a name="N642" id="N642"></a>A Glossary</h2>
+<dl>
+  <dt class="label"><a name="cx" id="cx"></a>Component Extension</dt>
+    <dd><p>The term <b>Component Extension</b> (also well-known as
+      <b>plug-ins</b> in Web browsers) refers to any software in charge of
+      providing the client-side part of the Component Extension API. It is a
+      program that runs as part of the <a title="" href="#host">Host
+      implementation</a> and that is not part of content.</p>
+    </dd>
+  <dt class="label"><a name="host" id="host"></a>Host implementation</dt>
+    <dd><p>The term <b>Host implementation</b> refers to any software in
+      charge of providing the server-side part of the Component Extension
+      API. Softwares may include Web browsers, media players, <a title=""
+      href="#cx">Component Extensions</a>, and other programs (including
+      assistive technologies) that help in retrieving and processing (this
+      includes rendering) Web content.</p>
+    </dd>
+  <dt class="label"><a name="api" id="api"></a>Application Programming
+  Interface (API)</dt>
+    <dd><p>An application programming interface (API) defines how
+      communication may take place between applications. It is a set of
+      functions or methods used to access some functionality.</p>
+    </dd>
+</dl>
+</div>
+
+<div class="div1">
+<h2><a name="references" id="references"></a>B References</h2>
+<dl>
+  <dt class="label"><a name="CSS2" id="CSS2"></a>CSS Level 2</dt>
+    <dd>W3C (World Wide Web Consortium) <a
+      href="http://www.w3.org/TR/1998/REC-CSS2-19980512">Cascading Style
+      Sheets, level 2 Specification</a>, May 1998. Available at
+      http://www.w3.org/TR/1998/REC-CSS2-19980512</dd>
+  <dt class="label"><a name="DOM2Core" id="DOM2Core"></a>DOM Level 2 Core</dt>
+    <dd>W3C (World Wide Web Consortium) <a
+      href="http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113">Document
+      Object Model Level 2 Core Specification</a>, November 2000. Available
+      at http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113</dd>
+  <dt class="label"><a name="DOM3Core" id="DOM3Core"></a>DOM Level 3 Core</dt>
+    <dd>W3C (World Wide Web Consortium) <a
+      href="http://www.w3.org/TR/DOM-Level-3-Core">Document Object Model
+      Level 3 Core Specification</a>, September 2001. Available at
+      http://www.w3.org/TR/DOM-Level-3-Core</dd>
+  <dt class="label"><a name="DOM2Style" id="DOM2Style"></a>DOM Level 2 Style
+  Sheets and CSS</dt>
+    <dd>W3C (World Wide Web Consortium) <a
+      href="http://www.w3.org/TR/2000/REC-DOM-Level-2-Style-20001113">Document
+      Object Model Level 3 Views and Formatting Specification</a>, November
+      2000. Available at
+      http://www.w3.org/TR/2000/REC-DOM-Level-2-Style-20001113</dd>
+  <dt class="label"><a name="DOM3VF" id="DOM3VF"></a>DOM Level 3 Views and
+  Formatting</dt>
+    <dd>W3C (World Wide Web Consortium) <a
+      href="http://www.w3.org/TR/2000/WD-DOM-Level-3-Views-20001115/">Document
+      Object Model Level 3 Views and Formatting</a>, November 2000. Available
+      at http://www.w3.org/TR/2000/WD-DOM-Level-3-Views-20001115</dd>
+  <dt class="label"><a name="Netscape3" id="Netscape3"></a>Netscape
+  Plug-ins</dt>
+    <dd>Netscape <a
+      href="http://developer.netscape.com/docs/manuals/communicator/plugin/index.htm">Plug-in
+      Guide</a>, 1998. Available at
+      http://developer.netscape.com/docs/manuals/communicator/plugin/index.htm</dd>
+  <dt class="label"><a name="opentype" id="opentype"></a>OpenType</dt>
+    <dd>Microsoft <a
+      href="http://www.microsoft.com/typography/otspec/default.htm">OpenType
+      Specification</a>, April 2001. Available at
+      http://www.microsoft.com/typography/otspec/default.htm</dd>
+  <dt class="label"><a name="URIRef" id="URIRef"></a>RFC2396</dt>
+    <dd>IETF (Internet Engineering Task Force) <a
+      href="http://www.ietf.org/rfc/rfc2396.txt">RFC 2396: Uniform Resource
+      Identifiers (URI): Generic Syntax</a>, eds. T. Berners-Lee, R.
+      Fielding, L. Masinter. August 1998. Available at
+      http://www.ietf.org/rfc/rfc2396.txt</dd>
+  <dt class="label"><a name="SVG1" id="SVG1"></a>SVG 1.0</dt>
+    <dd>W3C (World Wide Web Consortium) <a
+      href="http://www.w3.org/TR/SVG">Scalable Vector Graphics (SVG) 1.0
+      Specification</a>, September 2001. Available at
+    http://www.w3.org/TR/SVG</dd>
+  <dt class="label"><a name="SMIL20" id="SMIL20"></a>SMIL 2.0</dt>
+    <dd>W3C (World Wide Web Consortium) <a
+      href="http://www.w3.org/TR/smil20">Synchronized Multimedia Integration
+      Language (SMIL 2.0)</a>, August 2001. Available at
+      http://www.w3.org/TR/smil20</dd>
+  <dt class="label"><a name="SMILAnimation" id="SMILAnimation"></a>SMIL
+  Animation</dt>
+    <dd>W3C (World Wide Web Consortium) <a
+      href="http://www.w3.org/TR/smil-animation">SMIL Animation</a>,
+      September 2001. Available at http://www.w3.org/TR/smil-animation</dd>
+  <dt class="label"><a name="UAAG" id="UAAG"></a>User Agent Accessibility
+  Guidelines 1.0</dt>
+    <dd>W3C (World Wide Web Consortium) <a
+      href="http://www.w3.org/TR/UAAG10/">User Agent Accessibility Guidelines
+      1.0</a>, September 2001. Available at http://www.w3.org/TR/UAAG10</dd>
+  <dt class="label"><a name="WAP" id="WAP"></a>WAP Persistent Storage</dt>
+    <dd>WAP Forum (Wireless Application Forum) <a
+      href="http://www1.wapforum.org/tech/documents/WAP-227-PSTOR-20010530-a.pdf">WAP
+      Persistent Storage Interface </a>, May 2001. Available at
+      http://www1.wapforum.org/tech/documents/WAP-227-PSTOR-20010530-a.pdf</dd>
+  <dt class="label"><a name="XML" id="XML"></a>XML</dt>
+    <dd>W3C (World Wide Web Consortium) <a
+      href="http://www.w3.org/TR/2000/REC-xml-20001006">Extensible Markup
+      Language (XML) 1.0</a>, October 2000. Available at
+      http://www.w3.org/TR/2000/REC-xml-20001006</dd>
+  <dt class="label"><a name="InfoSet" id="InfoSet"></a>XML Information
+  set</dt>
+    <dd>W3C (World Wide Web Consortium) <a
+      href="http://www.w3.org/TR/2001/PR-xml-infoset-20010810">XML
+      Information Set</a>, August 2001. Available at
+      http://www.w3.org/TR/2001/PR-xml-infoset-20010810</dd>
+  <dt class="label"><a name="Namespaces" id="Namespaces"></a>XML
+  Namespaces</dt>
+    <dd>W3C (World Wide Web Consortium) <a
+      href="http://www.w3.org/TR/1999/REC-xml-names-19990114">Namespaces in
+      XML</a>, January 1999. Available at
+      http://www.w3.org/TR/1999/REC-xml-names-19990114</dd>
+</dl>
+</div>
+
+<div class="div1">
+<h2><a name="N79B" id="N79B"></a>C Contributors</h2>
+
+<p>The people who contributed to this document are the members of the
+HyperText Coordination Group and the participants of the Oslo face-to-face
+meeting:</p>
+
+<p>Jonny Axelsson (Opera), Bert Bos (W3C), Angel Diaz (IBM), Jon Ferraiolo
+(Adobe), Max Froumentin (W3C), Rick Graham (Bitflash), Stein Kulseth (Opera),
+Dean Jackson (W3C), Philippe Le H&eacute;garet (W3C), H&aring;kon Lie
+(Opera), Rune Lillesveen (Opera), Chris Lilley, (W3C), Charles McCathieNevile
+(W3C), Steven Pemberton (CWI/W3C), Vincent Quint (W3C, HyperText CG Chair),
+Tapas Roy (Openwave), Peter Stark (Ericksson), Ray Whitmer (Netscape/AOL),
+Steve Zilles (Adobe)</p>
+</div>
+</div>
+</body>
+</html>

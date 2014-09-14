@@ -1,0 +1,2407 @@
+<!-- http://www.w3.org/TR/powder-formal/ -->
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <title>Protocol for Web Description Resources (POWDER): Formal Semantics</title>
+  <style type="text/css">
+  var {font-family: serif; font-style: italic;}
+	li, dt, dd {margin-top: 1em;}
+	ul, ol, dl {margin-top: 1em; margin-bottom: 1em;}
+  ol ol {list-style-type: lower-alpha}
+  ol ol ol {list-style-type: lower-roman}
+  .example {padding: 0.5em; background-color: rgb(204, 255, 204); border:thin dotted black; white-space:nowrap; overflow:auto}
+  table {margin: 0 auto; border-collapse:collapse; border:thin solid black}
+  td, th {border:thin solid black; padding:0.5em}
+  caption {caption-side:bottom; padding-top:1em; margin:0 auto}
+  p.caption {font-weight:bold}
+	.toc1 {padding:0 0 0.5em 0}
+	.toc2 {padding:0 0 0.5em 1em}
+	.toc3 {padding:0 0 0.5em 2em}
+  .semext {padding: 0.5em; background-color:#cccccc; border:thin dotted black;}
+  </style>
+  <link rel="stylesheet" type="text/css" href="http://www.w3.org/StyleSheets/TR/W3C-REC.css"/>
+<!--  <link rel="stylesheet" type="text/css" href="http://www.w3.org/StyleSheets/TR/W3C-WD"/> -->
+
+</head>
+<body>
+<div class="head">
+
+<a href="http://www.w3.org/"><img height="48" width="72" alt="W3C" src="http://www.w3.org/Icons/w3c_home"/></a>
+<h1>Protocol for Web Description Resources (POWDER): Formal Semantics</h1>
+<h2>W3C Recommendation 1 September 2009</h2>
+<dl>
+  <dt>This version</dt><dd><a href="http://www.w3.org/TR/2009/REC-powder-formal-20090901/">http://www.w3.org/TR/2009/REC-powder-formal-20090901/</a></dd>
+  <dt>Latest version</dt><dd><a href="http://www.w3.org/TR/powder-formal/">http://www.w3.org/TR/powder-formal/</a></dd>
+  <dt>Previous version</dt><dd><a href="http://www.w3.org/TR/2009/PR-powder-formal-20090604/">http://www.w3.org/TR/2009/PR-powder-formal-20090604/</a></dd>
+</dl>
+<dl>
+<dt>Editors:</dt>
+
+  <dd>Stasinos Konstantopoulos, Institute of Informatics &amp; Telecommunications (IIT), NCSR &quot;Demokritos&quot;</dd>  
+  <dd>Phil Archer, Institute of Informatics &amp; Telecommunications (IIT), NCSR &quot;Demokritos&quot; (formerly with FOSI)</dd>
+</dl>
+<p>Please refer to the <a href="http://www.w3.org/2007/powder/powder-errata"><strong>errata</strong></a> for this document, which may include some normative corrections.</p>
+
+<p>See also <a href=" http://www.w3.org/2003/03/Translations/byTechnology?technology=powder-formal"> <strong>translations</strong></a>.</p>
+
+<p class="copyright"><a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> &copy; 2009 <a href="http://www.w3.org/"><acronym title="World Wide Web Consortium">W3C</acronym></a><sup>&reg;</sup> (<a href="http://www.csail.mit.edu/"><acronym title="Massachusetts Institute of Technology">MIT</acronym></a>, <a href="http://www.ercim.org/"><acronym title="European Research Consortium for Informatics and Mathematics">ERCIM</acronym></a>, <a href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply.</p>
+
+<hr />
+</div>
+<h2 id="abstract">Abstract</h2>
+<p>This document underpins the Protocol for Web Description Resources (POWDER). It describes how the relatively simple operational 
+format of a POWDER document can be transformed through two stages: first into a more tightly constrained XML format (POWDER-BASE), 
+and then into an RDF/OWL encoding (POWDER-S) that may be processed by Semantic Web tools. Such processing is only 
+possible, however, if tools implement the semantic extension defined within this document. The formal semantics of POWDER 
+are best understood after the reader is acquainted with the Description Resources [<a href="#dr">DR</a>] and 
+Grouping of Resources [<a href="#group">GROUP</a>] documents.</p>
+
+<h2 id="status">Status of this document</h2>
+<p><em>This section describes the status of this document at the time of its publication. Other documents may supersede this document. A list of current W3C publications and the latest revision of this technical report can be found in the <a href="http://www.w3.org/TR/" shape="rect">W3C technical reports index</a> at http://www.w3.org/TR/.</em></p>
+
+<p>This document is a W3C Recommendation that was developed by the <a href="http://www.w3.org/2007/powder/" shape="rect">POWDER Working Group</a>.</p>
+
+<p>Please see the Working Group's <a href="http://www.w3.org/2007/powder/Group/features.html">implementation report</a> 
+and <a href="http://lists.w3.org/Archives/Public/public-powderwg/2009Apr/0015.html">Disposition of Last Call Comments</a>.
+The disposition of comments received during previous calls are also <a href="http://lists.w3.org/Archives/Public/public-powderwg/2009Feb/0006.html">available</a>.
+Changes since the <a href="http://www.w3.org/TR/2009/PR-powder-formal-20090604/">previous version</a> of this document are minor in nature and are fully documented in the <a href="#sincePR">Change log</a>.</p>
+
+<p>Publication of this Recommendation is synchronized with several other documents:</p>
+<ul>
+  <li><a href="http://www.w3.org/TR/2009/REC-powder-dr-20090901/">POWDER: Description Resources</a> (Recommendation)</li>
+  <li><a href="http://www.w3.org/TR/2009/REC-powder-grouping-20090901/">POWDER: Grouping of Resources</a> (Recommendation)</li>
+  <li><a href="http://www.w3.org/TR/2009/NOTE-powder-primer-20090901/">POWDER: Primer</a> (Working Group Note)</li>
+  <li><a href="http://www.w3.org/TR/2009/NOTE-powder-test-20090604/">POWDER: Test Suite</a> (Working Group Note)</li>
+</ul>
+
+<p>The W3C Membership and other interested parties are invited to review
+the document and send comments to <a href="mailto:public-powderwg@w3.org">public-powderwg@w3.org</a> (with <a href="http://lists.w3.org/Archives/Public/public-powderwg/" shape="rect">public archive</a>).</p>
+
+<p>This document has been reviewed by W3C Members, by software developers, and by other W3C groups and interested parties, and is endorsed by the Director as a W3C Recommendation. It is a stable document and may be used as reference material or cited from another document. W3C's role in making the Recommendation is to draw attention to the specification and to promote its widespread deployment. This enhances the functionality and interoperability of the Web.</p>
+
+<p>This document was produced by a group operating under the <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 W3C Patent Policy</a>. W3C maintains a <a rel="disclosure" href="http://www.w3.org/2004/01/pp-impl/40243/status">public list of any patent disclosures</a> made in connection with the deliverables of the group; that page also includes instructions for disclosing a patent. An individual who has actual knowledge of a patent which the individual believes contains <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential Claim(s)</a> must disclose the information in accordance with <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section 6 of the W3C Patent Policy</a>. </p>
+
+
+
+<h2 id="toc">Table of Contents</h2>
+<div class="toc1">1 <a href="#intro">Introduction &amp; Scope</a></div>
+<div class="toc2">1.1 <a href="#namespaces">Namespaces, Terminology and Conventions Used in This Document</a></div>
+<div class="toc2">1.2 <a href="#conformancestatement">Conformance Statement</a></div>
+
+<div class="toc1">2 <a href="#attributionSemantics">Attribution Element Semantics</a></div>
+<div class="toc2">2.1 <a href="#powderAttribution">POWDER Attribution Semantics</a></div>
+<div class="toc2">2.2 <a href="#powderBaseAttribution">POWDER-BASE Attribution Semantics</a></div>
+
+<div class="toc1">3 <a href="#drSemantics">Description Resource Semantics</a></div>
+<div class="toc2">3.1 <a href="#multiDRsemantics">Multiple Description Resources in a Single POWDER Document</a></div>
+<div class="toc2">3.2 <a href="#descriptorConstraints">Descriptor Set Semantics</a></div>
+<div class="toc3">3.2.1 <a href="#simpleDs">Descriptor Sets expressed as RDF Properties and Values</a></div>
+<div class="toc3">3.2.2 <a href="#typeAssertion">Asserting the <code>rdf:type</code> Relationship</a></div>
+<div class="toc3">3.2.3 <a href="#externalDs">Referring to External Descriptor Sets</a></div>
+<div class="toc3">3.2.4 <a href="#furtherDs">Further Descriptors</a></div>
+<div class="toc2">3.3 <a href="#tagConstraints">Tag Set Semantics</a></div>
+
+<div class="toc1">4 <a href="#iriSets">IRI Set Semantics</a></div>
+
+<div class="toc2">4.1 <a href="#whitespace">White Space and List Pre-Processing</a></div>
+<div class="toc2">4.2 <a href="#iriSetSemantics">POWDER and POWDER-BASE IRI Set Semantics</a></div>
+<div class="toc2">4.3 <a href="#regexSemantics">POWDER-S IRI Set Semantics</a></div>
+<div class="toc3">4.3.1 <a href="#qCont">Include/Exclude Query Contains Semantics</a></div>
+<div class="toc3">4.3.2 <a href="#iPatt">Include/Exclude IRI Pattern Semantics</a></div>
+<div class="toc2">4.4 <a href="#emptyIRIsets">Direct Descriptions</a></div>
+<div class="toc2">4.5 <a href="#abouthostssemantics">Semantics of <code>abouthosts</code> and <code>aboutregex</code></a></div>
+<div class="toc2">4.6 <a href="#oxRegexSemantics">POWDER-BASE IRI Set Semantics in OWL 2 (Informative)</a></div>
+<div class="toc1">5 <a href="#pp">POWDER Processor Semantics</a></div>
+<div class="toc1">6 <a href="#ack">Acknowledgements</a></div>
+<div class="toc1">7 <a href="#refs">References</a></div>
+<div class="toc2">7.1 <a href="#normrefs">Normative References</a></div>
+<div class="toc2">7.2 <a href="#inforefs">Informative References</a></div>
+<div class="toc1">8 <a href="#change">Change Log</a></div>
+<div class="toc2">8.1 <a href="#sincefpwd">Changes since First Public Working Draft</a></div>
+<div class="toc2">8.2 <a href="#sincelc">Changes since Last Call Working Draft</a></div>
+<div class="toc2">8.3 <a href="#sincelc2">Changes since Second Last Call Working Draft</a></div>
+<div class="toc2">8.4 <a href="#sincelc3">Changes since Third Last Call Working Draft</a></div>
+<div class="toc2">8.4 <a href="#sincelc3">Changes since Third Last Call Working Draft</a></div>
+
+
+
+<h2 id="intro">1 Introduction &amp; Scope</h2>
+<p>The Protocol for Web Description Resources, POWDER, offers a simple method of associating RDF data with groups 
+of resources. Its primary 'unit of information' is the Description Resource (DR). This comprises three elements:</p>
+
+<ul>
+  <li>attribution (who is providing the description)</li>
+  <li>scope (defined as a set of IRIs over which the description applies to the resources de-referenced from those IRIs)</li>
+  <li>the description itself (the 'descriptor set').</li>
+</ul>
+
+<p>To some extent, this approach is in tension with the core semantics
+of RDF and OWL. To resolve that tension, it is necessary to extend RDF
+semantics as described below. In order to minimize the required
+extension, while at the same time preserving the relatively simple
+encoding of POWDER in XML which is generally readable by humans, we define a multi-layered approach.
+The operational semantics, i.e. the encoding of POWDER in XML, is
+first transformed into a more restricted XML encoding that is less easily understood by humans 
+and depends on matching IRIs against regular expressions to determine whether or not they are within the scope of the DR.
+This latter encoding is, in its own turn, transformed into the extended-RDF encoding.</p>
+
+<p id="qa1">This document formalizes the semantics of POWDER to ensure consistency between the different layers.
+It is of particular importance to RDF/OWL-based, as opposed to purely operational, implementations of POWDER.</p>
+
+<p>The data model makes the attribution element mandatory for all POWDER documents. These may contain any number 
+of Description Resources (DRs) that effectively inherit the attribution of the document as a whole. Descriptor sets 
+may also be included independently of a specific DR, and these too inherit the attribution. This 
+model persists throughout the layers of the POWDER model, which are as follows:</p>
+
+<dl>
+  <dt>POWDER</dt>
+  <dd>
+
+    <p>The operational encoding, a dialect of XML, that transports the RDF data. It is expected that POWDER will typically be published and processed in this form.</p>
+
+    <p>POWDER's resource grouping methods are mostly geared towards URLs and Information Resources as defined in the Architecture of the World Wide Web [<a href="#webarch">WEBARCH</a>].</p>
+
+  </dd>
+
+  <dt>POWDER-BASE</dt>
+  <dd>
+
+    <p>This is a largely theoretical XML encoding of POWDER that
+    reduces all means of grouping resources according to their IRI
+    into a single grouping method, that of matching IRIs against
+    arbitrary regular expressions.</p>
+
+    <p>POWDER-BASE is provided as a means of formally specifying the
+    semantics of the various IRI grouping methods defined in POWDER.
+    POWDER-BASE is generated automatically from POWDER by means of the GRDDL
+    transform [<a href="#grddl">GRDDL</a>] that is associated with the
+    POWDER namespace <span id="pa2"> and defined in this document</span>.</p>
+
+   <p>Elements not concerned with IRI set definition are identical in POWDER and POWDER-BASE.</p>
+
+  </dd> 
+
+  <dt>POWDER-S (Semantic POWDER)</dt>
+  <dd>
+
+    <p>The Semantic encoding uses a fragment of RDF/OWL that has been
+    extended in a way that facilitates the matching of the string
+    representation of a resource's identifier against a regular
+    expression. <span id="xq">The regular expression syntax used is defined by XML 
+	schema as modified by XQuery 1.0 and XPath 2.0 Functions and 
+	Operators [<a href="#xqxp">XQXP</a>]</span>.</p>
+
+    <p>OWL classes are used to represent sets of resources, grouped
+    according to their IRI and according to their properties
+    (descriptors). Resources are described by asserting that a class
+    that defines a set of IRIs is a sub class of a descriptor-defined
+    class-set. Attribution is provided by way of OWL annotation
+    properties.</p>
+
+    <p>A small RDF vocabulary is needed to support POWDER-S. Although
+    it is valid RDF/OWL, generic tools will only be able to process
+    the semantics of POWDER-S if they implement the necessary
+    extension defined in this document.</p>
+
+    <p>POWDER-S is generated from POWDER-BASE by means of the GRDDL transform
+    [<a href="#grddl">GRDDL</a>] that is associated with the POWDER
+    namespace. 
+    POWDER-S <a href="#keywords">MAY</a> be created directly, but this is generally
+    inadvisable since, whilst a POWDER Processor MUST understand and
+    process POWDER-BASE and SHOULD understand POWDER, it MAY NOT understand and process POWDER-S. The
+    aim of POWDER-S is to make the data available to the broader
+    Semantic Web via GRDDL, not to create an alternative encoding.</p>
+
+    <p>The conformance criteria for a POWDER Processor are given in the Description Resources document [<a href="#dr">DR</a>].</p>
+
+  </dd>
+</dl>
+
+<p id="pa3"><span id="stk1">The GRDDL transform</span> from POWDER to POWDER-BASE to POWDER-S 
+is defined in this document. The transform from POWDER to POWDER-BASE only affects elements related 
+to IRI set definition, taking tokens as input and yielding a set of regular expressions as 
+output. Such a transformation will be achievable by several means in different application 
+environments. One available method is to use the XSLT stylesheet associated with the POWDER 
+XML Schema [<a href="#wdr2b">WDR2B</a>], which uses <a href="#xslt2">XSLT 2</a>.</p>
+
+<p>A separate XSLT stylesheet, which only uses <a href="#xslt">XSLT 1</a> is associated with the POWDER-BASE schema and 
+achieves the more complex task of transforming POWDER-BASE to POWDER-S [<a href="#b2s">B2S</a>]. 
+Both stylesheets are consistent with the normative text in this document, but their syntactic 
+specifics are not normative; in effect, a POWDER processor MAY use different transforms to 
+produce syntactically different but semantically equivalent OWL/RDF for processing POWDER documents.</p>
+
+
+<p>Description Resources are defined separately [<a href="#dr">DR</a>] and a further document defines the creation of IRI sets [<a href="#group">GROUP</a>]. Readers should be familiar with those documents before proceeding with this one. 
+The full set of POWDER documents also includes its <a href="#usecases">Use Cases</a>, <a href="#primer">Primer</a> and <a href="#testsuite">Test Suite</a>, 
+together with <span id="cleanup1">two namespace documents: the POWDER XML schema [<a href="#wdr">WDR</a>] and POWDER-S vocabulary [<a href="#wdrs">WDRS</a>]</span><span id="pa4">.</span></p>
+
+<h3 id="namespaces">1.1 Namespaces, Terminology and Conventions Used in This Document.</h3>
+
+<p>The POWDER vocabulary namespace is <code>http://www.w3.org/2007/05/powder#</code> for which we use the prefix <code>wdr</code>
+The POWDER-S vocabulary namespace is <code>http://www.w3.org/2007/05/powder-s#</code> for which we use the prefix <code>wdrs</code>
+
+All prefixes used in this document, together with their associated namespaces, are shown in the table below.</p>
+
+<table id="table1">
+  <caption>Table 1: Prefixes and Namespaces used in this document</caption>
+  <tr><th>Prefix</th><th>Namespace</th></tr>
+  <tr><td style="padding:1em 0.5em"><code>wdr</code></td><td><code>http://www.w3.org/2007/05/powder#</code></td></tr>
+  <tr><td style="padding:1em 0.5em"><code>wdrs</code></td><td><code>http://www.w3.org/2007/05/powder-s#</code></td></tr>
+
+  <tr><td><code>rdf</code></td><td><code>http://www.w3.org/1999/02/22-rdf-syntax-ns#</code></td></tr>
+  <tr><td><code>rdfs</code></td><td><code>http://www.w3.org/2000/01/rdf-schema#"</code></td></tr>
+  <tr><td><code>owl</code></td><td><code>http://www.w3.org/2002/07/owl#</code></td></tr>
+  <tr><td><code>xsd</code></td><td><code><span id="ns_typo">http://www.w3.org/2001/XMLSchema#</span></code></td></tr>
+  <tr><td><code>xsl</code></td><td><code>http://www.w3.org/1999/XSL/Transform</code></td></tr>
+  <tr><td><code>ex</code></td><td>An arbitrary prefix used to denote an 'example vocabulary' <span id="pa6">from the <code>example.org</code> domain.</span></td></tr>
+</table>
+
+<p>Unqualified elements in this document are from the <code>wdr</code> namespace.</p>
+
+
+<p id="keywords">In this document, the words MUST, MUST NOT, SHOULD, SHOULD NOT, <span id="pa5">MAY and MAY NOT</span> are to be interpreted as described in RFC2119 [<a href="#ref-rfc2119">RFC2119</a>].</p>
+
+<p>For convenience and transparency, we have used the RDF/XML serialization for POWDER-S as we have throughout the document 
+set. Other serializations, such as N3 [<a href="#n3">N3</a>], are equally valid for POWDER-S. <span id="grdl1">The GRDDL transformations associated with the POWDER namespace, which use XSLT to effect the transform, produces RDF/XML as output.</span></p>
+
+<p>Examples in this document show fragments of data and each is linked to two external files that 
+mirror the data in the text, one serialized as RDF/XML and one as Turtle [<a href="#ttl">TTL</a>].
+However, in order to be valid documents, the external files include 
+generic data not shown in the text that has been taken largely from examples 
+<a href="http://www.w3.org/TR/powder-dr/#eg2-1">2-1</a> and <a href="http://www.w3.org/TR/powder-dr/#eg2-3">2-3</a> in 
+the Description Resources document [<a href="#dr">DR</a>].</p>
+
+<p>The regular expressions in this documents should be
+interpreted as per
+<a href="http://www.w3.org/TR/xpath-functions/#regex-syntax">Section 7.6.1</a>
+of the XQuery/XPath Recommendation [<a href="#xqxp">XQXP</a>].</p>
+
+
+<h3 id="conformancestatement">1.2 Conformance</h3>
+
+<p>Conformant implementations  of this Recommendation will transform POWDER to POWDER-BASE and/or POWDER-BASE to 
+POWDER-S documents as described in sections 2 - 4.5 below.</p>
+
+<p>The conformance criteria for a POWDER processor are specified in the Description Resources 
+document  [<a href="#dr">DR</a>]. This makes it clear that a conformant POWDER Processor MAY NOT process 
+POWDER-S documents. In applications that do process POWDER-S, however, conformance with this document means 
+that the software will implement the Semantic Extension defined in <a href="#regexSemantics">Section 4.3</a> 
+such that the results of the queries set out in <a href="#pp">Section 5</a> are indistinguishable from those returned 
+from a conformant POWDER Processor working purely with POWDER or POWDER-BASE.</p>
+
+
+<h2 id="attributionSemantics">2 Attribution Element Semantics</h2>
+
+
+<p>The <code>attribution</code> element, present in all POWDER documents, provides data about 
+the authorship, validity period, and other issues that a user or user agent can use 
+when deciding whether or not to confer their trust on a POWDER document.</p>
+
+
+<h3 id="powderAttribution">2.1 POWDER Attribution Semantics</h3>
+
+<p>Most <code>attribution</code> elements are not involved in IRI grouping, and as such are untouched during the transformation from POWDER to 
+POWDER-BASE. The only exception is <code>abouthosts</code>, which sets an outer limit on the resources described by the 
+DRs within the document. POWDER <code>abouthosts</code> elements are translated into 
+POWDER-BASE <code>aboutregex</code> elements, as discussed in <a href="#abouthostssemantics">Section 4.5</a> below.</p>
+
+    
+
+<h3 id="powderBaseAttribution">2.2 POWDER-S Attribution Semantics</h3>
+
+<p>Since the <code>attribution</code> element provides meta-data about the
+document itself, it is transformed from POWDER (through POWDER-BASE)
+into POWDER-S as annotation properties of an
+  <a href="http://www.w3.org/TR/2004/REC-owl-guide-20040210/#OntologyHeaders">
+    <code>owl:Ontology</code>
+  </a>
+instance
+referring to <code>rdf:about=&quot;&quot;</code> (i.e., the current
+document).
+This data does not receive any further
+semantics, but is meaningful to POWDER tools when deciding
+whether a POWDER document <em>as a whole</em> should be taken into
+account or discarded.
+The only exception is the POWDER <code>aboutregex</code> element, as
+discussed in <a href="#abouthostssemantics">Section 4.5</a> below.</p>
+
+<p id="stkr2">With the explicit exception of <code>abouthosts</code>, child elements of
+the <code>attribution</code> POWDER element are reproduced as
+<a href="http://www.w3.org/TR/2004/REC-owl-guide-20040210/#owl_AnnotationProperty">
+OWL annotation properties</a> in the POWDER-S instance. This is always possible as these POWDER
+elements are required to have either resource references or datatype values.
+This general rule applies to the POWDER elements <code>issuedby</code>, <code>issued</code>,
+<code>validfrom</code>, <code>validuntil</code>, <code>certifiedby</code>
+and <code>supportedby</code> where the only transformation necessary
+is to make their (transformed) namespace explicit. In each case the
+same string is used as their element name and <code>wdrs</code>
+property name. The <code>wdrs:issuedby</code> property is treated in
+the same manner, but is noteworthy as it is required for all POWDER
+documents.
+</p>
+
+<p id="ta1">POWDER provides a shortcut to avoid the automatic need to declare the <code>rdf</code> namespace 
+in all POWDER documents. Where child elements of the <code>attribution</code> element of a POWDER document 
+point to an IRI, this is provided as the value of a <code>src</code> attribute. The GRDDL transformation 
+renders such attributes as values for <code>rdf:resource</code>.</p>
+
+<p>Example 2-1 shows the generic semantics of the <code>attribution</code> element.</p>
+
+<div class="example" id="eg2-1">
+<p class="caption">Example 2-1: The Generic Semantics of the <code>attribution</code> Element</p>
+<p>POWDER [<a href="example_2_1.xml">XML</a>]</p>
+<pre>
+
+ 1  &lt;attribution&gt;
+ 2    &lt;ex:property1&gt;value&lt;/ex:property1&gt;
+ 3    &lt;ex:property2 rdf:resource=&quot;http://example.org/foo.rdf#frag&quot; /&gt;
+ 4    &lt;ex:property3 src=&quot;http://example.com/bar.rdf#frag&quot; /&gt;
+ 5  &lt;/attribution&gt;</pre>
+
+<p>POWDER-S [<a href="example_2_1.rdf">RDF/XML</a>,<a href="example_2_1.ttl">TURTLE</a>]</p>
+
+<pre>
+ 1  &lt;owl:Ontology rdf:about=&quot;&quot;&gt;
+ 2    &lt;ex:property1&gt;value&lt;/ex:property1&gt;
+ 3    &lt;ex:property2 rdf:resource=&quot;http://example.org/foo.rdf#frag&quot; /&gt;
+ 4    &lt;ex:property3 rdf:resource=&quot;http://example.org/foo.rdf#frag&quot; /&gt;
+ 5  &lt;/&lt;owl:Ontology&gt;
+</pre>
+</div>
+
+<p id="pluralNS">As noted above, some elements within the POWDER namespace that are treated differently
+or have noteworthy semantics:</p>
+
+<dl>
+  <dt id="creatorDiff">issuedby</dt>
+
+  <dd>The <code>issuedby</code> element in POWDER documents MUST
+  contain an external reference to an RDF resource. This resource
+  SHOULD identify the creator of the POWDER document; a POWDER
+  processor MAY use this information to evaluate the trust-worthiness
+  of the document. There is no restriction on the range of the
+  <code>wdrs:issuedby</code> property, but POWDER authors are 
+  advised to use well-known and widely-used vocabularies, such as
+  Dublin Core [<a href="#dc">DC</a>] or FOAF [<a href="#foaf">FOAF</a>],
+  and refer to instances of <code>dc:Agent</code> or
+  <code>foaf:Agent</code>, respectively.</dd>
+
+  <dt>issued, validfrom, validuntil</dt>
+
+  <dd>
+  The <code>issued</code>, <code>validfrom</code>,
+  and <code>validuntil</code> elements in POWDER documents MUST
+  contain 
+  <span id="dc2">a value conformant with the <a href="#xmldatetime">XML dateTime</a> datatype</span>. The
+  transformation to POWDER-S consists of simply creating annotation
+  properties in the <code>wdrs</code> namespace with these values.
+  The value of <code>issued</code> SHOULD be the date and time of
+  formal issuance (e.g., publication) of the document.
+  The values of <code>validfrom</code> and <code>validuntil</code>
+  SHOULD be specifying the validity period of the document.</dd>
+
+  <dt>certifiedby, supportedby</dt>
+
+  <dd>The <code>certifiedby</code> and <code>supportedby</code>
+  elements in POWDER documents MUST have a <code>src</code> attribute that has an IRI as its value.</dd>
+
+  <dt>abouthosts</dt>
+
+  <dd>
+  The <code>abouthosts</code> element is discussed
+  in <a href="#abouthostssemantics">Section 4.5</a> below.
+  </dd>
+
+</dl>
+
+<p>Example 2-2 below shows all the POWDER-specific attribution
+elements. Note that there is no <code>abouthosts</code> element in the
+example, as it will be discussed in
+<a href="#abouthostssemantics">Section 4.3</a> below.</p>
+
+<div class="example" id="eg2-2">
+<p class="caption">Example 2-2: POWDER-Specific Child Elements of the <code>attribution</code> Element</p>
+<p>POWDER [<a href="example_2_2.xml">XML</a>]</p>
+<pre>
+1  &lt;attribution&gt;
+2    &lt;issuedby src=&quot;http://example.org/company.rdf#me&quot; /&gt;
+3    &lt;issued&gt;2007-12-23T00:00:00&lt;/issued&gt;
+4    &lt;validfrom&gt;2008-01-01T00:00:00&lt;/validfrom&gt;
+5    &lt;validuntil&gt;2008-12-31T23:59:59&lt;/validuntil&gt;
+6    &lt;certifiedby src=&quot;http://authority.example/powder.xml&quot; /&gt;
+7    &lt;supportedby src=&quot;http://service.example.com?id=abc&quot; /&gt;
+8  &lt;/attribution&gt;
+</pre>
+
+<p>POWDER-S [<a href="example_2_2.rdf">RDF/XML</a>,<a href="example_2_2.ttl">TURTLE</a>]</p>
+<pre>
+1  &lt;owl:Ontology rdf:about=&quot;&quot;&gt;
+2    &lt;wdrs:issuedby rdf:resource=&quot;http://example.org/company.rdf#me&quot; /&gt;
+3    &lt;wdrs:issued&gt;2008-12-23T00:00:00&lt;/wdrs:issued&gt;
+4    &lt;wdrs:validfrom&gt;2008-01-01T00:00:00&lt;/wdrs:validfrom&gt;
+5    &lt;wdrs:validuntil&gt;2008-12-31T23:59:59&lt;/wdrs:validuntil&gt;
+6    &lt;wdrs:certifiedby rdf:resource=&quot;http://authority.example/powder.xml&quot; /&gt;
+7    &lt;wdrs:supportedby rdf:resource=&quot;http://service.example.com?id=abc&quot; /&gt;
+8  &lt;/owl:Ontology&gt;
+</pre></div>
+
+<p id="inclMore">There is one final POWDER element that is transformed into an 
+annotation of the POWDER-S document: the <code>more</code> element. This may occur as a child 
+of the root (<code>powder</code>) element and provides a link from one POWDER document to another. 
+It is simply transformed into a <code>rdfs:seeAlso</code> property of the POWDER-S document 
+(within the ontology header).</p>
+
+
+<h2 id="drSemantics">3 Description Resource Semantics</h2>
+
+<p>Description Resources use vocabularies defined in RDF and/or plain
+string literals (tags) to describe resources de-referenced from
+instances of the IRI set. Since descriptor set elements are not
+involved in the specification of the IRI set itself, they are
+transferred verbatim from POWDER to POWDER-BASE. Example 3-1 below
+shows a generic example of a DR in which the IRI set has been elided
+for clarity (the semantics of the IRI set is discussed in <a href="#iriSets">Section 4</a> below).</p>
+
+<div id="example3-1" class="example">
+<p class="caption">Example 3-1: A Generic Example of A Descriptor Set and Tag Set within a DR [<a href="example_3_1.xml">XML</a>]</p>
+<pre>  
+
+ 1 &lt;dr&gt;
+ 2   &lt;iriset&gt;&hellip;&lt;/iriset&gt;
+
+ 3   &lt;descriptorset&gt;
+ 4     &lt;ex:finish rdf:resource=&quot;http://example.org/vocab#shiny&quot;/&gt;
+ 5     &lt;ex:shape&gt;square&lt;/ex:shape&gt;
+ 6   &lt;/descriptorset&gt;
+
+ 7   &lt;tagset&gt;
+ 8     &lt;tag&gt;red&lt;/tag&gt;
+ 9     &lt;tag&gt;light&lt;/tag&gt;
+10   &lt;/tagset&gt;
+11 &lt;/dr&gt;
+</pre>
+</div>
+
+<p id="err1">The <code>ex:finish</code> element specifies that the <code>ex:finish</code> relation
+holds between all resources specified by <code>iriset</code> and the
+http://example.org/vocab#shiny resource.</p>
+
+<p>The content of <code>ex:shape</code> is interpreted as a string literal. The
+<code>ex:shape</code> element specifies that all resources in <code>iriset</code>
+<span id="stkr3">have</span> the value &quot;square&quot; for the <code>ex:shape</code> dataproperty.</p>
+
+<p><code>tag</code> is a string property defined by POWDER. Its content is a
+single string literal, possibly including spaces.</p>
+
+
+<p id="lc-2144">The overall description of the resources in <code>iriset</code> is the union of
+the descriptions in the <code>descriptorset</code> and the <code>tagset</code>. In our example these are:</p>
+
+<dl>
+  <dd>an ex:finish relation to http://example.org/vocab#shiny</dd>
+<dt>AND</dt>
+<dd>an ex:shape of &quot;square&quot;</dd>
+<dt>AND</dt>
+<dd>the tags &quot;red&quot; and &quot;light&quot;</dd>
+
+</dl>
+
+<p>We formally interpret the above as follows: there is an OWL class
+containing all resources that share all of these properties, and there
+is an OWL class of all resources denoted by <code>iriset</code>, and the latter
+is a subset of the former. In POWDER-S we say:</p>
+
+<div id="eg3-2" class="example">
+<p class="caption">Example 3-2 The POWDER-S Encoding of Example 3-1
+[<a href="example_3_2.rdf">RDF/XML</a>,<a href="example_3_2.ttl">TURTLE</a>]</p>
+<pre>
+ 1  &lt;owl:Class rdf:nodeID=&quot;iriset_1&quot;&gt;
+ 2    all resources specified by &lt;iriset&gt;...&lt;/iriset&gt;
+ 3  &lt;/owl:Class&gt;
+
+ 4  &lt;owl:Class rdf:nodeID=&quot;descriptorset_1&quot;&gt;
+ 5    &lt;rdfs:subClassOf&gt;
+ 6      &lt;owl:Class&gt;
+ 7        &lt;owl:intersectionOf rdf:parseType=&quot;Collection&quot;&gt;
+ 8          &lt;owl:Restriction&gt;
+ 9            &lt;owl:onProperty rdf:resource=&quot;http://example.org/vocab#finish&quot;/&gt;
+10            &lt;owl:hasValue rdf:resource=&quot;http://example.org/vocab#shiny&quot;/&gt;
+11          &lt;/owl:Restriction&gt;
+12         &lt;owl:Restriction&gt;
+13           &lt;owl:onProperty rdf:resource=&quot;http://example.org/vocab#shape&quot;/&gt;
+14           &lt;owl:hasValue&gt;square&lt;/owl:hasValue&gt;
+15         &lt;/owl:Restriction&gt;
+16       &lt;/owl:intersectionOf&gt;
+17     &lt;/owl:Class&gt;
+18   &lt;/rdfs:subClassOf&gt;
+19 &lt;/owl:Class&gt;
+
+20 &lt;owl:Class rdf:nodeID=&quot;tagset_1&quot;&gt;
+21   &lt;rdfs:subClassOf&gt;
+22     &lt;owl:Class&gt;
+23       &lt;owl:intersectionOf rdf:parseType=&quot;Collection&quot;&gt;
+24         &lt;owl:Restriction&gt;
+25           &lt;owl:onProperty rdf:resource=&quot;http://www.w3.org/2007/05/powder-s#tag&quot;/&gt;
+26           &lt;owl:hasValue&gt;red&lt;/owl:hasValue&gt;
+27         &lt;/owl:Restriction&gt;
+28         &lt;owl:Restriction&gt;
+29           &lt;owl:onProperty rdf:resource=&quot;http://www.w3.org/2007/05/powder-s#tag&quot;/&gt;
+30           &lt;owl:hasValue&gt;light&lt;/owl:hasValue&gt;
+31         &lt;/owl:Restriction&gt;
+32       &lt;/owl:intersectionOf&gt;
+33     &lt;/owl:Class&gt;
+34   &lt;/rdfs:subClassOf;&gt;
+35 &lt;/owl:Class&gt;
+
+36 &lt;owl:Class rdf:nodeID=&quot;iriset_1&quot;&gt;
+37   &lt;rdfs:subClassOf rdf:nodeID=&quot;descriptorset_1&quot;/&gt;
+38   &lt;rdfs:subClassOf rdf:nodeID=&quot;tagset_1&quot;/&gt;
+39 &lt;/owl:Class&gt;
+</pre>
+</div>
+
+<p>It is possible to have more than one <code>iriset</code> element, in which case
+a resource receives all of the descriptions by belonging to any
+one of the corresponding IRI sets. For example:</p>
+
+<div id="eg3-3" class="example">
+<p class="caption">Example 3-3: A DR with Multiple IRI Sets in its Scope [<a href="example_3_3.xml">XML</a>]</p>
+<pre>
+ 1  &lt;dr&gt;
+ 2   &lt;iriset&gt;.1.&lt;/iriset&gt;
+ 3   &lt;iriset&gt;.2.&lt;/iriset&gt;
+
+ 4   &lt;descriptorset xml:id=&quot;silver&quot;&gt;
+ 5     &lt;ex:finish rdf:resource=&quot;http://example.org/vocab#shiny&quot;/&gt;
+ 6   &lt;/descriptorset&gt;
+ 7  &lt;/dr&gt;</pre></div>
+
+<p>receives the following semantics:</p>
+
+<div id="eg3-4" class="example">
+<p class="caption">Example 3-4: The POWDER-S encoding of Example 3-3
+[<a href="example_3_4.rdf">RDF/XML</a>,<a href="example_3_4.ttl">TURTLE</a>]</p>
+<pre>
+ 1  &lt;owl:Class rdf:nodeID=&quot;iriset_1&quot;&gt;
+ 2     all resources specified by &lt;iriset&gt;.1.&lt;/iriset&gt;
+ 3  &lt;/owl:Class&gt;
+  
+ 5  &lt;owl:Class rdf:nodeID=&quot;iriset_2&quot;&gt;
+ 6     all resources specified by &lt;iriset&gt;.2.&lt;/iriset&gt;
+ 7  &lt;/owl:Class&gt;
+
+ 8  &lt;owl:Class rdf:ID=&quot;silver&quot;&gt;
+ 9    &lt;rdfs:subClassOf&gt;
+10      &lt;owl:Class&gt;
+11        &lt;owl:intersectionOf rdf:parseType=&quot;Collection&quot;&gt;
+12          &lt;owl:Restriction&gt;
+13           &lt;owl:onProperty rdf:resource=&quot;http://example.org/vocab#finish&quot;/&gt;
+14           &lt;owl:hasValue rdf:resource=&quot;http://example.org/vocab#shiny&quot;/&gt;
+15         &lt;/owl:Restriction&gt;
+16       &lt;/owl:intersectionOf&gt;
+17     &lt;/owl:Class&gt;
+18   &lt;/rdfs:subClassOf&gt;
+19 &lt;/owl:Class&gt;
+
+20 &lt;owl:Class rdf:nodeID=&quot;iriset_1&quot;&gt;
+21   &lt;rdfs:subClassOf rdf:resource=&quot;#silver&quot;/&gt;
+22 &lt;/owl:Class&gt;
+
+23 &lt;owl:Class rdf:nodeID=&quot;iriset_2&quot;&gt;
+24   &lt;rdfs:subClassOf rdf:resource=&quot;#silver&quot;/&gt;
+25 &lt;/owl:Class&gt;
+</pre></div>
+
+<p id="nodes">Examples 3-3 and 3-4 also show that if a <code>descriptorset</code> element has an ID of its own, this is used in the POWDER-S document.
+This is reflected in the way that the sub class relationship is asserted.
+Where no <code>xml:id</code> attribute is set in the original POWDER document, the transform assigns <code>rdf:nodeID</code> identifiers for
+the blank nodes. As a result, <code>rdf:nodeID</code> attributes are used within the POWDER-S document in the sub class
+assertion (see lines 36 - 39 in <a href="#eg3-2">Example 3-2</a>). However, where the original POWDER document
+includes an <code>xml:id</code> attribute, as in line 4 of <a href="#eg3-3">Example 3-3</a>, the sub class assertions in lines 21 and 24
+of Example 3-4 is correctly asserted using the <code>rdf:resource</code> attribute.</p>
+
+<p>A POWDER processor is free to choose any traversal policy for treating multiple <code>iriset</code> elements in 
+a DR: first match wins, last match wins, shortest <code>iriset</code> first, and so on, as long as all <code>iriset</code> 
+
+elements are tried before deciding that DR does not apply to a candidate resource (candidate resource is defined in the Grouping of Resources document [<a href="#group">GROUP</a>]). However, DR authors may use the 
+order of the <code>iriset</code> elements to suggest an efficient scope evaluation strategy, by putting the <code>iriset</code>  
+with the widest coverage first, so that a processor that chooses to follow the <code>iriset</code> elements in document order 
+is more likely to terminate the evaluation after fewer checks.</p>
+
+
+
+<h3 id="multiDRsemantics">3.1 Multiple Description Resources in a Single POWDER Document</h3>
+<p>A POWDER document may have any number of DRs, all of which
+are simultaneously asserted and ordering is not important. So, for
+example:</p>
+
+<div id="eg3-5" class="example">
+<p class="caption">Example 3-5: A POWDER Document Containing Multiple DRs [<a href="example_3_5.xml">XML</a>]</p>
+<pre>
+ 1  &lt;powder&gt;
+
+ 2    &lt;dr&gt;
+ 3      &lt;iriset&gt;.1.&lt;/iriset&gt;
+ 4      &lt;descriptorset&gt;
+ 5        &lt;ex:shape&gt;square&lt;/ex:shape&gt;
+ 6      &lt;/descriptorset&gt;
+ 7    &lt;/dr&gt;
+
+ 8    &lt;dr&gt;
+ 9      &lt;iriset&gt;.2.&lt;/iriset&gt;
+10     &lt;descriptorset&gt;
+11       &lt;ex:finish rdf:resource=&quot;http://example.org/vocab#shiny&quot;/&gt;
+12     &lt;/descriptorset&gt;
+13   &lt;/dr&gt;
+
+14 &lt;/powder&gt;
+</pre></div>
+
+<p>receives the following semantics:</p>
+
+<div id="eg3-6" class="example">
+<p class="caption">Example 3-6: The POWDER-S Encoding of Example 3-5
+[<a href="example_3_6.rdf">RDF/XML</a>,<a href="example_3_6.ttl">TURTLE</a>]</p>
+
+<pre>
+ 1 &lt;owl:Class rdf:nodeID=&quot;iriset_1&quot;&gt;
+ 2   all resources specified by &lt;iriset&gt;.1.&lt;/iriset&gt;
+ 3 &lt;/owl:Class&gt;
+
+ 4 &lt;owl:Class rdf:nodeID=&quot;descriptorset_1&quot;&gt;
+ 5   &lt;rdfs:subClassOf&gt;
+ 6     &lt;owl:Class&gt;
+ 7       &lt;owl:intersectionOf rdf:parseType=&quot;Collection&quot;&gt;
+ 8         &lt;owl:Restriction&gt;
+ 9           &lt;owl:onProperty rdf:resource=&quot;http://example.org/vocab#shape&quot;/&gt;
+10           &lt;owl:hasValue&gt;square&lt;/owl:hasValue&gt;
+11         &lt;/owl:Restriction&gt;
+12       &lt;/owl:intersectionOf&gt;
+13     &lt;/owl:Class&gt;
+14   &lt;/rdfs:subClassOf&gt;
+15 &lt;/owl:Class&gt;
+
+16 &lt;owl:Class rdf:nodeID=&quot;iriset_1&quot;&gt;
+17   &lt;rdfs:subClassOf rdf:nodeID=&quot;descriptorset_1&quot;/&gt;
+18 &lt;/owl:Class&gt;
+
+19 &lt;owl:Class rdf:nodeID=&quot;iriset_2&quot;&gt;
+20   all resources specified by &lt;iriset&gt;.2.&lt;/iriset&gt;
+21 &lt;/owl:Class&gt;
+
+22 &lt;owl:Class rdf:nodeID=&quot;descriptorset_2&quot;&gt;
+23   &lt;rdfs:subClassOf&gt;
+24     &lt;owl:Class&gt;
+25       &lt;owl:intersectionOf rdf:parseType=&quot;Collection&quot;&gt;
+26         &lt;owl:Restriction&gt;
+27           &lt;owl:onProperty rdf:resource=&quot;http://example.org/vocab#finish&quot;/&gt;
+28           &lt;owl:hasValue rdf:resource=&quot;http://example.org/vocab#shiny&quot;/&gt;
+29         &lt;/owl:Restriction&gt;
+30        &lt;/owl:intersectionOf&gt;
+31     &lt;/owl:Class&gt;
+32   &lt;/rdfs:subClassOf&gt;
+33 &lt;/owl:Class&gt;
+
+34 &lt;owl:Class rdf:nodeID=&quot;iriset_2&quot;&gt;
+35   &lt;rdfs:subClassOf rdf:nodeID=&quot;descriptorset_2&quot;/&gt;
+36 &lt;/owl:Class&gt;
+</pre></div>
+
+<p>The <code>owl:intersectionOf</code> of a singleton collection in both descriptor sets, although redundant, is a result of the GRDDL transformation.
+As <a href="#stk1">noted above</a>, syntactically different but semantically equivalent representations are equally valid.</p>
+
+<p>Note that <code>iriset_1</code> and <code>iriset_2</code> are not necessarily disjoint &mdash; some resources may be both shiny AND square.</p>
+
+<p>A POWDER document may have an <code>ol</code> element which is an ordered list of DRs. Such a list receives first-match semantics, that 
+is, when seeking the description of a candidate IRI, processors extract the descriptor set from the first DR in the ordered list in which it 
+is in scope. <code>ol</code> elements allow the easy expression of exceptions to more general rules. So, for example:</p>
+
+<div id="eg3-7" class="example">
+<p class="caption">Example 3-7: An Ordered List of DRs [<a href="example_3_7.xml">XML</a>]</p>
+<pre>
+ 1  &lt;ol&gt;
+
+ 2    &lt;dr&gt;
+ 3     &lt;iriset&gt;.1.&lt;/iriset&gt;
+ 4     &lt;descriptorset&gt;
+ 5       &lt;ex:shape&gt;square&lt;/ex:shape&gt;
+ 6     &lt;/descriptorset&gt;
+ 7    &lt;/dr&gt;
+
+ 8    &lt;dr&gt;
+ 9     &lt;iriset&gt;.2.&lt;/iriset&gt;
+10    &lt;descriptorset&gt;
+11      &lt;ex:shape&gt;round&lt;/ex:shape&gt;
+12    &lt;/descriptorset&gt;
+13   &lt;/dr&gt;
+
+14   &lt;dr&gt;
+15    &lt;iriset&gt;.3.&lt;/iriset&gt;
+16    &lt;descriptorset&gt;
+17      &lt;ex:shape&gt;triangular&lt;/ex:shape&gt;
+18    &lt;/descriptorset&gt;
+19   &lt;/dr&gt;
+
+20 &lt;/ol&gt;
+</pre></div>
+
+<p>receives the following semantics, where belonging to
+description_1 automatically precludes belonging to description_2 and
+description_3; and belonging to description_2 automatically precludes
+belonging to description_3:</p>
+
+<div id="eg3-8" class="example">
+<p class="caption">Example 3-8: The POWDER-S Encoding of Example 3-7
+[<a href="example_3_8.rdf">RDF/XML</a>,<a href="example_3_8.ttl">TURTLE</a>]</p>
+<pre>
+ 1  &lt;owl:Class rdf:nodeID=&quot;iriset_1&quot;&gt;
+ 2    all resources specified by &lt;iriset&gt;.1.&lt;/iriset&gt;
+ 3  &lt;/owl:Class&gt;
+
+ 4  &lt;owl:Class rdf:nodeID=&quot;iriset_1_not&quot;&gt;
+ 5    all resources not specified by &lt;iriset&gt;.1.&lt;/iriset&gt;
+ 6  &lt;/owl:Class&gt;
+
+ 7  &lt;owl:Class rdf:nodeID=&quot;descriptorset_1&quot;&gt;
+ 8   &lt;rdfs:subClassOf&gt;
+ 9     &lt;owl:Class&gt;
+10        &lt;owl:intersectionOf rdf:parseType=&quot;Collection&quot;&gt;
+11          &lt;owl:Restriction&gt;
+12            &lt;owl:onProperty rdf:resource=&quot;http://example.org/vocab#shape&quot;/&gt;
+13            &lt;owl:hasValue&gt;square&lt;/owl:hasValue&gt;
+14          &lt;/owl:Restriction&gt;
+15       &lt;/owl:intersectionOf&gt;
+16     &lt;/owl:Class&gt;
+17   &lt;/rdfs:subClassOf&gt;
+18 &lt;/owl:Class&gt;
+
+19 &lt;owl:Class rdf:nodeID=&quot;iriset_1&quot;&gt;
+20   &lt;rdfs:subClassOf rdf:nodeID=&quot;descriptorset_1&quot;/&gt;
+21 &lt;/owl:Class&gt;
+
+22 &lt;owl:Class rdf:nodeID=&quot;iriset_2&quot;&gt;
+23   &lt;owl:equivalentClass&gt;
+24     &lt;owl:Class&gt;
+25       &lt;owl:intersectionOf rdf:parseType=&quot;Collection&quot;&gt;
+26         all resources specified by &lt;iriset&gt;.2.&lt;/iriset&gt;
+27         &lt;owl:Class rdf:nodeID=&quot;iriset_1_not&quot; /&gt;
+28       &lt;/owl:intersectionOf&gt;
+29     &lt;/owl:Class&gt;
+30   &lt;/owl:equivalentClass&gt;
+31 &lt;/owl:Class&gt;
+
+32 &lt;owl:Class rdf:nodeID=&quot;iriset_2_not&quot;&gt;
+33   all resources not specified by &lt;iriset&gt;.2.&lt;/iriset&gt;
+34 &lt;/owl:Class&gt;
+
+35 &lt;owl:Class rdf:nodeID=&quot;descriptorset_2&quot;&gt;
+36   &lt;rdfs:subClassOf&gt;
+37     &lt;owl:Class&gt;
+38       &lt;owl:intersectionOf rdf:parseType=&quot;Collection&quot;&gt;
+39         &lt;owl:Restriction&gt;
+40           &lt;owl:onProperty rdf:resource=&quot;http://example.org/vocab#shape&quot;/&gt;
+41           &lt;owl:hasValue&gt;round&lt;/owl:hasValue&gt;
+42         &lt;/owl:Restriction&gt;
+43       &lt;/owl:intersectionOf&gt;
+44     &lt;/owl:Class&gt;
+45   &lt;/rdfs:subClassOf&gt;
+46 &lt;/owl:Class&gt;
+
+47 &lt;owl:Class rdf:nodeID=&quot;iriset_2&quot;&gt;
+48   &lt;rdfs:subClassOf rdf:nodeID=&quot;descriptorset_2&quot;/&gt;
+49 &lt;/owl:Class&gt;
+
+50 &lt;owl:Class rdf:nodeID=&quot;iriset_3&quot;&gt;
+51   &lt;owl:equivalentClass&gt;
+52     &lt;owl:Class&gt;
+53       &lt;owl:intersectionOf rdf:parseType=&quot;Collection&quot;&gt;
+54         all resources specified by &lt;iriset&gt;.3.&lt;/iriset&gt;
+55         &lt;owl:Class rdf:nodeID=&quot;iriset_1_not&quot; /&gt;
+56         &lt;owl:Class rdf:nodeID=&quot;iriset_2_not&quot; /&gt;
+57       &lt;/owl:intersectionOf&gt;
+58     &lt;/owl:Class&gt;
+59   &lt;/owl:equivalentClass&gt;
+60 &lt;/owl:Class&gt;
+
+61 &lt;owl:Class rdf:nodeID=&quot;descriptorset_3&quot;&gt;
+62   &lt;rdfs:subClassOf&gt;
+63     &lt;owl:Class&gt;
+64       &lt;owl:intersectionOf rdf:parseType=&quot;Collection&quot;&gt;
+65         &lt;owl:Restriction&gt;
+66           &lt;owl:onProperty rdf:resource=&quot;http://example.org/vocab#shape&quot;/&gt;
+67           &lt;owl:hasValue&gt;triangular&lt;/owl:hasValue&gt;
+68         &lt;/owl:Restriction&gt;
+69       &lt;/owl:intersectionOf&gt;
+70     &lt;/owl:Class&gt;
+71   &lt;/rdfs:subClassOf&gt;
+72 &lt;/owl:Class&gt;
+
+73 &lt;owl:Class rdf:nodeID=&quot;iriset_3&quot;&gt;
+74   &lt;rdfs:subClassOf rdf:nodeID=&quot;descriptorset_3&quot;/&gt;
+75 &lt;/owl:Class&gt;
+</pre></div>
+
+<p>The GRDDL transformation does a lot of work here so let's break it down:</p>
+
+<dl><dt>For each DR in the ordered list:</dt>
+<dd><p>For each IRI set in the DR, two classes are defined: one that represents all resources that are members of the IRI set (as in the earlier examples) and another that defines all the resources that are not members of the IRI set (how this is done is the subject of <a href="#iriSets">Section 4</a>). In the example these are given the nodeIDs iriset_n and iriset_n_not.</p>
+
+<p id="newOL1">It should be noted any iriset_n_not class
+includes the resources that are not included in the raw IRI set
+definition, as opposed to the iriset_n class which excludes the
+resources in the previous irisets (see lines 27, 55 &amp; 56).</p>
+
+<p>The following assertion is made: the intersection of the iriset of the current DR and the 'not' irisets from all preceding DRs is subsumed
+under the descriptorset (or tagset) of the current DR. (Note that there must be only one IRI set generated for each DR, possibly using owl:unionOf, regardless of
+how the POWDER/XML original is expressed.)</p>
+
+
+<p>It follows that the first DR in the list yields a simple sub class relationship between its IRI set(s) and descriptor set(s); and that the final DR in the list's 'iriset_not' is not used and may safely be omitted.</p>
+</dd>
+</dl>
+
+
+<!-- ############################################# Descriptor Sets ############################ -->
+<div>
+<h3 id="descriptorConstraints">3.2 Descriptor Set Semantics</h3>
+
+<h4 id="simpleDs">3.2.1 Descriptor Sets expressed as RDF Properties and Values</h4>
+
+<p id="rdfres">
+<span id="stkr4">
+A descriptor set contains RDF properties that have fillers that are not blank nodes
+and that do not identify either a class or a property, as shown in Example 3-9 below.</span>
+Subsumption of descriptorsets is expressed as discussed
+in <a href="#typeAssertion">Section 3.2.2</a> below.
+</p>
+
+<div id="eg3-9" class="example">
+<p class="caption">Example 3-9: A Descriptor Set Containing an RDF Property with a Literal Value and One with an RDF Resource as its Value.</p>
+<p>POWDER [<a href="example_3_9.xml">XML</a>]</p>
+<pre>
+ 1  &lt;descriptorset&gt;
+ 2    &lt;ex:shape&gt;square&lt;/ex:shape&gt;
+ 3    &lt;ex:finish rdf:resource=&quot;http://example.org/vocab#shiny&quot;/&gt;
+4  &lt;/descriptorset&gt;</pre>
+
+<p>POWDER-S  [<a href="example_3_9.rdf">RDF/XML</a>,<a href="example_3_9.ttl">TURTLE</a>]</p>
+<pre>
+ 1 &lt;owl:Class rdf:nodeID=&quot;descriptorset_1&quot;&gt;
+ 2   &lt;rdfs:subClassOf&gt;
+ 3     &lt;owl:Class&gt;
+ 2       &lt;owl:intersectionOf rdf:parseType=&quot;Collection&quot;&gt;
+ 3         &lt;owl:Restriction&gt;
+ 4           &lt;owl:onProperty rdf:resource=&quot;http://example.org/vocab#shape&quot;/&gt;
+ 5           &lt;owl:hasValue&gt;square&lt;/owl:hasValue&gt;
+ 6         &lt;/owl:Restriction&gt;
+ 7         &lt;owl:Restriction&gt;
+ 8           &lt;owl:onProperty rdf:resource=&quot;http://example.org/vocab#finish&quot;/&gt;
+ 9           &lt;owl:hasValue rdf:resource=&quot;http://example.org/vocab#shiny&quot;/&gt;
+12         &lt;/owl:Restriction&gt;
+13       &lt;/owl:intersectionOf&gt;
+14     &lt;/owl:Class&gt;
+15   &lt;/rdfs:subClassOf&gt;
+16 &lt;/owl:Class&gt;
+</pre><span id="bnodes"></span></div>
+
+<h4 id="typeAssertion">3.2.2 Asserting the <code>rdf:type</code> Relationship</h4>
+
+<p>Asserting the <code>rdf:type</code> property, i.e. that all elements within an IRI set are instances of a particular OWL or RDFS Class,
+is achieved most easily using the <code>typeof</code> element which takes the IRI of the class as the value of its <code>src</code> attribute
+as shown in Example 3-10 below. The POWDER-S translation of the <code>descriptorset</code> element 
+intersects <code>typeof</code> classes with the property
+restrictions (if any) in the <code>descriptorset</code>.</p>
+
+<div id="eg3-10" class="example">
+<p class="caption">Example 3-10: A Descriptor Set Asserting that IRIs within its Scope are Instances of a Class.</p>
+<p>POWDER [<a href="example_3_10.xml">XML</a>]</p>
+<pre>
+ 1  &lt;descriptorset&gt;
+ 2    &lt;typeof src=&quot;http://example.org/vocab#Conformance_Class&quot; /&gt;
+ 3    &lt;ex:shape&gt;square&lt;/ex:shape&gt;
+ 4  &lt;/descriptorset&gt;</pre>
+
+<p>POWDER-S [<a href="example_3_10.rdf">RDF/XML</a>,<a href="example_3_10.ttl">TURTLE</a>]</p>
+<pre>
+ 1 &lt;owl:Class rdf:nodeID=&quot;descriptorset_1&quot;&gt;
+ 2   &lt;rdfs:subClassOf&gt;
+ 3     &lt;owl:Class&gt;
+ 4       &lt;owl:intersectionOf rdf:parseType=&quot;Collection&quot;&gt;
+ 5         &lt;owl:Class rdf:about=&quot;http://example.org/vocab#Conformance_Class&quot; /&gt;
+ 6         &lt;owl:Restriction&gt;
+ 7           &lt;owl:onProperty rdf:resource=&quot;http://example.org/vocab#shape&quot;/&gt;
+ 8           &lt;owl:hasValue&gt;square&lt;/owl:hasValue&gt;
+ 9         &lt;/owl:Restriction&gt;
+10       &lt;/owl:intersectionOf&gt;
+11     &lt;/owl:Class&gt;
+12   &lt;/rdfs:subClassOf&gt;
+13 &lt;/owl:Class&gt;
+</pre>
+</div>
+
+<p>This is particularly useful in the context of the POWDER use cases [<a href="#usecases">USECASES</a>]
+when claiming that resources on a Web site conform to a published set
+of criteria. In such situations, multiple criteria can be
+grouped together by defining the class of resources that satisfy all the
+criteria as the intersection of a number of property restrictions;
+series of increasingly stricter conformance levels can be defined as a
+subsumption hierarchy of such classes.</p>
+
+<p id="typeEquiv">If used directly, the <code>rdf:type</code> property will be treated in the same way as 
+the <code>typeof</code> element in the POWDER to POWDER-S transform.</p>
+
+<h4 id="externalDs">3.2.3 Referring to External Descriptor Sets</h4>
+
+<p id="noMagic">A descriptor set may defer to a second descriptor set in another 
+POWDER document using the <code>src</code> attribute. The transformation uses the 
+value of the <code>src</code> attribute directly in the sub class relationship as shown below.</p>
+
+<div id="eg3-11" class="example">
+<p class="caption">Example 3-11: A Descriptor Set Referring to one in an External Document</p>
+<p>POWDER [<a href="example_3_11.xml">XML</a>]</p>
+<pre>
+&lt;descriptorset src=&quot;http://remote.example.org/powder2.xml#d1&quot; /&gt;</pre>
+
+<p>POWDER-S  [<a href="example_3_11.rdf">RDF/XML</a>,<a href="example_3_11.ttl">TURTLE</a>]</p>
+<pre>
+&lt;owl:Class rdf:nodeID=&quot;iriset_1&quot;&gt;
+  &lt;rdfs:subClassOf rdf:resource=&quot;http://remote.example.org/powder2.xml#d1&quot;/&gt;
+&lt;/owl:Class&gt;</pre>
+</div>
+
+<h4 id="furtherDs">3.2.4 Further Descriptors</h4>
+
+<p>There are two POWDER elements that can be included as child elements of <code>descriptorset</code> that 
+are mapped to property restrictions in POWDER-S. In both cases the same string is used as the element 
+name in POWDER and vocabulary term in POWDER-S:</p>
+<dl>
+  <dt><code>sha1sum</code></dt>
+  <dd>A SHA-1 sum of the described resource</dd>
+  <dt><code>certified</code></dt>
+  <dd>An element of type <code>xsd:boolean</code> used when a DR certifies another resource.</dd>
+</dl>
+
+<p>The usage of both <code>sha1sum</code> and <code>certified</code> is shown in 
+section 5.2 of the Description Resources document [<a href="#dr">DR</a>].</p>
+
+<p>We define further elements that can be included as child elements of <code>descriptorset</code> 
+that, when transformed into POWDER-S, become annotation properties of the descriptive OWL class (not property restrictions).</p>
+
+<dl>
+  <dt><code>displaytext</code></dt>
+  <dd>is transformed to <code>wdrs:text</code>. The text
+  supplied as the value of this element may be displayed in user
+  agents.</dd>
+  <dt><code>displayicon</code></dt>
+  <dd>has a <code>src</code> attribute, the value of which is a URI
+  (or IRI) <var>u</var> which, in POWDER-S, becomes
+  <code>wdrs:logo rdf:resource=&quot;<var>u</var>&quot;</code>. The
+  referred-to image may be displayed in user agents.</dd>
+  <dt><code>seealso</code>, <code>label</code>, <code>comment</code></dt>
+  <dd>Each of these elements is transformed into an annotation of the OWL class using the term from the <code>rdfs</code> vocabulary
+	with which it shares a local name. For the avoidance of doubt:
+    <p><code>&lt;seealso src=&quot;http://www.example.com/page.html&quot; /&gt;<br />
+    &lt;label&gt;An example to us all&lt;/label&gt;<br />
+    &lt;comment&gt;Comments make code easier to read&lt;/comment&gt;</code></p>
+    <p>are transformed into:</p>
+    <p><code>&lt;rdfs:seeAlso rdf:resource=&quot;http://www.example.com/page.html&quot; /&gt;<br />
+    &lt;rdfs:label&gt;An example to us all&lt;/rdfs:label&gt;<br />
+    &lt;rdfs:comment&gt;Comments make code easier to read&lt;/rdfs:comment&gt;</code></p></dd>
+</dl>
+<p>Usage of these elements is exemplified in the following section. As with <code>rdf:type</code>, they
+are provided as shortcuts within POWDER &mdash; the direct use of <code>rdfs:seeAlso</code>, 
+<code>rdfs:comment</code> and <code>rdfs:label</code> will be rendered in exactly the same way (as annotations and not property restrictions)
+by the transform.</p>
+
+<p id="stkr5">
+No other property from the <code>rdfs</code> namespace receives any
+special treatment. If it is meaningful, in a POWDER document, to use
+terms from the <code>rdfs</code> vocabulary other than those mentioned
+above, the POWDER author should be aware that they will be transformed
+into OWL property restrictions in exactly the same manner as
+properties from any other namespace.</p>
+
+</div>
+
+
+<h3 id="tagConstraints">3.3 Tag Set Semantics</h3>
+<p id="tidytags">The semantics of the (free text) tags are similar to those for properties with literal values. 
+Each tag given in a <code>tagset</code> element in a POWDER document is a value for the 
+RDF datatype property <code>wdrs:tag</code> as shown below. Note also 
+the use of the <code>seealso</code> (which puts the tags in context), <code>label</code> and <code>comment</code> elements described
+in the previous section.</p>
+
+<div id="eg3-12" class="example">
+<p class="caption">Example 3-12: A Tag Set.</p>
+<p>POWDER [<a href="example_3_12.xml">XML</a>]</p>
+<pre>
+ 1  &lt;tagset&gt;
+ 2    &lt;label&gt;Tags for the London landmark&lt;/label&gt;
+ 3    &lt;tag&gt;London&lt;/tag&gt;
+ 4    &lt;tag&gt;Swiss Re&lt;/tag&gt;
+ 5    &lt;tag&gt;gherkin&lt;/tag&gt;
+ 6    &lt;seealso src=&quot;http://encyclopaedia.example.com/gherkin.html&quot; /&gt;
+ 7    &lt;seealso src=&quot;http://photo.example.com/gherkin.jpg&quot; /&gt;
+ 8    &lt;comment&gt;Tags are linked to specific resources that contextualize them&lt;/comment&gt;
+ 9  &lt;/tagset&gt;
+</pre>
+<p>POWDER-S [<a href="example_3_12.rdf">RDF/XML</a>,<a href="example_3_12.ttl">TURTLE</a>]</p>
+<pre>
+ 1 &lt;owl:Class rdf:nodeID=&quot;tagset_1&quot;&gt;
+ 2   &lt;rdfs:label&gt;Tags for the London landmark&lt;/rdfs:label&gt;
+ 3   &lt;rdfs:subClassOf&gt;
+ 4     &lt;owl:Class&gt;
+ 3       &lt;owl:intersectionOf rdf:parseType=&quot;Collection&quot;&gt;
+ 4         &lt;owl:Restriction&gt;
+ 5           &lt;owl:onProperty rdf:resource=&quot;http://www.w3.org/2007/05/powder#tag&quot; /&gt;
+ 6           &lt;owl:hasValue&gt;London&lt;/owl:hasValue&gt;
+ 7         &lt;/owl:Restriction&gt;
+ 8         &lt;owl:Restriction&gt;
+ 9           &lt;owl:onProperty rdf:resource=&quot;http://www.w3.org/2007/05/powder#tag&quot; /&gt;
+12           &lt;owl:hasValue&gt;Swiss Re&lt;/owl:hasValue&gt;
+13         &lt;/owl:Restriction&gt;
+14         &lt;owl:Restriction&gt;
+15           &lt;owl:onProperty rdf:resource=&quot;http://www.w3.org/2007/05/powder#tag&quot; /&gt;
+16           &lt;owl:hasValue&gt;gherkin&lt;/owl:hasValue&gt;
+17         &lt;/owl:Restriction&gt;
+18       &lt;/owl:intersectionOf&gt;
+19     &lt;/owl:Class&gt;
+20   &lt;/rdfs:subClassOf&gt;
+21   &lt;rdfs:seeAlso rdf:resource=&quot;http://encyclopaedia.example.com/gherkin.html&quot; /&gt;
+22   &lt;rdfs:seeAlso rdf:resource=&quot;http://photo.example.com/gherkin.jpg&quot; /&gt;
+23   &lt;rdfs:comment&gt;Tags are linked to specific resources that contextualize them&lt;/rdfs:comment&gt;
+24 &lt;/owl:Class&gt;
+</pre>
+</div>
+
+
+
+<!-- ######################################## IRI Set semantics ################################### -->
+
+<h2 id="iriSets">4 IRI Set Semantics</h2>
+
+<p>The previous sections have shown that the semantics of several elements of a POWDER document can be obtained by applying 
+the GRDDL transform associated with the namespace to generate native RDF/OWL as POWDER-S. This is not so for the 
+IRI set element which, although transformed into valid RDF/OWL syntax, does not express the full semantics.</p>
+
+<p>The IRI constraints defined in the POWDER Grouping of Resources
+document [<a href="#group">GROUP</a>] are given regular-expression semantics by the first part of the GRDDL transform from
+POWDER to POWDER-BASE. Regular-expression IRI groups
+are, in their turn, given semantics using datarange restrictions by
+the POWDER-BASE to POWDER-S transformation. It 
+is noteworthy that the value space of POWDER's IRI constraints is, for the most part, a white space separated list of 
+alternative values. This makes POWDER in its XML form relatively simple, but the implications for the semantics are 
+substantial.</p>
+
+<h3 id="whitespace">4.1 White Space and List Pre-Processing</h3>
+
+<p>Many elements of a POWDER IRI set definition have white space separated lists of strings as their value. 
+White space is any of U+0009, U+000A, U+000D and U+0020. A space-separated list is a string in which the items 
+are separated by one or more space characters (in any order). The string may also be prefixed or suffixed with 
+zero or more of those characters. The GRDDL transform associated with the POWDER namespace converts these into 
+components of a regular expression for use in POWDER-BASE and POWDER-S by following the steps set out below:</p>
+
+<ul>
+  <li>Replace any sequence of space characters with a single space (U+0020) character, dropping any leading or trailing U+0020 characters</li>
+  <li>Replace each remaining space (U+0020) character with the vertical bar character | (U+0124)</li>
+  <li>Escape all instances of the following characters within the string using a \ character
+      <p><code>. \ ? * + { } ( ) [ ] ! " # % &amp; ' , - / : ; = > @ [ ] _ ` ~</code></p></li>
+
+  <li>Enclose the resulting string in parentheses</li>
+</ul>
+<p>The resulting string is used in a template regular expression to give the element and list's desired semantics. For example</p>
+
+<p><code>&lt;includehosts&gt;example.com example.org &lt;/includehosts&gt;</code></p>
+
+<p>becomes</p>
+
+<pre style="overflow:auto; padding-bottom:1em"><code>&lt;owl:Restriction&gt;
+  &lt;owl:onProperty rdf:resource=&quot;http://www.w3.org/2007/05/powder-s#matchesregex&quot; /&gt;
+  &lt;owl:hasValue  rdf:datatype=&quot;http://www.w3.org/2001/XMLSchema-datatypes#string&quot;&gt;\:\/\/(([^\/\?\#]*)\@)?([^\:\/\?\#\@]+\.)?<strong>(example\.com|example\.org)</strong>(\:([0-9]+))?\/&lt;/owl:hasValue&gt;
+&lt;/owl:Restriction&gt;</code></pre>
+
+<h3 id="iriSetSemantics">4.2 POWDER and POWDER-BASE IRI Set Semantics</h3>
+
+<p>POWDER's use cases involve information resources available on the Web, identified by IRIs containing host names, directory paths, 
+IP addresses, port numbers, and so on. To make it as easy as possible to create IRI sets we define a series of IRI constraints in 
+the Grouping of Resources document [<a href="#group">GROUP</a>]. These all receive semantics through being mapped to
+<code>includeregex</code> and <code>excluderegex</code> elements in POWDER-BASE.</p>
+
+<p>Re-visiting the example given in the previous section, the POWDER element</p>
+
+<pre>
+&lt;iriset&gt;
+  &lt;includehosts&gt;example.com example.org&lt;/includehosts&gt;
+&lt;/iriset&gt;
+</pre>
+
+<p>is expressed in POWDER-BASE as:</p>
+
+<pre style="overflow:auto; padding-bottom:1em">
+&lt;iriset&gt;
+  &lt;includeregex&gt;\:\/\/(([^\/\?\#]*)\@)?([^\:\/\?\#\@]+\.)?(example\.com|example\.org)(:([0-9]+))?\/&lt;includeregex&gt;
+&lt;/iriset&gt;
+</pre>
+
+<p>IRIs are always interpreted as strings, even if they include numerical
+parts such as ports and IP numbers as shown in the following example:</p>
+
+<div id="eg4-1" class="example">
+<p class="caption">Example 4-1: The POWDER and POWDER-BASE Encoding of an Example IRI Set</p>
+<p>POWDER: [<a href="example_4_1.xml">XML</a>]</p>
+
+<pre>
+&lt;iriset&gt;
+  &lt;includehosts&gt;example.com example.org&lt;/includehosts&gt;
+  &lt;includeports&gt;80 8080 8081 8082&lt;/includeports&gt;
+&lt;/iriset&gt;
+</pre>
+<p>POWDER-BASE: [<a href="example_4_1_b.xml">XML</a>]</p>
+
+<pre>
+&lt;iriset&gt;
+  &lt;includeregex&gt;\:\/\/(([^\/\?\#]*)\@)?([^\:\/\?\#\@]+\.)?(example\.com|example\.org)(\:([0-9]+))?\/&lt;/includeregex&gt;
+  &lt;includeregex&gt;\:\/\/(([^\/\?\#]*)\@)?([^\:\/\?\#\@]+\.)*[^\:\/\?\#\@]+\:(80|8080|8081|8082)\/&lt;/includeregex&gt;
+&lt;/iriset&gt;
+</pre></div>
+
+<p>This approach is applied to several of the POWDER IRI set elements. The following table shows these
+ and their associated template regular expressions. In each case, <var>var</var> means the value of the POWDER element 
+after processing as defined in <a href="#whitespace">Section 4.1</a>.</p>
+
+<table id="table3">
+  <caption>Table 3. Template regular expressions for IRI constraints that take a white space separated list of values.</caption>
+  <thead>
+  <tr><th>POWDER IRI Constraint<br />(<code>include/exclude...</code></th><th>POWDER-BASE Regular Expression<br />(used in <code>includeregex/excluderegex</code>)</th></tr>
+
+  </thead>
+  <tbody>
+  <tr><td><code>schemes</code></td>				<td><code>^<strong><var>var</var></strong>\:\/\/</code></td></tr>
+  <tr><td><code>hosts</code></td>				<td><code>\:\/\/(([^\/\?\#]*)\@)?([^\:\/\?\#\@]+\.)?<strong><var>var</var></strong>(\:([0-9]+))?\/</code></td></tr>
+
+  <tr><td><code>ports</code></td>				<td><code>\:\/\/(([^\/\?\#]*)\@)?([^\:\/\?\#\@]+\.)*[^\:\/\?\#\@]+\:<strong><var>var</var></strong>\/</code></td></tr>
+  <tr><td><code>exactpaths</code></td>			<td><code>\:\/\/(([^\/\?\#]*)\@)?([^\:\/\?\#\@]*)(\:([0-9]+))?<strong><var>var</var></strong>($|\?|\#)</code></td></tr>
+  <tr><td><code>pathcontains</code></td>		<td><code>\:\/\/(([^\/\?\#]*)\@)?([^\:\/\?\#\@]*)(\:([0-9]+))?\/[^\?\#]*<strong><var>var</var></strong>[^\?\#]*[\?\#]?</code></td></tr>
+
+  <tr><td><code>pathstartswith</code></td>		<td><code>\:\/\/(([^\/\?\#]*)\@)?([^\:\/\?\#\@]*)(\:([0-9]+))?<strong><var>var</var></strong></code></td></tr>
+  <tr><td><code>pathendswith</code></td>		<td><code>\:\/\/(([^\/\?\#]*)\@)?([^\:\/\?\#\@]*)(\:([0-9]+))?\/[^\?\#]*<strong><var>var</var></strong>($|\?|\#)</code></td></tr>
+  <tr><td><code>resources</code></td>			<td><code>^<strong><var>var</var></strong>$</code></td></tr>
+
+  </tbody>
+</table>
+
+<p>Note that the Grouping of Resources document [<a href="#group">GROUP</a>] sets out a 
+<span id="tlr">data processing and canonicalization process that must be followed. This
+has particular implications for the <code>ihost</code> component of IRIs as the regular
+expressions must match their IDNA ASCII representation [<a href="#rfc3490">RFC&nbsp;3490</a>], whereas
+for the rest of the IRI components the regular expressions must match
+their Unicode representations</span>. Furthermore, where the port number is
+constrained, default port numbers for the relevant scheme must be taken
+into account.</p>
+
+<p>Two further pairs of IRI set constraints defined in the Grouping of Resources document undergo additional processing when transformed
+from POWDER to POWDER-BASE: <code>includequerycontains</code> and <code>includeiripattern</code> (and their 'exclude' counterparts). Each of
+these maps to multiple elements in the POWDER-BASE document as shown in the following subsections.</p>
+
+<h3 id="qCont">4.2.1 Include/Exclude Query Contains Semantics</h3>
+
+<p><code>includequerycontains</code> and <code>excludequerycontains</code> take a single value, not a white space separated list of values.
+Furthermore, an attribute <code>delimiter</code> takes a single character that delimits the name/value pairs in the query string. If
+no such attribute is set, the ampersand (<code>&amp;</code>) character is used as the default. To transform these elements from 
+POWDER to POWDER-BASE regular expressions the following steps are carried out:</p>
+
+<ul>
+  <li>Split the supplied value at the delimiter, <strong><var>d</var></strong>, dropping that character in the process</li>
+
+  <li>For each resulting sub string, <strong><var>q</var></strong>, create an <code>includeregex</code> or <code>excluderegex</code> as appropriate
+    using the following regular expression template:
+    <p>
+      <code>
+	\:\/\/(([^\/\?\#]*)\@)?([^\:\/\?\#\@]*)(\:([0-9]+))?\/[^\?\#]*\?([^\#]*<strong><var>d</var></strong>)?<strong><var>q</var></strong>(<strong><var>d</var></strong>|$)
+      </code>
+
+    </p>
+  </li>
+</ul>
+
+<p>This transformation is exemplified below.</p>
+
+<div id="eg4-2" class="example">
+<p class="caption">Example 4-2: The POWDER and POWDER-BASE Encoding of an Example IRI Set including an <code>includequerycontains</code> Constraint</p>
+<p>POWDER: [<a href="example_4_2.xml">XML</a>]</p>
+
+<pre>&lt;iriset&gt;
+  &lt;includehosts&gt;example.org&lt;/includehosts&gt;
+  &lt;includequerycontains&gt;id=123456&amp;group=abcdefg&lt;/includequerycontains&gt;
+&lt;/iriset&gt;</pre>
+
+<p>POWDER-BASE: [<a href="example_4_2_b.xml">XML</a>]</p>
+
+<pre style="overflow:auto; padding-bottom:1em">&lt;iriset&gt;
+  &lt;includeregex&gt;\:\/\/(([^\/\?\#]*)\@)?([^\:\/\?\#\@]+\.)?<strong>(example\.org)</strong>(\:([0-9]+))?\/&lt;/includeregex&gt;
+  &lt;includeregex&gt;\:\/\/(([^\/\?\#]*)\@)?([^\:\/\?\#\@]*)(\:([0-9]+))?\/[^\?\#]*\?([^\#]*<strong>\&amp;</strong>)?<strong>id=123456</strong>(<strong>\&amp;</strong>|$)&lt;/includeregex&gt;
+  &lt;includeregex&gt;\:\/\/(([^\/\?\#]*)\@)?([^\:\/\?\#\@]*)(\:([0-9]+))?\/[^\?\#]*\?([^\#]*<strong>\&amp;</strong>)?<strong>group=abcdefg</strong>(<strong>\&amp;</strong>|$)&lt;/includeregex&gt;
+&lt;/iriset&gt;</pre>
+</div>
+
+<h3 id="iPatt">4.2.2 Include/Exclude IRI Pattern Semantics</h3>
+
+
+<p><code>includeiripattern</code> and <code>excludeiripattern</code> also take a single value, not a white space separated list of values,
+and generate <code>includeregex</code> and <code>excluderegex</code> elements in POWDER-BASE as follows:</p>
+
+<ul>
+  <li>Match the value given against this regular expression: <p><code>(([^:/\?\.]+):)?(//)?([^:/\?#@]<span id="iriPattRE">+</span>)(:([0-9]+))?</code></p>
+    <p>from which $2 is a constraint on the scheme, $4 is a constraint on the host and $6 is a constraint on the port (the host is always constrained, $2 and $6 may be empty).</p></li>
+  <li>Let the value of $2 be <var>s</var>, $4 be <var>h</var> and $6 be <var>p</var></li>
+
+  <li>
+    If <var>s</var> is empty then let <var>s</var> be <code>[A-Za-z]+</code>
+  </li>
+  <li>
+    If <var>p</var> is empty then let <var>p</var> be <code>(\:[0-9]+)?</code>,
+    else let <var>p</var> be <code>\:</code><strong><var>p</var></strong>
+
+  </li>
+  <li>
+    If <var>h</var> is exactly <strong>*</strong> then let <var>h</var> be
+    ([^\:\/\?\#\@]+\.)*[^\:\/\?\#\@]+
+  </li>
+  <li>
+    <p id="waf1">
+    Else if <var>h</var> matches the regular expression
+    <code>^\*\.(.*)</code>
+    then let <var>h</var> be
+    <code>([^\:\/\?\#\@]+\.)+<strong>$1</strong></code>
+    </p>
+  </li>
+  <li>
+    Else let <var>h</var> be
+    <code>([^\:\/\?\#\@]+\.)*<strong><var>h</var></strong></code>
+  </li>
+  <li>
+    Create the following element in the POWDER-BASE document:
+    <code>&lt;includeregex&gt;^<strong><var>s</var></strong>\:\/\/<strong><var>h</var></strong><strong><var>p</var></strong>&lt;/includeregex&gt;</code>
+
+  </li>
+</ul>
+
+<p>The following example shows these steps.</p>
+
+<div id="eg4-3" class="example">
+<p class="caption">Example 4-3: The POWDER and POWDER-BASE Encoding of an Example IRI Set including an <code>includeiripattern</code> Constraint</p>
+<p>POWDER: [<a href="example_4_3.xml">XML</a>]</p>
+
+<pre>&lt;iriset&gt;
+  &lt;includeiripattern&gt;http://*.example.org:8080&lt;/includeiripattern&gt;
+&lt;/iriset&gt;</pre>
+
+<p>POWDER-BASE: [<a href="example_4_3_b.xml">XML</a>]</p>
+<pre style="overflow:auto; padding-bottom:1em">&lt;iriset&gt;
+  &lt;includeregex&gt;^http\:\/\/([^\:\/\?\#\@]+\.)<span id="waf2">+</span>example.org:8080&lt;/includeregex&gt;
+&lt;/iriset&gt;</pre>
+</div>
+
+<p>Incidentally, the IRI set defined here is 'all resources on all subdomains of example.org (but not on example.org) accessed via HTTP through port 8080.'</p>
+
+
+<h3 id="regexSemantics">4.3 POWDER-S IRI Set Semantics</h3>
+
+<p>Providing OWL/RDF semantics for <code>iriset</code> elements is not directly
+possible, since RDF does not provide any means for accessing or
+manipulating the string representation of an IRI.</p>
+
+<div class="semext" id="SE">
+<p>POWDER-S uses two <a href="http://www.w3.org/TR/2004/REC-owl-semantics-20040210/syntax.html#owl_DatatypeProperty_syntax">OWL DatatypeProperties</a> 
+(<code>wdrs:matchesregex</code> and <code>wdrs:notmatchesregex</code>) to relate resources 
+to regular expressions which that resource matches. While 
+POWDER-S uses OWL classes to group resources, any engine determining if a resource 
+belonged in one of these OWL classes would need to be able to test a resource against 
+a regular expression.</p>
+
+<pre>
+wdrs:matchesregex rdf:type owl:DatatypeProperty .
+wdrs:matchesregex rdfs:range xsd:string .
+wdrs:notmatchesregex rdf:type owl:DatatypeProperty .
+wdrs:notmatchesregex rdfs:range xsd:string .
+</pre>
+
+<p>We further stipulate that &lt;<var>x</var>, <var>reg</var>&gt; 
+is in IEXT(I(wdrs:matchesregex)) if and only if:</p>
+  <ul>
+    <li>
+      <var>reg</var> conforms with regular expression syntax, AND
+    </li>
+    <li>
+      there exist literal <var>sss</var>^^xsd:string
+      and URI reference <var>uuu</var> such that:
+      <ul>
+	<li>
+          <var>uuu</var> and <var>sss</var>
+          satisfy the 1:1 correspondence between URI refrences
+          and their string representation, as specified
+          in Section 6.4 of the RDF Concepts document
+          [<a href="#uriref">URIREF</a>].
+	</li>
+	<li>
+	  <var>sss</var> matches the regular expression <var>reg</var>, AND
+	</li>
+	<li>
+	  I(<var>uuu</var>)=<var>x</var>
+	</li>
+      </ul>
+    </li>
+  </ul>
+<p>and that &lt;<var>x</var>, <var>reg</var>&gt; 
+is in IEXT(I(wdrs:notmatchesregex)) if and only if:</p>
+  <ul>
+    <li>
+      <var>reg</var> conforms with regular expression syntax, AND
+    </li>
+    <li>
+      there exist literal <var>sss</var>^^xsd:string
+      and URI reference <var>uuu</var> such that:
+      <ul>
+	<li>
+          <var>uuu</var> and <var>sss</var>
+          satisfy the 1:1 correspondence between URI refrences
+          and their string representation, as specified
+          in Section 6.4 of the RDF Concepts document
+          [<a href="#uriref">URIREF</a>].
+	</li>
+	<li>
+	  <var>sss</var> does not match the regular expression <var>reg</var>, AND
+	</li>
+	<li>
+	  I(<var>uuu</var>)=<var>x</var>
+	</li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<p>It is now possible to express <code>includeregex</code> and <code>excluderegex</code> as
+<code>owl:hasValue</code> restrictions [<a href="#owl">OWL</a>] on 
+<code>wdrs:matchesregex</code> and <code>wdrs:notmatchesregex</code> respectively
+and build up an OWL Class to represent the IRI set in the POWDER-S encoding. Furthermore,
+asserting a <code>rdfs:subClassOf</code> relationship between an <em>iriset</em> and a
+<em>descriptorset</em> expresses the claim that the resources in the former are described
+by the latter.</p> 
+
+<p id="err2">The following example takes a complete example POWDER document through POWDER-BASE to POWDER-S. Note that
+the only change from POWDER to POWDER-BASE is in the elements within the IRI set.</p>
+
+<div id="eg4-4" class="example">
+<p class="caption">Example 4-4: The Full Transformation of an Example from POWDER Through POWDER-BASE to POWDER-S</p>
+
+<p>POWDER  [<a href="example_4_4_1.xml">XML</a>]</p>
+
+<pre>
+ 1  &lt;?xml version=&quot;1.0&quot;?&gt;
+ 2  &lt;powder xmlns=&quot;http://www.w3.org/2007/05/powder#&quot; 
+ 3          xmlns:ex=&quot;http://example.org/vocab#&quot;&gt;
+
+ 4    &lt;attribution&gt;
+ 5      &lt;issuedby src=&quot;http://authority.example.org/company.rdf#me&quot; /&gt;
+ 6      &lt;issued&gt;2007-12-14T00:00:00&lt;/issued&gt;
+ 7    &lt;/attribution&gt;
+
+ 8    &lt;dr&gt;
+ 9      &lt;iriset&gt;
+10       &lt;includehosts&gt;example.com example.org&lt;/includehosts&gt;
+11       &lt;excludeports&gt;8080 8081 8082&lt;/excludeports&gt;
+12     &lt;/iriset&gt;
+13     &lt;descriptorset&gt;
+14      &lt;ex:color&gt;red&lt;/ex:color&gt;
+15      &lt;ex:shape&gt;square&lt;/ex:shape&gt;
+16      &lt;displaytext&gt;Everything on example.org and example.com is red and square&lt;/displaytext&gt;
+17      &lt;displayicon src=&quot;http://example.org/icon.png&quot; /&gt;
+18    &lt;/descriptorset&gt;
+19   &lt;/dr&gt;
+
+20 &lt;/powder&gt;
+</pre>
+
+<p>POWDER-BASE  [<a href="example_4_4_2.xml">XML</a>]</p>
+
+<pre>
+ 1  &lt;?xml version=&quot;1.0&quot;?&gt;
+ 2  &lt;powder xmlns=&quot;http://www.w3.org/2007/05/powder#&quot; 
+ 3          xmlns:ex=&quot;http://example.org/vocab#&quot;&gt;
+
+ 4    &lt;attribution&gt;
+ 5      &lt;issuedby src=&quot;http://authority.example.org/company.rdf#me&quot; /&gt;
+ 6      &lt;issued&gt;2007-12-14T00:00:00&lt;/issued&gt;
+ 7    &lt;/attribution&gt;
+
+ 8    &lt;dr&gt;
+ 9      &lt;iriset&gt;
+10       &lt;includeregex&gt;\:\/\/(([^\/\?\#]*)\@)?([^\:\/\?\#\@]+\.)?(example\.com|example\.org)(\:([0-9]+))?\/&lt;/includeregex&gt;
+11       &lt;excluderegex&gt;\:\/\/(([^\/\?\#]*)\@)?([^\:\/\?\#\@]+\.)*[^\:\/\?\#\@]+\:(8080|8081|8082)\/&lt;/excluderegex&gt;
+12     &lt;/iriset&gt;
+13     &lt;descriptorset&gt;
+14      &lt;ex:color&gt;red&lt;/ex:color&gt;
+15      &lt;ex:shape&gt;square&lt;/ex:shape&gt;
+16      &lt;displaytext&gt;Everything on example.org and example.com is red and square&lt;/displaytext&gt;
+17      &lt;displayicon src=&quot;http://example.org/icon.png&quot; /&gt;
+18    &lt;/descriptorset&gt;
+19   &lt;/dr&gt;
+
+20 &lt;/powder&gt;</pre>
+
+<p>POWDER-S  [<a href="example_4_4_3.rdf">RDF/XML</a>,<a href="example_4_4_3.ttl">TURTLE</a>]</p>
+
+<pre>
+ 1  &lt;?xml version=&quot;1.0&quot;?&gt;
+ 2  &lt;rdf:RDF
+ 3     xmlns:wdrs=&quot;http://www.w3.org/2007/05/powder-s#&quot;
+ 4     xmlns:rdf=&quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#&quot;
+ 5     xmlns:rdfs=&quot;http://www.w3.org/2000/01/rdf-schema#&quot;
+ 6     xmlns:owl=&quot;http://www.w3.org/2002/07/owl#&quot;
+ 7     xmlns:ex=&quot;http://example.org/vocab#&quot;&gt;
+ 
+ 8     &lt;owl:Ontology rdf:about=&quot;&quot;&gt;
+ 9      &lt;wdrs:issuedby rdf:resource=&quot;http://authority.example.org/company.rdf#me&quot; /&gt;
+10      &lt;wdrs:issued&gt;2007-12-14&lt;/wdrs:issued&gt;
+11    &lt;/owl:Ontology&gt;
+ 
+12    &lt;owl:Class rdf:nodeID=&quot;iriset_1&quot;&gt;
+13      &lt;owl:equivalentClass&gt;
+14        &lt;owl:Class&gt;
+15          &lt;owl:intersectionOf rdf:parseType=&quot;Collection&quot;&gt;
+16            &lt;owl:Restriction&gt;
+17              &lt;owl:onProperty rdf:resource=&quot;http://www.w3.org/2007/05/powder-s#matchesregex&quot; /&gt;
+18              &lt;owl:hasValue  rdf:datatype=&quot;http://www.w3.org/2001/XMLSchema-datatypes#string&quot;&gt;\:\/\/(([^\/\?\#]*)\@)?([^\:\/\?\#\@]+\.)?(example\.com|example\.org)(\:([0-9]+))?\/&lt;/owl:hasValue&gt;
+19            &lt;/owl:Restriction&gt;
+20            &lt;owl:Restriction&gt;
+21              &lt;owl:onProperty rdf:resource=&quot;http://www.w3.org/2007/05/powder-s#notmatchesregex&quot; /&gt;
+22              &lt;owl:hasValue  rdf:datatype=&quot;http://www.w3.org/2001/XMLSchema-datatypes#string&quot;&gt;\:\/\/(([^\/\?\#]*)\@)?([^\:\/\?\#\@]+\.)*[^\:\/\?\#\@]+\:(8080|8081|8082)\/&lt;/owl:hasValue&gt;
+23            &lt;/owl:Restriction&gt;
+24          &lt;/owl:intersectionOf&gt;
+25        &lt;/owl:Class&gt;
+26      &lt;/owl:equivalentClass&gt;
+27    &lt;/owl:Class&gt;
+
+28    &lt;owl:Class rdf:nodeID=&quot;descriptorset_1&quot;&gt;
+29      &lt;rdfs:subClassOf&gt;
+30        &lt;owl:Class&gt;
+31          &lt;owl:intersectionOf rdf:parseType=&quot;Collection&quot;&gt;
+32            &lt;owl:Restriction&gt;
+33              &lt;owl:onProperty rdf:resource=&quot;http://example.org/vocab#color&quot; /&gt;
+34              &lt;owl:hasValue&gt;red&lt;/owl:hasValue&gt;
+35           &lt;/owl:Restriction&gt;
+36            &lt;owl:Restriction&gt;
+37              &lt;owl:onProperty rdf:resource=&quot;http://example.org/vocab#shape&quot; /&gt;
+38              &lt;owl:hasValue&gt;square&lt;/owl:hasValue&gt;
+39            &lt;/owl:Restriction&gt;
+40          &lt;/owl:intersectionOf&gt;
+41        &lt;/owl:Class&gt;
+42      &lt;/rdfs:subClassOf&gt;
+43      &lt;wdrs:text&gt;Everything on example.org and example.com is red and square&lt;/wdrs:text&gt;
+44      &lt;wdrs:logo rdf:resource=&quot;http://example.org/icon.png&quot; /&gt;
+45    &lt;/owl:Class&gt;
+ 
+46    &lt;owl:Class rdf:nodeID=&quot;iriset_1&quot;&gt;
+47      &lt;rdfs:subClassOf rdf:nodeID=&quot;descriptorset_1&quot;/&gt;
+48    &lt;/owl:Class&gt;
+ 
+49 &lt;/rdf:RDF&gt;
+</pre></div>
+
+<p>It should be noted that <code>excluderegex</code> is expressed as a
+<code>wdrs:notmatchesregex</code> restriction as opposed to the complement of
+a <code>wdrs:matchesregex</code> restriction for the following reason:
+according to OWL open-world semantics, the absence of a
+<code>wdrs:matchesregex</code> triple does not entail membership in the complement
+of a <code>wdrs:matchesregex</code> restriction. Furthermore, it is practically
+impossible to enumerate the possible regular expressions and use
+<code>owl:DataRange</code> to locally close the interpretation and be
+able to infer membership in the complement of <code>hasValue</code>
+restrictions.</p>
+
+<p>Similarly, the union of <code>wdrs:notmatchesregex</code>
+restrictions is used to define the complements of iriset classes, for
+the purpose of expressing ordered lists of DRs
+(see <a href="#multiDRsemantics">Section 3.1</a> above). In this manner,
+the <code>iriset_1_not</code> and <code>iriset_2_not</code> classes
+of <a href="#eg3-8">Example 3-8</a> are defined as follows:</p>
+
+<div id="eg3-8b" class="example">
+<p class="caption">Example 3-8b: The POWDER-S Encoding of the
+iriset_1_not and iriset_2_not classes of Example 3-8
+[<a href="example_3_8.rdf">RDF/XML</a>,<a href="example_3_8.ttl">TURTLE</a>]</p>
+<pre>
+ 1  &lt;owl:Class rdf:nodeID=&quot;iriset_1_not&quot;&gt;
+ 2    &lt;owl:equivalentClass&gt;
+ 3      &lt;owl:Class&gt;
+ 2        &lt;owl:unionOf rdf:parseType=&quot;Collection&quot;&gt;
+ 3          &lt;owl:Restriction&gt;
+ 4            &lt;owl:onProperty rdf:resource=&quot;http://www.w3.org/2007/05/powder-s#notmatchesregex&quot; /&gt;
+ 5            &lt;owl:hasValue rdf:datatype=&quot;http://www.w3.org/2001/XMLSchema-datatypes#string&quot;&gt;\:\/\/(([^\/\?\#]*)\@)?([^\:\/\?\#\@]+\.)?(example\.com)(:([0-9]+))?\/&lt;/owl:hasValue&gt;
+ 6          &lt;/owl:Restriction&gt;
+ 7          &lt;owl:Restriction&gt;
+ 8            &lt;owl:onProperty rdf:resource=&quot;http://www.w3.org/2007/05/powder-s#notmatchesregex&quot; /&gt;
+ 9            &lt;owl:hasValue rdf:datatype=&quot;http://www.w3.org/2001/XMLSchema-datatypes#string&quot;&gt;\:\/\/(([^\/\?\#]*)\@)?([^\:\/\?\#\@]*)(\:([0-9]+))?\/foo&lt;/owl:hasValue&gt;
+12          &lt;/owl:Restriction&gt;
+13        &lt;/owl:unionOf&gt;
+14      &lt;/owl:Class&gt;
+15    &lt;/owl:equivalentClass&gt;
+16  &lt;/owl:Class&gt;
+
+17  &lt;owl:Class rdf:nodeID=&quot;iriset_2_not&quot;&gt;
+18    &lt;owl:equivalentClass&gt;
+19      &lt;owl:Class&gt;
+20        &lt;owl:unionOf rdf:parseType=&quot;Collection&quot;&gt;
+21          &lt;owl:Restriction&gt;
+22            &lt;owl:onProperty rdf:resource=&quot;http://www.w3.org/2007/05/powder-s#notmatchesregex&quot; /&gt;
+23            &lt;owl:hasValue rdf:datatype=&quot;http://www.w3.org/2001/XMLSchema-datatypes#string&quot;&gt;\:\/\/(([^\/\?\#]*)\@)?([^\:\/\?\#\@]+\.)?(example\.com)(:([0-9]+))?\/&lt;/owl:hasValue&gt;
+24          &lt;/owl:Restriction&gt;
+25          &lt;owl:Restriction&gt;
+26            &lt;owl:onProperty rdf:resource=&quot;http://www.w3.org/2007/05/powder-s#notmatchesregex&quot; /&gt;
+27            &lt;owl:hasValue rdf:datatype=&quot;http://www.w3.org/2001/XMLSchema-datatypes#string&quot;&gt;\:\/\/(([^\/\?\#]*)\@)?([^\:\/\?\#\@]*)(\:([0-9]+))?\/bar&lt;/owl:hasValue&gt;
+28          &lt;/owl:Restriction&gt;
+29        &lt;/owl:unionOf&gt;
+30      &lt;/owl:Class&gt;
+31    &lt;/owl:equivalentClass&gt;
+32  &lt;/owl:Class&gt;
+
+</pre></div>
+
+<p>Software can distinguish those RDF graphs to
+which the extended semantics apply by testing for the appearance of
+either the <code>wdrs:matchesregex</code> or the
+<code>wdrs:notmatchesregex</code> resource as the object of a
+triple. For instance, in Example 4-4 the following class description
+suffices to recognize a document that uses the semantic extension:</p>
+
+<pre>
+16  &lt;owl:Restriction&gt;
+17    &lt;owl:onProperty rdf:resource=&quot;http://www.w3.org/2007/05/powder-s#matchesregex&quot; /&gt;
+18    &lt;owl:hasValue  rdf:datatype=&quot;http://www.w3.org/2001/XMLSchema-datatypes#string&quot;&gt;\:\/\/(([^\/\?\#]*)\@)?([^\:\/\?\#\@]+\.)?(example\.com|example\.org)(\:([0-9]+))?\/&lt;/owl:hasValue&gt;
+19  &lt;/owl:Restriction&gt;
+</pre>
+
+
+
+<h3 id="emptyIRIsets">4.4 Direct Descriptions</h3>
+
+<p>POWDER and, consequently, POWDER-BASE documents might
+include <code>descriptorset</code> elements that are not
+inside a <code>dr</code> element but directly subsumed by the
+document's root. Such descriptions are not meant to be implicitly
+applied to any IRI groups, but are only made available by explicit
+reference by resources, as explained in Section 2.5 of
+the Description Resources document [<a href="#dr">DR</a>].</p>
+
+<p id="err3">In POWDER-S, such descriptions are translated into classes, but no
+subsumption of an IRI group is asserted, as shown in Example 4-5. Note, however,
+that as shown in <a href="#nodes">Section 3</a>,  each derived OWL class 
+is given an <code>rdf:ID</code> equivalent to the <code>xml:id</code> in the original 
+POWDER document, not an <code>rdf:nodeID</code>, so that it can be referred to from outside.</p>
+
+<div class="example" id="eg4-5">
+<p class="caption">Example 4-5: The Semantics of Direct Description Elements</p>
+<p>POWDER [<a href="example_4_5.xml">XML</a>]</p>
+
+<pre>
+ 1 &lt;descriptorset xml:id=&quot;square&quot;&gt;
+ 2   &lt;ex:finish rdf:resource=&quot;http://example.org/vocab#shiny&quot;/&gt;
+ 3   &lt;ex:shape&gt;square&lt;/ex:shape&gt;
+ 4 &lt;/descriptorset&gt;
+
+ 5 &lt;descriptorset xml:id=&quot;round&quot;&gt;
+ 6   &lt;ex:finish rdf:resource=&quot;http://example.org/vocab#matt&quot;/&gt;
+ 7   &lt;ex:shape&gt;round&lt;/ex:shape&gt;
+ 8 &lt;/descriptorset&gt;
+
+ 9 &lt;descriptorset xml:id=&quot;hexagonal&quot;&gt;
+10   &lt;ex:finish rdf:resource=&quot;http://example.org/vocab#eggshell&quot;/&gt;
+11   &lt;ex:shape&gt;hexagonal&lt;/ex:shape&gt;
+12 &lt;/descriptorset&gt;</pre>
+
+<p>POWDER-S [<a href="example_4_5.rdf">RDF/XML</a>,<a href="example_4_5.ttl">TURTLE</a>]</p>
+
+<pre>
+ 1 &lt;owl:Class rdf:ID=&quot;square&quot;&gt;
+ 2   &lt;rdfs:subClassOf&gt;
+ 3     &lt;owl:Class&gt;
+ 4       &lt;owl:intersectionOf rdf:parseType=&quot;Collection&quot;&gt;
+ 5         &lt;owl:Restriction&gt;
+ 6           &lt;owl:onProperty rdf:resource=&quot;http://example.org/vocab#finish&quot;/&gt;
+ 7           &lt;owl:hasValue rdf:resource=&quot;http://example.org/vocab#shiny&quot;/&gt;
+ 8         &lt;/owl:Restriction&gt;
+ 9         &lt;owl:Restriction&gt;
+10           &lt;owl:onProperty rdf:resource=&quot;http://example.org/vocab#shape&quot;/&gt;
+11           &lt;owl:hasValue&gt;square&lt;/owl:hasValue&gt;
+12         &lt;/owl:Restriction&gt;
+13       &lt;/owl:intersectionOf&gt;
+14     &lt;/owl:Class&gt;
+15   &lt;/rdfs:subClassOf&gt;
+16 &lt;/owl:Class&gt;
+
+17 &lt;owl:Class rdf:ID=&quot;round&quot;&gt;
+18   &lt;rdfs:subClassOf&gt;
+19     &lt;owl:Class&gt;
+20       &lt;owl:intersectionOf rdf:parseType=&quot;Collection&quot;&gt;
+21         &lt;owl:Restriction&gt;
+22           &lt;owl:onProperty rdf:resource=&quot;http://example.org/vocab#finish&quot;/&gt;
+23           &lt;owl:hasValue rdf:resource=&quot;http://example.org/vocab#matt&quot;/&gt;
+24         &lt;/owl:Restriction&gt;
+25         &lt;owl:Restriction&gt;
+26           &lt;owl:onProperty rdf:resource=&quot;http://example.org/vocab#shape&quot;/&gt;
+27           &lt;owl:hasValue&gt;round&lt;/owl:hasValue&gt;
+28         &lt;/owl:Restriction&gt;
+29       &lt;/owl:intersectionOf&gt;
+30     &lt;/owl:Class&gt;
+31   &lt;/rdfs:subClassOf&gt;
+32 &lt;/owl:Class&gt;
+
+33 &lt;owl:Class rdf:ID=&quot;hexagonal&quot;&gt;
+34   &lt;rdfs:subClassOf&gt;
+35     &lt;owl:Class&gt;
+36       &lt;owl:intersectionOf rdf:parseType=&quot;Collection&quot;&gt;
+37         &lt;owl:Restriction&gt;
+38           &lt;owl:onProperty rdf:resource=&quot;http://example.org/vocab#finish&quot;/&gt;
+39           &lt;owl:hasValue rdf:resource=&quot;http://example.org/vocab#eggshell&quot;/&gt;
+40         &lt;/owl:Restriction&gt;
+41         &lt;owl:Restriction&gt;
+42           &lt;owl:onProperty rdf:resource=&quot;http://example.org/vocab#shape&quot;/&gt;
+43           &lt;owl:hasValue&gt;hexagonal&lt;/owl:hasValue&gt;
+44         &lt;/owl:Restriction&gt;
+45       &lt;/owl:intersectionOf&gt;
+46     &lt;/owl:Class&gt;
+47   &lt;/rdfs:subClassOf&gt;
+48 &lt;/owl:Class&gt;
+</pre>
+</div>
+
+
+<h3 id="abouthostssemantics">4.5 Semantics of <code>abouthosts</code> and <code>aboutregex</code></h3>
+
+<p>The value of <code>abouthosts</code> is a whitespace-separated list
+of hosts. This list receives identical semantics to the value of
+the <code>includehosts</code> grouping element. In consequence, the
+transformation from POWDER to POWDER-BASE
+transforms the <code>abouthosts</code> elements into an
+<code>aboutregex</code> element using the same processing steps as for
+transforming <code>includehosts</code> into <code>includeregex</code>,
+as described in
+
+<a href="#iriSetSemantics">Section 4.2</a> above.</p>
+
+<p>The <code>aboutregex</code> element of POWDER-BASE documents sets an
+outer limit on the resources described by the DRs within the document.
+That is to say, it restricts the resources that
+may receive a description not only implicitly (via subsumption by an
+IRI set) but also explicitly as described in Section 2.5  of
+the Description Resources document [<a href="#dr">DR</a>].</p>
+
+<p>In order to capture these semantics, the POWDER-BASE to POWDER-S
+transformation must
+    add an implicit restriction to all descriptor sets in the
+    document, effectively
+    subsuming all resource classes created by <code>descriptorset</code>
+    elements under the resource class that is created by the
+    <code>aboutregex</code> element. In this manner, the implicit or explicit
+    assignment of a description to a resource (cf. Section 2.5 of
+    the Description Resources document [<a href="#dr">DR</a>]) will
+    create an inconsistency if the resource lies outside the
+    <code>aboutregex</code> class.</p>
+
+<p>It should be noted that <code>iriset</code> classes
+are <em>not</em> implicitly intersected with the <code>aboutregex</code>
+class, and it is the responsibility of the POWDER document author to
+ensure that all IRI sets in the document are within the scope
+defined by <code>abouthosts/aboutregex</code>.</p>
+
+<p id="inconsistency">This process is demonstrated by Example 4.7. Notice that in the POWDER-S document,
+each descriptor class is intersected with the 'aboutset' (lines 31, 51 and 63).
+A logical inconsistency will arise (i.e. an error) if an IRI set is not
+a subset of the aboutset class.</p>
+
+<div id="eg4-6" class="example">
+<p class="caption">Example 4-6: The Semantics of <code>abouthosts</code></p>
+
+<p>POWDER Document [<a href="example_4_6.xml">XML</a>]</p>
+<pre>
+ 1  &lt;attribution&gt;
+ 2    &lt;issuedby src=&quot;http://authority.example.org/company.rdf#me&quot; /&gt;
+ 3    &lt;abouthosts&gt;example.org example.com&lt;/abouthosts&gt;
+ 4  &lt;/attribution&gt;
+
+ 5  &lt;dr&gt;
+ 6    &lt;iriset&gt;
+ 7      &lt;includehosts&gt;square.example.org&lt;/includehosts&gt;
+ 8    &lt;/iriset&gt;
+ 9    &lt;descriptorset&gt;
+10     &lt;ex:shape&gt;square&lt;/ex:shape&gt;
+11   &lt;/descriptorset&gt;
+12 &lt;/dr&gt;
+
+13 &lt;dr&gt;
+14   &lt;iriset&gt;
+15     &lt;includehosts&gt;round.example.com&lt;/includehosts&gt;
+16   &lt;/iriset&gt;
+17   &lt;descriptorset&gt;
+18     &lt;ex:shape&gt;round&lt;/ex:shape&gt;
+19   &lt;/descriptorset&gt;
+20 &lt;/dr&gt;
+
+21 &lt;descriptorset xml:id=&quot;silver&quot;&gt;
+22   &lt;ex:finish rdf:resource=&quot;http://example.org/vocab#shiny&quot;/&gt;
+23   &lt;ex:shape&gt;square&lt;/ex:shape&gt;
+24 &lt;/descriptorset&gt;
+</pre>
+
+<p>POWDER-BASE Document [<a href="example_4_6_b.xml">XML</a>]</p>
+<pre>
+ 1  &lt;attribution&gt;
+ 2    &lt;maker ref=&quot;http://authority.example.org/company.rdf#me&quot; /&gt;
+ 3    &lt;aboutregex&gt;\:\/\/(([^\/\?\#]*)\@)?([^\:\/\?\#\@]+\.)?(example\.org|example\.com)(\:([0-9]+))?\/&lt;/aboutregex&gt;
+ 4  &lt;/attribution&gt;
+
+ 5  &lt;dr&gt;
+ 6    &lt;iriset&gt;
+ 7      &lt;includeregex&gt;\:\/\/(([^\/\?\#]*)\@)?([^\:\/\?\#\@]+\.)?(square\.example\.org)(\:([0-9]+))?\/&lt;/includeregex&gt;
+ 8    &lt;/iriset&gt;
+ 9    &lt;descriptorset&gt;
+10     &lt;ex:shape&gt;square&lt;/ex:shape&gt;
+11   &lt;/descriptorset&gt;
+12 &lt;/dr&gt;
+
+13 &lt;dr&gt;
+14   &lt;iriset&gt;
+15     &lt;includeregex&gt;\:\/\/(([^\/\?\#]*)\@)?([^\:\/\?\#\@]+\.)?(round\.example\.com)(\:([0-9]+))?\/&lt;/includeregex&gt;
+16   &lt;/iriset&gt;
+
+17   &lt;descriptorset&gt;
+18     &lt;ex:shape&gt;round&lt;/ex:shape&gt;
+19   &lt;/descriptorset&gt;
+20 &lt;/dr&gt;
+
+21 &lt;descriptorset xml:id=&quot;silver&quot;&gt;
+22   &lt;ex:finish rdf:resource="http://example.org/vocab#shiny"/&gt;
+23   &lt;ex:shape&gt;square&lt;/ex:shape&gt;
+24 &lt;/descriptorset&gt;
+</pre>
+
+<p>POWDER-S Document [<a href="example_4_6.rdf">RDF/XML</a>,<a href="example_4_6.ttl">TURTLE</a>]</p>
+<pre>
+ 1  &lt;?xml version=&quot;1.0&quot;?&gt;
+ 2  &lt;rdf:RDF
+ 3     xmlns:wdrs=&quot;http://www.w3.org/2007/05/powder-s#&quot;
+ 4     xmlns:rdf=&quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#&quot;
+ 5     xmlns:rdfs=&quot;http://www.w3.org/2000/01/rdf-schema#&quot;
+ 6     xmlns:owl=&quot;http://www.w3.org/2002/07/owl#&quot;
+ 7     xmlns:ex=&quot;http://example.org/vocab#&quot;&gt;
+ 
+ 8     &lt;owl:Ontology rdf:about=&quot;&quot;&gt;
+ 9      &lt;wdrs:issuedby rdf:resource=&quot;http://authority.example.org/company.rdf#me&quot; /&gt;
+10      &lt;wdrs:issued&gt;2007-12-14&lt;/wdrs:issued&gt;
+11    &lt;/owl:Ontology&gt;
+
+12    &lt;owl:Class rdf:nodeID=&quot;aboutset&quot;&gt; &lt;!-- From the abouthosts element --&gt;
+13      &lt;owl:equivalentClass&gt;
+14        &lt;owl:Class&gt;
+15          &lt;owl:intersectionOf rdf:parseType=&quot;Collection&quot;&gt;
+16            &lt;owl:Restriction&gt;
+17              &lt;owl:onProperty rdf:resource=&quot;http://www.w3.org/2007/05/powder-s#matchesregex&quot; /&gt;
+18              &lt;owl:hasValue rdf:datatype=&quot;http://www.w3.org/2001/XMLSchema-datatypes#string&quot;&gt;\:\/\/(([^\/\?\#]*)\@)?([^\:\/\?\#\@]+\.)?(example\.org|example\.net)(\:([0-9]+))?\/&lt;/owl:hasValue&gt;
+19            &lt;/owl:Restriction&gt;
+20          &lt;/owl:intersectionOf&gt;
+21        &lt;/owl:Class&gt;
+22      &lt;/owl:equivalentClass&gt;
+23    &lt;/owl:Class&gt;
+
+24    &lt;owl:Class rdf:nodeID=&quot;iriset_1&quot;&gt;
+25      &lt;owl:equivalentClass&gt;
+26        &lt;owl:Class&gt;
+27          &lt;owl:intersectionOf rdf:parseType=&quot;Collection&quot;&gt;
+28            &lt;owl:Restriction&gt;
+29              &lt;owl:onProperty rdf:resource=&quot;http://www.w3.org/2007/05/powder-s#matchesregex&quot; /&gt;
+30              &lt;owl:hasValue rdf:datatype=&quot;http://www.w3.org/2001/XMLSchema-datatypes#string&quot;&gt;\:\/\/(([^\/\?\#]*)\@)?([^\:\/\?\#\@]+\.)?(square\.example\.org)(\:([0-9]+))?\/&lt;/owl:hasValue&gt;
+31           &lt;/owl:Restriction&gt;
+32         &lt;/owl:intersectionOf&gt;
+33        &lt;/owl:Class&gt;
+34      &lt;/owl:equivalentClass&gt;
+35    &lt;/owl:Class&gt;
+
+36    &lt;owl:Class rdf:nodeID=&quot;descriptorset_1&quot;&gt;
+37      &lt;rdfs:subClassOf&gt;
+38        &lt;owl:Class&gt;
+39          &lt;owl:intersectionOf rdf:parseType=&quot;Collection&quot;&gt;
+40            &lt;owl:Class rdf:nodeID=&quot;aboutset&quot;/&gt;
+41            &lt;owl:Restriction&gt;
+42              &lt;owl:onProperty rdf:resource=&quot;http://example.org/vocab#shape&quot;/&gt;
+43              &lt;owl:hasValue&gt;square&lt;/owl:hasValue&gt;
+44            &lt;/owl:Restriction&gt;
+45          &lt;/owl:intersectionOf&gt;
+46        &lt;/owl:Class&gt;
+47      &lt;/rdfs:subClassOf&gt;
+48    &lt;/owl:Class&gt;
+
+49    &lt;owl:Class rdf:nodeID=&quot;iriset_1&quot;&gt;
+50      &lt;rdfs:subClassOf rdf:nodeID=&quot;descriptorset_1&quot;/&gt;
+51    &lt;/owl:Class&gt;
+
+52    &lt;owl:Class rdf:nodeID=&quot;iriset_2&quot;&gt;
+53      &lt;owl:equivalentClass&gt;
+54        &lt;owl:Class&gt;
+55          &lt;owl:intersectionOf rdf:parseType=&quot;Collection&quot;&gt;
+56            &lt;owl:Restriction&gt;
+57              &lt;owl:onProperty rdf:resource=&quot;http://www.w3.org/2007/05/powder-s#matchesregex&quot; /&gt;
+58              &lt;owl:hasValue rdf:datatype=&quot;http://www.w3.org/2001/XMLSchema-datatypes#string&quot;&gt;\:\/\/(([^\/\?\#]*)\@)?([^\:\/\?\#\@]+\.)?(round\.example\.com)(\:([0-9]+))?\/&lt;/owl:hasValue&gt;
+59            &lt;/owl:Restriction&gt;
+60          &lt;/owl:intersectionOf&gt;
+61        &lt;/owl:Class&gt;
+62      &lt;/owl:equivalentClass&gt;
+63    &lt;/owl:Class&gt;
+
+64    &lt;owl:Class rdf:nodeID=&quot;descriptorset_2&quot;&gt;
+65      &lt;rdfs:subClassOf&gt;
+66        &lt;owl:Class&gt;
+67          &lt;owl:intersectionOf rdf:parseType=&quot;Collection&quot;&gt;
+68            &lt;owl:Class rdf:nodeID=&quot;aboutset&quot;/&gt;
+69            &lt;owl:Restriction&gt;
+70              &lt;owl:onProperty rdf:resource=&quot;http://example.org/vocab#shape&quot;/&gt;
+71              &lt;owl:hasValue&gt;round&lt;/owl:hasValue&gt;
+72            &lt;/owl:Restriction&gt;
+73          &lt;/owl:intersectionOf&gt;
+74        &lt;/owl:Class&gt;
+75      &lt;/rdfs:subClassOf&gt;
+76    &lt;/owl:Class&gt;
+
+77    &lt;owl:Class rdf:nodeID=&quot;iriset_2&quot;&gt;
+78      &lt;rdfs:subClassOf rdf:nodeID=&quot;descriptorset_2&quot;/&gt;
+79    &lt;/owl:Class&gt;
+
+80    &lt;owl:Class rdf:ID=&quot;silver&quot;&gt;
+81      &lt;rdfs:subClassOf&gt;
+82        &lt;owl:Class&gt;
+83          &lt;owl:intersectionOf rdf:parseType=&quot;Collection&quot;&gt;
+84            &lt;owl:Class rdf:nodeID=&quot;aboutset&quot;/&gt;
+85            &lt;owl:Restriction&gt;
+86              &lt;owl:onProperty rdf:resource=&quot;http://example.org/vocab#finish&quot;/&gt;
+87              &lt;owl:hasValue rdf:resource=&quot;http://example.org/vocab#shiny&quot;/&gt;
+88            &lt;/owl:Restriction&gt;
+89            &lt;owl:Restriction&gt;
+90              &lt;owl:onProperty rdf:resource=&quot;http://example.org/vocab#shape&quot;/&gt;
+91              &lt;owl:hasValue&gt;square&lt;/owl:hasValue&gt;
+92            &lt;/owl:Restriction&gt;
+93          &lt;/owl:intersectionOf&gt;
+94        &lt;/owl:Class&gt;
+95      &lt;/rdfs:subClassOf&gt;
+96    &lt;/owl:Class&gt;
+
+97 &lt;/rdf:RDF&gt;</pre>
+
+</div>
+
+<p id="internal">As discussed in <a href="#externalDs">Section 3.2.3</a>, a DR MAY refer to <code>descriptorset</code> elements 
+in other POWDER documents. In such a situation, although it is not possible using XSLT (the technology used to effect the POWDER transforms) to
+generate <code>aboutregex</code> elements for POWDER-BASE as shown in the previous example, a conformant POWDER Processor 
+MUST take account of <code>abouthosts</code> elements in both documents. The <code>abouthosts</code> element is designed to place an
+outer limit on the scope of any description in a POWDER document so that publishers descriptions retain effective control
+over the assertions made using their descriptions, even when such
+assertions are not attributed to them. For example, publishers of
+descriptions can use <code>abouthosts</code> to state that their
+descriptions are only meaningful for a particular set of domains, and
+may not be used to describe anything else.</p>
+
+
+<h3 id="oxRegexSemantics">4.6 POWDER-BASE IRI Set Semantics in OWL 2 (Informative)</h3>
+
+<p>At the time of this writing, the OWL 2 [<a href="#owl2">OWL2</a>] working draft
+provides for user-defined datatypes, using the restriction facet
+mechanism in XSD 1.1 [<a href="#xsd">XSD</a>].
+As this includes regular expression patterns, it is possible to translate POWDER into OWL 2 requiring a
+simpler extension than the one in <a href="#regexSemantics">Section 4.3</a>.</p>
+
+<p>More specifically, we extend RDF semantics
+[<a href="#rdfsem">RDF-SEMANTICS</a>]
+with a functional datatype property <code>hasIRI</code>, defined as:</p>
+
+<div class="semext" id="SE2">
+<p><code>wdrs:hasIRI rdf:type owl:DatatypeProperty .<br />
+wdrs:hasIRI rdf:type owl:FunctionalProperty .<br />
+wdrs:hasIRI rdfs:range xsd:anyURI .</code></p>
+
+<p>and the further stipulation that:</p>
+
+<p>&lt;<var>x</var>, <var>sss</var>&gt; is in IEXT(I(wdrs:hasIRI)) if
+and only if
+there exists URI reference <var>uuu</var> such that:</p>
+  <ul>
+    <li>
+      <var>uuu</var> and <var>sss</var>
+      satisfy the 1:1 correspondence between URI refrences
+      and their string representation, as specified
+      in Section 6.4 of the RDF Concepts document
+      [<a href="#uriref">URIREF</a>], AND
+    </li>
+    <li>
+      I(<var>uuu</var>)=<var>x</var>.
+    </li>
+  </ul>
+</div>
+
+<p>Such an extension makes it possible to provide semantics to <code>iriset</code> by
+constructing an RDF datatype for each <code>iriset</code> and restricting the values of
+<code>hasIRI</code> to this datatype's range.
+In this manner, the POWDER-S translation of
+<a href="#eg4-4">Example 4-4</a> becomes as shown in
+<a href="#eg4-7">Example 4-7</a>, where <code>iriset_1</code>
+is a class of abstract resources, the concrete IRI string of which is
+within a user-defined datatype (lines 20-29 and 37-46).</p>
+
+
+<div id="eg4-7" class="example">
+<p class="caption">Example 4-7: The POWDER-S Encoding of Example 4-4 With User-defined Datatypes 
+[<a href="example_4_7.rdf">RDF/XML</a>,<a href="example_4_7.ttl">TURTLE</a>]</p>
+<pre>
+ 1  &lt;?xml version=&quot;1.0&quot;?&gt;
+ 2  &lt;rdf:RDF
+ 3    xmlns:wdrs=&quot;http://www.w3.org/2007/05/powder-s#&quot;
+ 4    xmlns:rdf=&quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#&quot;
+ 5    xmlns:rdfs=&quot;http://www.w3.org/2000/01/rdf-schema#&quot;
+ 6    xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema-datatypes#&quot;
+ 7    xmlns:owl=&quot;http://www.w3.org/2002/07/owl#&quot;
+ 8   xmlns:ex=&quot;http://example.org/vocab#&quot;&gt;
+  
+ 9   &lt;owl:Ontology rdf:about=&quot;&quot;&gt;
+10     &lt;wdrs:issuedby rdf:resource=&quot;http://authority.example.org/company.rdf#me&quot; /&gt;
+11     &lt;wdrs:issued&gt;2007-12-14&lt;/wdrs:issued&gt;
+12   &lt;/owl:Ontology&gt;
+ 
+13   &lt;owl:Class rdf:nodeID=&quot;iriset_1&quot;&gt;
+14     &lt;owl:equivalentClass&gt;
+15       &lt;owl:Class&gt;
+16         &lt;owl:intersectionOf rdf:parseType=&quot;Collection&quot;&gt;
+17           &lt;owl:Restriction&gt;
+18             &lt;owl:onProperty rdf:resource=&quot;http://www.w3.org/2007/05/powder-s#hasIRI&quot; /&gt;
+19              &lt;owl:someValuesFrom&gt;
+20                &lt;rdfs:Datatype&gt;
+21                  &lt;owl:onDatatype rdf:resource=&quot;http://www.w3.org/2001/XMLSchema-datatypes#string&quot;/&gt;
+22                  &lt;owl:withRestrictions rdf:parseType=&quot;Collection&quot;&gt;
+23                    &lt;rdf:Description&gt;
+24                      &lt;xsd:pattern rdf:datatype=&quot;http://www.w3.org/2001/XMLSchema-datatypes#string&quot;&gt;
+25                        \:\/\/(([^\/\?\#]*)\@)?([^\:\/\?\#\@]+\.)?(example\.com|example\.org)(\:([0-9]+))?\/
+26                      &lt;/xsd:pattern&gt;
+27                    &lt;/rdf:Description&gt;
+28                  &lt;/owl:withRestrictions&gt;
+29                &lt;/rdfs:Datatype&gt;
+30              &lt;/owl:someValuesFrom&gt;
+31            &lt;/owl:Restriction&gt;
+32            &lt;owl:Class&gt;
+33              &lt;owl:complementOf&gt;
+34                &lt;owl:Restriction&gt;
+35                  &lt;owl:onProperty rdf:resource=&quot;http://www.w3.org/2007/05/powder-s#hasIRI&quot; /&gt;
+36                &lt;owl:someValuesFrom&gt;
+37                  &lt;rdfs:Datatype&gt;
+38                    &lt;owl:onDatatype rdf:resource=&quot;http://www.w3.org/2001/XMLSchema-datatypes#string&quot;/&gt;
+39                    &lt;owl:withRestrictions rdf:parseType=&quot;Collection&quot;&gt;
+40                      &lt;rdf:Description&gt;
+41                        &lt;xsd:pattern rdf:datatype=&quot;http://www.w3.org/2001/XMLSchema-datatypes#string&quot;&gt;
+42                          \:\/\/(([^\/\?\#]*)\@)?([^\:\/\?\#\@]+\.)*[^\:\/\?\#\@]+\:(8080|8081|8082)\/
+43                          &lt;/xsd:pattern&gt;
+44                        &lt;/rdf:Description&gt;
+45                      &lt;/owl:withRestrictions&gt;
+46                    &lt;/rdfs:Datatype&gt;
+47                  &lt;/owl:someValuesFrom&gt;
+48                &lt;/owl:Restriction&gt;
+49              &lt;/owl:complementOf&gt;
+50            &lt;/owl:Class&gt;
+51          &lt;/owl:intersectionOf&gt;
+52        &lt;/owl:Class&gt;
+53     &lt;owl:equivalentClass&gt;
+54   &lt;/owl:Class&gt;
+
+55   &lt;owl:Class rdf:nodeID=&quot;descriptorset_1&quot;&gt;
+56     &lt;rdfs:subClassOf&gt;
+57       &lt;owl:Class&gt;
+58         &lt;owl:intersectionOf rdf:parseType=&quot;Collection&quot;&gt;
+59           &lt;owl:Restriction&gt;
+60             &lt;owl:onProperty rdf:resource=&quot;http://example.org/vocab#color&quot; /&gt;
+61             &lt;owl:hasValue&gt;red&lt;/owl:hasValue&gt;
+62           &lt;/owl:Restriction&gt;
+63           &lt;owl:Restriction&gt;
+64             &lt;owl:onProperty rdf:resource=&quot;http://example.org/vocab#shape&quot; /&gt;
+65             &lt;owl:hasValue&gt;square&lt;/owl:hasValue&gt;
+66           &lt;/owl:Restriction&gt;
+67         &lt;/owl:intersectionOf&gt;
+68       &lt;/owl:Class&gt;
+69     &lt;/rdfs:subClassOf&gt;
+70     &lt;wdrs:text&gt;Everything on example.org and example.com is red and square&lt;/wdrs:text&gt;
+71     &lt;wdrs:logo rdf:resource=&quot;http://example.org/icon.png&quot; /&gt;
+72   &lt;/owl:Class&gt;
+ 
+73   &lt;owl:Class rdf:nodeID=&quot;iriset_1&quot;&gt;
+74     &lt;rdfs:subClassOf rdf:nodeID=&quot;descriptorset_1&quot;/&gt;
+75   &lt;/owl:Class&gt;
+
+76 &lt;/rdf:RDF&gt;
+</pre></div>
+
+<p>Note how <code>hasIRI</code>, being axiomatically functional, makes it
+possible to use <code>owl:complementOf</code> to express the semantics
+of <code>excluderegex</code>. This should be contrasted to the more
+complex solution of the two complementary properties adopted in
+<a href="#regexSemantics">Section 4.3</a>.</p>
+
+
+<h2 id="pp">5 POWDER Processor Semantics</h2>
+
+<p>The operational semantics of the POWDER processor are specified in
+Section 3 of the Description Resources document
+[<a href="#dr">DR</a>], where the core functionality of the POWDER
+processor is defined as the implementation of a function
+<code>describe(<em>u</em>)</code>,
+which accepts as input an IRI and returns an RDF document describing the
+resource denoted by the IRI.</p>
+
+<p>Notwithstanding the processing and syntactic transformations
+required to serialize and deliver an RDF document, the triples present
+in the document can be formally specified using SPARQL queries with
+exactly two variables in the <code>SELECT</code> clause (predicate and
+object, the subject being the resource denoted by <em>u</em>.)</p>
+
+<p>More specifically, a POWDER processor must return:</p>
+<ol>
+  <li>All the RDF triples with <em>u</em> as the subject: <br/>
+  <code>
+    SELECT ?p ?o WHERE { &lt;<em>u</em>&gt; ?p ?o }
+  </code>
+  </li>
+
+  <li>
+  All annotation triples known about the descriptorset itself: <br/>
+  <code>
+    SELECT ?p ?o WHERE { &lt;<em>u</em>&gt; rdf:type ?ds . ?ds ?p ?o . ?p rdf:type owl:AnnotationProperty . }
+  </code>
+  </li>
+
+  <li>
+  Any <code>rdf:seeAlso</code>, <code>rdfs:label</code>, and <code>rdfs:comment</code>
+  statements about the descriptorset itself: <br/>
+  <code>
+    SELECT ?o WHERE { &lt;<em>u</em>&gt; rdf:type ?ds . ?ds rdfs:seeAlso ?o . } <br/>
+    SELECT ?o WHERE { &lt;<em>u</em>&gt; rdf:type ?ds . ?ds rdfs:label ?o . } <br/>
+    SELECT ?o WHERE { &lt;<em>u</em>&gt; rdf:type ?ds . ?ds rdfs:comment ?o . } <br/>
+  </code>
+  noting that only the object is returned, since the property is hard-wired in the query. 
+  </li>
+</ol>
+
+<p id="ppErr">In addition, the POWDER processor may return a triple with a <em>u</em> as subject,
+<code>wdrs:describedby</code> as property, and the IRI of the POWDER  document from 
+which the description was obtained as object. If more than one POWDER document is 
+the source of the description then each should be the object <var>o</var> of a separate</p>
+<p><code>&lt;<var>u</var>&gt; wdrs:describedby &lt;<var>o</var>&gt;</code></p> 
+<p>triple. If the processor can find no information about the candidate resource within the data
+available at the time of the request, then it returns a single triple with
+<em>u</em> as subject, <code>wdrs:notknownto</code> as property, and the IRI of the
+POWDER processor as object. This extra-logical behavior is handled by the serialization
+and delivery shell, based on the SPARQL query's result set being empty or not.</p>
+
+
+
+<h2 id="ack">6 Acknowledgements</h2>
+
+<p>The Working Group would like to thank Jeremy Carroll for his substantial contribution to the development 
+of the semantics of POWDER. Michael Schneider provided valuable assistance and expertise concerning the
+definition of the semantic extension.</p>
+
+<h2 id="refs">7 References</h2>
+<h3 id="normrefs">7.1 Normative References</h3>
+
+<dl>
+  <dt><a name="grddl" id="grddl">[GRDDL]</a></dt>
+  <dd><cite><a href="http://www.w3.org/TR/grddl/">Gleaning Resource Descriptions from Dialects of Languages (GRDDL)</a></cite>, W3C Recommendation 11 September 2007. D. Connolly. This document is at http://www.w3.org/TR/grddl/</dd>
+  <dt><a id="dr" name="dr">[DR]</a></dt>
+  <dd><cite><a href="http://www.w3.org/TR/powder-dr/">Protocol for Web Description Resources (POWDER): Description Resources</a></cite>, P. Archer, A. Perego, K. Smith. This document is at http://www.w3.org/TR/powder-dr/</dd>
+  <dt><a id="group" name="group">[GROUP]</a></dt>
+  <dd><cite><a href="http://www.w3.org/TR/powder-grouping/">Protocol for Web Description Resources (POWDER): Grouping of Resources</a></cite>, A. Perego, P. Archer This document is at http://www.w3.org/TR/powder-grouping/</dd>
+  <dt><a id="xmldatetime" name="xmldatetime">XML dateTime</a></dt>
+  <dd><cite><a href="http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#dateTime">XML Schema Part 2: Datatypes Second Edition</a></cite> W3C Recommendation 28 October 2004. P. Biron, A. Malhotra (Eds). This document is at http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#dateTime</dd>
+  <dt><a id="owl" name="owl">[OWL]</a></dt>
+  <dd><cite><a href="http://www.w3.org/TR/owl-semantics/">OWL Web Ontology Language, Semantics and Abstract Syntax</a></cite>, W3C Recommendation 10 February 2004. P. F. Patel-Schneider, I. Horrocks. This document is at http://www.w3.org/TR/owl-semantics/</dd>
+  <dt><a id="xqxp" name="xqxp">[XQXP]</a></dt>
+  <dd><cite><a href="http://www.w3.org/TR/xpath-functions/">XQuery 1.0 and XPath 2.0 Functions and Operators</a></cite>, A. Malhotra, J. Melton, N. Walsh. W3C Recommendation 23 January 2007. This document is at http://www.w3.org/TR/xpath-functions/</dd>
+  <dt><a name="ref-rfc2119" id="ref-rfc2119">[RFC2119]</a></dt>
+  <dd><cite><a href="http://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a></cite>, RFC 2119, S. Bradner. This document is at http://tools.ietf.org/html/rfc2119</dd>
+  <dt><a name="rdfsem" id="rdfsem">[RDF-SEMANTICS]</a></dt>
+  <dd><cite><a href="http://www.w3.org/TR/2004/REC-rdf-mt-20040210/">RDF Semantics</a></cite>, W3C Recommendation 10 February 2004, P. Hayes. The key text is in <a href="http://www.w3.org/TR/2004/REC-rdf-mt-20040210/#interp">Section 1.3</a>. This document is at http://www.w3.org/TR/2004/REC-rdf-mt-20040210/</dd>
+  <dt><a name="uriref" id="uriref">[URIREF]</a></dt>
+  <dd><cite><a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/">RDF
+  Concepts</a></cite>, W3C Recommendation 10 February 2004, G. Klyne
+  and J. Carrol. The key text is
+  in <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#section-Graph-URIref">Section 6.4</a>.
+  This document is at http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/</dd>
+  <dt id="rfc3490">[RFC 3490]</dt>
+  <dd><cite><a href="http://www.faqs.org/rfcs/rfc3490.html"> Internationalizing Domain Names in Applications (IDNA)</a></cite>. P. Faltstrom, P. Hoffman, A. Costello. This document is at http://www.faqs.org/rfcs/rfc3490.html.</dd>
+</dl>
+
+<h3 id="inforefs">7.2 Informative References</h3>
+
+<dl>
+  <dt><a name="webarch" id="webarch">[WEBARCH]</a></dt>
+  <dd><cite><a href="http://www.w3.org/TR/webarch/#id-resources">Architecture of the World Wide Web, Volume One</a></cite>, Section 2.2. W3C Recommendation 15 December 2004. I. Jacobs, N. Walsh. This document is at http://www.w3.org/TR/webarch/#id-resources</dd>
+  <dt><a name="xslt" id="xslt">[XSLT]</a></dt>
+  <dd><cite><a href="http://www.w3.org/TR/xslt">XSL Transformations (XSLT)</a></cite>, W3C Recommendation 16 November 1999. J. Clark. This document is at http://www.w3.org/TR/xslt</dd>
+  <dt><a name="xslt2" id="xslt2">[XSLT2]</a></dt>
+  <dd><cite><a href="http://www.w3.org/TR/xslt20/">XSL Transformations (XSLT) Version 2.0</a></cite>, W3C Recommendation 23 January 2007. M. Kay. This document is at http://www.w3.org/TR/xslt20/</dd>
+  <dt><a id="usecases" name="usecases">[USECASES]</a></dt>
+  <dd><cite><a href="http://www.w3.org/TR/powder-use-cases/">POWDER: Use Cases and Requirements</a></cite> W3C Working Group Note 31 October 2007, P. Archer . This document is at http://www.w3.org/TR/powder-use-cases/</dd>
+  <dt><a id="primer" name="primer">[PRIMER]</a></dt>
+  <dd><cite><a href="http://www.w3.org/TR/powder-primer/">Protocol for Web Description Resources (POWDER): Primer</a></cite> 2008, K. Scheppe, D. Pentecost. This document is at http://www.w3.org/TR/powder-primer/)</dd>
+  <dt><a id="testsuite" name="testsuite">[TESTS]</a></dt>
+  <dd><cite><a href="http://www.w3.org/TR/powder-test/">Protocol for Web Description Resources (POWDER): Test Suite</a></cite> 2008, A. Kukurikos. This document is at http://www.w3.org/TR/powder-test/</dd>
+
+  <dt><a id="wdr" name="wdr">[WDR]</a></dt>
+  <dd><cite><a href="http://www.w3.org/2007/05/powder">Protocol for Web Description Resources (POWDER): Web Description Resources XML Schema (WDR)</a></cite>, A. Perego, K. Smith. This document is at http://www.w3.org/2007/05/powder</dd>
+  <dt><a id="wdrs" name="wdrs">[WDRS]</a></dt>
+  <dd><cite><a href="http://www.w3.org/2007/05/powder-s">Protocol for Web Description Resources (POWDER): POWDER-S Vocabulary (WDRS)</a></cite>, A. Perego, P. Archer. This document is at http://www.w3.org/2007/05/powder-s</dd>
+
+  <dt><a id="wdr2b" name="wdr2b">[WDR2B]</a></dt>
+  <dd><cite>Protocol for Web Description Resources (POWDER): POWDER to POWDER-BASE XSLT</cite> 2008, K. Smith. (URI TBC)</dd>
+  <dt><a id="b2s" name="b2s">[B2S]</a></dt>
+  <dd><cite>Protocol for Web Description Resources (POWDER): POWDER-BASE to POWDER-S XSLT</cite> 2008, K. Smith (URI TBC)</dd>
+  <dt><a name="xsd" id="xsd">[XSD]</a></dt>
+  <dd><cite><a href="http://www.w3.org/TR/xmlschema11-2/#rf-pattern">W3C XML Schema Definition Language 1.1, Part 2: Datatypes</a></cite> W3C Working Draft 30 January 2009. D Peterson, S. Gao, A Malhotra, C M Sperberg-McQueen, and H S Thompson. This document is at http://www.w3.org/TR/2009/WD-xmlschema11-2-20090130/</dd>
+  <dt><a name="n3" id="n3">[N3]</a></dt>
+  <dd><cite><a href="http://www.w3.org/TeamSubmission/n3/">Notation3 (N3): A readable RDF syntax</a></cite>, T. Berners-Lee, D. Connolly. This document is at http://www.w3.org/TeamSubmission/n3/</dd>
+  <dt><a name="ttl" id="ttl">[TTL]</a></dt>
+  <dd><cite><a href="http://www.w3.org/TeamSubmission/turtle/">Turtle - Terse RDF Triple Language</a></cite>,  D. Beckett, T. Berners-Lee. This document is at http://www.w3.org/TeamSubmission/turtle/</dd>
+  <dt><a name="dc" id="dc">[DC]</a></dt>
+  <dd><cite><a href="http://dublincore.org/documents/dcmi-terms/">Dublin Core Metadata Initiative Terms</a></cite>. See http://dublincore.org/documents/dcmi-terms/</dd>
+  <dt><a id="foaf" name="foaf">[FOAF</a>]</dt>
+  <dd><cite><a href="http://xmlns.com/foaf/spec/">FOAF Vocabulary Specification 0.9</a></cite> Namespace Document 24 May 2007, D. Brickley, L. Miller. This document is at http://xmlns.com/foaf/spec/</dd>
+
+  <dt><a id="owl2" name="owl2">[OWL2]</a></dt>
+  <dd><cite><a href="http://www.w3.org/TR/owl2-overview/">OWL 2 Web Ontology Language: Document Overview</a></cite>. W3C OWL Working Group. This document is at http://www.w3.org/TR/owl2-overview/</dd>
+
+</dl>
+
+<h2 id="change">8 Change Log</h2>
+
+<h3 id="sincefpwd">8.1 Changes since <a href="http://www.w3.org/TR/2008/WD-powder-formal-20080709/">First Public Working Draft</a></h3>
+
+<ul>
+  <li><a href="#status">Status section</a> updated</li>
+  <li>Mention of separate <a href="#pluralNS">POWDER-BASE namespace</a> removed (a legacy from pre-publication draft)</li>
+  <li><code>&lt;maker&gt;</code> and <code>foaf:maker</code> <a href="#creatorDiff">replaced</a> by <code>&lt;issuedby&gt;</code> and <code>wdrs:issuedby</code>
+     in all examples. This is defined in the WDRS vocabulary as a sub property of both <code>foaf:maker</code> and <code>dcterms:creator</code> so that
+	Agent classes from both vocabularies may be used. Support for both now included. See <a href="http://lists.w3.org/Archives/Public/public-powderwg/2008Jul/0028.html">e-mail thread</a>.</li>
+  <li><a href="#creatorDiff">Sentence added</a> to clarify that the <code>dcterms/foaf:Agent</code> class can be included directly</li>
+  <li>Where previous examples have had &lt;ex:color rdf:resource="...#red"  /&gt; this has been changed to &lt;ex:finish rdf:resource="...#shiny"  /&gt; to avoid confusion following comments by <a href="http://lists.w3.org/Archives/Public/public-powderwg/2008Jul/0019.html">Ivan Herman</a></li>
+  <li>Correction of <a href="#err1">error in text</a> following example 3-1</li>
+  <li>Use of <code>rdf:nodeID</code> <a href="#nodes">corrected</a> throughout following comments by <a href="http://lists.w3.org/Archives/Public/public-powderwg/2008Jul/0001.html">Masahide Kanzaki</a> and <a href="http://lists.w3.org/Archives/Public/public-powderwg/2008Jul/0005.html">Ivan Herman</a>.</li> 
+  <li>Unnecessary detail elided from <a href="#eg3-8">Example 3-8</a></li>
+  <li>Line numbers added to all examples in the text following comment from <a href="http://lists.w3.org/Archives/Public/public-powderwg/2008Jul/0010.html">Ivan Herman</a> (see the P.S.)</li>
+  <li><a href="#descriptorConstraints">Section 3.2</a> substantially re-written and tidied up, introducing <code>typeof, seealso, label and comment</code> elements. Blank 
+	nodes no longer forbidden but their usage is strongly discouraged. Text flows from <a href="http://lists.w3.org/Archives/Public/public-powderwg/2008Jul/0064.html">e-mail 
+	discussion</a>.</li>
+  <li>Wording of <a href="#tidytags">section on tags</a> tidied up, <code>ref</code> attribute removed in favor of using <code>seealso</code>.</li>
+  <li>Slight change in the presentation of the semantic extension in <a href="#regexSemantics">Section 4.3</a>. This now 
+	has the fragment identifier of #SE. The semantic extension in the informative example 
+	in <a href="#oxRegexSemantics">Section 4.6</a> now has the fragment identifier of #SE2</li>
+  <li>Error in <a href="#err2">preamble to example 4-4</a> fixed. This referred to an extra namespace for POWDER-BASE which is no longer used.</li>
+  <li><a href="#err3">Section 4.4</a> and Example 4-6 amended slightly to state that descriptor sets not inside a DR are transformed into OWl classes with <code>rdf:ID</code> identifiers cf. <code>rdf:nodeID</code>s.</li>
+  <li>In section 4.5, the logical inconsistency of an IRI set being outwith an abouthosts limit is <a href="#inconsistency">made clear</a>. Example 4-7 reworked a little to make consistent with other examples.</li>
+  <li>Slight <a href="#internal">revision</a> to text concerning semantics of descriptor sets referred to in external documents as it relates to <code>abouthosts</code>. Reference is now to section 3.2.3 of this document cf. the DR document.</li>
+  <li>Use of <code>rdf:Description</code> to describe the POWDER-S document changed to <code>owl:Ontology</code> primarily to work around RDF's lack of named graphs, The ontology instance can be described using ontology headers.</li>
+  <li>The use of <code>owl:complementOf</code> in <a href="#eg3-8">Example 3-8</a> and related examples corrected following comment from <a href="http://lists.w3.org/Archives/Public/public-powderwg/2008Jul/0056.html">Ivan Herman</a></li>
+  <li>Collection removed from line 8 of POWDER-S example in <a href="#eg4-5">Example 4-5</a> following comment from <a href="http://lists.w3.org/Archives/Public/public-powderwg/2008Jul/0056.html">Ivan Herman</a></li>
+  <li>Template regular expressions (<a href="#table3">Table 3 etc.</a>) updated to support candidate resource IRIs that include user info following <a href="http://lists.w3.org/Archives/Public/public-powderwg/2008Jul/0072.html">e-mail comment</a>.</li>
+  <li>Support for arbitrary RDF in the <code>attribution</code> and <code>descriptorset</code> elements flagged as a Feature at Risk - see <a href="#status">Status section</a>.</li>
+</ul>
+
+<h3 id="sincelc">8.2 Changes since <a href="http://www.w3.org/TR/2008/WD-powder-formal-20080815/">Last Call Working Draft</a></h3>
+
+<ul>
+
+  <li>Removed mention of null subject in Section 2.2 and aligned the
+  in-line Example 2-1 with the external file, following
+  <a href="http://lists.w3.org/Archives/Public/public-powderwg/2008Sep/0013.html">
+    e-mail comment
+  </a>
+  by Peter Patel-Schneider.
+  </li>
+
+  <li>Replaced all instances of <code>wdrs:matchesregexp</code> with
+  <code>wdrs:matchesregex</code> following
+  <a href="http://lists.w3.org/Archives/Public/public-powderwg/2008Sep/0013.html">
+    e-mail comment
+  </a>
+  by Peter Patel-Schneider.
+  </li>
+
+  <li>Re-phrased 2nd paragraph of Section 2.2, and also corrected the
+  range of <code>wdrs:certifiedby</code> <code>wdrs:supportedby</code>
+  following
+  <a href="http://lists.w3.org/Archives/Public/public-powderwg/2008Sep/0013.html">
+    e-mail comment
+  </a>
+  by Peter Patel-Schneider.</li>
+
+  <li>
+    Amended both formulations of the RDF extension (Sect. 4.3 and 4.6)
+    following
+    <a href="http://lists.w3.org/Archives/Public/public-powderwg/2008Sep/0013.html">
+      e-mail comment
+    </a>
+    by Peter Patel-Schneider.
+  </li>
+
+  <li>
+    Removed the arbitrary RDF feature-at-risk (Sect. 2.2 and 3.2.1).
+  </li>
+
+  <li>Fixed various typos in Sections 3, 3.1 (Ex 3-5), 3.2.1, 4.6
+    following
+    <a href="http://lists.w3.org/Archives/Public/public-powderwg/2008Oct/0023.html">
+      e-mail comment
+    </a>
+    by Michael Schneider.</li>
+
+  <li>
+    Added a short note providing the rational behind the MUST NOT in Section 3.2.1,
+    following
+    <a href="http://lists.w3.org/Archives/Public/public-powderwg/2008Oct/0023.html">
+      e-mail comment
+    </a>
+    by Michael Schneider.</li>
+
+  <li>
+    Purged various left-overs of the situation before using
+    owl:AnnotationProperty instances for attribution. Namely, replaced
+    foaf:depiction with wdrs:logo and dcterms vocabulary with
+    dcelements vocabulary, since foaf:depiction and dcterms specify
+    doamins and/or ranges and cannot be an owl:AnnotationProperty
+    instances. Also changed from using dcterms:issued to wdrs:issued, 
+    foaf:depiction to wdrs:logo and dcterms:description to wdrs:text 
+    to ensure properties of the correct types with correct domain 
+    and range restrictions are used.</li>
+
+  <li>
+    Better clarified the last paragraph of Sect. 3.2.4.
+  </li>
+
+  <li>
+    Various changes made to reflect the positon of this document as
+    normative wrt to the transform and the XSLTs as useful, but
+    non-normative,
+    aids. [<a href="#pa2">1</a>, <a href="#pa3">2</a>, <a href="#pa4">3</a>, <a href="#grdl1">4</a>]
+  </li>
+
+  <li>
+    Various minor clarifications made and typos corrected following comments
+    by
+    <a href="http://lists.w3.org/Archives/Public/public-powderwg/2008Oct/0023.html">Michael Schneider</a>.
+    [<a href="#pa6">1</a>, <a href="#ta1">2</a>, <a href="#pa5">3</a>, <a href="#keywords">4</a>, <a href="#eg2-2">5</a>, <a href="#stkr3">6</a>, <a href="#stkr4">7</a>, <a href="#stkr5">8</a>] 
+  </li>
+
+  <li>
+    Minor additions made to fulfil QA requirements [Introduction
+    renamed as Introduction &amp; Scope with <a href="#qa1">additional
+    line</a>, <a href="#conformancestatement">Conformance Statement
+    added</a>]
+  </li>
+
+  <li>
+    Handling of descriptor sets defined in external
+    documents <a href="#noMagic">clarified and simplified</a> to
+    remove expectation of processors having knowledge of what is being
+    pointed to, following comment
+    from <a href="http://lists.w3.org/Archives/Public/public-powderwg/2008Jul/0055.html">Ivan Herman</a>.
+    The text on this issue following <a href="#eg4-7">Example 4-7</a> has been deleted.
+  </li>
+
+  <li>Added Turtle serializations for all examples, following
+  <a href="http://lists.w3.org/Archives/Public/public-powderwg/2008Sep/0013.html">
+    e-mail comment
+  </a>
+  by Peter Patel-Schneider.
+  </li>
+
+  <li>Added section on <a href="#pp">POWDER processor semantics</a>, showing the
+  SPARQL queries that retrieve the information expected from a PP.</li>
+
+  <li>excluderegex demonstrated in Ex 4-4; Ex 4-5 removed; Ex 4-6 renamed to Ex 4-5,
+  Ex 4-7 to Ex 4-6, and Ex 4-8 to Ex 4-7.</li>
+
+  <li>Section 4.3 modified to define <code>notmatchesregex</code>; rationale provided inline.
+  This also influenced ordered lists of DRs (Section 3.1).</li>
+
+  <li>Added <code>owl:FunctionalProperty</code> axiom to the definition of
+  <code>wdrs:hasIRI</code> in Section 4.6.</li>
+
+  <li>Fixed minor mistakes in the examples.</li>
+  <li><a href="#inclMore">Text added</a> to describe the transformation of the <code>more</code> element.</li>
+
+</ul>
+
+<h3 id="sincelc2">8.3 Changes since <a href="http://www.w3.org/TR/2008/WD-powder-dr-20081114/">Second Last Call Working Draft</a></h3>
+
+<ul>
+  <li><a href="#conformancestatement">Conformance statement</a> amended following a comment from <a href="http://lists.w3.org/Archives/Public/public-powderwg/2008Dec/0004.html">Dan Connolly</a></li>
+  <li>Reference to W3C DTF replaced with <a href="#dc2">reference to XML dataType</a> following comment from <a href="http://lists.w3.org/Archives/Public/public-powderwg/2008Dec/0005.html">Dan Connolly</a></li>
+  <li><a href="#refs">References</a> split into normative and informative following comment from <a href="http://lists.w3.org/Archives/Public/public-powderwg/2008Dec/0008.html">Dan Connolly</a>. Also obsolete references deleted.</li>
+  <li>Error corrected in <a href="#pp">Section 5</a> relating to the object of the wdrs:describedby property. Additional clarification added.</li>
+  <li>
+    Added in <a href="#namespaces">Section 1.1</a> a reference to the
+    particular flavour of regular expressions used in this document,
+    and in <a href="#regexSemantics">Section 4.3</a> a reference to RDF Semantics,
+    following comment from
+    <a href="http://lists.w3.org/Archives/Public/public-powderwg/2008Nov/0015.html">Jonathan Rees</a>.
+  </li>
+  <li>
+    Added in <a href="#regexSemantics">Section 4.3</a> a simple test
+    for recognizing documents that use the POWDER extension, as required by
+    the <a href="http://www.w3.org/TR/2004/REC-rdf-mt-20040210/#intro">preliminary section</a>
+    of the RDF Semantics document.
+  </li>
+  <li>Fixed <a href="#waf1">minor bugs</a> in <code>iripattern</code> transforms in Section 4.2.</li>
+  <li>
+    <a href="#eg3-8">Example 3-8</a> has a syntactic change (no change in semantics) which
+    makes the transform simpler to implement. Added a <a href="#newOL1">clarification
+    note</a> after Example 3-8, to avoid a possible misunderanding.
+  </li>
+
+  <li>The introductory sentence to the <a href="#SE">Semantic Extension</a> was rephrased to refer to
+	an owl:DatatypeProperty cf. an RDF Semantic Extension. This was only 
+	<a href="http://lists.w3.org/Archives/Public/public-powderwg/2009Mar/0004.html">accepted</a> after a prolonged
+	discussion begun by <a href="http://lists.w3.org/Archives/Public/public-powderwg/2008Dec/0034.html">Eric
+	Prud'hommeaux</a> (initially raised as a minor nit!).</li>
+
+  <li><a href="#tlr">Slight change</a> in the referencing of the Grouping document concerning data processing and IRI
+	canonicalization, following input from Thomas Roessler.</li>
+
+</ul>
+
+<h3 id="sincelc3">8.4 Changes since <a href="http://www.w3.org/TR/2009/WD-powder-formal-20090403/">Third Last Call Working Draft</a></h3>
+
+<ul>
+
+  <li>Updates in <a href="#oxRegexSemantics">Section 4.6</a>
+  reflecting changes in the OWL 2 specification, following input from
+  <a href="http://lists.w3.org/Archives/Public/public-owl-wg/2009Apr/0350.html">Ivan Herman</a>.</li>
+
+  <li>Minor fix in <a href="#regexSemantics">Section 4.3</a>
+    and <a href="#oxRegexSemantics">Section 4.6</a> removing the
+    problematic use rdf:XMLLiteral and directly referring to the
+    URIref - string correspondence. Problem spotted and fix provided by
+    <a href="http://lists.w3.org/Archives/Public/public-powderwg/2009Apr/0012.html">Michael Schneider</a>.</li>
+  <li><a href="#tlr">Further slight change</a> in the referencing of the Grouping document to emphasize
+  use of Unicode in IRI strings.</li>
+
+</ul>
+
+<h3 id="sincePR">8.5 Changes since <a href="http://www.w3.org/TR/2009/PR-powder-formal-20090604/">Proposed Recommendation</a></h3>
+<ul><li><a href="#ns_typo">XML Schema namespace</a> corrected</li>
+<li><a href="#xq">Sentence added</a> to clarify the Regular Expression Syntax used</li></ul>
+
+
+</body></html>

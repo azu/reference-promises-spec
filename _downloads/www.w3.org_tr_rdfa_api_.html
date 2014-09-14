@@ -1,0 +1,1805 @@
+<!-- http://www.w3.org/TR/rdfa-api/ -->
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML+RDFa 1.1//EN' 'http://www.w3.org/MarkUp/DTD/xhtml-rdfa-2.dtd'>
+<html dir="ltr" about="" property="dcterms:language" content="en" xmlns="http://www.w3.org/1999/xhtml" prefix='bibo: http://purl.org/ontology/bibo/'>
+<head>
+<title>RDFa API</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+
+<!--  
+  === NOTA BENE ===
+  For the three scripts below, if your spec resides on dev.w3 you can check them
+  out in the same tree and use relative links so that they'll work offline,
+   -->
+
+
+
+<style type="text/css">
+/*
+    XXX this is not up to date with the needs of various other parts, it will require
+        to be synched up with the latest developments
+        It may be that this will be split up so that only the parts that are acually used
+        by the document get to be included (e.g. WebIDL).
+*/
+
+/*****************************************************************
+ * ReSpec 2 CSS
+ * Robin Berjon, 2010-01-04
+ *****************************************************************/
+
+/* --- INLINES --- */
+em.rfc2119 { 
+    text-transform:     lowercase;
+    font-variant:       small-caps;
+    font-style:         normal;
+    color:              #900;
+}
+
+h1 acronym, h2 acronym, h3 acronym, h4 acronym, h5 acronym, h6 acronym, a acronym,
+h1 abbr, h2 abbr, h3 abbr, h4 abbr, h5 abbr, h6 abbr, a abbr {
+    border: none;
+}
+
+dfn {
+    font-weight:    bold;
+}
+
+a.internalDFN {
+    color:  inherit;
+    border-bottom:  1px solid #99c;
+    text-decoration:    none;
+}
+
+a.externalDFN {
+    color:  inherit;
+    border-bottom:  1px dotted #ccc;
+    text-decoration:    none;
+}
+
+a.bibref {
+    text-decoration:    none;
+}
+
+cite .bibref {
+    font-style: normal;
+}
+
+code {
+    color:  #ff4500;
+}
+
+
+/* --- WEB IDL --- */
+pre.idl {
+    border-top: 1px solid #90b8de;
+    border-bottom: 1px solid #90b8de;
+    padding:    1em;
+    line-height:    120%;
+}
+
+pre.idl::before {
+    content:    "WebIDL";
+    display:    block;
+    width:      150px;
+    background: #90b8de;
+    color:  #fff;
+    font-family:    initial;
+    padding:    3px;
+    font-weight:    bold;
+    margin: -1em 0 1em -1em;
+}
+
+.idlType {
+    color:  #ff4500;
+    font-weight:    bold;
+    text-decoration:    none;
+}
+
+/*.idlModule*/
+/*.idlModuleID*/
+/*.idlInterface*/
+.idlInterfaceID {
+    font-weight:    bold;
+    color:  #005a9c;
+}
+
+.idlSuperclass {
+    font-style: italic;
+    color:  #005a9c;
+}
+
+/*.idlAttribute*/
+.idlAttrType {
+    color:  #005a9c;
+}
+.idlAttrName {
+    color:  #ff4500;
+}
+.idlAttrName a {
+    color:  #ff4500;
+    border-bottom:  1px dotted #ff4500;
+    text-decoration: none;
+}
+
+/*.idlMethod*/
+.idlMethType {
+    color:  #005a9c;
+}
+.idlMethName {
+    color:  #ff4500;
+}
+.idlMethName a {
+    color:  #ff4500;
+    border-bottom:  1px dotted #ff4500;
+    text-decoration: none;
+}
+
+/*.idlParam*/
+.idlParamType {
+    color:  #005a9c;
+}
+.idlParamName {
+    font-style: italic;
+}
+
+.extAttr {
+    color:  #666;
+}
+
+/*.idlConst*/
+.idlConstType {
+    color:  #005a9c;
+}
+.idlConstName {
+    color:  #ff4500;
+}
+.idlConstName a {
+    color:  #ff4500;
+    border-bottom:  1px dotted #ff4500;
+    text-decoration: none;
+}
+
+/*.idlException*/
+.idlExceptionID {
+    font-weight:    bold;
+    color:  #c00;
+}
+
+.idlTypedefID, .idlTypedefType {
+    color:  #005a9c;
+}
+
+.idlRaises, .idlRaises a.idlType, .idlRaises a.idlType code, .excName a, .excName a code {
+    color:  #c00;
+    font-weight:    normal;
+}
+
+.excName a {
+    font-family:    monospace;
+}
+
+.idlRaises a.idlType, .excName a.idlType {
+    border-bottom:  1px dotted #c00;
+}
+
+.excGetSetTrue, .excGetSetFalse, .prmNullTrue, .prmNullFalse, .prmOptTrue, .prmOptFalse {
+    width:  45px;
+    text-align: center;
+}
+.excGetSetTrue, .prmNullTrue, .prmOptTrue { color:  #0c0; }
+.excGetSetFalse, .prmNullFalse, .prmOptFalse { color:  #c00; }
+
+.idlImplements a {
+    font-weight:    bold;
+}
+
+dl.attributes, dl.methods, dl.constants {
+    margin-left:    2em;
+}
+
+.attributes dt, .methods dt, .constants dt {
+    font-weight:    normal;
+}
+
+.attributes dt code, .methods dt code, .constants dt code {
+    font-weight:    bold;
+    color:  #000;
+    font-family:    monospace;
+}
+
+.attributes dt code {
+    background:  #ffffd2;
+}
+
+.attributes dt .idlAttrType code {
+    color:  #005a9c;
+    background:  transparent;
+    font-family:    inherit;
+    font-weight:    normal;
+    font-style: italic;
+}
+
+.methods dt code {
+    background:  #d9e6f8;
+}
+
+.constants dt code {
+    background:  #ddffd2;
+}
+
+.attributes dd, .methods dd, .constants dd {
+    margin-bottom:  1em;
+}
+
+table.parameters, table.exceptions {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    margin: 0.5em 0;
+    width:  100%;
+}
+table.parameters { border-bottom:  1px solid #90b8de; }
+table.exceptions { border-bottom:  1px solid #deb890; }
+
+.parameters th, .exceptions th {
+    color:  #fff;
+    padding:    3px 5px;
+    text-align: left;
+    font-family:    initial;
+    font-weight:    normal;
+    text-shadow:    #666 1px 1px 0;
+}
+.parameters th { background: #90b8de; }
+.exceptions th { background: #deb890; }
+
+.parameters td, .exceptions td {
+    padding:    3px 10px;
+    border-top: 1px solid #ddd;
+    vertical-align: top;
+}
+
+.parameters tr:first-child td, .exceptions tr:first-child td {
+    border-top: none;
+}
+
+.parameters td.prmName, .exceptions td.excName, .exceptions td.excCodeName {
+    width:  100px;
+}
+
+.parameters td.prmType {
+    width:  120px;
+}
+
+table.exceptions table {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    width:  100%;
+}
+
+/* --- TOC --- */
+.toc a, .tof a {
+    text-decoration:    none;
+}
+
+a .secno, a .figno {
+    color:  #000;
+}
+
+ul.tof, ol.tof {
+    list-style: none outside none;
+}
+
+.caption {
+    margin-top: 0.5em;
+    font-style:   italic;
+}
+
+/* --- TABLE --- */
+table.simple {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    border-bottom:  3px solid #005a9c;
+}
+
+.simple th {
+    background: #005a9c;
+    color:  #fff;
+    padding:    3px 5px;
+    text-align: left;
+}
+
+.simple th[scope="row"] {
+    background: inherit;
+    color:  inherit;
+    border-top: 1px solid #ddd;
+}
+
+.simple td {
+    padding:    3px 10px;
+    border-top: 1px solid #ddd;
+}
+
+.simple tr:nth-child(even) {
+    background: #f0f6ff;
+}
+
+/* --- DL --- */
+.section dd > p:first-child {
+    margin-top: 0;
+}
+
+.section dd > p:last-child {
+    margin-bottom: 0;
+}
+
+.section dd {
+    margin-bottom:  1em;
+}
+
+.section dl.attrs dd, .section dl.eldef dd {
+    margin-bottom:  0;
+}
+
+/* --- EXAMPLES --- */
+pre.example {
+    border-top: 1px solid #ff4500;
+    border-bottom: 1px solid #ff4500;
+    padding:    1em;
+    margin:     2em 0;
+}
+
+pre.example::before {
+    content:    "Example";
+    display:    block;
+    width:      150px;
+    background: #ff4500;
+    color:  #fff;
+    font-family:    initial;
+    padding:    3px;
+    font-weight:    bold;
+    margin: -1em 0 1em -1em;
+}
+
+/* --- EDITORIAL NOTES --- */
+.issue {
+    padding:    1em;
+    border: 1px solid #f00;
+    background: #ffc;
+}
+
+.issue::before {
+    content:    "Issue";
+    display:    block;
+    width:  150px;
+    margin: -1.5em 0 0.5em 0;
+    font-weight:    bold;
+    border: 1px solid #f00;
+    background: #fff;
+    padding:    3px 1em;
+}
+
+.note {
+    padding:    1em;
+    border: 2px solid #cff6d9;
+    background: #e2fff0;
+}
+
+.note::before {
+    content:    "Note";
+    display:    block;
+    width:  150px;
+    margin: -1.5em 0 0.5em 0;
+    font-weight:    bold;
+    border: 1px solid #cff6d9;
+    background: #fff;
+    padding:    3px 1em;
+}
+
+
+/* --- SYNTAX HIGHLIGHTING --- */
+/* Pretty printing styles. Used with prettify.js. */
+.str { color: #080; }
+.kwd { color: #008; }
+.com { color: #800; }
+.typ { color: #606; }
+.lit { color: #066; }
+.pun { color: #660; }
+.pln { color: #000; }
+.tag { color: #008; }
+.atn { color: #606; }
+.atv { color: #080; }
+.dec { color: #606; }
+/*pre.prettyprint { padding: 2px; border: 1px solid #888 }*/
+
+/* Specify class=linenums on a pre to get line numbering */
+ol.linenums { margin-top: 0; margin-bottom: 0 } /* IE indents via margin-left */
+li.L0, li.L1, li.L2, li.L3, li.L5, li.L6, li.L7, li.L8 { list-style-type: none }
+/* Alternate shading for lines */
+li.L1, li.L3, li.L5, li.L7, li.L9 { background: #eee }
+
+@media print {
+  .str { color: #060; }
+  .kwd { color: #006; font-weight: bold; }
+  .com { color: #600; font-style: italic; }
+  .typ { color: #404; font-weight: bold; }
+  .lit { color: #044; }
+  .pun { color: #440; }
+  .pln { color: #000; }
+  .tag { color: #006; font-weight: bold; }
+  .atn { color: #404; }
+  .atv { color: #060; }
+}
+
+/* --- OLD SYNTAX HIGHLIGHTING, REMOVE THIS WITH SHJS XXX --- */
+
+pre.sh_sourceCode {
+  background-color: white;
+  color: black;
+  font-style: normal;
+  font-weight: normal;
+}
+
+pre.sh_sourceCode .sh_keyword { color: #005a9c; font-weight: bold; }           /* language keywords */
+pre.sh_sourceCode .sh_type { color: #666; }                            /* basic types */
+pre.sh_sourceCode .sh_usertype { color: teal; }                             /* user defined types */
+pre.sh_sourceCode .sh_string { color: red; font-family: monospace; }        /* strings and chars */
+pre.sh_sourceCode .sh_regexp { color: orange; font-family: monospace; }     /* regular expressions */
+pre.sh_sourceCode .sh_specialchar { color: 	#ffc0cb; font-family: monospace; }  /* e.g., \n, \t, \\ */
+pre.sh_sourceCode .sh_comment { color: #A52A2A; font-style: italic; }         /* comments */
+pre.sh_sourceCode .sh_number { color: purple; }                             /* literal numbers */
+pre.sh_sourceCode .sh_preproc { color: #00008B; font-weight: bold; }       /* e.g., #include, import */
+pre.sh_sourceCode .sh_symbol { color: blue; }                            /* e.g., *, + */
+pre.sh_sourceCode .sh_function { color: black; font-weight: bold; }         /* function calls and declarations */
+pre.sh_sourceCode .sh_cbracket { color: red; }                              /* block brackets (e.g., {, }) */
+pre.sh_sourceCode .sh_todo { font-weight: bold; background-color: #00FFFF; }   /* TODO and FIXME */
+
+/* Predefined variables and functions (for instance glsl) */
+pre.sh_sourceCode .sh_predef_var { color: #00008B; }
+pre.sh_sourceCode .sh_predef_func { color: #00008B; font-weight: bold; }
+
+/* for OOP */
+pre.sh_sourceCode .sh_classname { color: teal; }
+
+/* line numbers (not yet implemented) */
+pre.sh_sourceCode .sh_linenum { display: none; }
+
+/* Internet related */
+pre.sh_sourceCode .sh_url { color: blue; text-decoration: underline; font-family: monospace; }
+
+/* for ChangeLog and Log files */
+pre.sh_sourceCode .sh_date { color: blue; font-weight: bold; }
+pre.sh_sourceCode .sh_time, pre.sh_sourceCode .sh_file { color: #00008B; font-weight: bold; }
+pre.sh_sourceCode .sh_ip, pre.sh_sourceCode .sh_name { color: #006400; }
+
+/* for Prolog, Perl... */
+pre.sh_sourceCode .sh_variable { color: #006400; }
+
+/* for LaTeX */
+pre.sh_sourceCode .sh_italics { color: #006400; font-style: italic; }
+pre.sh_sourceCode .sh_bold { color: #006400; font-weight: bold; }
+pre.sh_sourceCode .sh_underline { color: #006400; text-decoration: underline; }
+pre.sh_sourceCode .sh_fixed { color: green; font-family: monospace; }
+pre.sh_sourceCode .sh_argument { color: #006400; }
+pre.sh_sourceCode .sh_optionalargument { color: purple; }
+pre.sh_sourceCode .sh_math { color: orange; }
+pre.sh_sourceCode .sh_bibtex { color: blue; }
+
+/* for diffs */
+pre.sh_sourceCode .sh_oldfile { color: orange; }
+pre.sh_sourceCode .sh_newfile { color: #006400; }
+pre.sh_sourceCode .sh_difflines { color: blue; }
+
+/* for css */
+pre.sh_sourceCode .sh_selector { color: purple; }
+pre.sh_sourceCode .sh_property { color: blue; }
+pre.sh_sourceCode .sh_value { color: #006400; font-style: italic; }
+
+/* other */
+pre.sh_sourceCode .sh_section { color: black; font-weight: bold; }
+pre.sh_sourceCode .sh_paren { color: red; }
+pre.sh_sourceCode .sh_attribute { color: #006400; }
+
+</style><link href="http://www.w3.org/StyleSheets/TR/W3C-WG-NOTE" rel="stylesheet" type="text/css" charset="utf-8" /></head>
+
+<body style="display: inherit; "><div class="head"><p><a href="http://www.w3.org/"><img width="72" height="48" src="http://www.w3.org/Icons/w3c_home" alt="W3C" /></a></p><h1 property="dcterms:title" class="title" id="title">RDFa API</h1><h2 property="bibo:subtitle" id="subtitle">An API for extracting structured data from Web documents</h2><h2 property="dcterms:issued" datatype="xsd:dateTime" content="2012-07-05T04:00:00+0000" id="w3c-note-05-july-2012"><acronym title="World Wide Web Consortium">W3C</acronym> Working Group Note 05 July 2012</h2><dl><dt>This version:</dt><dd><a href="http://www.w3.org/TR/2012/NOTE-rdfa-api-20120705/">http://www.w3.org/TR/2012/NOTE-rdfa-api-20120705/</a></dd><dt>Latest published version:</dt><dd><a href="http://www.w3.org/TR/rdfa-api/">http://www.w3.org/TR/rdfa-api/</a></dd><dt>Latest editor's draft:</dt><dd><a href="http://www.w3.org/2010/02/rdfa/sources/rdfa-api/">http://www.w3.org/2010/02/rdfa/sources/rdfa-api/</a></dd><dt>Previous version:</dt><dd><a rel="dcterms:replaces" href="http://www.w3.org/TR/2011/WD-rdfa-api-20110419/">http://www.w3.org/TR/2011/WD-rdfa-api-20110419/</a></dd><dt>Editors:</dt><dd rel="bibo:editor"><span typeof="foaf:Person"><a rel="foaf:homepage" property="foaf:name" content="Manu Sporny" href="http://digitalbazaar.com/">Manu Sporny</a>, <a rel="foaf:workplaceHomepage" href="http://digitalbazaar.com/">Digital Bazaar, Inc.</a></span>
+</dd>
+<dd rel="bibo:editor"><span typeof="foaf:Person"><a rel="foaf:homepage" property="foaf:name" content="Benjamin Adrian" href="http://www.dfki.uni-kl.de/~adrian/">Benjamin Adrian</a>, <a rel="foaf:workplaceHomepage" href="http://www.dfki.de/">German Research Center for Artificial Intelligence GmbH</a></span>
+</dd>
+<dt>Authors:</dt><dd rel="dcterms:contributor"><span typeof="foaf:Person"><a rel="foaf:homepage" property="foaf:name" content="Nathan Rixham" href="http://webr3.org/">Nathan Rixham</a>, Invited Expert</span>
+</dd>
+<dd rel="dcterms:contributor"><span typeof="foaf:Person"><a rel="foaf:homepage" property="foaf:name" content="Mark Birbeck" href="http://markbirbeck.com/">Mark Birbeck</a>, <a rel="foaf:workplaceHomepage" href="http://markbirbeck.com/">Sidewinder Labs</a></span>
+</dd>
+<dd rel="dcterms:contributor"><span typeof="foaf:Person"><a rel="foaf:homepage" property="foaf:name" content="Ivan Herman" href="http://www.w3.org/">Ivan Herman</a>, <a rel="foaf:workplaceHomepage" href="http://www.w3.org/"><acronym title="World Wide Web Consortium">W3C</acronym></a></span>
+</dd>
+</dl><p class="copyright"><a rel="license" href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2010-2012 <span rel="dcterms:publisher"><span typeof="foaf:Organization"><a rel="foaf:homepage" property="foaf:name" content="World Wide Web Consortium" href="http://www.w3.org/"><acronym title="World Wide Web Consortium">W3C</acronym></a><sup>®</sup></span></span> (<a href="http://www.csail.mit.edu/"><acronym title="Massachusetts Institute of Technology">MIT</acronym></a>, <a href="http://www.ercim.eu/"><acronym title="European Research Consortium for Informatics and Mathematics">ERCIM</acronym></a>, <a href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. <acronym title="World Wide Web Consortium">W3C</acronym> <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply.</p><hr /></div>
+<div id="abstract" class="introductory section" property="dcterms:abstract" datatype="" typeof="bibo:Chapter" about="#abstract"><h2>Abstract</h2>
+  <p class="note">
+This document is not finished. Due to the lack of time, the RDF Web Applications Working Group was unable to complete work on this document before
+the end of their charter. At the time of publication of this
+document, it was not known whether <acronym title="World Wide Web Consortium">W3C</acronym> will continue this work on the
+Recommendation track in another Working Group. 
+While a significant amount of design work went into this document, at present there is only one known implementation of the specification. A number of design issues have not been completely resolved. Developers wishing to implement this API should be aware of incomplete nature of the specification.
+  </p>
+
+<p>
+RDFa [<cite><a class="bibref" rel="biblioentry" href="#bib-RDFA-CORE">RDFA-CORE</a></cite>] enables authors to publish structured information that is both 
+human- and machine-readable. Concepts that have traditionally been
+difficult for machines to detect, like people, places, events, music, movies, 
+and recipes, are now easily marked up in Web documents. While publishing this
+data is vital to the growth of 
+<a href="http://en.wikipedia.org/wiki/Linked_data">Linked Data</a>, 
+using the information to improve the collective utility of the Web for humankind 
+is the true goal. 
+To accomplish this goal, it must be simple for Web developers to extract and 
+utilize structured information from a Web document. This document details such a 
+mechanism; an RDFa Application Programming Interface (RDFa API) that allows 
+simple extraction and usage of structured information from a Web document.
+</p>
+
+<div class="informative section" typeof="bibo:Chapter" about="#how-to-read-this-document">
+<h3 id="how-to-read-this-document">How to Read this Document</h3><p><em>This section is non-normative.</em></p>
+
+<p>
+This document is a detailed specification for an <em>RDFa
+API</em>. The document is primarily intended for the following audiences:
+</p>
+<ul>
+  <li>User Agent developers that are providing a mechanism to programatically
+  extract RDF data from RDFa in a host language such as XHTML+RDFa 
+  [<cite><a class="bibref" rel="biblioentry" href="#bib-XHTML-RDFA">XHTML-RDFA</a></cite>], HTML+RDFa [<cite><a class="bibref" rel="biblioentry" href="#bib-HTML-RDFA">HTML-RDFA</a></cite>] or SVG Tiny 1.2 [<cite><a class="bibref" rel="biblioentry" href="#bib-SVGTINY12">SVGTINY12</a></cite>],
+  </li>
+  <li>DOM tool developers that want to provide a mechanism for extracting
+  RDFa content via programming languages such as ECMAScript, Python, Ruby,
+  or Perl, and </li>
+  <li>Developers that want to understand the inner workings and design
+  criteria for the RDFa API.</li>
+</ul>
+
+<p>
+For those looking for an introduction to the use of RDFa, or some
+real-world examples, please consult the RDFa Primer [<cite><a class="bibref" rel="biblioentry" href="#bib-RDFA-PRIMER">RDFA-PRIMER</a></cite>].</p>
+
+<p>
+If you are not familiar with RDF, you should read about the
+Resource Description Framework (RDF) [<cite><a class="bibref" rel="biblioentry" href="#bib-RDF-CONCEPTS">RDF-CONCEPTS</a></cite>] before reading this
+document. The [<cite><a class="bibref" rel="biblioentry" href="#bib-RDF-CONCEPTS">RDF-CONCEPTS</a></cite>] document outlines the core data model that 
+is used by RDFa to express information.</p>
+  
+<p>
+If you are not familiar with RDFa, you should read and understand the
+[<cite><a class="bibref" rel="biblioentry" href="#bib-RDFA-CORE">RDFA-CORE</a></cite>] specification. It describes how data is encoded in host
+languages using RDFa. A solid understanding of concepts in RDFa Core will 
+inevitably help you understand how the RDFa API works in concert
+with how the data is expressed in a host language.
+</p>
+
+<p>
+If you are not familiar with the RDF API, you should read about the
+Resource Description Framework Application Programming Interface
+[<cite><a class="bibref" rel="biblioentry" href="#bib-RDF-API">RDF-API</a></cite>] which is the base specification for this document.
+The [<cite><a class="bibref" rel="biblioentry" href="#bib-RDF-API">RDF-API</a></cite>] specification outlines fundamental programming concepts
+for working with Web-based data.</p>
+
+<p>
+If you are a Web developer and are already familiar with RDF and RDFa, and 
+you want to programatically extract RDFa content from documents, then you will 
+find the <a href="#concept-diagram">Concept Diagram</a>  and 
+<a href="#developing-with-the-api">Developing with the API</a> sections of 
+most interest. It contains a handful of ECMAScript examples on how to use the 
+<em>RDFa API</em>.</p>
+
+<p>
+Readers who are not familiar with the Terse RDF Triple Language [<cite><a class="bibref" rel="biblioentry" href="#bib-TURTLE">TURTLE</a></cite>] 
+may want to read the specification in order to understand the
+short-hand RDF notation used in some of the examples.</p>
+  
+<p>
+This document uses the <em>Web Interface Definition Language</em> 
+[<cite><a class="bibref" rel="biblioentry" href="#bib-WEBIDL">WEBIDL</a></cite>] to specify all language bindings. If you intend to implement
+the <em>RDFa API</em> you should be familiar with the Web IDL language
+[<cite><a class="bibref" rel="biblioentry" href="#bib-WEBIDL">WEBIDL</a></cite>].</p>
+
+<p>
+Examples may contain references to existing vocabularies and use
+abbreviations in CURIEs and source code. The following is a list of all
+vocabularies and their abbreviations, as used in this document:
+</p>
+
+<ul>
+  <li>The <a href="http://www.w3.org/1999/02/22-rdf-syntax-ns#">RDF</a>
+  vocabulary (abbreviation: <code>rdf</code>, e.g., <code>rdf:type</code>)</li>
+  <li>The <a href="http://www.w3.org/2001/XMLSchema#">XSD</a>
+  vocabulary (abbreviation: <code>xsd</code>, e.g., <code>xsd:integer</code>)</li>
+  <li>The <a href="http://www.w3.org/2000/01/rdf-schema#">RDF
+  schema</a> vocabulary (abbreviation: <code>rdfs</code>, e.g., <code>rdfs:label</code>)</li>
+  <li>The <a href="http://xmlns.com/foaf/spec/">Friend-Of-A-Friend</a>
+  vocabulary (abbreviation: <code>foaf</code>, e.g., <code>foaf:name</code>)</li>
+</ul>
+
+</div>
+
+<div id="conformance" typeof="bibo:Chapter" about="#conformance" class="section"><h3>Conformance</h3><p>As well as sections marked as non-normative, all authoring guidelines, diagrams, examples, and notes in this specification are non-normative. Everything else in this specification is normative.</p>
+<p>The key words <em class="rfc2119" title="must">must</em>, <em class="rfc2119" title="must not">must not</em>, <em class="rfc2119" title="required">required</em>, <em class="rfc2119" title="should">should</em>, <em class="rfc2119" title="should not">should not</em>, <em class="rfc2119" title="recommended">recommended</em>, <em class="rfc2119" title="may">may</em>, and <em class="rfc2119" title="optional">optional</em> in this specification are to be interpreted as described in [<cite><a class="bibref" rel="biblioentry" href="#bib-RFC2119">RFC2119</a></cite>].</p>
+
+  <p>
+  Conformance requirements phrased as algorithms or specific steps may be 
+  implemented in any manner, so long as the end result is equivalent. 
+  In particular, the algorithms defined in this specification are intended to be 
+  easy to follow, and not intended to be performant.</p>
+  <p>
+  User agents may impose implementation-specific limits on otherwise unconstrained 
+  inputs, e.g. to prevent denial of service attacks, to guard against running 
+  out of memory, or to work around platform-specific limitations.</p>
+  <p>
+  Implementations that use ECMAScript or Java to implement the Interfaces defined in this 
+  specification must implement them in a manner consistent with the respective ECMAScript
+  or Java Bindings defined in the Web IDL specification, as this 
+  specification uses that specification's terminology. [<cite><a class="bibref" rel="biblioentry" href="#bib-WEBIDL">WEBIDL</a></cite>]</p>
+  <p>
+  Implementations that use any other language to implement the Interfaces defined in this 
+  specification that do not have bindings defined in the Web IDL specification
+  should attempt to map the Interfaces as closely as possible to the implementation
+  language's native mechanisms and datatypes. Developers are encouraged to work
+  with other developers who are providing the RDF Interfaces in the same langauge to 
+  ensure that implementations are modular and easily exchangable.</p>
+</div>
+
+</div><div id="sotd" class="introductory section" typeof="bibo:Chapter" about="#sotd"><h2>Status of This Document</h2><p><em>This section describes the status of this document at the time of its publication. Other documents may supersede this document. A list of current <acronym title="World Wide Web Consortium">W3C</acronym> publications and the latest revision of this technical report can be found in the <a href="http://www.w3.org/TR/"><acronym title="World Wide Web Consortium">W3C</acronym> technical reports index</a> at http://www.w3.org/TR/.</em></p>
+<p>This document was published by the <a href="http://www.w3.org/2010/02/rdfa/">RDF Web Applications Working Group</a> as a Note. If you wish to make comments regarding this document, please send them to <a href="mailto:public-rdfa@w3.org">public-rdfa@w3.org</a> (<a href="mailto:public-rdfa-request@w3.org?subject=subscribe">subscribe</a>, <a href="http://lists.w3.org/Archives/Public/public-rdfa/">archives</a>). All feedback is welcome.</p><p>Publication as a Working Group Note does not imply endorsement by the <acronym title="World Wide Web Consortium">W3C</acronym> Membership. This is a draft document and may be updated, replaced or obsoleted by other documents at any time. It is inappropriate to cite this document as other than work in progress.</p><p>This document was produced by a group operating under the <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 <acronym title="World Wide Web Consortium">W3C</acronym> Patent Policy</a>. <acronym title="World Wide Web Consortium">W3C</acronym> maintains a <a href="http://www.w3.org/2004/01/pp-impl/44350/status" rel="disclosure">public list of any patent disclosures</a> made in connection with the deliverables of the group; that page also includes instructions for disclosing a patent. An individual who has actual knowledge of a patent which the individual believes contains <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential Claim(s)</a> must disclose the information in accordance with <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section 6 of the <acronym title="World Wide Web Consortium">W3C</acronym> Patent Policy</a>.</p></div><div id="toc" typeof="bibo:Chapter" about="#toc" class="section"><h2 class="introductory">Table of Contents</h2><ul class="toc"><li class="tocline"><a href="#introduction" class="tocxref"><span class="secno">1. </span>Introduction</a><ul class="toc"><li class="tocline"><a href="#design-considerations" class="tocxref"><span class="secno">1.1 </span>Design Considerations</a></li><li class="tocline"><a href="#goals" class="tocxref"><span class="secno">1.2 </span>Goals</a></li><li class="tocline"><a href="#concept-diagram" class="tocxref"><span class="secno">1.3 </span>Concept Diagram</a></li></ul></li><li class="tocline"><a href="#developing-with-the-api" class="tocxref"><span class="secno">2. </span>Developing with the API</a><ul class="toc"><li class="tocline"><a href="#basic-concepts" class="tocxref"><span class="secno">2.1 </span>Basic Concepts</a></li><li class="tocline"><a href="#advanced-concepts" class="tocxref"><span class="secno">2.2 </span>Advanced Concepts</a></li></ul></li><li class="tocline"><a href="#the-interfaces-specification" class="tocxref"><span class="secno">3. </span>The Interfaces Specification</a><ul class="toc"><li class="tocline"><a href="#projections" class="tocxref"><span class="secno">3.1 </span>Projections</a></li><li class="tocline"><a href="#the-document-interface" class="tocxref"><span class="secno">3.2 </span>The Document Interface</a></li><li class="tocline"><a href="#dom-implementation-extensions" class="tocxref"><span class="secno">3.3 </span>DOM Implementation Extensions</a></li><li class="tocline"><a href="#document-data" class="tocxref"><span class="secno">3.4 </span>Document Data</a></li><li class="tocline"><a href="#rdfa-environment" class="tocxref"><span class="secno">3.5 </span>RDFa Environment</a></li></ul></li><li class="tocline"><a href="#the-initialization-process" class="tocxref"><span class="secno">4. </span>The Initialization Process</a></li><li class="tocline"><a href="#future-discussion" class="tocxref"><span class="secno">5. </span>Future Discussion</a></li><li class="tocline"><a href="#acknowledgements" class="tocxref"><span class="secno">A. </span>Acknowledgements</a></li><li class="tocline"><a href="#references" class="tocxref"><span class="secno">B. </span>References</a><ul class="toc"><li class="tocline"><a href="#normative-references" class="tocxref"><span class="secno">B.1 </span>Normative references</a></li><li class="tocline"><a href="#informative-references" class="tocxref"><span class="secno">B.2 </span>Informative references</a></li></ul></li></ul></div>
+
+
+
+<!--  END SOTD  -->
+
+
+<div class="informative section" id="introduction" typeof="bibo:Chapter" about="#introduction">
+
+
+<!-- OddPage -->
+<h2><span class="secno">1. </span>Introduction</h2><p><em>This section is non-normative.</em></p>
+
+<p>
+RDFa provides a means to enable machine-readable markup of structured data
+in human-readable Web documents. Structured data that is contained in 
+documents, such as people, films, companies, events, and so on, can provide
+an added layer of information to Web Applications. The RDFa API provides a 
+set of interfaces that make it easy to access structured data in Web documents.
+</p>
+
+<p>
+A document that contains RDFa effectively provides two data layers. The first 
+layer is the information about the document itself, such as the relationship 
+between the elements, the value of its attributes, the origin of the document, 
+and so on, and this information is usually provided by the Document Object 
+Model, or DOM [<cite><a class="bibref" rel="biblioentry" href="#bib-DOM-LEVEL-1">DOM-LEVEL-1</a></cite>].
+</p>
+
+<p>
+The second data layer comprises information provided by embedded metadata, such 
+as company names, film titles, ratings, and so on, and this is usually provided 
+by RDFa [<cite><a class="bibref" rel="biblioentry" href="#bib-RDFA-CORE">RDFA-CORE</a></cite>], Microformats [<cite><a class="bibref" rel="biblioentry" href="#bib-MICROFORMATS">MICROFORMATS</a></cite>], DC-HTML, GRDDL,
+or Microdata.
+</p>
+
+<p>
+Whilst this embedded information could be accessed via the usual DOM interfaces
+-- for example, by iterating through child elements and checking attribute 
+values -- the potentially complex interrelationships between the data mean 
+that it is more efficient for developers if they have direct access to the data 
+after it has been extracted.
+</p>
+
+<p>
+For example, a document may contain the name of a person in one section and the
+phone number of the same person in another; whilst the basic DOM interfaces 
+provide access to these two pieces of information through normal navigation, it 
+is more convenient for authors to have these two pieces of information 
+available in one object.
+</p>
+
+<p>
+This specification defines the RDFa API, which may be used by developers and
+Web Applications to access structured data contained in Web documents.
+</p>
+
+<div class="informative section" id="design-considerations" typeof="bibo:Chapter" about="#design-considerations">
+<h3><span class="secno">1.1 </span>Design Considerations</h3><p><em>This section is non-normative.</em></p>
+
+<p>
+RDFa 1.0 [<cite><a class="bibref" rel="biblioentry" href="#bib-RDFA-SYNTAX">RDFA-SYNTAX</a></cite>] has seen substantial growth since it became
+an official <acronym title="World Wide Web Consortium">W3C</acronym> Recommendation in October 2008. It has seen wide
+adoption among search companies, e-commerce sites, governments, and
+content management systems. There are numerous interoperable
+implementations and growth is expected to continue to rise with the
+latest releases of RDFa 1.1 [<cite><a class="bibref" rel="biblioentry" href="#bib-RDFA-CORE">RDFA-CORE</a></cite>], XHTML+RDFa 1.1 [<cite><a class="bibref" rel="biblioentry" href="#bib-XHTML-RDFA">XHTML-RDFA</a></cite>],
+and HTML+RDFa 1.1 [<cite><a class="bibref" rel="biblioentry" href="#bib-HTML-RDFA">HTML-RDFA</a></cite>].</p>
+
+<p>
+In an effort to ensure that Web applications are able
+to fully utilize RDFa, this specification outlines an API and a set of
+interfaces that extract RDF data from Web documents and other document formats
+that utilize RDFa. The <em>RDFa API</em> is designed with maximum
+code expressiveness and ease of use in mind. Furthermore, a deep understanding 
+of RDF and RDFa is not necessary in order to extract and utilize the 
+structured data embedded in RDFa documents.</p>
+
+<p>
+Since there are many Web browsers and programming environments for the Web,
+the rapid adoption of RDFa requires an interoperable
+API that Web document designers can count on being available in all Web 
+browsers. The <em>RDFa API</em> provides a uniform and developer-friendly 
+interface for extracting RDFa from Web documents.</p>
+
+<p>
+Since most browser-based applications and browser extensions that
+utilize Web documents are written in ECMAScript [<cite><a class="bibref" rel="biblioentry" href="#bib-ECMA-262">ECMA-262</a></cite>], the 
+implementation of the <em>RDFa API</em> is primarily concerned with 
+ensuring that concepts covered in this document are easily utilized 
+in ECMAScript.
+</p>
+
+<p>
+While ECMAScript is of primary concern, the <em>RDFa API</em>
+specification is language independent and is designed such that DOM tool
+developers may implement it in many of the other common Web programming 
+languages such as Python, Java, Perl, and Ruby. Objects that are defined by the 
+<em>RDFa API</em> are designed to work as seamlessly as possible with 
+language-native types, operators, and program flow constructs.
+</p>
+</div>
+
+<div id="goals" typeof="bibo:Chapter" about="#goals" class="section">
+<h3><span class="secno">1.2 </span>Goals</h3>
+
+<p>The design goals that drove the creation of the APIs that are described in 
+this document are:</p>
+
+<dl>
+<dt>Ease of Use and Expressiveness</dt>
+<dd>
+While this should be a design goal for all APIs, special care is taken to
+ensure that developers can accomplish common tasks using a minimal amount of
+code. While execution speed is always an important factor to consider, it is
+secondary to minimizing the amount of work a developer must perform to 
+extract and use data contained in the document.
+</dd>
+<dt>Modularity and Pluggability</dt>
+<dd>
+This high-level API is part of a larger family of lower-level APIs for 
+interfacing with RDF data on the Web. Special care has been taken to ensure 
+that this API can be implemented without requiring the larger family of APIs. 
+If the larger family of APIs is available, however, this API fits in nicely 
+with those RDF APIs.
+</dd>
+<dt>DOM Orthogonality</dt>
+<dd>
+Interfaces defined on the Document should match programming
+paradigms that are familiar to developers. For example, if one were to 
+attempt to retrieve Element Nodes by Subject, the name of the method should
+be <code>document.getElementsBySubject()</code>, which roughly mirrors the
+<code>document.getElementsByClassName()</code> functionality that is a part of
+[<cite><a class="bibref" rel="biblioentry" href="#bib-DOM-LEVEL-1">DOM-LEVEL-1</a></cite>].
+</dd>
+<dt>Native Language Constructs</dt>
+<dd>
+Data is exposed and processed in a way that is natural for ECMAScript and
+many other Web programming languages like Python, Ruby and even C++. For 
+example, <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a>s are exposed as native language
+constructs. <a class="tref" title="Graph">Graph</a>s can be iterated over by providing
+an anonymous function or function pointer. By ensuring that programming 
+language constructs are considered in the design of the API, we ensure 
+that the API won't fight the language and thus, the developer.
+</dd>
+<dt>CURIEs and Templates</dt>
+<dd>Some of the mechanisms that underpin RDF are difficult to use in everyday
+programming. For example, having to type out an entire URI is not only 
+laborious for a programmer, but also error prone and overly-verbose. RDFa
+Core [<cite><a class="bibref" rel="biblioentry" href="#bib-RDFA-CORE">RDFA-CORE</a></cite>] introduces the concept of a Compact URI Expression, or
+CURIE. This API builds on the CURIE concept and allows URIs to be expressed 
+as CURIEs. The API should also provide short-cuts that reduce the amount of
+code that has to be repeated. <a class="tref" title="Projection_Template">Projection Template</a>s are one 
+example of reducing repetitive code writing as it can be stored in a 
+single variable and re-used when building Projetions.</dd>
+</dl>
+</div>
+
+<div id="concept-diagram" typeof="bibo:Chapter" about="#concept-diagram" class="section">
+<h3><span class="secno">1.3 </span>Concept Diagram</h3>
+
+<p>
+The following diagram describes the relationship between all concepts discussed
+in this document. 
+</p>
+
+
+<!--  
+It's 2010, WHY DOESN'T SVG JUST WORK!!! ~~ manu
+<object data="concept-stack.svg" type="image/svg+xml" width="100%" height="53%">
+   <img src="concept-stack.png" alt="The RDFa API Concept Stack" />
+</object>
+ -->
+
+
+<!--  GAAAARRRRH! COME ON! ~~ manu
+<div data-include="concept-stack.svg"></div>
+ -->
+
+
+<div style="margin: 0 auto; text-align: center;">
+   <img style="width: 50%;" src="concept-stack.png" alt="The RDFa API Concept Stack" />
+<p><strong>Concept Stack for the RDFa API and RDF API</strong></p>
+</div>
+
+<p>
+The RDFa API is layered on top of concepts defined by the RDF API. The lowest
+level concepts are Triples, Graphs and Projections. Triples, Graphs and 
+Projections are data structures used by Web Developers to work with data 
+expressed in RDF languages. Working directly with the data structures can be
+cumbersome at times, such as the requirement to use absolute URIs when accessing
+properties, thus Profiles are provided to support accessing the data using
+compact URIs (CURIEs). Data Parsers and Data Serializers provide mechanisms to 
+both read and write RDF data in a variety of RDF languages. All of these 
+concepts are provided via a high-level interface called the RDF Environment.
+</p>
+<p>
+API implementers should note that only the portions of the RDF API that are 
+directly used by this API need to be implemented for a conforming RDFa API
+implementation. That is, only Projections are required to be implemented 
+from the RDF API for a fully conformant RDFa API implementation.
+</p>
+<p>
+The higher-level RDFa API provides two interfaces for accessing data in the
+document. Simple queries for DOM data may be performed using the Document 
+interface, while more complex queries for structured data may be performed 
+using the Document Data interface.
+</p>
+</div>
+
+</div>
+
+<div class="informative section" id="developing-with-the-api" typeof="bibo:Chapter" about="#developing-with-the-api">
+
+<!-- OddPage -->
+<h2><span class="secno">2. </span>Developing with the API</h2><p><em>This section is non-normative.</em></p>
+
+<p>
+The following section provides an overview of the basic RDFa API that 
+developers may find most useful in day-to-day programming exercises. An
+overview of the more advanced RDFa API is also provided, which may help
+developers when tackling some of the more complex RDFa programming tasks.
+</p>
+
+<div class="informative section" id="basic-concepts" typeof="bibo:Chapter" about="#basic-concepts">
+
+<h3><span class="secno">2.1 </span>Basic Concepts</h3><p><em>This section is non-normative.</em></p>
+
+<p>
+This API provides a number of interfaces to enable:
+</p>
+
+<ul>
+<li>parsing Documents for RDFa metadata;</li>
+<li>retrieving Elements containing RDFa metadata;</li>
+<li>performing advanced queries on the Document and extracting 
+application-specific <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a>s for use in Web Applications.</li>
+</ul>
+
+<div typeof="bibo:Chapter" about="#the-basic-api" class="section">
+<h4 id="the-basic-api">The Basic API</h4>
+
+<p>
+Many web developers will find that the basic functionality provided by the
+RDFa API is sufficient for day-to-day programming tasks. Since developers
+typically work with object-oriented data structures, the basic API is 
+geared toward building language-native objects called <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a>s 
+and returning them to the developer.
+</p>
+
+<h4 id="retrieving-data-in-the-document">Retrieving Data in the Document</h4>
+
+ <dl>
+   <dt><code>document.data.getSubjects(optional property, optional value)</code></dt>
+   <dd>Retrieves a list of all subjects expressed in the document that match
+     the given arguments. If no arguments are provided, all subjects expressed
+     in the document are returned.</dd>
+
+   <dt><code>document.data.getProperties(optional subject)</code></dt>
+   <dd>Retrieves a list of all properties expressed in the document that
+     match the given subject. If a subject isn't provided, all properties 
+     expressed in the document are returned.
+   </dd>
+
+   <dt><code>document.data.getValues(optional subject, optional property)</code></dt>
+   <dd>Retrieves a list of all values expressed in the document that
+     match the given subject and property. If no arguments are provided, all 
+     values expressed in the document are returned.
+   </dd>
+
+   <dt><code>document.data.getProjection(subject, optional template)</code></dt>
+   <dd>Retrieves a single <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a> given a subject and an
+     optional template. The template is used for the purposes of building the 
+     Projection in an application-specific way. 
+     To retrieve a <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a> by a particular subject, one could do 
+     the following: 
+     <code>document.data.getProjection(&quot;http://example.com/people#bob&quot;)</code>.
+    </dd>
+
+   <dt><code>document.data.getProjections(optional property, optional value, optional template)</code></dt>
+   <dd>Retrieves a list of <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a>s given an optional property
+     and value to match against. A template can be provided for the purposes of 
+     building the <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a> in an application-specific way. To 
+     retrieve a list of <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a>s that contain the 
+     <code>foaf:name</code> property, one could do the following:
+     <code>document.data.getProjections(&quot;foaf:name&quot;)</code>.
+    </dd>
+    
+ </dl>
+
+<h4 id="retrieving-dom-elements">Retrieving DOM Elements</h4>
+
+ <dl>
+ 
+    <dt><code>document.getElementsByType(type)</code></dt>
+    <dd>Retrieves a list of DOM Nodes given a type to match against. The type
+      is the <code>rdf:type</code> expressed in the DOM Node. The type can be
+      expressed via the <code>typeof</code>, <code>rel</code>, <code>rev</code>
+      or the <code>property</code> attribute.
+    </dd>
+    
+    <dt><code>document.getElementsBySubject(subject)</code></dt>
+    <dd>Retrieves a list of DOM Nodes given a subject to match against. The
+      subject can be expressed via the <code>about</code>, <code>href</code>, 
+      <code>src</code>, or <code>resource</code> attribute.
+    </dd>
+    
+    <dt><code>document.getElementsByProperty(property, optional value)</code></dt>
+    <dd>Retrieves a list of DOM Nodes given a property and an optional value to
+      match against. Properties can be expressed via the <code>typeof</code>, 
+      <code>rel</code>, <code>rev</code> or <code>property</code> attribute.
+    </dd>
+
+ </dl>
+
+<h4 id="iri-mapping">IRI Mapping</h4>
+ 
+ <dl>
+   <dt><code>document.data.setMapping(mapping, iri)</code></dt>
+   <dd>Gets and sets short-hand IRI mappings that are used by the API. These
+       mappings allow values such as <code>foaf</code> to be mapped to a longer
+       IRI, for example: <code>http://xmlns.com/foaf/0.1/</code>. This mapping
+       ensures that when a developer specifies a compact URI like 
+       <code>foaf:Person</code>, that it is expanded to
+       <code>http://xmlns.com/foaf/0.1/Person</code> before it is used by the
+       underlying API.</dd>
+ </dl>
+
+<h4 id="advanced-processing">Advanced Processing</h4>
+
+ <dl>
+   <dt><code>document.data.rdfa.query(query, optional template)</code></dt> 
+   <dd>Retrieves an array of <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a>s based on a set of 
+     selection criteria. The template is used to build a language-native
+     object that is specific to the needs of the developer and the
+     application.</dd>
+ </dl>
+
+</div>
+
+<div typeof="bibo:Chapter" about="#using-the-basic-api" class="section">
+<h4 id="using-the-basic-api">Using the Basic API</h4>
+
+<p>
+The following section uses the markup shown below to demonstrate how to extract
+and use subject, properties, values and <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a>s using the RDFa 
+API. The following markup is used for the examples in this section and is 
+assumed to be served from a document located at 
+<code>http://example.org/people</code>.
+</p>
+
+<pre class="example">&lt;div prefix=&quot;foaf: http://xmlns.com/foaf/0.1/&quot; about=&quot;#albert&quot; typeof=&quot;foaf:Person&quot;&gt;
+  &lt;span property=&quot;foaf:name&quot;&gt;Albert Einstein&lt;/span&gt;
+&lt;/div&gt;</pre>
+
+<div typeof="bibo:Chapter" about="#retrieving-basic-data" class="section">
+<h5 id="retrieving-basic-data">Retrieving Basic Data</h5>
+
+<p>Often, developers must determine whether or not a document contains the type
+of data that they are interested in processing. The RDFa API provides a simple
+mechanism to extract things like subjects, properties and values from the 
+current document. The return types for subjects and properties are 
+always sequences of strings. Values are typically converted into language-native
+types. Strings and language-native types are used in order to make processing 
+the data easier on the developer.</p>
+
+For example to get all of the subjects expressed in a document, one can use 
+the following call:<p></p>
+
+<pre class="example">var subjects = document.data.getSubjects();</pre>
+
+<p>To get the list of properties for each subject retrieved above, a developer
+could process each subject in a loop, like so:
+</p>
+
+<pre class="example">for(var i = 0; i &lt; subjects.length; i++)
+{
+   var subject = subjects[i];
+   var properties = document.data.getProperties(subject);
+   // ... process the properties ...
+}</pre>
+
+<p>
+To retrieve only subjects containing a particular property, such as a name 
+property, a developer could do the following:
+</p>
+
+<pre class="example">var subjectsWithNames = document.data.getSubjects(&quot;http://xmlns.com/0.1/foaf/name&quot;);</pre>
+
+<p>
+Once the subjects containing a particular property are known, queries can be
+done on each subject to retrieve the values of properties:
+</p>
+
+<pre class="example">var namedSubject = subjectsWithNames[0];
+var names = document.data.getValues(namedSubject, &quot;http://xmlns.com/0.1/foaf/name&quot;);</pre>
+
+<p>
+To retrieve all values for a particular property, such as all of the names
+listed in the document, the following code could be executed:
+</p>
+
+<pre class="example">var allNames = document.data.getValues(null, &quot;http://xmlns.com/0.1/foaf/name&quot;);</pre>
+
+<p>
+There are many more combinations of arguments passed to the basic getter 
+methods for subjects, properties and values that allow high-level querying of
+data in the document. While this method of working with data may be useful to
+many developers, others may want to construct this data into a more 
+object-oriented view of the data. In order to support this scenario, the RDFa
+API introduces <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a>s in the next section.
+</p>
+
+</div>
+
+<div typeof="bibo:Chapter" about="#working-with-projections" class="section">
+<h5 id="working-with-projections">Working with Projections</h5>
+
+<h4 id="retrieving-projections-by-type">Retrieving Projections by Type</h4>
+
+<p>A <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a> is an object-oriented view of a particular subject
+that is expressed in the document. For example, to get all projections that 
+express people in a document, a developer can do the following:
+</p>
+
+<pre class="example">var people = document.data.getProjections(&quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&quot;, &quot;http://xmlns.com/foaf/0.1/Person&quot;);</pre>
+
+A developer can also specify short-cuts to use when specifying the URI:
+
+<pre class="example">document.data.setMapping(&quot;rdf&quot;, &quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&quot;);
+document.data.setMapping(&quot;foaf&quot;, &quot;http://xmlns.com/foaf/0.1/&quot;);
+var people = document.data.getProjections(&quot;rdf:type&quot;, &quot;foaf:Person&quot;);</pre>
+
+<h4 id="retrieving-projections-by-subject">Retrieving Projections by Subject</h4>
+
+<p>You can also get a <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a> by its subject:</p>
+
+<pre class="example">var albert = document.data.getProjection(&quot;http://example.org/people#albert&quot;);</pre>
+
+<p>You can also specify a relative IRI and the document IRI will be 
+automatically pre-pended:</p>
+
+<pre class="example">var albert = document.data.getProjection(&quot;#albert&quot;);</pre>
+
+<h4 id="retrieving-projections-by-property">Retrieving Projections by Property</h4>
+
+<p>You can get a list of <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a>s by their properties:</p>
+
+<pre class="example">var peopleNamedAlbert = document.data.getProjections(&quot;foaf:name&quot;, &quot;Albert Einstein&quot;);</pre>
+
+<h4 id="using-projections">Using Projections</h4>
+
+<p>
+You can retrieve property values from <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a>s like so:
+</p>
+
+<pre class="example">var albert = document.data.getProjection(&quot;#albert&quot;);
+var name = albert.get(&quot;foaf:name&quot;);</pre>
+
+<p>You can specify values that you would like to map to a 
+<a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a>:</p>
+
+<pre class="example">var albert = document.data.getProjection(&quot;#albert&quot;, {&quot;name&quot;: &quot;foaf:name&quot;});
+var name = albert.name;</pre>
+
+<div class="note">The DOM may change between calls to any of the RDFa API
+data retrieval methods. These changes <em class="rfc2119" title="may">may</em> cause subsequent
+calls to the same methods to return different results. As with any call against 
+a DOM that is changing, developers are advised to program accordingly in order 
+to avoid race conditions and other issues resulting from a changing 
+data set.</div>
+
+</div>
+
+<div typeof="bibo:Chapter" about="#managing-elements-with-data" class="section">
+<h5 id="managing-elements-with-data">Managing Elements with Data</h5>
+
+<h4 id="retrieving-elements-containing-data-by-type">Retrieving Elements Containing Data by Type</h4>
+
+<p>You can retrieve the DOM Element that is described above by doing the following:
+</p>
+
+<pre class="example">var elements = document.getElementsByType(&quot;http://xmlns.com/foaf/0.1/Person&quot;);</pre>
+
+or you can specify a short-cut to use when specifying the IRI:
+
+<pre class="example">document.data.setMapping(&quot;foaf&quot;, &quot;http://xmlns.com/foaf/0.1/&quot;);
+var elements = document.getElementsByType(&quot;foaf:Person&quot;);</pre>
+
+<h4 id="retrieving-elements-containing-data-by-subject">Retrieving Elements Containing Data by Subject</h4>
+
+<p>You can also get a list of Elements by the subject of the data:</p>
+
+<pre class="example">var elements = document.getElementsBySubject(&quot;http://example.org/people#albert&quot;);</pre>
+
+<p>You can also specify a relative IRI and the document IRI will be 
+automatically pre-pended:</p>
+
+<pre class="example">var elements = document.getElementsBySubject(&quot;#albert&quot;);</pre>
+
+<h4 id="retrieving-elements-by-property">Retrieving Elements by Property</h4>
+
+<p>You can get a list of Elements by the properties and values that
+they declare:</p>
+
+<pre class="example">var elements = document.getElementsByProperty(&quot;foaf:name&quot;, &quot;Albert Einstein&quot;);</pre>
+
+<h4 id="modifying-dom-elements">Modifying DOM Elements</h4>
+
+<p>
+You can modify elements that are returned just like any other DOM Node, 
+for example:
+</p>
+
+<pre class="example">var elements = document.getElementsByProperty(&quot;foaf:name&quot;, &quot;Bob&quot;);
+for(i = 0; i &lt;= elements.length; i++)
+{
+   var e = elements[i];
+   e.style.setProperty('color', '#00cc00', null);
+}</pre>
+
+<p>
+The code above would change the color of all the areas of the page where the
+item's name is &quot;Bob&quot; to green.
+</p>
+
+</div>
+</div>
+
+</div>
+
+<div id="advanced-concepts" typeof="bibo:Chapter" about="#advanced-concepts" class="section">
+<h3><span class="secno">2.2 </span>Advanced Concepts</h3>
+
+<p>
+This section covers a number of concepts that go beyond basic day-to-day 
+usage of the RDFa API.
+</p>
+
+<div typeof="bibo:Chapter" about="#advanced-queries" class="section">
+<h4 id="advanced-queries">Advanced Queries</h4>
+
+<div typeof="bibo:Chapter" about="#querying-by-type" class="section">
+<h5 id="querying-by-type">Querying by Type</h5>
+
+<p>
+Perhaps the most basic task is to select <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a>s of a
+particular type. The type of a <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a> is set in RDFa via
+the special attribute <code>typeof</code>. For example, the following
+markup expresses a <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a> of type <i>Person</i> in the
+Friend-of-a-Friend vocabulary:
+</p>
+
+<pre class="example">&lt;div typeof=&quot;foaf:Person&quot;&gt;
+  &lt;span property=&quot;foaf:name&quot;&gt;Albert Einstein&lt;/span&gt;
+&lt;/div&gt;</pre>
+
+<p>
+To locate all <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a>s that are people, we could use the
+<code>document.getProjections()</code> method:
+
+</p><pre class="example">document.data.getProjections(&quot;rdf:type&quot;, &quot;foaf:Person&quot;);</pre>
+
+or we could do the same using the standard query interface to retrieve a
+<a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a>:<p></p>
+
+<pre class="example">var people = document.data.rdfa.query({&quot;rdf:type&quot;: &quot;foaf:Person&quot;}, 
+   {&quot;name&quot;: &quot;foaf:name&quot;, &quot;age&quot;: &quot;foaf:age&quot;});</pre>
+
+<p>
+While the query interface is more verbose for simple queries, it becomes
+necessary for more complex queries as demonstrated later in this section. Note 
+that the Query object has access to 
+the mappings provided via the document.data object, so they can also be 
+used in queries. It is also possible to write the same query in a way that is 
+independent of any prefix-mappings:</p>
+
+<pre class="example">var people = document.data.rdfa.query( 
+   { &quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&quot;: &quot;http://xmlns.com/foaf/0.1/Person&quot; },
+   { &quot;name&quot;: &quot;http://xmlns.com/foaf/0.1/name&quot;, &quot;age&quot;: &quot;http://xmlns.com/foaf/0.1/age&quot; });</pre>
+</div>
+
+<div typeof="bibo:Chapter" about="#querying-by-property-value" class="section">
+<h5 id="querying-by-property-value">Querying by Property Value</h5>
+
+<p>
+The previous query selected all <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a>s of a certain
+type, but it did so by indicating that the property <code>rdf:type</code>
+should have a specific value. Queries can also specify other
+properties. For example, given the following mark-up:
+</p>
+
+<pre class="example">&lt;div typeof=&quot;foaf:Person&quot;&gt;
+  &lt;span property=&quot;foaf:name&quot;&gt;Albert Einstein&lt;/span&gt; -
+  &lt;span property=&quot;foaf:myersBriggs&quot;&gt;INTP&lt;/span&gt;
+  &lt;a rel=&quot;foaf:workInfoHomepage&quot; href=&quot;http://en.wikipedia.org/wiki/Albert_Einstein&quot;&gt;More...&lt;/span&gt;
+&lt;/div&gt;
+&lt;div typeof=&quot;foaf:Person&quot;&gt;
+  &lt;span property=&quot;foaf:name&quot;&gt;Mother Teresa&lt;/span&gt; -
+  &lt;span property=&quot;foaf:myersBriggs&quot;&gt;ISFJ&lt;/span&gt;
+  &lt;a rel=&quot;foaf:workInfoHomepage&quot; href=&quot;http://en.wikipedia.org/wiki/Mother_Teresa&quot;&gt;More...&lt;/span&gt;
+&lt;/div&gt;
+&lt;div typeof=&quot;foaf:Person&quot;&gt;
+  &lt;span property=&quot;foaf:name&quot;&gt;Marie Curie&lt;/span&gt; - 
+  &lt;span property=&quot;foaf:myersBriggs&quot;&gt;INTP&lt;/span&gt;
+  &lt;a rel=&quot;foaf:workInfoHomepage&quot; href=&quot;http://en.wikipedia.org/wiki/Marie_Curie&quot;&gt;More...&lt;/span&gt;
+&lt;/div&gt;</pre>
+
+<p>
+The following query demonstrates how a developer would select and use
+all <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a>s of type <i>Person</i> that also have a Myers Brigg's 
+personality type of &quot;INTP&quot; (aka: The Architect):
+</p>
+
+<pre class="example">var architects = document.data.rdfa.query({
+  &quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&quot;: &quot;http://xmlns.com/foaf/0.1/Person&quot;,
+  &quot;http://xmlns.com/foaf/0.1/myersBriggs&quot;: &quot;INTP&quot; },
+  { &quot;name&quot;: &quot;http://xmlns.com/foaf/0.1/name&quot; });
+
+var name = architects[0].name;</pre>
+
+<p>
+As before, prefix-mappings can also be used:
+</p>
+
+<pre class="example">var architects = document.data.rdfa.query( 
+   { &quot;rdf:type&quot;: &quot;foaf:Person&quot;, &quot;foaf:myersBriggs&quot;: &quot;INTP&quot; },
+   { &quot;name&quot;: &quot;foaf:name&quot; });
+
+var name = architects[0].name;</pre>
+
+In this case, all of the &quot;INTP&quot; personality types are gleaned from the 
+page and presented as <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a>s containing each person's 
+name and blog page:
+<p></p>
+
+<pre class="example">var architects = document.data.rdfa.query( 
+   { &quot;rdf:type&quot;: &quot;foaf:Person&quot;, &quot;foaf:myersBriggs&quot;: &quot;INTP&quot; },
+   { &quot;name&quot;: &quot;foaf:name&quot;, &quot;webpage&quot;: &quot;foaf:workInfoHomepage&quot; });
+
+var name = architects[0].name;
+var infoWebpage = architects[0].webpage;</pre>
+
+</div>
+</div>
+
+<div typeof="bibo:Chapter" about="#creating-projections" class="section">
+<h4 id="creating-projections">Creating Projections</h4>
+
+<p>
+Developers may find that they need to be able to
+build custom, language-native objects to use with their code.
+These specialized language-native objects are called <em>Projection</em>s, 
+and can be built by utilizing <em>Projection</em> Templates.
+</p>
+
+<p class="issue">There has been a complaint that this section comes from out
+of nowhere. The purpose of this section is to describe that Projections
+can be mapped to native language objects to ease development. We may need to
+elaborate more on this at this point in the document to help integrate
+this section with the flow of the document.</p>
+
+<p>
+For example, assume our source document contains the following
+event, marked up using the Data Vocabulary Event format:
+</p>
+
+<pre class="example">&lt;div prefix=&quot;v: http://rdf.data-vocabulary.org/#&quot; typeof=&quot;v:Event&quot;&gt; 
+  &lt;a rel=&quot;v:url&quot; href=&quot;http://amyandtheredfoxies.example.com/events&quot; 
+     property=&quot;v:summary&quot;&gt;Tour Info: Amy And The Red Foxies&lt;/a&gt;
+  
+  &lt;span rel=&quot;v:location&quot;&gt;
+  	&lt;a typeof=&quot;v:Organization&quot; rel=&quot;v:url&quot; href=&quot;http://www.kammgarn.de/&quot; property=&quot;v:name&quot;&gt;Kammgarn&lt;/a&gt;
+  &lt;/span&gt;
+  &lt;div rel=&quot;v:photo&quot;&gt;&lt;img src=&quot;foxies.jpg&quot;/&gt;&lt;/div&gt;
+  &lt;span property=&quot;v:summary&quot;&gt;Hey K-Town, Amy And The Red Foxies will rock Kammgarn in October.&lt;/span&gt;
+  When: 
+  &lt;span property=&quot;v:startDate&quot; content=&quot;20091015T19:00&quot;&gt;15. Oct., 7:00 pm&lt;/span&gt;-
+  &lt;span property=&quot;v:endDate&quot; content=&quot;20091015T21:00&quot;&gt;9:00 pm&lt;/span&gt;
+  &lt;/span&gt;
+
+  Category: &lt;span property=&quot;v:eventType&quot;&gt;concert&lt;/span&gt;
+&lt;/div&gt;</pre>
+
+<p>
+To query for all <i>Event</i> <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a>s we know that we 
+can do this:
+</p>
+
+<pre class="example">var events = document.data.getProjections(&quot;rdf:type&quot;, &quot;http://rdf.data-vocabulary.org/#Event&quot;);</pre>
+
+<p>
+However, to build a special <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a> that contains the 
+summary, start date and end date, we can also do this:
+</p>
+
+<pre class="example">var events = document.data.rdfa.query(
+   { &quot;rdf:type&quot;: &quot;http://rdf.data-vocabulary.org/#Event&quot; },
+   { &quot;type&quot;: &quot;rdf:type&quot;, &quot;summary&quot;: &quot;v:summary&quot;, 
+     &quot;start&quot;: &quot;v:startDate&quot;, &quot;end&quot;: &quot;v:endDate&quot; } );</pre>
+
+<p>
+The second parameter is a <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a> Template. Each key-value pair 
+specifies a <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a> property to URI mapping. That is, the key 
+is the name of the property to create in the <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a> object. 
+The value must exist in a triple, specifically as a property of the triple, in 
+order to copy the the object value of the triple over to the value of the 
+<a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a> object's property.
+</p>
+
+<p>
+For more detailed information about queries and <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a>s see the 
+<a class="tref idlType" title="DocumentData" href="#idl-def-DocumentData"><code>DocumentData</code></a> interface.
+</p>
+</div>
+</div>
+
+</div>
+
+
+<div class="normative section" id="the-interfaces-specification" typeof="bibo:Chapter" about="#the-interfaces-specification">
+
+<!-- OddPage -->
+<h2><span class="secno">3. </span>The Interfaces Specification</h2>
+
+<p>
+The following section contains all of the interfaces that RDFa API 
+implementers are expected to provide as well as guidance to ensure that
+implementations are conformant.
+</p>
+
+<div id="conformance2" typeof="bibo:Chapter" about="#conformance2" class="section">
+<p>
+Conformance requirements phrased as algorithms or specific steps may be 
+implemented in any manner, so long as the end result is equivalent. 
+In particular, the algorithms defined in this specification are intended to be 
+easy to follow and are not necessarily intended to be performant.
+</p>
+
+<p>
+User Agents may impose implementation-specific limits on otherwise unconstrained 
+inputs, e.g. to prevent denial of service attacks, to guard against running 
+out of memory, or to work around platform-specific limitations.
+</p>
+
+<p>
+Implementations that use ECMAScript or Java to implement the APIs defined in this 
+specification <em class="rfc2119" title="must">must</em> implement them in a manner consistent with the respective 
+ECMAScript or Java Bindings defined in the Web IDL specification [<cite><a class="bibref" rel="biblioentry" href="#bib-WEBIDL">WEBIDL</a></cite>], 
+as this specification uses that specification's terminology.
+</p>
+
+<p>
+Implementations that use any other language to implement the APIs defined in this 
+specification that do not have bindings defined in the Web IDL specification
+should attempt to map the API as closely as possible to the implementation
+language's native mechanisms and datatypes. Developers are encouraged to work
+with other developers who are providing the RDFa API in the same langauge to 
+ensure that RDFa API implementations are modular and easily replaceable.
+</p>
+  
+</div>
+
+<div class="normative section" id="projections" typeof="bibo:Chapter" about="#projections">
+<h3><span class="secno">3.1 </span>Projections</h3>
+
+<p>
+The <dfn title="Projection" id="dfn-projection">Projection</dfn> interface is used to build language-native
+objects that can be accessed in a way that is natural for the
+implementation language.
+</p>
+
+<pre class="idl"><span class="idlInterface" id="idl-def-Projection">[<span class="extAttr">NoInterfaceObject</span>]
+interface <span class="idlInterfaceID">Projection</span> {
+<span class="idlMethod">    <span class="idlMethType"><a>DOMString</a>[]</span> <span class="idlMethName"><a href="#widl-Projection-getProperties-DOMString">getProperties</a></span> ();</span>
+<span class="idlMethod">    <span class="idlMethType"><a>DOMString</a></span>   <span class="idlMethName"><a href="#widl-Projection-getSubject-DOMString">getSubject</a></span> ();</span>
+<span class="idlMethod">    <span class="idlMethType"><a>any getter</a></span>  <span class="idlMethName"><a href="#widl-Projection-get-any-getter-DOMString-uriOrCurie">get</a></span> (<span class="idlParam"><span class="idlParamType"><a>DOMString</a></span> <span class="idlParamName">uriOrCurie</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>any</a>[]</span>       <span class="idlMethName"><a href="#widl-Projection-getAll-any-DOMString-uriOrCurie">getAll</a></span> (<span class="idlParam"><span class="idlParamType"><a>DOMString</a></span> <span class="idlParamName">uriOrCurie</span></span>);</span>
+};</span>
+</pre><div typeof="bibo:Chapter" about="#methods" class="section"><h4 id="methods">Methods</h4><dl class="methods"><dt id="widl-Projection-get-any-getter-DOMString-uriOrCurie"><code>get</code></dt><dd>Retrieves the first property with the given name as a language-native 
+  datatype.
+
+    
+
+  <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">uriOrCurie</td><td class="prmType"><code><a>DOMString</a></code></td><td class="prmNullFalse">✘</td><td class="prmOptFalse">✘</td><td class="prmDesc">The name of the property to retrieve. The argument can be
+      either an absolute URI or a CURIE that will be resolved using the default 
+      document mapping.</td></tr></table><div><em>Return type: </em><code><a>any getter</a></code></div></dd><dt id="widl-Projection-getAll-any-DOMString-uriOrCurie"><code>getAll</code></dt><dd>Retrieves the list of values for a property as an array of 
+      language-native datatypes.
+
+    
+
+  <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">uriOrCurie</td><td class="prmType"><code><a>DOMString</a></code></td><td class="prmNullFalse">✘</td><td class="prmOptFalse">✘</td><td class="prmDesc">The name of the property to retrieve. The argument can be
+      either a full URI or a CURIE that will be resolved using the default 
+      document mapping.</td></tr></table><div><em>Return type: </em><code><a>any</a>[]</code></div></dd><dt id="widl-Projection-getProperties-DOMString"><code>getProperties</code></dt><dd>Retrieves the list of properties that are available on the 
+      <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a>. Each property <em class="rfc2119" title="must">must</em> be an absolute URI.
+  <div><em>No parameters.</em></div><div><em>Return type: </em><code><a>DOMString</a>[]</code></div></dd><dt id="widl-Projection-getSubject-DOMString"><code>getSubject</code></dt><dd>Retrieves the subject URI of this <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a> as a string, the
+    value <em class="rfc2119" title="must">must</em> be an absolute URI.
+  <div><em>No parameters.</em></div><div><em>Return type: </em><code><a>DOMString</a></code></div></dd></dl></div>
+</div>
+
+<div class="normative section" id="the-document-interface" typeof="bibo:Chapter" about="#the-document-interface">
+<h3><span class="secno">3.2 </span>The Document Interface</h3>
+
+<p>
+The <em>RDFa API</em> is designed to provide a small, powerful
+set of document-based interfaces that a developer may use to 
+retrieve <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a>s from a Web document. 
+This section focuses on the extensions necessary to the DOM environment. 
+These extensions are separated into four interfaces:</p>
+
+<ul>
+  <li><a href="#document-interface-extensions">Document Interface Extensions</a> 
+  — A set of basic extensions to the Document interface to help developers
+  identify DOM Nodes containing structured data in Web documents.
+  </li>
+  <li><a href="#dom-implementation-extensions">DOM Implementation Extensions</a>
+  — An extension to the DOM Implementation that allows developers to 
+  query for functionality provided by the RDFa API.
+  </li>
+  <li><a href="#document-data">Document Data</a> — The high-level
+  interface for providing access to structured data in documents.
+  </li>
+  <li><a href="#rdfa-environment">RDFa Environment</a> — The high-level
+  interface for performing advanced queries and parsing of RDFa documents.
+  </li>
+</ul>
+
+<div typeof="bibo:Chapter" about="#document-interface-extensions" class="section">
+<h4 id="document-interface-extensions">Document Interface Extensions</h4>
+
+<p>
+The following section describes all of the extensions that are necessary to
+enable manipulation of structured data within a Web Document.
+</p>
+
+<pre class="idl"><span class="idlImplements"><a>Document</a> implements <a href="#idl-def-DataDocument" class="idlType"><code>DataDocument</code></a>;</span></pre><div class="idlImplementsDesc"> 
+   All instances of the DOM <a>Document</a> interface <em class="rfc2119" title="must">must</em> implement 
+   <a href="#idl-def-DataDocument" class="idlType"><code>DataDocument</code></a>.
+</div> 
+
+<p>The DataDocument interface provides necessary extensions to the core
+DOM Document interface to enable the processing and storage of structured data.
+</p>
+
+<pre class="idl"><span class="idlInterface" id="idl-def-DataDocument">[<span class="extAttr">Supplemental, NoInterfaceObject</span>]
+interface <span class="idlInterfaceID">DataDocument</span> {
+<span class="idlAttribute">    readonly attribute <span class="idlAttrType"><a href="#idl-def-DocumentData" class="idlType"><code>DocumentData</code></a></span> <span class="idlAttrName"><a href="#widl-DataDocument-data">data</a></span>;</span>
+<span class="idlMethod">    <span class="idlMethType"><a>NodeList</a></span> <span class="idlMethName"><a href="#widl-DataDocument-getElementsByType-NodeList-DOMString-type">getElementsByType</a></span> (<span class="idlParam"><span class="idlParamType"><a>DOMString</a></span> <span class="idlParamName">type</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>NodeList</a></span> <span class="idlMethName"><a href="#widl-DataDocument-getElementsBySubject-NodeList-DOMString-subject">getElementsBySubject</a></span> (<span class="idlParam"><span class="idlParamType"><a>DOMString</a></span> <span class="idlParamName">subject</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>NodeList</a></span> <span class="idlMethName"><a href="#widl-DataDocument-getElementsByProperty-NodeList-DOMString-property-DOMString-value">getElementsByProperty</a></span> (<span class="idlParam"><span class="idlParamType"><a>DOMString</a></span> <span class="idlParamName">property</span></span>, <span class="idlParam">optional <span class="idlParamType"><a>DOMString</a>?</span> <span class="idlParamName">value</span></span>);</span>
+};</span>
+</pre><div typeof="bibo:Chapter" about="#attributes" class="section"><h5 id="attributes">Attributes</h5><dl class="attributes"><dt id="widl-DataDocument-data"><code>data</code> of type <span class="idlAttrType"><a href="#idl-def-DocumentData" class="idlType"><code>DocumentData</code></a></span>, readonly</dt><dd>The <a class="tref idlType" title="DocumentData" href="#idl-def-DocumentData"><code>DocumentData</code></a> interface is useful for extracting and storing data
+     that is associated with the Document.</dd></dl></div><div typeof="bibo:Chapter" about="#methods-1" class="section"><h5 id="methods-1">Methods</h5><dl class="methods"><dt id="widl-DataDocument-getElementsByProperty-NodeList-DOMString-property-DOMString-value"><code>getElementsByProperty</code></dt><dd>Retrieves a list of Nodes objects based on the value of a given property.
+
+  
+  <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">property</td><td class="prmType"><code><a>DOMString</a></code></td><td class="prmNullFalse">✘</td><td class="prmOptFalse">✘</td><td class="prmDesc">A DOMString representing an IRI-based property. The string can either
+    be a absolute URI or a CURIE.</td></tr><tr><td class="prmName">value</td><td class="prmType"><code><a>DOMString</a></code></td><td class="prmNullTrue">✔</td><td class="prmOptTrue">✔</td><td class="prmDesc">A DOMString representing the value to match against.</td></tr></table><div><em>Return type: </em><code><a>NodeList</a></code></div></dd><dt id="widl-DataDocument-getElementsBySubject-NodeList-DOMString-subject"><code>getElementsBySubject</code></dt><dd>Retrieves a NodeList consisting of Nodes that have explicitly specified
+      the given subject.
+
+  
+  <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">subject</td><td class="prmType"><code><a>DOMString</a></code></td><td class="prmNullFalse">✘</td><td class="prmOptFalse">✘</td><td class="prmDesc">A DOMString representing an IRI-based subject. The string can either
+    be a absolute URI or a CURIE.</td></tr></table><div><em>Return type: </em><code><a>NodeList</a></code></div></dd><dt id="widl-DataDocument-getElementsByType-NodeList-DOMString-type"><code>getElementsByType</code></dt><dd>Retrieves a list of Nodes based on the object type of the
+     data that they specify.
+
+  
+  <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">type</td><td class="prmType"><code><a>DOMString</a></code></td><td class="prmNullFalse">✘</td><td class="prmOptFalse">✘</td><td class="prmDesc">A DOMString representing an <code>rdf:type</code> to select against.</td></tr></table><div><em>Return type: </em><code><a>NodeList</a></code></div></dd></dl></div>
+
+</div>
+</div>
+
+<div class="normative section" id="dom-implementation-extensions" about="#dom-implementation-extensions" rel="bibo:affirmedBy" resource="http://www.w3.org/2010/02/rdfa/meetings/2010-08-05#resolution_2" typeof="bibo:Chapter">
+<h3><span class="secno">3.3 </span>DOM Implementation Extensions</h3>
+
+<p>
+If the RDFa API is implemented in a DOM environment and a 
+<code>DOMImplementation</code> interface is provided, the following
+additional requirements for the <code>hasFeature()</code> method <em class="rfc2119" title="must">must</em> be
+met:</p>
+
+<pre class="idl"><span class="idlInterface" id="idl-def-DOMImplementation">interface <span class="idlInterfaceID">DOMImplementation</span> {
+<span class="idlMethod">    <span class="idlMethType"><a>boolean</a></span> <span class="idlMethName"><a href="#widl-DOMImplementation-hasFeature-boolean-DOMString-feature-DOMString-version">hasFeature</a></span> (<span class="idlParam"><span class="idlParamType"><a>DOMString</a></span> <span class="idlParamName">feature</span></span>, <span class="idlParam"><span class="idlParamType"><a>DOMString</a></span> <span class="idlParamName">version</span></span>);</span>
+};</span>
+</pre><div typeof="bibo:Chapter" about="#methods-2" class="section"><h4 id="methods-2">Methods</h4><dl class="methods"><dt id="widl-DOMImplementation-hasFeature-boolean-DOMString-feature-DOMString-version"><code>hasFeature</code></dt><dd>Checks to see whether or not the DOM implementation has exposed
+  all of the mandatory RDFa API features specified in this specification. An 
+  implementation that supports all of the mandatory features in this 
+  specification <em class="rfc2119" title="must">must</em> return <code>true</code> for a feature string of
+    &quot;<code>RDFaAPI</code>&quot; and a version string of &quot;<code>1.1</code>&quot;.
+  
+  
+  <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">feature</td><td class="prmType"><code><a>DOMString</a></code></td><td class="prmNullFalse">✘</td><td class="prmOptFalse">✘</td><td class="prmDesc">The feature string to use when checking to see if the DOM environment
+    exposes all of the RDFa API attributes and methods.</td></tr><tr><td class="prmName">version</td><td class="prmType"><code><a>DOMString</a></code></td><td class="prmNullFalse">✘</td><td class="prmOptFalse">✘</td><td class="prmDesc">The version string to use when checking to see if the DOM environment
+    exposes all of the RDFa API attributes and methods.</td></tr></table><div><em>Return type: </em><code><a>boolean</a></code></div></dd></dl></div>
+
+</div>
+
+<div class="normative section" id="document-data" typeof="bibo:Chapter" about="#document-data">
+<h3><span class="secno">3.4 </span>Document Data</h3>
+
+<p>
+The <a class="tref idlType" title="DocumentData" href="#idl-def-DocumentData"><code>DocumentData</code></a> interface is used to access the structured data
+in the document.
+</p>
+
+<pre class="idl"><span class="idlInterface" id="idl-def-DocumentData">[<span class="extAttr">NoInterfaceObject</span>]
+interface <span class="idlInterfaceID">DocumentData</span> {
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>optional RDFEnvironment</a></span> <span class="idlAttrName"><a href="#widl-DocumentData-rdf">rdf</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a href="#idl-def-RDFaEnvironment" class="idlType"><code>RDFaEnvironment</code></a></span>         <span class="idlAttrName"><a href="#widl-DocumentData-rdfa">rdfa</a></span>;</span>
+<span class="idlMethod">    <span class="idlMethType"><a href="#idl-def-Projection" class="idlType"><code>Projection</code></a></span>            <span class="idlMethName"><a href="#widl-DocumentData-getProjection-Projection-DOMString-subject-object-template">getProjection</a></span> (<span class="idlParam"><span class="idlParamType"><a>DOMString</a></span> <span class="idlParamName">subject</span></span>, <span class="idlParam">optional <span class="idlParamType"><a>object</a></span> <span class="idlParamName">template</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>Sequence &lt;projection&gt;</a></span> <span class="idlMethName"><a href="#widl-DocumentData-getProjections-Sequence--Projection--object-template">getProjections</a></span> (<span class="idlParam">optional <span class="idlParamType"><a>object</a></span> <span class="idlParamName">template</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>Sequence &lt;projection&gt;</a></span> <span class="idlMethName"><a href="#widl-DocumentData-getProjections-Sequence--Projection--DOMString-property-DOMString-value-object-template">getProjections</a></span> (<span class="idlParam">optional <span class="idlParamType"><a>DOMString</a></span> <span class="idlParamName">property</span></span>, <span class="idlParam">optional <span class="idlParamType"><a>DOMString</a>?</span> <span class="idlParamName">value</span></span>, <span class="idlParam">optional <span class="idlParamType"><a>object</a></span> <span class="idlParamName">template</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>Sequence&lt;domstring&gt;</a></span>   <span class="idlMethName"><a href="#widl-DocumentData-getProperties-Sequence-DOMString--DOMString-subject">getProperties</a></span> (<span class="idlParam">optional <span class="idlParamType"><a>DOMString</a>?</span> <span class="idlParamName">subject</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>Sequence&lt;domstring&gt;</a></span>   <span class="idlMethName"><a href="#widl-DocumentData-getSubjects-Sequence-DOMString--DOMString-property-DOMString-value">getSubjects</a></span> (<span class="idlParam">optional <span class="idlParamType"><a>DOMString</a>?</span> <span class="idlParamName">property</span></span>, <span class="idlParam">optional <span class="idlParamType"><a>DOMString</a>?</span> <span class="idlParamName">value</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>Sequence&lt;any&gt;</a></span>         <span class="idlMethName"><a href="#widl-DocumentData-getValues-Sequence-any--DOMString-subject-DOMString-property">getValues</a></span> (<span class="idlParam">optional <span class="idlParamType"><a>DOMString</a>?</span> <span class="idlParamName">subject</span></span>, <span class="idlParam">optional <span class="idlParamType"><a>DOMString</a>?</span> <span class="idlParamName">property</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>DOMString</a></span>             <span class="idlMethName"><a href="#widl-DocumentData-setMapping-DOMString-in-DOMString-mapping-in-DOMString-uri">setMapping</a></span> (<span class="idlParam"><span class="idlParamType"><a>in DOMString</a></span> <span class="idlParamName">mapping</span></span>, <span class="idlParam"><span class="idlParamType"><a>in DOMString</a></span> <span class="idlParamName">uri</span></span>);</span>
+};</span>
+</pre><div typeof="bibo:Chapter" about="#attributes-1" class="section"><h4 id="attributes-1">Attributes</h4><dl class="attributes"><dt id="widl-DocumentData-rdf"><code>rdf</code> of type <span class="idlAttrType"><a>optional RDFEnvironment</a></span></dt><dd>The interface to the RDF convenience methods and functionality.
+  Implementations <em class="rfc2119" title="may">may</em> omit access to the underlying RDF implementation.
+  If implementations include this attribute, they <em class="rfc2119" title="must">must</em> conform to the
+  [<cite><a class="bibref" rel="biblioentry" href="#bib-RDF-API">RDF-API</a></cite>] specification.</dd><dt id="widl-DocumentData-rdfa"><code>rdfa</code> of type <span class="idlAttrType"><a href="#idl-def-RDFaEnvironment" class="idlType"><code>RDFaEnvironment</code></a></span></dt><dd>The RDFa Environment interface provides RDFa-specific capabilities.</dd></dl></div><div typeof="bibo:Chapter" about="#methods-3" class="section"><h4 id="methods-3">Methods</h4><dl class="methods"><dt id="widl-DocumentData-getProjection-Projection-DOMString-subject-object-template"><code>getProjection</code></dt><dd>Retrieves a <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a> given a subject and an optional 
+  Projection template if the subject exists in the document. If the subject
+  does not exist in the document, <code>null</code> is returned.
+
+  
+  <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">subject</td><td class="prmType"><code><a>DOMString</a></code></td><td class="prmNullFalse">✘</td><td class="prmOptFalse">✘</td><td class="prmDesc">The subject to use when matching against triples. The subject can
+    be either an absolute URI or a CURIE. The subject is used
+    to match against the URI in the first part of a triple. An implementation 
+    <em class="rfc2119" title="must">must</em> coerce the DOMString to the same type as the triple's subject being 
+    compared. If the type coercion will result in a URI, the CURIE mappings 
+    <em class="rfc2119" title="must">must</em> be queried first for a mapping and the given property expanded as a 
+    CURIE if a mapping is found. If the subject does not exist in the 
+    document, the return value <em class="rfc2119" title="must">must</em> be <code>null</code>.</td></tr><tr><td class="prmName">template</td><td class="prmType"><code><a>object</a></code></td><td class="prmNullFalse">✘</td><td class="prmOptTrue">✔</td><td class="prmDesc">The <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a> template is used to build the return
+    value. The template consists of a key-value associative array
+    where the key is the name of the property to create in the 
+    <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a> and the value is the URI to use when matching against
+    predicates in each triple.</td></tr></table><div><em>Return type: </em><code><a href="#idl-def-Projection" class="idlType"><code>Projection</code></a></code></div></dd><dt id="widl-DocumentData-getProjections-Sequence--Projection--object-template"><code>getProjections</code></dt><dd>Retrieves a list of all <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a>s in the document using
+    the optional <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a> template to build the 
+    <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a>s.
+
+  
+  <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">template</td><td class="prmType"><code><a>object</a></code></td><td class="prmNullFalse">✘</td><td class="prmOptTrue">✔</td><td class="prmDesc">The <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a> template is used to build the return
+    value. The template consists of a key-value associative array
+    where the key is the name of the property to create in the 
+    <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a> and the value is the URI to use when matching against
+    predicates in each triple.</td></tr></table><div><em>Return type: </em><code><a>Sequence &lt;Projection&gt;</a></code></div></dd><dt id="widl-DocumentData-getProjections-Sequence--Projection--DOMString-property-DOMString-value-object-template"><code>getProjections</code></dt><dd>Retrieves a list of <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a>s that match the given optional
+    property and value, constructed using the given <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a> 
+    template.
+
+  
+  <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">property</td><td class="prmType"><code><a>DOMString</a></code></td><td class="prmNullFalse">✘</td><td class="prmOptTrue">✔</td><td class="prmDesc">The property to use when matching against triples. The property can
+    be either an absolute URI or a CURIE. The property is used
+    to match against the URI in the second part of a triple, also known as the
+    predicate. An implementation <em class="rfc2119" title="must">must</em> coerce the DOMString to the same type as
+    the predicate being compared. If the type coercion will result in
+    a URI, the CURIE mappings <em class="rfc2119" title="must">must</em> be queried first for a mapping and the given 
+    property expanded as a CURIE if a mapping is found. If the value is
+    <code>null</code>, the match is always positive.</td></tr><tr><td class="prmName">value</td><td class="prmType"><code><a>DOMString</a></code></td><td class="prmNullTrue">✔</td><td class="prmOptTrue">✔</td><td class="prmDesc">The value to use when matching against triples. The value can
+    be either an absolute URI or a CURIE. The value is used to 
+    match against the final part of a triple, also known as the object. An 
+    implementation <em class="rfc2119" title="must">must</em> coerce the DOMString to the same type as the 
+    object being compared. If the type coercion will result in a URI, the 
+    CURIE mappings <em class="rfc2119" title="must">must</em> be queried first for a mapping and the given value 
+    expanded as a CURIE if a mapping is found. If the value is
+    <code>null</code>, the match is always positive.
+    </td></tr><tr><td class="prmName">template</td><td class="prmType"><code><a>object</a></code></td><td class="prmNullFalse">✘</td><td class="prmOptTrue">✔</td><td class="prmDesc">The <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a> template is used to build the return
+    value. The template consists of a key-value associative array
+    where the key is the name of the property to create in the 
+    <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a> and the value is the URI to use when matching against
+    predicates in each triple.</td></tr></table><div><em>Return type: </em><code><a>Sequence &lt;Projection&gt;</a></code></div></dd><dt id="widl-DocumentData-getProperties-Sequence-DOMString--DOMString-subject"><code>getProperties</code></dt><dd>Retrieves a list of DOMStrings which are IRI identifiers for properties
+    given an optional subject to match against.
+
+  
+  <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">subject</td><td class="prmType"><code><a>DOMString</a></code></td><td class="prmNullTrue">✔</td><td class="prmOptTrue">✔</td><td class="prmDesc">The subject to use when matching against triples. The subject is used
+    to match against the URI in the first part of a triple. The subject can
+    be either an absolute URI or a CURIE. The subject is used to 
+    match against the first part of a triple. An implementation <em class="rfc2119" title="must">must</em> coerce the 
+    DOMString to the same type as the triple's subject that is being compared. 
+    If the type coercion will result in a URI, the CURIE mappings <em class="rfc2119" title="must">must</em> be 
+    queried first for a mapping and the given property expanded as a CURIE if a 
+    mapping is found. If the given subject is <code>null</code>, the match is 
+    always positive.</td></tr></table><div><em>Return type: </em><code><a>Sequence&lt;DOMString&gt;</a></code></div></dd><dt id="widl-DocumentData-getSubjects-Sequence-DOMString--DOMString-property-DOMString-value"><code>getSubjects</code></dt><dd>Retrieves a list of DOMStrings which are IRI identifiers for subjects
+    given an optional property and value to match against.
+
+  
+  <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">property</td><td class="prmType"><code><a>DOMString</a></code></td><td class="prmNullTrue">✔</td><td class="prmOptTrue">✔</td><td class="prmDesc">The property to use when matching against triples. The property can
+    be either an absolute URI or a CURIE. The property is used
+    to match against the URI in the second part of a triple, also known as the
+    predicate. An implementation <em class="rfc2119" title="must">must</em> coerce the DOMString to the same type as
+    the predicate being compared. If the type coercion will result in
+    a URI, the CURIE mappings <em class="rfc2119" title="must">must</em> be queried first for a mapping and the given 
+    property expanded as a CURIE if a mapping is found. If the value is
+    <code>null</code>, the match is always positive.</td></tr><tr><td class="prmName">value</td><td class="prmType"><code><a>DOMString</a></code></td><td class="prmNullTrue">✔</td><td class="prmOptTrue">✔</td><td class="prmDesc">The value to use when matching against triples. The value can
+    be a number, a boolean, a DOMString, an absolute URI or a CURIE. The value is 
+    used to match against the final part of a triple, also known as the object. 
+    An implementation <em class="rfc2119" title="must">must</em> coerce the DOMString to the same type as the triple
+    object being compared. If the type coercion will result in a URI, the 
+    CURIE mappings <em class="rfc2119" title="must">must</em> be queried first for a mapping and the given property 
+    expanded as a CURIE if a mapping is found. If the value is
+    <code>null</code>, the match is always positive.
+    </td></tr></table><div><em>Return type: </em><code><a>Sequence&lt;DOMString&gt;</a></code></div></dd><dt id="widl-DocumentData-getValues-Sequence-any--DOMString-subject-DOMString-property"><code>getValues</code></dt><dd>Retrieves a list of mixed types given an optional subject and property to
+    match against.
+
+  
+  <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">subject</td><td class="prmType"><code><a>DOMString</a></code></td><td class="prmNullTrue">✔</td><td class="prmOptTrue">✔</td><td class="prmDesc">The subject to use when matching against triples. The subject can
+    be either an absolute URI or a CURIE. The subject is used
+    to match against the URI in the first part of a triple. An implementation 
+    <em class="rfc2119" title="must">must</em> coerce the DOMString to the same type as the subject being 
+    compared. If the type coercion will result in a URI, the CURIE mappings <em class="rfc2119" title="must">must</em> 
+    be queried first for a mapping and the given property expanded as a CURIE if 
+    a mapping is found. If the value is <code>null</code>, the match is always 
+    positive.</td></tr><tr><td class="prmName">property</td><td class="prmType"><code><a>DOMString</a></code></td><td class="prmNullTrue">✔</td><td class="prmOptTrue">✔</td><td class="prmDesc">The property to use when matching against triples. The property can
+    be either an absolute URI or a CURIE. The property is used
+    to match against the URI in the second part of a triple, also known as the
+    predicate. An implementation <em class="rfc2119" title="must">must</em> coerce the DOMString to the same type as
+    the predicate being compared. If the type coercion will result in
+    a URI, the CURIE mappings <em class="rfc2119" title="must">must</em> be queried first for a mapping and the given 
+    property expanded as a CURIE if a mapping is found. If the value is
+    <code>null</code>, the match is always positive.</td></tr></table><div><em>Return type: </em><code><a>Sequence&lt;any&gt;</a></code></div></dd><dt id="widl-DocumentData-setMapping-DOMString-in-DOMString-mapping-in-DOMString-uri"><code>setMapping</code></dt><dd>Sets a mapping given a mapping and a URI to map.
+  
+  <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">mapping</td><td class="prmType"><code><a>in DOMString</a></code></td><td class="prmNullFalse">✘</td><td class="prmOptFalse">✘</td><td class="prmDesc">The shortened form of the URI to map.</td></tr><tr><td class="prmName">uri</td><td class="prmType"><code><a>in DOMString</a></code></td><td class="prmNullFalse">✘</td><td class="prmOptFalse">✘</td><td class="prmDesc">An absolute URI that the mapping should expand to when used with any
+        of the structured data APIs.</td></tr></table><div><em>Return type: </em><code><a>DOMString</a></code></div></dd></dl></div>
+
+</div>
+
+<div class="normative section" id="rdfa-environment" typeof="bibo:Chapter" about="#rdfa-environment">
+<h3><span class="secno">3.5 </span>RDFa Environment</h3>
+
+<p>
+The <dfn title="RDFaEnvironment" id="dfn-rdfaenvironment">RDFaEnvironment</dfn> interface is used to perform RDFa-specific
+actions.
+</p>
+
+<pre class="idl"><span class="idlInterface" id="idl-def-RDFaEnvironment">[<span class="extAttr">NoInterfaceObject</span>]
+interface <span class="idlInterfaceID">RDFaEnvironment</span> {
+<span class="idlMethod">    <span class="idlMethType"><a>Sequence&lt;projection&gt;</a></span> <span class="idlMethName"><a href="#widl-RDFaEnvironment-query-Sequence-Projection--object-query-object-template">query</a></span> (<span class="idlParam">optional <span class="idlParamType"><a>object</a>?</span> <span class="idlParamName">query</span></span>, <span class="idlParam">optional <span class="idlParamType"><a>object</a></span> <span class="idlParamName">template</span></span>);</span>
+};</span>
+</pre><div typeof="bibo:Chapter" about="#methods-4" class="section"><h4 id="methods-4">Methods</h4><dl class="methods"><dt id="widl-RDFaEnvironment-query-Sequence-Projection--object-query-object-template"><code>query</code></dt><dd>Generates a sequence of <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a>s that match the 
+  given selection criteria.
+  
+  <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">query</td><td class="prmType"><code><a>object</a></code></td><td class="prmNullTrue">✔</td><td class="prmOptTrue">✔</td><td class="prmDesc">An associative array containing properties as keys and strings to 
+    match as values. If the query is null, every item in the default storage
+    mechanism is returned.</td></tr><tr><td class="prmName">template</td><td class="prmType"><code><a>object</a></code></td><td class="prmNullFalse">✘</td><td class="prmOptTrue">✔</td><td class="prmDesc">A template describing the attributes to create in each 
+    <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a> that is returned. The template is an associative 
+    array containing key-value pairs. Each key corresponds to a property that
+    will be created in the Projection that is returned. Each value corresponds
+    to a triple's property, also known as a predicate, whose value will be 
+    stored in the <a class="tref internalDFN" title="Projection" href="#dfn-projection">Projection</a> as the value of the key specified in
+    the template.</td></tr></table><div><em>Return type: </em><code><a>Sequence&lt;Projection&gt;</a></code></div></dd></dl></div>
+</div>
+
+</div>
+
+<div id="the-initialization-process" typeof="bibo:Chapter" about="#the-initialization-process" class="section">
+
+<!-- OddPage -->
+<h2><span class="secno">4. </span>The Initialization Process</h2>
+
+<p>
+The RDFa API <em class="rfc2119" title="must">must</em> be initialized before the Web developer has access to
+any of the methods that are defined in this specification. To initialize the
+API environment in a Browser-based environment, an implementor <em class="rfc2119" title="must">must</em> do the 
+following:
+</p>
+
+<ol>
+<li>Initialize all of the interfaces in the DOM environment required by
+this specification.</li>
+</ol>
+
+Unless otherwise specified, the document base is effectively the value of 
+<code>window.location.toString()</code>.
+
+</div>
+
+<div class="informative section" id="future-discussion" typeof="bibo:Chapter" about="#future-discussion">
+
+<!-- OddPage -->
+<h2><span class="secno">5. </span>Future Discussion</h2><p><em>This section is non-normative.</em></p>
+
+<p>
+The RDFa Working Group is currently discussing whether or not to include the
+following advanced functionality: 
+</p>
+<ul>
+<li>An event mechanism for receiving Triple modification notifications, if
+changes occur in the DOM.</li>
+<li>A mechanism for adding RDFa data into existing DOM content other than
+the direct modification of elements to add RDFa attributes.</li>
+</ul>
+
+</div>
+
+<div class="appendix section" id="acknowledgements" typeof="bibo:Chapter" about="#acknowledgements">
+
+<!-- OddPage -->
+<h2><span class="secno">A. </span>Acknowledgements</h2>
+
+<p>
+At the time of publication, the members of the RDFa Working Group
+were:</p>
+
+<ul>
+<li>Ben Adida, Mozilla</li>
+<li>Benjamin Adrian, German Research Center for Artificial Intelligence (DFKI) Gmbh</li>
+<li>Mark Birbeck, webBackplane.com (Invited Expert)</li>
+<li>Markus Gylling, DAISY Consortium</li>
+<li>Ivan Herman, <acronym title="World Wide Web Consortium">W3C</acronym></li>
+<li>Toby Inkster (Invited Expert)</li>
+<li>Shane McCarron, Applied Testing and Technology, Inc. (Invited Expert)</li>
+<li>Knud Möller, DERI Galway at the National University of Ireland</li>
+<li>John O'Donovan, British Broadcasting Corporation</li>
+<li>Steven Pemberton, Centre for Mathematics and Computer Science (CWI)</li>
+<li>Nathan Rixham (Invited Expert)</li>
+<li>Manu Sporny, Digital Bazaar (Chair, Invited Expert)</li>
+<li>Thomas Steiner, Google</li>
+<li>Robert Weir, IBM Corporation</li>
+</ul>
+
+</div>
+
+<!--  END s_acknowledgements  -->
+
+
+
+<!-- 
+<h1>IDL Definitions</h1>
+
+<p>
+This document contains the Web IDL definitions of the RDFa DOM
+API: <a href="rdfa_dom_api.idl">rdfa_dom_api.idl</a></p>
+</section>
+<section class="appendix informative">
+<h1>ECMAScript API Interface Example</h1>
+
+<p>
+This document contains a ECMAScript interface implementation for the RDFa 
+API:<a href="rdfa_dom_api.js">rdfa_dom_api.js</a></p>
+ -->
+
+
+
+
+
+<div id="references" class="appendix section" typeof="bibo:Chapter" about="#references">
+<!-- OddPage -->
+<h2><span class="secno">B. </span>References</h2><div id="normative-references" typeof="bibo:Chapter" about="#normative-references" class="section"><h3><span class="secno">B.1 </span>Normative references</h3><dl class="bibliography" about=""><dt id="bib-HTML-RDFA">[HTML-RDFA]</dt><dd rel="dcterms:requires">Manu Sporny; et al. <a href="http://www.w3.org/TR/2011/WD-rdfa-in-html-20110525/"><cite>HTML+RDFa 1.1</cite></a> 25 May 2011. W3C Working Draft. URL: <a href="http://www.w3.org/TR/2011/WD-rdfa-in-html-20110525/">http://www.w3.org/TR/2011/WD-rdfa-in-html-20110525/</a> 
+</dd><dt id="bib-RDF-API">[RDF-API]</dt><dd rel="dcterms:requires">Nathan Rixham, Manu Sporny; et al. <a href="http://www.w3.org/2010/02/rdfa/sources/rdf-api/"><cite>RDF API</cite></a> Latest. W3C Editor's Draft. URL: <a href="http://www.w3.org/2010/02/rdfa/sources/rdf-api/">http://www.w3.org/2010/02/rdfa/sources/rdf-api/</a>
+</dd><dt id="bib-RDFA-CORE">[RDFA-CORE]</dt><dd rel="dcterms:requires">Shane McCarron; et al. <a href="http://www.w3.org/TR/2012/PR-rdfa-core-20120508/"><cite>RDFa Core 1.1: Syntax and processing rules for embedding RDF through attributes.</cite></a> 8 May 2012. W3C Proposed Recommendation. URL: <a href="http://www.w3.org/TR/2012/PR-rdfa-core-20120508/">http://www.w3.org/TR/2012/PR-rdfa-core-20120508/</a> 
+</dd><dt id="bib-RFC2119">[RFC2119]</dt><dd rel="dcterms:requires">S. Bradner. <a href="http://www.ietf.org/rfc/rfc2119.txt"><cite>Key words for use in RFCs to Indicate Requirement Levels.</cite></a> March 1997. Internet RFC 2119.  URL: <a href="http://www.ietf.org/rfc/rfc2119.txt">http://www.ietf.org/rfc/rfc2119.txt</a> 
+</dd><dt id="bib-WEBIDL">[WEBIDL]</dt><dd rel="dcterms:requires">Cameron McCormack. <a href="http://www.w3.org/TR/2011/WD-WebIDL-20110927/"><cite>Web IDL.</cite></a> 27 September 2011. W3C Working Draft. (Work in progress.) URL: <a href="http://www.w3.org/TR/2011/WD-WebIDL-20110927/">http://www.w3.org/TR/2011/WD-WebIDL-20110927/</a> 
+</dd><dt id="bib-XHTML-RDFA">[XHTML-RDFA]</dt><dd rel="dcterms:requires">Shane McCarron; et. al. <a href="http://www.w3.org/TR/2012/PR-xhtml-rdfa-20120508/"><cite>XHTML+RDFa 1.1.</cite></a> 8 May 2012. W3C Proposed Recommendation. URL: <a href="http://www.w3.org/TR/2012/PR-xhtml-rdfa-20120508/">http://www.w3.org/TR/2012/PR-xhtml-rdfa-20120508/</a> 
+</dd></dl></div><div id="informative-references" typeof="bibo:Chapter" about="#informative-references" class="section"><h3><span class="secno">B.2 </span>Informative references</h3><dl class="bibliography" about=""><dt id="bib-DOM-LEVEL-1">[DOM-LEVEL-1]</dt><dd rel="dcterms:references">Vidur Apparao; et al. <a href="http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/"><cite>Document Object Model (DOM) Level 1.</cite></a> 1 October 1998. W3C Recommendation. URL: <a href="http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/">http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/</a> 
+</dd><dt id="bib-ECMA-262">[ECMA-262]</dt><dd rel="dcterms:references"><a href="http://www.ecma-international.org/publications/standards/Ecma-262.htm"><cite>ECMAScript Language Specification.</cite></a> December 1999. URL: <a href="http://www.ecma-international.org/publications/standards/Ecma-262.htm">http://www.ecma-international.org/publications/standards/Ecma-262.htm</a> 
+</dd><dt id="bib-MICROFORMATS">[MICROFORMATS]</dt><dd rel="dcterms:references"><a href="http://microformats.org"><cite>Microformats</cite></a>. URL: <a href="http://microformats.org">http://microformats.org</a> 
+</dd><dt id="bib-RDF-CONCEPTS">[RDF-CONCEPTS]</dt><dd rel="dcterms:references">Graham Klyne; Jeremy J. Carroll. <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210"><cite>Resource Description Framework (RDF): Concepts and Abstract Syntax.</cite></a> 10 February 2004. W3C Recommendation. URL: <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210">http://www.w3.org/TR/2004/REC-rdf-concepts-20040210</a> 
+</dd><dt id="bib-RDFA-PRIMER">[RDFA-PRIMER]</dt><dd rel="dcterms:references">Ben Adida, Ivan Herman, Manu Sporny. <a href="http://www.w3.org/TR/2011/WD-rdfa-primer-20111208"><cite>RDFa Primer.</cite></a> 08 December 2011. W3C Working Draft. URL: <a href="http://www.w3.org/TR/2011/WD-rdfa-primer-20111208">http://www.w3.org/TR/2011/WD-rdfa-primer-20111208</a> 
+</dd><dt id="bib-RDFA-SYNTAX">[RDFA-SYNTAX]</dt><dd rel="dcterms:references">Ben Adida, et al. <a href="http://www.w3.org/TR/2008/REC-rdfa-syntax-20081014"><cite>RDFa in XHTML: Syntax and Processing.</cite></a> 14 October 2008. W3C Recommendation. URL: <a href="http://www.w3.org/TR/2008/REC-rdfa-syntax-20081014">http://www.w3.org/TR/2008/REC-rdfa-syntax-20081014</a> 
+</dd><dt id="bib-SVGTINY12">[SVGTINY12]</dt><dd rel="dcterms:references">Scott Hayman; et al. <a href="http://www.w3.org/TR/2008/REC-SVGTiny12-20081222"><cite>Scalable Vector Graphics (SVG) Tiny 1.2 Specification.</cite></a> 22 December 2008. W3C Recommendation. URL: <a href="http://www.w3.org/TR/2008/REC-SVGTiny12-20081222">http://www.w3.org/TR/2008/REC-SVGTiny12-20081222</a> 
+</dd><dt id="bib-TURTLE">[TURTLE]</dt><dd rel="dcterms:references">David Beckett, Tim Berners-Lee. <a href="http://www.w3.org/TeamSubmission/turtle/"><cite>Turtle: Terse RDF Triple Language.</cite></a> January 2008. W3C Team Submission. URL: <a href="http://www.w3.org/TeamSubmission/turtle/">http://www.w3.org/TeamSubmission/turtle/</a> 
+</dd></dl></div></div></body></html>

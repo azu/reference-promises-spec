@@ -1,0 +1,1001 @@
+<!-- http://dev.w3.org/2009/dap/policy/Profile.html -->
+<!DOCTYPE html> 
+<html>
+  <head>
+    <title>Policy Markup for Device APIs</title>
+    <meta http-equiv='Content-Type' 
+          content='text/html;charset=utf-8'/> <script
+          src='../ReSpec.js/js/respec.js' 
+          class='remove'></script> <script class='remove'>
+      var respecConfig = { specStatus: "ED", 
+      shortName: "profile",
+      // publishDate: "2009-10-23", 
+      // previousPublishDate: "1977-03-15",
+      edDraftURI: "http://dev.w3.org/2009/dap/policy/Profile.html",
+      // lcEnd: "2009-08-05",
+    };
+    </script> <script src='../common/configPolicy.js' class='remove'></script>
+    </head> <body>
+    <section id='abstract'>
+      <p>This document defines policy markup for Device APIs. It is
+      similar to the XACML 2.0 standard, but different.</p>
+    </section> <!-- abstract -->
+
+    <section id='introduction'>
+      <h2>Introduction</h2> 
+      <p>
+        The Devices API policy framework [[!DAP-POLICY-FRAMEWORK]]
+        outlines the role and use of policy in the context of Device
+        APIs. This document defines  a policy markup similar to XACML
+        2.0 [[!XACML20]], but different.</p>
+      <section id="values-and-types">
+	<h3>Values and Types</h3>
+	  <p>Each value in an expression is conceptually a
+	  bag of potentially multiple simple values. The
+	  bag can be empty, containing no simple values. In
+	  practice almost every value encountered in the model is
+	  either an empty bag or a bag containing a single simple
+	  value. When a bag contains one or more simple values,
+	  all the simple values have the same type, one of: </p>
+	  <ul>
+	    <li>String</li> <li>IRI</li>
+	  </ul> <p> Each <a href="#modifier-function">modifier
+	  function</a> defines its result type, and how the
+	  function’s effect depends on the type of the input. </p>
+	  <p> Each <a href="#matching-function">matching
+	  function</a> defines how it depends on the type of its
+	  input. </p> <p> Where a modifier function or matching
+	  function does not specify how it treats an input of a
+	  particular type, it implicitly converts the value to a
+	  bag of strings before performing its operation. </p> <p>
+	  When evaluating an access control query at a given
+	  application Execution Phase, an expression may have
+	  undetermined value if one or more of the attributes on
+	  which it depends has undetermined value at that
+	  execution phase. </p> <p> For each <a
+	  href="#modifier-function">modifier function</a> and <a
+	  href="#matching-function">matching function</a>, its
+	  result for a given set of inputs is determined if and
+	  only if all of its inputs are determined. </p> <p> The
+	  syntax used for encoding a certificate fingerprint in
+	  DAP Security Policy documents is the SDP syntax defined
+	  in [[!RFC4572]] without the "fingerprint" scheme, as
+	  follows: </p> 
+<pre><code>dapfingerprint = hash-func SP fingerprint
+hash-func      = "sha-1" / "sha-224" / "sha-256" /
+	         "sha-384" / "sha-512" /
+                 "md5" / "md2" / token 
+                 ; Additional hash functions can only come 
+                 ; from updates to [[!RFC3279]]
+fingerprint    = 2UHEX *(":" 2UHEX) 
+                 ; Each byte in upper-case hex, separated
+                 ; by colons. 
+UHEX           = DIGIT / %x41-46 ; A-F uppercase </code></pre>
+	</section> <!-- values-and-types -->
+      <section id="attribute-match">
+	<h3>Attribute Match</h3>
+	  <p>An attribute match is a statement about one attribute
+	  whose truth can be evaluated, that is it evaluates to
+	  true or false (or undetermined). An attribute match is a
+	  subject match, resource match or environment match,
+	  depending on whether the attribute being matched is a
+	  subject, resource or environment attribute. </p> 
+    <p>An
+	  attribute match is an expression with a boolean result
+	  whose form is limited to one of the following:</p>
+	  <ul> 
+        <li>matchfunc(modifierfunc(attr), value)</li> 
+        <li>matchfunc(attr, value)</li>
+	  </ul>
+    <p>
+	  Matchfunc is the matching function, a function with a
+	  boolean result and two non-boolean inputs. Its result is
+	  undetermined if either input is undetermined. </p>
+    <p>In
+	  the first case, modifierfunc is a function with a
+	  non-boolean result and a single non-boolean input. The
+	  result of modifierfunc is undetermined if its input is
+	  undetermined. </p>
+    <p> In the second case, there is no
+	  modifierfunc. </p>
+    <p>The value to match (matchfunc’s
+	  second input) is a sequence of literal text and other
+	  attribute references implicitly combined using string
+	  concatenation. Thus its type is bag containing a single
+	  string, unless there is any reference to an attribute
+	  resolving to an empty bag, in which case it is an empty
+	  bag. Any reference to a non-string attribute is
+	  converted to string bag first. Any reference to an
+	  attribute whose value is a bag containing two or more
+	  values causes the whole match value to be undefined. Any
+	  reference to an undetermined attribute causes the whole
+	  value to match to be undetermined. </p>
+    <p> For a
+	  subject attribute match, only a single literal string is
+	  allowed, with no attribute references. </p>
+    <p> If the
+	  attribute does not exist, then it has the empty bag
+	  value. </p>
+	</section> <!-- attribute-match -->
+      <section id="subject-specification">
+	<h3>Subject Match</h3>
+	  <p>A <code>subject</code> specification consists of a
+	  conjunctive sequence of <code>subject</code> matches. 
+      A specification is evaluated as follows:</p>
+	  <ul> <li>is determined and has value TRUE if
+	  each of the <code>subject</code> matches has value
+	  TRUE</li> <li>otherwise, is undetermined if any
+	  or the <code>subject</code> matches is
+	  undetermined</li> <li>otherwise is determined
+	  and has value FALSE.</li> </ul>
+      <p>
+	  A <code>subject</code> match is an attribute match where the
+	  attribute being matched is a <code>subject</code> attribute,
+	  and the match value is a literal string and does not
+	  contain any attribute references. </p>
+      </section> <!-- subject-specification -->
+  <section id="target">
+	<h3>Target</h3>
+	  <p>The <code>target</code> of a policy or
+	  policy set identifies the set of
+	  subjects to which the policy or
+	  policy set applies. </p> 
+      <p>The <code>target</code>
+	  consists of a disjunctive sequence of <code>subject</code>
+	  specifications. A target specification is
+	  evaluated as follows:</p>
+	  <ul> 
+        <li>has value TRUE if at least one of the
+        subject specifications has value TRUE</li>
+        <li>otherwise has value FALSE</li> 
+        <li>A
+        <code>policy</code> or <code>policy-set</code> that has
+        no <code>target</code> explicitly specified is
+        treated as having a <code>target</code> that
+        evaluates unconditionally to TRUE.</li> 
+      </ul>
+  </section> <!-- target -->
+  <section id="decision">
+	<h3>Decision</h3>
+	  <p>If determined, the result of a rule or
+	  policy or policy set is a
+	  decision, either “not applicable” or any one of
+	  the <a href="#effect">effects</a> “<code>permit</code>”,
+	  “<code>prompt-blanket</code>”, “<code>prompt-session</code>”, “<code>prompt-oneshot</code>” or
+	  “<code>deny</code>”. </p> <p> The result of a rule or
+	  policy or policy set may be
+	  undetermined under conditions specified for each below.
+	  </p>
+  </section> <!-- decision -->
+  <section id="rule">
+	<h3>Rule</h3>
+	  <p>
+	  A rule consists of a <a href="#condition">condition</a> and an
+      <a href="#effect">effect</a>. 
+	  </p> <p>
+	  The result of a rule is determined if and only if its condition has determined value.
+	  </p>
+  </section> <!-- rule -->
+  <section id="condition">
+	<h3>Condition</h3>
+	  <p>The <code>condition</code> of a <code>rule</code> specifies
+	  extra criteria that need to be matched before the
+	  <code>rule</code> becomes applicable. </p> 
+      <p> The
+	  <code>condition</code> consists of one or more attribute
+	  matches, combined with AND and OR operators into an
+	  arbitrarily nested tree. </p> 
+      <p> The AND operator is
+	  evaluated as follows:</p>
+      <ul> 
+        <li>is determined and has
+	  value “no match” if any input is “no match”</li>
+	  <li>otherwise is undetermined if any input is
+	  undetermined</li> 
+      <li>otherwise is determined and has
+      value “match”</li> 
+      </ul>
+      <p> The OR operator is evaluated as
+	  follows:</p>
+      <ul> 
+        <li>is determined and has value “match” if
+	  any input is “match”</li> 
+      <li>otherwise is undetermined
+	  if any input is undetermined</li> 
+      <li>otherwise is
+	  determined and has value “no match”</li> 
+    </ul>
+  </section> <!-- decision -->
+  <section id="policy">
+	<h3>Policy</h3>
+	  <p>A <code>policy</code> has a <code>target</code>, and a list
+	  of zero or more <code>rules</code> combined using a <a
+	  href="#combining-algorithm"><code>rule-combining
+	  algorithm</code></a>. Where a directive attribute query
+	  finds more than one applicable directive attribute set,
+	  the first one is used. </p> <p>A <code>policy</code>
+	  optionally has a textual description. </p> <p> A
+	  <code>policy</code> optionally has an id. If an
+	  implementation provides a means to provision a security
+	  policy fragment to replace an existing one, this id can
+	  be used to identify the policy or policy
+	  set to replace. No management of ids is mandated,
+	  therefore it is recommended that a standardised textual
+	  representation of a UUID should be used as the id. </p>
+	  <p> The result of a policy is determined if and only if
+	  its combining rule has determined value. </p>
+  </section> <!-- policy -->
+  <section id="policy-set">
+	<h3>Policy Set</h3>
+	  <p>The overall security framework is a policy
+	  set. </p> <p> A <code>policy-set</code> is a target
+	  with a list of zero or more <code>policies</code> and
+	  <code>policy sets</code> combined using a <a
+	  href="#combining-algorithm">policy-combining
+	  algorithm</a>. Where a directive attribute query
+	  finds more than one applicable directive attribute set,
+	  the first one is used. </p> <p> A <code>policy set</code>
+	  optionally has an id. If an implementation provides a
+	  means to provision a security policy fragment to replace
+	  an existing one, this id can be used to identify the
+	  <code>policy</code> or <code>policy set</code> to replace. No
+	  management of ids is mandated, therefore it is
+	  recommended that a standardised textual representation
+	  of a UUID should be used as the id. </p> <p> The result
+	  of a policy is determined if and only if its combining
+	  rule has determined value. </p>
+  </section> <!-- policy-set -->
+  <section id="policy-document">
+	<h3>Policy Document</h3>
+	  <p>Where the implementation supports deployment of a
+	  fragment of policy to add to the existing security
+	  policy framework or to replace a part of it, the
+	  policy document is the unit of addition or
+	  replacement. A policy document can be either a
+	  <code>policy</code> or a <code>policy-set</code>. </p>
+		</section> <!-- policy-document -->
+  <section id="signed-policy-document">
+	<h3>Signed Policy Document</h3>
+	  <p>Where the implementation supports deployment of
+	  policy fragments as above, the signed policy
+	  documentx is the cryptographically signed unit of
+	  deployment. It contains one or more policy
+	  documents as well as a single signature. </p>
+  </section> <!-- signed-policy-document -->
+  <section id="matching-function">
+	<h3>Matching Function</h3>
+	  <p>The matching function used in an attribute match is
+	  one of the following. </p>
+	  <section id="string-equality-matching-function">
+	    <h4>String Equality Matching Function</h4>
+	      <p>True if and only if some string from one input string
+	      bag is byte-for-byte equal to some string from the other
+	      input string bag. Thus an empty bag is not equal to
+	      anything, not even another empty bag. An input of type
+	      other than empty bag or string bag is converted to
+	      string bag first. </p>
+	  </section> <!-- string-equality-matching-function -->
+	  <section id="globbing-matching-function">
+	    <h4>Globbing Matching Function</h4>
+	      <p>True if and only if, for some string in the first
+	      input string bag, the entire string matches the glob
+	      pattern in some string in the second input string bag.
+	      If either input is the empty bag, the result is false.
+	      An input of type other than empty bag or string bag is
+	      converted to string bag first. </p> <p>A glob pattern is
+	      as described in [[!SUS3]] section 2.13 Pattern Matching Notation
+	      but excluding 2.13.3 Patterns Used for Filename
+	      Expansion. </p> <!-- Shell & Utilities Volume of the SUSv3 spec --><p>Using this function with a glob
+	      pattern of “*” (a single asterisk) is a convenient way
+	      to test whether the first input is not an empty bag.
+	      </p>
+	  </section> <!-- globbing-matching-function -->
+	  <section id="regular-expression-matching-function">
+	    <h4>Regular Expression Matching Function</h4>
+	      <p>True if and only if, for some string in the first
+	      input string bag, some part of the string matches the
+	      regular expression pattern in some string in the second
+	      input string bag. If either input is the empty bag, the
+	      result is false. An input of type other than empty bag
+	      or string bag is converted to string bag first. </p>
+	      <p>This uses the definition of regular expressions in
+	      ECMAScript 3rd edition [[!ECMA-262]]. </p>
+	  </section> <!-- regular-expression-matching-function -->
+  </section> <!-- matching-function -->
+  <section id="modifier-function">
+	<h3>Modifier Function</h3>
+	  <p>The modifier function optionally specified in each
+	  attribute in a target or condition is one of the
+	  following. </p>
+	  <section id="uri-scheme-modifier-function">
+	    <h4>URI-Scheme Modifier Function</h4>
+	      <p>If the input is a string bag, first it is converted
+	      to a URI bag by interpreting each string as a URI. Any
+	      string that does not have the form of a URI is removed
+	      from the bag. </p> <p>Each URI in the bag is converted
+	      to a string by taking the URI’s scheme component. </p>
+	      <p>Thus the result type is either the empty bag or
+	      string bag. </p>
+	  </section> <!-- uri-scheme-modifier-function -->
+	  <section id="uri-authority-modifier-function">
+	    <h4>URI-Authority Modifier Function</h4>
+	      <p>If the input is a string bag, first it is converted
+	      to a URI bag by interpreting each string as a URI. Any
+	      string that does not have the form of a URI is removed
+	      from the bag. </p> <p>Each URI in the bag is converted
+	      to a string by taking the URI’s scheme and authority
+	      components. If the URI does not have an authority
+	      component, it is removed from the bag. </p> <p>Thus the
+	      result type is either the empty bag or string bag. </p>
+	  </section> <!-- uri-authority-modifier-function -->
+	  <section id="uri-scheme-authority-modifier-function">
+	    <h4>URI-Scheme-Authority Modifier Function</h4>
+	      <p>If the input is a string bag, first it is converted
+	      to a URI bag by interpreting each string as a URI. Any
+	      string that does not have the form of a URI is removed
+	      from the bag. </p> <p>Each URI in the bag is converted
+	      to a string by taking the URI’s scheme and authority
+	      components. If the URI does not have an authority
+	      component, it is removed from the bag. </p> <p>Thus the
+	      result type is either the empty bag or string bag. </p>
+	  </section> <!-- uri-scheme-authority-modifier-function -->
+	  <section id="uri-host-modifier-function">
+	    <h4>URI-Host Modifier Function</h4>
+	      <p>If the input is a string bag, first it is converted
+	      to a URI bag by interpreting each string as a URI. Any
+	      string that does not have the form of a URI is removed
+	      from the bag. </p> <p>Each URI in the bag is converted
+	      to a string by taking the URI’s scheme and authority
+	      components. If the URI does not have an authority
+	      component, it is removed from the bag. </p> <p>Thus the
+	      result type is either the empty bag or string bag. </p>
+	  </section> <!-- uri-host-modifier-function -->
+	  <section id="uri-path-modifier-function">
+	    <h4>URI-Path Modifier Function</h4>
+	      <p>If the input is a string bag, first it is converted
+	      to a URI bag by interpreting each string as a URI. Any
+	      string that does not have the form of a URI is removed
+	      from the bag. </p> <p>Each URI in the bag is converted
+	      to a string by taking the URI’s scheme and authority
+	      components. If the URI does not have an authority
+	      component, it is removed from the bag. </p> <p>Thus the
+	      result type is either the empty bag or string bag. </p>
+	  </section> <!-- uri-path-modifier-function -->
+  </section> <!-- modifier-function -->
+  <section id="combining-algorithm">
+	<h3>Combining Algorithm</h3>
+	  <p>The policy-combining algorithm for a
+	  policy set determines how child
+	  policies and policy sets are combined.
+	  </p> <p>The rule-combining algorithm for a
+	  policy determines how child rules are
+	  combined. </p> <p>The algorithms are described in the
+	  following subsections. The term “child” is used
+	  to mean the child rules in the policy
+	  when applying the policy’s rule-combining
+	  algorithm, or the child policies and
+	  policy sets in the policy set when
+	  applying the policy set’s policy-combining
+	  algorithm. </p>
+	  <section id="deny-overrides-combining-algorithm">
+	    <h4>Deny-Overrides Combining Algorithm</h4>
+	      <p>The Deny-Overrides Combining Algorithm is usable as a
+	      policy-combining algorithm and as a rule-combining
+	      algorithm. </p> 
+          <p>The overall result of a
+	      query is evaluated as follows:</p>
+          <ul> 
+            <li>if any
+	      child evaluates to "deny", then the overall result is
+	      "deny";</li> 
+          <li>otherwise, if any child is
+	      undetermined, then the overall result is
+	      undetermined;</li> 
+          <li>otherwise, if any child evaluates
+	      to "prompt-oneshot", then the overall result is
+	      "prompt-oneshot";</li> 
+          <li>otherwise, if any child
+	      evaluates to "prompt-session", then the overall result
+	      is "prompt-session";</li>
+          <li>otherwise, if any child
+	      evaluates to "prompt-blanket", then the overall result
+	      is "prompt-blanket";</li> 
+          <li>otherwise, if any child
+	      evaluates to "permit", then the overall result is
+	      "permit";</li> 
+          <li>otherwise, the overall result is
+	      "inapplicable".</li> 
+          </ul> 
+	  </section> <!-- deny-overrides-combining-algorithm -->
+	  <section id="permit-overrides-combining-algorithm">
+	    <h4>Permit-Overrides Combining Algorithm</h4>
+	      <p>The Permit-Overrides Combining Algorithm is usable as
+	      a policy-combining algorithm and as a rule-combining
+	      algorithm. The overall result of a query is
+	      evaluated as follows:</p>
+          <ul> 
+            <li>if any child evaluates to
+	      "permit", then the overall result is "permit";</li>
+	      <li>otherwise, if any child is undetermined, then the
+	      overall result is undetermined;</li> 
+          <li>otherwise, if
+	      any child evaluates to "prompt-blanket", then the
+	      overall result is "prompt-blanket";</li>
+          <li>otherwise,
+	      if any child evaluates to "prompt-session", then the
+	      overall result is "prompt-session";</li> 
+          <li>otherwise,
+	      if any child evaluates to "prompt-oneshot", then the
+	      overall result is "prompt-oneshot";</li> 
+          <li>otherwise,
+	      if any child evaluates to "deny", then the overall
+	      result is "deny";</li>
+          <li>otherwise, the overall result
+	      is "inapplicable".</li> 
+          </ul>
+	  </section> <!-- permit-overrides-combining-algorithm -->
+	  <section id="first-applicable-rule-combining-algorithm">
+	    <h4>First-Applicable Rule Combining Algorithm</h4>
+	      <p>The First-Applicable Rule Combining Algorithm is
+	      usable as a rule-combining algorithm. </p>
+          <p>The
+	      overall result of a query is evaluated by processing the
+	      children in written order as follows: </p>
+          <ul> 
+            <li>if the
+	      current child is determined and does not evaluate to
+	      "inapplicable", the overall result is the result of the
+	      current child;</li> 
+          <li>otherwise, if the current child
+	      is undetermined, the overall result is
+	      undetermined;</li> 
+          <li>otherwise, if the current child
+	      is determined and has value "inapplicable", continue
+	      processing at the next child. If already processing the
+	      final child, the overall result is "inapplicable".</li>
+	      </ul> 
+	  </section> <!-- first-applicable-rule-combining-algorithm -->
+	  <section id="first-matching-target-policy-combining-algorithm">
+	    <h4>First-Matching-Target Policy Combining Algorithm</h4>
+	      <p>The First-Matching-Target Policy Combining Algorithm
+	      is usable as a policy-combining algorithm. </p> 
+          <p>The
+	      overall result of a query is evaluated by processing the
+	      children in written order as follows: </p>
+          <ul>
+            <li>if the
+	      current child has a target that matches the overall
+	      result is the result of the current child;</li>
+	      <li>otherwise, continue processing at the next child. If
+	      already processing the final child, the overall result
+	      is "inapplicable".</li> 
+        </ul>
+	  </section> <!-- first-matching-target-policy-combining-algorithm -->
+  </section> <!-- combining-algorithm -->
+  <section id="effect">
+	<h3>Effect</h3>
+	  <p>The effect of a rule is one of the
+	  following: </p>
+	  <section id="permit">
+	    <h4>Permit</h4>
+	      <p>This effect allows requested access without
+	      user interaction. </p>
+	  </section> <!-- permit -->
+	  <section id="deny">
+	    <h4>Deny</h4>
+	      <p>This effect denies requested access without
+	      user interaction. </p>
+	  </section> <!-- deny -->
+	  <section id="prompt-x">
+	    <h4>Prompt-x</h4>
+	      <p>The prompt-oneshot, prompt-session and prompt-blanket
+	      effects allow requested access after explicit
+	      confirmation by the user. The implementation MUST prompt the user
+	      before allowing access. </p> 
+          <p>The implementation MUST only
+	      provide the 
+	      user the option to grant permission up to the maximum
+	      allowed by the effect, ie: </p>
+          <ul>
+	      <li>prompt-oneshot: "deny always", "deny this time",
+	      "allow this time";</li>
+          <li>prompt-session:
+	      prompt-oneshot options plus "deny for this session",
+	      "allow for this session";</li> 
+          <li>prompt-blanket:
+	      prompt-session options plus "allow always".</li>
+          </ul>
+          <p>
+	      The implementation MUST provide a means to respond
+	      with any available option that is applicable in the
+	      context in which the prompt is displayed. </p> 
+          <p> Any
+	      default action MUST be at least as restrictive as
+	      "deny this time". </p> 
+          <p> If the user has the option of
+	      deferring a response indefinitely and the user does not
+	      respond explicitly, the requested access MUST NOT be
+	      allowed. </p> 
+          <p> 
+	      For a widget, a session lasts while the application is
+	      still running and the terminal has not been switched off
+	      or placed in standby mode. </p> <p> For a website,
+	      another visit to the same page in the same Browser tab
+	      or window is part of the same session. </p>
+	  </section> <!-- prompt-x -->
+  </section> <!-- effect -->
+  <section id="query">
+	<h3>Query</h3>
+	  <p>A query represents a specific instance of a
+	  security policy being evaluated in order to make an
+	  access control decision relating to an attempted
+	  operation by a web application. </p> <p>A query
+	  is characterised by the collection of subject
+	  attributes associated with the web application
+	  instance, the collection of resource attributes
+	  associated with the attempted operation, and the
+	  collection of environment attributes associated
+	  with the circumstances of the attempt. The
+	  determinedness of each of these attributes is in
+	  accordance with the execution phase of the
+	  attempt. </p> <p>A query is evaluated against a
+	  <code>policy-set</code>, resulting in a decision in
+	  accordance with the evaluation rules defined in this
+	  specification. </p>
+  </section> <!-- query -->
+</section> <!-- security-model-definition -->
+  <section id="security-policy-document-format">
+    <h2>Security Policy Document Format</h2>
+      <p> This section defines a method for representing a Security Policy (e.g. for
+      interchange or device management purposes). </p>
+      <section id="schema">
+      <h3>Schema</h3>
+	<section id="signed-policy">
+	  <h4>The <code>&lt;signed-policy&gt;</code> Element</h4>
+	    <p>The root element of a signed policy document is a
+	    <code>&lt;signed-policy&gt;></code>. </p>
+	    <p><code>&lt;signed-policy&gt;</code> contains, in any
+	    order, exactly one <code>&lt;signature&gt;</code>
+	    element and one or more elements each of which is either
+	    <code>&lt;policy-set&gt;</code> or
+	    <code>&lt;policy&gt;</code>;. </p>
+	</section>
+	<section id="signature">
+	  <h4>The <code>&lt;signature&gt;</code> Element</h4>
+	    <p>The <code>&lt;signature&gt;</code> element, as a
+	    child of <code>&lt;signed-policy&gt;</code>, specifies
+	    the detached digital signature of the signed policy
+	    document as defined in XML Digital Signature
+	    [[!XMLDSIG-CORE2]], with the following additional
+	    constraints: </p> <ul>
+	      <li>the <code>&lt;signature&gt;</code> element MUST contain one or
+	      more valid &lt;Reference&gt; elements;</li> <li>the
+	      URL attribute of each &lt;Reference&gt; element MUST contain a
+	      reference to a <code>&lt;policy&gt;</code>; or
+	      <code>&lt;policy-set&gt;</code> element that is a
+	      sibling of the <code>&lt;signature&gt;</code> element
+	      in the same Signed Policy Document;</li> <li>the
+	      &lt;Reference&gt; element MUST NOT have any
+	      &lt;Transform&gt; elements;</li> <li>the widget user
+	      agent MUST treat
+	      the <code>&lt;signed-policy&gt;</code> as invalid if
+	      it has a child <code>&lt;policy&gt;</code>; or
+	      <code>&lt;policy-set&gt;</code> element for which
+	      there is no &lt;Reference&gt; element.</li>
+	    </ul> <p> Processing of the signature is specified in
+	    section (*** change ref ***). </p>
+	</section> <section id="policy-set-element">
+	  <h4>The <code>&lt;policy-set&gt;</code> Element</h4>
+	    <p>The root element of a policy document is either a
+	    <code>&lt;policy-set&gt;</code> or a
+	    <code>&lt;policy&gt;</code>;.
+	    <code>&lt;policy-set&gt;</code> has two possible
+	    attributes: </p> <ul>
+	      <li>combine, which MUST take a value of
+	      "deny-overrides", "permit-overrides" or
+	      "first-matching-target". The attribute is optional; if
+	      it is omitted, the default value is
+	      "deny-overrides";</li> <li>id, whose value is a
+	      textual identifier for the
+	      <code>&lt;policy-set&gt;</code>.</li>
+	    </ul> <p> <code>&lt;policy-set&gt;</code> contains an
+	    optional <code>&lt;target&gt;</code>;, then zero or more
+	    <code>&lt;policy&gt;</code>; and/or
+	    <code>&lt;policy-set&gt;</code> elements. </p>
+	</section>
+	<section id="rule-element">
+	  <h4>The <code>&lt;rule&gt;</code> Element</h4>
+	    <p><code>&lt;rule&gt;</code> has one possible attribute,
+	    effect, which must take a value of "permit",
+	    "prompt-blanket", "prompt-session", "prompt-oneshot" or
+	    "deny". The attribute is optional; if it is omitted, the
+	    default value is "permit". </p>
+	    <p><code>&lt;rule&gt;</code> contains an optional
+	    <code>&lt;condition&gt;</code>. </p>
+	</section>
+	<section id="target-element">
+	  <h4>The <code>&lt;target&gt;</code>  Element</h4>
+	    <p><code>&lt;target&gt;</code> contains one or more
+	    <code>&lt;subject&gt;</code> elements. </p>
+	</section>
+	<section id="subject">
+	  <h4>The <code>&lt;subject&gt;</code> Element</h4>
+	    <p><code>&lt;subject&gt;</code> contains one or more
+	    <code>&lt;subject-match&gt;</code> elements. </p>
+	</section>
+	<section id="condition-element">
+	  <h4>The <code>&lt;condition&gt;</code> Element</h4>
+	    <p> <code>&lt;condition&gt;</code> has one possible
+	    attribute, combine, which must take a value of "and" or
+	    "or". The attribute is optional; if it is omitted, the
+	    default value is "and". </p>
+	    <p><code>&lt;condition&gt;</code> contains one or more
+	    elements, each of which is one of
+	    <code>&lt;condition&gt;</code>,
+	    <code>&lt;subject-match&gt;</code>,
+	    <code>&lt;resource-match&gt;</code> or
+	    <code>&lt;environment-match&gt;</code>. </p>
+	</section>
+	<section id="subject-resource-environment-match">
+	  <h4>The <code>&lt;subject-match&gt;</code>, <code>&lt;resource-match&gt;</code>, <code>&lt;environment-match&gt;</code> Elements</h4>
+	    <p><code>&lt;subject-match&gt;</code> represents a
+	    condition on a single subject attribute to be matched in
+	    a target or condition.
+	    <code>&lt;resource-match&gt;</code> represents a
+	    condition on a single resource attribute to be matched
+	    in a condition. <code>&lt;environment-match&gt;</code>
+	    represents a condition on a single environment attribute
+	    to be matched in a condition. </p> <p>The element has up
+	    to three (XML) attributes: </p> <ul>
+	      <li>(mandatory) attr: the name of the subject,
+	      resource or environment (respectively) attribute to
+	      check. The attribute name is optionally followed by
+	      one of the suffixes ".scheme", ".authority",
+	      ".scheme-authority", ".host" or ".path", causing the
+	      equivalently named URI modifier function to be applied
+	      to the attribute value before matching.</li>
+	      <li>(optional) match: the literal text to match. If
+	      this attribute is omitted, then the contents of the
+	      element are used instead.</li> <li>(optional) func:
+	      the match function to use. If it is present, it must
+	      be one of "equal", "glob" or "regexp". If func is
+	      omitted, then the default is "glob".</li>
+	    </ul> <p>The contents of a
+	    <code>&lt;subject-match&gt;</code>,
+	    <code>&lt;resource-match&gt;</code> or
+	    <code>&lt;environment-match&gt;</code> element represent
+	    the value to match, only if the match attribute is
+	    absent. If the match attribute is present, then the
+	    element contents are ignored. For a
+	    <code>&lt;subject-match&gt;</code>, the contents are
+	    PCDATA. For the others, the contents can be any
+	    combination of PCDATA,
+	    <code>&lt;subject-attr&gt;</code>,
+	    <code>&lt;resource-attr&gt;</code> and
+	    <code>&lt;environment-attr&gt;</code> elements, giving
+	    the literal text to match after expanding any
+	    attributes. </p>
+	</section>
+	<section id="subject-resource-environment-attr">
+	  <h4>The <code>&lt;subject-attr&gt;</code>, <code>&lt;resource-attr&gt;</code>, <code>&lt;environment-attr&gt;</code> Elements</h4>
+	    <p>
+	    Each of these elements represents the value of a
+	    subject, resource or environment attribute
+	    respectively.
+	    </p> <p>
+	    The element has one (XML) attribute, attr, giving the
+	    name of the attribute to expand. It has no contents.
+	    </p>
+	</section>
+  </section>
+</section>
+
+<section id='attribute-definitions'>
+  <h2>Attribute Definitions</h2>
+<section class='subject-attribute-definitions'>
+  <h2>Subject Attribute Definitions</h2>
+  <p> The identity of a subject is in one of the following classes. The
+	class determines which attributes are available; other
+	attributes have the undefined value. </p>
+<section class='widget-subject-attribute-definitions'>
+  <h2>Widget Subject Attribute Definitions</h2>
+<table class="simple"> <caption> <dfn
+	  id="widget-subject-attributes-table">Widget Subject
+	  Attributes Table</dfn></caption> <thead> <tr> <th
+	  scope="col">Attribute</th> <th scope="col">Type</th> <th
+	  scope="col">Value</th> </tr> </thead> <tbody> <tr>
+	  <td>class</td> <td>string</td> <td>This has the value
+	  "widget" if and only if the subject is a widget.</td>
+	  </tr> <tr> <td>install-uri</td> <td>URI</td> <td>The URI
+	  that the widget resource was originally retrieved from
+	  before installation, if known, otherwise the empty
+	  bag.</td> </tr> <tr> <td>id</td> <td>URI</td> <td>The
+	  identity of the widget. For a W3C widget specification [[!WIDGETS]]
+	  compliant widget resource, this is the value of the <code>id</code>
+	  attribute of the <code>widget</code> element in the widget
+	  configuration document converted from IRI to URI based
+	  on RFC3987 [[!IRI]]. In this case, it is a URI that uniquely
+	  identifies the widget. Empty bag if there is no <code>id</code>
+	  attribute.</td> </tr> <tr> <td>version</td>
+	  <td>string</td> <td>Version of the widget resource. For
+	  a W3C widget specification compliant widget resource,
+	  this is the <code>version</code> attribute of the <code>widget</code> element in
+	  the widget configuration document. Empty bag if there is
+	  no <code>version</code> attribute.</td> </tr> <tr>
+	  <td>distributor-key-cn</td> <td>string</td> <td>The
+	  common name of the end entity certificate for the
+	  applicable widget resource distributor signature. Empty
+	  bag if none.</td> </tr> <tr>
+	  <td>distributor-key-fingerprint</td> <td>string</td>
+	  <td>The fingerprint of the end-entity certificate for
+	  the applicable widget resource distributor signature.
+	  Empty bag if none.</td> </tr> <tr>
+	  <td>distributor-key-root-cn</td> <td>string</td> <td>The
+	  common name of the root certificate for the applicable
+	  widget resource distributor signature. Empty bag if
+	  none.</td> </tr> <tr>
+	  <td>distributor-key-root-fingerprint</td>
+	  <td>string</td> <td>The fingerprint of the root
+	  certificate for the applicable widget resource
+	  distributor signature.Empty bag if none.</td> </tr> <tr>
+	  <td>author-key-cn</td> <td>string</td> <td>The common
+	  name of the end entity certificate for the widget
+	  resource author signature. Empty bag if none.</td> </tr>
+	  <tr> <td>author-key-fingerprint</td> <td>string</td>
+	  <td>The fingerprint of the end entity certificate for
+	  the widget resource author signature in SDP syntax.
+	  Empty bag if none.</td> </tr> <tr>
+	  <td>author-key-root-cn</td> <td>string</td> <td>The
+	  common name of the root certificate for the widget
+ 	  resource author signature. Empty bag if none.</td> </tr>
+	  <tr> <td>author-key-root-fingerprint</td>
+	  <td>string</td> <td>The fingerprint of the root
+	  certificate for the widget resource author signature.
+	  Empty bag if none.</td> </tr> <tr>
+	  <td>widget-attr:name</td> <td></td> <td>The value of the
+	  named attribute of the <code>widget</code> element whose type
+	  and value are set up in the widget configuration
+	  document for use in the security framework. Empty
+	  bag if no such named attribute is defined.</td> </tr>
+	  </tbody> </table>
+</section>
+<section class='website-subject-attribute-definitions'>
+  <h2>Web Site Subject Attribute Definitions</h2>
+<table class="simple"> <caption> 
+  <dfn id="website-subject-attributes-table">Website Subject
+	  Attributes Table</dfn></caption> 
+      <thead> 
+        <tr> 
+          <th scope="col">Attribute</th> 
+          <th scope="col">Type</th> 
+          <th scope="col">Value</th> 
+          <th scope="col">Meaning</th>
+        </tr>
+        </thead>
+        <tbody>
+          <tr> 
+            <td>class</td>
+            <td>string</td> 
+            <td>"website"</td> 
+            <td>Has the value "website" if and only if the subject is of this
+            class.</td> 
+            </tr> 
+              <tr> 
+              <td >sign-schema</td>
+              <td>string</td> 
+<td>"" (empty
+	  string)</td> <td>Not signed.</td> </tr> <tr>
+              <td >sign-schema</td>
+              <td>string</td> 
+	  <td>"tls"</td> <td>The page was fetched using HTTPS and
+	  the browser has verified that the site certificate’s
+	  Common Name matches the host that the page was fetched
+	  from, and it has already applied its own policies
+	  regarding whether the root certificate is in an
+	  acceptable trust domain.</td> </tr> <tr>
+              <td >sign-schema</td>
+              <td>string</td> 
+	  <td>"tls-ev"</td> <td>As "tls", and, additionally, the
+	  site certificate has an extended validation field and
+	  the browser’s internal policy allows that information to
+	  be passed to the security framework.</td> </tr> <tr>
+	  <td>uri</td> <td>URI</td> <td colspan="2">The URI used
+	  to access the document that embeds or refers to the
+	  JavaScript code, corresponding to the window.location
+	  property of the browsing context. In the case of that a
+	  feature is accessed from a child browsing context (for
+	  example from within a &lt;iframe&gt; within some outer
+	  document), this attribute provides the location of the
+	  child context.</td> </tr> <tr> <td>uri-top</td>
+	  <td>URI</td> <td colspan="2">The URI used to access the
+	  website that embeds or refers to the JavaScript code,
+	  corresponding to the top.window property of the browsing
+	  context. In the case that the feature is accessed from a
+	  child browsing context (for example from within an
+	  &lt;iframe&gt;), this attribute provides the location of
+	  the top-level browsing context. If the current browsing
+	  context is a child of a widget top-level browsing
+	  context, this attribute contains an IRI with the widget:
+	  scheme that corresponds to the top-level containing
+	  document from the widget resource.</td> </tr> <tr>
+	  <td>key-root-cn</td> <td>string</td> <td colspan="2">The
+	  common name of the root certificate chained to by the
+	  site certificate. Empty bag if none.</td> </tr> <tr>
+	  <td>key-root-fingerprint</td> <td>string</td> <td
+	  colspan="2">The fingerprint of the root certificate
+	  chained to by the site certificate. Empty bag if
+	  none.</td> </tr> </tbody> </table>
+</section>
+</section>
+<section class='resource-attribute-definitions'>
+  <h2>Resource Attribute Definitions</h2>
+<p>The resource is identified by one or more of
+	  the following attributes: </p> 
+<table class="simple"> 
+  <caption> 
+    <dfn id="widget-resource-attributes-table">Widget Resource
+	  Attributes Table</dfn></caption> 
+      <thead> 
+        <tr> <th scope="col">Attribute</th> <th scope="col">Type</th> <th
+	  scope="col">Value</th> <th scope="col">Comment</th>
+	  </tr>
+      </thead> 
+      <tbody> 
+        <tr> <td id="api-feature">api-feature (*** ref:
+	  ****)</td> <td>URI</td> <td>The IRI identifier of the
+	  requested Feature converted to URI as per RFC3987
+	  [[!IRI]].</td> <td>This uses the same naming scheme as
+	  in a widget’s <code>feature</code> element. Determined for all
+	  applicable application execution phases.</td> </tr>
+      <tr>
+        <td id="device-cap">device-cap</td> <td>string</td> <td>Device
+        capability being accessed, if any. Empty bag if
+        none</td> <td>See Appendix A (*** change this ref ***).
+        Determined for all applicable application Execution
+        Phases.</td> </tr> <tr> <td id="parameter">param:name</td> <td>See
+        comment</td> <td>The value of parameter name.</td>
+        <td>The specification of each Device Capabilities lists
+        the parameters associated with that Device Capability
+        and the type and semantics of each. Empty bag if the
+        parameter is not defined. Determined in the invoke
+        execution phase. Undetermined in all other execution
+        phases.</td> </tr>
+        <tr> <td colspan="4">The following
+	  resource attributes give information on the source of
+	  the implementation of the API Feature.</td> </tr> 
+      <tr>
+	  <td>feature-install-uri</td> <td>URI</td> <td>The URI
+	  that the API implementation was originally retrieved
+	  from before installation, if known, otherwise the empty
+	  bag.</td> <td>Determined for all applicable application
+	  execution phases.</td> </tr> 
+      <tr>
+	  <td>feature-key-cn</td> <td>string</td> <td>The common
+	  name of the end entity certificate for the signature
+	  associated with the Feature implementation. Empty bag if
+	  none.</td> <td>Determined for all applicable application
+	  execution phases.</td> </tr> 
+      <tr>
+	  <td>feature-key-root-cn</td> <td>string</td> <td>The
+	  common name of the root certificate for the signature
+	  associated with the Feature implementation. Empty bag if
+	  none</td> <td>Determined for all applicable application
+	  execution phases.</td> </tr> 
+      <tr>
+	  <td>feature-key-root-fingerprint</td> <td>string</td>
+	  <td>The fingerprint of the root certificate of the
+	  signature associated with the Feature implementation.
+	  Empty bag if none.</td> <td>Determined for all
+	  applicable application execution phases.</td> </tr> 
+      </tbody> 
+</table>
+</section>
+<section class='context-attribute-definitions'>
+  <h2>Context Attribute Definitions</h2>
+<table class="simple"> <caption> <dfn
+	  id="context-attributes-table">Context
+	  Attributes Table</dfn></caption> <thead> <tr> <th
+	  scope="col">Attribute</th> <th scope="col">Type</th> <th
+	  scope="col">Value</th> <th scope="col">Comment</th>
+	  </tr> </thead> <tbody> <tr> <td>roaming</td>
+	  <td>string</td> <td>"national", "international", or
+	  empty string</td> <td>Determined in the following
+	  execution phases:
+	  <ul> <li>widget-instantiate</li>
+	  <li>website-bind</li> <li>invoke</li> </ul>
+	  Undetermined in the following execution phases:
+	  <ul> <li>widget-install</li> </ul>
+	  </td> 
+</tr>
+ <tr> <td>bearer-type</td> <td>string</td>
+	  <td>The type of the current network bearer over which a
+	  network request will be served, either by request of the
+	  application or by default (per the current serving
+	  network or the one over which the request will be
+	  served, if multiple networks are available). A
+	  comma-separated list of one or more of the bearer types
+	  given as examples in W3C DCO [[DCONTOLOGY]].</td>
+	  <td>Determined in the following execution phases:
+	  <ul> <li>widget-instantiate</li>
+	  <li>website-bind</li> <li>invoke</li> </ul>
+	  Undetermined in the following execution phases:
+	  <ul> <li>widget-install</li> </ul>
+	  </td> </tr> </tbody> </table>
+    </section>
+    </section>
+<section id='examples'>
+  <h2>Examples</h2>
+<section id="example-abuse-policies">
+  <h2>Example Policies to mitigate Abuse Use Cases</h2>
+    <p> This section outlines some example policies that could be used to
+    deal with abuses of device APIs. </p>
+    <section id="premium-rate-defence">
+      <h3>Defending against premium rate abuse</h3>
+	<p>The example assumes that a number of mechanisms have
+	already been defeated in the security chain – the
+	application is trusted and is on the device. If the user
+	(or the policy provider) has stated that they don’t want
+	to call premium rate numbers in the UK: </p>
+	<pre><code>&lt;target&gt;
+  &lt;subject&gt;
+    &lt;subject-match attr="author-key-root-fingerprint" 
+        match="sha256 ******** root fingerprint of author ****" /&gt; 
+    &lt;-- to identify the Identified domain, the same would
+	  apply for the Unidentified domain--&gt;
+&lt;/target&gt;
+&lt;rule effect="one-shot"&gt;
+  &lt;condition&gt;
+    &lt;resource-match attr="dev-cap" match="messaging.*.send"
+		param:recipients="+4409*" func="glob"/&gt; &lt;-- to block UK premium rate numbers --&gt;
+  &lt;/condition&gt;
+&lt;/rule&gt;</code></pre>
+	We could extend this to other countries if we are concerned that
+    premium rate 
+	numbers would not only be from the host country. Here is an
+    example of a policy 
+	fragment for blocking Spanish premium rate numbers that could be 
+    added, along 
+	with the condition combining operator (please note: there are
+    probably more 
+	elegant ways of expressing this by using regular expressions):
+    <pre><code>&lt;condition combine="or"&gt;
+  &lt;resource-match attr="dev-cap" match="messaging.*.send"
+        param:recipients="+4409*" func="glob"/&gt; &lt;-- to block UK premium rate numbers --&gt;
+  &lt;resource-match attr="dev-cap"
+    match="messaging.*.send" param:recipients="+34806*" func="glob"/&gt;
+    &lt;-- to block Spanish premium rate numbers --&gt;
+&lt;/condition&gt;
+    </code>	</pre> 
+<p>If the malicious widget is out in the wild already and has been
+	identified, then we want to prevent it from installing and executing on devices,
+	halting the spread of the malware in its early stages of
+    distribution.
+ </p> <p>
+	Clearly, if the widget is prevented from installing, then it cannot call a
+	device API – these functions are shown as a belt and braces example:</p>
+	<pre><code>&lt;target&gt;
+  &lt;subject&gt;
+    &lt;subject-match attr="id" match="http://maliciouswidget1.example.org"/&gt;
+   &lt;/subject&gt;
+&lt;/target&gt;
+&lt;rule effect="deny"&gt;
+  &lt;condition combine="or"&gt;
+    &lt;resource-match attr="widget-install" /&gt; &lt;resource-match
+      attr="widget-instantiate" /&gt;
+    &lt;resource-match attr="api-feature" match="*"/&gt;
+    &lt;resource-match attr="dev-cap" match="*" /&gt;
+  &lt;/condition&gt;
+&lt;/rule&gt;</code></pre>
+    </section> <!-- premium-rate-abuse -->
+</section> <!-- example policies -->
+</section>
+<section class='appendix'>
+  <h2>Acknowledgements</h2>
+    <p>
+    The editors would like to extend special thanks to Nokia, OMTP BONDI,
+    and PhoneGap for providing the foundation of the working group’s
+    requirements discussion.
+    </p>
+</section>
+</body>
+</html>

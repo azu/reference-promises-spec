@@ -1,0 +1,1996 @@
+<!-- http://www.w3.org/TR/soapjms/ -->
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-us"><head><title>SOAP over Java Message Service 1.0</title><style type="text/css">
+/**/
+code           { font-family: monospace; }
+
+div.constraint,
+div.issue,
+div.note,
+div.notice     { margin-left: 2em; }
+
+ol.enumar      { list-style-type: decimal; }
+ol.enumla      { list-style-type: lower-alpha; }
+ol.enumlr      { list-style-type: lower-roman; }
+ol.enumua      { list-style-type: upper-alpha; }
+ol.enumur      { list-style-type: upper-roman; }
+
+dt.label       { display: run-in; }
+
+li, p           { margin-top: 0.3em;
+                 margin-bottom: 0.3em; }
+
+.diff-chg       { background-color: yellow; }
+.diff-del       { background-color: red; text-decoration: line-through;}
+.diff-add       { background-color: lime; }
+
+table          { empty-cells: show; }
+
+table caption {
+        font-weight: normal;
+        font-style: italic;
+        text-align: left;
+        margin-bottom: .5em;
+}
+
+div.issue {
+  color: red;
+}
+.rfc2119 {
+  font-variant: small-caps;
+}
+
+div.exampleInner pre { margin-left: 1em;
+                       margin-top: 0em; margin-bottom: 0em}
+div.exampleOuter {border: 4px double gray;
+                  margin: 0em; padding: 0em}
+div.exampleInner { background-color: #d5dee3;
+                   border-top-width: 4px;
+                   border-top-style: double;
+                   border-top-color: #d3d3d3;
+                   border-bottom-width: 4px;
+                   border-bottom-style: double;
+                   border-bottom-color: #d3d3d3;
+                   padding: 4px; margin: 0em }
+div.exampleWrapper { margin: 4px }
+div.exampleHeader { font-weight: bold;
+                    margin: 4px}
+
+div.boxedtext {
+   border: solid #bebebe 1px;
+   margin: 2em 1em 1em 2em;
+ }
+
+span.practicelab {
+   margin: 1.5em 0.5em 1em 1em;
+   font-weight: bold;
+   font-style: italic;
+ }
+
+span.practicelab   { background: #dfffff; }
+
+ span.practicelab {
+   position: relative;
+   padding: 0 0.5em;
+   top: -1.5em;
+ }
+p.practice
+{
+   margin: 1.5em 0.5em 1em 1em;
+ }
+
+@media screen {
+ p.practice {
+   position: relative;
+   top: -2em;
+   padding: 0;
+   margin: 1.5em 0.5em -1em 1em;
+}
+}
+/**/
+      </style><link rel="stylesheet" type="text/css" href="http://www.w3.org/StyleSheets/TR/W3C-REC.css"/></head><body><div class="head"><p><a href="http://www.w3.org/"><img src="http://www.w3.org/Icons/w3c_home" alt="W3C" height="48" width="72"/></a></p>
+<h1><a name="title" id="title"/>SOAP over Java Message Service 1.0</h1>
+<h2><a name="w3c-doctype" id="w3c-doctype"/>W3C Recommendation 16 February 2012</h2><dl><dt>This version:</dt><dd>
+      <a href="http://www.w3.org/TR/2012/REC-soapjms-20120216/">http://www.w3.org/TR/2012/REC-soapjms-20120216/</a>
+    </dd><dt>Latest version:</dt><dd><a href="http://www.w3.org/TR/soapjms/">http://www.w3.org/TR/soapjms/</a></dd><dt>Previous version:</dt><dd>
+	  <a href="http://www.w3.org/TR/2011/PR-soapjms-20111208/">http://www.w3.org/TR/2011/PR-soapjms-20111208/</a>
+    </dd><dt>Editors:</dt><dd>Phil Adams, IBM</dd><dd>Peter Easton, Progress Software</dd><dd>Eric Johnson, TIBCO</dd><dd>Roland Merrick, IBM</dd><dd>Mark Phillips, IBM</dd></dl><p>Please refer to the <a href="http://www.w3.org/2002/ws/soapjms/errata/soapjms-20120216-errata"><strong>errata</strong></a> for this document, which may
+      include normative corrections.</p><p>See also <a href="http://www.w3.org/2003/03/Translations/byTechnology?technology=soapjms"><strong>translations</strong></a>.</p><p class="copyright"><a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2012 <a href="http://www.w3.org/"><acronym title="World Wide Web Consortium">W3C</acronym></a><sup>®</sup> (<a href="http://www.csail.mit.edu/"><acronym title="Massachusetts Institute of Technology">MIT</acronym></a>, <a href="http://www.ercim.eu/"><acronym title="European Research Consortium for Informatics and Mathematics">ERCIM</acronym></a>, <a href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply.</p></div><hr/><div>
+<h2><a name="abstract" id="abstract"/>Abstract</h2><p>
+	This document specifies how SOAP binds to a messaging
+	system that supports the Java Message Service (JMS)
+	[<cite><a href="#jms">Java Message Service</a></cite>]. Binding is specified for both SOAP 1.1
+	[<cite><a href="#soap11">SOAP 1.1</a></cite>] and SOAP 1.2 [<cite><a href="#soap12">SOAP 1.2 Messaging Framework</a></cite>]
+	using the SOAP 1.2 Protocol Binding Framework.  This specification
+	also describes how to use WSDL documents to indicate and control
+	the use of this binding.
+    </p></div><div>
+<h2><a name="status" id="status"/>Status of this Document</h2><p><em>This section describes the status of this document at the time of its 
+publication. Other documents may supersede this document. A list of 
+current W3C publications and the latest revision of this technical 
+report can be found in the W3C technical reports index at <a href="http://www.w3.org/TR/">http://www.w3.org/TR/</a>.</em></p><p>This is the <a href="http://www.w3.org/2005/10/Process-20051014/tr.html#RecsW3C">Recommendation</a> of the SOAP over Java Message Service 1.0 
+specification. It has been produced by the <a href="http://www.w3.org/2002/ws/soapjms/">SOAP-JMS Binding Working Group</a>, 
+which is part of the W3C Web Services Activity.</p><p>This document is based on the W3C Submission SOAP over Java(tm) 
+Message Service 1.0. A list of changes is available in 
+<a href="#change-log">I Change Log</a>. Only editorial changes were made as a result of the Proposed Recommendation phase (See <a href="soapjms-diff-rec.html">diff</a>).</p><p>The authors of this document consider it to be stable, and invite 
+reviewers and implementors to send comments to the 
+<a href="mailto:public-soap-jms@w3.org">public-soap-jms@w3.org</a> mailing list 
+(<a href="http://lists.w3.org/Archives/Public/public-soap-jms/">public 
+archive</a>).</p><p>This document has been reviewed by W3C Members, by software developers,
+and by other W3C groups and interested parties, and is endorsed by the 
+Director as a W3C Recommendation. It is a stable document and may be used 
+as reference material or cited from another document. W3C's role in making 
+the Recommendation is to draw attention to the specification and to promote 
+its widespread deployment. This enhances the functionality and 
+interoperability of the Web.</p><p> This document was produced by a group operating under the 
+<a href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 W3C Patent Policy</a>. 
+W3C maintains a <a rel="disclosure" href="http://www.w3.org/2004/01/pp-impl/42357/status">public list of any patent disclosures</a> 
+made in connection with the deliverables of the group; 
+that page also includes instructions for disclosing a patent. An 
+individual who has actual knowledge of a patent which the individual 
+believes contains <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential 
+Claim(s)</a> must disclose the information in accordance with 
+<a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section 
+6 of the W3C Patent Policy</a>.
+</p></div><div class="toc">
+<h2><a name="contents" id="contents"/>Table of Contents</h2><p class="toc">1 <a href="#introduction">Introduction</a><br/>
+    1.1 <a href="#introduction-background">Background</a><br/>
+    1.2 <a href="#introduction-outofscope">Out of Scope</a><br/>
+    1.3 <a href="#introduction-context">Context</a><br/>
+    1.4 <a href="#introduction-notation">Notational Conventions</a><br/>
+        1.4.1 <a href="#XML_Namespaces">XML Namespaces</a><br/>
+    1.5 <a href="#assertions">Assertions</a><br/>
+    1.6 <a href="#introduction-conformance">Conformance</a><br/>
+2 <a href="#soap-binding">The SOAP/JMS Underlying Protocol Binding</a><br/>
+    2.1 <a href="#binding-intro">Introduction</a><br/>
+    2.2 <a href="#binding-properties">Properties Affecting Binding</a><br/>
+        2.2.1 <a href="#binding-connection">Connection to a destination</a><br/>
+        2.2.2 <a href="#binding-header-props">JMS Message Header properties</a><br/>
+            2.2.2.1 <a href="#binding-header-props-xmp">Setting JMS Message Header properties</a><br/>
+        2.2.3 <a href="#binding-message-props">JMS Message properties</a><br/>
+            2.2.3.1 <a href="#binding-message-props-xmp">Setting JMS Message properties</a><br/>
+        2.2.4 <a href="#binding-props-URI">Binding of Properties to URI</a><br/>
+        2.2.5 <a href="#binding-other-props">Other Properties</a><br/>
+    2.3 <a href="#authentication">Authentication for SOAP/JMS</a><br/>
+    2.4 <a href="#binding-message-body">The JMS Message Body</a><br/>
+        2.4.1 <a href="#textmessage-considerations">Considerations For Using TextMessage</a><br/>
+    2.5 <a href="#binding-supported-meps">Supported Message Exchange Patterns</a><br/>
+        2.5.1 <a href="#binding-support-topics">Support for Topic destinations</a><br/>
+    2.6 <a href="#binding-request-response">Request-Response Message Exchange Pattern</a><br/>
+        2.6.1 <a href="#requester-states">Behaviour of Requesting SOAP Node</a><br/>
+            2.6.1.1 <a href="#rr-requester-init">Init</a><br/>
+            2.6.1.2 <a href="#rr-requester-request">Requesting</a><br/>
+            2.6.1.3 <a href="#rr-requester-transition">Sending + Receiving</a><br/>
+            2.6.1.4 <a href="#rr-requester-complete">Success and Fail</a><br/>
+        2.6.2 <a href="#responder-states">Behaviour of Responding SOAP Node</a><br/>
+            2.6.2.1 <a href="#rr-responder-init">Init</a><br/>
+            2.6.2.2 <a href="#rr-responder-receiving">Receiving</a><br/>
+            2.6.2.3 <a href="#responder-transition">Receiving + Sending</a><br/>
+            2.6.2.4 <a href="#responder-complete">Success and Fail</a><br/>
+    2.7 <a href="#binding-one-way">One-way Message Exchange Pattern</a><br/>
+        2.7.1 <a href="#sender-states">Behaviour of Sending SOAP Node</a><br/>
+        2.7.2 <a href="#receiver-states">Behaviour of Receiving SOAP Node</a><br/>
+    2.8 <a href="#binding-faults">Faults</a><br/>
+3 <a href="#wsdl-extensions">WSDL Usage</a><br/>
+    3.1 <a href="#wsdl-overview">Overview</a><br/>
+    3.2 <a href="#wsdl-11-overview">WSDL 1.1 Extensions Overview</a><br/>
+    3.3 <a href="#wsdl-11-detail">WSDL 1.1 Extensions Detail</a><br/>
+        3.3.1 <a href="#wsdl-11-example">Example</a><br/>
+        3.3.2 <a href="#wsdl-11-transport-id">WSDL 1.1 Transport Identification</a><br/>
+        3.3.3 <a href="#wsdl-11-soapaction">WSDL 1.1 SOAP Action</a><br/>
+        3.3.4 <a href="#wsdl-11-properties">Specifying Properties In WSDL 1.1</a><br/>
+        3.3.5 <a href="#wsdl-11-url">Specifying Properties Via the JMS URI</a><br/>
+    3.4 <a href="#wsdl-properties">Properties</a><br/>
+</p>
+<h3><a name="appendices" id="appendices"/>Appendices</h3><p class="toc">A <a href="#references">References</a><br/>
+    A.1 <a href="#normative-references">Normative References</a><br/>
+    A.2 <a href="#Informative-references">Informative References</a><br/>
+B <a href="#schema">Schema</a><br/>
+C <a href="#wsdl11-example">Complete WSDL 1.1 Example</a> (Non-Normative)<br/>
+D <a href="#binding-examples">SOAP/JMS Underlying Protocol Binding Examples</a> (Non-Normative)<br/>
+    D.1 <a href="#soap-request-without-attachments">SOAP Request without attachments</a><br/>
+    D.2 <a href="#soap-request-with-attachments">SOAP Request with attachments</a><br/>
+E <a href="#JAX-WS-annotations">JAX-WS @BindingType annotation values</a> (Non-Normative)<br/>
+F <a href="#wsdl-2.0">WSDL 2.0</a> (Non-Normative)<br/>
+    F.1 <a href="#wsdl-20-overview">WSDL 2.0 Extensions Overview</a><br/>
+    F.2 <a href="#wsdl-20-detail">WSDL 2.0 Extensions Detail</a><br/>
+        F.2.1 <a href="#wsdl20-components">Relationship to WSDL 2.0 Component Model</a><br/>
+            F.2.1.1 <a href="#wsdl20-precedence">Precedence</a><br/>
+G <a href="#acknowledgments">Acknowledgements</a> (Non-Normative)<br/>
+H <a href="#assertionsummary">Assertion Summary</a> (Non-Normative)<br/>
+I <a href="#change-log">Change Log</a> (Non-Normative)<br/>
+</p></div><hr/><div class="body"><div class="div1">
+<h2><a name="introduction" id="introduction"/>1 Introduction</h2><div class="div2">
+<h3><a name="introduction-background" id="introduction-background"/>1.1 Background</h3><p>The work described in this and related documents is aimed
+	at a set of standards for the transport of SOAP messages over
+	JMS [<cite><a href="#jms">Java Message Service</a></cite>]. The main purpose is to ensure
+	interoperability between the implementations of different Web
+	services vendors. This will also enable customers to implement
+	their own Web services for part of their infrastructure, and
+	to have this interoperate with vendor provided Web
+	services. The main audience will be implementers of Web
+	services stacks; in particular people who wish to extend a Web
+	services stack with an implementation of SOAP/JMS. This will
+	enable them to write a SOAP/JMS implementation that will
+	interoperate with other SOAP/JMS implementations, and that
+	will not be dependent on any specific JMS implementation.</p><p>A motivational example is a customer who has different
+	departments that use Web services infrastructure from two
+	different vendors, VendorA and VendorB. The customer has a
+	need for reliable Web services interaction between the
+	departments. Where both these vendors provide support for
+	SOAP/JMS according to this standard, it ought be possible for
+	a client running using VendorA to interoperate with a service
+	using VendorB.</p><p>The standards will also be of interest to providers of Web
+	services intermediary services such as routing gateways; or
+	SOAP/HTTP to SOAP/JMS gateways. We do not discuss any details
+	of how such gateways might be designed and configured, but
+	adherence to the standard will help the gateway ensure proper
+	interoperation with SOAP/JMS clients and services.</p><p>The documents cover three major areas.</p><ul><li><p>The JMS calls that have to be made to construct and
+	  interpret SOAP/JMS messages in <a href="#soap-binding"><b>2 The SOAP/JMS Underlying Protocol Binding</b></a>.</p></li><li><p>The WSDL binding that describes SOAP/JMS services in <a href="#wsdl-extensions"><b>3 WSDL Usage</b></a>.</p></li><li><p>How SOAP over JMS uses the Uniform Resource Identifier (URI) [<cite><a href="#rfc3986">IETF RFC 3986</a></cite>]  specification for JMS endpoints (JMS URI) [<cite><a href="#jmsuri">IETF RFC 6167</a></cite>].</p></li></ul><p>Note that the URI specification is in a separate document.</p></div><div class="div2">
+<h3><a name="introduction-outofscope" id="introduction-outofscope"/>1.2 Out of Scope</h3><p>It is important to stress what this standard does NOT provide.</p><ul><li><p>It does NOT provide any mechanism for
+	  interoperation between two different JMS providers.  In the
+	  example above, VendorA and VendorB are different providers
+	  of a Web services infrastructure, but the customer still needs
+      to use a single implementation of JMS at both client and
+	  service side.</p></li><li><p>It does NOT define any (wire) format for SOAP/JMS
+	  messages.</p></li><li><p>It does NOT define how the Web services themselves
+	  will be presented to the application programmer.  For
+	  example, it does not describe how the programmer will
+	  characterise a one-way message.</p></li></ul></div><div class="div2">
+<h3><a name="introduction-context" id="introduction-context"/>1.3 Context</h3><p>This document specifies how SOAP binds to a messaging
+	system that supports JMS. Binding is specified for both SOAP 1.1
+	[<cite><a href="#soap11">SOAP 1.1</a></cite>] and SOAP 1.2 [<cite><a href="#soap12">SOAP 1.2 Messaging Framework</a></cite>]
+	using the SOAP 1.2 Protocol Binding Framework.</p><p>The approach taken for this specification is to model it on
+	the binding specifications that have been created for SOAP
+	1.2. The first of these was for a SOAP HTTP Binding, described
+	in section 7, <a href="http://www.w3.org/TR/soap12-part2/#soapinhttp">SOAP HTTP
+	binding</a>, [<cite><a href="#soap12p2">SOAP 1.2 Part 2: Adjuncts</a></cite>]. A second
+	binding for Email [<cite><a href="#SOAP-EMAIL">SOAP 1.2 Email Binding</a></cite>] is also
+	available.</p></div><div class="div2">
+<h3><a name="introduction-notation" id="introduction-notation"/>1.4 Notational Conventions</h3><p>
+	  The keywords "<strong>MUST</strong>", "<strong>MUST
+	  NOT</strong>", "<strong>REQUIRED</strong>",
+	  "<strong>SHALL</strong>", "<strong>SHALL
+	  NOT</strong>", "<strong>SHOULD</strong>",
+	  "<strong>SHOULD NOT</strong>",
+	  "<strong>RECOMMENDED</strong>",
+	  "<strong>MAY</strong>", and
+	  "<strong>OPTIONAL</strong>" in this document are to be
+	  interpreted as described in RFC 2119 [<cite><a href="#rfc2119">IETF RFC 2119</a></cite>].
+	</p><p>Parenthetic remarks about fault subcodes are mentioned throughout
+	the document where a conformance issue could result in an error.
+    The section <a href="#binding-faults"><b>2.8 Faults</b></a> discusses the treatment
+    of these subcodes.</p><div class="div3">
+<h4><a name="XML_Namespaces" id="XML_Namespaces"/>1.4.1 XML Namespaces</h4><p>
+	      This specification uses a number of namespace prefixes
+	      throughout; they are listed in <a href="#nsprefix">Table Prefixes and Namespaces used in this specification</a>. Properties are named with <a href="http://www.w3.org/TR/xml-names/#ns-qualnames">XML
+	      qualified names</a>. Property values are
+	      determined by the Schema type of the property, as
+	      defined in the specification which introduces the
+	      property. Note that the choice of any namespace prefix
+	      is arbitrary and not semantically significant (see
+	      [<cite><a href="#XML-NS">XML Namespaces</a></cite>]).
+	    </p><a name="nsprefix" id="nsprefix"/><table summary="Namespace prefixes usage in this specification" border="1" cellspacing="0" cellpadding="5"><caption>Prefixes and Namespaces used in this specification</caption><thead><tr><th>Prefix</th><th>Namespace</th><th>Specification</th></tr></thead><tbody><tr><td><code>soapjms</code></td><td><code>http://www.w3.org/2010/soapjms/</code></td><td>Defined by this specification</td></tr><tr><td><code>xsd</code></td><td><code>http://www.w3.org/2001/XMLSchema</code>
+		</td><td>[<cite><a href="#XMLSchemaPart1">XML Schema Structures</a></cite>]</td></tr><tr><td><code>wsdl11</code></td><td><code>http://schemas.xmlsoap.org/wsdl/</code></td><td>[<cite><a href="#wsdl11">WSDL 1.1</a></cite>]</td></tr><tr><td><code>wsdl20</code></td><td><code>http://www.w3.org/ns/wsdl</code></td><td>[<cite><a href="#wsdl20">WSDL 2.0 Core Language</a></cite>]</td></tr><tr><td><code>wsoap</code></td><td><code>http://www.w3.org/ns/wsdl/soap</code></td><td>[<cite><a href="#wsdl20forsoap">WSDL 2.0 Adjuncts</a></cite>]</td></tr><tr><td><code>wsdl11soap11</code></td><td><code>http://schemas.xmlsoap.org/wsdl/soap/</code></td><td>[<cite><a href="#wsdl11">WSDL 1.1</a></cite>]</td></tr><tr><td><code>wsdl11soap12</code></td><td><code>http://schemas.xmlsoap.org/wsdl/soap12/</code></td><td>[<cite><a href="#wsdl11forsoap12">WSDL 1.1 for SOAP 1.2</a></cite>]</td></tr></tbody></table><p>
+	      The binding defined by this specification is identified
+	      by the XML namespace URI [<cite><a href="#XML-NS">XML Namespaces</a></cite>]
+	      <code>http://www.w3.org/2010/soapjms/</code>.
+	    </p><p>It is the intent of the W3C SOAP JMS Binding Working
+	    Group that the SOAP/JMS XML namespace URI will not change
+	    arbitrarily with each subsequent revision of the
+	    corresponding XML Schema documents as the specifications
+	    transition through Candidate Recommendation, Proposed
+	    Recommendation and Recommendation status. However, should
+	    the specifications revert to Working Draft status, and a
+	    subsequent revision, published as a WD, CR or PR draft,
+	    results in non-backwardly compatible changes from a
+	    previously published WD, CR or PR draft of the
+	    specification, the namespace URI will be changed
+	    accordingly.</p><table border="1" summary="Editorial note: plh"><tr><td align="left" valign="top" width="50%"><b>Editorial note: plh</b></td><td align="right" valign="top" width="50%">20080501</td></tr><tr><td colspan="2" align="left" valign="top">The above paragraph will need to be removed for the publication of the Recommendation.</td></tr></table></div></div><div class="div2">
+<h3><a name="assertions" id="assertions"/>1.5 Assertions</h3><p>
+			Assertions in this specification are
+			marked by a dagger symbol (†) at the end
+			of a sentence. Each assertion has been assigned a unique
+			identifier that consists of a descriptive textual prefix and
+			a unique numeric suffix. The numeric suffixes are assigned
+			sequentially and never reused so there could be gaps in the
+			sequence.
+		</p><p>
+			The assertions and their identifiers are
+			summarized in section <a href="#assertionsummary"><b>H Assertion Summary</b></a>.
+		</p></div><div class="div2">
+<h3><a name="introduction-conformance" id="introduction-conformance"/>1.6 Conformance</h3><p>This specification defines two features, each of which has conformance criteria associated with it. 
+		<span id="Conformance-1000" class="test-assertion-tr">A conforming implementation <strong>MUST</strong> work with JMS.<sup><a href="#Conformance-1000-summary" title="Link to assertion Conformance-1000 summary">†</a></sup></span>
+		</p><ol class="enumar"><li><p>Feature: soapjms:Protocol [<code>http://www.w3.org/2010/soapjms/Protocol</code>]</p><p>
+			<span id="Conformance-1001" class="test-assertion-tr">A conforming implementation <strong>MUST</strong> implement all the requirements of <a href="#soap-binding"><b>2 The SOAP/JMS Underlying Protocol Binding</b></a>.<sup><a href="#Conformance-1001-summary" title="Link to assertion Conformance-1001 summary">†</a></sup></span>
+			<span id="Conformance-1002" class="test-assertion-tr">Conforming implementations <strong>MUST</strong> implement all the requirements of the JMS URI.<sup><a href="#Conformance-1002-summary" title="Link to assertion Conformance-1002 summary">†</a></sup></span>
+			</p></li><li><p>Feature: soapjms:WSDL11 [<code>http://www.w3.org/2010/soapjms/WSDL11</code>]</p><p>
+			<span id="Conformance-1003" class="test-assertion-tr">Support for WSDL 1.1 is optional and as such an implementation <strong>MAY</strong> implement it.  
+			However, a conforming implementation of this feature <strong>MUST</strong> implement all the requirements of <a href="#wsdl-11-detail"><b>3.3 WSDL 1.1 Extensions Detail</b></a>.<sup><a href="#Conformance-1003-summary" title="Link to assertion Conformance-1003 summary">†</a></sup></span></p></li></ol></div></div><div class="div1">
+<h2><a name="soap-binding" id="soap-binding"/>2 The SOAP/JMS Underlying Protocol Binding</h2><p>This section is normative.</p><p>This section describes the required feature: soapjms:Protocol [<code>http://www.w3.org/2010/soapjms/Protocol</code>]</p><div class="div2">
+<h3><a name="binding-intro" id="binding-intro"/>2.1 Introduction</h3><p>This section covers the SOAP/JMS binding, and implicitly the JMS calls that need to be made. 
+    	One might think of the JMS calls as the SOAP/JMS message format. 
+    	This is almost correct, but not completely. 
+    	JMS is strictly an API and does	not define a message format. 
+    	Also, this document covers how the SOAP/JMS implementation connects to the JMS service and selects the appropriate destination.
+    	</p><p>This part covers details such as how JMS connections and destinations are handled. 
+		It also covers the message content, including how properties and headers such as priority,
+		soapAction and targetService are handled within the SOAP/JMS implementation.
+		</p></div><div class="div2">
+<h3><a name="binding-properties" id="binding-properties"/>2.2 Properties Affecting Binding</h3><p>There are a number of properties that affect how the binding behaves.
+    The following properties are grouped into related sets. </p><p>Some of the properties are optional.
+	<span id="Protocol-2001" class="test-assertion-tr">
+    Properties can be obtained from a number of sources. 
+    If a given property is specified in more than one of these, 
+    the following list specifies the precedence: 
+    the first <strong>MUST</strong> be used in preference to the second.
+    <sup><a href="#Protocol-2001-summary" title="Link to assertion Protocol-2001 summary">†</a></sup></span></p><ol class="enumar"><li><p>The environment (for example local program variables, system environment variables etc).</p></li><li><p>WSDL elements or attributes (including those specified in an endpoint URI within the WSDL). 
+          The precedence rules for properties specified in a WSDL document are defined in <a href="#wsdl-11-properties"><b>3.3.4 Specifying Properties In WSDL 1.1</b></a> and <a href="#wsdl-11-url"><b>3.3.5 Specifying Properties Via the JMS URI</b></a>.</p></li></ol><p><span id="Protocol-2002" class="test-assertion-tr">
+	If a given property is specified more than once in the JMS 
+    URI the last instance of the property <strong>MUST</strong> be used.
+	<sup><a href="#Protocol-2002-summary" title="Link to assertion Protocol-2002 summary">†</a></sup></span></p><div class="div3">
+<h4><a name="binding-connection" id="binding-connection"/>2.2.1 Connection to a destination</h4><p>Since the underlying JMS URI scheme defines an open-ended scheme for identifying and connecting to a destination, it is not
+      possible to enumerate all the ways that connection information can be set.  However, in the interest of specifying
+      context information such as JNDI connection properties in such a way that they can apply to multiple services or endpoints,
+      this specification enumerates specific properties.</p><dl><dt class="label">[<a name="lookupVariant" id="lookupVariant" title="soapjms:lookupVariant">Definition</a>: <b>soapjms:lookupVariant</b>
+		](xsd:string)</dt><dd><ul><li><p>Specifies the technique to use for looking up the given destination name.</p></li><li><p><span id="Protocol-2003" class="test-assertion-tr">
+					<strong>MUST</strong> be specified in the JMS URI, as the <code>jms-variant</code> portion of the syntax. <sup><a href="#Protocol-2003-summary" title="Link to assertion Protocol-2003 summary">†</a></sup></span>
+				</p></li><li><p><span id="Protocol-2060" class="test-assertion-tr">
+					The <code>jms-variant</code>: <code>jndi</code> <strong>MUST</strong> be supported.<sup><a href="#Protocol-2060-summary" title="Link to assertion Protocol-2060 summary">†</a></sup></span>
+                    [<a name="unsupportedLookupVariant" id="unsupportedLookupVariant" title="unsupportedLookupVariant">Definition</a>: <span id="Protocol-2071" class="test-assertion-tr">
+                    A fault MUST be generated with subcode <b>unsupportedLookupVariant</b>
+                        if the JMS URI specifies a lookupVariant that is not supported by the implementation.<sup><a href="#Protocol-2071-summary" title="Link to assertion Protocol-2071 summary">†</a></sup></span>]
+				</p></li></ul></dd><dt class="label">[<a name="destinationName" id="destinationName" title="soapjms:destinationName">Definition</a>: <b>soapjms:destinationName</b>
+              ] (xsd:string)</dt><dd><ul><li><p>Specifies the name of the destination, for lookup as per the <a title="soapjms:lookupVariant" href="#lookupVariant">lookupVariant</a>.
+	      If the variant is "jndi", this is the Java Naming and Directory Interface (JNDI)
+	      name of the destination (queue or topic). </p></li><li><p><span id="Protocol-2004" class="test-assertion-tr"> <strong>MUST</strong> be specified in JMS URI, as the <code>jms-dest</code> portion of the syntax.<sup><a href="#Protocol-2004-summary" title="Link to assertion Protocol-2004 summary">†</a></sup></span></p></li></ul></dd><dt class="label">[<a name="jndiConnectionFactoryName" id="jndiConnectionFactoryName" title="soapjms:jndiConnectionFactoryName">Definition</a>: <b>soapjms:jndiConnectionFactoryName</b>
+              ] (xsd:string)</dt><dd><ul><li><p>Specifies the JNDI name of the connection factory.</p></li><li><p>optional in URI, optional in WSDL, optional in environment</p></li></ul></dd><dt class="label">[<a name="jndiInitialContextFactory" id="jndiInitialContextFactory" title="soapjms:jndiInitialContextFactory">Definition</a>: <b>soapjms:jndiInitialContextFactory</b>
+              ] (xsd:string)</dt><dd><ul><li><p>Specifies the fully qualified Java class name of the
+      <code>InitialContextFactory</code> to use.  This is mapped to the <code>java.naming.factory.initial</code>
+          property (defined by the constant <code>javax.naming.Context.INITIAL_CONTEXT_FACTORY</code>) to be set in
+      the <code>HashMap</code> sent to an <code>InitialContext</code> constructor.</p></li><li><p>optional in URI, optional in WSDL, optional in environment</p></li></ul></dd><dt class="label">[<a name="jndiURL" id="jndiURL" title="soapjms:jndiURL">Definition</a>: <b>soapjms:jndiURL</b>
+              ] (xsd:anyURI)</dt><dd><ul><li><p>Specifies the JNDI provider URL, which is mapped to the
+      <code>java.naming.provider.url</code> property (defined by the constant 
+          <code>javax.naming.Context.PROVIDER_URL</code>) to be set in the 
+          <code>HashMap</code> sent to an <code>InitialContext</code> constructor.</p></li><li><p>optional in URI, optional in WSDL, optional in environment</p></li></ul></dd><dt class="label">[<a name="jndiContextParameter" id="jndiContextParameter" title="soapjms:jndiContextParameter">Definition</a>: <b>soapjms:jndiContextParameter</b>
+              ] (soapjms:jndiContextParameterType)</dt><dd><ul><li><p>Provides mechanism to set additional, arbitrary JNDI environment properties, 
+      other than jndiURL and jndiInitialContextFactory, in the <code>java.util.Hashtable</code> sent to the
+       InitialContext constructor for the JNDI provider.</p></li><li><p>A property that can be specified more than once.
+      When determining precedence rules for multiple occurrences of the jndiContextParameter property, 
+      the property is not considered to occur more than once unless the name attribute is identical 
+      in multiple jndiContextParameter properties.</p></li><li><p>Specifies a JNDI property name and value pair to be added to the <code>java.util.Hashtable</code> sent to the 
+       InitialContext.
+</p></li><li><p>In XML form the JNDI property's name is defined by the name
+      attribute of the jndiContextParameter element, and the JNDI property
+      value is defined by the value attribute. When indicated in a URI, the
+      name of the JNDI property is derived from dropping the 'jndi-' prefix
+      from any parameter name starting that way, and the value comes from the
+      parameter value.  The value is added as a <code>java.lang.String</code>.
+      </p></li><li><p>optional in URI, optional in WSDL, optional in environment</p></li></ul><div class="exampleOuter">
+<div class="exampleHeader"><a name="d3e638" id="d3e638"/>Example: Including JNDI context properties in WSDL</div><div class="exampleInner"><pre>
+&lt;!-- Enable tracing for the ACME Corporation JNDI provider   --&gt;
+&lt;soapjms:jndiContextParameter name="com.acme.jndi.enable.tracing" value="true" /&gt;
+
+&lt;!-- Include the standard JNDI property to ignore JNDI provider referrals --&gt;
+&lt;soapjms:jndiContextParameter name="java.naming.referral" value="ignore" /&gt;
+ </pre></div></div><p/><div class="exampleOuter">
+<div class="exampleHeader"><a name="d3e644" id="d3e644"/>Example: Including JNDI context properties in URI</div><div class="exampleInner"><pre>
+jms:jndi:destinationName?jndi-com.acme.jndi.enable.tracing=true&amp;jndi-java.naming.referral=ignore
+ </pre></div></div></dd></dl></div><div class="div3">
+<h4><a name="binding-header-props" id="binding-header-props"/>2.2.2 JMS Message Header properties</h4><p>This set of properties provide information that will set the values
+      of corresponding JMS Header fields.  This specification assumes that the JMS
+      provider validates the values set for the respective message header properties, rather than
+      being explicitly constrained by this specification.</p><dl><dt class="label">[<a name="deliveryMode" id="deliveryMode" title="soapjms:deliveryMode">Definition</a>: <b>soapjms:deliveryMode</b>] (soapjms:deliveryModeType) </dt><dd><ul><li><p>indicates whether the request message is persistent or not. The valid values are "PERSISTENT" and "NON_PERSISTENT".  The default value is "PERSISTENT" (defaulted by JMS)</p></li><li><p>optional in URI, optional in WSDL, optional in environment</p></li><li><p><span id="Protocol-2005" class="test-assertion-tr">
+                        if specified <strong>MUST</strong> appear in the JMS message in the header named <code>JMSDeliveryMode</code>.
+                          If the value of this property is "PERSISTENT" then the <code>JMSDeliveryMode</code> integer value <strong>MUST</strong> be 
+                          set to <code>DeliveryMode.PERSISTENT</code>.  If the value of this property is "NON_PERSISTENT" then the 
+                          <code>JMSDeliveryMode</code> integer value <strong>MUST</strong> be set to <code>DeliveryMode.NON_PERSISTENT</code>. 
+                        <sup><a href="#Protocol-2005-summary" title="Link to assertion Protocol-2005 summary">†</a></sup></span></p></li></ul></dd><dt class="label">
+                [<a name="timeToLive" id="timeToLive" title="soapjms:timeToLive">Definition</a>: <b>soapjms:timeToLive</b>] (xsd:long)
+            </dt><dd><ul><li><p>the lifetime, in milliseconds, of the request message. A value of 0 indicates an infinite lifetime. The default value is 0 (defaulted by JMS).</p></li><li><p>optional in URI, optional in WSDL, optional in environment.</p></li><li><p><span id="Protocol-2006" class="test-assertion-tr"> if specified, this <strong>MUST</strong> be used to generate the value of the JMS header <code>JMSExpiration</code>.<sup><a href="#Protocol-2006-summary" title="Link to assertion Protocol-2006 summary">†</a></sup></span></p></li></ul></dd><dt class="label">
+                [<a name="priority" id="priority" title="soapjms:priority">Definition</a>: <b>soapjms:priority</b>] (soapjms:priorityType)
+            </dt><dd><ul><li><p>the JMS priority associated with the request message. Valid values are integers between 0 (lowest priority) and 9 (highest priority). The default value is 4 (defaulted by JMS).</p></li><li><p>optional in URI, optional in WSDL, optional in environment</p></li><li><p><span id="Protocol-2007" class="test-assertion-tr"> if specified, <strong>MUST</strong> appear in the JMS message in the header named <code>JMSPriority</code>.<sup><a href="#Protocol-2007-summary" title="Link to assertion Protocol-2007 summary">†</a></sup></span></p></li></ul></dd><dt class="label">
+                [<a name="replyToName" id="replyToName" title="soapjms:replyToName">Definition</a>: <b>soapjms:replyToName</b>] (xsd:string)
+            </dt><dd><ul><li><p>Specifies the name of the destination to which a response message will be sent. 
+		      If the <a title="soapjms:replyToName" href="#replyToName">replyToName</a> property has a value it is used to lookup a destination using the <a title="soapjms:lookupVariant" href="#lookupVariant">lookupVariant</a>. 
+		      If the variant is "jndi", this is the Java Naming and Directory Interface (JNDI) name of the destination (queue or topic).
+		      If the variant is "queue" or "topic", this refers to the name of a JMS queue.
+		      </p></li><li><p>optional in URI, optional in WSDL, optional in environment</p></li><li><p><span id="Protocol-2008" class="test-assertion-tr"> if specified, this <strong>MUST</strong> be used to derive the value to be used in the JMS header <code>JMSReplyTo</code>.<sup><a href="#Protocol-2008-summary" title="Link to assertion Protocol-2008 summary">†</a></sup></span></p></li></ul></dd><dt class="label">
+                [<a name="topicReplyToName" id="topicReplyToName" title="soapjms:topicReplyToName">Definition</a>: <b>soapjms:topicReplyToName</b>] (xsd:string)
+            </dt><dd><ul><li><p>Specifies the name of the topic destination to which a response message will be sent.</p></li><li><p>as defined by [<cite><a href="#jmsuri">IETF RFC 6167</a></cite>], the topicReplyToName only makes sense if the URI variant is "queue" or "topic".</p></li><li><p>if the replyToName is specified in the URI, WSDL, or environment, topicReplyToName is not relevant and MUST be ignored.</p></li><li><p>optional in URI, optional in WSDL, optional in environment</p></li><li><p><span id="Protocol-2070" class="test-assertion-tr"> if specified and if relevant, this <strong>MUST</strong> be used to derive the value to be used in the JMS header <code>JMSReplyTo</code>.<sup><a href="#Protocol-2070-summary" title="Link to assertion Protocol-2070 summary">†</a></sup></span></p></li></ul></dd></dl><div class="div4">
+<h5><a name="binding-header-props-xmp" id="binding-header-props-xmp"/>2.2.2.1 Setting JMS Message Header properties</h5><p>This section is non-normative and is intended to give an example of how a JMS Message Header property can be set.</p><div class="exampleOuter">
+<div class="exampleHeader"><a name="d3e818" id="d3e818"/>Example: Setting JMS Message Header properties</div><div class="exampleInner"><pre>
+import java.naming.Context;
+import javax.jms.DeliveryMode;
+import javax.jms.Destination;
+import javax.jms.Message;
+import javax.jms.MessageProducer;
+...
+
+class ... 
+{
+  // add appropriate error checking for your use....
+  public void someMethod(Context ctx, MessageProducer producer, Message jmsMessage,
+                         String deliveryModeStr, String replyToName, int priority, 
+                         long timeToLive) 
+  {
+    // Set the reply destination, first looking it up using JNDI
+    Destination replyDestination = ctx.lookup(replyToName);
+    jmsMessage.setJMSReplyTo(replyDestination);
+
+    // set the delivery mode to the appropriate constant value.
+    int deliveryMode = deliveryModeStr.equals("PERSISTENT") ? DeliveryMode.PERSISTENT: DeliveryMode.NON_PERSISTENT;
+    producer.setDeliveryMode( deliveryMode );
+
+    // set the default priority on the producer.
+    producer.setPriority(priority);
+
+    // set when the message is set to expire.
+    producer.setTimeToLive(timeToLive);
+
+    // and finally, send the message.
+    producer.send(jmsMessage);
+
+    // Alternately, instead of changing the producer's default settings, the
+    // header properties could be set on a per-message basis by passing them
+    // to the MessageProducer.send() method, like so:
+    // producer.send(jmsMessage, deliveryMode, priority, timeToLive);
+  }  
+} 
+ </pre></div></div></div></div><div class="div3">
+<h4><a name="binding-message-props" id="binding-message-props"/>2.2.3 JMS Message properties</h4><dl><dt class="label">
+                [<a name="targetService" id="targetService" title="soapjms:targetService">Definition</a>: <b>soapjms:targetService</b>] (xsd:string)
+            </dt><dd><ul><li><p>Used by the service implementation to dispatch the service request. </p></li><li><p>optional in URI</p></li><li><p>[<a name="missingTargetService" id="missingTargetService" title="missingTargetService">Definition</a>:                       
+                        <span id="Protocol-2009" class="test-assertion-tr"> 
+                        if specified <strong>MUST</strong> appear in the JMS message in the JMS property named 
+                        <code>SOAPJMS_targetService</code>.
+                         Use fault subcode <b>missingTargetService</b> if specified and <code>SOAPJMS_targetService</code> does not appear.                      
+                        <sup><a href="#Protocol-2009-summary" title="Link to assertion Protocol-2009 summary">†</a></sup></span>
+                        ]</p></li></ul></dd><dt class="label">
+                [<a name="bindingVersion" id="bindingVersion" title="soapjms:bindingVersion">Definition</a>: <b>soapjms:bindingVersion</b>] (xsd:string)
+            </dt><dd><ul><li><p>Specifies the version of SOAP JMS binding that is being used.</p></li><li><p><span id="Protocol-2010" class="test-assertion-tr"> fixed value "1.0" in the implementation, <strong>MUST</strong> appear in a JMS property named <code>SOAPJMS_bindingVersion</code>.<sup><a href="#Protocol-2010-summary" title="Link to assertion Protocol-2010 summary">†</a></sup></span></p><p>
+                        [<a name="unrecognizedBindingVersion" id="unrecognizedBindingVersion" title="unrecognizedBindingVersion">Definition</a>:   
+                        <span id="Protocol-2011" class="test-assertion-tr">
+                        A fault <strong>MUST</strong> be generated with subcode <b>unrecognizedBindingVersion</b> 
+                        if the value of the <b>soapjms:bindingVersion</b> property does not match the fixed value.
+                        <sup><a href="#Protocol-2011-summary" title="Link to assertion Protocol-2011 summary">†</a></sup></span>]</p></li></ul></dd><dt class="label">
+                [<a name="contentType" id="contentType" title="soapjms:contentType">Definition</a>: <b>soapjms:contentType</b>] (xsd:string)
+            </dt><dd><p>Note that the <code>contentType</code> value also indicates the MIME type of the primary message payload.  
+                This message property, then, identifies whether the message payload uses 
+                SOAP 1.1, SOAP 1.2, SOAP Messages With Attachments [<cite><a href="#SwA">SOAP Messages with Attachments</a></cite>] or 
+                MTOM [<cite><a href="#SOAP11-MTOM">SOAP 1.1 Binding for MTOM 1.0</a></cite>] [<cite><a href="#SOAP12-MTOM">SOAP MTOM</a></cite>] as the primary payload.</p><ul><li><p>Describes the content of the SOAP message, 
+                        this has the same values as the MIME Content-Type specified for a SOAP message over HTTP [<cite><a href="#mime">IETF RFC 2045</a></cite>].</p></li><li><p>If the value of the property is text/xml or application/soap+xml,
+                           a <code>charset</code> parameter might be present; if the value of the property is 
+                           multipart/related, a type parameter might be present.</p></li><li><p>[<a name="contentTypeMismatch" id="contentTypeMismatch" title="contentTypeMismatch">Definition</a>: 
+                            <span id="Protocol-2012" class="test-assertion-tr">
+                            If the <code>charset</code> parameter is specified, it is checked to ensure that it matches the encoding value from the supplied XML.
+                            A fault <strong>MUST</strong> be generated with subcode <b>contentTypeMismatch</b> if the encoding values do not match.<sup><a href="#Protocol-2012-summary" title="Link to assertion Protocol-2012 summary">†</a></sup></span>]
+                        </p></li><li><p>The charset parameter is optional and can take the values "utf-8" or "utf-16".  
+                        If the charset parameter is omitted, the character set rules for freestanding [<cite><a href="#xml">XML 1.0</a></cite>] apply to the body of the JMS message.
+                        </p></li><li><p>[<a name="missingContentType" id="missingContentType" title="missingContentType">Definition</a>: 
+                        <span id="Protocol-2016" class="test-assertion-tr">
+                        The contentType value <strong>MUST</strong> appear in the JMS message in the JMS property named <code>SOAPJMS_contentType</code>.
+                        A fault <strong>MUST</strong> be generated with subcode <b>missingContentType</b> if the 
+                        <code>SOAPJMS_contentType</code> property is missing.<sup><a href="#Protocol-2016-summary" title="Link to assertion Protocol-2016 summary">†</a></sup></span>]</p></li></ul></dd><dt class="label">
+                [<a name="soapAction" id="soapAction" title="soapjms:soapAction">Definition</a>: <b>soapjms:soapAction</b>] (xsd:anyURI)
+            </dt><dd><ul><li><p>As with SOAP/HTTP</p></li><li><p>Optional in WSDL, optional in environment</p></li><li><p>[<a name="missingSoapAction" id="missingSoapAction" title="missingSoapAction">Definition</a>: 
+                          <span id="Protocol-2018" class="test-assertion-tr">If specified <strong>MUST</strong> appear in the JMS message in the JMS property named <code>SOAPJMS_soapAction</code>.
+                          Fault subcode <b>missingSoapAction</b> MAY be used if <code>SOAPJMS_soapAction</code> does not appear.<sup><a href="#Protocol-2018-summary" title="Link to assertion Protocol-2018 summary">†</a></sup></span>
+                          ]</p></li><li><p>[<a name="mismatchedSoapAction" id="mismatchedSoapAction" title="mismatchedSoapAction">Definition</a>: 
+                        <span id="Protocol-2019" class="test-assertion-tr">
+                        If using SOAP 1.2, and the <a title="soapjms:contentType" href="#contentType">contentType</a>
+                    	property has an <code>action</code> parameter, that parameter value is compared with the <code>SOAPJMS_soapAction</code> value.
+                         
+                        A fault <strong>MUST</strong> be generated with fault subcode <b>mismatchedSoapAction</b> if the SOAP 1.2 <code>action</code> does not
+                    	match the <code>SOAPJMS_soapAction</code> value.<sup><a href="#Protocol-2019-summary" title="Link to assertion Protocol-2019 summary">†</a></sup></span>] 
+                    	</p></li></ul></dd><dt class="label">
+                [<a name="isFault" id="isFault" title="soapjms:isFault">Definition</a>: <b>soapjms:isFault</b>] (xsd:boolean)
+            </dt><dd><ul><li><p>This property indicates whether a SOAP/JMS message corresponds to a SOAP fault.
+                        </p></li><li><p> 
+                        For senders, this property is set to <code>true</code> when responding with a SOAP fault. 
+                        <span id="Protocol-2020" class="test-assertion-tr">
+                        When this property is <code>true</code>, the sending software <strong>MUST</strong> set a boolean JMS Message property 
+                        named <code>SOAPJMS_isFault</code> with a value of <code>true</code>, as in: 
+                        <code>Message.setBooleanProperty("SOAPJMS_isFault", true)</code>.
+                        <sup><a href="#Protocol-2020-summary" title="Link to assertion Protocol-2020 summary">†</a></sup></span>
+                        </p></li><li><p>For receivers, this property is derived from the boolean JMS Message property named <code>SOAPJMS_isFault</code> — 
+                        if present and containing a value of <code>true</code>, the value of <a title="soapjms:isFault" href="#isFault">soapjms:isFault</a> 
+                        is <code>true</code>. 
+                        If omitted, or present with a value of <code>false</code>, the value of <a title="soapjms:isFault" href="#isFault">soapjms:isFault</a> 
+                        is <code>false</code>.
+                        </p></li></ul></dd><dt class="label">
+                [<a name="requestURI" id="requestURI" title="soapjms:requestURI">Definition</a>: <b>soapjms:requestURI</b>] (xsd:string)
+            </dt><dd><ul><li><p>Specifies the JMS URI of the service. 
+                        <span id="Protocol-2021" class="test-assertion-tr">The client <strong>MUST</strong> create the requestURI by taking the supplied URI, leaving the destinationName as-is, 
+                        and removing the targetService and replyToName query parameters if they are specified. The client <strong>SHOULD</strong> 
+                        also remove deliveryMode, jndiConnectionFactoryName, jndiInitialContextFactory, jndiURL, jndiContextParameter, timeToLive, 
+                        and priority properties.  The client <strong>MAY</strong> remove other query parameters not explicitly mentioned above 
+                        (for example client security related properties).<sup><a href="#Protocol-2021-summary" title="Link to assertion Protocol-2021 summary">†</a></sup></span></p></li><li><p>A required property</p></li><li><p>[<a name="missingRequestURI" id="missingRequestURI" title="missingRequestURI">Definition</a>: 
+                        <span id="Protocol-2022" class="test-assertion-tr">
+                        Appears in the JMS message in the JMS property named <code>SOAPJMS_requestURI</code>.
+                        A fault <strong>MUST</strong> be generated with fault subcode <b>missingRequestURI</b> if the <code>SOAPJMS_requestURI</code> property 
+                        is missing from the message.<sup><a href="#Protocol-2022-summary" title="Link to assertion Protocol-2022 summary">†</a></sup></span>]</p></li><li><p>[<a name="malformedRequestURI" id="malformedRequestURI" title="malformedRequestURI">Definition</a>: 
+                        <span id="Protocol-2025" class="test-assertion-tr"> 
+                        A fault <strong>MUST</strong> be generated with subcode <b>malformedRequestURI</b> 
+                        when the <code>SOAPJMS_requestURI</code> violates the expected syntax.<sup><a href="#Protocol-2025-summary" title="Link to assertion Protocol-2025 summary">†</a></sup></span>  ].</p></li><li><p>[<a name="targetServiceNotAllowedInRequestURI" id="targetServiceNotAllowedInRequestURI" title="targetServiceNotAllowedInRequetURI">Definition</a>: 
+                        <span id="Protocol-2026" class="test-assertion-tr">
+                        A fault <strong>MUST</strong> be generated with subcode <b>targetServiceNotAllowedInRequestURI</b> 
+                        when <code>targetService</code> parameter is included in the <code>SOAPJMS_requestURI</code>). 
+                        <sup><a href="#Protocol-2026-summary" title="Link to assertion Protocol-2026 summary">†</a></sup></span>  ]  </p></li></ul></dd><dt class="label">
+                [<a name="contentEncoding" id="contentEncoding" title="soapjms:contentEncoding">Definition</a>: <b>soapjms:contentEncoding</b>] (xsd:string)
+            </dt><dd><ul><li><p>Identifies the transformation that has been applied to the message
+                        payload body.  Contains one of the values defined by IANA for the
+                        Content-Coding values of [<cite><a href="#IANA_HTTP_PARAMS">IANA HTTP PARAMS</a></cite>].  
+                        Defaults to "identity" if the property is not present.</p></li><li><p>Corresponds to the JMS Message property named SOAPJMS_contentEncoding</p></li><li><p>[<a name="contentEncodingNotSupported" id="contentEncodingNotSupported" title="contentEncodingNotSupported">Definition</a>: 
+                        <span id="Protocol-2039" class="test-assertion-tr">
+                        If the content encoding is specified, it is checked to
+                        ensure that it matches the content encoding values supported. A fault
+                        <strong>MUST</strong> be generated with subcode <b>contentEncodingNotSupported</b> 
+                        if the encoding values do not match.<sup><a href="#Protocol-2039-summary" title="Link to assertion Protocol-2039 summary">†</a></sup></span>]</p></li><li><p>Restriction: the meaning of the property is not defined for
+                     composite messages (messages with a Content-Type of "multipart" or
+                     "message"), only for discrete messages (Content-Type "application" or
+                     "text", for this specification).</p></li></ul></dd></dl><div class="div4">
+<h5><a name="binding-message-props-xmp" id="binding-message-props-xmp"/>2.2.3.1 Setting JMS Message properties</h5><p>This section is non-normative and is intended to give an example of how a JMS Message property can be set.</p><div class="exampleOuter">
+<div class="exampleHeader"><a name="d3e1214" id="d3e1214"/>Example: Setting JMS Message properties</div><div class="exampleInner"><pre> 		
+import javax.jms.Message;
+import javax.mail.internet.ContentType;
+...
+
+class ... {
+
+  public void anotherMethod(Message jmsMessage, String targetService, ContentType type, URI requestURI) {
+
+    jmsMessage.setStringProperty("SOAPJMS_targetService", targetService);
+
+    // at least for this definition of the binding, the version here is always "1.0"
+    jmsMessage.setStringProperty("SOAPJMS_bindingVersion", "1.0");
+
+    // set the content type using the ContentType value already defined by javax.mail.
+    jmsMessage.setStringProperty("SOAPJMS_contentType", type.toString() );
+
+    //According to Basic Profile SOAP 1.2 HTTP binding does not use the SOAPAction header
+    //However the soapAction is mandatory with SOAP 1.1 hence setting to empty string
+    jmsMessage.setStringProperty("SOAPJMS_soapAction", "");
+
+    // for the first message in an exchange, not a fault1
+    jmsMessage.setBooleanProperty("SOAPJMS_isFault", false);
+
+    jmsMessage.setStringProperty("SOAPJMS_requestURI", requestURI.toString() );
+  }
+}
+	    	
+	    	</pre></div></div></div></div><div class="div3">
+<h4><a name="binding-props-URI" id="binding-props-URI"/>2.2.4 Binding of Properties to URI</h4><p>Implementations of this specification need to allow for the setting
+      of the above properties.  Some properties, as mentioned above can be
+      inferred from context, or provided by the application environment. 
+      Some might be put into WSDL.  In many cases, it is desirable to
+      represent those properties as part of a URL-like representation. In particular,
+      this section describes how the properties above are used in the URI.  
+      Note that the URI scheme also defines query parameters, and where the
+      query parameter names are the same, the same meaning is intended here.</p><p>For brevity, properties are shown without the <code>SOAPJMS</code> prefix.
+      The "URI representation" column describes how the property is carried
+      in the URI.</p><a name="properties2URI" id="properties2URI"/><table summary="properties are shown without the SOAPJMS prefix. The 'URI representation' column describes how the property is carried in the URI." border="1" cellspacing="0" cellpadding="5"><caption>
+Binding of Properties to URI</caption><thead><tr><th>Specification Property</th><th>URI Representation</th></tr></thead><tbody><tr><td>deliveryMode</td><td> as <code>deliveryMode</code> query parameter</td></tr><tr><td>destinationName</td><td>as <code>jms-dest</code> portion of URI syntax</td></tr><tr><td>jndiConnectionFactoryName</td><td> as <code>jndiConnectionFactoryName</code> query parameter</td></tr><tr><td>jndiInitialContextFactory</td><td> as <code>jndiInitialContextFactory</code> query parameter</td></tr><tr><td>jndiURL</td><td> as <code>jndiURL</code> query parameter</td></tr><tr><td>jndiContextParameter</td><td>as a query parameter combining the string "jndi-" with the jndiContextParameter's name attribute</td></tr><tr><td>replyToName</td><td> as <code>replyToName</code> query parameter</td></tr><tr><td>topicReplyToName</td><td> as <code>topicReplyToName</code> query parameter</td></tr><tr><td>priority</td><td> as <code>priority</code> query parameter</td></tr><tr><td>targetService</td><td> as <code>targetService</code> query parameter</td></tr><tr><td>timeToLive</td><td> as <code>timeToLive</code> query parameter</td></tr></tbody></table></div><div class="div3">
+<h4><a name="binding-other-props" id="binding-other-props"/>2.2.5 Other Properties</h4><p>It is possible to specify other properties on the URI but they do
+      not affect processing. Any such properties will be included in the JMS
+      Message property requestURI unless explicitly removed by the client.
+      </p></div></div><div class="div2">
+<h3><a name="authentication" id="authentication"/>2.3 Authentication for SOAP/JMS</h3><p>Security, and in particular authentication, is a critical concern in most if not all
+            environments where this binding will be utilized.  There are at least two places where
+           authentication might need to occur — 1) authenticating to the registry (i.e. JNDI) where
+           JMS Destinations are located, and 2) authenticating to the JMS system itself.
+           Credentials such as usernames and passwords might be required to access directories and
+           to obtain JMS Connections from ConnectionFactories.  This specification does not mandate
+           how an implementation might obtain these credentials, although typically they can be
+           available as API parameters, environment variables, or in thread context storage.
+        </p><p>Implementers of this binding are encouraged to consider the most appropriate way to expose
+        authentication functionality to their users such that it meshes smoothly with the
+        models exposed by their environments.</p><div class="note"><p class="prefix"><b>Note:</b></p><p>Although technically possible, the specification of userid and/or password related
+            properties in the URI is not recommended.</p></div></div><div class="div2">
+<h3><a name="binding-message-body" id="binding-message-body"/>2.4 The JMS Message Body</h3><p>
+    <span id="Protocol-2027" class="test-assertion-tr">
+    The contents of the JMS Message body <strong>MUST</strong> be the SOAP payload as a 
+    JMS <code>BytesMessage</code> or <code>TextMessage</code>.
+    <sup><a href="#Protocol-2027-summary" title="Link to assertion Protocol-2027 summary">†</a></sup></span>
+    <span id="Protocol-2072" class="test-assertion-tr">
+    While the requesting node can support either <code>BytesMessage</code> or
+    <code>TextMessage</code>, the receiving node MUST support both <code>BytesMessage</code>
+    and <code>TextMessage</code>.<sup><a href="#Protocol-2072-summary" title="Link to assertion Protocol-2072 summary">†</a></sup></span>
+    <span id="Protocol-2073" class="test-assertion-tr">
+    If the message is formatted as a JMS <code>BytesMessage</code>, then the sender and 
+    receiver <strong>MUST</strong> use the <code>writeBytes()</code> and <code>readBytes()</code> 
+    methods, respectively.
+    <sup><a href="#Protocol-2073-summary" title="Link to assertion Protocol-2073 summary">†</a></sup></span>
+    [<a name="unsupportedJMSMessageFormat" id="unsupportedJMSMessageFormat" title="unsupportedJMSMessageFormat">Definition</a>: 
+    <span id="Protocol-2028" class="test-assertion-tr">
+    A fault <strong>MUST</strong> be generated with subcode <b>unsupportedJMSMessageFormat</b> when the 
+    arriving message format is not <code>BytesMessage</code> or <code>TextMessage</code>.
+    <sup><a href="#Protocol-2028-summary" title="Link to assertion Protocol-2028 summary">†</a></sup></span>
+    ]
+    </p><p>
+    After being decoded according to the <a title="soapjms:contentEncoding" href="#contentEncoding">contentEncoding</a> property, the
+    bytes or characters of the JMS Message payload correspond to the MIME
+    format as indicated by the definition of the <a title="soapjms:contentType" href="#contentType">contentType</a> property.
+    In this way, the SOAP node determines the proper formatting of the SOAP payload irrespective of the underlying JMS message type, 
+    and specifies an appropriate value for the <a title="soapjms:contentType" href="#contentType">contentType</a> property which describes it to the receiving SOAP node.
+    
+    <span id="Protocol-2029" class="test-assertion-tr">
+    Specifically, if the payload is formatted as a MIME multipart message, 
+    then the first byte or character encountered in the JMS Message body 
+    <strong>MUST</strong> be the start of the MIME boundary 
+    for the start of the first part 
+    — what MIME Part One [<cite><a href="#mime">IETF RFC 2045</a></cite>] section 2.5 calls a "Body Part".
+    <sup><a href="#Protocol-2029-summary" title="Link to assertion Protocol-2029 summary">†</a></sup></span> 
+    
+    <span id="Protocol-2030" class="test-assertion-tr">
+    If the message is formatted as "<code>text/xml</code>" 
+    or "<code>application/soap+xml</code>", 
+    then the first byte or character of the JMS Message body 
+    <strong>MUST</strong> be the start of a conforming XML document.
+    <sup><a href="#Protocol-2030-summary" title="Link to assertion Protocol-2030 summary">†</a></sup></span>
+    </p><div class="div3">
+<h4><a name="textmessage-considerations" id="textmessage-considerations"/>2.4.1 Considerations For Using TextMessage</h4><p>While the use of <code>TextMessage</code> might be attractive in some scenarios, 
+        there are some considerations that go along with it.</p><ul><li><p>Since the message is already in text format the "encoding" attribute in the XML header has to be ignored.</p></li><li><p>Messages with attachments will need to use <code>Content-Transfer-Encoding</code> for attachment parts.</p></li><li><p>Depending on the range of characters used by the SOAP message, 
+		using <code>TextMessage</code> might more than double the memory requirements to receive a message.</p></li><li><p>The impact on network consumption ought to be measured for particular scenarios and JMS providers.	</p></li><li><p>Use of the <a title="soapjms:contentEncoding" href="#contentEncoding">contentEncoding</a> property is not defined, since the underlying message payload is not raw bytes.</p></li></ul><p>Since binary data needs to be encoded to be carried as text, SOAP 
+        attachments via a <code>TextMessage</code> have the same concerns as the MIME specification 
+        carrying messages over a 7-bit channel [<cite><a href="#mime">IETF RFC 2045</a></cite>].  
+        The attachments will need to be encoded using one of the 
+        <code>Content-Transfer-Encoding</code> options specified by MIME.  
+        If the data is truly binary, such as a picture, a base64 encoding might be appropriate.</p><p>In typical scenarios, using <code>TextMessage</code> will almost 
+        certainly dramatically increase the memory requirements.  
+        This happens as a consequence of the JMS API <code>TextMessage.getText()</code>, 
+        which returns a Java String.  
+        The Java String class uses a UTF-16 representation to represent the data.  
+        This in memory representation will generally be larger than the 
+        corresponding <code>BytesMessage</code> representation.  
+        For example, if the message contains only US-ASCII characters, 
+        and is encoded into XML using UTF-8, the Java String representation of 
+        the message will take exactly twice as much memory.
+        </p><p>The in memory UTF-16 representation, coupled with base64 encoding of an attachment, 
+        will consume much more memory than the equivalent <code>BytesMessage</code> payload.  
+        To begin with, a base64 conversion yields a ratio of 33% more characters than bytes.  
+        Combined with a UTF-16 representation of those characters, the bytes required in 
+        memory will be 167% more than the original binary data (an 8/3 ratio).  
+        As a consequence, carefully consider any scenarios that use attachments with a <code>TextMessage</code>.
+        </p><p>As significant as the concerns around memory consumption might be, 
+        the effects on network payload size are more difficult to predict.  
+        Since the JMS API does not specify exactly how messages are handled, 
+        the effects on network traffic are JMS provider-specific.  
+        A JMS provider might be encoding a <code>TextMessage</code> with UTF-8, 
+        and could further compress such messages.  
+        With these two techniques, the data transferred via network calls 
+        could end up being no larger than a corresponding <code>BytesMessage</code>
+        representation, even with attachments.  
+        However, only actual monitoring will determine specific effects of specific scenarios.  
+        Clients of this specification who are using <code>TextMessage</code> are encouraged to do such monitoring.
+        </p></div></div><div class="div2">
+<h3><a name="binding-supported-meps" id="binding-supported-meps"/>2.5 Supported Message Exchange Patterns</h3><p><span id="Protocol-2033" class="test-assertion-tr">
+    In the case of SOAP 1.1 there is no formal specification of 
+    Message Exchange Patterns.     
+    A conforming SOAP-JMS Binding instance <strong>MUST</strong> 
+    support both the generic "request/response" and "one-way" 
+    patterns as specified in this document.<sup><a href="#Protocol-2033-summary" title="Link to assertion Protocol-2033 summary">†</a></sup></span></p><p><span id="Protocol-2032" class="test-assertion-tr">In the case of SOAP 1.2 a conforming SOAP-JMS Binding instance <strong>MUST</strong>
+    support the following message exchange patterns:<sup><a href="#Protocol-2032-summary" title="Link to assertion Protocol-2032 summary">†</a></sup></span></p><ul><li><p>
+			<code>http://www.w3.org/2003/05/soap/mep/request-response/</code>
+			(defined in <a href="http://www.w3.org/TR/soap12-part2/#singlereqrespmep">Request-Response
+			Message Exchange Pattern</a>)
+			</p></li><li><p> <code>http://www.w3.org/2006/08/soap/mep/one-way/</code> (defined in
+		    [<cite><a href="#soap-one-way-mep">SOAP 1.2 Part 3: One-Way MEP</a></cite>])
+		    </p></li></ul><p>There are tables of JMS properties, and explanations of their values,
+    in the remainder of this section.  Note that only the relevant
+    properties (i.e. ones affected by this specification) have been included
+    — other properties will continue to follow the normal JMS specification. 
+    For instance, the JMSMessageID header will be present on all messages,
+    and automatically generated by the underlying JMS implementation.</p><div class="div3">
+<h4><a name="binding-support-topics" id="binding-support-topics"/>2.5.1 Support for Topic destinations</h4><p>Topics can be used as destinations for SOAP messages over JMS. 
+      However, due to the potential complexities around how topics might
+      interact with message-exchange patterns, this specification provides
+      no guidelines as to how that message exchange might work.  In
+      particular, the "request-response" exchange clearly means something
+      different when an unknown number of responses might be received.  Even
+      the "one-way" exchange over a JMS topic differs in subtle ways from
+      the same exchange over HTTP, including the fundamental question of
+      whether the message is received at all, by any listeners.</p><p>For these reasons, implementers and clients of this specification
+      are advised to use caution when dealing with JMS topics.  We strongly
+      encourage implementers to carefully document their choices around the
+      use and support of topic destinations.</p></div></div><div class="div2">
+<h3><a name="binding-request-response" id="binding-request-response"/>2.6 Request-Response Message Exchange Pattern</h3><p>
+    For binding instances using the <a href="http://www.w3.org/TR/soap12-part2/#singlereqrespmep">Request-Response
+    Message Exchange Pattern</a>:</p><ul><li><p>A SOAP Node instantiated at the JMS interface can take on the role 
+    (i.e. the property <code>http://www.w3.org/2003/05/soap/bindingFramework/ExchangeContext/Role</code>)
+    of <code>RequestingSOAPNode</code>.</p></li><li><p>A SOAP Node instantiated at the JMS interface can take on the role 
+    (i.e. the property <code>http://www.w3.org/2003/05/soap/bindingFramework/ExchangeContext/Role</code>) 
+    of <code>RespondingSOAPNode</code>.</p></li></ul><p>The remainder of this section consists of descriptions of the MEP
+    state machine. In the state descriptions following, the states are
+    defined as values for the property <code>http://www.w3.org/2003/05/soap/bindingFramework/ExchangeContext/State</code>.</p><p>Failure reasons as specified in the tables represent values of the
+    property <code>http://www.w3.org/2003/05/soap/bindingFramework/ExchangeContext/FailureReason</code> -
+    their values are qualified names. If an implementation enters the "Fail" state,
+    the <code>http://www.w3.org/2003/05/soap/bindingFramework/ExchangeContext/FailureReason</code>
+    property will contain the value specified for the particular transition.</p><div class="div3">
+<h4><a name="requester-states" id="requester-states"/>2.6.1 Behaviour of Requesting SOAP Node</h4><div class="div4">
+<h5><a name="rr-requester-init" id="rr-requester-init"/>2.6.1.1 Init</h5><p>In the "Init" state, a JMS request is formulated and transmission of the request is initiated. 
+        The message is created as a JMS BytesMessage or TextMessage as defined in <a href="#binding-message-body"><b>2.4 The JMS Message Body</b></a>. </p><p>A number of the message header properties are implicitly created by the use of the JMS API.
+        The following table shows how the binding properties described earlier
+        explicitly affect the message constructed.</p><a name="table22" id="table22"/><table border="1" cellspacing="0" cellpadding="5"><caption>Init State Values</caption><thead><tr><th>Field</th><th>Value Set by Conforming Client</th></tr></thead><tbody><tr><th colspan="2">JMS Message Header</th></tr><tr><td>JMSDeliveryMode</td><td>the value of the <a title="soapjms:deliveryMode" href="#deliveryMode">deliveryMode</a> property or not set if not specified</td></tr><tr><td>JMSExpiration</td><td>calculated from the value of the <a title="soapjms:timeToLive" href="#timeToLive">timeToLive</a> property or not set if not specified</td></tr><tr><td>JMSPriority</td><td>the value of the <a title="soapjms:priority" href="#priority">priority</a> property or not set if not specified</td></tr><tr><td>JMSDestination</td><td>derived from the <a title="soapjms:destinationName" href="#destinationName">destinationName</a> property</td></tr><tr><td>JMSReplyTo</td><td>if the <a title="soapjms:replyToName" href="#replyToName">replyToName</a> property is specified, this
+        	is the JMS Destination object derived from that name. Otherwise the implementation has to
+        	determine the reply queue, and use the JMS Destination object which represents that queue;
+        	the queue can be a temporary queue generated as described in the JMS specification. </td></tr><tr><th colspan="2">JMS Message properties</th></tr><tr><td>SOAPJMS_requestURI</td><td>this is derived from the <a title="soapjms:requestURI" href="#requestURI">requestURI</a> property</td></tr><tr><td>SOAPJMS_bindingVersion</td><td>this is copied from the <a title="soapjms:bindingVersion" href="#bindingVersion">bindingVersion</a> property</td></tr><tr><td>SOAPJMS_soapAction</td><td>the value of the <a title="soapjms:soapAction" href="#soapAction">soapAction</a> property or not set if not specified</td></tr><tr><td>SOAPJMS_targetService</td><td>the value of the <a title="soapjms:targetService" href="#targetService">targetService</a> property or not set if not specified</td></tr><tr><td>SOAPJMS_contentType</td><td>inferred from the SOAP Envelope and presence of attachments</td></tr><tr><th colspan="2">JMS Message Body</th></tr><tr><td>body</td><td>A SOAP envelope is serialized according to the media type specified in the JMS Message property <code>SOAPJMS_contentType</code></td></tr></tbody></table></div><div class="div4">
+<h5><a name="rr-requester-request" id="rr-requester-request"/>2.6.1.2 Requesting</h5><p>In the "Requesting" state, sending of the request continues while
+        waiting for the start of the correlated response message. A correlated 
+        response message is defined as follows: If the 
+        <code>JMSCorrelationID</code> header field is set in the request message 
+        then a correlated response message is one where the value of the 
+        <code>JMSCorrelationID</code> header field is the same as the value 
+        of the <code>JMSCorrelationID</code> of the request message. 
+        If the <code>JMSCorrelationID</code> header field is not set 
+        in the request message then a correlated response message is one 
+        where the value of the <code>JMSCorrelationID</code> header field 
+        is the same as the value of the <code>JMSMessageID</code> header 
+        of the request message.</p><p>
+        <span id="Protocol-2050" class="test-assertion-tr">
+        The <code>JMSReplyTo</code> header <strong>MUST</strong> be assigned a value.
+        <sup><a href="#Protocol-2050-summary" title="Link to assertion Protocol-2050 summary">†</a></sup></span>
+        The response message will be received on the JMS Destination specified in the
+        <code>JMSReplyTo</code> header above, and that Destination is where
+        implementations need to listen.</p><p>If a correlated response message is received then a transition to
+        "Sending + Receiving" is made.</p><p>If, for whatever reason (for example a timeout), no correlated
+        response message is received then a failure reason
+        <code>receptionFailure</code> is set and a transition to "Fail" is
+        made.</p></div><div class="div4">
+<h5><a name="rr-requester-transition" id="rr-requester-transition"/>2.6.1.3 Sending + Receiving</h5><p>Receive a correlated message body that is assumed to contain a
+        SOAP envelope serialised according to the rules for carrying a SOAP
+        message in the media type specified in the JMS Message property
+        <code>SOAPJMS_contentType</code>.</p><p>If a well formed response message is received a transition to
+        "Success" is made, and otherwise transition to "Fail".</p></div><div class="div4">
+<h5><a name="rr-requester-complete" id="rr-requester-complete"/>2.6.1.4 Success and Fail</h5><p>"Success" and "Fail" are the terminal states of the
+        Request-Response MEP. Control over the message exchange context
+        returns to the local SOAP node.</p></div></div><div class="div3">
+<h4><a name="responder-states" id="responder-states"/>2.6.2 Behaviour of Responding SOAP Node</h4><div class="div4">
+<h5><a name="rr-responder-init" id="rr-responder-init"/>2.6.2.1 Init</h5><p>Receive and validate the inbound request message.</p><p>If a well formed request message is received a transition to the
+        local SOAP node is made followed by a transition to the "Receiving"
+        state.</p><p>If a malformed request message is received a transition to "Fail"
+        is made.</p></div><div class="div4">
+<h5><a name="rr-responder-receiving" id="rr-responder-receiving"/>2.6.2.2 Receiving</h5><p>Waiting for Response Message to become available in <a href="http://www.w3.org/TR/soap12-part2/#soapmec">Message Exchange
+        Context</a> as a result of processing the Request Message (note
+        Request Message fully received on exit from Init state).</p></div><div class="div4">
+<h5><a name="responder-transition" id="responder-transition"/>2.6.2.3 Receiving + Sending</h5><p>Completing Request Message reception and Response Message
+        transmission. (Response Message sent on exit from Receiving State).</p><p>The JMS response is formulated and transmission of the response is initiated. 
+        <span id="Protocol-2036" class="test-assertion-tr">The Response Message <strong>MUST</strong> be created 
+        using the same type as the corresponding Request Message, i.e. as a JMS <code>BytesMessage</code> or <code>TextMessage</code>.<sup><a href="#Protocol-2036-summary" title="Link to assertion Protocol-2036 summary">†</a></sup></span>
+
+        <span id="Protocol-2037" class="test-assertion-tr"> The message <strong>MUST</strong> be sent to the JMS Destination in the
+        <code>JMSReplyTo</code> header of the Request Message.<sup><a href="#Protocol-2037-summary" title="Link to assertion Protocol-2037 summary">†</a></sup></span>
+        <span id="Protocol-2038" class="test-assertion-tr"> 
+        If the <code>JMSCorrelationID</code> is set in the request message, 
+        then the <code>JMSCorrelationID</code> header field in the response 
+        message <strong>MUST</strong> be set to the same value as the <code>JMSCorrelationID</code> 
+        header field in the request message. If the <code>JMSCorrelationID</code> 
+        header field is not set in the request message, then the 
+        <code>JMSCorrelationID</code> header field in the response message 
+        <strong>MUST</strong> be set to the value of the <code>JMSMessageID</code> 
+        header in the request message.<sup><a href="#Protocol-2038-summary" title="Link to assertion Protocol-2038 summary">†</a></sup></span></p><p>A number of the message header properties are implicitly created by the use of the JMS API.
+        The following table shows how the binding properties described earlier explicitly affect the message constructed.</p><a name="table23" id="table23"/><table border="1" cellspacing="0" cellpadding="5"><caption>Receiving + Sending State Values</caption><thead><tr><th>Field</th><th>Value Set by Conforming Client</th></tr></thead><tbody><tr><th colspan="2">JMS Message Header</th></tr><tr><td>JMSDeliveryMode</td><td>this ought to be the same as that specified on the request</td></tr><tr><td>JMSExpiration</td><td>this is derived from the request. It is up to the responding node to decide whether to degrade for processing time.</td></tr><tr><td>JMSCorrelationID</td><td>this is copied from the request <code>JMSCorrelationID</code> if it is set, or the request <code>JMSMessageID</code> if the request <code>JMSCorrelationID</code> is not set</td></tr><tr><td>JMSDestination</td><td>this is copied from the <code>JMSReplyTo</code> property in the request</td></tr><tr><th colspan="2">JMS Message properties</th></tr><tr><td>SOAPJMS_requestURI</td><td>this is copied from the <a title="soapjms:requestURI" href="#requestURI">requestURI</a> property in the request message</td></tr><tr><td>SOAPJMS_bindingVersion</td><td>this is copied from the <a title="soapjms:bindingVersion" href="#bindingVersion">bindingVersion</a> property</td></tr><tr><td>SOAPJMS_contentType</td><td>inferred from the SOAP Envelope and presence of attachments</td></tr><tr><td>SOAPJMS_isFault</td><td>set to <code>true</code> if the response is a SOAP fault, otherwise it can be absent</td></tr><tr><th colspan="2">JMS Message Body</th></tr><tr><td>body</td><td>A SOAP envelope is serialized according to the media type specified in the JMS Message property <code>SOAPJMS_contentType</code>.</td></tr></tbody></table><p>If a response message is successfully sent a transition to the
+        "Success" state is made.</p><p>If there is a failure to send a response message then failure
+        reason <code>transmissionFailure</code> is set and a transition to
+        "Fail" is made.</p></div><div class="div4">
+<h5><a name="responder-complete" id="responder-complete"/>2.6.2.4 Success and Fail</h5><p>"Success" and "Fail" are the terminal states for the
+        Request-Response MEP. From the point-of-view of the local node this
+        message exchange has completed.</p></div></div></div><div class="div2">
+<h3><a name="binding-one-way" id="binding-one-way"/>2.7 One-way Message Exchange Pattern</h3><p>The SOAP One-way MEP defines properties for the exchange of a 
+    SOAP/JMS message which does not solicit a response.  For JMS messages sent to a Queue
+    destination this MEP results in a SOAP message which will be
+    received by zero or one receiver.  For JMS messages sent to a
+    Topic destination this MEP results in SOAP message(s) which will be
+    received by zero, one, or many receivers.</p><p>This message exchange pattern is identified by the URI
+    <code>http://www.w3.org/2006/08/soap/mep/one-way/</code>.
+    </p><p>For binding instances conforming to this specification:</p><ul><li><p>A SOAP Node instantiated at the sending JMS interface takes
+    on the role (i.e. the property
+    <code>http://www.w3.org/2003/05/soap/bindingFramework/ExchangeContext/Role</code>,
+    defined in Table 2, <a href="http://www.w3.org/TR/soap12-part2/#tabmeppropdefs">Property
+    definitions supporting the description of MEPs</a>), of
+    <code>SendingSOAPNode</code>.</p></li><li><p>A SOAP Node instantiated at the receiving JMS interface takes
+    on the role (i.e. the property
+    <code>http://www.w3.org/2003/05/soap/bindingFramework/ExchangeContext/Role</code>)
+    of <code>ReceivingSOAPNode</code>.</p></li></ul><p>The remainder of this section consists of descriptions of the MEP.  Failure reasons represent values of the
+    property <code>http://www.w3.org/2003/05/soap/bindingFramework/ExchangeContext/FailureReason</code>
+    — their values are qualified names. If a MEP instance terminates with a fault, then the
+    <code>http://www.w3.org/2003/05/soap/bindingFramework/ExchangeContext/FailureReason</code>
+    property will contain an value identifying the fault.</p><div class="div3">
+<h4><a name="sender-states" id="sender-states"/>2.7.1 Behaviour of Sending SOAP Node</h4><p>The message is created as a JMS BytesMessage or TextMessage as defined in <a href="#binding-message-body"><b>2.4 The JMS Message Body</b></a></p><p><span id="Protocol-2051" class="test-assertion-tr">
+        The <code>JMSReplyTo</code> header <strong>MUST NOT</strong> be assigned a value.
+        <sup><a href="#Protocol-2051-summary" title="Link to assertion Protocol-2051 summary">†</a></sup></span></p><p>If the Sender receives a message transmission failure, then the
+        <code>http://www.w3.org/2003/05/soap/bindingFramework/ExchangeContext/FailureReason</code> property 
+        is set to <code>transmissionFailure</code> and the message exchange is terminated with a fault.</p><p>A number of the message header properties are implicitly created by the use of the JMS API.
+        The following table shows how the binding properties described earlier explicitly affect the message constructed.</p><a name="table24" id="table24"/><table border="1" cellspacing="0" cellpadding="5"><caption>Sending SOAP Node Values</caption><thead><tr><th>Field</th><th>Value Set by Conforming Client</th></tr></thead><tbody><tr><th colspan="2">JMS Message Header</th></tr><tr><td>JMSDeliveryMode</td><td>the value of the <a title="soapjms:deliveryMode" href="#deliveryMode">deliveryMode</a> property or not set if not specified</td></tr><tr><td>JMSExpiration</td><td>calculated from the value of the <a title="soapjms:timeToLive" href="#timeToLive">timeToLive</a> property or not set if not specified</td></tr><tr><td>JMSPriority</td><td>the value of the <a title="soapjms:priority" href="#priority">priority</a> property or not set if not specified</td></tr><tr><td>JMSDestination</td><td>derived from the <a title="soapjms:destinationName" href="#destinationName">destinationName</a> property</td></tr><tr><th colspan="2">JMS Message properties</th></tr><tr><td>SOAPJMS_requestURI</td><td>this is derived from the <a title="soapjms:requestURI" href="#requestURI">requestURI</a> property</td></tr><tr><td>SOAPJMS_bindingVersion</td><td>this is copied from the <a title="soapjms:bindingVersion" href="#bindingVersion">bindingVersion</a> property</td></tr><tr><td>SOAPJMS_soapAction</td><td>the value of the <a title="soapjms:soapAction" href="#soapAction">soapAction</a> property or not set if not specified</td></tr><tr><td>SOAPJMS_targetService</td><td>the value of the <a title="soapjms:targetService" href="#targetService">targetService</a> property or not set if not specified</td></tr><tr><td>SOAPJMS_contentType</td><td>inferred from the SOAP Envelope and presence of attachments.</td></tr><tr><th colspan="2">JMS Message Body</th></tr><tr><td>body</td><td>A SOAP envelope is serialized according to the media type specified in the JMS Message property <code>SOAPJMS_contentType</code>.</td></tr></tbody></table></div><div class="div3">
+<h4><a name="receiver-states" id="receiver-states"/>2.7.2 Behaviour of Receiving SOAP Node</h4><p>The receiving node follows the rules defined in [<cite><a href="#soap-one-way-mep">SOAP 1.2 Part 3: One-Way MEP</a></cite>].</p></div></div><div class="div2">
+<h3><a name="binding-faults" id="binding-faults"/>2.8 Faults</h3><p>The SOAP fault subcodes listed throughout this document, and consolidated here, include:</p><ul><li><p><a title="contentTypeMismatch" href="#contentTypeMismatch">contentTypeMismatch</a> </p></li><li><p><a title="malformedRequestURI" href="#malformedRequestURI">malformedRequestURI</a></p></li><li><p><a title="mismatchedSoapAction" href="#mismatchedSoapAction">mismatchedSoapAction</a> </p></li><li><p><a title="missingContentType" href="#missingContentType">missingContentType</a></p></li><li><p><a title="missingRequestURI" href="#missingRequestURI">missingRequestURI</a> </p></li><li><p><a title="missingSoapAction" href="#missingSoapAction">missingSoapAction</a> </p></li><li><p><a title="missingTargetService" href="#missingTargetService">missingTargetService</a> </p></li><li><p><a title="targetServiceNotAllowedInRequetURI" href="#targetServiceNotAllowedInRequestURI">targetServiceNotAllowedInRequestURI</a> </p></li><li><p><a title="unrecognizedBindingVersion" href="#unrecognizedBindingVersion">unrecognizedBindingVersion</a> </p></li><li><p><a title="unsupportedJMSMessageFormat" href="#unsupportedJMSMessageFormat">unsupportedJMSMessageFormat</a> </p></li><li><p><a title="unsupportedLookupVariant" href="#unsupportedLookupVariant">unsupportedLookupVariant</a> </p></li><li><p><a title="contentEncodingNotSupported" href="#contentEncodingNotSupported">contentEncodingNotSupported </a> </p></li></ul><p>The above subcodes are the local name in the <code>soapjms</code> namespace,
+    appearing, for example, as <a title="malformedRequestURI" href="#malformedRequestURI"> soapjms:malformedRequestURI</a>.</p><p>In SOAP 1.2, the subcodes above are used as-is in the <code>env:Value</code>
+    element of the <code>env:Subcode</code> for a SOAP Fault.  The following shows
+    an example of a SOAP 1.2 Fault payload with the
+    <code>contentTypeMismatch</code> subcode:</p><div class="exampleOuter">
+<div class="exampleHeader"><a name="SOAP12FaultPayload" id="SOAP12FaultPayload"/>Example: SOAP 1.2 Fault payload with the contentTypeMismatch subcode</div><div class="exampleInner"><pre>&lt;env:Envelope
+   xmlns:env="http://www.w3.org/2003/05/soap-envelope"
+   xmlns:soapjms="http://www.w3.org/2010/soapjms/"
+   xmlns:xml="http://www.w3.org/XML/1998/namespace"&gt;
+ &lt;env:Body&gt;
+  &lt;env:Fault&gt;
+   &lt;env:Code&gt;
+     &lt;env:Value&gt;env:Sender&lt;/env:Value&gt;
+     &lt;env:Subcode&gt;
+      &lt;env:Value&gt;soapjms:contentTypeMismatch&lt;/env:Value&gt;
+     &lt;/env:Subcode&gt;
+   &lt;/env:Code&gt;
+   &lt;env:Reason&gt;
+     &lt;env:Text xml:lang="en"&gt;The content type of the JMS payload does 
+                             not match the XML.&lt;/env:Text&gt;
+   &lt;/env:Reason&gt;
+  &lt;/env:Fault&gt;
+ &lt;/env:Body&gt;
+&lt;/env:Envelope&gt;</pre></div></div><p>This specification does not mandate any particular text for the
+    <code>env:Text</code> child element of the <code>env:Reason</code> element.</p><p>The SOAP 1.1 specification does not support subcodes directly.  In
+    that scenario, the <code>faultcode</code> element uses a QName that matches the subcode
+    for SOAP 1.2.  The <code>faultstring</code> element can contain textual fault information. The same error as above, shown in SOAP 1.1:</p><div class="exampleOuter">
+<div class="exampleHeader"><a name="SOAP11FaultPayload" id="SOAP11FaultPayload"/>Example: SOAP 1.1 Fault payload with the contentTypeMismatch subcode</div><div class="exampleInner"><pre>&lt;env:Envelope
+     xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"&gt;
+   &lt;env:Body&gt;
+       &lt;env:Fault xmlns:soapjms="http://www.w3.org/2010/soapjms/"&gt;
+           &lt;faultcode&gt;soapjms:contentTypeMismatch&lt;/faultcode&gt;
+           &lt;faultstring&gt;The content type of the JMS payload does not match the XML.&lt;/faultstring&gt;
+       &lt;/env:Fault&gt;
+   &lt;/env:Body&gt;
+&lt;/env:Envelope&gt;</pre></div></div></div></div><div class="div1">
+<h2><a name="wsdl-extensions" id="wsdl-extensions"/>3 WSDL Usage</h2><div class="div2">
+<h3><a name="wsdl-overview" id="wsdl-overview"/>3.1 Overview</h3><p>These next sections describe how to indicate the use of SOAP over JMS
+    in WSDL.  We begin with complete examples, and then describe the
+    individual pieces and parts in the sections which follow.</p><p>The section <a href="#soap-binding"><b>2 The SOAP/JMS Underlying Protocol Binding</b></a> above contains the
+    actual rules by which SOAP messages are sent and received using JMS.  
+    This section indicates how WSDL can be used to
+    indicate the use and control the operation of that binding.</p><p>For general information on extending SOAP bindings in WSDL,
+    please refer to section 3, <a href="http://www.w3.org/TR/wsdl#_soap-b">SOAP Binding</a>,
+    <cite><a href="#wsdl11">WSDL 1.1</a></cite>.  For information about accepted
+    SOAP 1.2 bindings, see [<cite><a href="#wsdl11forsoap12">WSDL 1.1 for SOAP 1.2</a></cite>].</p></div><div class="div2">
+<h3><a name="wsdl-11-overview" id="wsdl-11-overview"/>3.2 WSDL 1.1 Extensions Overview</h3><ul><li><p>The transport attribute of the <code>wsdl11soap11:binding</code> or
+    <code>wsdl11soap12:binding</code> element gets a new URL reflecting a JMS transport.</p></li><li><p>Allows use of SOAPAction header, even though it is explicitly
+    disallowed by WSDL specification.</p></li><li><p>Defines how to set various properties to control the behavior
+    (connection parameters, runtime setting) of the binding.</p></li><li><p>Locates the service using a JMS URI.</p></li></ul></div><div class="div2">
+<h3><a name="wsdl-11-detail" id="wsdl-11-detail"/>3.3 WSDL 1.1 Extensions Detail</h3><p>This section is normative.</p><p>This section describes the optional feature: soapjms:WSDL11 [<code>http://www.w3.org/2010/soapjms/WSDL11</code>].
+      To focus on the salient details, all of the WSDL examples in this
+      section show only a portion of a WSDL file in question.</p><div class="div3">
+<h4><a name="wsdl-11-example" id="wsdl-11-example"/>3.3.1 Example</h4><p>The WSDL 1.1 specification includes in
+      section 1.2, <a href="http://www.w3.org/TR/wsdl#_wsdl">WSDL Document
+      Example</a>, the example <a href="http://www.w3.org/TR/wsdl#_example1">Example 1 SOAP 1.1
+      Request/Response via HTTP</a>.</p><p>The following example illustrates a new service description which
+      assumes the original service available over HTTP is also made
+      available over JMS.</p><p>Lines 14-33 are a new binding for specifying that JMS is to be
+      used, line 15 shows the transport URI in <code>&lt;wsdl11soap11:binding&gt;</code>, and   
+      lines 17-22  show the extension properties in the <code>&lt;wsdl11soap11:binding&gt;</code>.
+      </p><p>Lines 40-42 are also additions to specify the location at which
+      this new implementation exists.  
+      Line 41 shows the JMS URI Scheme <code>jms:</code> in the <code>&lt;wsdl11soap11::address&gt;</code>.</p><div class="exampleOuter">
+<div class="exampleHeader"><a name="wsdl11jms" id="wsdl11jms"/>Example: WSDL 1.1 JMS Binding</div><div class="exampleInner"><pre>1     &lt;wsdl11:binding name="StockQuoteSoapBinding" type="tns:StockQuotePortType"&gt;
+2        &lt;wsdl11soap11:binding style="document" 
+                transport="http://schemas.xmlsoap.org/soap/http"/&gt;
+3         &lt;wsdl11:operation name="GetLastTradePrice"&gt;
+4            &lt;wsdl11soap11:operation soapAction="http://example.com/GetLastTradePrice"/&gt;
+5           &lt;wsdl11:input&gt;
+6               &lt;wsdl11soap11:body use="literal"/&gt;
+7            &lt;/wsdl11:input&gt;
+8           &lt;wsdl11:output&gt;
+9               &lt;wsdl11soap11:body use="literal"/&gt;
+10          &lt;/wsdl11:output&gt;
+11        &lt;/wsdl11:operation&gt;
+12    &lt;/wsdl11:binding&gt;
+13
+14   &lt;wsdl11:binding name="StockQuoteSoapJMSBinding" type="tns:StockQuotePortType" 
+              xmlns:soapjms="http://www.w3.org/2010/soapjms/"&gt;
+15       &lt;wsdl11soap11:binding style="document" 
+              transport="http://www.w3.org/2010/soapjms/"/&gt;
+16
+17       &lt;!-- We want this binding to use a particular CF class --&gt;
+18       &lt;soapjms:jndiConnectionFactoryName&gt;
+19         sample.jms.ConnectionFactory
+20       &lt;/soapjms:jndiConnectionFactoryName&gt;
+21       &lt;!-- Specify PERSISTENT delivery mode --&gt;
+22       &lt;soapjms:deliveryMode&gt;PERSISTENT&lt;/soapjms:deliveryMode&gt;
+23
+24       &lt;wsdl11:operation name="GetLastTradePrice"&gt;
+25         &lt;wsdl11soap11:operation soapAction="http://example.com/GetLastTradePrice"/&gt;
+26         &lt;wsdl11:input&gt;
+27             &lt;wsdl11soap11:body use="literal"/&gt;
+28         &lt;/wsdl11:input&gt;
+29         &lt;wsdl11:output&gt;
+30             &lt;wsdl11soap11:body use="literal"/&gt;
+31          &lt;/wsdl11:output&gt;
+32       &lt;/wsdl11:operation&gt;
+33   &lt;/wsdl11:binding&gt;
+34
+35   &lt;wsdl11:service name="StockQuoteService"&gt;
+36       &lt;wsdl11:documentation&gt;My first service&lt;/wsdl11:documentation&gt;
+37       &lt;wsdl11:port name="StockQuotePort" binding="tns:StockQuoteSoapBinding"&gt;
+38           &lt;wsdl11soap11:address location="http://example.com/stockquote"/&gt;
+39       &lt;/wsdl11:port&gt;
+40       &lt;wsdl11:port name="StockQuotePort_jms" binding="tns:StockQuoteSoapJMSBinding"&gt;
+41           &lt;wsdl11soap11:address location="jms:jndi:myQueue?targetService=stockquote
+                                   &amp;amp;priority=8&amp;amp;replyToName=interested&amp;amp;userprop=mystuff"/&gt;
+42       &lt;/wsdl11:port&gt;
+43   &lt;/wsdl11:service&gt;</pre></div></div><p>The key points to notice are:</p><ul><li><p>The transport URI in <code>&lt;wsdl11soap11:binding&gt;</code> (line 15)</p></li><li><p>The jms: URI in the <code>&lt;wsdl11soap11:address&gt;</code> (line 41)</p></li><li><p>The extension properties in the <code>&lt;wsdl11soap11:binding&gt;</code> (lines 17-22)</p></li></ul></div><div class="div3">
+<h4><a name="wsdl-11-transport-id" id="wsdl-11-transport-id"/>3.3.2 WSDL 1.1 Transport Identification</h4><p>
+      For each of SOAP 1.1 and SOAP 1.2, the <code>transport</code> attribute of the
+		<a href="http://www.w3.org/TR/wsdl#_soap-b">wsdl11soap11:binding</a> element, 
+	    and the <a href="http://www.w3.org/TR/wsdl#_soap-b">wsdl11soap12:binding</a> element,
+		respectively, indicate the transport value.  
+        <span id="WSDLUsage-3003" class="test-assertion-tr">To indicate that this
+		SOAP/JMS binding is in use, the <code>transport</code> attribute MUST be set to the
+		value <code>http://www.w3.org/2010/soapjms/</code>.<sup><a href="#WSDLUsage-3003-summary" title="Link to assertion WSDLUsage-3003 summary">†</a></sup></span>
+      </p><div class="exampleOuter">
+<div class="exampleHeader"><a name="wsdl11soap11transport" id="wsdl11soap11transport"/>Example: SOAP 1.1 Binding for WSDL 1.1 Transport Identification</div><div class="exampleInner"><pre>&lt;wsdl11soap11:binding style="document" 
+                 transport="http://www.w3.org/2010/soapjms/"/&gt;</pre></div></div></div><div class="div3">
+<h4><a name="wsdl-11-soapaction" id="wsdl-11-soapaction"/>3.3.3 WSDL 1.1 SOAP Action</h4><p>The <a href="http://www.w3.org/TR/wsdl#_soap:operation">wsdl11soap11:operation</a>
+      portion of the WSDL specification explicitly disallows use of the
+      <code>soapAction</code> attribute in non-HTTP bindings. 
+This specification
+      supersedes that requirement, and allows the use of <code>soapAction</code> in
+      the <code>wsdl11soap11:operation</code> element for SOAP/JMS bindings.  This value
+      corresponds to the property <a title="soapjms:soapAction" href="#soapAction">soapAction</a>.</p></div><div class="div3">
+<h4><a name="wsdl-11-properties" id="wsdl-11-properties"/>3.3.4 Specifying Properties In WSDL 1.1</h4><p>
+      Various JMS properties described in the SOAP/JMS binding specification
+can be set in four places in the WSDL — the binding, the service, the
+port, and the URI for the port. Values specified at the service will
+propagate to all ports. Values specified at the binding will
+propagate to all ports using that binding. For example, the
+<a title="soapjms:jndiInitialContextFactory" href="#jndiInitialContextFactory">jndiInitialContextFactory</a> can be indicated for a <code>wsdl11:service</code>, and it
+is then implied for all of the contained <code>wsdl11:port</code> elements.</p><p><span id="WSDLUsage-3001" class="test-assertion-tr">If a property is specified at multiple levels within the WSDL document, 
+the most specific setting <strong>MUST</strong> take precedence (URI specified in the 
+address element's location attribute first, then other properties set on 
+the port, then service, then 
+binding).<sup><a href="#WSDLUsage-3001-summary" title="Link to assertion WSDLUsage-3001 summary">†</a></sup></span></p><p>In the following example, notice the <a title="soapjms:timeToLive" href="#timeToLive">timeToLive</a> property — for
+      the <code>quickPort</code> port, the value will be 10 (specified at the port
+      level).  For the <code>slowPort</code> port, the value will be 100 (specified at
+      the service level).  The setting in the binding is, in this example,
+      always overridden.</p><div class="exampleOuter">
+<div class="exampleHeader"><a name="wsdl11properties" id="wsdl11properties"/>Example: Specifying Properties in WSDL 1.1</div><div class="exampleInner"><pre>
+&lt;wsdl11:binding name="exampleBinding"&gt;
+  ...
+  &lt;soapjms:timeToLive&gt;200&lt;/soapjms:timeToLive&gt;
+&lt;/wsdl11:binding&gt;
+
+&lt;wsdl11:service name="exampleService"&gt;
+  &lt;soapjms:jndiInitialContextFactory&gt;
+    com.example.jndi.InitialContextFactory
+  &lt;/soapjms:jndiInitialContextFactory&gt;
+  &lt;soapjms:timeTolive&gt;100&lt;/soapjms:timeToLive&gt;
+  ...
+  &lt;wsdl11:port name="quickPort" binding="tns:exampleBinding"&gt;
+    ...
+    &lt;soapjms:timeToLive&gt;10&lt;/soapjms:timeToLive&gt;
+  &lt;/wsdl11:port&gt;
+  &lt;wsdl11:port name="slowPort" binding="tns:exampleBinding"&gt;
+    ...
+  &lt;/wsdl11:port&gt;
+&lt;/wsdl11:service&gt;</pre></div></div></div><div class="div3">
+<h4><a name="wsdl-11-url" id="wsdl-11-url"/>3.3.5 Specifying Properties Via the JMS URI</h4><p>Some of the above information can be put in the JMS URI. When expressing properties from the SOAP/JMS binding
+      in the URI, you do not need the namespace prefix — just use the
+      property name, such as "<code>priority</code>".</p><p>This URI is found as the value of the <code>location</code> attribute
+      on the <a href="http://www.w3.org/TR/wsdl#_soap:address"><span><code>&lt;wsdl11soap11:address&gt;</code></span></a>
+      or <a href="http://www.w3.org/TR/wsdl#_soap:address"><span><code>&lt;wsdl11soap12:address&gt;</code></span></a>
+      element when using SOAP 1.1 and SOAP 1.2, respectively.
+      <span id="WSDLUsage-3004" class="test-assertion-tr">
+      The value of the <code>location</code> attribute <strong>MUST</strong> be a URI corresponding to a
+		JMS Destination, and <strong>SHOULD</strong> be a "jms" scheme URI.<sup><a href="#WSDLUsage-3004-summary" title="Link to assertion WSDLUsage-3004 summary">†</a></sup></span>   
+       The characters in the URI need to be encoded
+       ("%20" for space, for example) as per normal URI escaping rules, and the
+        resulting URI needs to be encoded as per normal XML rules ("&amp;amp;" for
+        &amp;) when serialized into an XML attribute.		
+      </p><div class="exampleOuter">
+<div class="exampleHeader"><a name="jmsURIproperties" id="jmsURIproperties"/>Example: Specifying WSDL 1.1 Properties Via the JMS URI</div><div class="exampleInner"><pre>&lt;wsdl11:port .... &gt;
+       &lt;wsdl11soap11:address
+location="jms:jndi:destinationName?targetService=service%20Test&amp;amp;priority=5"/&gt;
+       
+&lt;/wsdl11:port&gt;</pre></div></div></div></div><div class="div2">
+<h3><a name="wsdl-properties" id="wsdl-properties"/>3.4 Properties</h3><p><span id="WSDLUsage-3002" class="test-assertion-tr">
+			The XML elements
+			<a title="soapjms:jndiConnectionFactoryName" href="#jndiConnectionFactoryName">jndiConnectionFactoryName</a>,
+			<a title="soapjms:jndiInitialContextFactory" href="#jndiInitialContextFactory">jndiInitialContextFactory</a>,
+			<a title="soapjms:jndiURL" href="#jndiURL">jndiURL</a>,
+			<a title="soapjms:deliveryMode" href="#deliveryMode">deliveryMode</a>,
+			<a title="soapjms:priority" href="#priority">priority</a>,
+			<a title="soapjms:timeToLive" href="#timeToLive">timeToLive</a>, and
+			<a title="soapjms:replyToName" href="#replyToName">replyToName</a>,
+			in the soapjms namespace, <strong>MUST</strong>
+			be supported when used in the context of the
+			WSDL service, port, and binding elements.
+			<sup><a href="#WSDLUsage-3002-summary" title="Link to assertion WSDLUsage-3002 summary">†</a></sup></span>
+			This specification does not define any use outside of those elements.
+		</p></div></div></div><div class="back"><div class="div1">
+<h2><a name="references" id="references"/>A References</h2><div class="div2">
+<h3><a name="normative-references" id="normative-references"/>A.1 Normative References</h3><dl><dt class="label"><a name="mime"/>[IETF RFC 2045] </dt><dd>	   
+    <cite><a href="http://www.ietf.org/rfc/rfc2045.txt">Multipurpose Internet Mail Extensions (MIME) Part One:
+    Format of Internet Message Bodies</a></cite>, N. Freed,
+    N. Borenstein, Authors. Internet Engineering Task Force, November
+    1996. Available at http://www.ietf.org/rfc/rfc2045.txt.
+  </dd><dt class="label"><a name="rfc2119"/>[IETF RFC 2119] </dt><dd>
+    <cite><a href="http://www.ietf.org/rfc/rfc2119.txt">Key words for use in RFCs to Indicate Requirement
+    Levels</a></cite>, S. Bradner, Author. Internet Engineering Task
+    Force, March 1997.  Available at
+    http://www.ietf.org/rfc/rfc2119.txt.
+  </dd><dt class="label"><a name="rfc3986"/>[IETF RFC 3986] </dt><dd>
+    <cite><a href="http://www.ietf.org/rfc/rfc3986.txt">Uniform Resource Identifier (URI): Generic Syntax
+    </a></cite>, T. Berners-Lee, R. Fielding, L. Masinter. Internet Engineering Task Force,
+    January 2005.  Available at http://www.ietf.org/rfc/rfc3986.txt.
+  </dd><dt class="label"><a name="jmsuri"/>[IETF RFC 6167] </dt><dd>
+    <cite><a href="http://www.ietf.org/rfc/rfc6167.txt">URI Scheme for Java Message Service
+    1.0</a></cite>, M. Phillips, P. Adams, D. Rokicki, and E. Johnson, 
+    Authors. Internet Engineering Task Force, April 2011. 
+    Available at http://www.ietf.org/rfc/rfc6167.txt
+  </dd><dt class="label"><a name="jms"/>[Java Message Service] </dt><dd>
+    <cite><a href="http://www.oracle.com/technetwork/java/jms/index.html">Java Message Service (JMS) 1.1</a></cite>, M. Hapner,
+    et. al., Authors. Sun Microsystems, Inc., 12 April 2002. Available at
+    http://www.oracle.com/technetwork/java/jms/index.html
+  </dd><dt class="label"><a name="soap11"/>[SOAP 1.1] </dt><dd>
+    <cite><a href="http://www.w3.org/TR/2000/NOTE-SOAP-20000508/">Simple Object Access Protocol (SOAP) 1.1</a></cite>,
+    D. Box, et al, Editors. DevelopMentor, International Business
+    Machines Corporation, Lotus Development Corporation, Microsoft,
+    and UserLand Software, 8 May 2000. This version of the SOAP 1.1 
+    specification is <a href="http://www.w3.org/TR/2000/NOTE-SOAP-20000508/">
+    http://www.w3.org/TR/2000/NOTE-SOAP-20000508/</a>.
+    The latest version of the SOAP 1.1 
+    specification is available at <a href="http://www.w3.org/TR/soap/">http://www.w3.org/TR/soap/</a>.
+  </dd><dt class="label"><a name="SOAP11-MTOM"/>[SOAP 1.1 Binding for MTOM 1.0] </dt><dd>
+    <cite><a href="http://www.w3.org/Submission/soap11mtom10/">SOAP 1.1 Binding for MTOM 1.0</a></cite>, Dimitar
+    Angelov, et. al., Authors. International Business Machines
+    Corporation, Microsoft Corporation, Inc., Oracle Corp. and SAP AG,
+    5 April 2006. 
+    This version of the SOAP 1.1 Binding for MTOM 1.0 
+    specification is <a href="http://www.w3.org/Submission/2006/SUBM-soap11mtom10-20060405/">
+    http://www.w3.org/Submission/2006/SUBM-soap11mtom10-20060405/</a>.
+    The latest version of the SOAP 1.1 Binding for MTOM 1.0
+    specification is available at <a href="http://www.w3.org/Submission/soap11mtom10/">
+    http://www.w3.org/Submission/soap11mtom10/</a>.
+  </dd><dt class="label"><a name="soap12"/>[SOAP 1.2 Messaging Framework] </dt><dd>
+    <cite><a href="http://www.w3.org/TR/2007/REC-soap12-part1-20070427/">SOAP Version 1.2 Part 1: Messaging Framework</a></cite>,
+    M.  Gudgin, M. Hadley, N. Mendelsohn, J-J. Moreau, H. Frystyk
+    Nielsen, Editors.  World Wide Web Consortium, 24 June 2003,
+    revised 27 April 2007. This version of the SOAP Version 1.2 Part
+    1: Messaging Framework Recommendation is <a href="http://www.w3.org/TR/2007/REC-soap12-part1-20070427/">
+    http://www.w3.org/TR/2007/REC-soap12-part1-20070427/</a>. The <a href="http://www.w3.org/TR/soap12-part1/">latest version of SOAP
+    Version 1.2 Part 1: Messaging Framework</a> is available at
+    http://www.w3.org/TR/soap12-part1/. 
+  </dd><dt class="label"><a name="soap12p2"/>[SOAP 1.2 Part 2: Adjuncts] </dt><dd>
+    <cite><a href="http://www.w3.org/TR/2007/REC-soap12-part2-20070427/">SOAP Version 1.2 Part 2: Adjuncts (Second
+    Edition)</a></cite>, M. Gudgin, et al., Editors. World Wide Web
+    Consortium, 24 June 2006, revised 27 April 2007. This version of
+    the "SOAP Version 1.2 Part 2: Adjuncts (Second Edition)"
+    Recommendation is
+    <a href="http://www.w3.org/TR/2007/REC-soap12-part2-20070427/">
+    http://www.w3.org/TR/2007/REC-soap12-part2-20070427/</a>. The <a href="http://www.w3.org/TR/soap12-part2/">latest version of "SOAP
+    Version 1.2 Part 2: Adjuncts"</a> is available at
+    http://www.w3.org/TR/soap12-part2/.
+  </dd><dt class="label"><a name="soap-one-way-mep"/>[SOAP 1.2 Part 3: One-Way MEP] </dt><dd>
+    <cite><a href="http://www.w3.org/TR/2007/NOTE-soap12-part3-20070702/">SOAP 1.2 Part 3: One-Way MEP</a></cite>, David Orchard,
+    Author. World Wide Web Consortium, 2 July 2007. This version of
+    the SOAP 1.2 Part 3: One-Way MEP is
+    <a href="http://www.w3.org/TR/2007/NOTE-soap12-part3-20070702/">
+    http://www.w3.org/TR/2007/NOTE-soap12-part3-20070702/</a>. 
+    The latest version of the SOAP 1.2 Part 3: One-Way MEP is available at   
+    <a href="http://www.w3.org/TR/soap12-part3/">http://www.w3.org/TR/soap12-part3/</a>.    
+  </dd><dt class="label"><a name="SwA"/>[SOAP Messages with Attachments] </dt><dd>
+    <cite><a href="http://www.w3.org/TR/SOAP-attachments">SOAP Messages with Attachments</a></cite>, John Barton,
+    Satish Thatte, and Henrik Frystyk Nielsen, Authors. Hewlett
+    Packard Labs, Microsoft Corporation, 11 December 2000. This version of the 
+    SOAP Messages with Attachments specification is     
+    <a href="http://www.w3.org/TR/2000/NOTE-SOAP-attachments-20001211">
+    http://www.w3.org/TR/2000/NOTE-SOAP-attachments-20001211</a>. 
+    The latest version is available at <a href="http://www.w3.org/TR/SOAP-attachments">
+    http://www.w3.org/TR/SOAP-attachments</a>. 
+  </dd><dt class="label"><a name="SOAP12-MTOM"/>[SOAP MTOM] </dt><dd>
+    <cite><a href="http://www.w3.org/TR/2005/REC-soap12-mtom-20050125/">SOAP Message Transmission Optimization
+    Mechanism</a></cite>, N. Mendelsohn, M. Nottingham, and
+    H. Ruellan, Editors. World Wide Web Consortium, W3C
+    Recommendation, 25 January 2005. This version of SOAP Message
+    Transmission Optimization Mechanism is <a href="http://www.w3.org/TR/2005/REC-soap12-mtom-20050125/">
+    http://www.w3.org/TR/2005/REC-soap12-mtom-20050125/</a>.
+    The <a href="http://www.w3.org/TR/soap12-mtom/">latest version of the
+    "SOAP Message Transmission Optimization Mechanism" document</a>
+    is available from <a href="http://www.w3.org/TR/soap12-mtom/">
+    http://www.w3.org/TR/soap12-mtom/</a>.
+  </dd><dt class="label"><a name="wsdl11"/>[WSDL 1.1] </dt><dd>
+    <cite><a href="http://www.w3.org/TR/2001/NOTE-wsdl-20010315">Web Services Description Language (WSDL) 1.1</a></cite>,
+    E.  Christensen, et al, Authors. Ariba, International Business
+    Machines Corporation, and Microsoft, 15 March 2001.  This version is 
+    available at <a href="http://www.w3.org/TR/2001/NOTE-wsdl-20010315">
+    http://www.w3.org/TR/2001/NOTE-wsdl-20010315</a>.  The latest version is
+    available at <a href="http://www.w3.org/TR/wsdl">http://www.w3.org/TR/wsdl</a>. 
+  </dd><dt class="label"><a name="wsdl11forsoap12"/>[WSDL 1.1 for SOAP 1.2] </dt><dd>
+    <cite><a href="http://www.w3.org/Submission/2006/SUBM-wsdl11soap12-20060405/">WSDL 1.1 Binding Extension for SOAP 1.2</a></cite>,
+    D. Angelov, et al, Authors. International Business Machines
+    Corporation, Microsoft Corporation, Inc., Oracle Corp. and SAP AG,
+    5 April 2006. This version is available at
+    <a href="http://www.w3.org/Submission/2006/SUBM-wsdl11soap12-20060405/">
+    http://www.w3.org/Submission/2006/SUBM-wsdl11soap12-20060405/</a>.  
+    The latest version is available at
+    <a href="http://www.w3.org/Submission/wsdl11soap12/">
+    http://www.w3.org/Submission/wsdl11soap12/</a>.
+  </dd><dt class="label"><a name="xml"/>[XML 1.0] </dt><dd>
+    <cite><a href="http://www.w3.org/TR/2006/REC-xml-20060816/">Extensible Markup Language (XML) 1.0 (Fourth
+    Edition)</a></cite>, T. Bray, J. Paoli, C. M. Sperberg-McQueen,
+    E. Maler, and FranÃ§ois Yergeau, Editors. World Wide Web Consortium, 10 February
+    1998, revised 16 August 2006. This version of the XML 1.0
+    Recommendation is <a href="http://www.w3.org/TR/2006/REC-xml-20060816/">
+    http://www.w3.org/TR/2006/REC-xml-20060816/</a>.  The
+    <a href="http://www.w3.org/TR/REC-xml/">latest version of XML
+    1.0</a> is available at http://www.w3.org/TR/REC-xml.
+  </dd><dt class="label"><a name="XML-NS"/>[XML Namespaces] </dt><dd>
+    <cite><a href="http://www.w3.org/TR/2006/REC-xml-names-20060816/">Namespaces in XML 1.0</a></cite>, T. Bray, D. Hollander, A.
+    Layman, and R. Tobin, Editors. World Wide Web Consortium, 14 January 1999,
+    revised 16 August 2006. This version of the Namespaces in XML
+    Recommendation is <a href="http://www.w3.org/TR/2006/REC-xml-names-20060816/">
+    http://www.w3.org/TR/2006/REC-xml-names-20060816/</a>. The
+    <a href="http://www.w3.org/TR/REC-xml-names/">latest version of
+    Namespaces in XML</a> is available at
+  http://www.w3.org/TR/REC-xml-names. </dd><dt class="label"><a name="XMLSchemaPart2"/>[XML Schema Datatypes] </dt><dd>
+    <cite><a href="http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/">XML Schema Part 2: Datatypes Second Edition</a></cite>, P. Byron
+    and A. Malhotra, Editors. World Wide Web Consortium, 2 May 2001, revised 28
+    October 2004. This version of the XML Schema Part 2 Recommendation is
+    <a href="http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/">
+    http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/</a>. The <a href="http://www.w3.org/TR/xmlschema-2/">latest version of XML Schema
+  Part 2</a> is available at http://www.w3.org/TR/xmlschema-2.
+  </dd><dt class="label"><a name="XMLSchemaPart1"/>[XML Schema Structures] </dt><dd>
+    <cite><a href="http://www.w3.org/TR/2004/REC-xmlschema-1-20041028/">XML Schema Part 1: Structures Second Edition</a></cite>, H.
+    Thompson, D. Beech, M. Maloney, and N. Mendelsohn, Editors. World Wide Web
+    Consortium, 2 May 2001, revised 28 October 2004. This version of the XML
+    Schema Part 1 Recommendation is <a href="http://www.w3.org/TR/2004/REC-xmlschema-1-20041028/">
+    http://www.w3.org/TR/2004/REC-xmlschema-1-20041028/</a>.
+    The <a href="http://www.w3.org/TR/xmlschema-1/">latest version of XML Schema
+  Part 1</a> is available at http://www.w3.org/TR/xmlschema-1. </dd><dt class="label"><a name="IANA_HTTP_PARAMS"/>[IANA HTTP PARAMS] </dt><dd>
+    <cite><a href="http://www.iana.org/assignments/http-parameters/http-parameters.xml">Hypertext Transfer Protocol (HTTP) Parameters, Internet Assigned Names And Numbers (IANA)</a></cite>,
+    Sept. 2, 2009, Available at <a href="http://www.iana.org/assignments/http-parameters/http-parameters.xml">
+    http://www.iana.org/assignments/http-parameters/http-parameters.xml</a>. </dd></dl></div><div class="div2">
+<h3><a name="Informative-references" id="Informative-references"/>A.2 Informative References</h3><dl><dt class="label"><a name="jax-ws"/>[JAX-WS] </dt><dd>
+    <cite><a href="">The Java API for XML Web Services</a></cite>,
+    Jitendra Kotamraju, Specification Lead, Java Community Process, Oracle Corp. 
+    10 Dec, 2009. Available at 
+    <a href="http://jcp.org/aboutJava/communityprocess/mrel/jsr224/index3.html">
+    http://jcp.org/aboutJava/communityprocess/mrel/jsr224/index3.html</a>.
+  </dd><dt class="label"><a name="SOAP-EMAIL"/>[SOAP 1.2 Email Binding] </dt><dd>
+    <cite><a href="http://www.w3.org/TR/soap12-email">SOAP Version 1.2 Email Binding</a></cite>, Highland Mary
+    Mountain, Jacek Kopecky, Stuart Williams, Glen Daniels, and Noah
+    Mendelsohn, Authors. World Wide Web Consortium, 3 July 2002. 
+    This version of the SOAP Version 1.2 Email Binding is available at
+    <a href="http://www.w3.org/TR/2002/NOTE-soap12-email-20020703">
+    http://www.w3.org/TR/2002/NOTE-soap12-email-20020703</a>. 
+    The latest version of the <a href="http://www.w3.org/TR/soap12-email"> 
+    SOAP Version 1.2 Email Binding</a> is available at <a href="http://www.w3.org/TR/soap12-email">http://www.w3.org/TR/soap12-email</a>.
+  </dd><dt class="label"><a name="wsdl20forsoap"/>[WSDL 2.0 Adjuncts] </dt><dd>
+    <cite><a href="http://www.w3.org/TR/2007/REC-wsdl20-adjuncts-20070626/">Web Services Description Language (WSDL) Version 2.0
+    Part 2: Adjuncts</a></cite>, R. Chinnici, H. Haas, A. Lewis, J-J.
+    Moreau, D. Orchard, S. Weerawarana, Editors.  World Wide Web
+    Consortium, 26 June 2007.  This version of the "Web Services
+    Description Language (WSDL) Version 2.0 Part 2: Adjuncts"
+    Recommendation is available at <a href="http://www.w3.org/TR/2007/REC-wsdl20-adjuncts-20070626/">
+    http://www.w3.org/TR/2007/REC-wsdl20-adjuncts-20070626/</a>. The <a href="http://www.w3.org/TR/wsdl20-adjuncts/">latest version of "Web
+    Services Description Language (WSDL) Version 2.0 Part 2:
+    Adjuncts"</a> is available at <a href="http://www.w3.org/TR/wsdl20-adjuncts/">http://www.w3.org/TR/wsdl20-adjuncts/</a>
+    .
+  </dd><dt class="label"><a name="wsdl20"/>[WSDL 2.0 Core Language] </dt><dd>
+    <cite><a href="http://www.w3.org/TR/2007/REC-wsdl20-20070626/">Web Services Description Language (WSDL) Version 2.0
+    Part 1: Core Language</a></cite>, R. Chinnici, J. J. Moreau,
+    A. Ryman, S. Weerawarana, Editors. World Wide Web Consortium,
+    26 June 2007. This version of the WSDL 2.0 specification is
+    <a href="http://www.w3.org/TR/2007/REC-wsdl20-20070626/">http://www.w3.org/TR/2007/REC-wsdl20-20070626/</a>. 
+    The <a href="http://www.w3.org/TR/wsdl20/">latest version of WSDL
+    2.0</a> is available at <a href="http://www.w3.org/TR/wsdl20/">http://www.w3.org/TR/wsdl20/</a>.
+  </dd></dl></div></div><div class="div1">
+<h2><a name="schema" id="schema"/>B Schema</h2><div class="exampleOuter"><div class="exampleInner"><pre>
+
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;xs:schema targetNamespace="http://www.w3.org/2010/soapjms/"
+    xmlns:soapjms="http://www.w3.org/2010/soapjms/"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"&gt;
+
+  &lt;xs:complexType name="jndiContextParameterType"&gt;
+  &lt;xs:simpleContent&gt;
+    &lt;xs:extension base="xs:string"&gt;
+      &lt;xs:attribute name="name" type="xs:string" use="required"/&gt;
+      &lt;xs:attribute name="value" use="required"&gt;
+        &lt;xs:simpleType&gt;
+          &lt;xs:restriction base="xs:string"&gt;
+            &lt;xs:minLength value="1"/&gt;
+          &lt;/xs:restriction&gt;
+        &lt;/xs:simpleType&gt;
+      &lt;/xs:attribute&gt;
+    &lt;/xs:extension&gt;
+  &lt;/xs:simpleContent&gt;
+  &lt;/xs:complexType&gt;
+
+  &lt;xs:simpleType name="deliveryModeType"&gt;
+    &lt;xs:restriction base="xs:string"&gt;
+      &lt;xs:enumeration value="PERSISTENT"/&gt;
+      &lt;xs:enumeration value="NON_PERSISTENT"/&gt;
+    &lt;/xs:restriction&gt;
+  &lt;/xs:simpleType&gt;
+
+  &lt;xs:simpleType name="priorityType"&gt;
+    &lt;xs:restriction base="xs:int"&gt;
+      &lt;xs:minInclusive value="0"/&gt;
+      &lt;xs:maxInclusive value="9"/&gt;
+    &lt;/xs:restriction&gt;
+  &lt;/xs:simpleType&gt;
+  
+  &lt;xs:simpleType name="FaultCodesType"&gt;
+    &lt;xs:restriction base="xs:QName"&gt;
+      &lt;xs:enumeration value="soapjms:contentTypeMismatch"/&gt;
+      &lt;xs:enumeration value="soapjms:malformedRequestURI"/&gt;
+      &lt;xs:enumeration value="soapjms:mismatchedSoapAction"/&gt;
+      &lt;xs:enumeration value="soapjms:missingContentType"/&gt;
+      &lt;xs:enumeration value="soapjms:missingRequestURI"/&gt;
+      &lt;xs:enumeration value="soapjms:missingSoapAction"/&gt;
+      &lt;xs:enumeration value="soapjms:missingTargetService"/&gt;      
+      &lt;xs:enumeration value="soapjms:targetServiceNotAllowedInRequestURI"/&gt;
+      &lt;xs:enumeration value="soapjms:unrecognizedBindingVersion"/&gt;
+      &lt;xs:enumeration value="soapjms:unsupportedJMSMessageFormat"/&gt;
+      &lt;xs:enumeration value="soapjms:unsupportedLookupVariant"/&gt;
+      &lt;xs:enumeration value="soapjms:contentEncodingNotSupported"/&gt;      
+    &lt;/xs:restriction&gt;
+  &lt;/xs:simpleType&gt;
+
+  &lt;xs:element name="jndiContextParameter" type="soapjms:jndiContextParameterType"/&gt;  
+  &lt;xs:element name="jndiConnectionFactoryName" type="xs:string"/&gt;
+  &lt;xs:element name="jndiInitialContextFactory" type="xs:string"/&gt;
+  &lt;xs:element name="jndiURL" type="xs:anyURI"/&gt;  
+  &lt;xs:element name="deliveryMode" type="soapjms:deliveryModeType"/&gt;
+  &lt;xs:element name="priority" type="soapjms:priorityType"/&gt;  
+  &lt;xs:element name="timeToLive" type="xs:long"/&gt;
+  &lt;xs:element name="replyToName" type="xs:string"/&gt;
+  &lt;xs:element name="topicReplyToName" type="xs:string"/&gt;
+  
+&lt;/xs:schema&gt;
+
+</pre></div></div></div><div class="div1">
+<h2><a name="wsdl11-example" id="wsdl11-example"/>C Complete WSDL 1.1 Example (Non-Normative)</h2><div class="exampleOuter"><div class="exampleInner"><pre>
+
+&lt;?xml version="1.0"?&gt;
+&lt;wsdl11:definitions name="StockQuote"
+
+targetNamespace="http://example.com/stockquote.wsdl"
+          xmlns:tns="http://example.com/stockquote.wsdl"
+          xmlns:stockquote="http://example.com/stockquote.xsd"
+          xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+          xmlns:wsdl11soap11="http://schemas.xmlsoap.org/wsdl/soap/"
+          xmlns:wsdl11="http://schemas.xmlsoap.org/wsdl/"
+          xmlns:soapjms="http://www.w3.org/2010/soapjms/" 
+          xmlns="http://schemas.xmlsoap.org/wsdl/"&gt;
+
+    &lt;wsdl11:types&gt;
+       &lt;xsd:schema targetNamespace="http://example.com/stockquote.xsd"&gt;
+           &lt;xsd:element name="TradePriceRequest"&gt;
+              &lt;xsd:complexType&gt;
+                  &lt;xsd:all&gt;
+                      &lt;xsd:element name="tickerSymbol" type="xsd:string" /&gt;
+                  &lt;/xsd:all&gt;
+              &lt;/xsd:complexType&gt;
+           &lt;/xsd:element&gt;
+           &lt;xsd:element name="TradePrice"&gt;
+              &lt;xsd:complexType&gt;
+                  &lt;xsd:all&gt;
+                      &lt;xsd:element name="price" type="xsd:float" /&gt;
+                  &lt;/xsd:all&gt;
+              &lt;/xsd:complexType&gt;
+           &lt;/xsd:element&gt;
+       &lt;/xsd:schema&gt;
+    &lt;/wsdl11:types&gt;
+
+    &lt;wsdl11:message name="GetLastTradePriceInput"&gt;
+        &lt;wsdl11:part name="body" element="stockquote:TradePriceRequest"/&gt;
+    &lt;/wsdl11:message&gt;
+
+    &lt;wsdl11:message name="GetLastTradePriceOutput"&gt;
+        &lt;wsdl11:part name="body" element="stockquote:TradePrice"/&gt;
+    &lt;/wsdl11:message&gt;
+
+    &lt;wsdl11:portType name="StockQuotePortType"&gt;
+        &lt;wsdl11:operation name="GetLastTradePrice"&gt;
+           &lt;wsdl11:input message="tns:GetLastTradePriceInput"/&gt;
+           &lt;wsdl11:output message="tns:GetLastTradePriceOutput"/&gt;
+        &lt;/wsdl11:operation&gt;
+    &lt;/wsdl11:portType&gt;
+
+     &lt;wsdl11:binding name="StockQuoteSoapHTTPBinding" type="tns:StockQuotePortType"&gt;
+        &lt;wsdl11soap11:binding style="document" 
+                transport="http://schemas.xmlsoap.org/soap/http"/&gt;
+         &lt;wsdl11:operation name="GetLastTradePrice"&gt;
+            &lt;wsdl11soap11:operation soapAction="http://example.com/GetLastTradePrice"/&gt;
+           &lt;wsdl11:input&gt;
+               &lt;wsdl11soap11:body use="literal"/&gt;
+            &lt;/wsdl11:input&gt;
+           &lt;wsdl11:output&gt;
+               &lt;wsdl11soap11:body use="literal"/&gt;
+          &lt;/wsdl11:output&gt;
+        &lt;/wsdl11:operation&gt;
+    &lt;/wsdl11:binding&gt;
+
+   &lt;wsdl11:binding name="StockQuoteSoapJMSBinding" type="tns:StockQuotePortType" &gt;
+       &lt;wsdl11soap11:binding style="document" 
+              transport="http://www.w3.org/2010/soapjms/"/&gt;
+
+       &lt;!-- We want this binding to use a particular CF class --&gt;
+       &lt;soapjms:jndiConnectionFactoryName&gt;
+         sample.jms.ConnectionFactory
+       &lt;/soapjms:jndiConnectionFactoryName&gt;
+
+       &lt;!-- Specify PERSISTENT delivery mode --&gt;
+       &lt;soapjms:deliveryMode&gt;PERSISTENT&lt;/soapjms:deliveryMode&gt;
+
+       &lt;wsdl11:operation name="GetLastTradePrice"&gt;
+         &lt;wsdl11soap11:operation soapAction="http://example.com/GetLastTradePrice"/&gt;
+         &lt;wsdl11:input&gt;
+             &lt;wsdl11soap11:body use="literal"/&gt;
+         &lt;/wsdl11:input&gt;
+         &lt;wsdl11:output&gt;
+             &lt;wsdl11soap11:body use="literal"/&gt;
+          &lt;/wsdl11:output&gt;
+       &lt;/wsdl11:operation&gt;
+   &lt;/wsdl11:binding&gt;
+
+   &lt;wsdl11:service name="StockQuoteService"&gt;
+       &lt;wsdl11:documentation&gt;My first service&lt;/wsdl11:documentation&gt;
+       &lt;wsdl11:port name="StockQuotePort" binding="tns:StockQuoteSoapHTTPBinding"&gt;
+           &lt;wsdl11soap11:address location="http://example.com/stockquote"/&gt;
+       &lt;/wsdl11:port&gt;
+       &lt;wsdl11:port name="StockQuotePort_jms" binding="tns:StockQuoteSoapJMSBinding"&gt;
+           &lt;wsdl11soap11:address location="jms:jndi:myQueue?targetService=stockquote
+                                 &amp;amp;priority=8&amp;amp;replyToName=interested&amp;amp;userprop=mystuff"/&gt;
+       &lt;/wsdl11:port&gt;
+   &lt;/wsdl11:service&gt;
+
+&lt;/wsdl11:definitions&gt;
+</pre></div></div></div><div class="div1">
+<h2><a name="binding-examples" id="binding-examples"/>D SOAP/JMS Underlying Protocol Binding Examples (Non-Normative)</h2><p>This section contains examples of the SOAP request messages which will
+be sent for the SOAP/JMS service described by the WSDL document in <a href="#wsdl11-example"><b>C Complete WSDL 1.1 Example</b></a>.  The WSDL contains the following URI:</p><div class="exampleOuter">
+<div class="exampleHeader"><a name="jmsuriExample" id="jmsuriExample"/>Example: JMS URI</div><div class="exampleInner"><pre>jms:jndi:myQueue?targetService=stockquote
+        &amp;priority=8
+        &amp;replyToName=interested
+        &amp;userprop=mystuff</pre></div></div><p>The URI is augmented by the following SOAP/JMS properties from the
+     StockQuoteSoapJMSBinding in the WSDL:
+     </p><ul><li><p><code>jndiConnectionFactoryName=sample.jms.ConnectionFactory</code></p></li><li><p><code>deliveryMode=PERSISTENT</code></p></li></ul><p>The JMS messages that invoke this service have three parts. The first part is 
+    the Message Header that contains a set of fields defined in the JMS
+    specification, the second part is a set of properties that represent
+    optional header fields, and the last part is the Message Body.</p><div class="div2">
+<h3><a name="soap-request-without-attachments" id="soap-request-without-attachments"/>D.1 SOAP Request without attachments</h3><p>The SOAP/JMS properties described in the <a href="#jmsuriExample">Example JMS URI</a> and  
+      <a href="#wsdl11-example"><b>C Complete WSDL 1.1 Example</b></a> are used in the JMS message as follows:</p><a name="tableHeader1" id="tableHeader1"/><table border="1" cellspacing="0" cellpadding="5"><caption>JMS Message Header Values</caption><thead><tr><th>Field</th><th>value</th><th>comments</th></tr></thead><tbody><tr><td>JMSMessage class</td><td>jms_bytes</td><td>a fixed value</td></tr><tr><td>JMSType</td><td>null</td><td/></tr><tr><td>JMSDeliveryMode</td><td>2</td><td/></tr><tr><td>JMSExpiration</td><td>0</td><td/></tr><tr><td>JMSPriority</td><td>8</td><td/></tr><tr><td>JMSMessageID</td><td><code>ID:d438e0000001</code></td><td/></tr><tr><td>JMSTimestamp</td><td><code>1092110476167</code></td><td/></tr><tr><td>JMSCorrelationID</td><td>null</td><td/></tr><tr><td>JMSDestination</td><td>A <code>Destination</code> object</td><td>resolved by JNDI from the destination name <code>myQueue</code></td></tr><tr><td>JMSReplyTo</td><td>A <code>Destination</code> object</td><td>resolved by JNDI from the destination name <code>interested</code></td></tr><tr><td>JMSRedelivered</td><td>false</td><td/></tr></tbody></table><a name="tableProperties1" id="tableProperties1"/><table border="1" cellspacing="0" cellpadding="5"><caption>JMS Message Properties Values</caption><thead><tr><th>Field</th><th>value</th><th>comments</th></tr></thead><tbody><tr><td>SOAPJMS_bindingVersion</td><td>1.0</td><td/></tr><tr><td>SOAPJMS_targetService</td><td>stockquote</td><td>this is derived from the <a title="soapjms:targetService" href="#targetService">targetService</a> property</td></tr><tr><td>SOAPJMS_requestURI</td><td>jms:jndi:myQueue?userprop=mystuff</td><td>this is derived from the <a title="soapjms:requestURI" href="#requestURI">requestURI</a> property</td></tr><tr><td>SOAPJMS_contentType</td><td>application/soap+xml</td><td>inferred from the SOAP Envelope and absence of attachments. In this case it is SOAP 1.2</td></tr></tbody></table><p>The following example shows a textual representation of the JMS message contents:</p><div class="exampleOuter">
+<div class="exampleHeader"><a name="jmssoap12e1" id="jmssoap12e1"/>Example: Textual representation of the JMS message contents for a SOAP 1.2 request without attachments</div><div class="exampleInner"><pre>&lt;env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"&gt;
+  &lt;env:Body&gt;
+    &lt;tns:TradePriceRequest xmlns:tns="http://example.com/stockquote.xsd"&gt;
+      &lt;tickerSymbol&gt;TickerSymbolValue&lt;/tickerSymbol&gt;
+    &lt;/tns:TradePriceRequest&gt;
+  &lt;/env:Body&gt;
+&lt;/env:Envelope&gt;</pre></div></div></div><div class="div2">
+<h3><a name="soap-request-with-attachments" id="soap-request-with-attachments"/>D.2 SOAP Request with attachments</h3><p>The SOAP/JMS properties described in the <a href="#jmsuriExample">Example JMS URI</a> and  
+      <a href="#wsdl11-example"><b>C Complete WSDL 1.1 Example</b></a> are used in the JMS message as follows:</p><a name="tableHeader2" id="tableHeader2"/><table border="1" cellspacing="0" cellpadding="5"><caption>JMS Message Header Values</caption><thead><tr><th>Field</th><th>value</th><th>comments</th></tr></thead><tbody><tr><td>JMSMessage class</td><td>jms_bytes</td><td>a fixed value</td></tr><tr><td>JMSType</td><td>null</td><td/></tr><tr><td>JMSDeliveryMode</td><td>2</td><td/></tr><tr><td>JMSExpiration</td><td>0</td><td/></tr><tr><td>JMSPriority</td><td>8</td><td/></tr><tr><td>JMSMessageID</td><td><code>ID:d438e0000001</code></td><td/></tr><tr><td>JMSTimestamp</td><td><code>1092110476167</code></td><td/></tr><tr><td>JMSCorrelationID</td><td>null</td></tr><tr><td>JMSDestination</td><td>A <code>Destination</code> object</td><td>resolved by JNDI from the destination name <code>myQueue</code></td></tr><tr><td>JMSReplyTo</td><td>A <code>Destination</code> object </td><td> resolved by JNDI from the destination name <code>interested</code></td></tr><tr><td>JMSRedelivered</td><td>false</td><td/></tr></tbody></table><a name="tableProperties2" id="tableProperties2"/><table border="1" cellspacing="0" cellpadding="5"><caption>JMS Message Properties Values</caption><thead><tr><th>Field</th><th>value</th><th>comments</th></tr></thead><tbody><tr><td>SOAPJMS_bindingVersion</td><td>1.0</td><td/></tr><tr><td>SOAPJMS_targetService</td><td>stockquote</td><td>this is derived from the <a title="soapjms:targetService" href="#targetService">targetService</a> property</td></tr><tr><td>SOAPJMS_requestURI</td><td>jms:jndi:myQueue?userprop=mystuff</td><td>this is derived from the <a title="soapjms:requestURI" href="#requestURI">requestURI</a> property</td></tr><tr><td>SOAPJMS_contentType</td><td>multipart/related type="application/xop+xml"; boundary="MIME_boundary"; charset=utf-8</td><td>inferred from the SOAP Envelope and use of MTOM. In this case it is SOAP 1.2</td></tr></tbody></table><p>The following example shows a textual representation of the JMS message contents:</p><div class="exampleOuter">
+<div class="exampleHeader"><a name="jmssoap12e2" id="jmssoap12e2"/>Example: Textual representation of the JMS message contents for a SOAP 1.2 Request with attachments</div><div class="exampleInner"><pre>
+--MIME_boundary
+Content-Type: "application/xop+xml"; charset=utf-8; type="text/xml"
+Content-Transfer-Encoding: 8bit
+Content-ID: &lt;945414389.1092086011970&gt;
+
+&lt;env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"&gt;
+  &lt;env:Header&gt;
+    &lt;myHdr&gt;
+      &lt;xop:Include href="cid:XXX" xmlns:xop="http://www.w3.org/2004/08/xop/include"/&gt;
+    &lt;/myHdr&gt;
+  &lt;/env:Header&gt;
+  &lt;env:Body&gt;
+    &lt;tns:TradePriceRequest xmlns:tns="http://example.com/stockquote.xsd"&gt;
+      &lt;tickerSymbol&gt;tickerSymbolValue&lt;/tickerSymbol&gt;
+    &lt;/tns:TradePriceRequest&gt;
+  &lt;/env:Body&gt;
+&lt;/env:Envelope&gt;
+
+--MIME_boundary
+content-type:application/octet-stream
+content-transfer-encoding:base64
+content-id:&lt;XXX&gt;
+
+YmxhaA== 
+--MIME_boundary--
+
+</pre></div></div></div></div><div class="div1">
+<h2><a name="JAX-WS-annotations" id="JAX-WS-annotations"/>E JAX-WS @BindingType annotation values (Non-Normative)</h2><p>The Java API for XML Web Services [<cite><a href="#jax-ws">JAX-WS</a></cite>] specification defines the @BindingType annotation for 
+    use with a JAX-WS endpoint implementation class. This annotation is 
+    used to specify the binding to be used by the endpoint, with the default 
+    being SOAP 1.1/HTTP. For example, the following annotation specifies the 
+    SOAP 1.2/HTTP binding:</p><div class="exampleOuter">
+<div class="exampleHeader"><a name="http-annotation" id="http-annotation"/>Example: annotation specifying SOAP 1.2/HTTP binding</div><div class="exampleInner"><pre>
+    @WebService
+    @BindingType("http://www.w3.org/2003/05/soap/bindings/HTTP/")
+    public class MyEndpointImpl {
+    ...
+    }    </pre></div></div><p>In addition to the @BindingType annotation, the JAX-WS specification 
+    also defines the specific values to be used with the annotation:</p><ul><li><p>javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_BINDING = 
+      "http://schemas.xmlsoap.org/wsdl/soap/http"</p></li><li><p>javax.xml.ws.soap.SOAPBinding.SOAP12HTTP_BINDING = 
+      "http://www.w3.org/2003/05/soap/bindings/HTTP/"</p></li></ul><p>Implementations of the SOAP/JMS binding specification which also support 
+    the JAX-WS specification are encouraged to support the use of the following 
+    @BindingType annotation values to indicate the use of the SOAP 1.1/JMS and 
+    SOAP 1.2/JMS bindings, respectively:</p><ul><li><p>SOAP 1.1/JMS: "http://www.w3.org/2010/soapjms/soap1.1"</p></li><li><p>SOAP 1.2/JMS: "http://www.w3.org/2010/soapjms/soap1.2"</p></li></ul></div><div class="div1">
+<h2><a name="wsdl-2.0" id="wsdl-2.0"/>F WSDL 2.0 (Non-Normative)</h2><p>This section describes using WSDL 2.0 in conjunction with SOAP/JMS.
+      For information about SOAP bindings in WSDL 2.0 see [<cite><a href="#wsdl20forsoap">WSDL 2.0 Adjuncts</a></cite>].</p><div class="div2">
+<h3><a name="wsdl-20-overview" id="wsdl-20-overview"/>F.1 WSDL 2.0 Extensions Overview</h3><ul><li><p>The <code>wsoap:protocol</code> attribute of the binding element gets a new
+    URL reflecting a JMS transport.</p></li><li><p>Defines how to set various properties to control the behavior
+    (connection parameters, runtime setting) of the binding.</p></li><li><p>Locates the service using a JMS URI.</p></li></ul></div><div class="div2">
+<h3><a name="wsdl-20-detail" id="wsdl-20-detail"/>F.2 WSDL 2.0 Extensions Detail</h3><p>Due to insufficient testing by implementations, the working group chose to
+      create this non-normative section that describes a WSDL 2.0 binding.</p><p>Section <a href="#wsdl-11-detail"><b>3.3 WSDL 1.1 Extensions Detail</b></a>  illustrates how a service originally available 
+      over HTTP is made available over JMS using WSDL 1.1.  
+      This section illustrates how to indicate the configuration for using SOAP over JMS with WSDL 2.0</p><div class="exampleInner"><pre>(01) &lt;wsdl20:binding
+(02)    name="StockQuoteSoapJMSBinding" interface="tns:StockQuoteInterface" 
+(03)    type="http://www.w3.org/2006/01/wsdl/soap"
+(04)    wsoap:protocol="http://www.w3.org/2010/soapjms/"
+   xmlns:soapjms="http://www.w3.org/2010/soapjms/"&gt;
+(05)   
+(06)   &lt;!-- We want this binding to use a particular CF class --&gt;
+(07)   &lt;soapjms:jndiConnectionFactoryName&gt;
+(08)     sample.jms.ConnectionFactory
+(09)   &lt;/soapjms:jndiConnectionFactoryName&gt;
+(10)   &lt;!-- Specify PERSISTENT delivery mode --&gt;
+(11)   &lt;soapjms:deliveryMode&gt;PERSISTENT&lt;/soapjms:deliveryMode&gt;
+(12) &lt;/wsdl20:binding&gt;
+(13) 
+(14) &lt;wsdl20:service name="StockQuoteService" interface="tns:StockQuoteInterface"&gt;
+(15)   &lt;wsdl20:documentation&gt;My first service&lt;/wsdl20:documentation&gt;
+(16)   &lt;wsdl20:endpoint name="SOAPHTTP" binding="tns:StockQuoteSoapHTTPBinding"
+(17)         address="http://example.com/stockquote"/&gt;
+(18)   &lt;wsdl20:endpoint name="JMS" binding="tns:StockQuoteSoapJMSBinding"
+(19)         address="jms:jndi:myQueue/stockquote"/&gt;
+(20) &lt;/wsdl20:service&gt;</pre></div><p>
+    Line 4 shows the protocol URI in the <code>wsoap:protocol</code>
+    attribute of the <code>&lt;binding&gt;</code>.   To indicate that
+    this SOAP/JMS binding is in use, the <code>wsoap:protocol</code>
+    attribute needs to be set to the value <code>http://www.w3.org/2010/soapjms/</code> .
+</p><p>Lines 7-11 show the use of WSDL 2.0 extension elements to set
+      some of the properties of the connection.  In this case, you see
+      the <code>&lt;soapjms:jndiConnectionFactoryName&gt;</code> and
+      <code>&lt;soapjms:deliveryMode&gt;</code> elements defining the
+      values for the <a title="soapjms:jndiConnectionFactoryName" href="#jndiConnectionFactoryName">jndiConnectionFactoryName</a>
+      and <a title="soapjms:deliveryMode" href="#deliveryMode">deliveryMode</a>
+      properties.  More generally, each allowed property can be
+      expressed as a WSDL 2.0 extension element, typed appropriately
+      for that property's value space.  For example, on line 11 above,
+      <code>&lt;soapjms:deliveryMode&gt;</code> is of type
+      <code>xsd:string</code>.  This XML representation then surfaces
+      in the WSDL 2.0 Component Model (see next section) as an
+      extension property.</p><p>Lines 18-19 are also additions to specify the location at
+      which this new implementation exists.  Line 19 showing the JMS
+      URI Scheme <code>jms:</code> in the <code>address</code>
+      attribute of the <code>&lt;endpoint&gt;</code> element.  As with
+      the WSDL 1.1 binding, the connection properties can also be set in
+      the URI.
+      The value of the <code>address</code> attribute needs to be a 
+      URI corresponding to a JMS Destination, and ought to be a 
+      "jms" scheme URI.
+      </p><div class="div3">
+<h4><a name="wsdl20-components" id="wsdl20-components"/>F.2.1 Relationship to WSDL 2.0 Component Model</h4><p>WSDL 2.0 is described abstractly in terms of a <a href="http://www.w3.org/TR/wsdl20/#component_model">component model</a>.
+              Extensions such as the SOAP/JMS binding extend the predefined components with new properties
+              and/or components.
+          </p><p>For this specification, each property in the list
+          <a title="soapjms:jndiConnectionFactoryName" href="#jndiConnectionFactoryName">jndiConnectionFactoryName</a>, 
+          <a title="soapjms:jndiInitialContextFactory" href="#jndiInitialContextFactory">jndiInitialContextFactory</a>,
+          <a title="soapjms:jndiURL" href="#jndiURL">jndiURL</a>, 
+          <a title="soapjms:deliveryMode" href="#deliveryMode">deliveryMode</a>, 
+          <a title="soapjms:priority" href="#priority">priority</a>, 
+          <a title="soapjms:timeToLive" href="#timeToLive">timeToLive</a>, 
+          and <a title="soapjms:replyToName" href="#replyToName">replyToName</a>
+          adds a WSDL Component Model Property with the same name to the containing WSDL 2.0 component.
+          
+          For instance,
+          if the <em>&lt;deliveryMode&gt;</em> extension element appeared underneath the <em>&lt;service&gt;</em>
+          element in a WSDL 2.0 description, it would result in a <a title="soapjms:deliveryMode" href="#deliveryMode">deliveryMode</a> property added
+          to the <a href="http://www.w3.org/TR/wsdl20/#Service">Service</a>
+          component.</p><div class="div4">
+<h5><a name="wsdl20-precedence" id="wsdl20-precedence"/>F.2.1.1 Precedence</h5><p>
+      Since the same property can be specified in multiple places, we need
+      precedence rules, and in fact they are similar to those specified in
+      section <a href="#wsdl-11-properties"><b>3.3.4 Specifying Properties In WSDL 1.1</b></a>. 
+      The most-specific setting overrides less-specific ones (URI specified in the endpoint element's
+      address attribute, then other properties set on the endpoint, then service, then binding).
+      For a particular interaction, the property might be found on the Endpoint component, then Service, 
+      then Binding, taking whichever value you find first.
+      </p></div></div></div></div><div class="div1">
+<h2><a name="acknowledgments" id="acknowledgments"/>G Acknowledgements (Non-Normative)</h2><p>This document is the work of the <a href="http://www.w3.org/2002/ws/soapjms/">W3C SOAP-JMS Binding
+  Working Group</a>.</p><p>
+    Members of the Working Group are (at the time of writing, and by
+    alphabetical order):
+      Adams, Phil (IBM Corporation), Golby-Kirk, Matthew (IBM Corporation), Johnson, Eric (TIBCO Software Inc.), Lafon, Yves (W3C/ERCIM), Lewis, Amelia (TIBCO Software Inc.), Mehta, Bhakti (Oracle Corporation), Phillips, Mark (IBM Corporation), Rokicki, Derek (Software AG), Sowatskey, Nathan (Cisco).
+  </p><p>
+    Previous members of the Working Group were:
+      Daniels, Glen, Easton, Peter, Hapner, Mark, Le Hégaret, Philippe, Merrick, Roland, Xiao, Dongbo.
+  </p><p>
+    The people who have contributed to <a href="http://lists.w3.org/Archives/Public/public-soap-jms/">discussions
+    on public-soap-jms@w3.org</a> are also gratefully
+    acknowledged.
+  </p><p>
+    The original contributors to the SOAP over Java™ Message
+    Service 1.0 W3C Member Submission: Phil Adams (IBM); Glen Daniels
+    (WSO2); Peter Easton (Progress Software); Tim Frank (Software AG);
+    Lei Jin (BEA Systems, Inc.); Eric Johnson (TIBCO Software Inc.);
+    Vinod Kumar (BEA Systems, Inc.); Amelia A. Lewis (TIBCO Software
+    Inc.); David Orchard (BEA Systems, Inc.); Roland Merrick (IBM);
+    Mark Phillips (IBM); Stephen Todd (IBM); Dongbo Xiao (BEA Systems,
+    Inc.) and Prasad Yendluri (Software AG).
+  </p></div>
+<h2><a name="assertionsummary" id="assertionsummary"/>H Assertion Summary (Non-Normative)</h2><p>
+    	This appendix summarizes assertions made by this specification.
+    	Each assertion is assigned a unique identifier.
+    </p><a name="document-assertion-summary" id="document-assertion-summary"/><table width="100%" border="1"><caption>
+    			Summary of Assertions
+    		</caption><col width="20%" span="1"/><col width="80%" span="1"/><tbody><tr><th>Id</th><th>Assertion</th></tr><tr><td>
+         <a name="Conformance-1000-summary" href="#Conformance-1000">Conformance-1000</a>
+      </td><td>A conforming implementation <strong>MUST</strong> work with JMS.</td></tr><tr><td>
+         <a name="Conformance-1001-summary" href="#Conformance-1001">Conformance-1001</a>
+      </td><td>A conforming implementation <strong>MUST</strong> implement all the requirements of <a href="#soap-binding"><b>2 The SOAP/JMS Underlying Protocol Binding</b></a>.</td></tr><tr><td>
+         <a name="Conformance-1002-summary" href="#Conformance-1002">Conformance-1002</a>
+      </td><td>Conforming implementations <strong>MUST</strong> implement all the requirements of the JMS URI.</td></tr><tr><td>
+         <a name="Conformance-1003-summary" href="#Conformance-1003">Conformance-1003</a>
+      </td><td>Support for WSDL 1.1 is optional and as such an implementation <strong>MAY</strong> implement it.  
+			However, a conforming implementation of this feature <strong>MUST</strong> implement all the requirements of <a href="#wsdl-11-detail"><b>3.3 WSDL 1.1 Extensions Detail</b></a>.</td></tr><tr><td>
+         <a name="Protocol-2001-summary" href="#Protocol-2001">Protocol-2001</a>
+      </td><td>
+    Properties can be obtained from a number of sources. 
+    If a given property is specified in more than one of these, 
+    the following list specifies the precedence: 
+    the first <strong>MUST</strong> be used in preference to the second.
+    </td></tr><tr><td>
+         <a name="Protocol-2002-summary" href="#Protocol-2002">Protocol-2002</a>
+      </td><td>
+	If a given property is specified more than once in the JMS 
+    URI the last instance of the property <strong>MUST</strong> be used.
+	</td></tr><tr><td>
+         <a name="Protocol-2003-summary" href="#Protocol-2003">Protocol-2003</a>
+      </td><td>(lookupVariant)
+					<strong>MUST</strong> be specified in the JMS URI, as the <code>jms-variant</code> portion of the syntax. </td></tr><tr><td>
+         <a name="Protocol-2004-summary" href="#Protocol-2004">Protocol-2004</a>
+      </td><td>(destinationName) <strong>MUST</strong> be specified in JMS URI, as the <code>jms-dest</code> portion of the syntax.</td></tr><tr><td>
+         <a name="Protocol-2005-summary" href="#Protocol-2005">Protocol-2005</a>
+      </td><td>(deliveryMode)
+                        if specified <strong>MUST</strong> appear in the JMS message in the header named <code>JMSDeliveryMode</code>.
+                          If the value of this property is "PERSISTENT" then the <code>JMSDeliveryMode</code> integer value <strong>MUST</strong> be 
+                          set to <code>DeliveryMode.PERSISTENT</code>.  If the value of this property is "NON_PERSISTENT" then the 
+                          <code>JMSDeliveryMode</code> integer value <strong>MUST</strong> be set to <code>DeliveryMode.NON_PERSISTENT</code>. 
+                        </td></tr><tr><td>
+         <a name="Protocol-2006-summary" href="#Protocol-2006">Protocol-2006</a>
+      </td><td>(timeToLive) if specified, this <strong>MUST</strong> be used to generate the value of the JMS header <code>JMSExpiration</code>.</td></tr><tr><td>
+         <a name="Protocol-2007-summary" href="#Protocol-2007">Protocol-2007</a>
+      </td><td>(priority) if specified, <strong>MUST</strong> appear in the JMS message in the header named <code>JMSPriority</code>.</td></tr><tr><td>
+         <a name="Protocol-2008-summary" href="#Protocol-2008">Protocol-2008</a>
+      </td><td>(replyToName) if specified, this <strong>MUST</strong> be used to derive the value to be used in the JMS header <code>JMSReplyTo</code>.</td></tr><tr><td>
+         <a name="Protocol-2009-summary" href="#Protocol-2009">Protocol-2009</a>
+      </td><td>(targetService) 
+                        if specified <strong>MUST</strong> appear in the JMS message in the JMS property named 
+                        <code>SOAPJMS_targetService</code>.
+                         Use fault subcode <b>missingTargetService</b> if specified and <code>SOAPJMS_targetService</code> does not appear.                      
+                        </td></tr><tr><td>
+         <a name="Protocol-2010-summary" href="#Protocol-2010">Protocol-2010</a>
+      </td><td>(bindingVersion) fixed value "1.0" in the implementation, <strong>MUST</strong> appear in a JMS property named <code>SOAPJMS_bindingVersion</code>.</td></tr><tr><td>
+         <a name="Protocol-2011-summary" href="#Protocol-2011">Protocol-2011</a>
+      </td><td>
+                        A fault <strong>MUST</strong> be generated with subcode <b>unrecognizedBindingVersion</b> 
+                        if the value of the <b>soapjms:bindingVersion</b> property does not match the fixed value.
+                        </td></tr><tr><td>
+         <a name="Protocol-2012-summary" href="#Protocol-2012">Protocol-2012</a>
+      </td><td>(contentType)
+                            If the <code>charset</code> parameter is specified, it is checked to ensure that it matches the encoding value from the supplied XML.
+                            A fault <strong>MUST</strong> be generated with subcode <b>contentTypeMismatch</b> if the encoding values do not match.</td></tr><tr><td>
+         <a name="Protocol-2016-summary" href="#Protocol-2016">Protocol-2016</a>
+      </td><td>(contentType)
+                        The contentType value <strong>MUST</strong> appear in the JMS message in the JMS property named <code>SOAPJMS_contentType</code>.
+                        A fault <strong>MUST</strong> be generated with subcode <b>missingContentType</b> if the 
+                        <code>SOAPJMS_contentType</code> property is missing.</td></tr><tr><td>
+         <a name="Protocol-2018-summary" href="#Protocol-2018">Protocol-2018</a>
+      </td><td>(soapAction)If specified <strong>MUST</strong> appear in the JMS message in the JMS property named <code>SOAPJMS_soapAction</code>.
+                          Fault subcode <b>missingSoapAction</b> MAY be used if <code>SOAPJMS_soapAction</code> does not appear.</td></tr><tr><td>
+         <a name="Protocol-2019-summary" href="#Protocol-2019">Protocol-2019</a>
+      </td><td>(soapAction)
+                        If using SOAP 1.2, and the <a title="soapjms:contentType" href="#contentType">contentType</a>
+                    	property has an <code>action</code> parameter, that parameter value is compared with the <code>SOAPJMS_soapAction</code> value.
+                         
+                        A fault <strong>MUST</strong> be generated with fault subcode <b>mismatchedSoapAction</b> if the SOAP 1.2 <code>action</code> does not
+                    	match the <code>SOAPJMS_soapAction</code> value.</td></tr><tr><td>
+         <a name="Protocol-2020-summary" href="#Protocol-2020">Protocol-2020</a>
+      </td><td>(isFault)
+                        When this property is <code>true</code>, the sending software <strong>MUST</strong> set a boolean JMS Message property 
+                        named <code>SOAPJMS_isFault</code> with a value of <code>true</code>, as in: 
+                        <code>Message.setBooleanProperty("SOAPJMS_isFault", true)</code>.
+                        </td></tr><tr><td>
+         <a name="Protocol-2021-summary" href="#Protocol-2021">Protocol-2021</a>
+      </td><td>The client <strong>MUST</strong> create the requestURI by taking the supplied URI, leaving the destinationName as-is, 
+                        and removing the targetService and replyToName query parameters if they are specified. The client <strong>SHOULD</strong> 
+                        also remove deliveryMode, jndiConnectionFactoryName, jndiInitialContextFactory, jndiURL, jndiContextParameter, timeToLive, 
+                        and priority properties.  The client <strong>MAY</strong> remove other query parameters not explicitly mentioned above 
+                        (for example client security related properties).</td></tr><tr><td>
+         <a name="Protocol-2022-summary" href="#Protocol-2022">Protocol-2022</a>
+      </td><td>(requestURI)
+                        Appears in the JMS message in the JMS property named <code>SOAPJMS_requestURI</code>.
+                        A fault <strong>MUST</strong> be generated with fault subcode <b>missingRequestURI</b> if the <code>SOAPJMS_requestURI</code> property 
+                        is missing from the message.</td></tr><tr><td>
+         <a name="Protocol-2025-summary" href="#Protocol-2025">Protocol-2025</a>
+      </td><td> 
+                        A fault <strong>MUST</strong> be generated with subcode <b>malformedRequestURI</b> 
+                        when the <code>SOAPJMS_requestURI</code> violates the expected syntax.</td></tr><tr><td>
+         <a name="Protocol-2026-summary" href="#Protocol-2026">Protocol-2026</a>
+      </td><td>
+                        A fault <strong>MUST</strong> be generated with subcode <b>targetServiceNotAllowedInRequestURI</b> 
+                        when <code>targetService</code> parameter is included in the <code>SOAPJMS_requestURI</code>). 
+                        </td></tr><tr><td>
+         <a name="Protocol-2027-summary" href="#Protocol-2027">Protocol-2027</a>
+      </td><td>
+    The contents of the JMS Message body <strong>MUST</strong> be the SOAP payload as a 
+    JMS <code>BytesMessage</code> or <code>TextMessage</code>.
+    </td></tr><tr><td>
+         <a name="Protocol-2028-summary" href="#Protocol-2028">Protocol-2028</a>
+      </td><td>
+    A fault <strong>MUST</strong> be generated with subcode <b>unsupportedJMSMessageFormat</b> when the 
+    arriving message format is not <code>BytesMessage</code> or <code>TextMessage</code>.
+    </td></tr><tr><td>
+         <a name="Protocol-2029-summary" href="#Protocol-2029">Protocol-2029</a>
+      </td><td>
+    Specifically, if the payload is formatted as a MIME multipart message, 
+    then the first byte or character encountered in the JMS Message body 
+    <strong>MUST</strong> be the start of the MIME boundary 
+    for the start of the first part 
+    — what MIME Part One [<cite><a href="#mime">IETF RFC 2045</a></cite>] section 2.5 calls a "Body Part".
+    </td></tr><tr><td>
+         <a name="Protocol-2030-summary" href="#Protocol-2030">Protocol-2030</a>
+      </td><td>
+    If the message is formatted as "<code>text/xml</code>" 
+    or "<code>application/soap+xml</code>", 
+    then the first byte or character of the JMS Message body 
+    <strong>MUST</strong> be the start of a conforming XML document.
+    </td></tr><tr><td>
+         <a name="Protocol-2032-summary" href="#Protocol-2032">Protocol-2032</a>
+      </td><td>In the case of SOAP 1.2 a conforming SOAP-JMS Binding instance <strong>MUST</strong>
+    support the following message exchange patterns:</td></tr><tr><td>
+         <a name="Protocol-2033-summary" href="#Protocol-2033">Protocol-2033</a>
+      </td><td>
+    In the case of SOAP 1.1 there is no formal specification of 
+    Message Exchange Patterns.     
+    A conforming SOAP-JMS Binding instance <strong>MUST</strong> 
+    support both the generic "request/response" and "one-way" 
+    patterns as specified in this document.</td></tr><tr><td>
+         <a name="Protocol-2036-summary" href="#Protocol-2036">Protocol-2036</a>
+      </td><td>The Response Message <strong>MUST</strong> be created 
+        using the same type as the corresponding Request Message, i.e. as a JMS <code>BytesMessage</code> or <code>TextMessage</code>.</td></tr><tr><td>
+         <a name="Protocol-2037-summary" href="#Protocol-2037">Protocol-2037</a>
+      </td><td> The message <strong>MUST</strong> be sent to the JMS Destination in the
+        <code>JMSReplyTo</code> header of the Request Message.</td></tr><tr><td>
+         <a name="Protocol-2038-summary" href="#Protocol-2038">Protocol-2038</a>
+      </td><td> 
+        If the <code>JMSCorrelationID</code> is set in the request message, 
+        then the <code>JMSCorrelationID</code> header field in the response 
+        message <strong>MUST</strong> be set to the same value as the <code>JMSCorrelationID</code> 
+        header field in the request message. If the <code>JMSCorrelationID</code> 
+        header field is not set in the request message, then the 
+        <code>JMSCorrelationID</code> header field in the response message 
+        <strong>MUST</strong> be set to the value of the <code>JMSMessageID</code> 
+        header in the request message.</td></tr><tr><td>
+         <a name="Protocol-2039-summary" href="#Protocol-2039">Protocol-2039</a>
+      </td><td>(contentEncoding)
+                        If the content encoding is specified, it is checked to
+                        ensure that it matches the content encoding values supported. A fault
+                        <strong>MUST</strong> be generated with subcode <b>contentEncodingNotSupported</b> 
+                        if the encoding values do not match.</td></tr><tr><td>
+         <a name="Protocol-2050-summary" href="#Protocol-2050">Protocol-2050</a>
+      </td><td>
+        The <code>JMSReplyTo</code> header <strong>MUST</strong> be assigned a value.
+        </td></tr><tr><td>
+         <a name="Protocol-2051-summary" href="#Protocol-2051">Protocol-2051</a>
+      </td><td>
+        The <code>JMSReplyTo</code> header <strong>MUST NOT</strong> be assigned a value.
+        </td></tr><tr><td>
+         <a name="Protocol-2060-summary" href="#Protocol-2060">Protocol-2060</a>
+      </td><td>(lookupVariant)
+					The <code>jms-variant</code>: <code>jndi</code> 
+         <strong>MUST</strong> be supported.</td></tr><tr><td>
+         <a name="Protocol-2070-summary" href="#Protocol-2070">Protocol-2070</a>
+      </td><td>(topicReplyToName) if specified and if relevant, this <strong>MUST</strong> be used to derive the value to be used in the JMS header <code>JMSReplyTo</code>.</td></tr><tr><td>
+         <a name="Protocol-2071-summary" href="#Protocol-2071">Protocol-2071</a>
+      </td><td>
+                    A fault MUST be generated with subcode <b>unsupportedLookupVariant</b>
+                        if the JMS URI specifies a lookupVariant that is not supported by the implementation.</td></tr><tr><td>
+         <a name="Protocol-2072-summary" href="#Protocol-2072">Protocol-2072</a>
+      </td><td>
+    While the requesting node can support either <code>BytesMessage</code> or
+    <code>TextMessage</code>, the receiving node MUST support both <code>BytesMessage</code>
+    and <code>TextMessage</code>.</td></tr><tr><td>
+         <a name="Protocol-2073-summary" href="#Protocol-2073">Protocol-2073</a>
+      </td><td>
+    If the message is formatted as a JMS <code>BytesMessage</code>, then the sender and 
+    receiver <strong>MUST</strong> use the <code>writeBytes()</code> and <code>readBytes()</code> 
+    methods, respectively.
+    </td></tr><tr><td>
+         <a name="WSDLUsage-3001-summary" href="#WSDLUsage-3001">WSDLUsage-3001</a>
+      </td><td>If a property is specified at multiple levels within the WSDL document, 
+the most specific setting <strong>MUST</strong> take precedence (URI specified in the 
+address element's location attribute first, then other properties set on 
+the port, then service, then 
+binding).</td></tr><tr><td>
+         <a name="WSDLUsage-3002-summary" href="#WSDLUsage-3002">WSDLUsage-3002</a>
+      </td><td>
+			The XML elements
+			<a title="soapjms:jndiConnectionFactoryName" href="#jndiConnectionFactoryName">jndiConnectionFactoryName</a>,
+			<a title="soapjms:jndiInitialContextFactory" href="#jndiInitialContextFactory">jndiInitialContextFactory</a>,
+			<a title="soapjms:jndiURL" href="#jndiURL">jndiURL</a>,
+			<a title="soapjms:deliveryMode" href="#deliveryMode">deliveryMode</a>,
+			<a title="soapjms:priority" href="#priority">priority</a>,
+			<a title="soapjms:timeToLive" href="#timeToLive">timeToLive</a>, and
+			<a title="soapjms:replyToName" href="#replyToName">replyToName</a>,
+			in the soapjms namespace, <strong>MUST</strong>
+			be supported when used in the context of the
+			WSDL service, port, and binding elements.
+			</td></tr><tr><td>
+         <a name="WSDLUsage-3003-summary" href="#WSDLUsage-3003">WSDLUsage-3003</a>
+      </td><td>To indicate that this
+		SOAP/JMS binding is in use, the <code>transport</code> attribute MUST be set to the
+		value <code>http://www.w3.org/2010/soapjms/</code>.</td></tr><tr><td>
+         <a name="WSDLUsage-3004-summary" href="#WSDLUsage-3004">WSDLUsage-3004</a>
+      </td><td>
+      The value of the <code>location</code> attribute <strong>MUST</strong> be a URI corresponding to a
+		JMS Destination, and <strong>SHOULD</strong> be a "jms" scheme URI.</td></tr></tbody></table><div class="div1">
+<h2><a name="change-log" id="change-log"/>I Change Log (Non-Normative)</h2><table xmlns:a="http://www.w3.org/2005/Atom" xmlns:h="http://www.w3.org/1999/xhtml" border="1"><tr><th>Date</th><th>Editor</th><th>Description</th></tr><tr><td>2011-11-01</td><td>ejohnson</td><td>
+Updated acknowledgements.
+Updated disposition of comments to properly identify Andrew Kennedy as opening one issue, and to link to previous version of the dispositions.
+Updated entitiespr.dtd to reflect previous version, and expected publication date.
+Updated XML to fix problem with an invalid &lt;ul&gt; section in generated HTML.
+Regenerated HTML.
+</td></tr><tr><td>2011-09-13</td><td>ejohnson</td><td>
+More link fixes.
+</td></tr><tr><td>2011-09-13</td><td>ejohnson</td><td>
+Updated acknowledgments (official entry for TIBCO changed.) Also updated a whole bunch of
+links that were flagged as warnings by the link checker.
+</td></tr><tr><td>2011-05-24</td><td>ejohnson</td><td>
+Updated acknowledgments, changelog.xml, and spec. Primary aim was to update reference for "jms" URI
+scheme to point at RFC 6167!
+</td></tr><tr><td>2011-01-17</td><td>ejohnson</td><td>
+Applied issue 70, updated acknowledgments, and change log.
+</td></tr><tr><td>2011-01-07</td><td>mphillip</td><td>
+Applied the resolution for ISSUE-65 to complete ACTION-237
+
+http://www.w3.org/2002/ws/soapjms/tracker/actions/237
+               http://www.w3.org/2002/ws/soapjms/tracker/issues/65
+            </td></tr><tr><td>2010-12-21</td><td>mphillip</td><td>
+Applied the resolution for ISSUE-69 to complete ACTION-236
+
+http://www.w3.org/2002/ws/soapjms/tracker/actions/236
+               http://www.w3.org/2002/ws/soapjms/tracker/issues/69
+            </td></tr><tr><td>2010-12-14</td><td>mphillip</td><td>
+Applied the resolution for ISSUE-68 to complete ACTION-234
+
+http://www.w3.org/2002/ws/soapjms/tracker/actions/234
+               http://www.w3.org/2002/ws/soapjms/tracker/issues/68
+            </td></tr><tr><td>2010-12-14</td><td>mphillip</td><td>
+Applied the resolution for ISSUE-67 to complete ACTION-230
+
+http://www.w3.org/2002/ws/soapjms/tracker/actions/230
+               http://www.w3.org/2002/ws/soapjms/tracker/issues/67
+            </td></tr><tr><td>2010-11-24</td><td>ejohnson</td><td>
+Updated link to latest version of JMS URI scheme draft, also updated acknowledgments.
+</td></tr><tr><td>2010-10-12</td><td>mphillip</td><td>
+Applied the resolution for ISSUE-64 to complete ACTION-216
+
+http://www.w3.org/2002/ws/soapjms/tracker/actions/216
+               http://www.w3.org/2002/ws/soapjms/tracker/issues/64
+            </td></tr><tr><td>2010-09-15</td><td>mphillip</td><td>
+Applied the resolution for ISSUE-62 and ISSUE-63  to complete ACTION-211
+
+http://www.w3.org/2002/ws/soapjms/tracker/actions/211
+               http://www.w3.org/2002/ws/soapjms/tracker/issues/62
+               http://www.w3.org/2002/ws/soapjms/tracker/issues/63
+            </td></tr><tr><td>2010-09-07</td><td>mphillip</td><td>
+Applied the resolution for ISSUE-61 to complete ACTION-209
+http://www.w3.org/2002/ws/soapjms/tracker/actions/209
+               http://www.w3.org/2002/ws/soapjms/tracker/issues/61
+            </td></tr><tr><td>2010-08-30</td><td>ejohnson</td><td>
+Applied resolution for http://www.w3.org/2002/ws/soapjms/tracker/issues/60
+            </td></tr><tr><td>2010-08-30</td><td>ejohnson</td><td>
+Applied resolution for http://www.w3.org/2002/ws/soapjms/tracker/issues/55
+            </td></tr><tr><td>2010-08-30</td><td>ejohnson</td><td>
+Applied resolution of http://www.w3.org/2002/ws/soapjms/tracker/issues/48
+            </td></tr><tr><td>2010-08-27</td><td>mphillip</td><td>
+Applied changes for ACTION-201 (Part2) http://www.w3.org/2002/ws/soapjms/tracker/actions/201 to resolve ISSUE-58
+</td></tr><tr><td>2010-08-23</td><td>mphillip</td><td>
+Applied changes for ACTION-201 (Part1) http://www.w3.org/2002/ws/soapjms/tracker/actions/201 to resolve Issue-56 and ISSUE-57
+</td></tr><tr><td>2010-08-23</td><td>mphillip</td><td>
+Applied changes for ACTION-200 http://www.w3.org/2002/ws/soapjms/tracker/actions/200 to resolve Issue-50
+</td></tr><tr><td>2010-08-03</td><td>ejohnson</td><td>
+Applied issues 47, 49, 51, 52, 53, 54
+</td></tr><tr><td>2010-07-19</td><td>ejohnson</td><td>
+Applied changes for issues 41-46, as per action item 194 and the recorded minutes.
+</td></tr><tr><td>2010-07-16</td><td>ejohnson</td><td>
+Applied resolution for ISSUE-40
+</td></tr><tr><td>2010-07-12</td><td>ejohnson</td><td>
+Fixed editorial items identified in email:
+http://lists.w3.org/Archives/Public/public-soap-jms/2010Jul/0013.html
+            </td></tr><tr><td>2010-07-12</td><td>ejohnson</td><td>
+Fixed a small typo with previous fix - three --&gt; two.
+</td></tr><tr><td>2010-07-09</td><td>ejohnson</td><td>
+Action 183 - applied changes for ISSUE-38
+</td></tr><tr><td>2010-07-09</td><td>ejohnson</td><td>
+Fixed publication date for URI scheme, as per action 179.
+</td></tr><tr><td>2010-07-08</td><td>mphillip</td><td>
+Applied changes for ACTION-188 http://www.w3.org/2002/ws/soapjms/tracker/actions/188 - issue 39 http://www.w3.org/2002/ws/soapjms/tracker/issues/39
+            </td></tr><tr><td>2010-07-06</td><td>mphillip</td><td>
+Applied changes for ACTION-185 http://www.w3.org/2002/ws/soapjms/tracker/actions/185
+            </td></tr><tr><td>2010-06-28</td><td>ejohnson</td><td>
+Fixed link to JMS URI scheme as per ACTION-179
+</td></tr><tr><td>2010-06-08</td><td>peaston</td><td>
+ACTION-177 - Update the spec with the resolution to issue 34
+(error subcodes in schema, SOAP 1.1 Fault structure)
+</td></tr><tr><td>2010-05-06</td><td>padams2</td><td>
+One more update for Issue-31
+</td></tr><tr><td>2010-05-06</td><td>padams2</td><td>
+Apply correct updates for Issue-31
+</td></tr><tr><td>2010-04-27</td><td>padams2</td><td>
+Applied changes for Issue-31
+</td></tr><tr><td>2010-04-27</td><td>padams2</td><td>
+Applied changes for Issue-30
+</td></tr><tr><td>2010-04-26</td><td>padams2</td><td>
+Applied changes for Issue-32 and Issue33
+</td></tr><tr><td>2010-03-22</td><td>mphillip</td><td>
+Changes to resolve Issue 28  (action 147) - see http://www.w3.org/2002/ws/soapjms/tracker/issues/28
+            </td></tr><tr><td>2010-02-16</td><td>mphillip</td><td>
+Changes to resolve Issue 26  (action 141) - see http://www.w3.org/2002/ws/soapjms/tracker/issues/26
+            </td></tr><tr><td>2010-02-16</td><td>mphillip</td><td>
+Changes to resolve Issue 24  (action 140) - see http://www.w3.org/2002/ws/soapjms/tracker/issues/24
+            </td></tr><tr><td>2010-02-16</td><td>mphillip</td><td>
+Changes to resolve Issue 25  (action 139) - see http://www.w3.org/2002/ws/soapjms/tracker/issues/25
+            </td></tr><tr><td>2010-01-29</td><td>mphillip</td><td>
+Changes to resolve Issue 22  (action 135)
+</td></tr><tr><td>2010-01-29</td><td>mphillip</td><td>
+Changes to resolve Issue 18 (action 125)
+</td></tr><tr><td>2010-01-26</td><td>mphillip</td><td>
+Changes to resolve Issue 17
+</td></tr><tr><td>2009-12-08</td><td>padams2</td><td>
+Changes for Issue-20
+</td></tr><tr><td>2009-12-08</td><td>padams2</td><td>
+Changes for Issue-19
+</td></tr><tr><td>2009-12-01</td><td>padams2</td><td>
+Changes to resolve issue-16
+</td></tr><tr><td>2009-12-01</td><td>padams2</td><td>
+Changes to resolve issue-15
+</td></tr><tr><td>2009-11-16</td><td>mphillip</td><td>
+Updates to resolve Issue 4 - see action 120 http://www.w3.org/2002/ws/soapjms/tracker/actions/120
+            </td></tr><tr><td>2009-10-21</td><td>mphillip</td><td>
+Changes to resolve Issue 4 (action 101) regarding requestURI  by removing assertion Protocol-2024, and rewording Protocol-2021
+</td></tr><tr><td>2009-10-13</td><td>padams2</td><td>
+Changes to resolve Issue-14
+</td></tr><tr><td>2009-10-01</td><td>padams2</td><td>
+Changes to resolve Issue-12 and Issue-13
+</td></tr><tr><td>2009-09-18</td><td>padams2</td><td>
+Changes to resolve Issue-9 (reworded some assertions)
+</td></tr><tr><td>2009-08-18</td><td>padams2</td><td>
+Fixed formatting of assertion 2016 in the appendix
+</td></tr><tr><td>2009-08-18</td><td>padams2</td><td>
+Changes to resolve Issue-10 (removed assertion 2017)
+</td></tr><tr><td>2009-08-18</td><td>padams2</td><td>
+Changes to resolve Issue-8; regen'd testcase document
+</td></tr><tr><td>2009-08-12</td><td>padams2</td><td>
+Follow-up changes for issues 2, 3, and 6 from 8/11 conference call
+</td></tr><tr><td>2009-08-11</td><td>padams2</td><td>
+Changes to resolve Issue-7 (removed assertion 2041)
+</td></tr><tr><td>2009-08-11</td><td>padams2</td><td>
+Changes to resolve Issue-6 (removed assertion 2039)
+</td></tr><tr><td>2009-08-11</td><td>padams2</td><td>
+Changes to resolve Issue-5 (removed assertion 2035)
+</td></tr><tr><td>2009-08-10</td><td>padams2</td><td>
+Changes to resolve ISSUE-3 (Combined assertions 2022 and 2023)
+</td></tr><tr><td>2009-08-10</td><td>padams2</td><td>
+Changes to resolve ISSUE-2 (combined assertions 2019 and 2020)
+</td></tr><tr><td>2009-08-10</td><td>padams2</td><td>
+Changes to resolve Issue-1 (text associated with the contentTypeMismatch fault subcode)
+</td></tr><tr><td>2009-05-06</td><td>rmerric</td><td>
+change section heading from Request-Response MEP to Request-Response Message Exchange Pattern as per derek suggestion that we be consistent with One-way Message Exchange Pattern
+</td></tr><tr><td>2009-05-06</td><td>rmerric</td><td>
+change how assertions Protocol-2035, Protocol-2039, and Protocol-2041 appear in the assertion summary.
+</td></tr><tr><td>2009-05-05</td><td>rmerric</td><td>
+Improve summary text for assertions Protocol-34 &amp; Protocol-40
+</td></tr><tr><td>2009-05-05</td><td>rmerric</td><td>
+remove assertion Protocol-2042 that is a duplicate of its constituent parts
+</td></tr><tr><td>2009-04-29</td><td>rmerric</td><td>
+mark usage of rfc2119 terms where required, tweak assertions so that the assertion summary is clearer.
+</td></tr><tr><td>2009-04-28</td><td>rmerric</td><td>
+expand scope of text inside assertions 1003 and 1004.
+</td></tr><tr><td>2009-04-23</td><td>rmerric</td><td>
+fix syntax error in example "Setting JMS Message Header properties"
+</td></tr><tr><td>2009-04-16</td><td>rmerric</td><td>
+ACTION-82 apply agreed changes to contentType
+</td></tr><tr><td>2009-04-14</td><td>padams2</td><td>
+Added new fault subcode:  unsupportedLookupVariant
+</td></tr><tr><td>2009-04-14</td><td>rmerric</td><td>
+editorial tweak to previous precedence change
+</td></tr><tr><td>2009-04-08</td><td>rmerric</td><td>
+clarify precedence rules for binding properties
+</td></tr><tr><td>2009-03-25</td><td>rmerric</td><td>
+change NONPERSISTENT to NON_PERSISTENT
+</td></tr><tr><td>2009-03-23</td><td>peaston</td><td>
+Clarify the wording and scope of the jndiContext Parameter property
+</td></tr><tr><td>2009-03-19</td><td>rmerric</td><td>
+tweak wording for topicReplyToName
+</td></tr><tr><td>2009-03-19</td><td>rmerric</td><td>
+add topicReplytoName definition
+</td></tr><tr><td>2009-02-10</td><td>padams2</td><td>
+Added myself as an editor
+</td></tr><tr><td>2009-02-10</td><td>padams2</td><td>
+Minor wording change re: use of java naming-related properties (Action-61)
+</td></tr><tr><td>2009-01-29</td><td>rmerric</td><td>
+make support for lookupVariant = jndi required. Response to Last Call comment LC03.
+</td></tr><tr><td>2009-01-29</td><td>rmerric</td><td>
+Add support for JMS 1.1 to conformance criteria. Response to Last Call comment LC02.
+</td></tr><tr><td>2008-11-18</td><td>rmerric</td><td>
+point to November draft of URI Scheme
+</td></tr><tr><td>2008-11-12</td><td>rmerric</td><td>
+add precedence question to status section.
+</td></tr><tr><td>2008-10-29</td><td>rmerric</td><td>
+add note about handling of precedence.
+more minor typos.
+</td></tr><tr><td>2008-10-29</td><td>rmerric</td><td>
+create named types in schema and use them in "Properties affecting binding"
+</td></tr><tr><td>2008-10-29</td><td>rmerric</td><td>
+remove references to the obsolete "context" variant
++fix two minor typos
+</td></tr><tr><td>2008-10-22</td><td>rmerric</td><td>
+Remove Editor Note
+</td></tr><tr><td>2008-10-22</td><td>rmerric</td><td>
+add jndiContextParameter
+</td></tr><tr><td>2008-10-22</td><td>rmerric</td><td>
+Add XML Schema as an appendix
+</td></tr><tr><td>2008-10-15</td><td>rmerric</td><td>
+simplify conformance criteria for JMS URI support
+</td></tr><tr><td>2008-10-15</td><td>rmerric</td><td>
+clarify fault: unsupportedJMSMessageFormat
+</td></tr><tr><td>2008-10-14</td><td>rmerric</td><td>
+correct feature URIs
+</td></tr><tr><td>2008-10-14</td><td>rmerric</td><td>
+change conformance criteria
+</td></tr><tr><td>2008-10-09</td><td>padams2</td><td>
+Modified soapjms.xml with minor edits related to TextMessage.
+</td></tr><tr><td>2008-10-09</td><td>rmerric</td><td>
+fix rfc2045 reference
+</td></tr><tr><td>2008-10-09</td><td>rmerric</td><td>
+Add support for TextMessage and considerations for use of said type.
+</td></tr><tr><td>2008-08-18</td><td>bmehta</td><td>
+Made changes to the spec to show snippets in JMS Message Header and Message properties based on code shown by Eric
+</td></tr><tr><td>2008-07-29</td><td>rmerric</td><td>
+add examples of how to set message properties
+</td></tr><tr><td>2008-07-23</td><td>ylafon</td><td>
+&lt;p&gt; were out of balance as a block level element was in the middle
+</td></tr><tr><td>2008-07-23</td><td>rmerric</td><td>
+Remove Java TM
+</td></tr><tr><td>2008-07-17</td><td>rmerric</td><td>
+Added a non-normative code snippet to DeliveryMode
+</td></tr><tr><td>2008-07-14</td><td>plehegar</td><td>
+Fixed language information
+</td></tr><tr><td>2008-07-11</td><td>rmerric</td><td>
+editorial nits before FPWD
+</td></tr><tr><td>2008-06-25</td><td>rmerric</td><td>
+make valid as well as well-formed!
+</td></tr><tr><td>2008-06-25</td><td>rmerric</td><td>
+MUST &amp; MUST NOT for JMSReplyTo
+</td></tr><tr><td>2008-06-25</td><td>rmerric</td><td>
+Editorial changes identified by Eric and Peter
+</td></tr><tr><td>2008-06-23</td><td>rmerric</td><td>
+fix pointer to IETF JMS URI spec
+</td></tr><tr><td>2008-06-22</td><td>bmehta</td><td>
+Fixed some places where I missed the iri
+</td></tr><tr><td>2008-06-22</td><td>bmehta</td><td>
+Updated with changes based on discussions in meetings and Eric's feedback
+</td></tr><tr><td>2008-06-12</td><td>peaston</td><td>
+Add support for assertion markups
+</td></tr><tr><td>2008-06-10</td><td>rmerric</td><td>
+add the authors as a test
+</td></tr><tr><td>2008-05-01</td><td>plehegar</td><td>
+Using latest version for WSDL 2.0 references
+</td></tr><tr><td>2008-05-01</td><td>plehegar</td><td>
+Added support for CVS changelog
+</td></tr><tr><td>2008-05-01</td><td>plehegar</td><td>
+Moved section 2.9 into non-normative appendix. Updated the references section (now normative). Added table and example headers. Fixed/added bibref. Using SOAP 1.2 instead of SOAP 1.1 in example. Added XML Namespaces section.
+</td></tr><tr><td>2008-04-22</td><td>plehegar</td><td>
+New
+</td></tr></table></div></div></body></html>

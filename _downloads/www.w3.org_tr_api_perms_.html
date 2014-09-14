@@ -1,0 +1,783 @@
+<!-- http://www.w3.org/TR/api-perms/ -->
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
+<html dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
+<head> 
+ <style type="text/css">
+/*****************************************************************
+ * ReSpec CSS
+ * Robin Berjon &lt;robin at berjon dot com>
+ * v0.05 - 2009-07-31
+ *****************************************************************/
+
+
+/* --- INLINES --- */
+em.rfc2119 { 
+    text-transform:     lowercase;
+    font-variant:       small-caps;
+    font-style:         normal;
+    color:              #900;
+}
+
+h1 acronym, h2 acronym, h3 acronym, h4 acronym, h5 acronym, h6 acronym, a acronym,
+h1 abbr, h2 abbr, h3 abbr, h4 abbr, h5 abbr, h6 abbr, a abbr {
+    border: none;
+}
+
+dfn {
+    font-weight:    bold;
+}
+
+a.internalDFN {
+    color:  inherit;
+    border-bottom:  medium solid #99c;
+    text-decoration:    none;
+}
+
+a.externalDFN {
+    color:  inherit;
+    border-bottom:  medium dotted #ccc;
+    text-decoration:    none;
+}
+
+a.bibref {
+    text-decoration:    none;
+}
+
+code {
+    color:  #ff4500;
+}
+
+
+/* --- WEB IDL --- */
+pre.idl {
+    border-top: 1px solid #90b8de;
+    border-bottom: 1px solid #90b8de;
+    padding:    1em;
+    line-height:    120%;
+}
+
+pre.idl::before {
+    content:    "WebIDL";
+    display:    block;
+    width:      150px;
+    background: #90b8de;
+    color:  #fff;
+    font-family:    initial;
+    padding:    3px;
+    font-weight:    bold;
+    margin: -1em 0 1em -1em;
+}
+
+.idlType {
+    color:  #ff4500;
+    font-weight:    bold;
+    text-decoration:    none;
+}
+
+/*.idlModule*/
+/*.idlModuleID*/
+/*.idlInterface*/
+.idlInterfaceID {
+    font-weight:    bold;
+    color:  #005a9c;
+}
+
+.idlSuperclass {
+    font-style: italic;
+    color:  #005a9c;
+}
+
+/*.idlAttribute*/
+.idlAttrType, .idlFieldType {
+    color:  #005a9c;
+}
+.idlAttrName, .idlFieldName {
+    color:  #ff4500;
+}
+.idlAttrName a, .idlFieldName a {
+    color:  #ff4500;
+    border-bottom:  1px dotted #ff4500;
+    text-decoration: none;
+}
+
+/*.idlMethod*/
+.idlMethType {
+    color:  #005a9c;
+}
+.idlMethName {
+    color:  #ff4500;
+}
+.idlMethName a {
+    color:  #ff4500;
+    border-bottom:  1px dotted #ff4500;
+    text-decoration: none;
+}
+
+/*.idlParam*/
+.idlParamType {
+    color:  #005a9c;
+}
+.idlParamName {
+    font-style: italic;
+}
+
+.extAttr {
+    color:  #666;
+}
+
+/*.idlConst*/
+.idlConstType {
+    color:  #005a9c;
+}
+.idlConstName {
+    color:  #ff4500;
+}
+.idlConstName a {
+    color:  #ff4500;
+    border-bottom:  1px dotted #ff4500;
+    text-decoration: none;
+}
+
+/*.idlException*/
+.idlExceptionID {
+    font-weight:    bold;
+    color:  #c00;
+}
+
+.idlTypedefID, .idlTypedefType {
+    color:  #005a9c;
+}
+
+.idlRaises, .idlRaises a.idlType, .idlRaises a.idlType code, .excName a, .excName a code {
+    color:  #c00;
+    font-weight:    normal;
+}
+
+.excName a {
+    font-family:    monospace;
+}
+
+.idlRaises a.idlType, .excName a.idlType {
+    border-bottom:  1px dotted #c00;
+}
+
+.excGetSetTrue, .excGetSetFalse, .prmNullTrue, .prmNullFalse, .prmOptTrue, .prmOptFalse {
+    width:  45px;
+    text-align: center;
+}
+.excGetSetTrue, .prmNullTrue, .prmOptTrue { color:  #0c0; }
+.excGetSetFalse, .prmNullFalse, .prmOptFalse { color:  #c00; }
+
+.idlImplements a {
+    font-weight:    bold;
+}
+
+dl.attributes, dl.methods, dl.constants, dl.fields {
+    margin-left:    2em;
+}
+
+.attributes dt, .methods dt, .constants dt, .fields dt {
+    font-weight:    normal;
+}
+
+.attributes dt code, .methods dt code, .constants dt code, .fields dt code {
+    font-weight:    bold;
+    color:  #000;
+    font-family:    monospace;
+}
+
+.attributes dt code, .fields dt code {
+    background:  #ffffd2;
+}
+
+.attributes dt .idlAttrType code, .fields dt .idlFieldType code {
+    color:  #005a9c;
+    background:  transparent;
+    font-family:    inherit;
+    font-weight:    normal;
+    font-style: italic;
+}
+
+.methods dt code {
+    background:  #d9e6f8;
+}
+
+.constants dt code {
+    background:  #ddffd2;
+}
+
+.attributes dd, .methods dd, .constants dd, .fields dd {
+    margin-bottom:  1em;
+}
+
+table.parameters, table.exceptions {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    margin: 0.5em 0;
+    width:  100%;
+}
+table.parameters { border-bottom:  1px solid #90b8de; }
+table.exceptions { border-bottom:  1px solid #deb890; }
+
+.parameters th, .exceptions th {
+    color:  #fff;
+    padding:    3px 5px;
+    text-align: left;
+    font-family:    initial;
+    font-weight:    normal;
+    text-shadow:    #666 1px 1px 0;
+}
+.parameters th { background: #90b8de; }
+.exceptions th { background: #deb890; }
+
+.parameters td, .exceptions td {
+    padding:    3px 10px;
+    border-top: 1px solid #ddd;
+    vertical-align: top;
+}
+
+.parameters tr:first-child td, .exceptions tr:first-child td {
+    border-top: none;
+}
+
+.parameters td.prmName, .exceptions td.excName, .exceptions td.excCodeName {
+    width:  100px;
+}
+
+.parameters td.prmType {
+    width:  120px;
+}
+
+table.exceptions table {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    width:  100%;
+}
+
+/* --- TOC --- */
+.toc a {
+    text-decoration:    none;
+}
+
+a .secno {
+    color:  #000;
+}
+
+/* --- TABLE --- */
+table.simple {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    border-bottom:  3px solid #005a9c;
+}
+
+.simple th {
+    background: #005a9c;
+    color:  #fff;
+    padding:    3px 5px;
+    text-align: left;
+}
+
+.simple th[scope="row"] {
+    background: inherit;
+    color:  inherit;
+    border-top: 1px solid #ddd;
+}
+
+.simple td {
+    padding:    3px 10px;
+    border-top: 1px solid #ddd;
+}
+
+.simple tr:nth-child(even) {
+    background: #f0f6ff;
+}
+
+/* --- DL --- */
+.section dd > p:first-child {
+    margin-top: 0;
+}
+
+.section dd > p:last-child {
+    margin-bottom: 0;
+}
+
+.section dd {
+    margin-bottom:  1em;
+}
+
+.section dl.attrs dd, .section dl.eldef dd {
+    margin-bottom:  0;
+}
+
+/* --- EXAMPLES --- */
+pre.example {
+    border-top: 1px solid #ff4500;
+    border-bottom: 1px solid #ff4500;
+    padding:    1em;
+    margin-top: 1em;
+}
+
+pre.example::before {
+    content:    "Example";
+    display:    block;
+    width:      150px;
+    background: #ff4500;
+    color:  #fff;
+    font-family:    initial;
+    padding:    3px;
+    font-weight:    bold;
+    margin: -1em 0 1em -1em;
+}
+
+/* --- EDITORIAL NOTES --- */
+.issue {
+    padding:    1em;
+    border: 1px solid #f00;
+    background: #ffc;
+}
+
+.issue::before {
+    content:    "Issue";
+    display:    block;
+    width:  150px;
+    margin: -1.5em 0 0.5em 0;
+    font-weight:    bold;
+    border: 1px solid #f00;
+    background: #fff;
+    padding:    3px 1em;
+}
+
+.note {
+    padding:    1em;
+    border: 2px solid #cff6d9;
+    background: #e2fff0;
+}
+
+.note::before {
+    content:    "Note";
+    display:    block;
+    width:  150px;
+    margin: -1.5em 0 0.5em 0;
+    font-weight:    bold;
+    border: 1px solid #cff6d9;
+    background: #fff;
+    padding:    3px 1em;
+}
+
+/* --- SYNTAX HIGHLIGHTING --- */
+pre.sh_sourceCode {
+  background-color: white;
+  color: black;
+  font-style: normal;
+  font-weight: normal;
+}
+
+pre.sh_sourceCode .sh_keyword { color: #005a9c; font-weight: bold; }           /* language keywords */
+pre.sh_sourceCode .sh_type { color: #666; }                            /* basic types */
+pre.sh_sourceCode .sh_usertype { color: teal; }                             /* user defined types */
+pre.sh_sourceCode .sh_string { color: red; font-family: monospace; }        /* strings and chars */
+pre.sh_sourceCode .sh_regexp { color: orange; font-family: monospace; }     /* regular expressions */
+pre.sh_sourceCode .sh_specialchar { color: 	#ffc0cb; font-family: monospace; }  /* e.g., \n, \t, \\ */
+pre.sh_sourceCode .sh_comment { color: #A52A2A; font-style: italic; }         /* comments */
+pre.sh_sourceCode .sh_number { color: purple; }                             /* literal numbers */
+pre.sh_sourceCode .sh_preproc { color: #00008B; font-weight: bold; }       /* e.g., #include, import */
+pre.sh_sourceCode .sh_symbol { color: blue; }                            /* e.g., &lt;, >, + */
+pre.sh_sourceCode .sh_function { color: black; font-weight: bold; }         /* function calls and declarations */
+pre.sh_sourceCode .sh_cbracket { color: red; }                              /* block brackets (e.g., {, }) */
+pre.sh_sourceCode .sh_todo { font-weight: bold; background-color: #00FFFF; }   /* TODO and FIXME */
+
+/* Predefined variables and functions (for instance glsl) */
+pre.sh_sourceCode .sh_predef_var { color: #00008B; }
+pre.sh_sourceCode .sh_predef_func { color: #00008B; font-weight: bold; }
+
+/* for OOP */
+pre.sh_sourceCode .sh_classname { color: teal; }
+
+/* line numbers (not yet implemented) */
+pre.sh_sourceCode .sh_linenum { display: none; }
+
+/* Internet related */
+pre.sh_sourceCode .sh_url { color: blue; text-decoration: underline; font-family: monospace; }
+
+/* for ChangeLog and Log files */
+pre.sh_sourceCode .sh_date { color: blue; font-weight: bold; }
+pre.sh_sourceCode .sh_time, pre.sh_sourceCode .sh_file { color: #00008B; font-weight: bold; }
+pre.sh_sourceCode .sh_ip, pre.sh_sourceCode .sh_name { color: #006400; }
+
+/* for Prolog, Perl... */
+pre.sh_sourceCode .sh_variable { color: #006400; }
+
+/* for LaTeX */
+pre.sh_sourceCode .sh_italics { color: #006400; font-style: italic; }
+pre.sh_sourceCode .sh_bold { color: #006400; font-weight: bold; }
+pre.sh_sourceCode .sh_underline { color: #006400; text-decoration: underline; }
+pre.sh_sourceCode .sh_fixed { color: green; font-family: monospace; }
+pre.sh_sourceCode .sh_argument { color: #006400; }
+pre.sh_sourceCode .sh_optionalargument { color: purple; }
+pre.sh_sourceCode .sh_math { color: orange; }
+pre.sh_sourceCode .sh_bibtex { color: blue; }
+
+/* for diffs */
+pre.sh_sourceCode .sh_oldfile { color: orange; }
+pre.sh_sourceCode .sh_newfile { color: #006400; }
+pre.sh_sourceCode .sh_difflines { color: blue; }
+
+/* for css */
+pre.sh_sourceCode .sh_selector { color: purple; }
+pre.sh_sourceCode .sh_property { color: blue; }
+pre.sh_sourceCode .sh_value { color: #006400; font-style: italic; }
+
+/* other */
+pre.sh_sourceCode .sh_section { color: black; font-weight: bold; }
+pre.sh_sourceCode .sh_paren { color: red; }
+pre.sh_sourceCode .sh_attribute { color: #006400; }
+
+</style>    
+
+  
+    <title>Permissions for Device API Access</title> <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />   
+<link href="http://www.w3.org/StyleSheets/TR/W3C-WD" rel="stylesheet" type="text/css" charset="utf-8" /></head><body style="display: inherit;"><div class="head"><p><a href="http://www.w3.org/"><img width="72" height="48" alt="W3C" src="http://www.w3.org/Icons/w3c_home" /></a></p><h1 id="title" class="title">Permissions for Device API Access</h1><h2 id="w3c-working-draft-05-october-2010">W3C Working Draft 05 October 2010</h2><dl><dt>This version:</dt><dd><a href="http://www.w3.org/TR/2010/WD-api-perms-20101005/">http://www.w3.org/TR/2010/WD-api-perms-20101005/</a></dd><dt>Latest published version:</dt><dd><a href="http://www.w3.org/TR/api-perms/">http://www.w3.org/TR/api-perms/</a></dd><dt>Latest editor's draft:</dt><dd><a href="http://dev.w3.org/2009/dap/api-perms/">http://dev.w3.org/2009/dap/api-perms/</a></dd><dt>Previous version:</dt><dd>none</dd><dt>Editors:</dt><dd><span>Paddy Byers</span>, <a href="http://www.aplix.com/">Aplix</a></dd>
+<dd><span>Frederick Hirsch</span>, <a href="http://www.nokia.com/">Nokia</a></dd>
+<dd><span>Dominique Hazaël-Massieux</span>, W3C</dd>
+</dl><p class="copyright"><a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2010 <a href="http://www.w3.org/"><acronym title="World Wide Web Consortium">W3C</acronym></a><sup>®</sup> (<a href="http://www.csail.mit.edu/"><acronym title="Massachusetts Institute of Technology">MIT</acronym></a>, <a href="http://www.ercim.eu/"><acronym title="European Research Consortium for Informatics and Mathematics">ERCIM</acronym></a>, <a href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply.</p><hr /></div>
+    <div id="abstract" class="introductory section"><h2>Abstract</h2>
+      This document identifies the permissions that are needed to use specific client-side APIs which grant access to sensitive data and operations.
+    </div><div class="introductory section" id="sotd"><h2>Status of This Document</h2><p><em>This section describes the status of this document at the time of its publication. Other documents may supersede this document. A list of current W3C publications and the latest revision of this technical report can be found in the <a href="http://www.w3.org/TR/">W3C technical reports index</a> at http://www.w3.org/TR/.</em></p>
+<p>This First Public Working Draft represents the early consensus of the group on what
+identifiable permissions should look like and they encompass. The group
+is now looking for feedback on this approach, and its applicability to
+various use cases, including widgets configurations, installable Web
+ applications, existing permissions verifications.</p>
+
+<p>This document was published by the <a href="http://www.w3.org/2009/dap/">Device APIs and Policy Working Group</a> as a Working Draft. This document is intended to become a W3C Recommendation. If you wish to make comments regarding this document, please send them to <a href="mailto:public-device-apis@w3.org">public-device-apis@w3.org</a> (<a href="mailto:public-device-apis-request@w3.org?subject=subscribe">subscribe</a>, <a href="http://lists.w3.org/Archives/Public/public-device-apis/">archives</a>). All feedback is welcome.</p><p>Publication as a Working Draft does not imply endorsement by the W3C Membership. This is a draft document and may be updated, replaced or obsoleted by other documents at any time. It is inappropriate to cite this document as other than work in progress.</p><p>This document was produced by a group operating under the <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 W3C Patent Policy</a>. W3C maintains a <a rel="disclosure" href="http://www.w3.org/2004/01/pp-impl/43696/status">public list of any patent disclosures</a> made in connection with the deliverables of the group; that page also includes instructions for disclosing a patent. An individual who has actual knowledge of a patent which the individual believes contains <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential Claim(s)</a> must disclose the information in accordance with <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section 6 of the W3C Patent Policy</a>.</p></div><div id="toc" class="section"><h2 class="introductory">Table of Contents</h2><ul class="toc"><li class="tocline"><a href="#introduction" class="tocxref"><span class="secno">1. </span>Introduction</a></li><li class="tocline"><a href="#permissions" class="tocxref"><span class="secno">2. </span>Permissions</a><ul class="toc"><li class="tocline"><a href="#geolocation" class="tocxref"><span class="secno">2.1 </span>Geolocation API</a></li><li class="tocline"><a href="#contact" class="tocxref"><span class="secno">2.2 </span>Contact API</a></li><li class="tocline"><a href="#capture" class="tocxref"><span class="secno">2.3 </span>Capture API</a></li><li class="tocline"><a href="#file" class="tocxref"><span class="secno">2.4 </span>File API</a></li><li class="tocline"><a href="#sysinfo" class="tocxref"><span class="secno">2.5 </span>System Information API</a></li></ul></li><li class="tocline"><a href="#mapping-to-bondi-features-and-android-permissions" class="tocxref"><span class="secno">A. </span>Mapping to BONDI features and Android permissions</a><ul class="toc"><li class="tocline"><a href="#geolocation-1" class="tocxref"><span class="secno">A.1 </span>Geolocation</a></li><li class="tocline"><a href="#contacts" class="tocxref"><span class="secno">A.2 </span>Contacts</a></li><li class="tocline"><a href="#media-capture" class="tocxref"><span class="secno">A.3 </span>Media Capture</a></li><li class="tocline"><a href="#file" class="tocxref"><span class="secno">A.4 </span>File</a></li><li class="tocline"><a href="#system-information" class="tocxref"><span class="secno">A.5 </span>System Information</a></li></ul></li><li class="tocline"><a href="#references" class="tocxref"><span class="secno">B. </span>References</a><ul class="toc"><li class="tocline"><a href="#normative-references" class="tocxref"><span class="secno">B.1 </span>Normative references</a></li><li class="tocline"><a href="#informative-references" class="tocxref"><span class="secno">B.2 </span>Informative references</a></li></ul></li></ul></div> 
+<!--  abstract  -->
+
+
+    <div id="introduction" class="section">
+      
+<!-- OddPage -->
+<h2><span class="secno">1. </span>Introduction</h2>
+      <p>A number of Web APIs, in particular those used to access private or
+        sensitive data from the hosting device, are meant to be discoverable,
+        as well as disabled or enabled on a site-by-site or
+        application-by-application basis, depending on the security
+        context.</p> 
+      <p>For instance, the <a href="http://www.w3.org/TR/2009/CR-widgets-20091201/#the-feature-element">feature
+          element</a> as defined in the Widget Packaging and 
+        Configuration specification [<cite><a class="bibref" rel="biblioentry" href="#bib-WIDGETS">WIDGETS</a></cite>] allows a widget runtime
+        engine to grant access only to the specific APIs that the
+        configuration file of the widget listed.</p> 
+      <p>This document  identifies and names the various permissions that are attached to existing Web APIs.</p>
+
+    </div> 
+<!--  introduction  -->
+
+    <div id="permissions" class="section">
+      
+<!-- OddPage -->
+<h2><span class="secno">2. </span>Permissions</h2>
+      <p>Each permission described in this document is identified using a string  specified in this document.      </p> 
+      <p>Where these permissions needed to be identified as a URI (e.g. in a widget configuration file [<cite><a class="bibref" rel="biblioentry" href="#bib-WIDGETS">WIDGETS</a></cite>]), a URI can be built from these strings by 
+        appending that string to the base
+        <code>http://www.w3.org/ns/api-perms/</code>.</p> 
+      <p class="note">The DAP base URI is entirely tentative at this stage.</p>
+
+      <div id="geolocation" class="section">
+        <h3><span class="secno">2.1 </span>Geolocation API</h3> 
+
+        <p>The <code>geolocation</code> identifier corresponds to the
+          access to both or either of the <code><a href="http://www.w3.org/TR/geolocation-API/#get-current-position">Geolocation::getCurrentPosition</a></code>
+          and <code><a href="http://www.w3.org/TR/geolocation-API/#watch-position">Geolocation::watchPosition</a></code>
+          methods defined in the Geolocation API [<cite><a class="bibref" rel="biblioentry" href="#bib-GEOLOCATION-API">GEOLOCATION-API</a></cite>].</p>  
+
+	<p>In the Web browser environment, this permission is usually granted through explicit user’s consent, and is retained for later access in the same session.</p>
+
+      </div> 
+      <div id="contact" class="section">
+	    <h3><span class="secno">2.2 </span>Contact API</h3>
+	<p>The <code>contacts.read</code> identifier corresponds to the access to the <code><a href="http://www.w3.org/TR/contacts-api/#widl-Contacts-find">Contacts::find</a></code> method defined in the Contacts API [<cite><a class="bibref" rel="biblioentry" href="#bib-CONTACTS-API">CONTACTS-API</a></cite>].</p>
+	<p>In the Web browser environment, this permission is usually granted implicitly by asking the user to select what data of which contacts should be shared, for each call to the said method.</p>
+
+      </div>
+      <div id="capture" class="section">
+	    <h3><span class="secno">2.3 </span>Capture API</h3>
+        <p>The <code>mediacapture</code> identifier corresponds to the access to the <code><a href="http://www.w3.org/TR/media-capture-api/#widl-Capture-captureImage">Capture::captureImage</a></code>, <code><a href="http://www.w3.org/TR/media-capture-api/#widl-Capture-captureVideo">Capture::captureVideo</a></code> and <code><a href="http://www.w3.org/TR/media-capture-api/#widl-Capture-captureAudio">Capture::captureAudio</a></code> methods defined in Media Capture API [<cite><a class="bibref" rel="biblioentry" href="#bib-MEDIACAPTURE-API">MEDIACAPTURE-API</a></cite>]. </p>
+	<p>In the Web browser environment, this permission is usually granted implicitly by asking the user to activate a button to start and stop the recording operations, for each call to the said methods.</p>
+
+      </div>
+      <div id="fileapi" class="section">
+	    <h3><span class="secno">2.4 </span>File API</h3>
+            <p>The <code>file.read</code> identifier corresponds to
+            the access to the <code><a href="http://dev.w3.org/2006/webapi/FileAPI/#dfn-readAsArrayBuffer">FileReader::readAsArrayBuffer</a></code>,
+            <code><a href="http://dev.w3.org/2006/webapi/FileAPI/#dfn-readAsArrayBuffer">FileReader::readAsBinaryString</a></code>,
+            <code><a href="http://dev.w3.org/2006/webapi/FileAPI/#dfn-readAsText">FileReader::readAsText</a></code> and <code><a href="http://dev.w3.org/2006/webapi/FileAPI/#dfn-readAsArrayBuffer">FileReader::readAsDataURL</a></code> methods defined in the File API [<cite><a class="bibref" rel="biblioentry" href="#bib-FILE-API">FILE-API</a></cite>]. </p> 
+	<p>In the Web browser environment, this permission is usually granted implicitly once the <code>File</code> object has been created, after the user has selected a file from a file picker, and is retained for later access in the same browsing context.</p>
+
+            <p>The <code>file.write</code> identifier corresponds to
+            the access to
+            the <code><a href="http://dev.w3.org/2009/dap/file-system/file-writer.html">FileWriter</a>::write</code>, <code><a href="http://dev.w3.org/2009/dap/file-system/file-writer.html">FileWriter</a>::truncate</code>, <code><a href="http://dev.w3.org/2009/dap/file-system/file-writer.html">FileWriterSync</a>::write</code>
+            and <code><a href="http://dev.w3.org/2009/dap/file-system/file-writer.html">FileWriterSync</a>::truncate</code>
+            methods defined in the File Writer API [<cite><a class="bibref" rel="biblioentry" href="#bib-FILE-WRITER">FILE-WRITER</a></cite>]. </p>
+
+	<p>In the Web browser environment, this permission is usually granted implicitly once the <code>FileSaver</code> object has been created, after the user has selected a path to which the data can be saved (e.g. through a “Save As” dialog).</p>
+
+      </div>
+
+
+      
+
+      <div id="sysinfo" class="section">
+	    <h3><span class="secno">2.5 </span>System Information API</h3>
+	    <p>The <code>deviceinfo</code> identifier corresponds to the access to the data of the <code>Power</code>, <code>CPU</code>, <code>Thermal</code>, <code>AVCodecs</code>, <code>Storage</code>, <code>OutputDevices</code>, <code>InputDevices</code> properties available through the <code><a href="http://www.w3.org/TR/system-info-api/#widl-SystemInfo-get">SystemInfo::get</a></code> and <code><a href="http://www.w3.org/TR/system-info-api/#widl-SystemInfo-watch">SystemInfo::watch</a></code> methods  defined in the System Information API [<cite><a class="bibref" rel="biblioentry" href="#bib-SYSINFOAPI">SYSINFOAPI</a></cite>].</p>
+
+	    <p>The <code>networkinfo</code> identifier corresponds to the access to the data of the <code>Network</code> property available through the <code><a href="http://www.w3.org/TR/system-info-api/#widl-SystemInfo-get">SystemInfo::get</a></code> and <code><a href="http://www.w3.org/TR/system-info-api/#widl-SystemInfo-watch">SystemInfo::watch</a></code> methods  defined in the System Information API [<cite><a class="bibref" rel="biblioentry" href="#bib-SYSINFOAPI">SYSINFOAPI</a></cite>].</p>
+
+	    <p>The <code>sensorinfo</code> identifier corresponds to the access to the data of the <code>AmbientLight</code>, <code>AmbientNoise</code>, <code>AmbientTemperature</code>, <code>AmbientAtmosphericPressure</code> and <code>Proximity</code> properties available through the <code><a href="http://www.w3.org/TR/system-info-api/#widl-SystemInfo-get">SystemInfo::get</a></code> and <code><a href="http://www.w3.org/TR/system-info-api/#widl-SystemInfo-watch">SystemInfo::watch</a></code> methods  defined in the System Information API [<cite><a class="bibref" rel="biblioentry" href="#bib-SYSINFOAPI">SYSINFOAPI</a></cite>].</p>
+
+	<p>In the Web browser environment, these permissions are usually granted through explicit user’s consent, and are retained for later access in the same session.</p>
+      </div>
+    </div>
+
+
+    <div class="appendix section" id="mapping-to-bondi-features-and-android-permissions">
+      
+<!-- OddPage -->
+<h2><span class="secno">A. </span>Mapping to BONDI features and Android permissions</h2>
+            <p>This section maps the permissions defined in this document to  BONDI 1.11 feature strings
+        [<cite><a class="bibref" rel="biblioentry" href="#bib-BONDI-FEATURES1-11">BONDI-FEATURES1-11</a></cite>] and corresponding  
+        <a href="http://developer.android.com/reference/android/Manifest.permission.html">
+          Android permissions</a>.</p> 
+      <p>BONDI 1.11 feature URIs are formed by appending the BONDI
+        string to the base URI:  <code>http://bondi.omtp.org/api/1.1/</code>.
+      </p>
+<p>BONDI and Android values are only given as
+  examples.</p> 
+      <p class="note">
+ Note also that this section might contain errors.  BONDI
+        and Android meanings may not correspond as shown and even if
+        the names are similar they may  not be equivalent.</p> 
+      <div id="geolocation-1" class="section">
+	<h3><span class="secno">A.1 </span>Geolocation</h3>
+        <table summary="Geolocation Permissions" class="simple">
+          <thead>
+            <tr>
+	      <th rowspan="2">W3C API permissions</th>
+              <th colspan="2">
+                <a>BONDI 1.11 Feature</a> 
+              </th>
+              <th colspan="2">
+                <a>Android Permissions</a> 
+              </th>
+            </tr>
+	    <tr><th>Identifier</th><th>Scope</th><th>Identifier</th><th>Scope</th>
+	    </tr>
+          </thead>
+          <tbody>
+            <tr>
+	      <td rowspan="2"><code>geolocation</code></td>
+              <td rowspan="2">
+                <code>geolocation.position</code>
+              </td>
+              <td rowspan="2">
+                Detection of the user’s position
+              </td>
+              <td>
+                <code>android.permission.ACCESS_COARSE_LOCATION</code> 
+              </td>
+              <td>
+                access coarse (e.g., Cell-ID, WiFi) location
+              </td>
+	    </tr>
+	    <tr>
+              <td>
+                <code>android.permission.ACCESS_FINE_LOCATION</code> 
+              </td>
+
+              <td>
+                access fine (e.g., GPS) location
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div id="contacts" class="section">
+	<h3><span class="secno">A.2 </span>Contacts</h3>
+        <table summary="Contact Permissions" class="simple">
+          <thead>
+            <tr>
+	      <th rowspan="2">W3C API permissions</th>
+              <th colspan="2">
+                <a>BONDI 1.11 Feature</a> 
+              </th>
+              <th colspan="2">
+                <a>Android Permissions</a> 
+              </th>
+            </tr>
+	    <tr><th>Identifier</th><th>Scope</th><th>Identifier</th><th>Scope</th>
+	    </tr>          </thead>
+          <tbody>
+	    <tr>
+	      <td><code>contacts.read</code></td>
+              <td>
+                <code>pim.contacts.read</code>
+              </td>
+              <td>
+                Read the contacts stored in the terminal
+              </td>
+              <td>
+                <code>android.permission.READ_CONTACTS</code> 
+              </td>
+              <td>
+                read the user's contacts data.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+      <div id="media-capture" class="section">
+	<h3><span class="secno">A.3 </span>Media Capture</h3>
+	        <table summary="Capture Permissions" class="simple">
+          <thead>
+            <tr>
+	      <th rowspan="2">W3C API permissions</th>
+              <th colspan="2">
+                <a>BONDI 1.11 Feature</a> 
+              </th>
+              <th colspan="2">
+                <a>Android Permissions</a> 
+              </th>
+            </tr>
+	    <tr><th>Identifier</th><th>Scope</th><th>Identifier</th><th>Scope</th>
+	    </tr>          </thead>
+          <tbody>
+            <tr>
+	      <td rowspan="3"><code>mediacapture</code></td>
+              <td>
+                <code>camera.capture</code>
+              </td>
+              <td>
+                capturing a picture from a selected camera
+              </td>
+              <td rowspan="2">
+                <code>android.permission.CAMERA</code> 
+              </td>
+              <td rowspan="2">
+                access the camera device
+              </td>
+
+            </tr>
+            <tr>
+              <td>
+                <code>camera.record</code>
+              </td>
+              <td>
+                capturing a video from a selected camera
+              </td>
+	    </tr>
+	    <tr>
+	      <td></td><td></td>
+	      <td><code>android.permission.RECORD_AUDIO</code></td>
+	      <td>Allows an application to record audio</td>
+            </tr>
+          </tbody>
+        </table>
+	<p class="note">BONDI 1.1 has a separate permission for detecting available cameras, <code>camera.access</code>.</p>
+
+	</div>
+      <div id="file" class="section">
+	<h3><span class="secno">A.4 </span>File</h3>
+	        <table summary="System Information Permissions" class="simple">
+          <thead>
+            <tr>
+	      <th rowspan="2">W3C API permissions</th>
+              <th colspan="2">
+                <a>BONDI 1.11 Feature</a> 
+              </th>
+              <th colspan="2">
+                <a>Android Permissions</a> 
+              </th>
+            </tr>
+	    <tr><th>Identifier</th><th>Scope</th><th>Identifier</th><th>Scope</th>
+	    </tr>          </thead>
+          <tbody>
+	    <tr>
+	      <td><code>file.read</code></td>
+	      <td><code>filesystem.read</code></td>
+	      <td>Read access to a filesystem</td>
+	      <td><code>android.permission.READ_OWNER_DATA</code></td>
+	      <td>Allows an application to read the owner's data.</td>
+	    </tr>
+	    <tr>
+	      <td><code>file.write</code></td>
+	      <td><code>filesystem.write</code></td>
+	      <td>Write access to a filesystem</td>
+	      <td><code>android.permission.WRITE_OWNER_DATA</code></td>
+	      <td>Allows an application to write (but not read) the owner's data.g</td>
+	    </tr>
+	  </tbody>
+	  </table>
+      </div>
+      <div id="system-information" class="section">
+	<h3><span class="secno">A.5 </span>System Information</h3>
+	        <table summary="System Information Permissions" class="simple">
+          <thead>
+            <tr>
+	      <th rowspan="2">W3C API permissions</th>
+              <th colspan="2">
+                <a>BONDI 1.11 Feature</a> 
+              </th>
+              <th colspan="2">
+                <a>Android Permissions</a> 
+              </th>
+            </tr>
+	    <tr><th>Identifier</th><th>Scope</th><th>Identifier</th><th>Scope</th>
+	    </tr>          </thead>
+          <tbody>
+	    <tr>
+	      <td><code>deviceinfo</code></td>
+	      <td><code>pim.devicestatus</code></td>
+              <td>
+                Access to the device status module
+              </td>
+              <td>
+                <code>android.permission.BATTERY_STATS</code> 
+              </td>
+              <td>
+                collect battery statistics
+              </td>
+	      
+	    </tr>
+	    <tr>
+	      <td><code>networkinfo</code></td>
+	      <td colspan="2">N/A</td>
+              <td>
+                <code>android.permission.NETWORK_STATE</code> 
+              </td>
+              <td>Allows applications to access information about networks 
+              </td>
+
+	    </tr>
+	    <tr>
+	      <td><code>sensorinfo</code></td>
+	      <td colspan="2">N/A</td>
+	      <td colspan="2">N/A</td>
+	    </tr>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+    
+  <div id="references" class="appendix section">
+<!-- OddPage -->
+<h2><span class="secno">B. </span>References</h2><div id="normative-references" class="section"><h3><span class="secno">B.1 </span>Normative references</h3><dl class="bibliography"><dt id="bib-CONTACTS-API">[CONTACTS-API]</dt><dd>R. Tibbett. <a href="http://dev.w3.org/2009/dap/contacts/Overview.html"><cite>Contacts API</cite></a>. 3rd August 2010. W3C Latest Editor's Draft. (Work in progress.) URL: <a href="http://dev.w3.org/2009/dap/contacts/Overview.html">http://dev.w3.org/2009/dap/contacts/Overview.html</a> 
+</dd><dt id="bib-FILE-API">[FILE-API]</dt><dd>Arun Ranganathan. <a href="http://www.w3.org/TR/2009/WD-FileAPI-20091117/"><cite>File API.</cite></a> 17 November 2009. W3C Working Draft. (Work in progress.) URL: <a href="http://www.w3.org/TR/2009/WD-FileAPI-20091117/">http://www.w3.org/TR/2009/WD-FileAPI-20091117/</a> 
+</dd><dt id="bib-FILE-WRITER">[FILE-WRITER]</dt><dd>Eric Uhrhane. <a href="http://dev.w3.org/2009/dap/file-system/file-writer.html"><cite>File Writer API.</cite></a> W3C Working Draft. (Work in progress.) URL: <a href="http://dev.w3.org/2009/dap/file-system/file-writer.html">http://dev.w3.org/2009/dap/file-system/file-writer.html</a> 
+</dd><dt id="bib-GEOLOCATION-API">[GEOLOCATION-API]</dt><dd>Andrei Popescu. <a href="http://www.w3.org/TR/2008/WD-geolocation-API-20081222"><cite>Geolocation API Specification.</cite></a> 22 December 2008. W3C Working Draft. (Work in progress.) URL: <a href="http://www.w3.org/TR/2008/WD-geolocation-API-20081222">http://www.w3.org/TR/2008/WD-geolocation-API-20081222</a> 
+</dd><dt id="bib-MEDIACAPTURE-API">[MEDIACAPTURE-API]</dt><dd>Dzung D Tran; Ilkka Oksanen; Ingmar Kliche. <a href="http://dev.w3.org/2009/dap/camera/Overview-API.html"><cite>The Media Capture API</cite></a> 3 September 2010. W3C Editors Draft (Workin progress.) URL: <a href="http://dev.w3.org/2009/dap/camera/Overview-API.html">http://dev.w3.org/2009/dap/camera/Overview-API.html</a> 
+</dd><dt id="bib-SYSINFOAPI">[SYSINFOAPI]</dt><dd>Dzung Tran, Max Froumentin, eds. <a href="http://www.w3.org/TR/2010/WD-system-info-api-20100202/"><cite>The System Information API</cite>, 2 February 2010, W3C Working Draft. (Work in Progess.) URL: </a><a href="http://www.w3.org/TR/2010/WD-system-info-api-20100202/">http://www.w3.org/TR/2010/WD-system-info-api-20100202/</a>
+</dd></dl></div><div id="informative-references" class="section"><h3><span class="secno">B.2 </span>Informative references</h3><dl class="bibliography"><dt id="bib-BONDI-FEATURES1-11">[BONDI-FEATURES1-11]</dt><dd><cite>BONDI API Features v1.1</cite> 2 June 2010. Formerly available at http://bondi.omtp.org/1.11/apis/apifeatures.html
+</dd><dt id="bib-WIDGETS">[WIDGETS]</dt><dd>Marcos Caceres. <a href="http://www.w3.org/TR/2009/CR-widgets-20091201/"><cite>Widget Packaging and Configuration.</cite></a> 01 December 2009. W3C Candidate Recommendation. (Work in progress.) URL: <a href="http://www.w3.org/TR/2009/CR-widgets-20091201/">http://www.w3.org/TR/2009/CR-widgets-20091201/</a> 
+</dd></dl></div></div></body></html>

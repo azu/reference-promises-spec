@@ -1,0 +1,365 @@
+<!-- http://www.w3.org/TR/xinclude-11-requirements/ -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta name="generator" content=
+"HTML Tidy for Mac OS X (vers 31 October 2006 - Apple Inc. build 15.3.6), see www.w3.org" />
+<title>XInclude 1.1 Requirement and Use Cases</title>
+<link rel="alternate" title="XML" href="Overview.xml" />
+<link rel="stylesheet" type="text/css" href=
+"http://www.w3.org/StyleSheets/TR/base.css" />
+<link rel="stylesheet" type="text/css" href=
+"http://www.w3.org/StyleSheets/TR/W3C-WG-NOTE.css" />
+</head>
+<body>
+<div class="specification">
+<div class="head" id="spec.head">
+<p><a href="http://www.w3.org/"><img height="48" width="72" alt=
+"W3C" src="http://www.w3.org/Icons/w3c_home" /></a></p>
+<h1>XInclude 1.1 Requirement and Use Cases</h1>
+<h2>W3C Working Group Note 14 February 2012</h2>
+<dl>
+<dt>This Version:</dt>
+<dd><a href=
+"http://www.w3.org/TR/2012/NOTE-xinclude-11-requirements-20120214/">
+http://www.w3.org/TR/2012/NOTE-xinclude-11-requirements-20120214/</a></dd>
+<dt>Latest Version:</dt>
+<dd><a href=
+"http://www.w3.org/TR/xinclude-11-requirements/">http://www.w3.org/TR/xinclude-11-requirements/</a></dd>
+<dt>Editor:</dt>
+<dd><span class="personname">Norman Walsh</span>, <span class=
+"orgname">MarkLogic Corporation</span> <tt class=
+"email">&lt;<a href=
+"mailto:norman.walsh@marklogic.com">norman.walsh@marklogic.com</a>&gt;</tt></dd>
+</dl>
+<p>This document is also available in these non-normative formats:
+<a href="Overview.xml">XML</a></p>
+<p class="copyright"><a href=
+"http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a>
+© 2012 <a href="http://www.w3.org/"><acronym title=
+"World Wide Web Consortium">W3C</acronym></a><sup>®</sup> (<a href=
+"http://www.csail.mit.edu/"><acronym title=
+"Massachusetts Institute of Technology">MIT</acronym></a>, <a href=
+"http://www.ercim.eu/"><acronym title=
+"European Research Consortium for Informatics and Mathematics">ERCIM</acronym></a>,
+<a href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved.
+W3C <a href=
+"http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>,
+<a href=
+"http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a>
+and <a href=
+"http://www.w3.org/Consortium/Legal/copyright-documents">document
+use</a> rules apply.</p>
+<hr />
+<div class="abstract">
+<h2>Abstract</h2>
+<p>This document summarizes requirements and use cases for possible
+enhancements to XInclude.</p>
+</div>
+<div class="status">
+<h2>Status of this Document</h2>
+<p>Implementation experience has led users of XInclude to suggest a
+number of enhancements. These enhancements would allow XInclude to
+support the needs of richer applications by providing mechanisms to
+address uniqueness constraints, to communicate with processes that
+occur after XInclude, and to take advantage of the fragment
+identifier scheme for <tt class="code">text/plain</tt> documents.
+This document attempts to enumerate these enhancements.</p>
+<p><em>This section describes the status of this document at the
+time of its publication. Other documents may supersede this
+document. A list of current W3C publications and the latest
+revision of this technical report can be found in the <a href=
+"http://www.w3.org/TR/">W3C technical reports index</a> at
+http://www.w3.org/TR/.</em></p>
+<p>This requirements document is being published as a Working Group
+Note. Publication as a Working Group Note does not imply
+endorsement by the W3C Membership. This is a draft document and may
+be updated, replaced or obsoleted by other documents at any time.
+It is inappropriate to cite this document as other than work in
+progress.</p>
+<p>This document is a product of the <a href=
+"http://www.w3.org/XML/Core/">W3C XML Core Working Group</a> as
+part of the <a href="http://www.w3.org/XML/">XML Activity</a>.</p>
+<p>Please submit any comments on this document to <a href=
+"mailto:www-xml-xinclude-comments@w3.org">www-xml-xinclude-comments@w3.org</a>;
+<a href=
+"http://lists.w3.org/Archives/Public/www-xml-xinclude-comments/">public
+archives</a> are available.</p>
+<p>This document was produced by a group operating under the
+<a href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5
+February 2004 W3C Patent Policy</a>. W3C maintains a <a href=
+"http://www.w3.org/2004/01/pp-impl/18796/status#disclosures">public
+list of any patent disclosures</a> made in connection with the
+deliverables of the group; that page also includes instructions for
+disclosing a patent. An individual who has actual knowledge of a
+patent which the individual believes contains <a href=
+"http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">
+Essential Claim(s)</a> must disclose the information in accordance
+with <a href=
+"http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">
+section 6 of the W3C Patent Policy</a>.</p>
+</div>
+</div>
+<hr />
+<div id="spectoc">
+<div class="toc">
+<h2 id="TableOfContents">Table of Contents</h2>
+<dl class="toc">
+<dt><span>1&#160;<a href=
+"#introduction">Introduction</a></span></dt>
+<dt><span>2&#160;<a href="#rfc5147">Support for RFC
+5147</a></span></dt>
+<dd>
+<dl class="toc">
+<dt><span>2.1&#160;<a href="#text-pointer-design">Text pointer
+design</a></span></dt>
+</dl>
+</dd>
+<dt><span>3&#160;<a href="#improved-communication">Improved
+communication between the pre- and post-included
+infosets</a></span></dt>
+<dd>
+<dl class="toc">
+<dt><span>3.1&#160;<a href="#communication-design">Communication
+design</a></span></dt>
+</dl>
+</dd>
+<dt><span>4&#160;<a href="#references">References</a></span></dt>
+</dl>
+</div>
+</div>
+<div class="section">
+<h3><a name="introduction" id=
+"introduction"></a>1&#160;Introduction</h3>
+<p>It has been several years since the XInclude Recommendation was
+published. This document outlines the requirements and use cases
+for to changes to XInclude: support for [<a href=
+"#rfc-5147"><span class="abbrev">RFC 5147</span></a>] and improved
+communication between the pre- and post-inclusion Infosets.</p>
+</div>
+<div class="section">
+<h3><a name="rfc5147" id="rfc5147"></a>2&#160;Support for RFC
+5147</h3>
+<p>XInclude offers facilities for both XML inclusion and plain text
+inclusion. In its current design, the use of fragment identifiers
+(in the <tt class="tag-attribute">xpointer</tt> attribute) is
+forbidden when performing plain text inclusion.</p>
+<p>The publication of RFC 5147 introduces a fragment identifier
+syntax for text/plain content. It would be very useful to be able
+to extract portions of a text document with RFC 5147 fragment
+identifiers just as it is useful to be able to extract portions of
+an XML document with XPointer.</p>
+<p>XInclude should be extended to support RFC 5147 fragment
+identifiers when <tt class="code">parse="text"</tt> is
+specified.</p>
+<div class="section">
+<h4><a name="text-pointer-design" id=
+"text-pointer-design"></a>2.1&#160;Text pointer design</h4>
+<p>It's worth considering, briefly, the possible design choices
+that could be made in adding support for RFC 5147. Three seem
+apparent:</p>
+<div class="orderedlist">
+<ol style="list-style: decimal;">
+<li>
+<p>Support a new fragment identifier scheme in the <tt class=
+"tag-attribute">xpointer</tt> attribute, for example <tt class=
+"code">xpointer="text(line=12,19;length=1859)"</tt>. Unfortunately,
+the <tt class="tag-attribute">xpointer</tt> attribute is described
+as being specifically for XPointer fragment identifiers. XPointer,
+in turn, is specifically about XML.</p>
+</li>
+<li>
+<p>Add a new attribute, for example <tt class=
+"tag-attribute">textpointer</tt> to hold the fragment identifier
+for text/plain content.</p>
+</li>
+<li>
+<p>Add a new attribute, for example <tt class=
+"tag-attribute">fragid</tt> to hold the fragment identifier and
+deprecate the use of <tt class="tag-attribute">xpointer</tt>. In
+some respects, this seems the most logical choice, but it would
+invalidate (or at least deprecate) all existing documents that are
+using fragment identifiers. What's more, implementors would have to
+support both attributes indefinitely in order to handle legacy
+content, so this doesn't seem to provide much benefit.</p>
+</li>
+</ol>
+</div>
+<p>Adding a new attribute seems like the best compromise.</p>
+</div>
+</div>
+<div class="section">
+<h3><a name="improved-communication" id=
+"improved-communication"></a>3&#160;Improved communication between
+the pre- and post-included infosets</h3>
+<p>XInclude is a transformative process. It begins with two or more
+infosets and produces a new, single infoset that represents the
+result of the transformation process. (For the purpose of this
+discussion, it's sufficient to consider the case where <tt class=
+"code">parse="text"</tt> is specified as including an infoset that
+consists entirely of character information items).</p>
+<p>There are aspects of the included infosets that must be made
+manifest in the resulting infoset in order to preserve semantics.
+Specifically, a <tt class="tag-attribute">xml:base</tt> attribute
+may be added to included elements in order to preserve the XML Base
+of the included items and a <tt class="tag-attribute">xml:lang</tt>
+attribute may be added to included elements in order to preserve
+the language of the included items.</p>
+<p>These additional bits of communication across the transclusion
+boundary preserve important semantic information present in the
+original infosets. It is possible to imagine <em>other</em> kinds
+of important semantic information that an author might want to
+preserve.</p>
+<p>In particular, one troubling aspect of XInclude processing is
+the potential damage done to ID/IDREF relationships. If the same ID
+is defined in several included documents (each of which is entirely
+valid on its own), the resulting document cannot be valid because
+it contains duplicate ID values. By the same token, IDREF values
+that ostensibly point to one of these now duplicated IDs are now
+left in an unfortunate state.</p>
+<p>Authors might have several strategies in mind for resolving
+these problems:</p>
+<div class="orderedlist">
+<ol style="list-style: decimal;">
+<li>
+<p>Perform textual transformation of IDs in (some) included
+documents to force uniqueness across the entire resulting
+infoset.</p>
+</li>
+<li>
+<p>Perform IDREF fixup using any of several algorithms:</p>
+<div class="orderedlist">
+<ol style="list-style: lower-alpha;">
+<li>
+<p>Within an included fragment, point to the locally included
+ID.</p>
+</li>
+<li>
+<p>Within an included fragment, point to globally the first ID.</p>
+</li>
+<li>
+<p>Outside an included fragment, point to the first preceding
+ID.</p>
+</li>
+<li>
+<p>Outside an included fragment, point to the first following
+ID.</p>
+</li>
+<li>
+<p>Point to the closest ID.</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<p>It's clear that there is no single strategy that would satisfy
+all authors all the time. In fact, on examination, it becomes clear
+that there's no single strategy that would satisfy all authors
+<em>within the same document</em>. (For additional background and
+detailed analysis of one real use case, see [<a href=
+"#dbtrans-req"><span class="abbrev">DBTRANS-REQ</span></a>] and
+[<a href="#dbtrans"><span class="abbrev">DBTRANS</span></a>].)</p>
+<p>Designing a language (or extending XInclude) to support this
+degree of flexibility would be complicated. This complexity would
+be exacerbated by the fact that generic XML tools may not even be
+able to identify all of the ID and IDREF values in a document.
+Addressing this problem may require vocabulary-specific knowledge
+of the documents involved.</p>
+<p>Attempts to solve the problem in a vocabulary-specific manner,
+however, run afoul of the fact that XInclude leaves no trace of its
+actions. A processor cannot come back to the result of an XInclude
+transformation and identify the boundaries of inclusion.</p>
+<p>The ability to do that, which is arguably semantic information
+at least as valuable as the base URI and language of the included
+documents, would provide the hooks necessary to develop
+application-specific solutions without requiring that those
+solutions encompass <em>all</em> of the features of XInclude.</p>
+<p>One method of providing this information would be to pass
+attributes present on the <tt class="tag-element">xi:include</tt>
+element through to the root element(s) included. For example, if a
+<tt class="code">chapter</tt> was included with this XInclude:</p>
+<div class="programlisting">
+<pre>
+&lt;xi:include href="chapter.xml" ex:root="true" ex:fixup="nearest"/&gt;
+</pre></div>
+<p>The resulting infoset might include the chapter in this way:</p>
+<div class="programlisting">
+<pre>
+&lt;chapter xml:base="base/chapter.xml" xml:lang="en-us"
+         ex:root="true" ex:fixup="nearest"/&gt;
+</pre></div>
+<p>Passing additional attributes through would provide a mechanism
+for authors to communicate with down-stream processes.</p>
+<p>XInclude should be extended to support improved communication
+between the pre- and post-included infosets.</p>
+<div class="section">
+<h4><a name="communication-design" id=
+"communication-design"></a>3.1&#160;Communication design</h4>
+<p>It's worth considering, briefly, the possible design choices
+that could be made in adding support of this kind:</p>
+<div class="orderedlist">
+<ol style="list-style: decimal;">
+<li>
+<p>All attributes could be copied.</p>
+</li>
+<li>
+<p>All attributes except <tt class="tag-attribute">href</tt>,
+<tt class="tag-attribute">parse</tt>, <tt class=
+"tag-attribute">xml:base</tt>, and <tt class=
+"tag-attribute">xml:lang</tt> could be copied.</p>
+</li>
+<li>
+<p>Only namespace-qualified attributes could be copied.</p>
+</li>
+<li>
+<p>Only <em>non-</em>namespace-qualified attributes could be
+copied.</p>
+</li>
+<li>
+<p>The attributes to be copied could be explicitly enumerated in
+another new attribute.</p>
+</li>
+<li>
+<p>Some record of which attributes <em>have been</em> copied could
+be added to the result.</p>
+</li>
+</ol>
+</div>
+<p>There are merits to each of these options, and there may be
+others, but ideally the solution will be as simple as possible.</p>
+<p>It's also worth noting that none of these approaches offers any
+solution for inclusions that consist of top-level nodes other than
+elements. It doesn't appear possible to address those cases.</p>
+</div>
+</div>
+<div class="section">
+<h3><a name="references" id="references"></a>4&#160;References</h3>
+<div class="bibliolist">
+<div class="bibliomixed" id="rfc-5147">
+<p>[<span class="abbrev">RFC 5147</span>] <a href=
+"http://www.ietf.org/rfc/rfc5147.txt"><span class=
+"citetitle"><cite>URI Fragment Identifiers for the text/plain Media
+Type</cite></span></a>. E. Wilde, M. Duerst, IETF, April 2008. (See
+http://www.ietf.org/rfc/rfc5147.txt.)</p>
+</div>
+<div class="bibliomixed" id="dbtrans-req">
+<p>[<span class="abbrev">DBTRANS-REQ</span>] <a href=
+"http://docbook.org/docs/transclusion-requirements/"><span class=
+"citetitle"><cite>Requirements for transclusion in
+DocBook</cite></span></a>. Jirka Kosek, 09 December 2010. (See
+http://docbook.org/docs/transclusion-requirements/.)</p>
+</div>
+<div class="bibliomixed" id="dbtrans">
+<p>[<span class="abbrev">DBTRANS</span>] <a href=
+"http://docbook.org/docs/transclusion/"><span class=
+"citetitle"><cite>DocBook Transclusion</cite></span></a>. Jirka
+Kosek, 20 April 2011. (See
+http://docbook.org/docs/transclusion/.)</p>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,1792 @@
+<!-- http://www.w3.org/TR/owl-semantics/ -->
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>OWL Web Ontology Language Semantics and Abstract Syntax</title>
+
+<link rel="alternate" media="print" href="semantics-all.html" />
+<link rel="section" href="syntax.html" />
+<link rel="section" href="direct.html" />
+<link rel="section" href="mapping.html" />
+<link rel="section" href="rdfs.html" />
+<link rel="section" href="proofs.html" />
+<link rel="section" href="examples.html" />
+
+<style type="text/css">
+.PrePublicationWarning {
+   font-weight: bold; 
+   margin: 1em 0em; 
+   border: medium double black; 
+   background: yellow; 
+   padding: 1em;
+}
+</style>
+
+<link rel="stylesheet" type="text/css" href="./spec.css" />
+<link rel="stylesheet" type="text/css"
+      href="http://www.w3.org/StyleSheets/TR/W3C-REC" />
+
+
+</head>
+
+<body>
+
+<div class="head">
+
+<a href="http://www.w3.org/">
+<img height="48" width="72" alt="W3C" src="http://www.w3.org/Icons/w3c_home" /> 
+</a> 
+
+<h1><a name="ST" />
+OWL Web Ontology Language <br /> Semantics and Abstract Syntax </h1>
+
+<h2><a name="SW" />
+
+W3C Recommendation 10 February 2004
+</h2>
+
+      <div id="owl_2_notice" style="border: solid black 1px; padding: 0.5em; background: #FFB;">
+
+	<p style="margin-top: 0; font-weight: bold;">New Version
+        Available: OWL 2 <span style="padding-left: 2em;"></span>
+        (Document Status Update, 12 November 2009)</p>
+
+	<p style="margin-bottom: 0;">The OWL Working Group has produced
+	a W3C Recommendation for a new version of OWL which adds
+	features to this 2004 version, while remaining compatible.
+	Please see <a href="http://www.w3.org/TR/owl2-overview">OWL 2
+	Document Overview</a> for an introduction to OWL 2 and a guide
+	to the OWL 2 document set.</p>
+
+      </div>
+
+
+<dl>
+
+<dt>This version:</dt>
+<dd>
+<a href="http://www.w3.org/TR/2004/REC-owl-semantics-20040210/">http://www.w3.org/TR/2004/REC-owl-semantics-20040210/</a>
+</dd>
+
+<dt>Latest version:</dt>
+<dd>
+<a href="http://www.w3.org/TR/owl-semantics/">http://www.w3.org/TR/owl-semantics/</a>
+</dd>
+
+<dt>Previous version:</dt>
+<dd>
+<a href="http://www.w3.org/TR/2003/PR-owl-semantics-20031215/">http://www.w3.org/TR/2003/PR-owl-semantics-20031215/</a>
+</dd>
+
+<dt>Editors:</dt>  
+<dd>
+<a href="http://www-db.research.bell-labs.com/user/pfps/">Peter F. Patel-Schneider</a>,
+	Bell Labs Research, Lucent Technologies<br />
+<a href="http://www.coginst.uwf.edu/~phayes/">Patrick Hayes</a>,
+	IHMC, University of West Florida<br />
+<a href="http://www.cs.man.ac.uk/~horrocks/">Ian Horrocks</a>,
+	Department of Computer Science, University of Manchester<br />
+</dd>
+</dl>
+
+
+<p>Please refer to the <a
+href="http://www.w3.org/2001/sw/WebOnt/errata#owl-semantics"><strong>errata</strong></a>
+for this document, which may include some normative corrections.</p>
+
+<p>
+This document is also available in this non-normative form: <a href="semantics-all.html">single HTML file</a>.
+</p>
+
+<p>See also <a href="http://www.w3.org/2001/sw/RDFCore/translation/owl-semantics">translations</a>.</p>
+
+<p class="copyright">
+<a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">
+Copyright</a> © 2004 <a href="http://www.w3.org/">
+<acronym title="World Wide Web Consortium">W3C</acronym></a><sup>®</sup>
+(<a href="http://www.csail.mit.edu/"><acronym title="Massachusetts Institute of Technology">MIT</acronym></a>, <a
+href="http://www.ercim.org/"><acronym title="European Research
+Consortium for Informatics and Mathematics">ERCIM</acronym></a>, <a
+href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C <a
+href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">
+liability</a>,
+<a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">
+trademark</a>,
+<a href="http://www.w3.org/Consortium/Legal/copyright-documents">document
+use</a> and 
+<a href="http://www.w3.org/Consortium/Legal/copyright-software">software
+licensing</a> rules apply.
+</p>  
+
+
+<hr />
+
+</div>
+
+<h2><a id="abstract" name="abstract">Abstract</a></h2>
+
+<div class="abstract">
+<p>
+This description of OWL, the Web Ontology Language 
+being designed by the W3C Web Ontology Working Group,
+contains a high-level abstract syntax for both OWL DL and OWL Lite, 
+sublanguages of OWL.
+A model-theoretic semantics is given to provide a formal meaning for OWL
+ontologies written in this abstract syntax. 
+A model-theoretic semantics in the form of an extension to the RDF
+semantics is also given to provide a formal meaning for OWL ontologies 
+as RDF graphs (OWL Full).
+A mapping from the abstract syntax to RDF graphs is given and
+the two model theories are shown to have the same consequences on
+OWL ontologies that can be written in the abstract syntax. 
+</p>
+</div>
+
+<div class="status">
+<h2><a id="status" name="status"></a>Status of this document</h2>
+
+<!-- Start Status-Of-This-Document Text -->
+
+<p>This document has been reviewed by W3C Members and other interested
+parties, and it has been endorsed by the Director as a <a
+href="http://www.w3.org/2003/06/Process-20030618/tr.html#RecsW3C">W3C
+Recommendation</a>.  W3C's role in making the Recommendation is to
+draw attention to the specification and to promote its widespread
+deployment. This enhances the functionality and interoperability of
+the Web.</p>
+
+<p>This is one of <a
+href="http://www.w3.org/TR/2004/REC-owl-features-20040210/#s1.1">six
+parts</a> of the W3C Recommendation for OWL, the Web Ontology
+Language.  It has been developed by the <a
+href="http://www.w3.org/2001/sw/WebOnt/">Web Ontology Working
+Group</a> as part of the <a href="http://www.w3.org/2001/sw/">W3C
+Semantic Web Activity</a> (<a
+href="http://www.w3.org/2001/sw/Activity">Activity Statement</a>, <a
+href="http://www.w3.org/2001/sw/WebOnt/charter">Group Charter</a>) for
+publication on 10 February 2004.  </p>
+
+<p>The design of OWL expressed in earlier versions of these documents
+has been widely reviewed and satisfies the Working Group's <a
+href="http://www.w3.org/TR/webont-req/"> technical requirements</a>.
+The Working Group has addressed <a
+href="http://lists.w3.org/Archives/Public/public-webont-comments/">
+all comments received</a>, making changes as necessary.  Changes to
+this document since <a
+href="http://www.w3.org/TR/2003/PR-owl-semantics-20031215/">the Proposed
+Recommendation version</a> are detailed in the <a
+href="./#changes-since-PR">change log</a>.</p>
+
+<p>Comments are welcome at <a
+href="mailto:public-webont-comments@w3.org">public-webont-comments@w3.org</a>
+(<a
+href="http://lists.w3.org/Archives/Public/public-webont-comments/">archive</a>)
+and general discussion of related technology is welcome at <a
+href="mailto:www-rdf-logic@w3.org">www-rdf-logic@w3.org</a> (<a
+href="http://lists.w3.org/Archives/Public/www-rdf-logic/"
+shape="rect">archive</a>).
+</p>
+
+<p>A list of <a href="http://www.w3.org/2001/sw/WebOnt/impls">
+implementations</a> is available.</p>
+
+<p>The W3C maintains a list of <a
+href="http://www.w3.org/2001/sw/WebOnt/discl" rel="disclosure">any
+patent disclosures related to this work</a>.
+</p>
+
+<p><em>This section describes the status of this document at the time of its publication. Other documents may supersede this document. A list of current W3C publications and the latest revision of this technical report can be found in the <a href="http://www.w3.org/TR/">W3C technical reports index</a> at http://www.w3.org/TR/.</em></p>
+
+<!-- End Status-Of-This-Document Text -->
+
+</div>
+
+<hr />
+
+<div class="toc">
+
+<h2><a id="contents" name="contents">Table of contents</a></h2>
+
+<ul class="toc">
+<li class="tocline1">1. <a href="#1">Introduction</a> (Informative)
+    </li>
+<li class="tocline1">2. <a href="syntax.html">Abstract Syntax</a> (Normative)
+    <ul class="toc">
+    <li class="tocline2">2.1 <a href="syntax.html#2.1">Ontologies</a></li>
+    <li class="tocline2">2.2 <a href="syntax.html#2.2">Facts</a></li>
+    <li class="tocline2">2.3 <a href="syntax.html#2.3">Axioms</a>
+      <ul class="toc">
+	<li class="tocline3">2.3.1 <a href="syntax.html#2.3.1">OWL Lite Axioms</a>
+            <ul class="toc">
+		<li class="tocline4">2.3.1.1 <a href="syntax.html#2.3.1.1">OWL Lite Class Axioms</a></li>
+	        <li class="tocline4">2.3.1.2 <a href="syntax.html#2.3.1.2">OWL Lite Restrictions</a></li>
+	        <li class="tocline4">2.3.1.3 <a href="syntax.html#2.3.1.3">OWL Lite Property Axioms</a></li>
+            </ul>
+	</li>
+        <li class="tocline3">2.3.2 <a href="syntax.html#2.3.2">OWL DL Axioms</a>
+            <ul class="toc">
+		<li class="tocline4">2.3.2.1 <a href="syntax.html#2.3.2.1">OWL DL Class Axioms</a></li>
+	        <li class="tocline4">2.3.2.2 <a href="syntax.html#2.3.2.2">OWL DL Descriptions</a></li>
+	        <li class="tocline4">2.3.2.3 <a href="syntax.html#2.3.2.3">OWL DL Restrictions</a></li>
+	        <li class="tocline4">2.3.2.4 <a href="syntax.html#2.3.2.4">OWL DL Property Axioms</a></li>
+            </ul>
+	</li>
+      </ul>
+      </li>
+    </ul>
+    </li>
+<li class="tocline1">3. <a href="direct.html">Direct Model-Theoretic Semantics</a> (Normative)
+       <ul class="toc">
+       <li class="tocline2">3.1 <a href="direct.html#3.1">Vocabularies and Interpretations</a></li>
+       <li class="tocline2">3.2 <a href="direct.html#3.2">Interpreting Embedded Constructs</a></li>
+       <li class="tocline2">3.3 <a href="direct.html#3.3">Interpreting Axioms and Facts</a></li>
+       <li class="tocline2">3.4 <a href="direct.html#3.4">Interpreting Ontologies</a></li>
+       </ul>
+    </li>
+<li class="tocline1">4. <a href="mapping.html">Mapping to RDF Graphs</a> (Normative)
+       <ul class="toc">
+       <li class="tocline2">4.1 <a href="mapping.html#4.1">Translation to RDF Graphs</a></li>
+       <li class="tocline2">4.2 <a href="mapping.html#4.2">Definition of
+	       OWL DL and OWL Lite Ontologies in RDF Graph Form</a></li>
+       </ul>
+    </li>
+<li class="tocline1">5. <a href="rdfs.html">RDF-Compatible Model-Theoretic Semantics</a> (Normative)
+       <ul class="toc">
+	<li class="tocline2">5.1 <a href="rdfs.html#5.1">The OWL and RDF Universes</a></li>
+	<li class="tocline2">5.2 <a href="rdfs.html#5.2">OWL Interpretations</a></li>
+	<li class="tocline2">5.3 <a href="rdfs.html#5.3">OWL Full</a></li>
+	<li class="tocline2">5.4 <a href="rdfs.html#5.4">OWL DL</a></li>
+       </ul>
+    </li>
+</ul>
+
+<ul class="toc">
+<li class="tocline1">Appendix A. <a href="proofs.html">Proofs</a> (Informative)
+  <ul class="toc">
+    <li class="tocline2">A.1 <a href="proofs.html#A.1">Correspondence
+		    between Abstract Syntax and OWL DL</a>
+      <ul class="toc">
+        <li class="tocline3">A.1.1 <a href="proofs.html#A.1.1">Correspondence for Descriptions</a></li>
+        <li class="tocline3">A.1.2 <a href="proofs.html#A.1.2">Correspondence for Directives</a></li>
+        <li class="tocline3">A.1.3 <a href="proofs.html#A.1.3">From RDF Semantics to Direct Semantics</a></li>
+        <li class="tocline3">A.1.4 <a href="proofs.html#A.1.4">From Direct Semantics to RDF Semantics</a></li>
+        <li class="tocline3">A.1.5 <a href="proofs.html#A.1.5">Correspondence Theorem</a></li>
+      </ul>
+    </li>
+    <li class="tocline2">A.2 <a href="proofs.html#A.2">Correspondence
+		    between OWL DL and OWL Full</a>
+    </li>
+  </ul>
+</li>
+<li class="tocline1">Appendix B. <a href="examples.html">Examples</a>
+	 (Informative)
+       <ul class="toc">
+       <li class="tocline2">B.1 <a href="examples.html#B.1">Examples of
+	       Mapping from Abstract Syntax to RDF Graphs</a></li>
+       <li class="tocline2">B.2 <a href="examples.html#B.2">
+		Examples of Entailments in OWL DL and OWL Full</a></li>
+       </ul>
+</li>
+<li class="tocline1">Appendix C. <a href="#C">Changes since Last Call</a>
+	(Informative)
+       <ul class="toc">
+       <li class="tocline2">C.1 <a href="#C.1">
+		Substantive changes after Last Call</a></li> 
+       <li class="tocline2">C.2 <a href="#C.2">
+		Editorial changes after Last Call</a></li>
+       <li class="tocline2">C.3 <a href="#C.3">
+		Substantive changes after Candidate Recommendation</a></li>
+       <li class="tocline2">C.4 <a href="#C.4">
+		Editorial changes after Candidate Recommendation</a></li>
+       <li class="tocline2">C.5 <a href="#changes-since-PR">
+		Changes since Proposed Recommendation</a></li>
+       </ul>
+</li>
+</ul>
+
+<ul class="toc">
+<li class="tocline1"><a href="#index">Index of Vocabulary</a> (Informative)</li>
+<li class="tocline1"><a href="#acknowledgments">Acknowledgments</a> (Informative)</li>
+<li class="tocline1"><a href="#references">References</a>
+       <ul class="toc">
+       <li class="tocline2"><a href="#references-normative">Normative
+		  References</a></li> 
+       <li class="tocline2"><a href="#references-other">Other
+		  References</a></li> 
+	</ul>
+	</li>
+</ul>
+
+<hr />
+
+</div>
+
+<h2><a name="1"></a>1. Introduction (Informative)</h2>
+
+<p>
+<span class="editorialchange">
+This document is one part of the specification of OWL, the Web Ontology
+Language.  
+The OWL Overview
+[<cite><a href="#ref-overview">OWL Overview</a></cite>]
+describes each of the different documents in the specification
+and how they fit together.
+</span>
+</p>
+
+<p>
+This document
+contains several interrelated normative
+specifications of the several
+styles of OWL, the Web Ontology Language being produced by the 
+<a href="http://www.w3.org/2001/sw/WebOnt/">W3C Web Ontology Working Group
+(WebOnt)</a>.
+First, <a href="syntax.html#2">Section 2</a> contains
+a high-level, abstract syntax for both
+<a href="syntax.html#owl-lite">OWL Lite</a>, a subset of OWL,
+and <a href="syntax.html#owl-dl">OWL DL</a>, a fuller style of using OWL
+but one that still places some
+limitations on how OWL ontologies are constructed.
+Eliminating these limitations results in the full OWL language, called
+<a href="rdfs.html#owl-full">OWL Full</a>, which has the same syntax
+as RDF.
+The normative exchange syntax for OWL is 
+RDF/XML [<cite><a href="#ref-rdfsyntax">RDF Syntax</a></cite>];
+the OWL Reference document
+[<cite><a href="#ref-ref">OWL Reference</a></cite>]
+shows how the RDF syntax is used in OWL.
+A mapping from the OWL abstract syntax to 
+<a href="http://www.w3.org/TR/2003/WD-rdf-concepts-20030123/#section-data-model">RDF graphs</a>
+[<cite><a href="#ref-rdfconcepts">RDF Concepts</a></cite>]
+is, however, provided in <a href="mapping.html">Section 4</a>.
+</p>
+
+<p>
+This document contains two formal semantics for OWL.
+One of these semantics, defined in 
+<a href="direct.html#3">Section 3</a>,
+is a direct, standard model-theoretic semantics for
+OWL ontologies written in the abstract syntax.
+The other, defined in <a href="rdfs.html#5">Section 5</a>,
+is a vocabulary extension of the RDF semantics 
+[<cite><a href="#ref-rdfmt">RDF Semantics</a></cite>] that provides semantics
+for OWL ontologies in the form of RDF graphs.
+Two versions of this second semantics are provided, one that corresponds
+more closely to the direct semantics (and is thus a semantics for OWL DL) 
+and one that can be used in cases where classes need to be treated as
+individuals or other situations that cannot be handled in the abstract
+syntax (and is thus a semantics for OWL Full).  These two versions are 
+actually very close, only differing in how they divide up the domain of
+discourse.
+</p>
+
+<p>
+<a href="proofs.html">Appendix A</a>
+contains a proof that the direct and RDFS-compatible semantics have the same
+consequences on OWL ontologies that correspond to abstract OWL
+ontologies that separate OWL individuals, OWL classes, OWL properties, 
+and the RDF, RDFS, and OWL structural vocabulary.
+<a href="proofs.html">Appendix A</a>
+also contains the sketch of a proof that the entailments in the
+RDFS-compatible semantics for OWL Full include all the entailments in
+the RDFS-compatible semantics for OWL DL.
+Finally a few examples of the various concepts defined in the document are
+presented in <a href="examples.html">Appendix B</a>.
+</p>
+
+<p>
+This document is designed to be read by those interested in the
+technical details of OWL.  It is not particularly intended for the
+casual reader, who should probably first read the OWL Guide
+[<cite><a href="#ref-guide">OWL Guide</a></cite>].  Developers of parsers
+and other syntactic tools for 
+OWL will be particularly interested in Sections 
+<a href="syntax.html#2">2</a> and <a href="mapping.html#4">4</a>.
+Developers of reasoners and other semantic tools for OWL will be
+particularly interested in Sections
+<a href="direct.html#3">3</a> and <a href="rdfs.html#5">5</a>.
+</p>
+
+<hr />
+
+<!-- split here -->
+
+<h2><a name="C"></a>Appendix C. Changes from Last Call (Informative)</h2>
+
+<div class="editorialchange">
+
+<p>
+This appendix provides an informative account of the changes from the
+last-call version of this document.
+All substantive post-last call changes to the document, as well as some editorial
+post-last-call changes, are indicated in the style of this appendix.
+</p>
+
+<h3><a name="C.1"></a>C.1 Substantive changes after Last Call</h3> 
+
+<p>
+This section provides information on the post Last Call changes to the document that make
+changes to the specification of OWL.  
+</p>
+
+<ul>
+<li> [10 April 2003] 
+	In response to
+	<a href="http://lists.w3.org/Archives/Public/www-webont-wg/2003Apr/0046.html">
+	http://lists.w3.org/Archives/Public/www-webont-wg/2003Apr/0046.html</a>,
+	added <span class="syntax">owl:Class</span>, 
+	 <span class="syntax">owl:Restriction</span>, 
+	 <span class="syntax">owl:ObjectProperty</span>, 
+	 <span class="syntax">owl:DatatypeProperty</span>, 
+	 <span class="syntax">owl:AnnotationProperty</span>, 
+	 <span class="syntax">owl:OntologyProperty</span>, 
+	 <span class="syntax">owl:Ontology</span>, 
+	 <span class="syntax">owl:AllDifferent</span>, 
+	 <span class="syntax">owl:FunctionalProperty</span>, 
+	 <span class="syntax">owl:InverseFunctionalProperty</span>, 
+	 <span class="syntax">owl:SymmetricProperty</span>, and 
+	 <span class="syntax">owl:TransitiveProperty</span>
+	to C<sub>I</sub>
+	in <a href="rdfs.html#5.2">Section 5.2</a>.  Some of these were
+	inferrable already.  
+	</li>
+
+<li> [10 April 2003] 
+	Related to
+	<a href="http://lists.w3.org/Archives/Public/www-webont-wg/2003Apr/0046.html">
+	http://lists.w3.org/Archives/Public/www-webont-wg/2003Apr/0046.html</a>,
+	added <span class="syntax">owl:distinctMembers</span>
+	to R<sub>I</sub>
+	in <a href="rdfs.html#5.2">Section 5.2</a>. 
+	</li>
+
+<li> [15 April 2003] 
+	In response to
+	<a href="http://lists.w3.org/Archives/Public/www-webont-wg/2003Apr/0064.html">
+	http://lists.w3.org/Archives/Public/www-webont-wg/2003Apr/0064.html</a>,
+	added <span class="syntax">owl:OntologyProperty</span>
+	to the disallowed vocabulary 
+	in <a href="mapping.html#disallowed_owl_vocabulary">disallowed OWL vocabulary</a>
+	in <a href="mapping.html#4.2">Section 4.2</a>. 
+	</li>
+
+<li> [5 May 2003] 
+	Per a decision of the Web Ontology working group on 1 May 2003
+	to add <span class="syntax">owl:Nothing</span> to OWL Lite, 
+	recorded in 
+	<a href="http://lists.w3.org/Archives/Public/www-webont-wg/2003May/0017.html">
+	http://lists.w3.org/Archives/Public/www-webont-wg/2003May/0017.html</a>,
+	changed <a href="syntax.html#owl_Nothing_syntax">the introduction of
+	owl:Nothing</a> to so indicate.
+	The <a href="#owl_Nothing">index</a> for
+	<span class="syntax">owl:Nothing</span> 
+	was also updated.
+	</li>
+
+<li> [9 May 2003]
+	To improve internal consistency, added optional 
+	<span class="syntax">rdf:Property</span> types for Annotation
+	Properties in 
+	<a href="mapping.html#4.1">Section 4.1</a>.  
+	</li>
+
+<li> [30 May 2003]
+	Per a decision of the Web Ontology working group on 29 May 2003 to
+	modify the mapping of EquivalentClasses,
+	recorded in 
+	<a href="http://lists.w3.org/Archives/Public/www-webont-wg/2003May/0402.html">
+	http://lists.w3.org/Archives/Public/www-webont-wg/2003May/0402.html</a> 
+	and in response to 
+	<a href="http://lists.w3.org/Archives/Public/www-webont-wg/2003Apr/0003.html"> 
+	http://lists.w3.org/Archives/Public/www-webont-wg/2003Apr/0003.html</a>
+	and <a href="http://lists.w3.org/Archives/Public/public-webont-comments/2003May/0052.html">
+	http://lists.w3.org/Archives/Public/public-webont-comments/2003May/0052.html</a>,
+	changed the mapping rule for 
+		EquivalentClasses(d1 ... dn)
+	to
+		T(di) owl:equivalentTo T(dj) .  for all &lt;i,j&gt; in G 
+		where G is a set of pairs over {1,...,n} that if
+		interpreted as an undirected graph forms a connected graph
+		for {1,...,n}.
+	</li>
+
+<li> [30 May 2003]
+	Per a decision of the Web Ontology working group on 29 May 2003 to
+	add axioms for ontology properties,
+	recorded in 
+	<a href="http://lists.w3.org/Archives/Public/www-webont-wg/2003May/0402.html">
+	http://lists.w3.org/Archives/Public/www-webont-wg/2003May/0402.html</a>,
+	added axioms for ontology properties to the OWL Lite and OWL DL
+	abstract syntax in Sections <a href="syntax.html#2.3.1.3">2.3.1.3</a>.  
+	and <a href="syntax.html#2.3.2.4">Section 2.3.2.4</a>; 
+	added direct semantics conditions for ontology property axioms
+	in <a href="direct.html#3.3">Section 3.3</a>; and
+	added a mapping for ontology property axioms
+	in <a href="mapping.html#4.1">Section 4.1</a>.
+	Fixed the proofs of <a href="proofs.html#lemma-2">Lemma 2</a>
+	and <a href="proofs.html#lemma-3">Lemma 3</a>.
+	</li>
+
+<li> [30 May 2003]
+	Per a decision of the Web Ontology working group on 29 May 2003 to
+	change the semantics for 
+	<span class="syntax">owl:intersectionOf</span> and related
+	resources from an intensional semantics to an extensional semantics,
+	recorded in 
+	<a href="http://lists.w3.org/Archives/Public/www-webont-wg/2003May/0402.html">
+	http://lists.w3.org/Archives/Public/www-webont-wg/2003May/0402.html</a>,
+	modified the semantic conditions for 
+	<span class="syntax">owl:intersectionOf</span>,
+	<span class="syntax">owl:unionOf</span>,
+	<span class="syntax">owl:complementOf</span>, and 
+	<span class="syntax">owl:oneOf</span> 
+	in <a href="rdfs.html#5.2">Section 5.2</a>.  
+	No change needed to be made to the proof of 
+	<a href="proofs.html#lemma-1">Lemma 1</a>. 
+	Fixed the proofs of 
+	<a href="proofs.html#lemma-4">Lemma 4</a> and
+	<a href="proofs.html#lemma-2">Lemma 2</a>.
+	</li>
+
+<li> [2 June 2003]
+	In response to an observation by Jeremy Carroll in
+	<a href="http://lists.w3.org/Archives/Public/www-webont-wg/2003Jun/0004.html">
+	http://lists.w3.org/Archives/Public/www-webont-wg/2003Jun/0004.html</a>,
+	changed the mapping rule for anonymous individuals with no types 
+	slightly in <a href="mapping.html#4.1">Section 4.1</a>.  
+	</li>
+
+<li> [4 June 2003]
+	In response to
+	<a href="http://lists.w3.org/Archives/Public/www-webont-wg/2003Jun/0011.html">
+	http://lists.w3.org/Archives/Public/www-webont-wg/2003Jun/0011.html</a>,
+	the treatment of datatypes and rdfs:Literal has been slightly
+	changed in <a href="syntax.html#2.3.1.3">Section 2.3.1.3</a>,
+	<a href="syntax.html#2.3.2.3">Section 2.3.2.3</a>, and
+	<a href="mapping.html#4.1">Section 4.1</a>.
+	</li>
+
+<li> [4 June 2003]
+	In response to
+	<a href="http://lists.w3.org/Archives/Public/public-webont-comments/2003May/0050.html">
+	http://lists.w3.org/Archives/Public/public-webont-comments/2003May/0050.html</a>,
+	point owlsas-rdf-equivalent-class, modified the treatment of
+	ontology annotations in <a href="direct.html#3.4">Section 3.4</a>.  
+	</li>
+
+<li> [5 June 2003]
+	In response to a comment by Jeremy Carroll in
+	<a href="http://lists.w3.org/Archives/Public/www-webont-wg/2003Jun/0004.html">
+	http://lists.w3.org/Archives/Public/www-webont-wg/2003Jun/0004.html</a>,
+	the direct semantics has been modified to allow for domain elements
+	that are not OWL individuals.  These domain elements are used to
+	provide meaning for annotations on classes, properties, and ontologies.
+	Changes have been made in 
+	<a href="direct.html#3.1">Section 3.1</a>,
+	<a href="direct.html#3.2">Section 3.2</a>,
+	<a href="direct.html#3.3">Section 3.3</a>,
+	and 
+	<a href="proofs.html#A.1">Appendix A.1</a>.
+	</li> 
+
+<li> [6 June 2003]
+	Changed the treatment of datatypes to correspond with the
+	substantive post-last-call fixes and changes to the treatment of
+	datatypes in RDF.
+<!-- Take out link to editor's draft.
+	See <a href="http://www.w3.org/TR/2004/REC-rdf-mt-20040210/">
+	http://www.w3.org/TR/2004/REC-rdf-mt-20040210/</a>.
+-->
+	Changes have been made in 
+	<a href="direct.html#3.1">Section 3.1</a> and
+	<a href="proofs.html#A.1">Appendix A.1</a>.
+	</li>
+
+<li> [26 June 2003]
+	Per a decision of the Web Ontology working group on 26 June 2003
+	to replace <span class="syntax">owl:sameIndividualAs</span> with 
+	<span class="syntax">owl:sameAs</span>,
+	recorded in 
+	<a href="http://lists.w3.org/Archives/Public/www-webont-wg/2003Jun/0364.html">
+	http://lists.w3.org/Archives/Public/www-webont-wg/2003Jun/0364.html</a>,
+	made changes to
+	<a href="syntax.html#2.2">Section 2.2</a>,
+	<a href="direct.html#3.3">Section 3.3</a>,
+	<a href="mapping.html#4.1">Section 4.1</a>,
+	<a href="mapping.html#4.2">Section 4.2</a>,
+	<a href="rdfs.html#5.2">Section 5.2</a>, and
+	<a href="proofs.html#A.1">Appendix A.1</a>.
+	</li>
+
+<li> [30 June 2003]
+	Fixed a bug in the semantic conditions for 
+	<span class="syntax">owl:hasValue</span> 
+	noticed by Jeremy Carroll, changing the conditions for the value
+	from a property to an individual or a data value
+	in <a href="rdfs.html#5.2">Section 5.2</a>.
+	</li>
+
+<li> [23 July 2003]
+	In response to a substantive post-last-call change to the RDF semantics, 
+	changing the if-and-only-if conditions for 
+	<span class="syntax">rdfs:subClassOf</span> and 
+	<span class="syntax">rdfs:subPropertyOf</span> to only-if
+	conditions,
+	added if-and-only-if conditions for 
+	<span class="syntax">rdfs:subClassOf</span>, 
+	over OWL classes, and
+	<span class="syntax">rdfs:subPropertyOf</span>,
+	over OWL individual-valued properties and 
+	over OWL datatype properties,
+	to <a href="rdfs.html#5.2">Section 5.2</a>.
+	</li>
+
+<li> [23 July 2003]
+	In response to a substantive change to the RDF syntax mapping to
+	triples, removing the typing triples for collections, 
+	[applicable document unknown],
+	made typing of list resources optional in 
+	<a href="mapping.html#4.1">Section 4.1</a>.
+	Also modified an example in 
+	<a href="examples.html#B.1">Appendix B.1</a>.
+	</li>
+</ul>
+
+<h3><a name="C.2"></a>C.2 Editorial changes after Last Call</h3> 
+
+<p>
+This section provides information on post Last Call editorial changes to the document, 
+i.e., changes that do not affect the specification of OWL.
+</p>
+
+<ul>
+<li> [9 April 2003] 
+	In response to
+	<a href="http://lists.w3.org/Archives/Public/public-webont-comments/2003Apr/0023.html">
+	http://lists.w3.org/Archives/Public/public-webont-comments/2003Apr/0023.html</a>,
+	point 2, changed ``most information about properties'' to
+	``most information concerning properties''
+	in <a href="syntax.html#2.3">Section 2.3</a>. 
+	</li>
+
+<li> [14 April 2003] 
+	In response to
+	<a href="http://lists.w3.org/Archives/Public/public-webont-comments/2003Apr/0029.html">
+	http://lists.w3.org/Archives/Public/public-webont-comments/2003Apr/0029.html</a>,
+	point 1, added 
+	``Because there is no standard way to go from a URI reference to an XML
+	Schema datatype in an XML Schema, there is no standard way to use
+	user-defined XML Schema datatypes in OWL.''
+	to the discussion of allowable XML Schema datatypes in
+	<a href="syntax.html#2">Section 2</a>.  
+	</li>
+
+<li> [14 April 2003] 
+	In response to
+	<a href="http://lists.w3.org/Archives/Public/public-webont-comments/2003Apr/0029.html">
+	http://lists.w3.org/Archives/Public/public-webont-comments/2003Apr/0029.html</a>,
+	point 2.1, added 
+	``(The property rdf:type is added to the annotation properties so as
+	to provide a meaning for deprecation, see 
+	<a href="direct.html#owl_DeprecatedClass_semantics">below</a>.)'' after
+	``ER provides meaning for URI references that are used as
+	OWL properties.'' in 
+	<a href="direct.html#3.1">Section 3.1</a>.  
+	</li>
+
+<li> [14 April 2003] 
+	In response to
+	<a href="http://lists.w3.org/Archives/Public/public-webont-comments/2003Apr/0029.html">
+	http://lists.w3.org/Archives/Public/public-webont-comments/2003Apr/0029.html</a>,
+	point 2.3, added ``A datatype theory must contain datatypes for
+	<span class="syntax">xsd:string</span> and 
+	<span class="syntax">xsd:integer</span>.  It may contain datatypes
+	for the other
+	<a href="syntax.html#owl_built_in_datatypes">built-in XML Schema
+	datatypes that are suitable for use in OWL</a>.  It may also
+	contain other datatypes, but there is no provision in the OWL
+	syntax for conveying what these datatypes are.'' just after the
+	definition of a datatype theory in 
+	<a href="direct.html#3.1">Section 3.1</a>.  
+	</li>
+
+<li> [14 April 2003] 
+	In response to
+	<a href="http://lists.w3.org/Archives/Public/public-webont-comments/2003Apr/0029.html">
+	http://lists.w3.org/Archives/Public/public-webont-comments/2003Apr/0029.html</a>,
+	point 2.5, added ``annotations''  the the list of things that EC is
+	extended to in 
+	<a href="direct.html#3.2">Section 3.2</a>.  
+	</li>
+
+<li> [9 May 2003] 
+	In response to
+	<a href="http://lists.w3.org/Archives/Public/public-webont-comments/2003May/0050.html">
+	http://lists.w3.org/Archives/Public/public-webont-comments/2003May/0050.html</a>,
+	point owlsas-rdf-datatype-denotation, removed the phrase ``as in RDF''
+	from 
+	<a href="syntax.html#2.1">Section 2.1</a>.  
+	</li>
+
+<li> [9 May 2003] 
+	In response to
+	<a href="http://lists.w3.org/Archives/Public/public-webont-comments/2003May/0050.html">
+	http://lists.w3.org/Archives/Public/public-webont-comments/2003May/0050.html</a>,
+	point owlsas-rdf-equivalent-class, added an explanation of why one
+	might admit <span class="syntax">EquivalentClasses</span> with only
+	one description in 
+	<a href="syntax.html#2.3.2.1">Section 2.3.2.1</a>.  
+	</li>
+
+<li> [9 May 2003] 
+	In response to
+	<a href="http://lists.w3.org/Archives/Public/public-webont-comments/2003May/0050.html">
+	http://lists.w3.org/Archives/Public/public-webont-comments/2003May/0050.html</a>,
+	added ``, for n>=1 '' in the semantic condition for
+	multi-restrictions in
+	<a href="direct.html#3.2">Section 3.2</a>.  
+	</li>
+
+<li> [9 May 2003] 
+	In response to
+	<a href="http://lists.w3.org/Archives/Public/public-webont-comments/2003May/0050.html">
+	http://lists.w3.org/Archives/Public/public-webont-comments/2003May/0050.html</a>,
+	changed to ``include class identifiers and restrictions''
+	in <a href="syntax.html#2.3.2.2">Section 2.3.2.2</a>
+	and ``Elements of the OWL vocabulary that construct descriptions''
+	in <a href="rdfs.html#5.2">Section 5.2</a>.
+	</li>
+
+<li> [13 May 2003] 
+	In response to
+	<a href="http://lists.w3.org/Archives/Public/www-webont-wg/2003May/0180.html">
+	http://lists.w3.org/Archives/Public/www-webont-wg/2003May/0180.html</a>,
+	the links in the table of contents for 
+	in <a href="proofs.html">Appendix A</a>
+	were fixed.
+	</li>
+
+<li> [14 May 2003] 
+	In response to
+	<a href="http://lists.w3.org/Archives/Public/public-webont-comments/2003Apr/0030.html">
+	http://lists.w3.org/Archives/Public/public-webont-comments/2003Apr/0030.html</a>,
+	added a new paragraph to the beginning of
+	<a href="mapping.html">Section 4.</a>
+	</li>
+
+<li> [14 May 2003] 
+	In response to
+	<a href="http://lists.w3.org/Archives/Public/public-webont-comments/2003May/0057.html">
+	http://lists.w3.org/Archives/Public/public-webont-comments/2003May/0057.html</a>,
+	made some changes to the wording on OWL ontologies in the abstract
+	syntax near the beginning of 
+	<a href="syntax.html#2.1">Section 2.1.</a>
+	</li>
+
+<li> [14 May 2003] 
+	In response to
+	<a href="http://lists.w3.org/Archives/Public/public-webont-comments/2003May/0057.html">
+	http://lists.w3.org/Archives/Public/public-webont-comments/2003May/0057.html</a>,
+	added anchors to the transformations in
+	<a href="mapping.html#4.1">Section 4.1.</a>
+	</li>
+
+<li> [14 May 2003] 
+	In response to some discussion about ontology names
+	changed the discussion of the purpose of ontology names in 
+	<a href="syntax.html#2.1">Section 2.1.</a>
+	</li>
+
+<li> [22 May 2003]
+	In response to a message from Jeff Heflin,
+	<a href="http://lists.w3.org/Archives/Public/www-webont-wg/2003May/0302.html">
+	http://lists.w3.org/Archives/Public/www-webont-wg/2003May/0302.html</a>,
+	added a comment to the effect tools should determine entailment
+	between imports closures in 
+	<a href="rdfs.html#5.3">Section 5.3</a> and 
+	<a href="rdfs.html#5.4">Section 5.4</a>.  
+	(Removed on 27 May 2003.)
+	</li>
+
+<li> [22 May 2003]
+	Changed ``consistent with the Web'' to ``imports closed''
+	<a href="rdfs.html#5.3">Section 5.3</a> and 
+	<a href="proofs.html">Appendix A</a>.
+	</li>
+
+<li> [26 May 2003]
+	In response to 
+	<a href="http://lists.w3.org/Archives/Public/www-webont-wg/2003May/0335.html">
+	http://lists.w3.org/Archives/Public/www-webont-wg/2003May/0335.html</a>,
+	changed several `if' to `iff' in definitions in 
+	<a href="direct.html#3.4">Section 3.4</a>,
+	<a href="rdfs.html#5.3">Section 5.3</a>, and 
+	<a href="rdfs.html#5.4">Section 5.4</a>.  
+	This is editorial as
+	complete definitions are often written using `if'.
+	</li>
+
+<li> [30 May 2003]
+	Fixed a typographical error in the proof of 
+	<a href="proofs.html#lemma-4">Lemma 4</a>.
+	</li>
+
+<li> [4 June 2003]
+	In response to 
+	<a href="http://lists.w3.org/Archives/Public/public-webont-comments/2003Apr/0029.html">
+	http://lists.w3.org/Archives/Public/public-webont-comments/2003Apr/0029.html</a>,
+	points 2.2 and 2.3, the status of
+	<span class="syntax">rdfs:Literal</span> and 
+	<span class="syntax">rdf:XMLLiteral</span> has been clarified in
+	<a href="syntax.html">Section 2</a>,
+	<a href="syntax.html#2.1">Section 2.1</a>, and
+	<a href="mapping.html#4.2">Section 4.2</a>.
+	</li>
+
+<li> [19 June 2003]
+	In response to 
+	<a href="http://lists.w3.org/Archives/Public/www-webont-wg/2003Jun/0257.html">
+	http://lists.w3.org/Archives/Public/www-webont-wg/2003Jun/0257.html</a>,
+	changed to note after the proof of 
+	<a href="rdfs.html#theorem-2">Theorem 2</a>
+	in <a href="proofs.html#A.2">Appendix A.2</a>
+	to note that the converse of the theorem is not true.
+	</li>
+
+<li> [19 June 2003]
+	In response to 
+	<a href="http://lists.w3.org/Archives/Public/public-webont-comments/2003May/0055.html">
+	http://lists.w3.org/Archives/Public/www-webont-wg/2003May/0055.html</a>,
+	changed some explanatory text concerning the transformation to
+	triples	in <a href="mapping.html#4.1">Section 4.1</a>.
+	</li>
+
+<li> [19 June 2003]
+	In response to 
+	<a href="http://lists.w3.org/Archives/Public/www-webont-wg/2003Jun/0264.html">
+	http://lists.w3.org/Archives/Public/www-webont-wg/2003Jun/0264.html</a>,
+	added introductory material about the other WebOnt documents to 
+	<a href="#1">Section 1</a>.
+	</li>
+
+<li> [24 June 2003]
+	In response to 
+	<a href="http://lists.w3.org/Archives/Public/public-webont-comments/2003May/0069.html">
+	http://lists.w3.org/Archives/Public/public-webont-comments/2003May/0069.html</a>,
+	added note about correspondence to existing DLs to 
+	<a href="syntax.html#2">Section 2</a>.
+	</li>
+
+<li> [22 July 2003]
+	In response to 
+	<a href="http://lists.w3.org/Archives/Public/public-webont-comments/2003Jul/0011.html">
+	http://lists.w3.org/Archives/Public/public-webont-comments/2003Jul/0011.html</a> and
+	<a href="http://lists.w3.org/Archives/Public/public-webont-comments/2003Jul/0041.html">
+	http://lists.w3.org/Archives/Public/public-webont-comments/2003Jul/0041.html</a>,
+	changed several uses of ``object'' to ``individual'' or ``individual-valued'' in 
+	<a href="syntax.html#2">Section 2</a> and
+	<a href="rdfs.html#5.2">Section 5.2</a> and made other editorial
+	changes to <a href="rdfs.html#5.2">Section 5.2</a>.
+	</li>
+
+<li> [23 July 2003]
+	To remove any reference to tools, made wording changes in
+	<a href="direct.html#3.1">Section 3.1</a> and 
+	<a href="syntax.html#2.1">Section 2.1</a>, concerning the treatment
+	of datatypes.
+	</li>
+
+<li> [25 July 2003]
+	In response to 
+	<a href="http://lists.w3.org/Archives/Public/public-webont-comments/2003Apr/0064.html">
+	http://lists.w3.org/Archives/Public/public-webont-comments/2003Apr/0064.html</a>,
+	added explicit tagging of the informative or normative nature of
+	all sections. 
+	</li>
+
+<li> [25 July 2003]
+	In response to 
+	<a href="http://lists.w3.org/Archives/Public/www-webont-wg/2003Jul/0296.html">
+	http://lists.w3.org/Archives/Public/www-webont-wg/2003Jul/0296.html</a>,
+	removed a comment about the relationship between the two model
+	theories from
+	<a href="#1">Section 1</a>.
+	</li>
+
+<li> [6 August 2003]
+	In response to 
+	<a href="http://lists.w3.org/Archives/Public/www-webont-wg/2003Jul/0015.html">
+	http://lists.w3.org/Archives/Public/www-webont-wg/2003Jul/0015.html</a>,
+	changed <span class="syntax">owl:IndividualProperty</span>
+	to <span class="syntax">owl:ObjectProperty</span> in
+	<a href="proofs#A.2">Appendix A.2</a>.
+	</li>
+
+<li> [6 August 2003]
+	In response to 
+	<a href="syntax.html#2.1">Section 2.1</a>, concerning the treatment
+	<a href="http://lists.w3.org/Archives/Public/public-webont-comments/2003Apr/0064.html">
+	http://lists.w3.org/Archives/Public/public-webont-comments/2003Apr/0064.html</a>,
+	added quotes around 
+	<span class="syntax">rdfs:Literal</span>
+	to indicate that it is a terminal, not a non-terminal, in 
+	<a href="syntax.html#2.3.1.3">Section 2.3.1.3</a> and
+	<a href="syntax.html#2.3.2.3">Section 2.3.2.3</a>.
+</li>
+</ul>
+
+<h3><a name="C.3"></a>C.3 Substantive changes after Candidate Recommendation</h3> 
+
+<p>
+This section provides information on the post Candidate Recommendation
+changes to the document that make changes to the specification of OWL.  
+</p>
+
+<ul>
+<li> [18 September 2003] 
+	In response to 
+	<a href="http://lists.w3.org/Archives/Public/www-webont-wg/2003Sep/0156.html">
+	http://lists.w3.org/Archives/Public/www-webont-wg/2003Sep/0156.html</a>,
+	made the type triples for the individualvaluedPropertyID production in
+	<a href="mapping.html#4.1">Section 4.1</a>
+	optional if typing triples would be produced from some other production.
+</li>
+<!-- changed later
+<li> [18 September 2003] 
+	In response to 
+	<a href="http://lists.w3.org/Archives/Public/www-webont-wg/2003Sep/0177.html">
+	http://lists.w3.org/Archives/Public/www-webont-wg/2003Sep/0177.html</a>,
+	made the type triple for anonymous ontologies optional unless the
+	ontology has annotations.  Changes were made to the second through
+	sixth mapping rules in 
+	<a href="mapping.html#4.1">Section 4.1</a>.
+<li>
+-->
+<li> [3 October 2003] 
+	In response to 
+	<a href="http://lists.w3.org/Archives/Public/www-webont-wg/2003Sep/0177.html">
+	http://lists.w3.org/Archives/Public/www-webont-wg/2003Sep/0177.html</a>,
+	augmented the mapping from the abstract syntax to triples to allow
+	for collections of axioms and facts outside of ontologies to
+	generate OWL DL in triples
+	made the type triple for anonymous ontologies optional unless the
+	ontology has annotations.  Upgraded the definition of entailment
+	in the direct model theory to allow entailment to work over
+	collections of axioms and facts outside of ontologies.
+	Changes were made in 
+	<a href="direct.html#3.4">Section 3.4</a>,
+	<a href="mapping.html#4.2">Section 4.2</a>, and
+	<a href="rdfs.html#5.4">Section 5.4</a>.
+	Many of the proofs in <a href="proofs.html#A">Appendix A</a>
+	required minor changes.
+</li>
+<li> [6 November 2003] In response to proposal <a
+	href="http://lists.w3.org/Archives/Public/www-webont-wg/2003Oct/0167.html">
+	http://lists.w3.org/Archives/Public/www-webont-wg/2003Oct/0167.html</a>
+	and in accordance with a decision of the working group
+	<a href="http://lists.w3.org/Archives/Public/www-webont-wg/2003Nov/0000.html">
+	http://lists.w3.org/Archives/Public/www-webont-wg/2003Nov/0000.html</a>,
+	added the condition that EC(<span
+	class="syntax">owl:Thing</span>) must be nonempty in <a
+	href="direct.html#3.1">Section 3.1</a> and that IOT must be
+	nonempty in <a href="rdfs.html#5.2">Section 5.2</a>.
+</li>
+<li> [29 November 2003] In response to <a
+href="http://lists.w3.org/Archives/Public/www-webont-wg/2003Nov/0064.html">
+http://lists.w3.org/Archives/Public/www-webont-wg/2003Nov/0064.html</a>
+and <a
+href="http://lists.w3.org/Archives/Public/www-webont-wg/2003Nov/0132.html">
+http://lists.w3.org/Archives/Public/www-webont-wg/2003Nov/0132.html</a>,
+made changes to <a href="rdfs.html#5.2">Section 5.2</a> to bring the
+treatment of datatypes into line with the latest version of the RDF
+semantics [<cite><a href="#ref-rdfmt">RDF Semantics</a></cite>].
+</li>
+<li> [29 November 2003] In response to <a
+href="http://lists.w3.org/Archives/Public/www-webont-wg/2003Nov/0064.html">
+http://lists.w3.org/Archives/Public/www-webont-wg/2003Nov/0064.html</a>,
+added a <a href="rdfs.html#note-correspondence">note</a> to the
+beginning of <a href="rdfs.html">Section 5</a> (and a reference to
+this note in <a href="rdfs.html#5.4">Section 5.4</a>) explicitly
+stating that the Direct Model-Theoretic Semantics takes precedence
+over the OWL DL semantics.
+</li>
+</ul>
+
+<h3><a name="C.4"></a>C.4 Editorial changes after Candidate Recommendation</h3> 
+
+<p>
+This section provides information on post Candidate Recommendation editorial changes to the document, 
+i.e., changes that do not affect the specification of OWL.
+</p>
+
+<ul>
+<li> [29 November 2003] In response to <a
+href="http://lists.w3.org/Archives/Public/www-webont-wg/2003Nov/0132.html">
+http://lists.w3.org/Archives/Public/www-webont-wg/2003Nov/0132.html</a>,
+made several editorial changes to Sections <a
+href="syntax.html">2</a>, <a href="direct.html">3</a>, <a
+href="mapping.html">4</a> and <a href="rdfs.html">5</a>.
+</li>
+</ul>
+
+<ul>
+<li> [3 December 2003] In further response to <a
+href="http://lists.w3.org/Archives/Public/www-webont-wg/2003Nov/0132.html">
+http://lists.w3.org/Archives/Public/www-webont-wg/2003Nov/0132.html</a>
+and ensuing discussion,
+made several editorial changes to Sections <a href="direct.html">3</a> and
+<a href="rdfs.html">5</a> and Appendix <a href="proofs.html">A</a>.
+</li>
+</ul>
+
+
+<h3><a name="changes-since-PR"></a>C.5 Changes since Proposed Recommendation</h3> 
+
+
+<p>
+This section provides information on post Proposed Recommendation changes to the document.
+</p>
+
+
+<ul>
+<li> [21 December 2003] Fixed typographical error: Recommentation
+&rarr; Recommendation (in several places).
+</li>
+<li> [29 January 2004] In response to <a
+href="http://lists.w3.org/Archives/Public/www-webont-wg/2004Jan/0021.html">http://lists.w3.org/Archives/Public/www-webont-wg/2004Jan/0021.html</a>,
+clarified the <a href="mapping.html#separated_vocabulary">definition of separated
+vocabulary</a> in <a href="mapping.html#4.2">Section 4.2</a>.
+</li>
+<li> [29 January 2004] In response to <a
+href="http://www.ilrt.bris.ac.uk/discovery/chatlogs/webont/2004-01-29#T17-08-44">http://www.ilrt.bris.ac.uk/discovery/chatlogs/webont/2004-01-29#T17-08-44</a>,
+made explicit in the definition of an RDF compatible OWL
+interpretation in <a href="rdfs.html#5.2">Section 5.2</a> that an RDF
+compatible datatype map necessarily includes a datatype for <span
+class="syntax">rdf:XMLLiteral</span>.
+</li>
+</ul>
+
+
+</div>
+
+<hr />
+
+<h2><a id="index" name="index">Index of Vocabulary (Informative)</a></h2>
+
+
+<p>
+The following table provides pointers to information about each
+element of the OWL vocabulary, as well as some elements of the RDF and RDFS
+vocabularies. 
+The first column points to the vocabulary element's major definition
+in the abstract syntax of <a href="syntax.html#2">Section 2</a>.
+The second column points to the vocabulary element's major definition
+in the OWL Lite abstract syntax.
+The third column points to the vocabularly element's major definition
+in the direct semantics of <a href="direct.html#3">Section 3</a>.
+The fourth column points to the major piece of the translation from
+the abstract syntax to triples for the vocabulary element
+<a href="mapping.html#4">Section 4</a>.
+The fifth column points to the vocabularly element's major definition
+in the RDFS-compatible semantics of <a href="rdfs.html#5">Section 5</a>.
+</p>
+
+<table border="1" cellspacing="0">
+<caption>Vocabulary Terms</caption>
+<thead>
+<tr><th>Vocabulary Term</th>
+    <th>Abstract OWL DL Syntax</th>
+    <th>Abstract OWL Lite Syntax</th>
+    <th>Direct Semantics</th>
+    <th>Mapping to Triples</th>
+    <th>RDFS-Compatible Semantics</th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr>
+<td class="index"><a id="owl_AllDifferent">owl:AllDifferent</a></td>
+<td class="index"></td>
+<td class="index"></td>
+<td class="index"></td>
+<td class="index"><a href="mapping.html#owl_AllDifferent_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_AllDifferent_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_allValuesFrom">owl:allValuesFrom</a></td>
+<td class="index"><a href="syntax.html#owl_allValuesFrom_syntax">2.3.2.3</a></td>
+<td class="index"><a href="syntax.html#owl_allValuesFrom_syntax_lite">2.3.1.2</a></td>
+<td class="index"><a href="direct.html#owl_allValuesFrom_semantics">3.2</a></td>
+<td class="index"><a href="mapping.html#owl_allValuesFrom_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_allValuesFrom_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_AnnotationProperty">owl:AnnotationProperty</a></td>
+<td class="index"><a href="syntax.html#owl_AnnotationProperty_syntax_lite">2.3.1.3</a></td>
+<td class="index"><a href="syntax.html#owl_AnnotationProperty_syntax">2.3.2.4</a></td>
+<td class="index"><a href="direct.html#owl_AnnotationProperty_semantics"><span class="editorialchange">3.2</span></a></td>
+<td class="index"><a href="mapping.html#owl_AnnotationProperty_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_AnnotationProperty_rdf"><span class="editorialchange">5.2</span></a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_backwardCompatibleWith">owl:backwardCompatibleWith</a></td>
+<td class="index"><a href="syntax.html#owl_backwardCompatibleWith_syntax">2.1</a></td>
+<td class="index"><a href="syntax.html#owl_backwardCompatibleWith_syntax">2.1</a></td>
+<td class="index"></td>
+<td class="index"><a href="mapping.html#owl_backwardCompatibleWith_mapping">4.1</a></td>
+<td class="index"></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_cardinality">owl:cardinality</a></td>
+<td class="index"><a href="syntax.html#owl_cardinality_syntax">2.3.2.3</a></td>
+<td class="index"><a href="syntax.html#owl_cardinality_syntax_lite">2.3.1.2</a></td>
+<td class="index"><a href="direct.html#owl_cardinality_semantics">3.2</a></td>
+<td class="index"><a href="mapping.html#owl_cardinality_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_cardinality_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_Class">owl:Class</a></td>
+<td class="index"><a href="syntax.html#owl_Class_syntax">2.3.2.1</a></td>
+<td class="index"><a href="syntax.html#owl_Class_syntax_lite">2.3.1.1</a></td>
+<td class="index"><a href="direct.html#owl_Class_semantics">3.3</a></td>
+<td class="index"><a href="mapping.html#owl_Class_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_Class_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_complementOf">owl:complementOf</a></td>
+<td class="index"><a href="syntax.html#owl_complementOf_syntax">2.3.2.2</a></td>
+<td class="index"></td>
+<td class="index"><a href="direct.html#owl_complementOf_semantics">3.2</a></td>
+<td class="index"><a href="mapping.html#owl_complementOf_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_complementOf_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_DatatypeProperty">owl:DatatypeProperty</a></td>
+<td class="index"><a href="syntax.html#owl_DatatypeProperty_syntax">2.3.2.4</a></td>
+<td class="index"><a href="syntax.html#owl_DatatypeProperty_syntax_lite">2.3.1.3</a></td>
+<td class="index"><a href="direct.html#owl_DatatypeProperty_semantics">3.3</a></td>
+<td class="index"><a href="mapping.html#owl_DatatypeProperty_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_DatatypeProperty_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_DeprecatedClass">owl:DeprecatedClass</a></td>
+<td class="index"><a href="syntax.html#owl_DeprecatedClass_syntax">2.3.2.1</a></td>
+<td class="index"><a href="syntax.html#owl_DeprecatedClass_syntax_lite">2.3.1.1</a></td>
+<td class="index"><a href="direct.html#owl_DeprecatedClass_semantics">3.3</a></td>
+<td class="index"><a href="mapping.html#owl_DeprecatedClass_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_DeprecatedClass_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_DeprecatedProperty">owl:DeprecatedProperty</a></td>
+<td class="index"><a href="syntax.html#owl_DeprecatedProperty_syntax">2.3.2.4</a></td>
+<td class="index"><a href="syntax.html#owl_DeprecatedProperty_syntax_lite">2.3.1.3</a></td>
+<td class="index"><a href="direct.html#owl_DeprecatedProperty_semantics">3.3</a></td>
+<td class="index"><a href="mapping.html#owl_DeprecatedProperty_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_DeprecatedProperty_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_DataRange">owl:DataRange</a></td>
+<td class="index"><a href="syntax.html#owl_DataRange_syntax">2.3.2.3</a></td>
+<td class="index"><a href="syntax.html#owl_DataRange_syntax_lite"><span class="editorialchange">2.3.1.2</span></a></td>
+<td class="index"><a href="direct.html#owl_DataRange_semantics">3.2</a></td>
+<td class="index"><a href="mapping.html#owl_DataRange_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_DataRange_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_differentFrom">owl:differentFrom</a></td>
+<td class="index"><a href="syntax.html#owl_differentFrom_syntax">2.2</a></td>
+<td class="index"><a href="syntax.html#owl_differentFrom_syntax">2.2</a></td>
+<td class="index"><a href="direct.html#owl_differentFrom_semantics">3.3</a></td>
+<td class="index"><a href="mapping.html#owl_differentFrom_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_differentFrom_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_disjointWith">owl:disjointWith</a></td>
+<td class="index"><a href="syntax.html#owl_disjointWith_syntax">2.3.2.1</a></td>
+<td class="index"></td>
+<td class="index"><a href="direct.html#owl_disjointWith_semantics">3.3</a></td>
+<td class="index"><a href="mapping.html#owl_disjointWith_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_disjointWith_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_distinctMembers">owl:distinctMembers</a></td>
+<td class="index"></td>
+<td class="index"></td>
+<td class="index"></td>
+<td class="index"><a href="mapping.html#owl_distinctMembers_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_distinctMembers_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_equivalentClass">owl:equivalentClass</a></td>
+<td class="index"><a href="syntax.html#owl_equivalentClass_syntax">2.3.2.1</a></td>
+<td class="index"><a href="syntax.html#owl_equivalentClass_syntax_lite">2.3.1.1</a></td>
+<td class="index"><a href="direct.html#owl_equivalentClass_semantics">3.3</a></td>
+<td class="index"><a href="mapping.html#owl_equivalentClass_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_equivalentClass_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_equivalentProperty">owl:equivalentProperty</a></td>
+<td class="index"><a href="syntax.html#owl_equivalentProperty_syntax">2.3.1.3</a></td>
+<td class="index"><a href="syntax.html#owl_equivalentProperty_syntax">2.3.1.3</a></td>
+<td class="index"><a href="direct.html#owl_equivalentProperty_semantics">3.3</a></td>
+<td class="index"><a href="mapping.html#owl_equivalentProperty_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_equivalentProperty_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_FunctionalProperty">owl:FunctionalProperty</a></td>
+<td class="index"><a href="syntax.html#owl_FunctionalProperty_syntax">2.3.2.4</a></td>
+<td class="index"><a href="syntax.html#owl_FunctionalProperty_syntax_lite">2.3.1.3</a></td>
+<td class="index"><a href="direct.html#owl_FunctionalProperty_semantics">3.3</a></td>
+<td class="index"><a href="mapping.html#owl_FunctionalProperty_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_FunctionalProperty_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_hasValue">owl:hasValue</a></td>
+<td class="index"><a href="syntax.html#owl_hasValue_syntax">2.3.2.3</a></td>
+<td class="index"></td>
+<td class="index"><a href="direct.html#owl_hasValue_semantics">3.2</a></td>
+<td class="index"><a href="mapping.html#owl_hasValue_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_hasValue_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_imports">owl:imports</a></td>
+<td class="index"><a href="syntax.html#owl_imports_syntax">2.1</a></td>
+<td class="index"><a href="syntax.html#owl_imports_syntax">2.1</a></td>
+<td class="index"><a href="direct.html#owl_imports_semantics">3.4</a></td>
+<td class="index"><a href="mapping.html#owl_imports_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_imports_rdf">5.4</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_incompatibleWith">owl:incompatibleWith</a></td>
+<td class="index"><a href="syntax.html#owl_incompatibleWith_syntax">2.1</a></td>
+<td class="index"><a href="syntax.html#owl_incompatibleWith_syntax">2.1</a></td>
+<td class="index"></td>
+<td class="index"><a href="mapping.html#owl_incompatibleWith_mapping">4.1</a></td>
+<td class="index"></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_intersectionOf">owl:intersectionOf</a></td>
+<td class="index"><a href="syntax.html#owl_intersectionOf_syntax">2.3.2.2</a></td>
+<td class="index"></td>
+<td class="index"><a href="direct.html#owl_intersectionOf_semantics">3.2</a></td>
+<td class="index"><a href="mapping.html#owl_intersectionOf_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_intersectionOf_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_InverseFunctionalProperty">owl:InverseFunctionalProperty</a></td>
+<td class="index"><a href="syntax.html#owl_InverseFunctionalProperty_syntax">2.3.2.4</a></td>
+<td class="index"><a href="syntax.html#owl_InverseFunctionalProperty_syntax_lite">2.3.1.3</a></td>
+<td class="index"><a href="direct.html#owl_InverseFunctionalProperty_semantics">3.3</a></td>
+<td class="index"><a href="mapping.html#owl_InverseFunctionalProperty_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_InverseFunctionalProperty_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_inverseOf">owl:inverseOf</a></td>
+<td class="index"><a href="syntax.html#owl_inverseOf_syntax">2.3.2.4</a></td>
+<td class="index"><a href="syntax.html#owl_inverseOf_syntax_lite">2.3.1.3</a></td>
+<td class="index"><a href="direct.html#owl_inverseOf_semantics">3.3</a></td>
+<td class="index"><a href="mapping.html#owl_inverseOf_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_inverseOf_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_maxCardinality">owl:maxCardinality</a></td>
+<td class="index"><a href="syntax.html#owl_maxCardinality_syntax">2.3.2.3</a></td>
+<td class="index"><a href="syntax.html#owl_maxCardinality_syntax_lite">2.3.1.2</a></td>
+<td class="index"><a href="direct.html#owl_maxCardinality_semantics">3.2</a></td>
+<td class="index"><a href="mapping.html#owl_maxCardinality_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_maxCardinality_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_minCardinality">owl:minCardinality</a></td>
+<td class="index"><a href="syntax.html#owl_minCardinality_syntax">2.3.2.3</a></td>
+<td class="index"><a href="syntax.html#owl_minCardinality_syntax_lite">2.3.1.2</a></td>
+<td class="index"><a href="direct.html#owl_minCardinality_semantics">3.2</a></td>
+<td class="index"><a href="mapping.html#owl_minCardinality_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_minCardinality_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_Nothing">owl:Nothing</a></td>
+<td class="index"><a href="syntax.html#owl_Nothing_syntax">2.1</a></td>
+<td class="index"><span class="editorialchange"><a href="syntax.html#owl_Nothing_syntax">2.1</a></span></td>
+<td class="index"><a href="direct.html#owl_Nothing_semantics">3.2</a></td>
+<td class="index"><a href="mapping.html#owl_Nothing_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_Nothing_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_ObjectProperty">owl:ObjectProperty</a></td>
+<td class="index"><a href="syntax.html#owl_ObjectProperty_syntax">2.3.2.4</a></td>
+<td class="index"><a href="syntax.html#owl_ObjectProperty_syntax_lite">2.3.1.3</a></td>
+<td class="index"><a href="direct.html#owl_ObjectProperty_semantics">3.3</a></td>
+<td class="index"><a href="mapping.html#owl_ObjectProperty_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_ObjectProperty_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_oneOf">owl:oneOf</a></td>
+<td class="index"><a href="syntax.html#owl_oneOf_syntax">2.3.2.2</a></td>
+<td class="index"></td>
+<td class="index"><a href="direct.html#owl_oneOf_semantics">3.2</a></td>
+<td class="index"><a href="mapping.html#owl_oneOf_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_oneOf_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_onProperty">owl:onProperty</a></td>
+<td class="index"><a href="syntax.html#owl_onProperty_syntax">2.3.2.3</a></td>
+<td class="index"><a href="syntax.html#owl_onProperty_syntax_lite">2.3.1.2</a></td>
+<td class="index"><a href="direct.html#owl_onProperty_semantics">3.2</a></td>
+<td class="index"><a href="mapping.html#owl_onProperty_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_onProperty_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_Ontology">owl:Ontology</a></td>
+<td class="index"><a href="syntax.html#owl_Ontology_syntax">2.1</a></td>
+<td class="index"><a href="syntax.html#owl_Ontology_syntax">2.1</a></td>
+<td class="index"><a href="direct.html#owl_Ontology_semantics">3.4</a></td>
+<td class="index"><a href="mapping.html#owl_Ontology_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_Ontology_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_OntologyProperty">owl:OntologyProperty</a></td>
+<td class="index"><a href="syntax.html#owl_OntologyProperty_syntax_lite">2.3.1.3</a></td>
+<td class="index"><a href="syntax.html#owl_OntologyProperty_syntax">2.3.2.4</a></td>
+<td class="index"><a href="direct.html#owl_OntologyProperty_semantics"><span class="editorialchange">3.2</span></a></td>
+<td class="index"><a href="mapping.html#owl_OntologyProperty_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_OntologyProperty_rdf"><span class="editorialchange">5.2</span></a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_priorVersion">owl:priorVersion</a></td>
+<td class="index"><a href="syntax.html#owl_priorVersion_syntax">2.1</a></td>
+<td class="index"><a href="syntax.html#owl_priorVersion_syntax">2.1</a></td>
+<td class="index"></td>
+<td class="index"><a href="mapping.html#owl_priorVersion_mapping">4.1</a></td>
+<td class="index"></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_Restriction">owl:Restriction</a></td>
+<td class="index"><a href="syntax.html#owl_Restriction_syntax">2.3.2.3</a></td>
+<td class="index"><a href="syntax.html#owl_Restriction_syntax_lite">2.3.1.2</a></td>
+<td class="index"><a href="direct.html#owl_Restriction_semantics">3.2</a></td>
+<td class="index"><a href="mapping.html#owl_Restriction_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_Restriction_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_sameAs">owl:sameAs</a></td>
+<td class="index"><a href="syntax.html#owl_sameAs_syntax">2.2</a></td>
+<td class="index"><a href="syntax.html#owl_sameAs_syntax">2.2</a></td>
+<td class="index"><a href="direct.html#owl_sameAs_semantics">3.3</a></td>
+<td class="index"><a href="mapping.html#owl_sameAs_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_sameAs_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_someValuesFrom">owl:someValuesFrom</a></td>
+<td class="index"><a href="syntax.html#owl_someValuesFrom_syntax">2.3.2.3</a></td>
+<td class="index"><a href="syntax.html#owl_someValuesFrom_syntax_lite">2.3.1.2</a></td>
+<td class="index"><a href="direct.html#owl_someValuesFrom_semantics">3.2</a></td>
+<td class="index"><a href="mapping.html#owl_someValuesFrom_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_someValuesFrom_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_SymmetricProperty">owl:SymmetricProperty</a></td>
+<td class="index"><a href="syntax.html#owl_SymmetricProperty_syntax">2.3.2.4</a></td>
+<td class="index"><a href="syntax.html#owl_SymmetricProperty_syntax_lite">2.3.1.3</a></td>
+<td class="index"><a href="direct.html#owl_SymmetricProperty_semantics">3.3</a></td>
+<td class="index"><a href="mapping.html#owl_SymmetricProperty_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_SymmetricProperty_rdf">4.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_Thing">owl:Thing</a></td>
+<td class="index"><a href="syntax.html#owl_Thing_syntax">2.1</a></td>
+<td class="index"><a href="syntax.html#owl_Thing_syntax">2.1</a></td>
+<td class="index"><a href="direct.html#owl_Thing_semantics">3.2</a></td>
+<td class="index"><a href="mapping.html#owl_Thing_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_Thing_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_TransitiveProperty">owl:TransitiveProperty</a></td>
+<td class="index"><a href="syntax.html#owl_TransitiveProperty_syntax">2.3.2.4</a></td>
+<td class="index"><a href="syntax.html#owl_TransitiveProperty_syntax_lite">2.3.1.3</a></td>
+<td class="index"><a href="direct.html#owl_TransitiveProperty_semantics">3.3</a></td>
+<td class="index"><a href="mapping.html#owl_TransitiveProperty_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_TransitiveProperty_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_unionOf">owl:unionOf</a></td>
+<td class="index"><a href="syntax.html#owl_unionOf_syntax">2.3.2.2</a></td>
+<td class="index"></td>
+<td class="index"><a href="direct.html#owl_unionOf_semantics">3.2</a></td>
+<td class="index"><a href="mapping.html#owl_unionOf_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#owl_unionOf_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="owl_versionInfo">owl:versionInfo</a></td>
+<td class="index"><a href="syntax.html#owl_versionInfo_syntax">2.1</a></td>
+<td class="index"><a href="syntax.html#owl_versionInfo_syntax">2.1</a></td>
+<td class="index"></td>
+<td class="index"><a href="mapping.html#owl_versionInfo_mapping">4.1</a></td>
+<td class="index"></td>
+</tr>
+
+<tr>
+<td class="index"><a id="rdf_List">rdf:List</a></td>
+<td class="index"></td>
+<td class="index"></td>
+<td class="index"></td>
+<td class="index"><a href="mapping.html#rdf_List_mapping"><span class="editorialchange">4.1</span></a></td>
+<td class="index"><a href="rdfs.html#rdf_List_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="rdf_nil">rdf:nil</a></td>
+<td class="index"></td>
+<td class="index"></td>
+<td class="index"></td>
+<td class="index"><a href="mapping.html#rdf_nil_mapping"><span class="editorialchange">4.1</span></a></td>
+<td class="index"><a href="rdfs.html#rdf_nil_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="rdf_type">rdf:type</a></td>
+<td class="index"><a href="syntax.html#rdf_type_syntax">2.2</a></td>
+<td class="index"><a href="syntax.html#rdf_type_syntax">2.2</a></td>
+<td class="index"><a href="direct.html#rdf_type_semantics">3.3</a></td>
+<td class="index"><a href="mapping.html#rdf_type_mapping">4.1</a></td>
+<td class="index"></td>
+</tr>
+
+<tr>
+<td class="index"><a id="rdfs_comment">rdfs:comment</a></td>
+<td class="index"><a href="syntax.html#rdfs_comment_syntax">2.1</a></td>
+<td class="index"><a href="syntax.html#rdfs_comment_syntax">2.1</a></td>
+<td class="index"></td>
+<td class="index"><a href="mapping.html#rdfs_comment_mapping">4.1</a></td>
+<td class="index"></td>
+</tr>
+
+<tr>
+<td class="index"><a id="rdfs_Datatype">rdfs:Datatype</a></td>
+<td class="index"></td>
+<td class="index"></td>
+<td class="index"></td>
+<td class="index"><a href="mapping.html#rdfs_Literal_mapping"><span class="editorialchange">4.1</span></a></td>
+<td class="index"><a href="rdfs.html#rdfs_Datatype_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="rdfs_domain">rdfs:domain</a></td>
+<td class="index"><a href="syntax.html#rdfs_domain_syntax">2.3.2.4</a></td>
+<td class="index"><a href="syntax.html#rdfs_domain_syntax_lite">2.3.1.3</a></td>
+<td class="index"><a href="direct.html#rdfs_domain_semantics">3.3</a></td>
+<td class="index"><a href="mapping.html#rdfs_domain_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#rdfs_domain_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="rdfs_label">rdfs:label</a></td>
+<td class="index"><a href="syntax.html#rdfs_label_syntax">2.1</a></td>
+<td class="index"><a href="syntax.html#rdfs_label_syntax">2.1</a></td>
+<td class="index"></td>
+<td class="index"><a href="mapping.html#rdfs_label_mapping">4.1</a></td>
+<td class="index"></td>
+</tr>
+
+<tr>
+<td class="index"><a id="rdfs_Literal">rdfs:Literal</a></td>
+<td class="index"><a href="syntax.html#rdfs_Literal_syntax_lite">2.3.1.3</a></td>
+<td class="index"><a href="syntax.html#rdfs_Literal_syntax">2.3.2.3</a></td>
+<td class="index"><a href="direct.html#rdfs_Literal_semantics">4.1</a></td>
+<td class="index"><a href="mapping.html#rdfs_Literal_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#rdfs_Literal_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="rdfs_range">rdfs:range</a></td>
+<td class="index"><a href="syntax.html#rdfs_range_syntax">2.3.2.4</a></td>
+<td class="index"><a href="syntax.html#rdfs_range_syntax_lite">2.3.1.3</a></td>
+<td class="index"><a href="direct.html#rdfs_range_semantics">3.3</a></td>
+<td class="index"><a href="mapping.html#rdfs_range_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#rdfs_range_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="rdfs_subClassOf">rdfs:subClassOf</a></td>
+<td class="index"><a href="syntax.html#rdfs_subClassOf_syntax">2.3.2.1</a></td>
+<td class="index"><a href="syntax.html#rdfs_subClassOf_syntax_lite">2.3.1.1</a></td>
+<td class="index"><a href="direct.html#rdfs_subClassOf_semantics">3.3</a></td>
+<td class="index"><a href="mapping.html#rdfs_subClassOf_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#rdfs_subClassOf_rdf">5.2</a></td>
+</tr>
+
+<tr>
+<td class="index"><a id="rdfs_subPropertyOf">rdfs:subPropertyOf</a></td>
+<td class="index"><a href="syntax.html#rdfs_subPropertyOf_syntax">2.3.1.3</a></td>
+<td class="index"><a href="syntax.html#rdfs_subPropertyOf_syntax">2.3.1.3</a></td>
+<td class="index"><a href="direct.html#rdfs_subPropertyOf_semantics">3.3</a></td>
+<td class="index"><a href="mapping.html#rdfs_subPropertyOf_mapping">4.1</a></td>
+<td class="index"><a href="rdfs.html#rdfs_subPropertyOf_rdf">5.2</a></td>
+<td class="index"></td>
+</tr>
+
+</tbody></table>
+
+
+<hr />
+
+<h2><a id="acknowledgments" name="acknowledgments">Acknowledgments</a></h2>
+
+<p>
+The 
+<a href="http://www.daml.org/committee/">
+Joint US/EU ad hoc Agent Markup Language Committee
+</a>
+developed DAML+OIL, which is the direct precursor to OWL.
+Many of the ideas in DAML+OIL and thus in OWL are also present in the
+<a href="http://www.ontoknowledge.org/index.shtml">
+Ontology Inference Layer (OIL)</a>.
+</p>
+
+<p>
+This document is the result of extensive discussions within the
+<a href="http://www.w3.org/2001/sw/WebOnt/">Web Ontology Working Group</a>
+as a whole.  The participants in this working group included:  
+Yasser alSafadi, 
+Jean-Fran&#231;ois Baget, 
+James Barnette, 
+Sean Bechhofer, 
+Jonathan Borden, 
+Frederik Brysse, 
+Stephen Buswell, 
+Jeremy Carroll, 
+Dan Connolly, 
+Peter Crowther, 
+Jonathan Dale, 
+Jos De Roo, 
+David De Roure, 
+Mike Dean, 
+Larry Eshelman, 
+J&#233;r&#244;me Euzenat, 
+Tim Finin, 
+Nicholas Gibbins, 
+Sandro Hawke, 
+Patrick Hayes, 
+Jeff Heflin,
+Ziv Hellman, 
+James Hendler, 
+Bernard Horan, 
+Masahiro Hori, 
+Ian Horrocks, 
+Jane Hunter, 
+Francesco Iannuzzelli, 
+R&#252;diger Klein, 
+Natasha Kravtsova, 
+Ora Lassila, 
+Massimo Marchiori, 
+Deborah McGuinness, 
+Enrico Motta, 
+Leo Obrst, 
+Mehrdad Omidvari, 
+Martin Pike, 
+Marwan Sabbouh, 
+Guus Schreiber, 
+Noboru Shimizu, 
+Michael Sintek,
+Michael K. Smith, 
+John Stanton, 
+Lynn Andrea Stein, 
+Herman ter Horst, 
+David Trastour, 
+Frank van Harmelen, 
+Bernard Vatant,
+Raphael Volz, 
+Evan Wallace, 
+Christopher Welty, 
+Charles White,
+and John Yanosy.
+
+</p>
+
+<hr />
+
+<h2><a id="references" name="references">References</a></h2>
+
+<h3><a id="references-normative" name="references-normative">Normative
+References</a></h3>
+
+<dl>
+
+<dt><a name="ref-rdfconcepts" id="ref-rdfconcepts">[RDF Concepts]</a></dt>
+<dd><cite><a
+href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/">Resource
+Description Framework (RDF): Concepts and Abstract Syntax</a></cite>,
+Graham Klyne and Jeremy J. Carroll, Editors, W3C Recommendation, 10 February 2004,
+http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/ . <a
+href="http://www.w3.org/TR/rdf-concepts/">Latest version</a> available
+at http://www.w3.org/TR/rdf-concepts/ .</dd>
+
+<dt><a name="ref-rdfmt" id="ref-rdfmt">[RDF Semantics]</a></dt>
+<dd><cite><a
+href="http://www.w3.org/TR/2004/REC-rdf-mt-20040210/">RDF
+Semantics</a></cite>, Patrick Hayes, Editor, W3C Recommendation, 10 February 2004, http://www.w3.org/TR/2004/REC-rdf-mt-20040210/
+. <a href="http://www.w3.org/TR/rdf-mt/">Latest version</a> available
+at http://www.w3.org/TR/rdf-mt/ .</dd>
+
+<dt><a name="ref-rdfsyntax" id="ref-rdfsyntax">[RDF Syntax]</a></dt>
+<dd><cite><a
+href="http://www.w3.org/TR/2004/REC-rdf-syntax-grammar-20040210/">RDF/XML
+Syntax Specification (Revised)</a></cite>, Dave Beckett, Editor, W3C
+Recommendation, 10 February 2004,
+http://www.w3.org/TR/2004/REC-rdf-syntax-grammar-20040210/ . <a
+href="http://www.w3.org/TR/rdf-syntax-grammar/">Latest version</a>
+available at http://www.w3.org/TR/rdf-syntax-grammar/ .</dd>
+
+<dt><a name="ref-rdf-testcases" id="ref-rdf-testcases">[RDF Tests]</a></dt>
+<dd><cite><a
+href="http://www.w3.org/TR/2004/REC-rdf-testcases-20040210/">RDF
+Test Cases</a></cite>, Jan Grant and Dave Beckett, Editors, W3C
+Recommendation, 10 February 2004,
+http://www.w3.org/TR/2004/REC-rdf-testcases-20040210/ . <a
+href="http://www.w3.org/TR/rdf-testcases/">Latest version</a>
+available at http://www.w3.org/TR/rdf-testcases/ .</dd>
+
+<dt><a id="ref-xml">[XML]</a></dt>
+<dd>
+<cite><a href="http://www.w3.org/TR/2000/REC-xml-20001006">
+Extensible Markup Language (XML) 1.0 (Second Edition)</a></cite>.
+Tim Bray, Jean Paoli, C. M. Sperberg-McQueen, and Eve Maler, eds.
+W3C Recommendation 6 October 2000.
+Latest version is available at 
+<a href="http://www.w3.org/TR/REC-xml">http://www.w3.org/TR/REC-xml</a>.
+</dd>
+
+<dt><a id="ref-xmls-datatypes">[XML Schema Datatypes]</a></dt>
+<dd>
+<cite><a href="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/">
+XML Schema Part 2: Datatypes.</a></cite>.
+Paul V. Biron and Ashok Malhotra, eds.
+W3C Recommendation 02 May 2001.
+Latest version is available at 
+<a href="http://www.w3.org/TR/xmlschema-2/">http://www.w3.org/TR/xmlschema-2/</a>.
+</dd>
+
+</dl>
+
+<h3><a id="references-other" name="references-other">Other
+References</a></h3>
+
+<dl>
+
+<dt><a id="ref-daml">[DAML+OIL]</a></dt>
+<dd>
+<cite>
+<a href="http://www.w3.org/TR/2001/NOTE-daml+oil-reference-20011218">
+DAML+OIL (March 2001) Reference Description</a></cite>.
+Dan Connolly, Frank van Harmelen, Ian Horrocks, 
+Deborah L. McGuinness, Peter F. Patel-Schneider, and Lynn Andrea Stein.
+W3C Note 18 December 2001.
+Latest version is available at 
+<a href="http://www.w3.org/TR/daml+oil-reference">http://www.w3.org/TR/daml+oil-reference</a>.
+</dd>
+
+<dt><a name="ref-guide" id="ref-guide">[OWL Guide]</a></dt>
+<dd><cite><a
+href="http://www.w3.org/TR/2004/REC-owl-guide-20040210/">OWL Web
+Ontology Language Guide</a></cite>, Michael K. Smith, Chris Welty, and
+Deborah L. McGuinness, Editors, W3C Recommendation, 10 February 2004,
+http://www.w3.org/TR/2004/REC-owl-guide-20040210/ . <a
+href="http://www.w3.org/TR/owl-guide/">Latest version</a> available at
+http://www.w3.org/TR/owl-guide/ .</dd>
+
+<dt><a id="ref-issues">[OWL Issues]</a></dt>
+<dd>
+<cite><a href="http://www.w3.org/2001/sw/WebOnt/webont-issues.html">
+Web Ontology Issue Status</a></cite>.
+Michael K. Smith, ed.
+27 June 2003.
+</dd>
+
+<dt><a name="ref-overview" id="ref-overview">[OWL
+Overview]</a></dt> <dd><cite><a
+href="http://www.w3.org/TR/2004/REC-owl-features-20040210/">OWL Web
+Ontology Language Overview</a></cite>, Deborah L. McGuinness and Frank
+van Harmelen, Editors, W3C Recommendation, 10 February 2004,
+http://www.w3.org/TR/2004/REC-owl-features-20040210/ . <a
+href="http://www.w3.org/TR/owl-features/">Latest version</a> available
+at http://www.w3.org/TR/owl-features/ .</dd>
+
+<dt><a name="ref-ref" id="ref-ref">[OWL
+Reference]</a></dt> <dd><cite><a
+href="http://www.w3.org/TR/2004/REC-owl-ref-20040210/">OWL Web
+Ontology Language Reference</a></cite>, Mike Dean and Guus Schreiber,
+Editors, W3C Recommendation, 10 February 2004,
+http://www.w3.org/TR/2004/REC-owl-ref-20040210/ . <a
+href="http://www.w3.org/TR/owl-ref/">Latest version</a> available at
+http://www.w3.org/TR/owl-ref/ .</dd>
+
+<dt><a name="ref-rdf-syntax" id="ref-rdf-syntax">[RDF Syntax]</a></dt>
+<dd><cite><a
+href="http://www.w3.org/TR/2004/REC-rdf-syntax-grammar-20040210/">RDF/XML
+Syntax Specification (Revised)</a></cite>, Dave Beckett, Editor, W3C
+Recommendation, 10 February 2004,
+http://www.w3.org/TR/2004/REC-rdf-syntax-grammar-20040210/ . <a
+href="http://www.w3.org/TR/rdf-syntax-grammar/">Latest version</a>
+available at http://www.w3.org/TR/rdf-syntax-grammar/ .</dd>
+
+<dt><a name="ref-rdf-vocabulary" id="ref-rdf-vocabulary">[RDF
+Vocabulary]</a></dt> <dd><cite><a
+href="http://www.w3.org/TR/2004/REC-rdf-schema-20040210/">RDF
+Vocabulary Description Language 1.0: RDF Schema</a></cite>, Dan
+Brickley and R. V. Guha, Editors, W3C Recommendation, 10 February 2004, http://www.w3.org/TR/2004/REC-rdf-schema-20040210/ . <a
+href="http://www.w3.org/TR/rdf-schema/">Latest version</a> available
+at http://www.w3.org/TR/rdf-schema/ .</dd>
+
+</dl>
+
+<hr />
+
+
+</body>
+</html>
+

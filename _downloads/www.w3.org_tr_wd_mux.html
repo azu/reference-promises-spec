@@ -1,0 +1,1183 @@
+<!-- http://www.w3.org/TR/WD-mux -->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+  <TITLE> W3C WD: SMUX Protocol Specification</TITLE>
+</HEAD>
+<BODY text="#000000" bgcolor="#FFFFFF">
+<H3 align='right'>
+  <A HREF='http://www.w3.org/'><IMG border='0' align='left' alt='W3C' src='http://www.w3.org/Icons/WWW/w3c_home'></A>WD-mux-19980710
+</H3>
+<H1 ALIGN=center>
+  SMUX Protocol Specification
+</H1>
+<H3 align=center>
+  W3C Working Draft 10-July-1998
+</H3>
+<DL>
+  <DT>
+    This version:
+  <DD>
+    <A HREF="http://www.w3.org/TR/1998/WD-mux-19980710">http://www.w3.org/TR/1998/WD-mux-19980710</A>
+  <DT>
+    Latest public version:
+  <DD>
+    <A HREF="http://www.w3.org/TR/WD-mux">http://www.w3.org/TR/WD-mux</A>
+  <DT>
+    Authors:
+  <DD>
+    Jim Gettys, Compaq Computer Corporation, Visiting Scientist,
+    <A href="http://www.w3.org/WINDOWS/">W3C</A>,
+    &lt;<A HREF="mailto:jg@w3.org">jg@w3.org</A>&gt;
+  <DD>
+    Henrik Frystyk Nielsen, <A href="http://www.w3.org/WINDOWS/">W3C</A>,
+    &lt;<A HREF="mailto:frystyk@w3.org">frystyk@w3.org</A>&gt;
+</DL>
+<p><small><A href='http://www.w3.org/Consortium/Legal/ipr-notice.html#Copyright'>Copyright</A>
+ &nbsp;&copy;&nbsp; 1998 <A href='http://www.w3.org'>W3C</A> (<A href='http://www.lcs.mit.edu'>MIT</A>,
+ <A href='http://www.inria.fr/'>INRIA</A>, <A href='http://www.keio.ac.jp/'>Keio</A> ),
+ All Rights Reserved. W3C <A href='http://www.w3.org/Consortium/Legal/ipr-notice.html#Legal Disclaimer'>liability,</A>
+ <A href='http://www.w3.org/Consortium/Legal/ipr-notice.html#W3C Trademarks'>trademark</A>,
+ <A href='http://www.w3.org/Consortium/Legal/copyright-documents.html'>document use
+ </A>and <A href='http://www.w3.org/Consortium/Legal/copyright-software.html'>software licensing </A>rules apply.
+</small></p>
+<H2>
+  Status of This Document
+</H2>
+<P>
+This is a W3C Working Draft for review by W3C members and other interested
+parties. It is a draft document and may be updated, replaced or made obsolete
+by other documents at any time. It is inappropriate to use W3C Working Drafts
+as reference material or to cite them as other than "work in progress." A
+list of current
+<A href="http://www.w3.org/TR">W3C
+working drafts</A> is also available.
+<P>
+This document describes an experimental design for a multiplexing transport,
+intended for, but not restricted to use with the Web. SMUX has been implemented
+as part of the HTTP/NG project. Use of this protocol is EXPERIMENTALat this
+time and the protocol may change. In particular, transition strategies to
+use of SMUX have not been definitively worked out. You have been warned!
+<P>
+This document is part of a suite of documents describing the HTTP-NG design
+and prototype implementation:
+<UL>
+  <LI>
+    <A href="http://www.w3.org/TR/1998/WD-HTTP-NG-goals">HTTP-NG
+    Short- and Longterm Goals</A>, WD
+  <LI>
+    <A href="http://www.w3.org/TR/WD-HTTP-NG-architecture">HTTP-NG
+    Architectural Model</A>, WD
+  <LI>
+    <A href="http://www.w3.org/TR/WD-HTTP-NG-wire">HTTP-NG
+    Wire Protocol</A>, WD
+  <LI>
+    <A href="http://www.w3.org/TR/WD-HTTP-NG-interfaces">The
+    Classic Web Interfaces in HTTP-NG</A>, WD
+  <LI>
+    <A href="http://www.w3.org/TR/WD-mux">The MUX
+    Protocol</A>, WD
+  <LI>
+    <A href="http://www.w3.org/TR/NOTE-HTTP-NG-testbed">Description
+    of the HTTP-NG Testbed</A>, Note
+</UL>
+<P>
+<B>Note</B>: Since working drafts are subject to frequent change, you are
+advised to reference the above URL, rather than the URLs for working drafts
+themselves. This work is part of the W3C HTTP/NG Activity (for current status,
+see
+<A href="http://www.w3.org/Protocols/HTTP-NG/Activity">http://www.w3.org/Protocols/HTTP-NG/Activity</A>).
+<P>
+Please send comments on this specification to
+&lt;<A HREF="mailto:www-http-ng-comments@w3.org">www-http-ng-comments@w3.org</A>&gt;.
+<H2>
+  Abstract
+</H2>
+<P>
+This document defines the experimental multiplexing protocol referred to
+as "SMUX". SMUX is a session management protocol separating the underlying
+transport from the upper level application protocols. It provides a lightweight
+communication channel to the application layer by multiplexing data streams
+on top of a reliable stream oriented transport. By supporting coexistence
+of multiple application level protocols (e.g. HTTP and HTTP/NG), SMUX should
+ease transitions to future Web protocols, and communications of client applets
+using private protocols with servers over the same TCP connection as the
+HTTP conversation.
+<H2>
+  <A name="Contents"></A>Contents
+</H2>
+<UL>
+  <LI>
+    <A href="#Introduction">Introduction</A>
+  <LI>
+    <A href="#Operation">Operation and Deadlock Avoidance</A>
+  <LI>
+    <A href="#Mux_Header">SMUX Header</A>
+  <LI>
+    <A href="#Alignment">Alignment</A>
+  <LI>
+    <A href="#Session_ID_Allocation">Session ID Allocation</A>
+  <LI>
+    <A href="#Establishment">Session Establishment</A>
+  <LI>
+    <A href="#StackID">Protocol ID's</A>
+  <LI>
+    <A href="#Graceful">Graceful Release</A>
+  <LI>
+    <A href="#Disgraceful">Disgraceful Release</A>
+  <LI>
+    <A href="#Message">Message Boundaries</A>
+  <LI>
+    <A href="#Flow">Flow Control</A>
+  <LI>
+    <A href="#Control">Control Messages</A>
+  <LI>
+    <A href="#Closed">Remaining Issues for Discussion</A>
+  <LI>
+    <A href="#Closed">Closed Issues from Discussion and Email</A>
+  <LI>
+    <A href="#Glossary">Glossary</A>
+  <LI>
+    <A href="#References">References</A>
+</UL>
+<H2>
+  <A name="Introduction" href="#Contents"></A>Introduction
+</H2>
+<H4>
+  Changes from Previous Version
+</H4>
+<P>
+Tried to clarify teminology.
+<P>
+Moved comparison between SMUX and SCP(TMP) to end of the document, and extracted
+a goals section from it.
+<H2>
+  Key Words
+</H2>
+<P>
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
+"SHOULD NOT",&nbsp; "RECOMMENDED", "MAY", and "OPTIONAL" in this document
+are to be interpreted as described in RFC 2119 <A href="#RFC2119">[7]</A>.
+<H3>
+  Purpose
+</H3>
+<P>
+The Internet is suffering from the effects of the
+<A href="http://www.w3.org/Protocols/rfc1945/rfc1945.txt">HTTP/1.0
+protocol</A>, which was designed without understanding of the underlying
+TCP <A href="#RFC793">[1]</A> transport protocol. HTTP/1.0 opens a TCP connection
+for each URI <A href="#RFCURI">[28]</A> retrieved (at a cost of both packets
+and round trip times (RTTs)), and then closes the TCP connection. For small
+HTTP requests, these TCP connections have poor performance due to TCP slow
+start <A href="#RFC2001">[9]</A> <A href="#Congestion">[10]</A> as well as
+the round trips required to open and close each TCP connection.
+<P>
+There are (at least) three reasons why multiple simultaneous TCP connections
+have come into widespread use on the Internet despite the apparent
+inefficiencies:
+<OL>
+  <LI>
+    A client using multiple TCP connections gains a significant advantage in
+    perceived performance by the end-user, as it allows for early retrieval of
+    metadata (e.g. size) of embedded objects in a page. This allows a client
+    to format a page sooner without suffering annoying reformatting of the page.
+    Clients which open multiple TCP connections in parallel to the same server,
+    however could cause self congestion on heavily congested links, since packets
+    generated by TCP opens and closes are not themselves congestion controlled.
+  <LI>
+    The additional TCP opens cause performance problems in the network, but a
+    client that opens multiple TCP connections simultaneously to the same server
+    may also receive an "unfair" bandwidth advantage in the network relative
+    to clients that use a single TCP connection. This problem is not solvable
+    at the application level; only the network itself can enforce such "fairness".
+  <LI>
+    To keep low bandwidth/high latency links busy (e.g. dialup lines), more than
+    one TCP connection has been necessary since slow start may cause the line
+    to be partially idle.
+</OL>
+<P>
+The "Keep-Alive" extension to HTTP/1.0 is a form of persistent TCP connections
+but does not work through HTTP/1.0 proxies and does not take pipelining of
+requests into account. Instead a revised version of persistent TCP connections
+was introduced in HTTP/1.1 as the default mode of operation.
+<P>
+HTTP/1.1 <A href="#RFC2068">[6]</A> persistent connections and pipelining
+<A href="#HTTP11Performance">[11]</A> will reduce network traffic and the
+amount of TCP overhead caused by opening and closing TCP connections. However,
+the serialized behavior of HTTP/1.1 pipelining does not adequately support
+simultaneous rendering of inlined objects - part of most Web pages today;
+nor does it provide suitable fairness between protocol flows, or allow for
+graceful abortion of HTTP transactions without closing the TCP connection
+(quite common in HTTP operation).
+<P>
+Persistent connections and pipelining, however, do not fully address the
+rendering nor the fairness problems described above.&nbsp; A "hack" solution
+is possible using HTTP range requests; however, this approach does not, for
+example, allow a server to send just the metadata contained in embedded object
+before sending the object itself, nor does it solve the TCP connection abort
+problem.
+<P>
+Current TCP implementations do not share congestion information across multiple
+simultaneous TCP&nbsp;connections between two peers, which increases the
+overhead of opening new TCP connections. We expect that Transactional TCP
+<A href="#RFC1644">[5]</A> and sharing of congestion information in TCP control
+blocks <A href="#RFC2140">[8]</A> will improve TCP performance by using less
+RTTs and better congestion behavior, making it more suitable for HTTP
+transactions.
+<P>
+The solution to these problems requires two actions; either by itself will
+not entirely discourage opening multiple TCP connections to the same server
+from a client.
+<UL>
+  <LI>
+    Internet service providers should enable the Random Early Detection (RED)
+    <A href="#RED">[12]</A> or other active congestion control algorithms in
+    their routers to ensure bandwidth fairness to clients when the network is
+    congested. RED also addresses queue length problems observed in routers today.
+  <LI>
+    Development and deployment of a multiplexing protocol for use with HTTP (and
+    eventually other protocols), so that multiple objects from a web server can
+    be fetched approximately simultaneously over a single TCP connection, so
+    that the metadata to objects can be sent to clients without other metadata
+    waiting for the rest of the first object requested.
+</UL>
+<P>
+This document describes such an experimental multiplexing protocol. It is
+designed to multiplex a TCP&nbsp;connection underneath HTTP so that HTTP
+itself does not have to change, and allow coexistence of multiple protocols
+(e.g. HTTP and HTTP/NG), which will ease transitions to future Web protocols,
+and communications of client applets using private protocols with servers
+over the same TCP connection as the HTTP conversation.
+<P>
+Ideas from this design come from Simon Spero's SCP [15] [16] description
+and from experience from the
+<A href="http://www.research.digital.com/CRL/abstracts/90.8.html">X Window
+System's protocol design</A> <A href="#X">[13]</A>.
+<H2>
+  Goals
+</H2>
+<P>
+We believe SMUX meets the following goals::
+<UL>
+  <LI>
+    Unconfirmed service without negotiation or round trips to the server
+  <LI>
+    simple design
+  <LI>
+    high performance
+  <LI>
+    deadlock-free (we believe), by a credit based flow control scheme.
+  <LI>
+    allow multiple protocols to be multiplexed over same TCP connection
+  <LI>
+    allow connections to be established in either direction (enabling callbacks
+    to the session initiator).
+  <LI>
+    ability to build a full function socket interface above this protocol.
+  <LI>
+    low overhead
+  <LI>
+    preserves alignment in the data stream, so that it is easy to use with protocols
+    that marshal their data in a binary form.
+</UL>
+<H2>
+  SMUX&nbsp;Protocol Operation
+</H2>
+<H3>
+  Deadlock Scenario
+</H3>
+<P>
+Multiplexing multiple sessions over a single transport TCP&nbsp;connection
+introduces a potential deadlock that SMUX is designed to avoid.
+<P>
+Here is an example of potential deadlock:
+<UL>
+  <LI>
+    Presume that each session is being handled by an independent thread and that
+    memory available to the SMUX implementation&nbsp; is limited (for example,
+    on a thin client on a meter reader).
+  <LI>
+    For the purposes of this example, presume the thin client has 50K bytes of
+    buffer available to its SMUX implementation, and cannot get more.
+  <LI>
+    The sender of data decides to send, as part of a session request (SYN message),
+    100K bytes of initial data.&nbsp; There are no other senders, so all of the
+    data gets transmitted.&nbsp; But the thread to deal with the message is blocked,
+    and cannot make progress.
+  <LI>
+    Unless SMUX can buffer all 100K (or 1 meg, or pick your favorite numbers),
+    any other session's data would be blocked behind this initial transmission
+    until and unless SMUX can read and buffer the data someplace (and since it
+    has no buffer available, the deadlock occurs). Many similar (but possibly
+    harder to explain) deadlocks are possible.
+</UL>
+<P>
+This example points out that deadlock is possible: SMUX must be able to buffer
+data independently of the consumers of the data.&nbsp; It must also have
+some way to throttle sessions where the consumer of the data is not responsive
+in the multiplexing layer (in this example, prevent the transmission of more
+than 50 Kbytes of data).&nbsp; Note that this deadlock is independent of
+the size of any multiplexing fragment, but strictly dependent on availability
+of buffer space in SMUX for a particular session.
+<H3>
+  Deadlock Avoidance
+</H3>
+<P>
+In SMUX, the receiver makes a promise (sends a credit) to the transmitter
+that a certain amount of buffer space is available (or at least that it will
+consume the bytes, if not buffer them, e.g. a real time audio protocol where
+the data is disposed of), and the transmitter promises not to send more data
+than the receiver has promised (no more than the credit).&nbsp; If these
+promises are met, then SMUX will not deadlock.
+<P>
+A SMUX implementation MUST maintain and adhere to the credit system or it
+can deadlock.&nbsp; Implementations on systems with large amounts of memory
+(e.g. VM systems) may be quite different than ones on thin clients with limited,
+non-virtual memory.&nbsp; It is reasonable on a VM system to hand out credits
+freely (analogous to the virtual socket buffering found in TCP implementations);
+but your implementation must be careful to test its credit mechanisms so
+that they will inter operate with limited memory systems.&nbsp; Credit control
+messages MAY be sent on sessions that are not active.
+<P>
+Sessions have an initial credit size (<I>initial_default_credit</I>) of 16
+KB on each session; there is a SMUX control message to set this initial credit
+to something larger than the default.
+<H3>
+  Operation and Implementation Considerations
+</H3>
+<P>
+A transmitter MUST NOT transmit more data in a fragment than the available
+credit on the session (or it could deadlock).
+<P>
+An SMUX implementation MUST fragment streams when transmitting them into
+<I>fragments</I>. The <I>max_fragment_size</I>, a&nbsp; variable which is
+maintained on (currently) a per transport TCP connection basis,&nbsp; determines
+the largest possible fragment a sender should ever send to a receiver.&nbsp;
+This determines the maximum latency introduced by a SMUX layer above and
+beyond the inherent TCP latencies (socket buffering on both sender and receiver
+and the delay-bandwidth product amount of data that could be in flight at
+any given instant).&nbsp; A client on a low bandwidth link, or with limited
+memory buffering might decide to set the <I>max_fragment_size</I> down to
+control latency and buffer space required.&nbsp; If <I>max_fragment_size</I>
+is set to zero, the transmitter is left to determine the fragment size and
+MAY take into account application protocol knowledge (e.g. a SMUX implementation
+for HTTP might send fragments of the metadata of embedded objects, or the
+next phase of a progressive image format, which it only knows).&nbsp; An
+implementation SHOULD honor the <I>max_fragment_size </I>as it transmits
+data, if it has been set by the receiver.
+<P>
+An SMUX implementation that does not have explicit knowledge or experience
+of good fragment sizes might use these guidelines as a starting point:
+<UL>
+  <LI>
+    The path_MTU of the TCP connection, minus the size of the TCP and IP headers
+    (remember that IPV6 may have longer headers!) and 8 bytes for an XMUX header,
+    if this information is available <A href="#RFC1191">[3]</A>.
+  <LI>
+    The MSS of the TCP connection, if the path_MTU is not available
+  <LI>
+    In either case, you probably want to subtract 8 bytes to make sure a SMUX
+    header can be added without forcing another TCP segment.
+</UL>
+<P>
+This would result in fragmentation roughly similar to TCP segmentation over
+multiple TCP&nbsp;connections.
+<P>
+An implementation should round robin between sessions with data to send in
+some fashion to avoid starving sessions, or allowing a single thread to
+monopolize the TCP connection.&nbsp; Exact details of such behavior is left
+to the implementation.&nbsp; To achieve highest bandwidth and lowest overhead
+SMUX behavior, credits should be handed out in reasonably large chunks. TCP
+implementations typically send an ack message on every other packet, and
+it is very hard to arrange to piggyback acks on data segments in
+implementations.&nbsp; Therefore, for SMUX to have reasonably low overhead
+credits should be handed out in some significant multiple (4 or more times
+larger) than the ~3000 bytes represented by two packets on an ethernet.&nbsp;
+The outstanding credit balance across active sessions will also have to be
+larger than the bandwidth/delay product of the TCP connection if SMUX is
+not to become a limit on TCP transport performance.
+<P>
+Both of these arguments indicate that outstanding credits in many implementations
+should be 10K bytes or more.&nbsp; Implementations SHOULD piggyback credit
+messages on data packets where possible, to avoid unneeded packets on the
+wire.&nbsp; A careful implementation in which both ends of the TCP connection
+are regularly sending some payload should be able to avoid sending extra
+packets on the network.
+<P>
+<I>If necessary, we could add in a future version fragmentation control messages
+to do some bandwidth allocation, but for now, we are not bothering.</I>
+<H3>
+  <A name="Mux_Header" href="#Contents"></A>SMUX Header
+</H3>
+<P>
+SMUX headers are <I>always</I> in big endian byte order. <BR>
+<I>If people want, we could expand out the union below on a control message
+type basis (e.g. the way the C bindings to X events were written out...).
+For this draft, I'm not doing so.</I>
+<PRE>&nbsp;#define MUX_CONTROL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0x00800000
+&nbsp;#define MUX_SYN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0x00400000
+&nbsp;#define MUX_FIN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0x00200000
+&nbsp;#define MUX_RST&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0x00100000
+&nbsp;#define MUX_PUSH&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0x00080000
+&nbsp;#define MUX_SESSION&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0xFF000000
+&nbsp;#define MUX_LONG_LENGTH&nbsp;&nbsp; 0xFF040000
+&nbsp;#define MUX_LENGTH&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0x0003FFFF
+&nbsp;
+&nbsp;typedef unsigned int flagbit;
+&nbsp;struct w3mux_hdr {
+&nbsp;&nbsp;&nbsp;&nbsp; union {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; struct {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; unsigned int session_id : 8;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; flagbit control : 1;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; flagbit syn : 1;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; flagbit fin : 1;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; flagbit rst : 1;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; flagbit push : 1;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; flagbit long_length : 1;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; unsigned int fragment_size : 18;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int long_fragment_size : 32; /* only present if long_length is set */
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } data_hdr;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; struct {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; unsigned int session_id : 8;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; flagbit control : 1;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; unsigned int control_code : 4;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; flagbit long_length : 1;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; unsigned int fragment_size : 18;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int long_fragment_size : 32; /* only present if long_length is set */
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } control_message;
+&nbsp;&nbsp;&nbsp;&nbsp; } contents;
+&nbsp;};
+</PRE>
+<P>
+The <I>fragment_size</I> is always the size in bytes of the fragment, excluding
+the SMUX header and any padding.
+<H3>
+  <A name="Alignment"></A>Alignment
+</H3>
+<P>
+SMUX headers are always (at least) 32 bit aligned. To find the next SMUX
+header, take the <I>fragment_size</I>, and round up to the next 32 bit boundary.
+<P>
+Transmitters MAY insert <I><TT>NoOp </TT></I>control messages to force 64
+bit alignment of the protocol stream.
+<H3>
+  <A name="Long_Fragments"></A>Long Fragments
+</H3>
+<P>
+A SMUX header with the <I>long_length</I> bit set must use the 32 bits following
+the SMUX header (the l<I>ong_fragment_size</I> field) for the value of the
+<I>fragment_size</I> field, for whatever purpose the <I>fragment_size</I>
+field is being used for.
+<H3>
+  <A name="Atoms"></A>Atoms
+</H3>
+<P>
+Atoms are integers that are used as short-hand names for strings, which are
+defined using the <I>InternAtom </I>control message.&nbsp; Atoms are only
+used as protocol ID's in this version of SMUX, though they might be used
+for other purposes in future versions.&nbsp; Since the atom might be redefined
+at any time, it is not safe to use an atom unless you have defined it (i.e.
+you cannot use atoms defined by the other end of a mux connection). Atoms
+are therefore not unique values, and only make sense in the context of a
+particular direction of a particular mux connection.&nbsp; This restriction
+is to avoid having to define some protocol for deallocating atoms, with any
+round trip overhead that would likely imply.
+<P>
+Strings are defined to be UTF-8 encoded UNICODE strings.&nbsp; (Note that
+an ascii string is valid UTF-8).&nbsp; The definition of structure of these
+strings is outside of the scope of this document, though we expect they will
+often be URI's, naming a protocol or stack of protocols.&nbsp; Atoms always
+have values between 0x20000 and 0x200ff (a maximum of 256 atoms can be defined).
+<P>
+Strings used for protocol id's MUST be URIs <A href="#RFCURI">[28]</A>.
+<H3>
+  <A name="StackID" href="#Contents"></A>Protocol
+  ID's
+</H3>
+<P>
+The protocol used by a session is identified by a Protocol ID, which can
+either be an IANA port number, or an atom.
+<OL>
+  <LI>
+    To allow higher layers to stack protocols (e.g. HTTP on top of deflate
+    compression, on top of TCP).
+  <LI>
+    To identify the protocol or protocol stack in use so that application firewall
+    relays can perform sanity checking and policy enforcement on the multiplexed
+    protocols .
+</OL>
+<P>
+In the simplest case, a protocol ID is just a value in the range of 0-0x1FFFF,
+and specifies the TCP port number (0x0000-0xffff) or UDP port number
+(0x10000-0x1ffff) of the protocol per the IANA port number registry [17].&nbsp;
+Firewall proxies can presume that the bytes should conform to that
+protocol.&nbsp; Protocol ID's above 0xfffff are atoms. The scheme name of
+the URI indicates the protocol family being used.
+<H3>
+  <A name="Session_ID_Allocation"></A>Session ID Allocation
+</H3>
+<P>
+Each session is allocated a session identifier. Session Identifiers below
+0 and 1 are reserved for future use. Session IDs allocated by initiator of
+the transport TCP connection are even; those allocated by the receiver of
+the transport connection odd. Proxies that do not understand messages of
+reserved Session ID's should forward them unchanged.&nbsp; A session identifier
+MUST only be deallocated and potentially reused by new sessions when a session
+is fully closed in both directions.
+<H3>
+  <A name="Establishment" href="#Contents"></A>Session
+  Establishment
+</H3>
+<P>
+To establish a new session, the initiating end sends a SYN message, allocating
+a free session number out of its address space. A session is established
+by setting the SYN bit in the first message sent on that session. The session
+is specified by the <I>session_id</I> field. The <I>fragment_size </I>field
+is interpreted as the
+<A href="#StackID">protocol
+ID</A> of the session, as discussed above.
+<P>
+The receiver MUST either open the reverse path of that session (send a SYN
+message), or it MUST send a FIN message to indicate that the reverse path
+is not going to be used further, or send a RST message to indicate an
+error.&nbsp; This enables the initiator of a session to know when it is safe
+to reuse that session ID.
+<H3>
+  <A name="Graceful" href="#Contents"></A>Graceful
+  Release
+</H3>
+<P>
+A session is ended by sending a fragment with the FIN bit set. Each end of
+a MUX connection may be closed independently.
+<P>
+MUX uses a half-close mechanism like TCP[1] to close data flowing in each
+direction in a session. After sending a FIN fragment, the sender MUST NOT
+send any more payload in that direction.
+<H3>
+  <A name="Disgraceful" href="#Contents"></A>Disgraceful
+  Release
+</H3>
+<P>
+A session may be terminated by sending a message with the RST bit set. All
+pending data for that session should be discarded. "No such protocol" errors
+detected by the receiver of a new session are signaled to the originator
+on session creation by sending a message with the RST bit set. (Same as in
+TCP).
+<P>
+The payload of the fragment containing the RST bit contains the null terminated
+string containing the URI of an error message (note that content negotiation
+makes this message potentially multi-lingual), followed by a null terminated
+UTF-8 string containing the reason for the reset (in case the URI is not
+accessable).
+<H3>
+  <A name="Message" href="#Contents"></A>Message
+  Boundaries
+</H3>
+<P>
+A message boundary is marked by sending a message with the PUSH bit set.
+The boundary is set between the last octet in this message, including that
+octet, and the first byte of a subsequent message.&nbsp; This differs slightly
+from TCP, as PUSH can be reliably used as a record mark.
+<H3>
+  <A name="Flow" href="#Contents"></A>Flow
+  Control
+</H3>
+<P>
+Flow control is determined by a simple credit scheme described above by
+using&nbsp; the <I><TT>AddCredits</TT></I> control message defined below.
+Fragments transmitted must never exceed the outstanding credit for that session.
+The initial outstanding credit for a session is 16Kbytes.
+<H3>
+  <A name="Endpoints"></A>End Points
+</H3>
+<P>
+One of the major design goals of SMUX is to allow callbacks to objects in
+the process that initiated the transport TCP&nbsp;connection without requiring
+additional TCP connections (with the overhead in both machine resources and
+time that this would cause, or the problems with TCP connection establishment
+through firewalls).
+<P>
+The <I>DefineEndpoint</I> control message allows one to advertize that a
+particular (set of) URI's are reachable over the transport TCP connection.
+<H3>
+  <A name="Control" href="#Contents"></A>Control
+  Messages
+</H3>
+<P>
+The control bit of the SMUX header is always set in a control message. Control
+messages can be sent on any session, even sessions that are not (yet) open.
+The <I>control_code</I> reuses the SYN, FIN, RST, and PUSH bits of the SMUX
+header. The <I>control_code</I> of the control message determines the control
+message type. Any unused data in a control message must be ignored.
+<P>
+<I>The revised version of SMUX means that a session creation costs 4 bytes
+(a control message with SYN set, and with the protocol ID in the message).&nbsp;
+Therefore the first fragment of payload has a total overhead of 8 bytes.&nbsp;
+(This is presuming using an IANA based protocol, rather than a named
+protocol).&nbsp; This is the same as the previous version, though it means
+two messages rather than one.</I>
+<P>
+The individual control message types are listed below.
+<TABLE cellpadding="2">
+  <TR>
+    <TH>code&nbsp;</TH>
+    <TH>Name&nbsp;</TH>
+    <TD><B>Dir</B></TD>
+    <TH>Description&nbsp;</TH>
+  </TR>
+  <TR>
+    <TD>0&nbsp;</TD>
+    <TD><TT>InternAtom</TT></TD>
+    <TD>Both</TD>
+    <TD>The <I>session_id</I> is used as the Atom to be defined (offset by 0x2000),
+      so a value of 0 is defining ID 0x2000). The <I>fragment_size</I> field is
+      the length of the UTF-8 encoded string. The fragment itself contains the
+      string to be interned.<I>&nbsp; This allows the interning of 256 strings.&nbsp;
+      (is this enough?).</I></TD>
+  </TR>
+  <TR>
+    <TD>1&nbsp;</TD>
+    <TD><TT>DefineEndpoint</TT>&nbsp;</TD>
+    <TD>Both</TD>
+    <TD>The <I>session_id</I> is ignored.&nbsp; The <I>fragment_size</I> is
+      interpreted as the protocol ID, naming an endpoint actually available on
+      this transport TCP connection.&nbsp; This enables a single transport
+      TCP&nbsp;connection to be used for callbacks, or to advertise that a protocol
+      endpoint can be reached to the process on the other end of the transport
+      TCP connection. Whether this relative URI naming can be used depends upon
+      the scheme of the URI [20], which defines its structure.&nbsp; <BR>
+      For example, a firewall proxy might advertize just "http:" for the proxy,
+      claiming it can be used to contact any HTTP protocol object anywhere, or
+      "http://foo.com/bar/" to indicate that any object below that point in the
+      URI space on the server foo.com may be reached by this TCP connection. A
+      client might advertize that "http://myhost.com/" is available via this transport
+      TCP connection.</TD>
+  </TR>
+  <TR>
+    <TD>2&nbsp;</TD>
+    <TD><TT>SetMSS&nbsp;</TT></TD>
+    <TD>Both</TD>
+    <TD>This sets a limit on fragment sizes below the outstanding credit limit.
+      The <I>session_id</I> must be zero. The <I>fragment_size</I> field is used
+      as <I>max_fragment_size</I> (the largest fragment that be sent on any session
+      on this transport TCP connection.). A <I>max_fragment_size</I> of zero means
+      there is no limit on the fragment size allowed for this session.&nbsp;</TD>
+  </TR>
+  <TR>
+    <TD>3&nbsp;</TD>
+    <TD><TT>AddCredit</TT></TD>
+    <TD>R-&gt;T</TD>
+    <TD>The <I>session_id</I> specifies the session. The <I>fragment_size</I>
+      specifies the flow control credit granted (to be added to the current outstanding
+      credit balance). A value of zero indicates no limit on how much data may
+      be sent on this session.</TD>
+  </TR>
+  <TR>
+    <TD>4</TD>
+    <TD><TT>SetDefaultCredit</TT></TD>
+    <TD>R-&gt;T</TD>
+    <TD>The <I>session_id</I> must be zero. The <I>fragment_size</I> field is
+      used as to set the initial default credit limit for any incoming MUX connections
+      over this transport TCP connection. (i.e. it is short hand for sending a
+      series of AddCredit messages for each session ID).</TD>
+  </TR>
+  <TR>
+    <TD>5</TD>
+    <TD><TT>NoOp</TT></TD>
+    <TD>Both</TD>
+    <TD>This control message is defined to perform no function.&nbsp; Any data
+      in the payload should be ignored.</TD>
+  </TR>
+  <TR>
+    <TD>6-15&nbsp;</TD>
+    <TD><CENTER>
+	-&nbsp;
+      </CENTER>
+    </TD>
+    <TD></TD>
+    <TD>Undefined. Reserved for future use. Must be ignored if not understood,
+      and forwarded by any proxies.&nbsp; The <I>fragment_size</I> is always used
+      for the length of the control message, and any data for the control message
+      will be in the payload of the control message (to allow proxies to be able
+      to forward future control messages).</TD>
+  </TR>
+</TABLE>
+<H2>
+  <A name="Remaining" href="#Contents"></A>Remaining
+  Issues for Discussion
+</H2>
+<DL>
+  <DT>
+    When can MUX be used???
+  <DD>
+    What are the appropriate strategies for determining if the simple multiplexing
+    protocol can be used? Name server hack? UPGRADE in HTTP? Remember that previous
+    UPGRADE to use MUX worked?
+</DL>
+<H2>
+  Comparison with SCP (TMP)
+</H2>
+<P>
+Note that TIP (Transaction Internet Protocol) <A href="#TIP">[21]</A> defines
+a version of SCP called TMP .
+<P>
+Goals:
+<UL>
+  <LI>
+    Unconfirmed service without negotiation.
+  <LI>
+    SCP allows data to be sent with the session establishment; the recipient
+    does not confirm successful mux connection establishment, but may reject
+    unsuccessful attempts. This simplifies the design of the protocol, and removes
+    the latency required for a confirmed operation.
+  <LI>
+    simple design
+  <LI>
+    performance where critical
+</UL>
+<P>
+There are five issues that make SCP (TMP) inadequate for our use:
+<UL>
+  <LI>
+    SCP can deadlock, unless unlimited amounts of memory is available.
+  <LI>
+    it has no provision for multiplexing multiple protocols over the same transport
+    TCP connection, essential for graceful transition without dependency on the
+    currently incomplete NG design, and to allow other uses which could use the
+    same multiplexed connection (e.g. applet communication with serverlets).
+  <LI>
+    SCP's 8 byte overhead is not reasonable most of the time. SMUX uses four
+    bytes in the default case. The design below permits an 8 byte header if you
+    care to preserve 64 bit alignment at the cost of bytes. In practice, there
+    seems few data formats or architectures that actually require more than 32
+    bit alignment.
+  <LI>
+    Without some form of flow control, infinite buffering in clients (receivers)
+    would be required.
+  <LI>
+    Alignment is preserved in the data stream. This allows compact, high speed
+    (un)marshalling code in implementations of binary protocols, without extra
+    data copies, which in such protocols can be significant overhead.
+  <LI>
+    SCP SYN in Version 2 requires a second message, which costs a round trip.
+</UL>
+<P>
+So far, SMUX is similar to SCP. There are some important differences:
+<UL>
+  <LI>
+    deadlock-free (we believe), by a credit based flow control scheme.
+  <LI>
+    allow multiple protocols to be multiplexed over same TCP connection (not
+    available in SCP).
+  <LI>
+    lower overhead than SCP, while preserving data alignment (very important
+    for binary protocol marshaling code)
+  <LI>
+    ability to build a full function socket interface above this protocol.
+  <LI>
+    SMUX avoids the SYN round trip of SCP V2 by session ID's being allocated
+    in independent address spaces.&nbsp; This also avoids many of the state
+    transitions of SCP, simplifying the protocol greatly.
+</UL>
+<P>
+Other comment on SCP:
+<P>
+SCP has 2<SUP>24</SUP> sessions, which seems highly excessive, and reserves
+1024 of them for future use.<A name="Operation1"></A>
+<H2>
+  <A name="Closed" href="#Contents"></A>Closed
+  Issues from Discussion and Mail
+</H2>
+<P>
+Some of the comments below allude to previous versions of the specification,
+and may not make sense in the context of the current version.
+<H3>
+  Flow control: priority vs. credit schemes
+</H3>
+<P>
+Henrik and I have convinced ourselves there are fundamental differences between
+a priority scheme and the credit scheme in this draft.&nbsp; They interact
+quite differently with TCP, and priority schemes have no way to limit the
+total amount of data being transmitted, though priority schemes are better
+matched to what the Web wants.&nbsp; We've decided, at least for now, to
+defer any priority schemes to higher level protocols.
+<H3>
+  Stacking Protocols and Transports (Stacks)
+</H3>
+<P>
+ILU [22] style protocol stacks are a GOOD THING. There have been too many
+worries about the birthday problem for people to be comfortable with Bill
+Janssen's hashing schemes (see
+<A href="http://www.w3.org/Protocols/MUX/Naming.html">Henrik
+Frystyk Nielsen</A> and
+<A href="http://www.w3.org/Protocols/MUX/ThoughtsOnHashing.txt">Robert
+Thau's mail</A> on this topic).&nbsp;&nbsp; We tried putting this directly
+in MUX in a previous version, and experience shows that it didn't really
+help an implementer (in particular, Bill Janssen while implementing ILU).&nbsp;
+This version has just the name of the protocol, and it is left to others
+to implement any stacking (e.g. ILU).
+<P>
+We believe the name of the protocol is necessary, if SMUX is ever to be used
+with firewalls.&nbsp; Application level firewall relays need the protocol
+information to sanity check the protocol being relayed. Application level
+relays are considered much more secure than just punching holes in the firewall
+for particular protocol families, which small organizations often find
+sufficient, as the relay can sanity check the protocol stream and enable
+better policy decisions (for example, to forbid certain datatypes in HTTP
+to transit a firewall).&nbsp; Large organizations and large targets typically
+only run application level proxies.
+<H3>
+  Byte Usage
+</H3>
+<P>
+Wasting bytes in general, and in particular at TCP connection establishment,
+for a multiplexing transport must be avoided. There are several reasons for
+this:
+<UL>
+  <LI>
+    if the initial segment is too long, a network round trip will be lost to
+    TCP slow start, so bytes near the beginning of a conversation MAY BE much
+    more precious than bytes later in the conversation, once slow start overhead
+    has been paid. If the first segment is too long, you fall off a cliff.
+  <LI>
+    Directly affects user perceived response; no cleverness of later packing
+    and batching of request can get the time back; each goes directly to perceived
+    latency when a user talks to the server for the first time.
+</UL>
+<P>
+So there is more than the usual tension between generality vs. performance.
+Performance analysis
+<P>
+Human perception is about 30 milliseconds; if much more than this, the user
+perceives delay. At 14.4 K baud, one byte uncompressed costs .55 milliseco
+nds (ignoring modem latencies). On an airplane via telephone today, you get
+a munificent 4800 baud, which is 3X slower. Cellular modems transmitting
+data (CDPD), as I understand it, will give us around 20Kbaud, when deployed.
+<P>
+So basic multiplexing @ 4 byte overhead costs ~ 2 milliseconds on common
+modems. This means basic overhead is small vs. human perception, for most
+low speed situations, a good position to be in.
+<P>
+On cMux onnection open, with above protocol we send 4 bytes in the setup
+message, and then must open a session, requiring at least 8 bytes more. 12
+bytes == 7 milliseconds at 14.4K. Not 64 bit aligned, and 4 bytes costs of
+order 2 milliseconds. Ugh... Maybe a setup message isn't a good idea; other
+uses (e.g. security) can be dealt with by a control message.
+<H3>
+  Multiple protocols over one SMUX
+</H3>
+<P>
+We want to SMUX multiple protocols simultaneously over the same transport
+TCP connection, so we need to know what protocol is in use with each session,
+so the demultipexor can hand the data to the right person. (e.g. SUNRPC and
+DCERCP simultaneously).
+<P>
+There are two obvious ways I can see to do this:
+<DL>
+  <DT>
+    a)&nbsp;&nbsp;&nbsp; Send a control message when a session is first used,
+    indicating the protocol.
+  <DD>
+    Disadvantage: costs probably 8 bytes to do so (4 SMUX overhead, and 4 byte
+    message), and destroys potential 64 bit alignment.
+  <DT>
+    b)&nbsp;&nbsp;&nbsp;&nbsp; If syn is set indicating new session, then steal
+    mux_length field to indicate protocol in use on that session.
+  <DD>
+    (overhead; 4 bytes for the SMUX header used just to establish the session.)
+</DL>
+<P>
+Opinions? Mine is that b) is better than a. Answer: b) is the adopted strategy.
+<H3>
+  Priority...
+</H3>
+<P>
+For a given stream, priority will affect which session is handled when
+multiplexing data; sending the priority on every block is unneeded, and would
+waste bytes. There is one case in which priority might be useful: at an
+intermediate proxy relaying sessions (and maybe remultiplexing them).
+<P>
+If so, it should be sent only when sessions are established or changed. Changes
+can be handled by a control message. Opinions?
+<P>
+A priority field can be hacked into the length field with the protocol field
+using b) above.
+<P>
+So the question is: is it important to send priority at all in this SMUX
+protocol? Or should priority control, if needed, be a control message?&nbsp;
+; (control message).
+<P>
+Answer: Not in this protocol. Opens Pandora's box with remultiplexors, which
+could have denial of service attacks.
+<H3>
+  Setup message
+</H3>
+<P>
+Is any setup message needed? I don't think it is,. and initial bytes are
+precious (see performance discussion above), and it complicates trivial use.
+If we move the byte order flag to the SMUX header, and use control messages
+if other information needs to be sent, we can dispense with it, and the layer
+is simpler. This is my current position, and unless someone objects with
+reasons, I'll nuke it in the next version of this document.
+<P>
+Answer: Not needed. Nuked.
+<H3>
+  Byte order flags
+</H3>
+<P>
+While higher layer protocols using host dependent byte order can be a performan
+ce win (when sending larger objects such as arrays of data), the overhead
+at this layer isn't much, and may not be worth bothering with. Worst case
+(naive code) would be four memory reads and 3 shift overhead/payload. Smart
+code is one load and appropriate shifts etc.
+<P>
+Opinions? I'm still leaning toward swapping bytes here, but there are other
+examples of byte load and shift (particularly slow on Alpha, but not much
+of an issue on other systems).
+<P>
+Answer: Not sufficient performance gain at SMUX level to be worth doing.
+Defined as LE byte order for SMUX headers.
+<H3>
+  Error handling
+</H3>
+<P>
+There are several error conditions, probably best reported via control messages
+from server:
+<UL>
+  <LI>
+    No such protocol. Some sort of serial number should be reported, I suppose;
+    this serial number can be implicit as in X
+  <LI>
+    bad message.
+  <LI>
+    Some combinations of flag bits are not legal.
+  <LI>
+    Priority if it exists?
+</UL>
+<P>
+Any others? Any twists to worry about?
+<P>
+Answer: Only error that can occur is no such protocol, given no priority
+in the base protocol. May still be some unresolved issues here around "Christma
+s Tree" message (all bits turned on).
+<H3>
+  Length Field
+</H3>
+<P>
+Any reason to believe that the 32 bit length field for a single payload is
+inadequate? I don't think so, and I live on an Alpha.
+<P>
+Answer: 32 bit extended length field for a single fragment is sufficient.
+<H3>
+  Compression
+</H3>
+<P>
+Does there need to be a bit saying the payload is compressed to avoid explosion
+of protocol types?
+<P>
+Answer: Yes; introduction of control message to allow specification of transport
+stacks achieves this.
+<H3>
+  Stacks
+</H3>
+<P>
+I think that we should be able to multiplex any TCP, UDP, or IP protocol.
+Internet protocol numbers are 8 bit fields.
+<P>
+So we need 16 bits for TCP, one bit to distinguish TCP and UDP, and one bit
+more we can use for IP protocol numbers and address space we can allocate
+privately. This argues for an 18 bit length field to allow for this reuse.
+* 18 bit length field * * 8 bit session field * * 4 control bits * * 1 long
+length bit *
+<P>
+The last bit is used to define control messages, which reuse the syn, fin,
+rst, and push bits as a control_code to define the control message. There
+are escapes, both by undefined control codes, and by the reservation of two
+sessions for further use if there needs to be further extensions. The spec
+above reflects this.
+<H3>
+  Alignment
+</H3>
+<P>
+Back to alignment. If we demand 4 byte alignment, for all requests that do
+not end up naturally aligned, we waste bytes. Two bytes are wasted on average.
+At 14.4Kbaud the overhead for protocols that do not pad up would on mean
+be 6 bytes or ~3ms, rather than 4 bytes or ~ 2 ms (presuming even distributions
+of length). Note that this DOES NOT effect initial request latency (time
+to get first URL), and is therefore less critical than elsewhere.
+<P>
+I have one related worry; it can sometimes be painful to get padding bytes
+at the end of a buffer; I've heard of people losing by having data right
+up to the end of a page, so implementations are living slightly dangerous
+ly if they presume they can send the padding bytes by sending the 1, 2 or
+3 bytes after the buffer (rather than an independent write to the OS for
+padding bytes).
+<P>
+Alternatively, the buffer alignment requirement can be satisfied by
+implementations remembering how many pad bytes have to be sent, and adjusting
+the beginning address of the subsequent write by that many bytes before the
+buffer where the SMUX header has been put. Am I being unnecessarily paranoid?
+<P>
+Opinion: I believe alignment of fragments in general is a GOOD THING, and
+will simplify both the SMUX transport and protocols at higher levels if they
+can make this presumption in their implementations. So I believe this overhead
+is worth the cost; if you want to do better and save these bytes, then start
+building an application specific compression scheme. If not, please make
+your case.
+<H3>
+  Control bits
+</H3>
+<P>
+Are the four bits defined in Simon's flags field what we need? Are there
+any others?
+<P>
+Answer: no. More bits than we need. Current protocol doesn't use as many.
+I've ended back at the original bits specified, rather than the smaller set
+suggested by Bill Janssen. This enables full emulation of all the details
+of a socket interface, which would not otherwise be possible. See details
+around TCP and socket handling, discussed in books like "TCP/IP Illustrated,"
+by W. Richard Stevens.
+<P>
+Am I all wet?
+<P>
+Opinion: I believe that we should do this.
+<H3>
+  Control Messages
+</H3>
+<P>
+Question: do we want/need a short control message? Right now, the out for
+extensibility are control messages sent in the reserved (and as yet unspecified
+) control session. This requires a minimum of 8 bytes on the wire. We could
+steal the last available bit, and allow for a 4 byte short control message,
+that would have 18 bits of payload.
+<P>
+Opinion: Flow control needs it; protocol/transport stacks need it. Document
+above now defines some control messages.
+<H3>
+  Simplicity of default Behavior
+</H3>
+<P>
+The above specification allows for someone who just wants to SMUX a single
+protocol to entirely ignore protocol ID's.
+<H2>
+  <A name="Glossary" href="#Contents"></A>Glossary
+</H2>
+<P>
+<B>To be supplied</B>
+<H2>
+  <A name="References" href="#Contents"></A>References
+</H2>
+<DL>
+  <DT>
+    <OL>
+      <LI>
+	J. Postel, <I>"Transmission Control
+	Protocol"</I>,&nbsp;<A name="RFC793"></A><A href="http://info.internet.isi.edu/in-notes/rfc/files/rfc793.txt">RFC
+	793</A>, Network Information Center, SRI International, September 1981
+      <LI>
+	J. Postel, <I>"TCP and IP bake
+	off"</I>,&nbsp;<A name="RFC1025"></A><A href="http://info.internet.isi.edu/in-notes/rfc/files/rfc1025.txt">RFC
+	1025</A>, September 1987
+      <LI>
+	J. Mogul, S. Deering, <I>"Path MTU
+	Discovery"</I>,&nbsp;<A name="RFC1191"></A><A href="http://info.internet.isi.edu/in-notes/rfc/files/rfc1191.txt">RFC
+	1191</A>, DECWRL, Stanford University, November 1990
+      <LI>
+	<A name="_Ref392921583"></A>T. Berners-Lee, <I>"Universal Resource Identifiers
+	in WWW. A Unifying Syntax for the Expression of Names and Addresses of Objects
+	on the Network as used in the World-Wide
+	Web"</I>,&nbsp;<A name="RFC1630"></A><A href="http://info.internet.isi.edu/in-notes/rfc/files/rfc1630.txt">RFC
+	1630</A>, CERN, June 1994.
+      <LI>
+	R. Braden, <I>"T/TCP -- TCP Extensions for Transactions: Functional
+	Specification"<A name="RFC1644"></A>,
+	</I><A href="http://info.internet.isi.edu/in-notes/rfc/files/rfc1644.txt">RFC
+	1644</A>, USC/ISI, July 1994
+      <LI value="4">
+	<A name="_Ref393090534"></A>R. Fielding, <I>"Relative Uniform Resource
+	Locators"</I>,<A name="RFC1808"></A>
+	<A href="http://info.internet.isi.edu/in-notes/rfc/files/rfc1808.txt">RFC
+	1808</A>, UC Irvine, June 1995.
+      <LI>
+	<A name="_Ref392568171"></A>T. Berners-Lee, R. Fielding, H. Frystyk,
+	<I>"Hypertext Transfer Protocol --
+	HTTP/1.0"</I>,&nbsp;<A name="RFC1945"></A><A href="http://info.internet.isi.edu/in-notes/rfc/files/rfc1945.txt">RFC
+	1945</A>, W3C/MIT, UC Irvine, W3C/MIT, May 1996
+      <LI>
+	R. Fielding, J. Gettys, J. C. Mogul, H. Frystyk, T. Berners-Lee, <I>"Hypertext
+	Transfer Protocol --
+	HTTP/1.1"</I>,&nbsp;<A name="RFC2068"></A><A href="http://info.internet.isi.edu/in-notes/rfc/files/rfc2068.txt">RFC
+	2068</A>, U.C. Irvine, DEC W3C/MIT, DEC, W3C/MIT, W3C/MIT, January 1997
+      <LI>
+	S. Bradner, <I>"Key words for use in RFCs to Indicate Requirement
+	Levels"</I>,&nbsp;<A name="RFC2119"></A><A href="http://info.internet.isi.edu/in-notes/rfc/files/rfc2119.txt">RFC
+	2119</A>, Harvard University, March 1997
+      <LI>
+	J. Touch, <I>"TCP Control Block
+	Interdependence"</I>,&nbsp;<A name="RFC2140"></A><A href="http://info.internet.isi.edu/in-notes/rfc/files/rfc2140.txt">RFC
+	2140</A>, April 1997
+      <LI>
+	W. Stevens, <I>"TCP Slow Start, Congestion Avoidance, Fast Retransmit, and
+	Fast Recovery
+	Algorithms"</I>,&nbsp;<A name="RFC2001"></A><A href="http://info.internet.isi.edu/in-notes/rfc/files/rfc2001.txt">RFC
+	2001</A>, January 1997
+      <LI>
+	V. Jacobson,
+	"<A name="Congestion"></A><A href="ftp://ftp.ee.lbl.gov/papers/congavoid.ps.Z">Congestion
+	Avoidance and Contro</A>l", Proceedings of SIGCOMM '88
+      <LI>
+	H. Frystyk Nielsen, J. Gettys, A. Baird-Smith, E. Prud'hommeaux, H. W. Lie,
+	and C.
+	Lilley,&nbsp;<A name="HTTP11Performance"></A>"<A href="http://www.w3.org/Protocols/HTTP/Performance/Pipeline.html">Network
+	Performance Effects of HTTP/1.1, CSS1, and PNG</A>", Proceedings of SIGCOMM
+	'97
+      <LI>
+	S. Floyd and V.
+	Jacobson,&nbsp;<A name="RED"></A>"<A href="ftp://ftp.ee.lbl.gov/papers/early.pdf">Random
+	Early Detection Gateways for Congestion Avoidance</A>", IEEE/ACM Trans. on
+	Networking, vol. 1, no. 4, Aug. 1993.
+      <LI>
+	R.W.Scheifler, J. Gettys, "<A name="X"></A>The X Window System" ACM Transactions
+	on Graphics # 63, Special Issue on User Interface Software, 5(2):79-109 (1986).
+      <LI>
+	V. Paxson,
+	"<A name="IEEEv8n4"></A><A href="ftp://ftp.ee.lbl.gov/papers/WAN-TCP-growth-trends.ps.Z">Growth
+	Trends in Wide-Area TCP Connections</A>" IEEE Network, Vol. 8 No. 4, pp.
+	8-17, July 1994
+      <LI>
+	S. Spero, <I>"Session Control Protocol, Version 1.0"</I>
+      <LI>
+	S. Spero<I>,
+	"<A href="http://info.internet.isi.edu/in-drafts/files/draft-evans-v2-scp-00.txt">Session
+	Control Protocol, Version 2.0</A>"</I>
+      <LI>
+	Keywords and Port numbers are maintained by IANA in the port-numbers registry.
+      <LI>
+	Keywords and Protocol numbers are maintained by IANA in the protocol-numbers
+	registry.
+      <LI>
+	W. Richard Stevens, "<A name="TCPIllustratedV1"></A>TCP/IP Illustrated, Volume
+	1", Addison-Wesley, 1994
+      <LI>
+	Berners-Lee, T., Fielding, R., Masinter, L.,&nbsp; "Uniform Resource Identifiers
+	(URI): Generic Syntax and Semantics," Work in Progress of the IETF, November,
+	1997.
+      <LI>
+	J. Lyon, K. Evans, J. Klein,
+	"<A name="TIP"></A><A href="http://www.ietf.org/internet-drafts/draft-lyon-itp-nodes-08.txt">Transaction
+	Internet Protocol Version 2.0</A>," Work in Progress of the Transaction Internet
+	Protocol Working Group, November, 1997.
+      <LI>
+	B. Janssen, M. Spreitzer,
+	"<A name="ILU"></A><A href="http://www.w3.org/Protocols/MUX/[61]ftp://ftp.parc.xerox.com/pub/ilu/ilu.html">Inter-Language
+	Unification</A>"; in particular see the manual section on
+	<A href="http://www.w3.org/Protocols/MUX/[62]ftp://ftp.parc.xerox.com/pub/ilu/2.0/20a8-manual-html/manual_9.html#SEC174">Protocols
+	and Transports</A>.
+    </OL>
+</DL>
+<P>
+  <HR>
+<ADDRESS>
+  @(#) $Id: WD-mux-19980710.html,v 1.2 1998/07/10 17:02:54 frystyk Exp $
+</ADDRESS>
+</BODY></HTML>

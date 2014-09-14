@@ -1,0 +1,574 @@
+<!-- http://www.w3.org/TR/WD-jepi-uppflow -->
+<!doctype html public "-//W3C//DTD HTML 1996-01//EN">
+<HTML>
+<HEAD>
+<TITLE>Seven Examples of UPP over PEP</TITLE>
+<!-- Changed by: Eui-Suk Chung,  6-Jan-1997 -->
+</HEAD>
+
+<BODY>
+
+<H3 align=right><A HREF="http://www.w3.org/"><IMG
+align=left alt="W3C"
+src="http://www.w3.org/pub/WWW/Icons/WWW/w3c_home"></A>
+WD-jepi-uppflow-970106</H3>
+
+<center>
+<H1>Selecting Payment Mechanisms Over HTTP</h1>
+<H4>Or, Seven Examples of UPP Over PEP (as used in JEPI)</H4>
+</center>
+
+<H3 align=center>W3C Working Draft 6-JAN-97</H3>
+
+<DL>
+<DT>This version:
+<DD><A HREF="http://www.w3.org/pub/WWW/TR/WD-jepi-uppflow-970106.html">http://www.w3.org/pub/WWW/TR/WD-jepi-uppflow-970106.html</A>
+
+<DT>Previous versions:
+<DD><A HREF="http://www.w3.org/pub/WWW/TR/draft-ietf-jepi-uppflow-00.html">http://www.w3.org/pub/WWW/TR/draft-ietf-jepi-uppflow-00.html</A> (Internet Draft)
+
+<DT>Latest version:
+<DD><A HREF="http://www.w3.org/pub/WWW/TR/WD-jepi-uppflow.html">http://www.w3.org/pub/WWW/TR/WD-jepi-uppflow.html</A>
+
+<DT>Author:
+<DD>Don Eastlake <a href="mailto:dee@cybercash.com">&lt;dee@cybercash.com&gt;</a><br>
+Rohit Khare <a href="mailto:khare@w3.org">&lt;khare@w3.org&gt;</a><br>
+Jim Miller <a href="mailto:jmiller@w3.org">&lt;jmiller@w3.org&gt;</a><br>
+</DL>
+
+<HR>
+<H2>Status of this memo</H2>
+This is a W3C Working Draft for review by W3C members and other
+interested parties. It is a draft document and may be updated,
+replaced or obsoleted by other documents at any time. It is
+inappropriate
+to use W3C Working Drafts as reference material or to cite them
+as other than &quot;work in progress&quot;. A list of current
+W3C working drafts can be found at: <A
+href="http://www.w3.org/pub/WWW/TR">http://www.w3.org/pub/WWW/TR</A><P>
+
+<B>Note:</B> since working drafts are subject to frequent change,
+you are advised to reference the above URL, rather than the URLs
+for working drafts themselves. 
+<HR>
+<H2>1. Abstract</h2>
+<P>
+The Joint Electronics Payment Initiative aims to bring key industry players together to assure that multiple payment protocols can operate effectively in Web applications. The concrete goal is automatable payment selection over HTTP.<P>
+The first step towards this was Don Eastlake's development of the Universal Payment Preamble, which is also available as an internet-draft (draft-eastlake-universal-payment). The second is the development of an HTTP Extension Protocol to embed UPP in HTTP. The latter proposal is part of the chartered activities of the IETF HTTP WG (draft-ietf-http-pep-03).
+<P>
+This document describes how to use UPP over PEP to support payment selection between clients and merchants. It explains basic operations: requesting available payment choices, presenting multiple choices, demanding a selection, making a selection, and accepting and rejecting choices.
+
+<h2>2. Introduction</h2>
+The JEPI project is using PEP as a vehicle for negotiating over
+payment mechanism between a Web client and server. In order to
+accomplish this, JEPI has adopted the Universal Payment Preamble
+(UPP) proposed by Donald Eastlake as a particular protocol to
+be used over PEP. This document describes a set of seven
+fundamental operations that support payment mechanism negotiation,
+and shows how to use PEP and UPP to accomplish each. In addition,
+it contains comments intended for the implementation team for
+JEPI indicating the subset which are actually needed for the JEPI
+demonstration.
+<H3>2.1 The Seven Fundamental Operations of Payment Mechanism Negotiation
+</H3>
+
+<OL>
+<LI><B>Request payment choices.</B> Either end (client or server)
+should be able to ask the other what forms of payment it supports.
+<I>JEPI implementors:</I> In the demo, only the server will generate
+these requests.
+<LI><B>Present payment choices that it supports</B>. Either end
+should be able to list the forms of payment it supports. Notice
+that this may not be a complete list, but rather a list of options
+that it &quot;prefers&quot; at the current moment. This list may
+be presented in response to a request (<B>operation 1</B>) or
+spontaneously. The latter behavior is analogous to the use of
+&quot;logo stickers&quot; on a store window or cash register.
+<I>JEPI implementors: </I>the demo will only require this operation
+in response to a specific request.
+<LI><B>Demand payment choice.</B> The merchant (server) may demand
+that the client choose a specific form of payment to be used to
+pay for items. <I>JEPI implementors: </I>In the demo, this happens
+when the &quot;invoice page&quot; is sent from the server to the
+client; the demand indicates what components of the page will
+require a response with payment choice (<B>operation 4</B>).
+<LI><B>Make a payment choice.</B> The customer (client) can indicate
+the payment method to be used to make a payment. This normally
+indicates to the server that payment should actually begin, and
+the response will either be to accept (<B>operation 5</B>) or
+reject (<B>operation 6</B>) the chosen mechanism.
+<LI><B>Accept a payment choice. </B>The server, in response to
+a payment choice (<B>operation 4</B>), may accept the choice and
+initiate an actual payment operation. The payment operation itself
+is not part of the JEPI project and may or may not use PEP to
+handle the payment.
+<LI><B>Reject a payment choice. </B>The server, in response to
+a payment choice (<B>operation 4</B>), may reject the choice and
+request that another choice be made. UPP specifies that a rejection
+can occur either because the user canceled the transaction prior
+to completion or because the transaction failed for other (payment-system
+specific) reasons. They are distinguished and can result in different
+client actions.
+<LI><B>Do you accept payment by X</B>? Either side can ask the
+other if it supports payment by a particular payment mechanism.
+<I>JEPI implementors:</I> This is not currently required for the
+demonstration, but it might be a useful addition for the client
+to ask the server this question prior to counter-offering with
+a payment mechanism not mentioned by the server in its list of
+supported mechanisms (<B>operation 2</B>). 
+</OL>
+
+<H2>3. Notation </H2>
+
+<P> Amongst other things, UPP provides a uniform vocabulary for naming
+options common to many payment systems, and a uniform syntax for each
+such option. It is not clear at the current time what mechanism should
+be used to allow independent payment system designers to name options
+so that they will not collide with the UPP namespace of shared
+options. We will use sub-bags to separate the name spaces.  That is,
+we will assume that a bag of the form <b>{upp
+{</b><i>upp-parameter-name upp-parameter-value</i><b>} ... }</b> will
+be used to hold these parameters.  A complete list of these common
+parameters and their syntax is available in the UPP specification.
+
+<P>In a complete implementation of UPP using PEP, it would be possible
+to specify these common parameters in the PEP-specified header fields
+<B>Protocol:</B>, <B>Protocol-Request:</B>, <B>Protocol-Query:</B>,
+and <B>Protocol-Info:</B> as well as in any payment-system specific
+headers. In the JEPI demonstration, however, we will not be using
+these parameters for the generic UPP protocol (they may be used in
+payment-specific protocols). In this document we will indicate where
+they are syntactically permitted by using the notation
+&quot;<I>upp-params</I>.&quot; For the demonstration, these will
+always be omitted in the examples shown here.
+
+<P>For clarity, we omit all of the HTTP headers and message body with
+the exception of those parts directly related to the operation being
+demonstrated.  The protocol-name URLs shown here are purely for
+example, and will be determined by the participants at a later
+date. The URLs for the various for lists will be determined by each
+merchant application. Because we do not expect proxy servers to
+participate in the payment negotiation shown during the JEPI demo, the
+scope parameters of all PEP headers have been omitted: they are
+defined to default to <b>{scope origin}</b> as required for the
+demonstration. Similarly, the strength of PEP directives defaults to
+optional (<B>{str opt}</B>), so it is only shown otherwise.
+
+<H2>4. Operation 1: Requesting Preferred Payment Choices </H2>
+
+<BLOCKQUOTE>
+Either end (client or server) should be able to ask the other
+what forms of payment it supports. 
+</BLOCKQUOTE>
+
+<H3>Client asks Server </H3>
+
+<P>
+In order for the client to ask the server what payment choices
+are available, the <B>Protocol-Query: </B>header is added to an
+HTTP request from the client to the server. <I>JEPI implementors:</I>
+In the demo, only the server will generate these requests.
+
+<P><PRE><B>
+GET <i>URL</i>
+Protocol-Query: {http://www.w3.org/UPP <I>upp-params</I>}</B></PRE>
+
+<P>This means &quot;do you have UPP available at the URL specified in
+the HTTP request that contains this header.&quot; If any of the
+<I>upp-params</I> are specified then they further restrict the meaning
+of the query (i.e. if a <B>{upp {amount {frf}}}</B> were specified,
+the query would mean &quot;do you have UPP available, for amounts
+denominated in French francs, at the URL specified in the HTTP request
+that contains this header&quot;).
+
+<P>
+In order to ask a more general question (such as &quot;what payment
+choices are available for all URLs at your site&quot;) the <B>for</B>
+option must be used:
+
+<P><PRE><B>
+GET <i>URL</i>
+Protocol-Query: {http://www.w3.org/UPP {for /*} <I>upp-params</I>}</B></PRE>
+
+<P>Notice that in a <B>for</B>, the &quot;URLs&quot; ending in * are actually
+prefix strings. So the &quot;/*&quot; here means &quot;any URL at your
+server that starts with '/',&quot; which in turn means all URLs at
+your server.
+
+<P>
+The response to this HTTP message will fall into one of two categories:
+<UL>
+<LI>No <B>Protocol-Info: {http://www.w3.org/UPP</B> <B>&#133;}</B>
+header line. This indicates that the server does not support all
+of PEP. [It is also possible for a server to support PEP, but not UPP, in
+which case it would send <TT>Protocol-Info: {http://www.w3.org/UPP {str ref}}</TT>]
+<LI>A header line of the form <B>Protocol-Info: {http://www.w3.org/UPP
+&#133;}</B> is included in the headers. This indicates that the
+server supports PEP, and the response is in the form described
+below under <B>Operation 2</B>. The header can also use a <TT>for</TT> list
+to hint where on the server payments will be discussed.
+</UL>
+
+<P>
+A proper implementation of PEP requires that the protocol module
+associated with the specified protocol will be invoked when a
+<TT>Protocol-Query:</TT> line is encountered specifying that protocol. A
+proper implementation of the UPP protocol module will supply one
+of the responses indicated under <B>Operation 2</B> (Present Payment
+Choices), indicating the payment options that the server wishes
+to advertise.
+<H3>Server asks Client </H3>
+
+<P>
+In order for the server to ask the client what payment choices
+are available, a similar mechanism is used. In this case, however,
+the server should use the <B>{for }</B> to indicate the
+parts of its URL space where payment might be discussed:
+
+<P><PRE><B>
+200 OK
+Protocol-Query: {http://www.w3.org/UPP {for /PaymentPages/*}
+                                       <I>upp-params</I>}</B></PRE>
+
+<P>Technically, this is a way for the server to ask the client to reveal 
+payments choices a user will consider for URLs that begin with <B>/PaymentPages/</B>.
+The client will reply (at least) whether the protocol can be used for the resource
+of the response, and (optionally) whether it might be used elsewhere (the range the
+server specified, anywhere on that server, etc). 
+
+<P>
+A proper implementation of PEP requires that the protocol module
+associated with the specified protocol will be invoked when a
+<B>Protocol-Query</B> line is encountered specifying that protocol.
+A proper implementation of the UPP protocol module will supply
+one of the responses indicated under <B>Operation 2</B> (Present
+Payment Choices), indicating the payment options that the client
+wishes to advertise.
+<P>
+Then, the next time the client accesses any resource in the <B>for</B> list from the
+query, it will include its answer(s) to the query.
+
+<H2>5. Operation 2: Present Payment Choices </H2>
+
+<BLOCKQUOTE>
+Either end should be able to list the forms of payment it supports.
+Notice that this may not be a complete list, but rather a list
+of options that it &quot;prefers&quot; at the current moment.
+This list may be presented in response to a request (<B>operation
+1</B>) or spontaneously. The latter behavior is analogous to the
+use of &quot;logo stickers&quot; on a store window or cash register.
+
+</BLOCKQUOTE>
+
+<BLOCKQUOTE>
+<I>JEPI implementors: </I>the demo will only require this operation
+in response to a specific request. 
+</BLOCKQUOTE>
+
+<P>
+This operation is performed by adding one or more <B>Protocol-Info:</B>
+headers to the HTTP packet. If the list is being presented in
+response to a request (<B>operation 1</B>), PEP requires that
+it include a header in the following form:
+
+<P><PRE><B>
+200 OK <i>-or-</i> GET <i>...</i>
+Protocol-Info: {http://www.w3.org/UPP </B>[<I>for</I>] [<B>{str </B><I>strength</I><B>}</B>]
+                                      <I><B>upp-params</B></I><B>}</B></PRE>
+
+<P>where the <I>for</I> should be the same as the <B>for</B> clause in
+the request (or omitted if it wasn't in the request); and the
+<I>strength</I> (if present) must be <B>ref</B>, <B>req</B>, or
+<B>opt</B>. The strength can be <B>opt</B> (or omitted) in any case;
+it may be <B>ref</B> only if payment won't be permitted at any of the
+URLs specified by the <I>for</I> clause; it may be <B>req</B> only if
+payment is required at all of the URLs specified by the <I>for</I>
+clause.
+
+<P>
+In addition, there should be <B>Protocol-Info:</B> headers for
+each of the payment systems that are to be presented to the other
+end. These will have the form:
+
+<P><PRE><B>
+200 OK <i>-or-</i> GET <i>...</i>
+Protocol-Info: {</B><I>http://...payment-system... </I>[<I>for</I>] [<B>{str </B><I>strength</I><B>}</B>]
+                                            <I><B>payment-params</B></I><B>}</B></PRE>
+
+<P>where <I>payment-protocol</I> is the URL for the specific payment
+protocol, the <I>for</I> and <I>strength</I> are as discussed above,
+and the <I>payment-params</I> are additional parameters (including the
+UPP parameters) that are specific to the payment system.
+
+<P>
+For example, if a client receives the request:
+
+<P><PRE><B>
+200 OK
+Protocol-Query: {http://www.w3.org/UPP {for /PaymentPages/*}
+                                       <I>upp-params</I>}</B></PRE>
+
+<P>and wishes to indicate that it can pay using VISA over SET and via
+CyberCash coins it might reply as follows (details of the
+payment-specific lines are not finalized yet):
+
+<P><PRE><b>
+HEAD </b><i>...</i><B>
+Protocol-Info: {http://www.w3.org/UPP {for /PaymentPages/*}}
+   {http://www.SET.org/PEPSpec
+      {params {upp {instrument-brand VISA}}}
+      {for /PaymentPages/*}}
+   {http://www.CyberCash.com/PEPSpec
+      {params {upp {instrument-type ECASH}}}
+      {for /PaymentPages/*}}</B></PRE>
+
+<H2>6. Operation 3: Demand Payment Choice </H2>
+
+<BLOCKQUOTE>
+The merchant (server) may demand that the client choose a specific
+form of payment to be used to pay for items. 
+</BLOCKQUOTE>
+
+<BLOCKQUOTE>
+<I>JEPI implementors: </I>In the demo, this happens when the &quot;invoice
+page&quot; is sent from the server to the client; the demand indicates
+what components of the page will require a response with payment
+choice (<B>operation 4</B>).  In the demonstration, this same
+invoice page will carry both the <B>operation 2</B> and <B>operation
+3</B> headers together: the server will announce some of its payment
+options at the time it issues the invoice and requires that payment
+be accompanied by a particular payment choice.
+</BLOCKQUOTE>
+
+<P> As part of a standard server (successful) reply, it may deliver a
+page that includes references that will require payment (i.e.  a
+&quot;Pay Button&quot; or &quot;Pay URL&quot;).  These should be
+identified in the header of the response packet by asking the client
+to respond by initiating a UPP payment protocol sequence:
+
+<P><PRE><B>
+200 OK
+Protocol-request: {http://www.w3.org/UPP {str req} {for /PayButton}}</B></PRE>
+
+<P>
+Technically, this means that the server asks the client to use
+the UPP protocol (<B>operation 4) </B>whenever it asks for retrieval
+of the exact URL <B>/PayButton</B> from this same
+server.  The <B>{str req}</B> is a hint to the client that if
+it doesn't use the protocol, the request for that URL will be
+refused.  Thus, the client is not absolutely required to remember
+that it should use UPP with the specified URL - but a network
+roundtrip will be avoided if it does so.
+<H2>7. Operation 4: Make a Payment Choice </H2>
+
+<BLOCKQUOTE>
+The customer (client) can indicate the payment method to be used
+to make a payment. This normally indicates to the server that
+payment should actually begin, and the response will either be
+to accept (<B>operation 5</B>) or reject (<B>operation 6</B>)
+the chosen mechanism. 
+</BLOCKQUOTE>
+
+<P>
+In practice, this will only happen when a client replies to an
+<B>operation 3</B> request for payment method.  It must then respond
+with two headers: one indicating that it is responding to a request
+to use the UPP protocol by choosing a compatible payment protocol,
+and the compatible protocol header itself.  For example, if the
+payment choice is to use VISA over SET, then we might expect a
+response as follows:
+
+<P><pre><b>
+GET </b><i>...</i><b>
+Protocol: {http://www.w3.org/UPP {via http://www.SET.org/PEPSpec}}
+  {http://www.SET.org/PEPSpec
+     {str req}
+     {params {upp {instrument-type CREDIT} {instrument-brand VISA}}
+             </B><I>other-SET-params</I><B>}}</B></pre>
+
+<P>The expected response is either an <B>operation 5</B> (server
+accepts the choice of SET and VISA) or <B>operation 6</B> (server
+refuses the choice).
+
+<P>
+It is expected that somewhere between receiving the <B>operation
+3</B> and issuing the <B>operation 4</B> the client application
+will have to decide on the payment mechanism.  Neither PEP nor
+UPP specifies how this happens.  For the JEPI demonstration, it
+is assumed that the browser will intercept the request
+to access any specified payment URLs (from the <TT>for</TT> list of the
+required challenge) and will engage in a dialog
+with the user if necessary to produce the desired choice. This implies that what 
+merchants might typically describe as the "Pay" button becomes the "Choose a Payment Mechanism and Pay" button.
+
+<H2>8. Operation 5: Accept a Payment Choice </H2>
+
+<BLOCKQUOTE>
+The server, in response to a payment choice (<B>operation 4</B>),
+may accept the choice and initiate an actual payment operation.
+The payment operation itself is not part of the JEPI project and
+may or may not use PEP to handle the payment.
+</BLOCKQUOTE>
+
+<P>
+At this point, <B>operation 4</B> has provided enough information
+to the server that it is willing to kick off the actual payment
+system.  JEPI, PEP, and UPP provide no information on precisely
+how to do this, but there is one additional PEP/UPP header which
+can be optionally sent back to the client.  If a normal MIME-based
+helper application is available to do the payment on the client
+side, then there is no need for the following header.  On the
+other hand, a better user interface can often be produced if a
+helper application can be run while the client (browser) waits
+for the application to complete.  To support this, UPP adds one
+final message from the server to the client.  It provides the
+URLs that should be shown in each of three cases:
+<UL>
+<LI>the payment is successfully completed
+<LI>the payment is canceled because of user intervention
+<LI>the payment is unable to complete because the computers are
+unable to finish the transaction (network outage, over credit
+limit, etc.)
+</UL>
+
+<P>
+The header is as follows:
+
+<P><PRE><B>
+200 OK
+Protocol: {http://www.w3.org/UPP 
+   {params {upp {abort </B><I>abort-URL</I><B>}
+                {cancel </B><I>cancel-URL</I><B>}
+                {success </B><I>success-URL</I><B>}}}</B></PRE>
+
+<H2>9. Operation 6: Reject a Payment Choice </H2>
+
+<BLOCKQUOTE>
+The server, in response to a payment choice (<B>operation 4</B>),
+may reject the choice and request that another choice be made.
+UPP specifies that a rejection can occur either because the user
+canceled the transaction prior to completion or because the transaction
+failed for other (payment-system specific) reasons. They are distinguished
+and can result in different client actions.
+</BLOCKQUOTE>
+
+<P>
+If a client proposes a payment system that is not acceptable to
+the server, the server responds with a 400- or 500-class PEP error message.
+ The body of the message should explain what went wrong as well as
+possible, including any explanation that the requested payment system
+may be able to supply.  It should probably include a button to go back
+to the invoice page, if possible, but the browser's BACK button will
+work, too.  The server should include one additional header on this
+message to reduce the chance that the same payment system will be
+tried a second time:
+
+<P><PRE><B>
+420 Client PEP Error <I>-or-</I> 520 Server PEP Error
+Protocol-Info: {</b><i>http://...payment-system...</I>
+                  <B>{str ref} </B><I>payment-params</I><b>}</b>
+<i>Followed by an <b>operation 3</b> header</i></PRE>
+
+<P>
+where <I>payment-system</I> is the payment protocol that is being
+rejected, <I>payment-params</I> are the parameters of the payment
+system which caused the problem, and <I>pay-URL</I> is the URL
+of the item just requested (i.e. the one that initiates the payment
+protocol on the server side).<P>
+
+The error code is distinguished mainly by whether the server has the
+protocol and doesn't accept it and the client should know better (422
+Protocol Extension Refused) or if the server does not have it (521
+Protocol Extension Not Implemented) or cannot get it to work (520
+Protocol Extension Error or 522 Protocol Extension Parameters Not
+Acceptable). Other PEP error codes may be more specifically applicable
+for particular payment systems.
+
+<H2>10. Operation 7: Do you accept payment by X? </H2>
+
+<BLOCKQUOTE>
+Either side can ask the other if it supports payment by a particular
+payment mechanism. 
+</BLOCKQUOTE>
+
+<BLOCKQUOTE>
+<I>JEPI implementors:</I> This is not currently required for the
+demonstration, but it might be a useful addition for the client
+to ask the server this question prior to counter-offering with
+a payment mechanism not mentioned by the server in its list of
+supported mechanisms (<B>operation 2</B>). 
+</BLOCKQUOTE>
+
+<P>
+The PEP header <B>Protocol-Query</B> can be used by either party
+at any time to ask this question.  As with <B>operation 1</B>,
+there is a technical meaning for the query that requires the other
+end to respond with a <B>Protocol-Info</B> response that is specific
+to the particular URL being queried, and the <B>{for &#133;}</B>
+construct can be used to generalize the query.
+<P>
+Also as with <B>operation 1</B> and <B>2</B>, a proper implementation
+of a payment system module for use with UPP should provide additional
+information about where and with which parameters the payment
+system will operate when it is possible to do so.  That is, a
+request for &quot;do you support SET for VISA at URL /MerchantHomePage&quot;
+<I>must</I> be answered &quot;no&quot; (unless payment happens
+on the home page), but a more thorough response will volunteer the information
+that such a payment <I>is</I> permitted elsewhere at the site.
+
+<P><PRE><B>
+200 OK <i>-or-</i> GET <i>...</i>
+Protocol-Query: {<I>payment-system </I>[<I>payment-system-params</I>]}</B></PRE>
+
+<P>
+where <I>payment-system</I> is the URL of the payment system protocol,
+and <I>payment-system-params</I> are parameters specific to that
+protocol (including common UPP parameters).<BR>
+
+<h2>11. Security Considerations</h2>
+None of these message headers have security protection. They should be trusted only if received through a trusted medium (private channel, etc). In addition, UPP makes no security claims about the contents of the headers; ALL payment-related data should be recapitulated within the particular (presumably cryptographically secure) payment protocol.<P>
+In short, this protocol only addresses payment selection in the clear. Security of the overall payments process lies in other components.
+
+<h2>12. Authors' Addresses</h2>
+<PRE>
+Donald E. Eastlake 3rd
+CyberCash, Inc.
+318 Acton Street
+Carlisle, MA 01741 USA
+Tel: +1 (508) 287 4877 (+1 703 620 4200 main office, Reston, Virginia, USA)
+Fax: +1 (508) 371 7148
+Email: dee@cybercash.com 
+
+Rohit Khare
+Technical Staff, W3 Consortium
+MIT Laboratory for Computer Science
+545 Technology Square
+Cambridge, MA 02139, U.S.A.
+Tel: +1 (617) 253 5884
+Fax: +1 (617) 258 5999
+Email: khare@w3.org 
+
+Jim Miller
+Technology & Society Area Leader, W3 Consortium
+MIT Laboratory for Computer Science
+545 Technology Square
+Cambridge, MA 02139, U.S.A.
+Tel: +1 (617) 253 3194
+Fax: +1 (617) 258 5999
+Email: jmiller@w3.org 
+</PRE>
+
+<p>
+<A href="http://www.w3.org/Consortium/Legal/ipr-notice.html#Copyright">
+Copyright</A> &nbsp;&copy;&nbsp; 1997 <A href="http://www.w3.org">W3C</A>
+(<A href="http://www.lcs.mit.edu">MIT</A>,
+<A href="http://www.inria.fr/">INRIA</A>,
+<A href="http://www.keio.ac.jp/">Keio</A> ), All Rights Reserved. W3C
+<A href="http://www.w3.org/Consortium/Legal/ipr-notice.html#Legal Disclaimer">liability,</A>
+<A href="http://www.w3.org/Consortium/Legal/ipr-notice.html#W3C Trademarks">trademark</A>,
+<A href="http://www.w3.org/Consortium/Legal/copyright-documents.html">document
+use </A>and
+<A href="http://www.w3.org/Consortium/Legal/copyright-software.html">software
+licensing </A>rules apply.
+</BODY>
+</HTML>

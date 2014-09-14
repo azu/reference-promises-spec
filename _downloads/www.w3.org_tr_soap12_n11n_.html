@@ -1,0 +1,383 @@
+<!-- http://www.w3.org/TR/soap12-n11n/ -->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en"><head><META http-equiv="Content-Type" content="text/html; charset=utf-8"><title>SOAP Version 1.2 Message Normalization</title><style type="text/css">
+code           { font-family: monospace; }
+
+div.constraint,
+div.issue,
+div.note,
+div.notice     { margin-left: 2em; }
+
+dt.label       { display: run-in; }
+
+li, p           { margin-top: 0.3em;
+                 margin-bottom: 0.3em; }
+
+.diff-chg	{ background-color: #e47833; }
+.diff-del	{ background-color: red; text-decoration: line-through;}
+.diff-add	{ background-color: lime; }
+
+table          { empty-cells: show; }
+
+
+div.exampleInner pre { margin-left: 1em;
+                       margin-top: 0em; margin-bottom: 0em}
+div.exampleOuter {border: 4px double gray;
+                  margin: 0em; padding: 0em}
+div.exampleInner { background-color: #d5dee3;
+                   border-top-width: 4px;
+                   border-top-style: double;
+                   border-top-color: #d3d3d3;
+                   border-bottom-width: 4px;
+                   border-bottom-style: double;
+                   border-bottom-color: #d3d3d3;
+                   padding: 4px; margin: 0em }
+div.exampleWrapper { margin: 4px }
+div.exampleHeader { font-weight: bold;
+                    margin: 4px}
+</style><link type="text/css" rel="stylesheet" href="http://www.w3.org/StyleSheets/TR/W3C-WG-NOTE.css"></head><body>
+  <div class="head"><p><a href="http://www.w3.org/"><img width="72" height="48" alt="W3C" src="http://www.w3.org/Icons/w3c_home"></a></p>
+<h1>SOAP Version 1.2 Message Normalization</h1>
+<h2>W3C Working Group Note 8 October 2003</h2><dl><dt>This version:</dt><dd><a href="http://www.w3.org/TR/2003/NOTE-soap12-n11n-20031008/">http://www.w3.org/TR/2003/NOTE-soap12-n11n-20031008/</a></dd><dt>Latest version:</dt><dd><a href="http://www.w3.org/TR/soap12-n11n/">http://www.w3.org/TR/soap12-n11n/</a></dd><dd><dt>Previous version:</dt><dd><a href="http://www.w3.org/TR/2003/NOTE-soap12-n11n-20030328/">http://www.w3.org/TR/2003/NOTE-soap12-n11n-20030328/</a></dd><dt>Editors:</dt>
+      <dd>Martin Gudgin, Microsoft</dd>
+      <dd>Marc Hadley, Sun Microsystems</dd>
+    </dl><p class="copyright"><a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> &copy;2003 <a href="http://www.w3.org/"><acronym title="World Wide Web Consortium">W3C</acronym></a><sup>&reg;</sup>(<a href="http://www.lcs.mit.edu/"><acronym title="Massachusetts Institute of Technology">MIT</acronym></a>, <a href="http://www.ercim.org/"><acronym title="European Research Consortium for Informatics and Mathematics">ERCIM</acronym></a>, <a href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a>, <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> and <a href="http://www.w3.org/Consortium/Legal/copyright-software">software licensing</a> rules apply.</p></div><hr><div>
+<h2><a name="abstract">Abstract</a></h2>
+      <p>SOAP 1.2 intermediaries have some license when reserializing
+      messages that pass through them. This document defines a
+      transformation algorithm that renders all semantically equivalent SOAP
+      messages identically. The transformation may be used in
+      conjunction with an XML canonicalization algorithm prior to the
+      generation of a message digest in producing XML digital signatures
+      that are sufficiently robust to survive passage through one or
+      more SOAP intermediaries.</p>
+    </div><div>
+<h2><a name="status">Status of this Document</a></h2>
+<p><em>This section describes the status of this document at the time of its publication. Other documents may supersede this document. A list of current W3C publications and the latest revision of this technical report can be found in the <a href="http://www.w3.org/TR/">W3C technical reports index</a> at http://www.w3.org/TR/.</em></p>
+
+      <p>
+	Publication as a Working Group Note does not imply endorsement by
+	the W3C Membership. This is a draft document and may be updated, 
+	replaced or obsoleted by other documents at any time. It is
+	inappropriate to cite this document as other than work in progress.
+      </p>
+
+      <p>This document is the work of the W3C XML Protocol Working Group, 
+	and no more work from this Working Group is currently expected on
+	this document.</p>
+
+      <p>The XML Protocol Working Group is part of the <a href="http://www.w3.org/2002/ws/Activity">Web Services Activity</a>.</p>
+
+    <p>Comments on this document should be sent to the 
+	<a href="http://lists.w3.org/Archives/Public/xml-dist-app/">
+	publicly archived</a> mailing list 
+	<a href="mailto:xml-dist-app@w3.org">xml-dist-app@w3.org</a>
+    </p>	
+    <p>Patent disclosures relevant to this specification may be
+	found on the Working Group's <a href="http://www.w3.org/2000/xp/Group/2/10/16-IPR-statements.html">patent
+	disclosure page</a>.</p>
+
+    </div>
+  <hr><div class="toc">
+<h2><a name="contents">Table of Contents</a></h2><p class="toc">1. <a href="#intro">Introduction</a><br>&nbsp;&nbsp;&nbsp;&nbsp;1.1 <a href="#notation">Notational Conventions</a><br>2. <a href="#N100D6">The Need for SOAP Message Normalization</a><br>&nbsp;&nbsp;&nbsp;&nbsp;2.1 <a href="#N100DB">A Simple Example</a><br>3. <a href="#N10103">Specification of SOAP Message Normalization</a><br>4. <a href="#N101B1">Use in XML Security</a><br>5. <a href="#refs">References</a><br>&nbsp;&nbsp;&nbsp;&nbsp;5.1 <a href="#normrefs">Normative References</a><br>&nbsp;&nbsp;&nbsp;&nbsp;5.2 <a href="#nonnormrefs">Informative References</a><br></p>
+<h3><a id="appendix" name="appendix">Appendices</a></h3><p class="toc">A. <a href="#xsltimpl">XSLT Implementation</a> (Non-Normative)<br>B. <a href="#acks">Acknowledgements</a> (Non-Normative)<br></p></div><hr><div class="body">
+
+
+    <div class="div1">
+      
+<h2><a name="intro"></a>1. Introduction</h2>
+
+      <p>SOAP 1.2 <a href="#SOAP-PART1">[SOAP Part1]</a> intermediaries have some
+      license when reserializing messages that pass through them.
+      Current XML canonicalizations (see <a href="#XMLC14N">[XML C14N]</a> and
+      <a href="#EXCLC14N">[EXCL C14N]</a>) do not take into account the transforms
+      that a SOAP intermediary can legally apply to messages passing
+      through it. This document defines a transformation that renders all
+      semantically equivalent SOAP messages identically. This
+      transformation may be used in conjunction with an XML
+      canonicalization algorithm prior to the generation of a message
+      digest in producing XML digital signatures that are sufficiently
+      robust to survive passage through one or more SOAP
+      intermediaries.</p>
+      
+      <div class="div2">
+    	
+<h3><a name="notation"></a>1.1 Notational Conventions</h3>
+
+        <p>The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+        NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+        "OPTIONAL" in this document are to be interpreted as described
+        in <a href="#RFC2119">[RFC 2119]</a>.</p>
+
+        <p>This note uses a number of namespace prefixes
+        throughout; they are listed in <a href="#tabnsprefixes"><b>Table 1</b></a>.
+        Note that the choice of any namespace prefix is arbitrary and
+        not semantically significant (see <a href="#XMLInfoSet">[XML InfoSet]</a>).</p>
+        
+        <a name="tabnsprefixes"></a><table border="1">
+          <caption>Table 1: Prefixes and Namespaces used in this specification.</caption>
+          <tbody>
+          <tr>
+            <th rowspan="1" colspan="1">Prefix</th>
+            <th rowspan="1" colspan="1">Namespace</th>
+            <th rowspan="1" colspan="1">Notes</th>
+          </tr>
+          <tr>
+            <td rowspan="1" colspan="1">env</td>
+            <td rowspan="1" colspan="1">"http://www.w3.org/2003/05/soap-envelope"</td>
+            <td rowspan="1" colspan="1">A normative XML Schema <a href="#XMLSchemaP1">[XML Schema Part1]</a>,
+            <a href="#XMLSchemaP2">[XML Schema Part2]</a> document for the
+            "http://www.w3.org/2003/05/soap-envelope"
+            namespace can be found at <a href="http://www.w3.org/2003/05/soap-envelope">http://www.w3.org/2003/05/soap-envelope</a>.</td>
+          </tr>
+          </tbody>
+        </table>
+
+        <p>Namespace names of the general form
+        "http://example.org/..." and
+        "http://example.com/..." represent application or
+        context-dependent URIs (see <a href="#RFC2396">[RFC 2396]</a>).</p>
+
+        <p>All parts of this note are normative, with the exception of
+        examples and sections explicitly marked as "Non-Normative".</p>
+
+      </div>
+      
+    </div>
+      
+    <div class="div1">
+      
+<h2><a name="N100D6"></a>2. The Need for SOAP Message Normalization</h2>
+      
+      <div class="div2">
+        
+<h3><a name="N100DB"></a>2.1 A Simple Example</h3>
+        
+        <p>As a simple example of the kind of problem a SOAP
+        intermediary can cause for an XML signature, consider the
+        following SOAP message:</p>
+        
+        <div class="exampleOuter">
+	      
+<div class="exampleHead">Example 1: SOAP message containing a SOAP header block and a SOAP body</div>
+              <div class="exampleInner"><pre>&lt;env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"&gt;
+ &lt;env:Header&gt;
+  &lt;n:alertcontrol env:mustUnderstand="false"
+   xmlns:n="http://example.org/alertcontrol"&gt;
+   &lt;n:priority&gt;1&lt;/n:priority&gt;
+   &lt;n:expires&gt;2001-06-22T14:00:00-05:00&lt;/n:expires&gt;
+  &lt;/n:alertcontrol&gt;
+ &lt;/env:Header&gt;
+ &lt;env:Body&gt;
+  &lt;m:alert xmlns:m="http://example.org/alert"&gt;
+   &lt;m:msg&gt;Pick up Mary at school at 2pm&lt;/m:msg&gt;
+  &lt;/m:alert&gt;
+ &lt;/env:Body&gt;
+&lt;/env:Envelope&gt;</pre></div></div>
+
+        <p>A SOAP intermediary is at liberty to remove the
+        <code>env:mustUnderstand</code>  attribute from SOAP header blocks
+        when its value is "false" or "0".
+        If the message included a signature of the header block
+        generated using XML Canonicalization <a href="#XMLC14N">[XML C14N]</a> or
+        Exclusive XML Canonicalization <a href="#EXCLC14N">[EXCL C14N]</a> then
+        that signature would be invalidated if the intermediary removed
+        the <code>mustUnderstand</code>  attribute. There is therefore a
+        requirement for a transformation that takes into account the
+        variations that a SOAP intermediary can introduce. SOAP Message
+        Normalization fulfils this requirement.</p>
+      
+      </div>
+      
+    </div>
+    
+    <div class="div1">
+      
+<h2><a name="N10103"></a>3. Specification of SOAP Message Normalization</h2>
+        
+      <p>SOAP Message Normalization is specified as an XML infoset
+      transformation and consists of the following steps:</p>
+      
+      <ul>
+      
+        <li><p>A SOAP <code>Header</code>  element information
+        item that has no child element information items is
+        removed.</p></li>
+        
+        <li>
+          <p>If a SOAP <code>Header</code>  element information
+          item is present then for each child element information item
+          of the SOAP <code>Header</code>  element information item:</p>
+          
+          <ul>
+          
+            <li><p>If the SOAP <code>mustUnderstand</code>  attribute
+            information item is present with a value of
+            "0" or "false" then remove the
+            <code>mustUnderstand</code>  attribute information
+            item.</p></li>
+            
+            <li><p>If the SOAP <code>mustUnderstand</code>  attribute
+            information item is present with a value of
+            "1" then change its value to
+            "true".</p></li>
+
+            <li><p>If the SOAP <code>role</code>  attribute information
+            item is present with a value of
+            "http://www.w3.org/2003/05/soap-envelope/role/
+            ultimateReceiver" or "" then  remove
+            the <code>role</code>  attribute information item.</p></li>
+
+            <li><p>If the SOAP <code>relay</code>  attribute
+            information item is present with a value of
+            "0" or "false" then remove the
+            <code>relay</code>  attribute information
+            item.</p></li>
+            
+            <li><p>If the SOAP <code>relay</code>  attribute
+            information item is present with a value of
+            "1" then change its value to
+            "true".</p></li>
+
+          </ul>
+        </li>
+        
+        <li><p>Processing instruction information items that are
+        children of the SOAP <code>Envelope</code> , <code>Header</code> ,
+        <code>Fault</code> , <code>Code</code> , <code>Subcode</code> , <code>Value</code> ,
+        <code>Reason</code> , <code>Text</code> , <code>Node</code>  and <code>Role</code> 
+        element information items are removed.</p></li>
+        
+        <li><p>Whitespace character information items that are
+        children of the SOAP <code>Envelope</code> , <code>Header</code> ,
+        <code>Fault</code> , <code>Code</code> , <code>Subcode</code> , <code>Value</code> ,
+        <code>Reason</code> , <code>Node</code>  and <code>Role</code>  element
+        information items are removed.</p></li>
+
+      </ul>
+      
+    </div>
+    
+    <div class="div1">
+      
+<h2><a name="N101B1"></a>4. Use in XML Security</h2>
+      
+      <p>SOAP Message Normalization may be used as a <code>Transform</code> 
+      algorithm in XML Digital Signature <a href="#XMLDSIG">[XML DSig]</a>. Use of
+      a separate <code>CanonicalizationMethod</code>  such as XML
+      Canonicalization <a href="#XMLC14N">[XML C14N]</a> or Exclusive XML
+      Canonicalization <a href="#EXCLC14N">[EXCL C14N]</a> is required. SOAP
+      Message Normalization is identified with the following URI:</p>
+      
+      <ul>
+      
+        <li><p>"http://www.w3.org/2003/10/soap12-n11n"</p></li>
+      
+      </ul>
+      
+    </div>
+  
+    <div class="div1">
+      
+<h2><a name="refs"></a>5. References</h2>
+
+      <div class="div2">
+	    
+<h3><a name="normrefs"></a>5.1 Normative References</h3>
+
+        <dl>
+
+    	<dt class="label"><a name="SOAP-PART1"></a>[SOAP Part1] </dt><dd>W3C Recommendation "SOAP
+    	Version 1.2 Part 1: Messaging Framework", Martin Gudgin, Marc
+    	Hadley, Noah Mendelsohn, Jean-Jacques Moreau, Henrik Frystyk Nielsen, 24 June 2003.  (See <a href="http://www.w3.org/TR/2003/REC-soap12-part1-20030624/">http://www.w3.org/TR/2003/REC-soap12-part1-20030624/</a>.)</dd>
+
+	    <dt class="label"><a name="RFC2119"></a>[RFC 2119] </dt><dd>IETF "RFC 2119: Key
+	    words for use in RFCs to Indicate Requirement Levels", S.
+	    Bradner, March 1997.  (See <a href="http://www.ietf.org/rfc/rfc2119.txt">http://www.ietf.org/rfc/rfc2119.txt</a>.)</dd>
+
+	    <dt class="label"><a name="RFC2396"></a>[RFC 2396] </dt><dd>IETF "RFC 2396:
+	    Uniform Resource Identifiers (URI): Generic Syntax", T.
+	    Berners-Lee, R. Fielding, L. Masinter, August 1998.  (See <a href="http://www.ietf.org/rfc/rfc2396.txt">http://www.ietf.org/rfc/rfc2396.txt</a>.)</dd>
+
+	    <dt class="label"><a name="XMLSchemaP1"></a>[XML Schema Part1] </dt><dd>W3C
+	    Recommendation "XML Schema Part 1: Structures", Henry S.
+	    Thompson, David Beech, Murray Maloney, Noah Mendelsohn, 2 May
+	    2001.  (See <a href="http://www.w3.org/TR/2001/REC-xmlschema-1-20010502/">http://www.w3.org/TR/2001/REC-xmlschema-1-20010502/</a>.)</dd>
+
+	    <dt class="label"><a name="XMLSchemaP2"></a>[XML Schema Part2] </dt><dd>W3C
+	    Recommendation "XML Schema Part 2: Datatypes", Paul V. Biron,
+	    Ashok Malhotra, 2 May 2001.  (See <a href="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/">http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/</a>.)</dd>
+
+	    <dt class="label"><a name="XMLNS"></a>[Namespaces in XML] </dt><dd>W3C Recommendation "Namespaces in XML", Tim Bray,
+	    Dave Hollander, Andrew Layman, 14 January 1999.  (See <a href="http://www.w3.org/TR/1999/REC-xml-names-19990114/">http://www.w3.org/TR/1999/REC-xml-names-19990114/</a>.)</dd>
+
+	    <dt class="label"><a name="XML"></a>[XML 1.0] </dt><dd>W3C
+	    Recommendation "Extensible Markup Language (XML) 1.0 (Second
+	    Edition)", Tim Bray, Jean Paoli, C. M. Sperberg-McQueen, Eve
+	    Maler, 6 October 2000.  (See <a href="http://www.w3.org/TR/2000/REC-xml-20001006">http://www.w3.org/TR/2000/REC-xml-20001006</a>.)</dd>
+
+	    <dt class="label"><a name="XMLInfoSet"></a>[XML InfoSet] </dt><dd>W3C
+	    Recommendation "XML Information Set", John Cowan, Richard Tobin,
+	    24 October 2001.  (See <a href="http://www.w3.org/TR/2001/REC-xml-infoset-20011024/">http://www.w3.org/TR/2001/REC-xml-infoset-20011024/</a>.)</dd>
+	    
+	    <dt class="label"><a name="XMLC14N"></a>[XML C14N] </dt><dd>W3C
+	    Recommendation "Canonical XML", John Boyer,
+	    15 March 2001.  (See <a href="http://www.w3.org/TR/xml-c14n">http://www.w3.org/TR/xml-c14n</a>.)</dd>
+
+	    <dt class="label"><a name="EXCLC14N"></a>[EXCL C14N] </dt><dd>W3C
+	    Recommendation "Exclusive Canonical XML", John Boyer, Donald Eastlake, Joseph Reagle,
+	    18 July 2001.  (See <a href="http://www.w3.org/TR/xml-exc-c14n/">http://www.w3.org/TR/xml-exc-c14n/</a>.)</dd>
+
+	    <dt class="label"><a name="XMLDSIG"></a>[XML DSig] </dt><dd>IETF Draft Standard/W3C Recommendation "XML-Signature
+	    Syntax and Processing", D. Eastlake, J. Reagle, and D. Solo, August 2001.  (See <a href="http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/">http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/</a>.)</dd>
+
+	    <dt class="label"><a name="XMLENC"></a>[XML Enc] </dt><dd>W3C
+	    Recommendation "XML Encryption Syntax and Processing", Takeshi Imamura, Blair Dillaway, Ed Simon, December 2002.  (See <a href="http://www.w3.org/TR/xmlenc-core/">http://www.w3.org/TR/xmlenc-core/</a>.)</dd>
+
+        </dl>
+
+      </div>
+
+      <div class="div2">
+    	
+<h3><a name="nonnormrefs"></a>5.2 Informative References</h3>
+
+	    <dl>
+
+          <dt class="label"><a name="soap11"></a>[SOAP 1.1] </dt><dd>W3C Note "Simple Object
+          Access Protocol (SOAP) 1.1", Don Box, David Ehnebuske, Gopal
+          Kakivaya, Andrew Layman, Noah Mendelsohn, Henrik Nielsen,
+          Satish Thatte, Dave Winer, 8 May 2000.  (See <a href="http://www.w3.org/TR/SOAP/">http://www.w3.org/TR/SOAP/</a>.)</dd>
+
+	</dl>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="back">
+    <div class="div1">
+      
+<h2><a name="xsltimpl"></a>A. XSLT Implementation (Non-Normative)</h2>
+      
+      <p>A future version of this document might usefully contain an
+      implementation of SOAP Message Normalization in the form of an
+      XSLT stylesheet.</p>
+      
+    </div>
+
+    <div class="div1">
+      
+<h2><a name="acks"></a>B. Acknowledgements (Non-Normative)</h2>
+      
+      <p>This document is the work of the W3C XML Protocol Working Group.</p>
+
+      <p>The authors would like to thank Rich Salz for initiating this
+      work. The authors would like to thank Rich Salz and Joseph Reagle
+      for reviewing this document during production</p>
+
+    </div>
+  </div>
+</body></html>

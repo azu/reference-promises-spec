@@ -1,0 +1,651 @@
+<!-- http://www.w3.org/TR/ElementTraversal/ -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Element Traversal Specification</title>
+    
+	<style type="text/css">
+		.issue 
+		{ 
+		   background-color: #ffffbf; 
+		   border: 2px dashed red;
+		}
+
+		.note 
+		{ 
+		   color:green; 
+		}
+     
+		.def 
+		{ 
+		   font-weight: normal; 
+		}
+
+		.example 
+		{ 
+		   border:2px double gray; 
+		   padding-left: 2em; 
+		}
+	</style>
+	<link rel="stylesheet" type="text/css" href="http://www.w3.org/StyleSheets/TR/W3C-REC"/>
+  </head>
+  <body>
+
+
+    <div class="head">
+      <p>
+         <a href="http://www.w3.org/"><img height="48" width="72" alt="W3C" src="http://www.w3.org/Icons/w3c_home"/></a>
+      </p>
+      <h1 class="head">Element Traversal Specification</h1>
+      <h2 id="pagesubtitle">W3C Recommendation 22 December 2008</h2>
+      <dl>
+      <dt>This version:</dt>
+         <dd>
+             <a href="http://www.w3.org/TR/2008/REC-ElementTraversal-20081222/">http://www.w3.org/TR/2008/REC-ElementTraversal-20081222/</a>
+         </dd>
+      <dt>Latest version:</dt>
+        <dd>
+           <a href="http://www.w3.org/TR/ElementTraversal/">http://www.w3.org/TR/ElementTraversal/</a>
+        </dd>
+      <dt>Previous version:</dt>
+        <dd>
+          <a href="http://www.w3.org/TR/2008/PR-ElementTraversal-20081117/">http://www.w3.org/TR/2008/PR-ElementTraversal-20081117/</a>
+        </dd>
+      </dl>
+      <dl>
+        <dt>Editors:</dt>
+        <dd>
+          <span class="person"><a href="http://schepers.cc/">Doug Schepers</a> (<a href="http://www.w3.org/">W3C</a>, formerly <a href="http://vectoreal.com/">Vectoreal</a>) &lt;<a href="mailto:schepers@w3.org">schepers@w3.org</a>&gt;</span>
+        </dd>
+        <dd>
+          <span class="person">Robin Berjon (formerly Expway) &lt;<a href="mailto:robin@berjon.com">robin@berjon.com</a>&gt;, until 2006</span>
+        </dd>
+      </dl>
+       
+       <p>Please refer to the <a href="http://www.w3.org/2008/12/REC-ElementTraversal-20081222-errata.html"><strong>errata</strong></a> for this document, which may include some normative corrections.</p>
+       
+       <p>See also <a href=" http://www.w3.org/2003/03/Translations/byTechnology?technology=ElementTraversal">  <strong>translations</strong></a>.</p>
+       
+       <p class="copyright"><a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> &copy; 2008 <a href="http://www.w3.org/"><acronym title="World Wide Web Consortium">W3C</acronym></a><sup>&reg;</sup> (<a href="http://www.csail.mit.edu/"><acronym title="Massachusetts Institute of Technology">MIT</acronym></a>, <a href="http://www.ercim.org/"><acronym title="European Research Consortium for Informatics and Mathematics">ERCIM</acronym></a>, <a href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply.</p>
+   </div>
+   <hr/>
+
+   <div class="section">
+      <h2 id="specabstract">Abstract</h2>
+
+      <p> 
+         This specification defines the <a href="#interface-elementTraversal"><code>ElementTraversal</code></a> interface, which allows script navigation of the elements of a DOM tree, excluding all other nodes in the DOM, such as text nodes. It also provides an attribute to expose the number of child elements of an element.  It is intended to provide a more convenient alternative to existing DOM navigation interfaces, with a low implementation footprint. 
+      </p>
+    </div>
+
+    <div class="section">
+    <h2 id="sotd">Status of this Document</h2>
+		<p><em>This section describes the status of this document at the time of its publication. Other documents may supersede this document. A list of current W3C publications and the latest revision of this technical report can be found in the <a href="http://www.w3.org/TR/">W3C technical reports index</a> at http://www.w3.org/TR/.</em></p>
+
+		<p>This is the 22 December 2008 Recommendation of the Element Traversal specification.</p>
+		
+		<p>This document has been reviewed by W3C Members, by software developers, and by other W3C groups and interested parties, and is endorsed by the Director as a W3C Recommendation. It is a stable document and may be used as reference material or cited from another document. W3C's role in making the Recommendation is to draw attention to the specification and to promote its widespread deployment. This enhances the functionality and interoperability of the Web.</p>
+		
+		 <p>The <a href="http://www.w3.org/2008/webapps/">Web Applications (WebApps) Working Group</a> has produced a <a href="http://www.w3.org/2008/webapps/ElementTraversal/tests/">test suite</a> and <a href="http://www.w3.org/2008/webapps/ElementTraversal/index.html" title="Element Traversal Test Suite Implementation Report">implementation report</a> to indicate the current level of implementation support for this specification, with passing results for all tests. There have been no changes since Proposed Recommendation.</p>
+
+		<p>Please send questions and comments regarding this specification to <a href="mailto:public-webapps@w3.org">public-webapps@w3.org</a>, the public email list for issues related to WebApps WG deliverables. This list is publicly <a href="http://lists.w3.org/Archives/Public/public-webapps/">archived</a>, and acceptance of this archiving policy is requested automatically upon first post. To subscribe to this list send an email to <a href="mailto:public-webapps-request@w3.org">public-webapps-request@w3.org</a> with the word "subscribe" in the subject line.</p>
+
+		<p> This document has been produced by the <a href="http://www.w3.org/2008/webapps/">Web Applications (WebApps) Working Group</a> as part of the W3C <a href="http://www.w3.org/2006/rwc/Activity">Rich Web Clients Activity</a>, following the procedures set out for the W3C <a href="http://www.w3.org/Consortium/Process/">Process</a>.</p>
+
+		<p>The <a href="#interface-elementTraversal"><code>ElementTraversal</code></a> interface was originally published as part of the <a href="http://www.w3.org/TR/2006/CR-SVGMobile12-20060810/svgudom.html#svg__ElementTraversal">SVG Tiny 1.2 specification</a> in the SVG namespace.  At the request of the SVG, CDF, JCP, and other groups, it was transferred to the WebAPI WG, and migrated to DOM and DOM namespace as a generic facility.  It was transferred again when the WebApps WG took responsibility for the deliverables of the WebAPI WG.</p>
+
+		<p> This document was produced by a group operating under the <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 W3C Patent Policy</a>. W3C maintains a <a rel="disclosure" href="http://www.w3.org/2004/01/pp-impl/42538/status">public list of any patent disclosures</a> made in connection with the deliverables of the group; that page also includes instructions for disclosing a patent. An individual who has actual knowledge of a patent which the individual believes contains <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential Claim(s)</a> must disclose the information in accordance with <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section 6 of the W3C Patent Policy</a>. </p>
+    </div>
+
+   <div class="section">
+      <h2 id="contents">Table of Contents</h2>
+
+      <ul class="toc">
+        <li>
+          <a href="#introduction">1. Introduction</a>
+        </li>
+        <li>
+          <ul class="toc">
+            <li>
+              <a href="#notcovered">1.1. Not in This Specification</a>
+            </li>
+            <li>
+              <a href="#conformance">1.2. Conformance</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="#interface-elementTraversal">2. <code>ElementTraversal</code> interface</a>
+        </li>
+        <li>
+          <ul class="toc">
+            <li>
+              <a href="#attribute-firstElementChild">2.1. <code>firstElementChild</code></a>
+            </li>
+            <li>
+              <a href="#attribute-lastElementChild">2.2. <code>lastElementChild</code></a>
+            </li>
+            <li>
+              <a href="#attribute-previousElementSibling">2.3. <code>previousElementSibling</code></a>
+            </li>
+            <li>
+              <a href="#attribute-nextElementSibling">2.4. <code>nextElementSibling</code></a>
+            </li>
+            <li>
+              <a href="#attribute-childElementCount">2.5. <code>childElementCount</code></a>
+            </li>
+          </ul>
+        </li>
+         <li>
+           <a href="#usage">3. Examples of usage</a>
+            <ul class="toc">
+               <li>
+                  <a href="#example-3.1">3.1. Example of <code>previousElementSibling</code></a>
+               </li>
+               <li>
+                  <a href="#example-3.2">3.2. Example of Precalculating Values and Looping Through Elements</a>
+               </li>
+               <li>
+                  <a href="#example-3.3">3.3. Example of Comparison with Other DOM Interfaces</a>
+               </li>
+            </ul>
+         </li>
+        <li>
+          <a href="#relationships">4. Relationship to other <acronym title="Document Object Model">DOM</acronym> specifications</a>
+        </li>
+        <li>
+          <ul class="toc">
+            <li>
+              <a href="#rel-dom1core">4.1. <acronym title="Document Object Model">DOM</acronym> Level 1 Core</a>
+            </li>
+            <li>
+              <a href="#rel-dom2traversal">4.2. <acronym title="Document Object Model">DOM</acronym> Level 2 Traversal &amp; Range</a>
+            </li>
+            <li>
+              <a href="#rel-dom3core">4.3. <acronym title="Document Object Model">DOM</acronym> Level 3 Core</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="#security">5. Security Considerations</a>
+        </li>
+      </ul>
+      <ul class="toc">
+        <li>
+          <a href="#idl">A. IDL Definitions</a>
+        </li>
+        <li>
+          <a href="#ecmascript-bindings">B. ECMAScript Language Binding</a>
+        </li>
+        <li>
+          <a href="#java-bindings">C. Java Language Binding</a>
+        </li>
+        <li>
+          <a href="#change">D. Change History</a>
+        </li>
+        <li>
+          <a href="#bibref">E. References</a>
+        </li>
+        <li>
+          <a href="#acknow">F. Acknowledgements</a>
+        </li>
+      </ul>
+
+    </div>
+
+   <div class="section">
+      <h2 id="introduction">1. Introduction</h2>
+      
+      <p>
+         <strong>This section is informative.</strong>
+      </p>
+      
+      <p>
+         The DOM Level 1 <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-1950641247"><code>Node</code></a> interface defines 11 node types, but most commonly authors wish to operate solely on <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-111237558"><code>nodeType</code></a> <code>1</code>, the <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-745549614"><code>Element</code></a> node. Other node types include the <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#i-Document"><code>Document</code></a> element and <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-1312295772"><code>Text</code></a> nodes, which include whitespace and line breaks. DOM 1 node traversal includes all of these node types, which is often a source of confusion for authors and which requires an extra step for authors to confirm that the expected <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-745549614"><code>Element</code></a> node interfaces are available. This introduces an additional performance constraint.
+      </p>
+
+      <p>
+         <a href="#interface-elementTraversal"><code>ElementTraversal</code></a> is an interface which allows the author to restrict navigation to <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-745549614"><code>Element</code></a> nodes.  It permits navigation from an element to its first element child, its last element child, and to its next or previous element siblings. Because the implementation exposes only the element nodes, the memory and computational footprint of the DOM representation can be optimized for constrained devices. 
+      </p>
+
+      <p>
+         The DOM Level 1 <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-1950641247"><code>Node</code></a> interface also defines the <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-1451460987"><code>childNodes</code></a> attribute, which is a live list of all child nodes of the node; the <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-1451460987"><code>childNodes</code></a> list has a <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-6D0FB19E"><code>length</code></a> attribute to expose the total number of child nodes of all <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-111237558"><code>nodeTypes</code></a>, useful for preprocessing operations and calculations before, or instead of, looping through the child nodes.  The <a href="#interface-elementTraversal"><code>ElementTraversal</code></a> interface has a similar attribute, <a href="#attribute-childElementCount"><code>childElementCount</code></a>, that reports only the number of <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-745549614"><code>Element</code></a> nodes, which is often what is desired for such operations.
+      </p>
+
+
+      <div class="section">
+         <h3 id="notcovered">1.1. Not in This Specification</h3>
+
+         <p> 
+            This specification does not include the complete list of attributes, methods, and other interfaces available on the <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-745549614"><code>Element</code></a> object.  Additional interfaces are found in other specifications, notably the DOM Core specifications.
+         </p>
+      </div>
+
+      <div class="section">
+         <h3 id="conformance">1.2. Conformance</h3>
+         
+         <p>
+            <strong>This section is normative.</strong>
+         </p>
+         
+         <p> 
+            The key words "<em class="rfc2119" title="Keyword in RFC 2119 context">MUST</em>",
+            "<em class="rfc2119" title="Keyword in RFC 2119 context">MUST NOT</em>", 
+            "<em class="rfc2119" title="Keyword in RFC 2119 context">REQUIRED</em>",
+            "<em class="rfc2119" title="Keyword in RFC 2119 context">SHALL</em>", 
+            "<em class="rfc2119" title="Keyword in RFC 2119 context">SHALL NOT</em>", 
+            "<em class="rfc2119" title="Keyword in RFC 2119 context">SHOULD</em>", 
+            "<em class="rfc2119" title="Keyword in RFC 2119 context">SHOULD NOT</em>", 
+            "<em class="rfc2119" title="Keyword in RFC 2119 context">RECOMMENDED</em>", 
+            "<em class="rfc2119" title="Keyword in RFC 2119 context">MAY</em>", 
+            and "<em class="rfc2119" title="Keyword in RFC 2119 context">OPTIONAL</em>" in this document are to be interpreted as described in RFC 2119 [<cite><a href="#RFC2119" class="bibref">RFC2119</a></cite>].  For purposes of readability, these terms are not necessarily used in a case-sensitive manner in this document.
+         </p>
+
+         <p> 
+            Sometimes, for readability, conformance requirements are phrased as requirements on elements, attributes, methods, interfaces, properties or functions. In all cases these are conformance requirements on implementations.  A conforming implementation of this specification meets all requirements identified by the use of these terms, within the scope of its language bindings. 
+         </p>
+      </div>
+   </div>
+
+
+   <div class="section">
+      <h2 id="interface-elementTraversal">2. <code>ElementTraversal</code> interface</h2>
+      
+      <p>
+         <strong>This section is normative.</strong>
+      </p>
+
+      <p>
+         The <a href="#interface-elementTraversal"><code>ElementTraversal</code></a> interface is a set of read-only attributes which allow an author to easily navigate between elements in a document.  In conforming implementations of Element Traversal, all objects that implement <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-745549614"><code>Element</code></a> must also implement the <a href="#interface-elementTraversal"><code>ElementTraversal</code></a> interface.  Four of the attributes, <a href="#attribute-firstElementChild"><code>firstElementChild</code></a>, <a href="#attribute-lastElementChild"><code>lastElementChild</code></a>, <a href="#attribute-previousElementSibling"><code>previousElementSibling</code></a>, and <a href="#attribute-nextElementSibling"><code>nextElementSibling</code></a>, each provide a live reference to another element with the defined relationship to the current element, if the related element exists.  The fifth attribute, <a href="#attribute-childElementCount"><code>childElementCount</code></a>, exposes the number of child elements of an element, for preprocessing before navigation.  A conforming User Agent must implement all five attributes.  A  User Agent may implement similar interfaces in other specifications, but such implementation is not required for conformance to this specification, if the User Agent is designed for a minimal code footprint.  
+      </p>
+
+      <p> 
+         This interface must be implemented on all <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-745549614"><code>Element</code></a>s, regardless of their namespace.  EntityReference nodes are not visible to the Element Traversal mechanism; if the tree-walker encounters an EntityReference node, it descends into it without informing the caller, and processes any children as if they had been present at the place where the entity node was found.  Navigation must be irrespective of namespace, e.g. if an element in the HTML namespace is followed by element in the SVG namespace, the <a href="#attribute-nextElementSibling"><code>nextElementSibling</code></a> attribute on the HTML element will return the SVG element.
+      </p>
+
+      <h3 id="attribute-firstElementChild">2.1. <code>firstElementChild</code></h3>
+      
+      <p>
+         Accessing this attribute of an element must return a reference to the first child node of that element which is of <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-111237558"><code>nodeType</code></a> <code>1</code>, as an <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-745549614"><code>Element</code></a> object.  If the element on which this attribute is accessed does not have any child nodes, or if none of those child nodes are element nodes, then this attribute must return <code>null</code>. 
+      </p>
+
+      <h3 id="attribute-lastElementChild">2.2. <code>lastElementChild</code></h3>
+      
+      <p>
+         Accessing this attribute of an element must return a reference to the last child node of that element which is of <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-111237558"><code>nodeType</code></a> <code>1</code>, as an <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-745549614"><code>Element</code></a> object.  If the element on which this attribute is accessed does not have any child nodes, or if none of those child nodes are element nodes, then this attribute must return <code>null</code>. 
+      </p>
+
+      <h3 id="attribute-previousElementSibling">2.3. <code>previousElementSibling</code></h3>
+      
+      <p>
+         Accessing this attribute of an element must return a reference to the sibling node of that element which most immediately precedes that element in document order, and which is of <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-111237558"><code>nodeType</code></a> <code>1</code>, as an <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-745549614"><code>Element</code></a> object.  If the element on which this attribute is accessed does not have any preceding sibling nodes, or if none of those preceding sibling nodes are element nodes, then this attribute must return <code>null</code>. 
+      </p>
+
+      <h3 id="attribute-nextElementSibling">2.4. <code>nextElementSibling</code></h3>
+      
+      <p>
+         Accessing this attribute of an element must return a reference to the sibling node of that element which most immediately follows that element in document order, and which is of <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-111237558"><code>nodeType</code></a> <code>1</code>, as an <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-745549614"><code>Element</code></a> object.  If the element on which this attribute is accessed does not have any following sibling nodes, or if none of those following sibling nodes are element nodes, then this attribute must return <code>null</code>. 
+      </p>
+
+      <h3 id="attribute-childElementCount">2.5. <code>childElementCount</code></h3>
+
+      <p>
+         Accessing this attribute of an element must return the current number of child nodes of that element which are of <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-111237558"><code>nodeType</code></a> <code>1</code>.  An implementation may store this number, or it may calculate it upon accessing this attribute, but the number must always represent the number of child element nodes at the time the attribute is accessed.  Only immediate child nodes must be counted, e.g. elements which are child nodes of one of the child nodes of the element on which the attribute is accessed are not included in this count.  If the element on which this attribute is accessed does not have any child nodes, or if none of those child nodes are element nodes, then this attribute must return 0. 
+      </p>
+
+   </div>
+
+
+
+   <div class="section">
+      <h2 id="usage">3. Examples of usage</h2>
+
+      <p>
+         <strong>This section is informative.</strong>
+      </p>
+
+      <p>
+         This section illustrates several ECMAScript [<cite><a href="#ref-ecma262">ECMA262</a></cite>] examples using Element Traversal.
+      </p>
+
+
+      <h3 id="example-3.1">3.1. Example of <a href="#attribute-previousElementSibling"><code>previousElementSibling</code></a></h3>
+      <p>
+         This example demonstrates the utility of the <a href="#attribute-previousElementSibling"><code>previousElementSibling</code></a> attribute. The following code takes an element as a parameter, and returns the element's position in document order within its parent:
+      </p>
+
+<pre>
+function findPosition( el ) {
+   var pos = 0;
+
+   // step through child elements in reverse order
+   while ( null != el ) {
+      // navigate to previous sibling
+      el = el.previousElementSibling;
+      pos++;
+   }
+   
+   return pos;
+}
+</pre>
+
+
+      <h3 id="example-3.2">3.2. Example of Precalculating Values and Looping Through Elements</h3>
+      <p>
+         This example demonstrates the utility of the <a href="#attribute-childElementCount"><code>childElementCount</code></a> attribute. The following code takes an element as a parameter, and places each of its children equidistantly according to the available space:
+      </p>
+
+<pre>
+function spaceChildren( el ) {
+   // get count of element nodes
+   var elCount = el.childElementCount;
+   
+   var eachWidth = window.innerWidth / (elCount + 1);
+
+   // get first child element 
+   var childEl = el.firstElementChild;
+
+   // set initial position
+   var nextPos = eachWidth/2;
+   
+   // step through child elements one by one
+   while ( childEl ) {
+      // position child
+      childEl.style.setProperty( 'position', 'absolute', '' );
+      childEl.style.setProperty( 'left', nextPos + 'px', '' );
+      childEl.style.setProperty( 'width', eachWidth + 'px', '' );
+      
+      // increment position by width
+      nextPos += eachWidth;
+      
+      // then navigate to next child element
+      childEl = childEl.nextElementSibling;
+   }
+}
+</pre>
+
+
+      <h3 id="example-3.3">3.3. Example of Comparison with Other DOM Interfaces</h3>
+      <p>
+         This example contrasts <a href="#interface-elementTraversal"><code>ElementTraversal</code></a> with other DOM interfaces.  The following script shows different methods of iterating through a DOM tree, given the following SVG fragment:
+      </p>
+         
+<pre>
+&lt;g id='shapeGroup'&gt;
+
+   &lt;rect id='rect1' x='5' y='5' width='310' height='220' rx='15' ry='15' fill='skyblue'/&gt;
+   &lt;rect id='rect2' x='15' y='15' width='210' height='180' rx='15' ry='15' fill='cornflowerblue'/&gt;
+
+   &lt;ellipse id='ellipse1' cx='90' cy='70' rx='50' ry='30' fill='yellow' stroke='orange'/&gt;
+
+   &lt;path id='path1' stroke-width='15' stroke='orange' fill='none' stroke-linecap='round' 
+      d='M25,150 C180,180 290,0 400,140 S420,100 460,90'/&gt;  
+   &lt;text id='text1' x='0' y='0' font-size='35' fill='yellow' stroke='orange'
+      stroke-width='2' stroke-linejoin='round' font-weight='bold'&gt;
+      &lt;textPath id='textPath1' xlink:href="#path1"&gt;when life gives you lemons...&lt;/textPath&gt;&lt;/text&gt;
+
+&lt;/g&gt;
+</pre>
+
+<pre>
+function walkTest( el ) {
+   // get count of all nodes
+   var nodeCount = el.childNodes.length;
+
+   // get first child node 
+   var firstNode = el.firstChild;
+
+   // get first child element 
+   var childEl = el.firstElementChild;
+
+   // step through child elements one by one
+   while ( childEl ) {
+      // do something useful here...
+
+      // then navigate to next child element
+      childEl = childEl.nextElementSibling;
+   }
+}
+</pre>
+      
+      <p>
+         Where <var>el</var> is the <code>'g'</code> element with the <code>'id'</code> <code>"shapeGroup"</code>, <var>nodeCount</var> will have the value <code>11</code>. <var>firstNode</var> will be a <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-1312295772"><code>Text</code></a> node (<a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-111237558"><code>nodeType</code></a> of <code>3</code>), and is not equivalent to the first assigned value of <var>childEl</var>, which is an <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-745549614"><code>Element</code></a> node (<a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-111237558"><code>nodeType</code></a> of <code>1</code>) with the <code>'id'</code> <code>"rect1"</code>.  The <code>while</code> loop will cycle 4 more times, iterating through the sibling <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-745549614"><code>Element</code></a> nodes, respectively <code>"rect2"</code>, <code>"ellipse1"</code>, <code>"path1"</code>, and <code>"text1"</code>.  The last value of <var>childEl</var> will be <code>null</code>, as <code>"text1"</code> does not have a next element sibling, though it does have a next node sibling.
+      </p> 
+
+      <p class="note">
+         Note that an SVG <a href="http://www.w3.org/TR/SVG/text.html#TextElement"><span class="element-name">'text'</span></a> element is not the same as a <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-1312295772"><code>Text</code></a> node.  Note also that the SVG <a href="http://www.w3.org/TR/SVG/text.html#TextPathElement"><span class="element-name">'textPath'</span></a> child element of the <a href="http://www.w3.org/TR/SVG/text.html#TextElement"><span class="element-name">'text'</span></a> element is not included in the iteration, as it is not a sibling of <var>childEl</var>.
+      </p>
+   </div>
+   
+   <div class="section">
+      <h2 id="relationships">4. Relationship to other <acronym title="Document Object Model">DOM</acronym> specifications</h2>
+      
+      <p>
+         <strong>This section is informative.</strong>
+      </p>
+
+
+      <div class="section">
+         <h3 id="rel-dom1core">4.1. <acronym title="Document Object Model">DOM</acronym> Level 1 Core</h3>
+         <p>
+            This specification provides an interface that has functional similarity to the DOM navigation attributes of DOM 1 Core, but operates only on element nodes, not other node types. The most comparable DOM 1 Core attributes are <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#attribute-firstChild"><code>firstChild</code></a>, <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#attribute-lastChild"><code>lastChild</code></a>, <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#attribute-previousSibling"><code>previousSibling</code></a>, <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#attribute-nextSibling"><code>nextSibling</code></a>, and <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#attribute-length"><code>nodeList.length</code></a>.
+         </p>
+      </div>
+      
+      <div class="section">
+         <h3 id="rel-dom2traversal">4.2. <acronym title="Document Object Model">DOM</acronym> Level 2 Traversal &amp; Range</h3>
+         <p>
+            Document Object Model Level 2 <a href="#ref-DOM2TR">Traversal &amp; Range</a> is a comprehensive document navigation specification, but may require more device and implementor resources than Element Traversal. As Element Traversal consists of an optimized subset of the functionality of DOM 2 <a href="http://www.w3.org/TR/DOM-Level-2-Traversal-Range/traversal.html">Traversal</a>, a user agent that implements both may do so in a way that leverages the functionality of Traversal.
+         </p>
+      </div>
+      
+      <div class="section">
+         <h3 id="rel-dom3core">4.3. <acronym title="Document Object Model">DOM</acronym> Level 3 Core</h3>
+         <p>
+            This is a supplementary specification to <a href="#ref-DOM3Core">DOM 3 Core</a>.
+         </p>
+      </div>
+
+   </div>
+
+   <div class="section">
+      <h2 id="security">5. Security Considerations</h2>
+
+      <p>
+         <strong>This section is informative.</strong>
+      </p>
+
+      <p>
+         There are no known security considerations involved in the implementation or use of the <a href="#interface-elementTraversal"><code>ElementTraversal</code></a> interface.  This section shall be revised if future security considerations are discovered.
+      </p>
+   </div>
+
+   <div class="section">
+      <h2 id="idl">A. IDL Definitions</h2>
+
+      <div class="idl-definition">
+         <dl>
+            <dt class="idlDef"> IDL Definition </dt>
+            <dd>
+             <div class="idl-code">
+<pre>
+interface ElementTraversal
+{
+   readonly attribute Element        <a href="#idl_firstElementChild"><code>firstElementChild</code></a>;
+   readonly attribute Element        <a href="#idl_lastElementChild"><code>lastElementChild</code></a>;
+   readonly attribute Element        <a href="#idl_previousElementSibling"><code>previousElementSibling</code></a>;
+   readonly attribute Element        <a href="#idl_nextElementSibling"><code>nextElementSibling</code></a>;
+   readonly attribute unsigned long  <a href="#idl_childElementCount"><code>childElementCount</code></a>;
+};
+</pre>
+               </div>
+            </dd>
+         </dl>
+
+      <dl>
+        <dt>
+          <strong>No defined constants</strong>
+
+        </dt>
+      </dl>
+      <dl>
+        <dt>
+          <strong>Attributes</strong>
+        </dt>
+        <dd>
+          <dl>
+            <dt>
+               <span id="idl_firstElementChild" class="dom-attr-name"><a href="#attribute-firstElementChild"><code>firstElementChild</code></a></span>
+            </dt>
+            <dd>Returns the first child element node of this element.  <code>null</code> if this element has no child elements.</dd>
+          </dl>
+          <dl>
+            <dt>
+               <span id="idl_lastElementChild" class="dom-attr-name"><a href="#attribute-lastElementChild"><code>lastElementChild</code></a></span>
+            </dt>
+            <dd>Returns the last child element node of this element.  <code>null</code> if this element has no child elements.</dd>
+          </dl>
+          <dl>
+            <dt>
+               <span id="idl_previousElementSibling" class="dom-attr-name"><a href="#attribute-previousElementSibling"><code>previousElementSibling</code></a></span>
+            </dt>
+            <dd>Returns the previous sibling element node of this element.  <code>null</code> if this element has no element sibling nodes that come before this one in the document tree.</dd>
+          </dl>
+          <dl>
+            <dt>
+               <span id="idl_nextElementSibling" class="dom-attr-name"><a href="#attribute-nextElementSibling"><code>nextElementSibling</code></a></span>
+            </dt>
+            <dd>Returns the next sibling element node of this element.  <code>null</code> if this element has no element sibling nodes that come after this one in the document tree.</dd>
+          </dl>
+          <dl>
+            <dt>
+               <span id="idl_childElementCount" class="dom-attr-name"><a href="#attribute-childElementCount"><code>childElementCount</code></a></span>
+            </dt>
+            <dd>Returns the current number of element nodes that are children of this element.  <code>0</code> if this element has no child nodes that are of <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-111237558"><code>nodeType</code></a> <code>1</code>.</dd>
+          </dl>
+        </dd>
+      </dl>
+      <dl>
+        <dt>
+          <strong>No defined methods</strong>
+        </dt>
+      </dl>
+    </div>
+
+
+   </div>
+
+
+   <div class="section">
+      <h2 id="ecmascript-bindings">B. ECMAScript Language Binding</h2>
+
+      <div>
+         <dl>
+            <dt>Object <code>Element</code></dt>
+            <dd>
+               <dl>
+                  <dt class="def">In a User Agent which implements the <a href="#interface-elementTraversal"><code>ElementTraversal</code></a> interface, <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-745549614"><code>Element</code></a> has all the properties and methods of <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-1950641247"><code>Node</code></a> and <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-745549614"><code>Element</code></a> as defined in other DOM specifications, and in addition has the following properties:</dt>
+                  <dd class="code">
+                     <dl>
+                        <dt><a href="#attribute-firstElementChild"><code>firstElementChild</code></a></dt>
+                        <dd>This read-only property is of type <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-745549614"><code>Element</code></a>.</dd>
+
+                        <dt><a href="#attribute-lastElementChild"><code>lastElementChild</code></a></dt>
+                        <dd>This read-only property is of type <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-745549614"><code>Element</code></a>.</dd>
+
+                        <dt><a href="#attribute-previousElementSibling"><code>previousElementSibling</code></a></dt>
+                        <dd>This read-only property is of type <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-745549614"><code>Element</code></a>.</dd>
+
+                        <dt><a href="#attribute-nextElementSibling"><code>nextElementSibling</code></a></dt>
+                        <dd>This read-only property is of type <a href="http://www.w3.org/TR/REC-DOM-Level-1/level-one-core.html#ID-745549614"><code>Element</code></a>.</dd>
+
+                        <dt><a href="#attribute-childElementCount"><code>childElementCount</code></a></dt>
+                        <dd>This read-only property is of type <code>Number</code>.</dd>
+                     </dl>
+                  </dd>
+               </dl>
+            </dd>
+         </dl>
+      </div>
+   </div>
+
+
+   <div class="section">
+      <h2 id="java-bindings">C. Java Language Binding</h2>
+      <strong id="org.w3c.dom.ElementTraversal.java">org/w3c/dom/ElementTraversal.java:</strong>
+
+      <div class="java-code">
+<pre>
+package org.w3c.dom;
+
+public interface ElementTraversal 
+{
+    Element getFirstElementChild();
+
+    Element getLastElementChild();
+
+    Element getPreviousElementSibling();
+
+    Element getNextElementSibling();
+
+    int getChildElementCount();
+}
+</pre>
+      </div>
+
+
+   </div>
+
+   <div class="section">
+      <h2 id="change">D. Change History</h2>
+      <p>
+         Various editorial changes and corrections and modifications to the examples were made from draft to draft.
+      </p>
+      <p>
+         The attribute <a href="#attribute-childElementCount"><code>childElementCount</code></a> was supplementary to the original proposal, for reasons stated in this specification.
+      </p>
+   </div>
+
+
+   <div class="section">
+      <h2 id="bibref">E. References</h2>
+
+      <h3 id="Normative">Normative references</h3>
+      <dl class="bibliography">
+         <dt id="ref-rfc2119">[<a name="RFC2119" id="RFC2119">RFC2119</a>]</dt>
+         <dd><cite><a href="http://www.ietf.org/rfc/rfc2119.txt">Key words for use in RFCs to indicate Requirement Levels</a></cite>, S. Bradner, March 1997. The specification for how to use English as if it were a technical language to indicate normative requirements.</dd>
+
+         <dt id="ref-DOM1Core">[<a name="DOM1Core" id="DOM1Core">DOM1Core</a>]</dt>
+		 <dd><cite><a href="http://www.w3.org/TR/REC-DOM-Level-1/">Document Object Model - Level 1 Core</a></cite>, V. Apparao, S. Byrne, M. Champion, S. Isaacs, I. Jacobs, A. Le Hors, G. Nicol, J. Robie, R. Sutor, C. Wilson, L. Wood, Editors. World Wide Web Consortium, 1 October 1998.  A standard set of objects for representing HTML and XML documents, a standard model of how these objects can be combined, and a standard interface for accessing and manipulating them.</dd>
+
+         <dt id="ref-ecma262">[<a name="ECMA262">ECMA262</a>]</dt>
+		 <dd><cite><a href="http://www.ecma-international.org/publications/standards/Ecma-262.htm">Standard ECMA-262, 3<sup>rd</sup> edition</a></cite>. ECMA International, December 1999.  The specification for the ECMAScript language, of which JavaScript is a dialect.</dd>
+      </dl>
+
+      <h3 id="Informativ">Informative references</h3>
+      <dl class="bibliography">
+         <dt id="ref-SVGD">[<a name="SVGD" id="SVGD">SVGD</a>]</dt>
+		 <dd><cite><a href="http://www.w3.org/TR/2006/CR-SVGMobile12-20060810/svgudom.html#svg__ElementTraversal">The SVG Micro DOM (uDOM)</a></cite>, O. Andersson, R. Berjon, E. Dahlström, A. Emmons, J. Ferraiolo, V. Hardy, S. Hayman, D. Jackson, C. Lilley, A. Neumann, C. Northway, A. Quint, N. Ramani, D. Schepers, A. Shellshear, Editors. World Wide Web Consortium, 10 August 2006.  The proposed <code>ElementTraversal</code> interface in SVG.</dd>
+         
+         <dt id="ref-DOM2TR">[<a name="DOM2TR" id="DOM2TR">DOM2TR</a>]</dt>
+		<dd><cite><a href="http://www.w3.org/TR/DOM-Level-2-Traversal-Range/">Document Object Model (DOM) Level 2 Traversal and Range Specification</a></cite>, J. Kesselman, J. Robie, M. Champion, P. Sharpe, V. Apparao, L. Wood, Editors. World Wide Web Consortium, 13 November 2000.  A set of platform- and language-neutral interfaces that allow programs and scripts to dynamically traverse and identify a range of content in a document.</dd>
+         
+         <dt id="ref-DOM3Core">[<a name="DOM3Core" id="DOM3Core">DOM3Core</a>]</dt>
+		<dd><cite><a href="http://www.w3.org/TR/DOM-Level-3-Core/">Document Object Model (DOM) Level 3 Core Specification</a></cite>, A. Le Hors, P. Le Hégaret, L. Wood, G. Nicol, J. Robie, M. Champion, S. Byrne, Editors. World Wide Web Consortium, 07 April 2004.  A platform- and language-neutral interface that allows programs and scripts to dynamically access and update the content, structure and style of documents.</dd>
+      </dl>
+   </div>
+
+
+   <div class="section">
+      <h2 id="acknow">F. Acknowledgments</h2>
+
+      <p> 
+         The editor would like to thank the following people for contributing to this specification: David Andersson, Robin Berjon, Jean-Yves Bitterlich, Sergiu Dumitriu, Daniel Glazman, Bjoern Hoehrmann, Kurosawa Takeshi, Chris Lilley, Charles McCathieNevile, Cameron McCormack, Simon Pieters, Nandini Ramani, Jonas Sicking, Andrew Sledd, Josh Soref, Anne van Kesteren, Boris Zbarsky, and Mohamed Zergaoui.  The editor would additionally like to thank the SVG <acronym title="Working Group">WG</acronym> for producing the draft [<a href="#ref-SVGD">SVGD</a>] on which this was initially based.
+      </p>
+
+   </div>
+
+</body>
+</html>

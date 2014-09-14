@@ -1,0 +1,764 @@
+<!-- http://www.w3.org/TR/matrix/ -->
+<!DOCTYPE html PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN' 'http://www.w3.org/TR/html4/loose.dtd'>
+<html lang="en" dir="ltr">
+<head>
+    <title>DOMMatrix interface</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <!--<script src='respec-w3c-common.js' class='remove'></script>-->
+    
+    
+  <link charset="utf-8" type="text/css" rel="stylesheet" href="respec/respec.css"><link charset="utf-8" type="text/css" rel="stylesheet" href="matrix.css"><link charset="utf-8" type="text/css" rel="stylesheet" href="http://www.w3.org/StyleSheets/TR/W3C-WD"></head>
+  <body style="display: inherit;"><div class="head"><p><a href="http://www.w3.org/"><img src="http://www.w3.org/Icons/w3c_home" alt="W3C" height="48" width="72"></a></p><h1 class="title" id="title">DOMMatrix interface</h1><h2 id="w3c-working-draft-19-september-2013"><acronym title="World Wide Web Consortium">W3C</acronym> First Public Working Draft 19 September 2013</h2><dl><dt>This version:</dt><dd><a href="http://www.w3.org/TR/2013/WD-matrix-20130919/">http://www.w3.org/TR/2013/WD-matrix-20130919/</a></dd><dt>Latest published version:</dt><dd><a href="http://www.w3.org/TR/matrix/">http://www.w3.org/TR/matrix/</a></dd><dt>Latest editor's draft:</dt><dd><a href="http://dev.w3.org/fxtf/matrix/">http://dev.w3.org/fxtf/matrix/</a></dd><dt>Editors:</dt><dd><span>Dirk Schulze</span>, <a href="http://adobe.com/">Adobe Systems Inc.</a>,  <span class="ed_mailto"><a href="mailto:dschulze@adobe.com">dschulze@adobe.com</a></span> </dd>
+<dd><span>Rik Cabanier</span>, <a href="http://adobe.com/">Adobe Systems Inc.</a>,  <span class="ed_mailto"><a href="mailto:cabanier@adobe.com">cabanier@adobe.com</a></span> </dd>
+</dl><p class="copyright"><a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2013 <a href="http://www.w3.org/"><acronym title="World Wide Web Consortium">W3C</acronym></a><sup>®</sup> (<a href="http://www.csail.mit.edu/"><acronym title="Massachusetts Institute of Technology">MIT</acronym></a>, <a href="http://www.ercim.eu/"><acronym title="European Research Consortium for Informatics and Mathematics">ERCIM</acronym></a>, <a href="http://www.keio.ac.jp/">Keio</a>, <a href="http://ev.buaa.edu.cn/">Beihang</a>), All Rights Reserved. W3C <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply.</p><hr></div>
+    <div class="introductory section" id="abstract"><h2>Abstract</h2>
+      <p>
+        This specification describes a transformation matrix interface with the dimension of 3x2 and 4x4.
+      </p>
+
+      <p>
+        The transformation matrix interface replaces the SVGMatrix interface from SVG [<cite><a href="#bib-SVG11" rel="biblioentry" class="bibref">SVG11</a></cite>]. It is a common interface used to describe 2D and 3D transformations on a graphical context for SVG, Canvas 2D Context [<cite><a href="#bib-CANVAS-2D" rel="biblioentry" class="bibref">CANVAS-2D</a></cite>] and CSS Transforms [<cite><a href="#bib-CSS3-TRANSFORMS" rel="biblioentry" class="bibref">CSS3-TRANSFORMS</a></cite>]<!-- and WebGL [[WEBGL]] -->.
+      </p>
+    </div><div id="sotd" class="introductory section"><h2>Status of This Document</h2><p><em>This section describes the status of this document at the time of its publication. Other documents may supersede this document. A list of current <acronym title="World Wide Web Consortium">W3C</acronym> publications and the latest revision of this technical report can be found in the <a href="http://www.w3.org/TR/"><acronym title="World Wide Web Consortium">W3C</acronym> technical reports index</a> at http://www.w3.org/TR/.</em></p><p>This document was published by the <a href="http://www.w3.org/Style/CSS/members">CSS Working Group</a> (part of the <a href="http://www.w3.org/Style/Activity">Style Activity</a>) and <a href="http://www.w3.org/Graphics/SVG/WG/">SVG Working Group</a> (part of the <a href="http://www.w3.org/Graphics/Activity">Graphics Activity</a>) as a First Public Working Draft. This document is intended to become a <acronym title="World Wide Web Consortium">W3C</acronym> Recommendation. If you wish to make comments regarding this document, please send them to <a href="mailto:public-fx@w3.org">public-fx@w3.org</a> (<a href="mailto:public-fx-request@w3.org?subject=subscribe">subscribe</a>, <a href="http://lists.w3.org/Archives/Public/public-fx/">archives</a>). All feedback is welcome.</p><p>Publication as a First Public Working Draft does not imply endorsement by the W3C Membership. This is a draft document and may be updated, replaced or obsoleted by other documents at any time. It is inappropriate to cite this document as other than work in progress.</p><p> This document was produced by groups operating under the <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 W3C Patent Policy</a>. W3C maintains a public list of any patent disclosures (<a rel="disclosure" href="http://www.w3.org/2004/01/pp-impl/19480/status">for the Working Group</a> and the <a rel="disclosure" href="http://www.w3.org/2004/01/pp-impl/32061/status">CSS Working Group</a>) made in connection with the deliverables of the groups; those pages also include instructions for disclosing a patent. An individual who has actual knowledge of a patent which the individual believes contains <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential Claim(s)</a> must disclose the information in accordance with <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section 6 of the W3C Patent Policy</a>. </p></div><div class="section" id="toc"><h2 class="introductory">Table of Contents</h2><ul class="toc"><li class="tocline"><a class="tocxref" href="#terminology"><span class="secno">1. </span>Terminology</a></li><li class="tocline"><a class="tocxref" href="#the-point-dictionary"><span class="secno">2. </span>The <span class="idlType formerLink idlType"><code>Point</code></span> dictionary</a><ul class="toc"><li class="tocline"><a class="tocxref" href="#dictionary-point-members"><span class="secno">2.1 </span>Dictionary <span class="idlType formerLink idlType"><code>Point</code></span> Members</a></li></ul></li><li class="tocline"><a class="tocxref" href="#the-cssmatrix-interface"><span class="secno">3. </span>The <span class="idlType formerLink idlType"><code>DOMMatrix</code></span> interface</a><ul class="toc"><li class="tocline"><a class="tocxref" href="#the-constructors"><span class="secno">3.1 </span>The constructors</a><ul class="toc"><li class="tocline"><a class="tocxref" href="#constructors"><span class="secno">3.1.1 </span>Constructors</a></li></ul></li><li class="tocline"><a class="tocxref" href="#two-dimensional-attributes"><span class="secno">3.2 </span>Two-dimensional attributes</a><ul class="toc"><li class="tocline"><a class="tocxref" href="#attributes"><span class="secno">3.2.1 </span>Attributes</a></li></ul></li><li class="tocline"><a class="tocxref" href="#three-dimensional-attributes"><span class="secno">3.3 </span>Three-dimensional attributes</a><ul class="toc"><li class="tocline"><a class="tocxref" href="#attributes-1"><span class="secno">3.3.1 </span>Attributes</a></li></ul></li><li class="tocline"><a class="tocxref" href="#immutable-transformation-methods"><span class="secno">3.4 </span>Immutable transformation methods</a><ul class="toc"><li class="tocline"><a class="tocxref" href="#methods"><span class="secno">3.4.1 </span>Methods</a></li></ul></li><li class="tocline"><a class="tocxref" href="#mutable-transformation-methods"><span class="secno">3.5 </span>Mutable transformation methods</a><ul class="toc"><li class="tocline"><a class="tocxref" href="#methods-1"><span class="secno">3.5.1 </span>Methods</a></li></ul></li><li class="tocline"><a class="tocxref" href="#helper-methods"><span class="secno">3.6 </span>Helper methods</a><ul class="toc"><li class="tocline"><a class="tocxref" href="#methods-2"><span class="secno">3.6.1 </span>Methods</a></li></ul></li></ul></li><li class="tocline"><a class="tocxref" href="#transformation-to-a-3x2-matrix"><span class="secno">4. </span>Transformation to a 3x2 matrix</a></li><li class="tocline"><a class="tocxref" href="#webidl-ref"><span class="secno">A. </span>Interface summary</a></li><li class="tocline"><a class="tocxref" href="#conformance"><span class="secno">B. </span>Conformance</a><ul class="toc"><li class="tocline"><a class="tocxref" href="#document-conventions"><span class="secno">B.1 </span>
+        Document conventions</a></li><li class="tocline"><a class="tocxref" href="#conformance-classes-1"><span class="secno">B.2 </span>
+        Conformance classes</a></li><li class="tocline"><a class="tocxref" href="#partial-implementations"><span class="secno">B.3 </span>
+        Partial implementations</a></li><li class="tocline"><a class="tocxref" href="#experimental-implementations"><span class="secno">B.4 </span>
+        Experimental implementations</a></li><li class="tocline"><a class="tocxref" href="#non-experimental-implementations"><span class="secno">B.5 </span>
+        Non-experimental implementations</a></li></ul></li><li class="tocline"><a class="tocxref" href="#acknowledgments"><span class="secno">C. </span>Acknowledgments</a></li><li class="tocline"><a class="tocxref" href="#references"><span class="secno">D. </span>References</a><ul class="toc"><li class="tocline"><a class="tocxref" href="#normative-references"><span class="secno">D.1 </span>Normative references</a></li><li class="tocline"><a class="tocxref" href="#informative-references"><span class="secno">D.2 </span>Informative references</a></li></ul></li></ul></div>
+
+    <div class="section" id="terminology">
+      <!--OddPage--><h2><span class="secno">1. </span>Terminology</h2>
+      <dl>
+        <dt><dfn id="dfn-post-multiply">post-multiply</dfn></dt>
+        <dd>Term A post-multiplied by term B is equal to A · B.</dd>
+        <dt><dfn id="dfn-pre-multiply">pre-multiply</dfn></dt>
+        <dd>Term A pre-multiplied by term B is equal to B · A.</dd>
+        <dt><dfn id="dfn-multiply">multiply</dfn></dt>
+        <dd>Multiply term A by term B is equal to A · B.</dd>
+      </dl>
+    </div>
+
+    <div class="section" id="the-point-dictionary">
+      <!--OddPage--><h2><span class="secno">2. </span>The <a class="idlType" href="#idl-def-Point"><code>Point</code></a> dictionary</h2>
+      <p>
+        A 2D points and 3D points are represented by the following WebIDL dictionary:
+      </p>
+
+      <pre class="idl"><span class="idlDictionary" id="idl-def-Point">dictionary <span class="idlDictionaryID">Point</span> {
+<span class="idlMember">    <span class="idlMemberType"><a>unrestricted double</a></span> <span class="idlMemberName"><a href="#widl-Point-x">x</a></span> = <span class="idlMemberValue">0</span>;</span>
+<span class="idlMember">    <span class="idlMemberType"><a>unrestricted double</a></span> <span class="idlMemberName"><a href="#widl-Point-y">y</a></span> = <span class="idlMemberValue">0</span>;</span>
+<span class="idlMember">    <span class="idlMemberType"><a>unrestricted double</a></span> <span class="idlMemberName"><a href="#widl-Point-z">z</a></span> = <span class="idlMemberValue">0</span>;</span>
+<span class="idlMember">    <span class="idlMemberType"><a>unrestricted double</a></span> <span class="idlMemberName"><a href="#widl-Point-w">w</a></span> = <span class="idlMemberValue">1</span>;</span>
+};</span>
+</pre><div class="section" id="dictionary-point-members"><h3><span class="secno">2.1 </span>Dictionary <a href="#idl-def-Point" class="idlType"><code>Point</code></a> Members</h3><dl class="dictionary-members"><dt id="widl-Point-w"><code>w</code> of type <span class="idlMemberType"><a>unrestricted double</a></span>, defaulting to <code>1</code></dt><dd>
+          The perspective of the point.
+          <p class="issue">
+            A multiplication of a point with a matrix requires 4 values. Implementations usually normalize the point by w. It should be considered to do this here as well.
+          </p>
+        </dd><dt id="widl-Point-x"><code>x</code> of type <span class="idlMemberType"><a>unrestricted double</a></span>, defaulting to <code>0</code></dt><dd>
+          The x coordinate of the point.
+        </dd><dt id="widl-Point-y"><code>y</code> of type <span class="idlMemberType"><a>unrestricted double</a></span>, defaulting to <code>0</code></dt><dd>
+          The y coordinate of the point.
+        </dd><dt id="widl-Point-z"><code>z</code> of type <span class="idlMemberType"><a>unrestricted double</a></span>, defaulting to <code>0</code></dt><dd>
+          The z coordinate of the point.
+        </dd></dl></div>
+    </div>
+<!--
+    <section>
+      <h2>The <a>DecomposedMatrix</a> dictionary</h2>
+      <p>
+        The resulting values of a decomposed matrix as defined by <a href="#decomposing-the-matrix">Decomposing the matrix</a> and used in CSS Transforms [[CSS3-TRANSFORMS]] are represented by the following DecomposedMatrix dictionary:
+      </p>
+
+      <dl title='dictionary DecomposedMatrix' class='idl'>
+        <dt>sequence&lt;double> translation</dt>
+        <dd>
+          Is an sequence of three double items for the translation of the matrix.
+        </dd>
+        <dt>sequence&lt;double> scale</dt>
+        <dd>
+          Is an sequence of three double items for the scaling of the matrix.
+        </dd>
+        <dt>sequence&lt;double> skew</dt>
+        <dd>
+          Is an sequence of three double items representing the shear of the matrix.
+        </dd>
+        <dt>sequence&lt;double> perspective</dt>
+        <dd>
+          Is an sequence of four double items representing the perspective of the matrix.
+        </dd>
+        <dt>sequence&lt;double> quaternions</dt>
+        <dd>
+          Is an sequence of four double items representing the quaternions for the rotation of the matrix.
+        </dd>
+      </dl>
+
+      <p class='issue'>Define initial values.</p>
+
+      <p class='issue'>
+        It is doubtful that this can be very useful for authors. On the other hand, it allows scripted animations similar to the animations by CSS3 Transforms.
+      </p>
+    </section>
+-->
+    <div class="section" id="the-cssmatrix-interface">
+      <!--OddPage--><h2><span class="secno">3. </span>The <a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a> interface</h2>
+
+      <p>
+        The <a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a> interface represents a mathematical matrix with the purpose of describing transformations a graphical contexts. The following sections describe the details of the interface. For the full interface see <a href="#webidl-ref">Interface summary</a>.
+      </p>
+
+      <p>
+        <a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a> aims to replace the SVGMatrix interface from SVG [<cite><a href="#bib-SVG11" rel="biblioentry" class="bibref">SVG11</a></cite>]. However, the SVGMatrix interface is mandatory for user agents with support for SVG. The SVGMatrix interface must be an alias to the DOMMatrix interface, the sameway as the HTMLDocument interface is to the Document interface.
+      </p>
+
+      <div class="figure">
+        <img src="images/4x4matrix.png" alt="4x4 matrix with items m11 to m44">
+        <p class="capture">A 4x4 matrix representing a <a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a> with items m11 to m44.</p>
+      </div>
+
+      <p class="issue">It needs to be decided if DOMMatrix stored single or double precision floating point numbers.</p>
+
+      <div class="section" id="the-constructors">
+        <h3><span class="secno">3.1 </span>The constructors</h3>
+
+        <p>
+          A series of constructors to create a <a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a> object.
+        </p>
+
+        <pre class="idl"><span class="idlInterface" id="idl-def-DOMMatrix">[<span class="idlCtor"><span class="idlCtorName"><a href="#widl-ctor-DOMMatrix">Constructor</a></span></span>,
+ <span class="idlCtor"><span class="idlCtorName"><a href="#widl-ctor-DOMMatrix--DOMString-transformList">Constructor</a></span> (<span class="idlParam"><span class="idlParamType"><a>DOMString</a></span> <span class="idlParamName">transformList</span></span>)</span>,
+ <span class="idlCtor"><span class="idlCtorName"><a href="#widl-ctor-DOMMatrix--DOMMatrix-other">Constructor</a></span> (<span class="idlParam"><span class="idlParamType"><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></span> <span class="idlParamName">other</span></span>)</span>,
+ <span class="idlCtor"><span class="idlCtorName"><a href="#widl-ctor-DOMMatrix--Float32array-array">Constructor</a></span> (<span class="idlParam"><span class="idlParamType"><a>Float32array</a></span> <span class="idlParamName">array</span></span>)</span>,
+ <span class="idlCtor"><span class="idlCtorName"><a href="#widl-ctor-DOMMatrix--Float64array-array">Constructor</a></span> (<span class="idlParam"><span class="idlParamType"><a>Float64array</a></span> <span class="idlParamName">array</span></span>)</span>,
+ <span class="idlCtor"><span class="idlCtorName"><a href="#widl-ctor-DOMMatrix--sequence-unrestricted-double--numberSequence">Constructor</a></span> (<span class="idlParam"><span class="idlParamType">sequence&lt;<a></a><a>unrestricted double</a>&gt;</span> <span class="idlParamName">numberSequence</span></span>)</span>]
+interface <span class="idlInterfaceID">DOMMatrix</span> {
+};</span>
+</pre><div class="section" id="constructors"><h4><span class="secno">3.1.1 </span>Constructors</h4><dl class="constructors"><dt id="widl-ctor-DOMMatrix"><code>DOMMatrix</code></dt><dd>Creates an identity matrix.<div><em>No parameters.</em></div></dd><dt id="widl-ctor-DOMMatrix--DOMString-transformList"><code>DOMMatrix</code></dt><dd>
+            
+            The DOMString must consist of a transform function list as specified by CSS Transforms.
+            <div class="example">
+              <p>In the following example a CSS Transform string is passed to the DOMMatrix constructor.</p>
+              <pre><code>var matrix = new DOMMatrix("translate(20px,20px), scale(2,3), rotate(45deg)"</code></pre>
+              <p>The resulting matrix is equal to the following sequence of method calls:</p>
+              <pre><code>
+var matrix = new DOMMatrix();
+matrix.translateBy(20,20);
+matrix.scaleNonUniformBy(2,3);
+matrix.rotateBy(45);
+              </code></pre>
+            </div>
+            <p class="issue">Should unit-less values (like for SVG transform presentation attribute) be allowed too? <code>"translate(20,20)"</code></p>
+            <p>Throws a <var>DOMException</var> with name <code>SyntaxError</code> if the <code>DOMString</code> parameter does not validate to a transform list [<cite><a href="#bib-CSS3-TRANSFORMS" rel="biblioentry" class="bibref">CSS3-TRANSFORMS</a></cite>].
+          </p><table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">transformList</td><td class="prmType"><code><a>DOMString</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">A DOMString of transformation functions with the syntax and specifies defined in CSS Transforms [<cite><a href="#bib-CSS3-TRANSFORMS" rel="biblioentry" class="bibref">CSS3-TRANSFORMS</a></cite>]. One CSS pixel length maps to one unit less value in the matrix.</td></tr></table></dd><dt id="widl-ctor-DOMMatrix--DOMMatrix-other"><code>DOMMatrix</code></dt><dd>
+            
+          <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">other</td><td class="prmType"><code><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">All element values of the current matrix are set to the element values of the other matrix.</td></tr></table></dd><dt id="widl-ctor-DOMMatrix--Float32array-array"><code>DOMMatrix</code></dt><dd>
+            
+            <p>Throws a <var>DOMException</var> with name <code>SyntaxError</code> if the <code>Float32array</code> parameter does not consist of 6 or 16 items.
+          </p><table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">array</td><td class="prmType"><code><a>Float32array</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">
+                Create an identity matrix first. An Float32array [<cite><a href="#bib-TYPED-ARRAYS" rel="biblioentry" class="bibref">TYPED-ARRAYS</a></cite>] of 6 items sets the element values <code>a</code> to <code>f</code>. An array of 16 items sets the element values <code>m11</code> to <code>m44</code>.
+              </td></tr></table></dd><dt id="widl-ctor-DOMMatrix--Float64array-array"><code>DOMMatrix</code></dt><dd>
+            
+            <p>Throws a <var>DOMException</var> with name <code>SyntaxError</code> if the <code>Float64array</code> parameter does not consist of 6 or 16 items.
+          </p><table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">array</td><td class="prmType"><code><a>Float64array</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">
+                Create an identity matrix first. An Float64array [<cite><a href="#bib-TYPED-ARRAYS" rel="biblioentry" class="bibref">TYPED-ARRAYS</a></cite>] of 6 items sets the element values <code>a</code> to <code>f</code>. An array of 16 items sets the element values <code>m11</code> to <code>m44</code>.
+              </td></tr></table></dd><dt id="widl-ctor-DOMMatrix--sequence-unrestricted-double--numberSequence"><code>DOMMatrix</code></dt><dd>
+            
+            <p>Throws a <var>DOMException</var> with name <code>SyntaxError</code> if the number sequence parameter does not consist of 6 or 16 items.
+          </p><table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">numberSequence</td><td class="prmType"><code>sequence&lt;<a></a><a>unrestricted double</a>&gt;</code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">
+                Create an identity matrix first. A sequence of 6 items sets the element values <code>a</code> to <code>f</code>. A sequence of 16 items sets the element values <code>m11</code> to <code>m44</code>. 
+              </td></tr></table></dd></dl></div></div>
+
+        <div class="section" id="two-dimensional-attributes">
+          <h3><span class="secno">3.2 </span>Two-dimensional attributes</h3>
+
+          <p>
+            If a <a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a> just consists of 2D transformations the 6 values <code>a</code> to <code>f</code> can represent the transformation matrix. If the <a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a> object is immutable, a <var>DOMException</var> with name <code>NoModificationAllowedError</code> must be thrown on setting the attributes.
+          </p>
+
+          <p>
+            The following attributes <code>a</code> to <code>f</code> are aliases to the two-dimensional elements of the 4x4 matrix.
+          </p>
+
+          <pre class="idl"><span class="idlInterface" id="idl-def-DOMMatrix-partial1">partial interface <span class="idlInterfaceID">DOMMatrix</span> {
+<span class="idlSectionComment">    // These attributes are simple aliases for certain elements of the 4x4 matrix</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-a">a</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-b">b</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-c">c</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-d">d</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-e">e</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-f">f</a></span>;</span>
+};</span>
+</pre><div class="section" id="attributes"><h4><span class="secno">3.2.1 </span>Attributes</h4><dl class="attributes"><dt id="widl-DOMMatrix-a"><code>a</code> of type <span class="idlAttrType"><a>unrestricted double</a></span></dt><dd>
+              <p>Corresponds to the attribute <span>m11</span> of the DOMMatrix interface.</p>
+            </dd><dt id="widl-DOMMatrix-b"><code>b</code> of type <span class="idlAttrType"><a>unrestricted double</a></span></dt><dd>
+              <p>Corresponds to the attribute <span>m12</span> of the DOMMatrix interface.</p>
+            </dd><dt id="widl-DOMMatrix-c"><code>c</code> of type <span class="idlAttrType"><a>unrestricted double</a></span></dt><dd>
+              <p>Corresponds to the attribute <span>m21</span> of the DOMMatrix interface.</p>
+            </dd><dt id="widl-DOMMatrix-d"><code>d</code> of type <span class="idlAttrType"><a>unrestricted double</a></span></dt><dd>
+              <p>Corresponds to the attribute <span>m22</span> of the DOMMatrix interface.</p>
+            </dd><dt id="widl-DOMMatrix-e"><code>e</code> of type <span class="idlAttrType"><a>unrestricted double</a></span></dt><dd>
+              <p>Corresponds to the attribute <span>m41</span> of the DOMMatrix interface.</p>
+            </dd><dt id="widl-DOMMatrix-f"><code>f</code> of type <span class="idlAttrType"><a>unrestricted double</a></span></dt><dd>
+              <p>Corresponds to the attribute <span>m42</span> of the DOMMatrix interface.</p>
+            </dd></dl></div>
+        </div>
+
+        <div class="section" id="three-dimensional-attributes">
+          <h3><span class="secno">3.3 </span>Three-dimensional attributes</h3>
+
+          <p>
+            The following attributes <code>m11</code> to <code>m44</code> represent the elements of the 4x4 matrix. The coordinates are in column-major order. If the <a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a> object is immutable, a <var>DOMException</var> with name <code>NoModificationAllowedError</code> must be thrown on setting the attributes.
+          </p>
+
+          <pre class="idl"><span class="idlInterface" id="idl-def-DOMMatrix-partial2">partial interface <span class="idlInterfaceID">DOMMatrix</span> {
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-m11">m11</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-m12">m12</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-m13">m13</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-m14">m14</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-m21">m21</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-m22">m22</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-m23">m23</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-m24">m24</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-m31">m31</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-m32">m32</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-m33">m33</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-m34">m34</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-m41">m41</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-m42">m42</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-m43">m43</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-m44">m44</a></span>;</span>
+};</span>
+</pre><div class="section" id="attributes-1"><h4><span class="secno">3.3.1 </span>Attributes</h4><dl class="attributes"><dt id="widl-DOMMatrix-m11"><code>m11</code> of type <span class="idlAttrType"><a>unrestricted double</a></span></dt><dd>
+              <p>
+                The value of the element in column 1, row 1 of the matrix.
+              </p>
+            </dd><dt id="widl-DOMMatrix-m12"><code>m12</code> of type <span class="idlAttrType"><a>unrestricted double</a></span></dt><dd>
+              <p>
+                The value of the element in column 1, row 2 of the matrix.
+              </p>
+            </dd><dt id="widl-DOMMatrix-m13"><code>m13</code> of type <span class="idlAttrType"><a>unrestricted double</a></span></dt><dd>
+              <p>
+                The value of the element in column 1, row 3 of the matrix.
+              </p>
+            </dd><dt id="widl-DOMMatrix-m14"><code>m14</code> of type <span class="idlAttrType"><a>unrestricted double</a></span></dt><dd>
+              <p>
+                The value of the element in column 1, row 4 of the matrix.
+              </p>
+            </dd><dt id="widl-DOMMatrix-m21"><code>m21</code> of type <span class="idlAttrType"><a>unrestricted double</a></span></dt><dd>
+              <p>
+                The value of the element in column 2, row 1 of the matrix.
+              </p>
+            </dd><dt id="widl-DOMMatrix-m22"><code>m22</code> of type <span class="idlAttrType"><a>unrestricted double</a></span></dt><dd>
+              <p>
+                The value of the element in column 2, row 2 of the matrix.
+              </p>
+            </dd><dt id="widl-DOMMatrix-m23"><code>m23</code> of type <span class="idlAttrType"><a>unrestricted double</a></span></dt><dd>
+              <p>
+                The value of the element in column 2, row 3 of the matrix.
+              </p>
+            </dd><dt id="widl-DOMMatrix-m24"><code>m24</code> of type <span class="idlAttrType"><a>unrestricted double</a></span></dt><dd>
+              <p>
+                The value of the element in column 2, row 4 of the matrix.
+              </p>
+            </dd><dt id="widl-DOMMatrix-m31"><code>m31</code> of type <span class="idlAttrType"><a>unrestricted double</a></span></dt><dd>
+              <p>
+                The value of the element in column 3, row 1 of the matrix.
+              </p>
+            </dd><dt id="widl-DOMMatrix-m32"><code>m32</code> of type <span class="idlAttrType"><a>unrestricted double</a></span></dt><dd>
+              <p>
+                The value of the element in column 3, row 2 of the matrix.
+              </p>
+            </dd><dt id="widl-DOMMatrix-m33"><code>m33</code> of type <span class="idlAttrType"><a>unrestricted double</a></span></dt><dd>
+              <p>
+                The value of the element in column 3, row 3 of the matrix.
+              </p>
+            </dd><dt id="widl-DOMMatrix-m34"><code>m34</code> of type <span class="idlAttrType"><a>unrestricted double</a></span></dt><dd>
+              <p>
+                The value of the element in column 3, row 4 of the matrix.
+              </p>
+            </dd><dt id="widl-DOMMatrix-m41"><code>m41</code> of type <span class="idlAttrType"><a>unrestricted double</a></span></dt><dd>
+              <p>
+                The value of the element in column 4, row 1 of the matrix.
+              </p>
+            </dd><dt id="widl-DOMMatrix-m42"><code>m42</code> of type <span class="idlAttrType"><a>unrestricted double</a></span></dt><dd>
+              <p>
+                The value of the element in column 4, row 2 of the matrix.
+              </p>
+            </dd><dt id="widl-DOMMatrix-m43"><code>m43</code> of type <span class="idlAttrType"><a>unrestricted double</a></span></dt><dd>
+              <p>
+                The value of the element in column 4, row 3 of the matrix.
+              </p>
+            </dd><dt id="widl-DOMMatrix-m44"><code>m44</code> of type <span class="idlAttrType"><a>unrestricted double</a></span></dt><dd>
+              <p>
+                The value of the element in column 4, row 4 of the matrix.
+              </p>
+            </dd></dl></div>
+        </div>
+
+        <div class="section" id="immutable-transformation-methods">
+          <h3><span class="secno">3.4 </span>Immutable transformation methods</h3>
+
+          <p>
+            The following methods do not modify the current matrix and return new <a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a> object.
+          </p>
+
+          <pre class="idl"><span class="idlInterface" id="idl-def-DOMMatrix-partial3">partial interface <span class="idlInterfaceID">DOMMatrix</span> {
+<span class="idlSectionComment">    // Immutable transform methods</span>
+<span class="idlMethod">    <span class="idlMethType"><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></span> <span class="idlMethName"><a href="#widl-DOMMatrix-translate-DOMMatrix-unrestricted-double-tx-unrestricted-double-ty-unrestricted-double-tz">translate</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">tx</span></span>, <span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">ty</span></span>, 
+                         <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">tz</span> = <span class="idlParamValue">0</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></span> <span class="idlMethName"><a href="#widl-DOMMatrix-scale-DOMMatrix-unrestricted-double-scale-unrestricted-double-originX-unrestricted-double-originY">scale</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">scale</span></span>, <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originX</span> = <span class="idlParamValue">0</span></span>, 
+                     <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originY</span> = <span class="idlParamValue">0</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></span> <span class="idlMethName"><a href="#widl-DOMMatrix-scaled-DOMMatrix-unrestricted-double-scale-unrestricted-double-originX-unrestricted-double-originY-unrestricted-double-originZ">scale3d</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">scale</span></span>, <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originX</span> = <span class="idlParamValue">0</span></span>, 
+                       <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originY</span> = <span class="idlParamValue">0</span></span>, 
+                       <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originZ</span> = <span class="idlParamValue">0</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></span> <span class="idlMethName"><a href="#widl-DOMMatrix-scaleNonUniform-DOMMatrix-unrestricted-double-scaleX-unrestricted-double-scaleY-unrestricted-double-scaleZ-unrestricted-double-originX-unrestricted-double-originY-unrestricted-double-originZ">scaleNonUniform</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">scaleX</span></span>, 
+                               <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">scaleY</span> = <span class="idlParamValue">1</span></span>, 
+                               <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">scaleZ</span> = <span class="idlParamValue">1</span></span>, 
+                               <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originX</span> = <span class="idlParamValue">0</span></span>, 
+                               <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originY</span> = <span class="idlParamValue">0</span></span>, 
+                               <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originZ</span> = <span class="idlParamValue">0</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></span> <span class="idlMethName"><a href="#widl-DOMMatrix-rotate-DOMMatrix-unrestricted-double-angle-unrestricted-double-originX-unrestricted-double-originY">rotate</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">angle</span></span>, <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originX</span> = <span class="idlParamValue">0</span></span>, 
+                      <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originY</span> = <span class="idlParamValue">0</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></span> <span class="idlMethName"><a href="#widl-DOMMatrix-rotateFromVector-DOMMatrix-unrestricted-double-x-unrestricted-double-y">rotateFromVector</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">x</span></span>, <span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">y</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></span> <span class="idlMethName"><a href="#widl-DOMMatrix-rotateAxisAngle-DOMMatrix-unrestricted-double-x-unrestricted-double-y-unrestricted-double-z-unrestricted-double-angle">rotateAxisAngle</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">x</span></span>, <span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">y</span></span>, 
+                               <span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">z</span></span>, <span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">angle</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></span> <span class="idlMethName"><a href="#widl-DOMMatrix-skewX-DOMMatrix-unrestricted-double-sx">skewX</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">sx</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></span> <span class="idlMethName"><a href="#widl-DOMMatrix-skewY-DOMMatrix-unrestricted-double-sy">skewY</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">sy</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></span> <span class="idlMethName"><a href="#widl-DOMMatrix-multiply-DOMMatrix-DOMMatrix-other">multiply</a></span> (<span class="idlParam"><span class="idlParamType"><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></span> <span class="idlParamName">other</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></span> <span class="idlMethName"><a href="#widl-DOMMatrix-flipX-DOMMatrix">flipX</a></span> ();</span>
+<span class="idlMethod">    <span class="idlMethType"><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></span> <span class="idlMethName"><a href="#widl-DOMMatrix-flipY-DOMMatrix">flipY</a></span> ();</span>
+<span class="idlMethod">    <span class="idlMethType"><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></span> <span class="idlMethName"><a href="#widl-DOMMatrix-inverse-DOMMatrix">inverse</a></span> ();</span>
+};</span>
+</pre><div class="section" id="methods"><h4><span class="secno">3.4.1 </span>Methods</h4><dl class="methods"><dt id="widl-DOMMatrix-flipX-DOMMatrix"><code>flipX</code></dt><dd>
+              Post-multiplies the transformation <code>DOMMatrix(-1, 0, 0, 1, 0, 0)</code> and returns the resulting matrix. The current matrix is not modified.
+            <div><em>No parameters.</em></div><div><em>Return type: </em><code><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></code></div></dd><dt id="widl-DOMMatrix-flipY-DOMMatrix"><code>flipY</code></dt><dd>
+              Post-multiplies the transformation <code>DOMMatrix(1, 0, 0, -1, 0, 0)</code> and returns the resulting matrix. The current matrix is not modified.
+            <div><em>No parameters.</em></div><div><em>Return type: </em><code><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></code></div></dd><dt id="widl-DOMMatrix-inverse-DOMMatrix"><code>inverse</code></dt><dd>
+              Returns the inverted matrix of the current matrix. The current matrix is not modified.
+            <div><em>No parameters.</em></div><div><em>Return type: </em><code><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></code></div></dd><dt id="widl-DOMMatrix-multiply-DOMMatrix-DOMMatrix-other"><code>multiply</code></dt><dd>
+              
+              Performs matrix multiplication. This matrix is post-multiplied by the other matrix, returning the resulting new matrix. The current matrix is not modified.
+            <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">other</td><td class="prmType"><code><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">Other matrix for multiplication</td></tr></table><div><em>Return type: </em><code><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></code></div></dd><dt id="widl-DOMMatrix-rotate-DOMMatrix-unrestricted-double-angle-unrestricted-double-originX-unrestricted-double-originY"><code>rotate</code></dt><dd>
+              
+              <p>Post-multiplies a rotation transformation on the current matrix with the given origin and returns the resulting matrix. The current matrix is not modified.</p>
+              <p>The 2D rotation matrix is <a href="http://www.w3.org/TR/2012/WD-css3-transforms-20120911/#RotateDefined">described</a> in CSS Transforms with <code>alpha = angle</code>. This does not include the origin translation. [<cite><a href="#bib-CSS3-TRANSFORMS" rel="biblioentry" class="bibref">CSS3-TRANSFORMS</a></cite>].</p>
+            <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">angle</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">Rotation angle in degrees.</td></tr><tr><td class="prmName">originX</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt"><span class="prmOptTrue">✔</span> (<code>0</code>)</td><td class="prmDesc">Transformation origin on the x-axis.</td></tr><tr><td class="prmName">originY</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt"><span class="prmOptTrue">✔</span> (<code>0</code>)</td><td class="prmDesc">Transformation origin on the y-axis.</td></tr></table><div><em>Return type: </em><code><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></code></div></dd><dt id="widl-DOMMatrix-rotateAxisAngle-DOMMatrix-unrestricted-double-x-unrestricted-double-y-unrestricted-double-z-unrestricted-double-angle"><code>rotateAxisAngle</code></dt><dd>
+              
+              <p>Post-multiplies a rotation transformation on the current matrix and returns the resulting matrix. The rotation of the transform is applied around the given vector. The current matrix is not modified.</p>
+              <p>The 3D rotation matrix is <a href="http://www.w3.org/TR/2012/WD-css3-transforms-20120911/#Rotate3dDefined">described</a> in CSS Transforms with <code>alpha = angle</code> [<cite><a href="#bib-CSS3-TRANSFORMS" rel="biblioentry" class="bibref">CSS3-TRANSFORMS</a></cite>].</p>
+            <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">x</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">The x coordinate of the vector (x,y,z).</td></tr><tr><td class="prmName">y</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">The y coordinate of the vector (x,y,z).</td></tr><tr><td class="prmName">z</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">The z coordinate of the vector (x,y,z).</td></tr><tr><td class="prmName">angle</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">Rotation angle in degrees.</td></tr></table><div><em>Return type: </em><code><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></code></div></dd><dt id="widl-DOMMatrix-rotateFromVector-DOMMatrix-unrestricted-double-x-unrestricted-double-y"><code>rotateFromVector</code></dt><dd>
+              
+              <p>Post-multiplies a rotation transformation on the current matrix and returns the resulting matrix. The rotation angle is determined by the angle between the vector (1,0)<sup>T</sup> and (x,y)<sup>T</sup> in the clockwise direction. If <code>x</code> and <code>y</code> should both be zero, the angle is specified as zero. The current matrix is not modified.</p>
+              <p>The 2D rotation matrix is <a href="http://www.w3.org/TR/2012/WD-css3-transforms-20120911/#RotateDefined">described</a> in CSS Transforms where <code>alpha</code> is the angle between the vector (1,0)<sup>T</sup> and (x,y)<sup>T</sup> in degrees [<cite><a href="#bib-CSS3-TRANSFORMS" rel="biblioentry" class="bibref">CSS3-TRANSFORMS</a></cite>].</p>
+            <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">x</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">The x coordinate of the vector (x,y)<sup>T</sup>.</td></tr><tr><td class="prmName">y</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">The y coordinate of the vector (x,y)<sup>T</sup>.</td></tr></table><div><em>Return type: </em><code><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></code></div></dd><dt id="widl-DOMMatrix-scale-DOMMatrix-unrestricted-double-scale-unrestricted-double-originX-unrestricted-double-originY"><code>scale</code></dt><dd>
+              
+              <p>Post-multiplies a uniform 2D scale transformation (<code>m11 = m22 = scale</code>) on the current matrix with the given origin and returns the resulting matrix. The current matrix is not modified.</p>
+              <p>The 2D scale matrix is <a href="http://www.w3.org/TR/2012/WD-css3-transforms-20120911/#ScaleDefined">described</a> in CSS Transforms with <code>sx = sy = scale</code>. This does not include the origin translation. [<cite><a href="#bib-CSS3-TRANSFORMS" rel="biblioentry" class="bibref">CSS3-TRANSFORMS</a></cite>].</p>
+            <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">scale</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">Multiplier for a uniform scale transformation.</td></tr><tr><td class="prmName">originX</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt"><span class="prmOptTrue">✔</span> (<code>0</code>)</td><td class="prmDesc">Transformation origin on the x-axis.</td></tr><tr><td class="prmName">originY</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt"><span class="prmOptTrue">✔</span> (<code>0</code>)</td><td class="prmDesc">Transformation origin on the y-axis.</td></tr></table><div><em>Return type: </em><code><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></code></div></dd><dt id="widl-DOMMatrix-scaled-DOMMatrix-unrestricted-double-scale-unrestricted-double-originX-unrestricted-double-originY-unrestricted-double-originZ"><code>scale3d</code></dt><dd>
+              
+              <p>Post-multiplies a uniform scale transformation (<code>m11 = m22 = m33 = scale</code>) on the current matrix with the given origin and returns the resulting matrix. The current matrix is not modified.</p>
+              <p>The 3D scale matrix is <a href="http://www.w3.org/TR/2012/WD-css3-transforms-20120911/#Scale3dDefined">described</a> in CSS Transforms with <code>sx = sy = sz = scale</code>. This does not include the origin translation. [<cite><a href="#bib-CSS3-TRANSFORMS" rel="biblioentry" class="bibref">CSS3-TRANSFORMS</a></cite>].</p>
+            <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">scale</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">Multiplier for a uniform scale transformation.</td></tr><tr><td class="prmName">originX</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt"><span class="prmOptTrue">✔</span> (<code>0</code>)</td><td class="prmDesc">Transformation origin on the x-axis.</td></tr><tr><td class="prmName">originY</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt"><span class="prmOptTrue">✔</span> (<code>0</code>)</td><td class="prmDesc">Transformation origin on the y-axis.</td></tr><tr><td class="prmName">originZ</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt"><span class="prmOptTrue">✔</span> (<code>0</code>)</td><td class="prmDesc">Transformation origin on the z-axis.</td></tr></table><div><em>Return type: </em><code><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></code></div></dd><dt id="widl-DOMMatrix-scaleNonUniform-DOMMatrix-unrestricted-double-scaleX-unrestricted-double-scaleY-unrestricted-double-scaleZ-unrestricted-double-originX-unrestricted-double-originY-unrestricted-double-originZ"><code>scaleNonUniform</code></dt><dd>
+              
+              <p>Post-multiplies a non-uniform scale transformation on the current matrix with the given origin and returns the resulting matrix. The current matrix is not modified.</p>
+              <p>The 3D scale matrix is <a href="http://www.w3.org/TR/2012/WD-css3-transforms-20120911/#Scale3dDefined">described</a> in CSS Transforms with <code>sx = scaleX</code>,  <code>sy = scaleY</code> and <code>sz = scaleZ</code>. This does not include the origin translation. [<cite><a href="#bib-CSS3-TRANSFORMS" rel="biblioentry" class="bibref">CSS3-TRANSFORMS</a></cite>].</p>
+            <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">scaleX</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">Multiplier for a non-uniform scale along the x-axis.</td></tr><tr><td class="prmName">scaleY</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt"><span class="prmOptTrue">✔</span> (<code>1</code>)</td><td class="prmDesc">Multiplier for a non-uniform scale along the y-axis.</td></tr><tr><td class="prmName">scaleZ</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt"><span class="prmOptTrue">✔</span> (<code>1</code>)</td><td class="prmDesc">Multiplier for a non-uniform scale along the z-axis.</td></tr><tr><td class="prmName">originX</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt"><span class="prmOptTrue">✔</span> (<code>0</code>)</td><td class="prmDesc">Transformation origin on the x-axis.</td></tr><tr><td class="prmName">originY</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt"><span class="prmOptTrue">✔</span> (<code>0</code>)</td><td class="prmDesc">Transformation origin on the y-axis.</td></tr><tr><td class="prmName">originZ</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt"><span class="prmOptTrue">✔</span> (<code>0</code>)</td><td class="prmDesc">Transformation origin on the z-axis.</td></tr></table><div><em>Return type: </em><code><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></code></div></dd><dt id="widl-DOMMatrix-skewX-DOMMatrix-unrestricted-double-sx"><code>skewX</code></dt><dd>
+              
+              <p>Post-multiplies a skewX transformation on the current matrix and returns the resulting matrix. The current matrix is not modified.</p>
+              <p>The 2D skewX matrix is <a href="http://www.w3.org/TR/2012/WD-css3-transforms-20120911/#SkewXDefined">described</a> in CSS Transforms with <code>alpha = sx</code> [<cite><a href="#bib-CSS3-TRANSFORMS" rel="biblioentry" class="bibref">CSS3-TRANSFORMS</a></cite>].</p>
+            <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">sx</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">Skew angle along the x-axis in degrees.</td></tr></table><div><em>Return type: </em><code><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></code></div></dd><dt id="widl-DOMMatrix-skewY-DOMMatrix-unrestricted-double-sy"><code>skewY</code></dt><dd>
+              
+              <p>Post-multiplies a skewX transformation on the current matrix and returns the resulting matrix.</p>
+              <p>The 2D skewY matrix is <a href="http://www.w3.org/TR/2012/WD-css3-transforms-20120911/#SkewYDefined">described</a> in CSS Transforms with <code>beta = sy</code> [<cite><a href="#bib-CSS3-TRANSFORMS" rel="biblioentry" class="bibref">CSS3-TRANSFORMS</a></cite>].</p>
+            <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">sy</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">Skew angle along the y-axis in degrees.</td></tr></table><div><em>Return type: </em><code><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></code></div></dd><dt id="widl-DOMMatrix-translate-DOMMatrix-unrestricted-double-tx-unrestricted-double-ty-unrestricted-double-tz"><code>translate</code></dt><dd>
+              
+              <p>Post-multiplies a translation transformation on the current matrix and returns the resulting matrix. The current matrix is not modified.</p>
+              <p>The 3D translation matrix is <a href="http://www.w3.org/TR/2012/WD-css3-transforms-20120911/#Translate3dDefined">described</a> in CSS Transforms [<cite><a href="#bib-CSS3-TRANSFORMS" rel="biblioentry" class="bibref">CSS3-TRANSFORMS</a></cite>].</p>
+            <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">tx</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">Translation value along the x-axis.</td></tr><tr><td class="prmName">ty</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">Translation value along the y-axis.</td></tr><tr><td class="prmName">tz</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt"><span class="prmOptTrue">✔</span> (<code>0</code>)</td><td class="prmDesc">Optional translation value along the z-axis.</td></tr></table><div><em>Return type: </em><code><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></code></div></dd></dl></div>
+        </div>
+
+        <div class="section" id="mutable-transformation-methods">
+          <h3><span class="secno">3.5 </span>Mutable transformation methods</h3>
+
+          <p>
+            The following methods do modify the current matrix. If the <a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a> object is immutable, a <var>DOMException</var> with name <code>NoModificationAllowedError</code> must be thrown on calling the operations below.
+          </p>
+
+          <pre class="idl"><span class="idlInterface" id="idl-def-DOMMatrix-partial4">partial interface <span class="idlInterfaceID">DOMMatrix</span> {
+<span class="idlSectionComment">    // Mutable transform methods</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span> <span class="idlMethName"><a href="#widl-DOMMatrix-multiplyBy-void-DOMMatrix-other">multiplyBy</a></span> (<span class="idlParam"><span class="idlParamType"><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></span> <span class="idlParamName">other</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span> <span class="idlMethName"><a href="#widl-DOMMatrix-preMultiplyBy-void-DOMMatrix-other">preMultiplyBy</a></span> (<span class="idlParam"><span class="idlParamType"><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></span> <span class="idlParamName">other</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span> <span class="idlMethName"><a href="#widl-DOMMatrix-translateBy-void-unrestricted-double-tx-unrestricted-double-ty-unrestricted-double-tz">translateBy</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">tx</span></span>, <span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">ty</span></span>, 
+                      <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">tz</span> = <span class="idlParamValue">0</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span> <span class="idlMethName"><a href="#widl-DOMMatrix-scaleBy-void-unrestricted-double-scale-unrestricted-double-originX-unrestricted-double-originY">scaleBy</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">scale</span></span>, <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originX</span> = <span class="idlParamValue">0</span></span>, 
+                  <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originY</span> = <span class="idlParamValue">0</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span> <span class="idlMethName"><a href="#widl-DOMMatrix-scaledBy-void-unrestricted-double-scale-unrestricted-double-originX-unrestricted-double-originY-unrestricted-double-originZ">scale3dBy</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">scale</span></span>, <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originX</span> = <span class="idlParamValue">0</span></span>, 
+                    <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originY</span> = <span class="idlParamValue">0</span></span>, 
+                    <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originZ</span> = <span class="idlParamValue">0</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span> <span class="idlMethName"><a href="#widl-DOMMatrix-scaleNonUniformBy-void-unrestricted-double-scaleX-unrestricted-double-scaleY-unrestricted-double-scaleZ-unrestricted-double-originX-unrestricted-double-originY-unrestricted-double-originZ">scaleNonUniformBy</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">scaleX</span></span>, 
+                            <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">scaleY</span> = <span class="idlParamValue">1</span></span>, 
+                            <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">scaleZ</span> = <span class="idlParamValue">1</span></span>, 
+                            <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originX</span> = <span class="idlParamValue">0</span></span>, 
+                            <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originY</span> = <span class="idlParamValue">0</span></span>, 
+                            <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originZ</span> = <span class="idlParamValue">0</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span> <span class="idlMethName"><a href="#widl-DOMMatrix-rotateBy-void-unrestricted-double-angle-unrestricted-double-originX-unrestricted-double-originY">rotateBy</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">angle</span></span>, <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originX</span> = <span class="idlParamValue">0</span></span>, 
+                   <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originY</span> = <span class="idlParamValue">0</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span> <span class="idlMethName"><a href="#widl-DOMMatrix-rotateFromVectorBy-void-unrestricted-double-x-unrestricted-double-y">rotateFromVectorBy</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">x</span></span>, <span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">y</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span> <span class="idlMethName"><a href="#widl-DOMMatrix-rotateAxisAngleBy-void-unrestricted-double-x-unrestricted-double-y-unrestricted-double-z-unrestricted-double-angle">rotateAxisAngleBy</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">x</span></span>, <span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">y</span></span>, <span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">z</span></span>, 
+                            <span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">angle</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span> <span class="idlMethName"><a href="#widl-DOMMatrix-skewXBy-void-unrestricted-double-sx">skewXBy</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">sx</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span> <span class="idlMethName"><a href="#widl-DOMMatrix-skewYBy-void-unrestricted-double-sy">skewYBy</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">sy</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span> <span class="idlMethName"><a href="#widl-DOMMatrix-invert-void">invert</a></span> ();</span>
+};</span>
+</pre><div class="section" id="methods-1"><h4><span class="secno">3.5.1 </span>Methods</h4><dl class="methods"><dt id="widl-DOMMatrix-invert-void"><code>invert</code></dt><dd>
+              Inverts the current matrix.
+            <div><em>No parameters.</em></div><div><em>Return type: </em><code><a>void</a></code></div></dd><dt id="widl-DOMMatrix-multiplyBy-void-DOMMatrix-other"><code>multiplyBy</code></dt><dd>
+              
+              The other matrix gets post-multiplied to the current matrix.
+            <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">other</td><td class="prmType"><code><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">The matrix that gets post-multiplied.</td></tr></table><div><em>Return type: </em><code><a>void</a></code></div></dd><dt id="widl-DOMMatrix-preMultiplyBy-void-DOMMatrix-other"><code>preMultiplyBy</code></dt><dd>
+              
+              The other matrix gets pre-multiplied to the current matrix.
+            <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">other</td><td class="prmType"><code><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">The matrix that gets pre-multiplied.</td></tr></table><div><em>Return type: </em><code><a>void</a></code></div></dd><dt id="widl-DOMMatrix-rotateAxisAngleBy-void-unrestricted-double-x-unrestricted-double-y-unrestricted-double-z-unrestricted-double-angle"><code>rotateAxisAngleBy</code></dt><dd>
+              
+              <p>Post-multiplies a rotation transformation on the current matrix. The rotation of the transform is applied around the given vector.</p>
+              <p>The 3D rotation matrix is <a href="http://www.w3.org/TR/2012/WD-css3-transforms-20120911/#Rotate3dDefined">described</a> in CSS Transforms with <code>alpha = angle</code> [<cite><a href="#bib-CSS3-TRANSFORMS" rel="biblioentry" class="bibref">CSS3-TRANSFORMS</a></cite>].</p>
+            <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">x</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">The x coordinate of the vector (x,y,z).</td></tr><tr><td class="prmName">y</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">The y coordinate of the vector (x,y,z).</td></tr><tr><td class="prmName">z</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">The z coordinate of the vector (x,y,z).</td></tr><tr><td class="prmName">angle</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">Rotation angle in degrees.</td></tr></table><div><em>Return type: </em><code><a>void</a></code></div></dd><dt id="widl-DOMMatrix-rotateBy-void-unrestricted-double-angle-unrestricted-double-originX-unrestricted-double-originY"><code>rotateBy</code></dt><dd>
+              
+              <p>Post-multiplies a rotation transformation on the current matrix with the given origin.</p>
+              <p>The 2D rotation matrix is <a href="http://www.w3.org/TR/2012/WD-css3-transforms-20120911/#RotateDefined">described</a> in CSS Transforms with <code>alpha = angle</code>. This does not include the origin translation. [<cite><a href="#bib-CSS3-TRANSFORMS" rel="biblioentry" class="bibref">CSS3-TRANSFORMS</a></cite>].</p>
+            <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">angle</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">Rotation angle in degrees.</td></tr><tr><td class="prmName">originX</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt"><span class="prmOptTrue">✔</span> (<code>0</code>)</td><td class="prmDesc">Transformation origin on the x-axis.</td></tr><tr><td class="prmName">originY</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt"><span class="prmOptTrue">✔</span> (<code>0</code>)</td><td class="prmDesc">Transformation origin on the y-axis.</td></tr></table><div><em>Return type: </em><code><a>void</a></code></div></dd><dt id="widl-DOMMatrix-rotateFromVectorBy-void-unrestricted-double-x-unrestricted-double-y"><code>rotateFromVectorBy</code></dt><dd>
+              
+              <p>Post-multiplies a rotation transformation on the current matrix. The rotation angle is determined by the angle between the vector (1,0)<sup>T</sup> and (x,y)<sup>T</sup> in the clockwise direction. If <code>x</code> and <code>y</code> should both be zero, the angle is specified as zero.</p>
+              <p>The 2D rotation matrix is <a href="http://www.w3.org/TR/2012/WD-css3-transforms-20120911/#RotateDefined">described</a> in CSS Transforms where <code>alpha</code> is the angle between the vector (1,0)<sup>T</sup> and (x,y)<sup>T</sup> in degrees [<cite><a href="#bib-CSS3-TRANSFORMS" rel="biblioentry" class="bibref">CSS3-TRANSFORMS</a></cite>].</p>
+            <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">x</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">The x coordinate of the vector (x,y)<sup>T</sup>.</td></tr><tr><td class="prmName">y</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">The y coordinate of the vector (x,y)<sup>T</sup>.</td></tr></table><div><em>Return type: </em><code><a>void</a></code></div></dd><dt id="widl-DOMMatrix-scaledBy-void-unrestricted-double-scale-unrestricted-double-originX-unrestricted-double-originY-unrestricted-double-originZ"><code>scale3dBy</code></dt><dd>
+              
+              <p>Post-multiplies a uniform 2D scale transformation (<code>m11 = m22 = m33 = scale</code>) on the current matrix with the given origin.</p>
+              <p>The 3D scale matrix is <a href="http://www.w3.org/TR/2012/WD-css3-transforms-20120911/#Scale3dDefined">described</a> in CSS Transforms with <code>sx = sy = sz = scale</code>. This does not include the origin translation. [<cite><a href="#bib-CSS3-TRANSFORMS" rel="biblioentry" class="bibref">CSS3-TRANSFORMS</a></cite>].</p>
+            <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">scale</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">Multiplier for a uniform scale transformation.</td></tr><tr><td class="prmName">originX</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt"><span class="prmOptTrue">✔</span> (<code>0</code>)</td><td class="prmDesc">Transformation origin on the x-axis.</td></tr><tr><td class="prmName">originY</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt"><span class="prmOptTrue">✔</span> (<code>0</code>)</td><td class="prmDesc">Transformation origin on the y-axis.</td></tr><tr><td class="prmName">originZ</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt"><span class="prmOptTrue">✔</span> (<code>0</code>)</td><td class="prmDesc">Transformation origin on the z-axis.</td></tr></table><div><em>Return type: </em><code><a>void</a></code></div></dd><dt id="widl-DOMMatrix-scaleBy-void-unrestricted-double-scale-unrestricted-double-originX-unrestricted-double-originY"><code>scaleBy</code></dt><dd>
+              
+              <p>Post-multiplies a uniform 2D scale transformation (<code>m11 = m22 = scale</code>) on the current matrix with the given origin.</p>
+              <p>The 2D scale matrix is <a href="http://www.w3.org/TR/2012/WD-css3-transforms-20120911/#ScaleDefined">described</a> in CSS Transforms with <code>sx = sy = scale</code>. This does not include the origin translation. [<cite><a href="#bib-CSS3-TRANSFORMS" rel="biblioentry" class="bibref">CSS3-TRANSFORMS</a></cite>].</p>
+            <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">scale</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">Multiplier for a uniform scale transformation.</td></tr><tr><td class="prmName">originX</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt"><span class="prmOptTrue">✔</span> (<code>0</code>)</td><td class="prmDesc">Transformation origin on the x-axis.</td></tr><tr><td class="prmName">originY</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt"><span class="prmOptTrue">✔</span> (<code>0</code>)</td><td class="prmDesc">Transformation origin on the y-axis.</td></tr></table><div><em>Return type: </em><code><a>void</a></code></div></dd><dt id="widl-DOMMatrix-scaleNonUniformBy-void-unrestricted-double-scaleX-unrestricted-double-scaleY-unrestricted-double-scaleZ-unrestricted-double-originX-unrestricted-double-originY-unrestricted-double-originZ"><code>scaleNonUniformBy</code></dt><dd>
+              
+              <p>Post-multiplies a non-uniform scale transformation on the current matrix with the given origin.</p>
+              <p>The 3D scale matrix is <a href="http://www.w3.org/TR/2012/WD-css3-transforms-20120911/#Scale3dDefined">described</a> in CSS Transforms with <code>sx = scaleX</code>,  <code>sy = scaleY</code> and <code>sz = scaleZ</code>. This does not include the origin translation. [<cite><a href="#bib-CSS3-TRANSFORMS" rel="biblioentry" class="bibref">CSS3-TRANSFORMS</a></cite>].</p>
+            <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">scaleX</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">Multiplier for a non-uniform scale along the x-axis.</td></tr><tr><td class="prmName">scaleY</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt"><span class="prmOptTrue">✔</span> (<code>1</code>)</td><td class="prmDesc">Multiplier for a non-uniform scale along the y-axis.</td></tr><tr><td class="prmName">scaleZ</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt"><span class="prmOptTrue">✔</span> (<code>1</code>)</td><td class="prmDesc">Multiplier for a non-uniform scale along the z-axis.</td></tr><tr><td class="prmName">originX</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt"><span class="prmOptTrue">✔</span> (<code>0</code>)</td><td class="prmDesc">Transformation origin on the x-axis.</td></tr><tr><td class="prmName">originY</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt"><span class="prmOptTrue">✔</span> (<code>0</code>)</td><td class="prmDesc">Transformation origin on the y-axis.</td></tr><tr><td class="prmName">originZ</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt"><span class="prmOptTrue">✔</span> (<code>0</code>)</td><td class="prmDesc">Transformation origin on the z-axis.</td></tr></table><div><em>Return type: </em><code><a>void</a></code></div></dd><dt id="widl-DOMMatrix-skewXBy-void-unrestricted-double-sx"><code>skewXBy</code></dt><dd>
+              
+              <p>Post-multiplies a skewX transformation on the current matrix.</p>
+              <p>The 2D skewX matrix is <a href="http://www.w3.org/TR/2012/WD-css3-transforms-20120911/#SkewXDefined">described</a> in CSS Transforms with <code>alpha = sx</code> [<cite><a href="#bib-CSS3-TRANSFORMS" rel="biblioentry" class="bibref">CSS3-TRANSFORMS</a></cite>].</p>
+            <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">sx</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">Skew angle along the x-axis in degrees.</td></tr></table><div><em>Return type: </em><code><a>void</a></code></div></dd><dt id="widl-DOMMatrix-skewYBy-void-unrestricted-double-sy"><code>skewYBy</code></dt><dd>
+              
+              <p>Post-multiplies a skewX transformation on the current matrix.</p>
+              <p>The 2D skewY matrix is <a href="http://www.w3.org/TR/2012/WD-css3-transforms-20120911/#SkewYDefined">described</a> in CSS Transforms with <code>beta = sy</code> [<cite><a href="#bib-CSS3-TRANSFORMS" rel="biblioentry" class="bibref">CSS3-TRANSFORMS</a></cite>].</p>
+            <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">sy</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">Skew angle along the y-axis in degrees.</td></tr></table><div><em>Return type: </em><code><a>void</a></code></div></dd><dt id="widl-DOMMatrix-translateBy-void-unrestricted-double-tx-unrestricted-double-ty-unrestricted-double-tz"><code>translateBy</code></dt><dd>
+              
+              <p>Post-multiplies a translation transformation on the current matrix.</p>
+              <p>The 3D translation matrix is <a href="http://www.w3.org/TR/2012/WD-css3-transforms-20120911/#Translate3dDefined">described</a> in CSS Transforms [<cite><a href="#bib-CSS3-TRANSFORMS" rel="biblioentry" class="bibref">CSS3-TRANSFORMS</a></cite>].</p>
+            <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">tx</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">Translation value along the x-axis.</td></tr><tr><td class="prmName">ty</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">Translation value along the y-axis.</td></tr><tr><td class="prmName">tz</td><td class="prmType"><code><a>unrestricted double</a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt"><span class="prmOptTrue">✔</span> (<code>0</code>)</td><td class="prmDesc">Optional translation value along the z-axis.</td></tr></table><div><em>Return type: </em><code><a>void</a></code></div></dd></dl></div>
+        </div>
+
+        <div class="section" id="helper-methods">
+          <h3><span class="secno">3.6 </span>Helper methods</h3>
+
+          <p>
+            The following helper methods do not modify the <a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a> object.
+          </p>
+
+          <pre class="idl"><span class="idlInterface" id="idl-def-DOMMatrix-partial5">partial interface <span class="idlInterfaceID">DOMMatrix</span> {
+<span class="idlSectionComment">    // Helper methods</span>
+<span class="idlMethod">    <span class="idlMethType"><a>boolean</a></span>             <span class="idlMethName"><a href="#widl-DOMMatrix-isD-boolean">is2D</a></span> ();</span>
+<span class="idlMethod">    <span class="idlMethType"><a>unrestricted double</a></span> <span class="idlMethName"><a href="#widl-DOMMatrix-determinant-unrestricted-double">determinant</a></span> ();</span>
+<span class="idlMethod">    <span class="idlMethType"><a class="idlType" href="#idl-def-Point"><code>Point</code></a></span>               <span class="idlMethName"><a href="#widl-DOMMatrix-transformPoint-Point-Point-point">transformPoint</a></span> (<span class="idlParam"><span class="idlParamType"><a class="idlType" href="#idl-def-Point"><code>Point</code></a></span> <span class="idlParamName">point</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>Float32Array</a></span>        <span class="idlMethName"><a href="#widl-DOMMatrix-toFloatArray-Float32Array">toFloat32Array</a></span> ();</span>
+<span class="idlMethod">    <span class="idlMethType"><a>Float64Array</a></span>        <span class="idlMethName"><a href="#widl-DOMMatrix-toFloatArray-Float64Array">toFloat64Array</a></span> ();</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span>                <span class="idlMethName"><a href="#widl-DOMMatrix-stringifier-void">stringifier</a></span> ();</span>
+};</span>
+</pre><div class="section" id="methods-2"><h4><span class="secno">3.6.1 </span>Methods</h4><dl class="methods"><dt id="widl-DOMMatrix-determinant-unrestricted-double"><code>determinant</code></dt><dd>
+              Returns the determinant of the current matrix.
+            <div><em>No parameters.</em></div><div><em>Return type: </em><code><a>unrestricted double</a></code></div></dd><dt id="widl-DOMMatrix-isD-boolean"><code>is2D</code></dt><dd>
+              Returns <code>true</code> if <code>m13</code>, <code>m14</code>, <code>m23</code>, <code>m24</code>, <code>m31</code>, <code>m32</code>, <code>m34</code>, <code>m43</code> are equal to zero and <code>m33</code>, <code>m44</code> are equal to one.
+            <div><em>No parameters.</em></div><div><em>Return type: </em><code><a>boolean</a></code></div></dd><dt id="widl-DOMMatrix-stringifier-void"><code>stringifier</code></dt><dd>
+              Returns a string in the form of a CSS Transforms <code>matrix</code> function if the current matrix is a 2D transform or a CSS Transforms <code>matrix3d</code> else. The syntax is as specified in CSS Transforms [<cite><a href="#bib-CSS3-TRANSFORMS" rel="biblioentry" class="bibref">CSS3-TRANSFORMS</a></cite>].
+              <p class="issue">Should be <code>stringifier;</code>. Bug in old respec tool.</p>
+              <div class="example">
+                <p>In this example a matrix is created and several methods with 2D transformations are called.</p>
+                <pre><code>var matrix = new DOMMatrix();
+matrix.scaleBy(2);
+matrix.translateBy(20,20);</code></pre>
+                <p>The <code>matrix.toString()</code> returns the DOM string:</p>
+                <pre><code>"matrix(2,0,0,2,20,20)"</code></pre>
+                <p>For 3D operations, the <var>stringifier</var> returns DOM string representing a 3D matrix.</p>
+                <pre><code>var matrix = new DOMMatrix();
+matrix.scale3dBy(2);</code></pre>
+                <p>Calling <code>matrix.toString()</code> after the snippet above returns the DOM string:</p>
+                <pre><code>"matrix3d(2,0,0,0,0,2,0,0,0,0,2,0,0,0,0,1)"</code></pre>
+              </div>
+            <div><em>No parameters.</em></div><div><em>Return type: </em><code><a>void</a></code></div></dd><dt id="widl-DOMMatrix-toFloatArray-Float32Array"><code>toFloat32Array</code></dt><dd>
+              Returns the serialized 16 elements <code>m11</code> to <code>m44</code> of the current matrix in column-major order as Float32Array [<cite><a href="#bib-TYPED-ARRAYS" rel="biblioentry" class="bibref">TYPED-ARRAYS</a></cite>].
+            <div><em>No parameters.</em></div><div><em>Return type: </em><code><a>Float32Array</a></code></div></dd><dt id="widl-DOMMatrix-toFloatArray-Float64Array"><code>toFloat64Array</code></dt><dd>
+              Returns the serialized 16 elements <code>m11</code> to <code>m44</code> of the current matrix in column-major order as Float64Array [<cite><a href="#bib-TYPED-ARRAYS" rel="biblioentry" class="bibref">TYPED-ARRAYS</a></cite>].
+            <div><em>No parameters.</em></div><div><em>Return type: </em><code><a>Float64Array</a></code></div></dd><dt id="widl-DOMMatrix-transformPoint-Point-Point-point"><code>transformPoint</code></dt><dd>
+              
+              The point is post-multiplied on the current matrix and returns the resulting point. <code>point</code> is not modified.
+            <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">point</td><td class="prmType"><code><a class="idlType" href="#idl-def-Point"><code>Point</code></a></code></td><td class="prmNullFalse">✘</td><td class="prmOpt prmOptFalse">✘</td><td class="prmDesc">A Point dictionary.</td></tr></table><div><em>Return type: </em><code><a class="idlType" href="#idl-def-Point"><code>Point</code></a></code></div></dd></dl></div>
+      </div>
+    </div>
+
+    <div class="section" id="transformation-to-a-3x2-matrix">
+      <!--OddPage--><h2><span class="secno">4. </span>Transformation to a 3x2 matrix</h2>
+      <p>Host languages might require an internal 3x2 matrix abstraction of a <a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a>. This transformation from a 4x4 matrix to a 3x2 by loosing information is described in section <a href="http://www.w3.org/TR/2012/WD-css3-transforms-20120911/#MatrixDefined">Mathematical Description of Transform Functions</a> of CSS Transforms [<cite><a href="#bib-CSS3-TRANSFORMS" rel="biblioentry" class="bibref">CSS3-TRANSFORMS</a></cite>].</p>
+    </div>
+
+    <div class="appendix section" id="webidl-ref">
+      <!--OddPage--><h2><span class="secno">A. </span>Interface summary</h2>
+    <pre class="idl"><span class="idlDictionary" id="idl-def-Point-summary">dictionary <span class="idlDictionaryID">Point</span> {
+<span class="idlMember">    <span class="idlMemberType"><a>unrestricted double</a></span> <span class="idlMemberName"><a href="#widl-Point-w">w</a></span> = <span class="idlMemberValue">1</span>;</span>
+<span class="idlMember">    <span class="idlMemberType"><a>unrestricted double</a></span> <span class="idlMemberName"><a href="#widl-Point-x">x</a></span> = <span class="idlMemberValue">0</span>;</span>
+<span class="idlMember">    <span class="idlMemberType"><a>unrestricted double</a></span> <span class="idlMemberName"><a href="#widl-Point-y">y</a></span> = <span class="idlMemberValue">0</span>;</span>
+<span class="idlMember">    <span class="idlMemberType"><a>unrestricted double</a></span> <span class="idlMemberName"><a href="#widl-Point-z">z</a></span> = <span class="idlMemberValue">0</span>;</span>
+};</span>
+
+<span class="idlInterface" id="idl-def-DOMMatrix-summary">[<span class="idlCtor"><span class="idlCtorName"><a href="#widl-ctor-DOMMatrix">Constructor</a></span></span>,
+ <span class="idlCtor"><span class="idlCtorName"><a href="#widl-ctor-DOMMatrix--DOMString-transformList">Constructor</a></span> (<span class="idlParam"><span class="idlParamType"><a>DOMString</a></span> <span class="idlParamName">transformList</span></span>)</span>,
+ <span class="idlCtor"><span class="idlCtorName"><a href="#widl-ctor-DOMMatrix--DOMMatrix-other">Constructor</a></span> (<span class="idlParam"><span class="idlParamType"><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></span> <span class="idlParamName">other</span></span>)</span>,
+ <span class="idlCtor"><span class="idlCtorName"><a href="#widl-ctor-DOMMatrix--Float32array-array">Constructor</a></span> (<span class="idlParam"><span class="idlParamType"><a>Float32array</a></span> <span class="idlParamName">array</span></span>)</span>,
+ <span class="idlCtor"><span class="idlCtorName"><a href="#widl-ctor-DOMMatrix--Float64array-array">Constructor</a></span> (<span class="idlParam"><span class="idlParamType"><a>Float64array</a></span> <span class="idlParamName">array</span></span>)</span>,
+ <span class="idlCtor"><span class="idlCtorName"><a href="#widl-ctor-DOMMatrix--sequence-unrestricted-double--numberSequence">Constructor</a></span> (<span class="idlParam"><span class="idlParamType">sequence&lt;<a></a><a>unrestricted double</a>&gt;</span> <span class="idlParamName">numberSequence</span></span>)</span>]
+interface <span class="idlInterfaceID">DOMMatrix</span> {
+<span class="idlSectionComment">
+    // These attributes are simple aliases for certain elements of the 4x4 matrix</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-a">a</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-b">b</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-c">c</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-d">d</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-e">e</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-f">f</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-m11">m11</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-m12">m12</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-m13">m13</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-m14">m14</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-m21">m21</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-m22">m22</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-m23">m23</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-m24">m24</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-m31">m31</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-m32">m32</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-m33">m33</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-m34">m34</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-m41">m41</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-m42">m42</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-m43">m43</a></span>;</span>
+<span class="idlAttribute">    attribute <span class="idlAttrType"><a>unrestricted double</a></span> <span class="idlAttrName"><a href="#widl-DOMMatrix-m44">m44</a></span>;</span>
+<span class="idlSectionComment">
+    // Immutable transform methods</span>
+<span class="idlMethod">    <span class="idlMethType"><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></span>           <span class="idlMethName"><a href="#widl-DOMMatrix-translate-DOMMatrix-unrestricted-double-tx-unrestricted-double-ty-unrestricted-double-tz">translate</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">tx</span></span>, <span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">ty</span></span>, 
+                                   <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">tz</span> = <span class="idlParamValue">0</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></span>           <span class="idlMethName"><a href="#widl-DOMMatrix-scale-DOMMatrix-unrestricted-double-scale-unrestricted-double-originX-unrestricted-double-originY">scale</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">scale</span></span>, 
+                               <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originX</span> = <span class="idlParamValue">0</span></span>, 
+                               <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originY</span> = <span class="idlParamValue">0</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></span>           <span class="idlMethName"><a href="#widl-DOMMatrix-scaled-DOMMatrix-unrestricted-double-scale-unrestricted-double-originX-unrestricted-double-originY-unrestricted-double-originZ">scale3d</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">scale</span></span>, 
+                                 <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originX</span> = <span class="idlParamValue">0</span></span>, 
+                                 <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originY</span> = <span class="idlParamValue">0</span></span>, 
+                                 <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originZ</span> = <span class="idlParamValue">0</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></span>           <span class="idlMethName"><a href="#widl-DOMMatrix-scaleNonUniform-DOMMatrix-unrestricted-double-scaleX-unrestricted-double-scaleY-unrestricted-double-scaleZ-unrestricted-double-originX-unrestricted-double-originY-unrestricted-double-originZ">scaleNonUniform</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">scaleX</span></span>, 
+                                         <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">scaleY</span> = <span class="idlParamValue">1</span></span>, 
+                                         <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">scaleZ</span> = <span class="idlParamValue">1</span></span>, 
+                                         <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originX</span> = <span class="idlParamValue">0</span></span>, 
+                                         <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originY</span> = <span class="idlParamValue">0</span></span>, 
+                                         <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originZ</span> = <span class="idlParamValue">0</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></span>           <span class="idlMethName"><a href="#widl-DOMMatrix-rotate-DOMMatrix-unrestricted-double-angle-unrestricted-double-originX-unrestricted-double-originY">rotate</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">angle</span></span>, 
+                                <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originX</span> = <span class="idlParamValue">0</span></span>, 
+                                <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originY</span> = <span class="idlParamValue">0</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></span>           <span class="idlMethName"><a href="#widl-DOMMatrix-rotateFromVector-DOMMatrix-unrestricted-double-x-unrestricted-double-y">rotateFromVector</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">x</span></span>, <span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">y</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></span>           <span class="idlMethName"><a href="#widl-DOMMatrix-rotateAxisAngle-DOMMatrix-unrestricted-double-x-unrestricted-double-y-unrestricted-double-z-unrestricted-double-angle">rotateAxisAngle</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">x</span></span>, <span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">y</span></span>, 
+                                         <span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">z</span></span>, <span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">angle</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></span>           <span class="idlMethName"><a href="#widl-DOMMatrix-skewX-DOMMatrix-unrestricted-double-sx">skewX</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">sx</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></span>           <span class="idlMethName"><a href="#widl-DOMMatrix-skewY-DOMMatrix-unrestricted-double-sy">skewY</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">sy</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></span>           <span class="idlMethName"><a href="#widl-DOMMatrix-multiply-DOMMatrix-DOMMatrix-other">multiply</a></span> (<span class="idlParam"><span class="idlParamType"><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></span> <span class="idlParamName">other</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></span>           <span class="idlMethName"><a href="#widl-DOMMatrix-flipX-DOMMatrix">flipX</a></span> ();</span>
+<span class="idlMethod">    <span class="idlMethType"><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></span>           <span class="idlMethName"><a href="#widl-DOMMatrix-flipY-DOMMatrix">flipY</a></span> ();</span>
+<span class="idlMethod">    <span class="idlMethType"><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></span>           <span class="idlMethName"><a href="#widl-DOMMatrix-inverse-DOMMatrix">inverse</a></span> ();</span>
+<span class="idlSectionComment">
+    // Mutable transform methods</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span>                <span class="idlMethName"><a href="#widl-DOMMatrix-multiplyBy-void-DOMMatrix-other">multiplyBy</a></span> (<span class="idlParam"><span class="idlParamType"><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></span> <span class="idlParamName">other</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span>                <span class="idlMethName"><a href="#widl-DOMMatrix-preMultiplyBy-void-DOMMatrix-other">preMultiplyBy</a></span> (<span class="idlParam"><span class="idlParamType"><a class="idlType" href="#idl-def-DOMMatrix"><code>DOMMatrix</code></a></span> <span class="idlParamName">other</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span>                <span class="idlMethName"><a href="#widl-DOMMatrix-translateBy-void-unrestricted-double-tx-unrestricted-double-ty-unrestricted-double-tz">translateBy</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">tx</span></span>, <span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">ty</span></span>, 
+                                     <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">tz</span> = <span class="idlParamValue">0</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span>                <span class="idlMethName"><a href="#widl-DOMMatrix-scaleBy-void-unrestricted-double-scale-unrestricted-double-originX-unrestricted-double-originY">scaleBy</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">scale</span></span>, 
+                                 <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originX</span> = <span class="idlParamValue">0</span></span>, 
+                                 <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originY</span> = <span class="idlParamValue">0</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span>                <span class="idlMethName"><a href="#widl-DOMMatrix-scaledBy-void-unrestricted-double-scale-unrestricted-double-originX-unrestricted-double-originY-unrestricted-double-originZ">scale3dBy</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">scale</span></span>, 
+                                   <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originX</span> = <span class="idlParamValue">0</span></span>, 
+                                   <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originY</span> = <span class="idlParamValue">0</span></span>, 
+                                   <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originZ</span> = <span class="idlParamValue">0</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span>                <span class="idlMethName"><a href="#widl-DOMMatrix-scaleNonUniformBy-void-unrestricted-double-scaleX-unrestricted-double-scaleY-unrestricted-double-scaleZ-unrestricted-double-originX-unrestricted-double-originY-unrestricted-double-originZ">scaleNonUniformBy</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">scaleX</span></span>, 
+                                           <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">scaleY</span> = <span class="idlParamValue">1</span></span>, 
+                                           <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">scaleZ</span> = <span class="idlParamValue">1</span></span>, 
+                                           <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originX</span> = <span class="idlParamValue">0</span></span>, 
+                                           <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originY</span> = <span class="idlParamValue">0</span></span>, 
+                                           <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originZ</span> = <span class="idlParamValue">0</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span>                <span class="idlMethName"><a href="#widl-DOMMatrix-rotateBy-void-unrestricted-double-angle-unrestricted-double-originX-unrestricted-double-originY">rotateBy</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">angle</span></span>, 
+                                  <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originX</span> = <span class="idlParamValue">0</span></span>, 
+                                  <span class="idlParam">optional <span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">originY</span> = <span class="idlParamValue">0</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span>                <span class="idlMethName"><a href="#widl-DOMMatrix-rotateFromVectorBy-void-unrestricted-double-x-unrestricted-double-y">rotateFromVectorBy</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">x</span></span>, <span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">y</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span>                <span class="idlMethName"><a href="#widl-DOMMatrix-rotateAxisAngleBy-void-unrestricted-double-x-unrestricted-double-y-unrestricted-double-z-unrestricted-double-angle">rotateAxisAngleBy</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">x</span></span>, <span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">y</span></span>, 
+                                           <span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">z</span></span>, <span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">angle</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span>                <span class="idlMethName"><a href="#widl-DOMMatrix-skewXBy-void-unrestricted-double-sx">skewXBy</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">sx</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span>                <span class="idlMethName"><a href="#widl-DOMMatrix-skewYBy-void-unrestricted-double-sy">skewYBy</a></span> (<span class="idlParam"><span class="idlParamType"><a>unrestricted double</a></span> <span class="idlParamName">sy</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span>                <span class="idlMethName"><a href="#widl-DOMMatrix-invert-void">invert</a></span> ();</span>
+<span class="idlSectionComment">
+    // Helper methods</span>
+<span class="idlMethod">    <span class="idlMethType"><a>boolean</a></span>             <span class="idlMethName"><a href="#widl-DOMMatrix-isD-boolean">is2D</a></span> ();</span>
+<span class="idlMethod">    <span class="idlMethType"><a>unrestricted double</a></span> <span class="idlMethName"><a href="#widl-DOMMatrix-determinant-unrestricted-double">determinant</a></span> ();</span>
+<span class="idlMethod">    <span class="idlMethType"><a class="idlType" href="#idl-def-Point"><code>Point</code></a></span>               <span class="idlMethName"><a href="#widl-DOMMatrix-transformPoint-Point-Point-point">transformPoint</a></span> (<span class="idlParam"><span class="idlParamType"><a class="idlType" href="#idl-def-Point"><code>Point</code></a></span> <span class="idlParamName">point</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>Float32Array</a></span>        <span class="idlMethName"><a href="#widl-DOMMatrix-toFloatArray-Float32Array">toFloat32Array</a></span> ();</span>
+<span class="idlMethod">    <span class="idlMethType"><a>Float64Array</a></span>        <span class="idlMethName"><a href="#widl-DOMMatrix-toFloatArray-Float64Array">toFloat64Array</a></span> ();</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span>                <span class="idlMethName"><a href="#widl-DOMMatrix-stringifier-void">stringifier</a></span> ();</span>
+};</span>
+</pre></div>
+
+    <div id="conformance" class="appedix section">
+      <!--OddPage--><h2><span class="secno">B. </span>Conformance</h2>
+
+      <div class="section" id="document-conventions">
+        <h3 id="conventions"><span class="secno">B.1 </span>
+        Document conventions</h3>
+
+        <p>Conformance requirements are expressed with a combination of
+        descriptive assertions and RFC 2119 terminology. The key words “<em title="must" class="rfc2119">must</em>”,
+        “<em title="must not" class="rfc2119">must not</em>”, “<em title="required" class="rfc2119">required</em>”, “<em title="shall" class="rfc2119">shall</em>”, “<em title="shall not" class="rfc2119">shall not</em>”, “<em title="should" class="rfc2119">should</em>”, “<em title="should not" class="rfc2119">should not</em>”,
+        “<em title="recommended" class="rfc2119">recommended</em>”, “<em title="may" class="rfc2119">may</em>”, and “<em title="optional" class="rfc2119">optional</em>” in the normative parts of this
+        document are to be interpreted as described in RFC 2119.
+        However, for readability, these words do not appear in all uppercase
+        letters in this specification.
+
+        </p><p>All of the text of this specification is normative except sections
+        explicitly marked as non-normative, examples, and notes. [<cite><a href="#bib-RFC2119" rel="biblioentry" class="bibref">RFC2119</a></cite>]</p>
+
+        <p>Examples in this specification are introduced with the words “for example”
+        or are set apart from the normative text with <code>class="example"</code>,
+        like this:
+
+        </p><div class="example">
+          <p>This is an example of an informative example.</p>
+        </div>
+
+        <p>Informative notes begin with the word “Note” and are set apart from the
+        normative text with <code>class="note"</code>, like this:
+
+        </p><p class="note">Note, this is an informative note.</p>
+      </div>
+
+      <div class="section" id="conformance-classes-1">
+        <h3 id="conformance-classes"><span class="secno">B.2 </span>
+        Conformance classes</h3>
+
+        <p>Conformance to this specification
+        is defined for three conformance classes:
+        </p><dl>
+          <dt><dfn id="dfn-style-sheet--as-conformance-class" title="style sheet!!as conformance class">style sheet</dfn>
+            </dt><dd>A <a href="http://www.w3.org/TR/CSS21/conform.html#style-sheet">CSS
+            style sheet</a>.
+          </dd><dt><dfn id="dfn-renderer">renderer</dfn></dt>
+            <dd>A <a href="http://www.w3.org/TR/CSS21/conform.html#user-agent">UA</a>
+            that interprets the semantics of a style sheet and renders
+            documents that use them.
+          </dd><dt><dfn id="authoring-tool">authoring tool</dfn></dt>
+            <dd>A <a href="http://www.w3.org/TR/CSS21/conform.html#user-agent">UA</a>
+            that writes a style sheet.
+        </dd></dl>
+
+        <p>A style sheet is conformant to this specification
+        if all of its statements that use syntax defined in this module are valid
+        according to the generic CSS grammar and the individual grammars of each
+        feature defined in this module.
+
+        </p><p>A renderer is conformant to this specification
+        if, in addition to interpreting the style sheet as defined by the
+        appropriate specifications, it supports all the features defined
+        by this specification by parsing them correctly
+        and rendering the document accordingly. However, the inability of a
+        UA to correctly render a document due to limitations of the device
+        does not make the UA non-conformant. (For example, a UA is not
+        required to render color on a monochrome monitor.)
+
+        </p><p>An authoring tool is conformant to this specification
+        if it writes style sheets that are syntactically correct according to the
+        generic CSS grammar and the individual grammars of each feature in
+        this module, and meet all other conformance requirements of style sheets
+        as described in this module.
+      </p></div>
+
+      <div class="section" id="partial-implementations">
+        <h3 id="partial"><span class="secno">B.3 </span>
+        Partial implementations</h3>
+
+        <p>So that authors can exploit the forward-compatible parsing rules to
+        assign fallback values, CSS renderers <strong>must</strong>
+        treat as invalid (and <a href="http://www.w3.org/TR/CSS21/conform.html#ignore">ignore
+        as appropriate</a>) any at-rules, properties, property values, keywords,
+        and other syntactic constructs for which they have no usable level of
+        support. In particular, user agents <strong>must not</strong> selectively
+        ignore unsupported component values and honor supported values in a single
+        multi-value property declaration: if any value is considered invalid
+        (as unsupported values must be), CSS requires that the entire declaration
+        be ignored.</p>
+      </div>
+
+      <div class="section" id="experimental-implementations">
+        <h3 id="experimental"><span class="secno">B.4 </span>
+        Experimental implementations</h3>
+
+        <p>To avoid clashes with future CSS features, the CSS2.1 specification
+        reserves a <a href="http://www.w3.org/TR/CSS21/syndata.html#vendor-keywords">prefixed
+        syntax</a> for proprietary and experimental extensions to CSS.
+
+        </p><p>Prior to a specification reaching the Candidate Recommendation stage
+        in the <acronym title="World Wide Web Consortium">W3C</acronym> process, all implementations of a CSS feature are considered
+        experimental. The CSS Working Group recommends that implementations
+        use a vendor-prefixed syntax for such features, including those in
+        <acronym title="World Wide Web Consortium">W3C</acronym> Working Drafts. This avoids incompatibilities with future changes
+        in the draft.
+        </p>
+      </div>
+
+      <div class="section" id="non-experimental-implementations">
+        <h3 id="testing"><span class="secno">B.5 </span>
+        Non-experimental implementations</h3>
+
+        <p>Once a specification reaches the Candidate Recommendation stage,
+        non-experimental implementations are possible, and implementors should
+        release an unprefixed implementation of any CR-level feature they
+        can demonstrate to be correctly implemented according to spec.
+
+        </p><p>To establish and maintain the interoperability of CSS across
+        implementations, the CSS Working Group requests that non-experimental
+        CSS renderers submit an implementation report (and, if necessary, the
+        testcases used for that implementation report) to the <acronym title="World Wide Web Consortium">W3C</acronym> before
+        releasing an unprefixed implementation of any CSS features. Testcases
+        submitted to <acronym title="World Wide Web Consortium">W3C</acronym> are subject to review and correction by the CSS
+        Working Group.
+
+        </p><p>Further information on submitting testcases and implementation reports
+        can be found from on the CSS Working Group's website at
+        <a href="http://www.w3.org/Style/CSS/Test/">http://www.w3.org/Style/CSS/Test/</a>.
+        Questions should be directed to the
+        <a href="http://lists.w3.org/Archives/Public/public-css-testsuite">public-css-testsuite@w3.org</a>
+        mailing list.
+      </p></div>
+    </div>
+
+    <div id="acknowledgments" class="appendix section">
+      <!--OddPage--><h2><span class="secno">C. </span>Acknowledgments</h2>
+      <p>
+        Many thanks to Dean Jackson for his initial proposal to make this specification possible.
+      </p>
+    </div>
+  
+
+<div class="appendix section" id="references"><!--OddPage--><h2><span class="secno">D. </span>References</h2><div class="section" id="normative-references"><h3><span class="secno">D.1 </span>Normative references</h3><dl class="bibliography"><dt id="bib-CSS3-TRANSFORMS">[CSS3-TRANSFORMS]</dt><dd>Simon Fraser; Dean Jackson; David Hyatt; Chris Marrin; Edward O'Connor; Dirk Schulze; Aryeh Gregor. <a href="http://www.w3.org/TR/css3-transforms/"><cite>CSS Transforms.</cite></a> URL: <a href="http://www.w3.org/TR/css3-transforms/">http://www.w3.org/TR/css3-transforms/</a> 
+</dd><dt id="bib-RFC2119">[RFC2119]</dt><dd>S. Bradner. <a href="http://www.ietf.org/rfc/rfc2119.txt"><cite>Key words for use in RFCs to Indicate Requirement Levels.</cite></a> March 1997. Internet RFC 2119.  URL: <a href="http://www.ietf.org/rfc/rfc2119.txt">http://www.ietf.org/rfc/rfc2119.txt</a> 
+</dd><dt id="bib-TYPED-ARRAYS">[TYPED-ARRAYS]</dt><dd>David Herman, Kenneth Russell. <a href="https://www.khronos.org/registry/typedarray/specs/latest/"><cite>Typed Arrays</cite></a> Khronos Working Draft. (Work in progress.) URL: <a href="https://www.khronos.org/registry/typedarray/specs/latest/">https://www.khronos.org/registry/typedarray/specs/latest/</a> 
+</dd></dl></div><div class="section" id="informative-references"><h3><span class="secno">D.2 </span>Informative references</h3><dl class="bibliography"><dt id="bib-CANVAS-2D">[CANVAS-2D]</dt><dd>Rik Cabanier; Eliot Graff; Jay Munro; Tom Wiltzius; Ian Hickson. <a href="http://www.w3.org/TR/2dcontext/"><cite>HTML Canvas 2D Context.</cite></a> 17 December 2012. W3C Candidate Recommendation. (Work in progress.) URL: <a href="http://www.w3.org/TR/2dcontext/">http://www.w3.org/TR/2dcontext/</a> 
+</dd><dt id="bib-SVG11">[SVG11]</dt><dd>Erik Dahlström; et al. <a href="http://www.w3.org/TR/2011/REC-SVG11-20110816/"><cite>Scalable Vector Graphics (SVG) 1.1 (Second Edition).</cite></a> 16 August 2011. W3C Recommendation. URL: <a href="http://www.w3.org/TR/2011/REC-SVG11-20110816/">http://www.w3.org/TR/2011/REC-SVG11-20110816/</a> 
+</dd></dl></div></div></body></html>

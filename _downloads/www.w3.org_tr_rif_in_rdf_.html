@@ -1,0 +1,843 @@
+<!-- http://www.w3.org/TR/rif-in-rdf/ -->
+<!DOCTYPE html  PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN'  'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'><html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>RIF In RDF (Second Edition)</title>
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+  <style type="text/css">
+   .editsection { display: none; }
+</style>
+<link href="tr.css" rel="stylesheet" type="text/css" />
+<link href="http://www.w3.org/StyleSheets/TR/W3C-WG-NOTE" rel="stylesheet" type="text/css" />
+
+  
+</head>
+<body>
+
+<div class="head">
+<a href="http://www.w3.org/"><img alt="W3C" height="48" src="http://www.w3.org/Icons/w3c_home" width="72" /></a><h1 id="title" style="clear:both"><span id="short-title">RIF In RDF (Second Edition)</span></h1>
+
+<h2 id="W3C-doctype">W3C Working Group Note 5 February 2013</h2>
+
+<!-- no inplace warning -->
+<dl>
+<dt>This version:</dt>
+<dd><a href="http://www.w3.org/TR/2013/NOTE-rif-in-rdf-20130205/" id="this-version-url">http://www.w3.org/TR/2013/NOTE-rif-in-rdf-20130205/</a></dd>
+
+<dt>Latest version:</dt>
+<dd><a href="http://www.w3.org/TR/rif-in-rdf/">http://www.w3.org/TR/rif-in-rdf/</a></dd>
+
+<dt>Previous version:</dt>
+<dd><a href="http://www.w3.org/TR/2012/NOTE-rif-in-rdf-20121211/">http://www.w3.org/TR/2012/NOTE-rif-in-rdf-20121211/</a></dd>
+</dl>
+
+<dl><dt>Editors:</dt><dd>Sandro Hawke, W3C/MIT</dd>
+<dd>Axel Polleres, DERI, NUI Galway</dd>
+</dl>
+
+
+
+<p>A <a href="http://www.w3.org/TR/2013/NOTE-rif-in-rdf-20130205/diff-from-20121211">color-coded version of this document showing changes made since the previous version</a> is also available.</p><p>This document is also available in these non-normative formats: <a href="http://www.w3.org/2013/pdf/NOTE-rif-in-rdf-20130205.pdf">PDF version</a>.</p>
+
+
+
+<p class="copyright"><a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> &copy; 2013 <a href="http://www.w3.org/"><acronym title="World Wide Web Consortium">W3C</acronym></a><sup>&reg;</sup> (<a href="http://www.csail.mit.edu/"><acronym title="Massachusetts Institute of Technology">MIT</acronym></a>, <a href="http://www.ercim.eu/"><acronym title="European Research Consortium for Informatics and Mathematics">ERCIM</acronym></a>, <a href="http://www.keio.ac.jp/">Keio</a>, <a href="http://ev.buaa.edu.cn/">Beihang</a>), All Rights Reserved. W3C <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply.</p>
+
+</div>
+<hr />
+<h2><a id="abstract" name="abstract">Abstract</a></h2>
+
+<div>
+<div><p>This document specifies a reversible mapping (or transformation) from Rule Interchange Format (RIF) XML documents to Resource Description Framework (RDF) graphs.  This mapping allows the contents of RIF documents to be interoperably stored and processed as RDF triples, using existing serializations and tools for RDF.  When used with the standard mapping from RDF triples to RIF frames, this also provides a "reflection" or "introspection" mechanism, an interoperable way for RIF rules to operate on RIF documents.</p></div>
+</div>
+
+<h2 class="no-toc no-num">
+<a id="w3c_status" name="w3c_status">Status of this Document</a>
+</h2>
+    
+<h4 class="no-toc no-num" id="may-be">May Be Superseded</h4>
+    
+<p><em>This section describes the status of this document at the time of its publication. Other documents may supersede this document. A list of current W3C publications and the latest revision of this technical report can be found in the <a href="http://www.w3.org/TR/">W3C technical reports index</a> at http://www.w3.org/TR/.</em></p>
+
+
+<h4 class="no-toc no-num" id="related">Set of Documents</h4>
+
+<p>This document is being published as one of a set of 13 documents: </p>
+<ol>
+<li><a href="http://www.w3.org/TR/2013/NOTE-rif-overview-20130205/">RIF Overview (Second Edition)</a></li>
+<li><a href="http://www.w3.org/TR/2013/NOTE-rif-ucr-20130205/">RIF Use Cases and Requirements (Second Edition)</a></li>
+<li><a href="http://www.w3.org/TR/2013/REC-rif-core-20130205/">RIF Core Dialect (Second Edition)</a></li>
+<li><a href="http://www.w3.org/TR/2013/REC-rif-bld-20130205/">RIF Basic Logic Dialect (Second Edition)</a></li>
+<li><a href="http://www.w3.org/TR/2013/REC-rif-prd-20130205/">RIF Production Rule Dialect (Second Edition)</a></li>
+<li><a href="http://www.w3.org/TR/2013/REC-rif-fld-20130205/">RIF Framework for Logic Dialects (Second Edition)</a></li>
+<li><a href="http://www.w3.org/TR/2013/REC-rif-dtb-20130205/">RIF Datatypes and Built-Ins 1.0 (Second Edition)</a></li>
+<li><a href="http://www.w3.org/TR/2013/REC-rif-rdf-owl-20130205/">RIF RDF and OWL Compatibility (Second Edition)</a></li>
+<li><a href="http://www.w3.org/TR/2013/NOTE-rif-owl-rl-20130205/">OWL 2 RL in RIF (Second Edition)</a></li>
+<li><a href="http://www.w3.org/TR/2013/NOTE-rif-xml-data-20130205/">RIF Combination with XML data (Second Edition)</a></li>
+<li><a href="http://www.w3.org/TR/2013/NOTE-rif-in-rdf-20130205/">RIF In RDF (Second Edition)</a>  (this document)</li>
+<li><a href="http://www.w3.org/TR/2013/NOTE-rif-test-20130205/">RIF Test Cases (Second Edition)</a></li>
+<li><a href="http://www.w3.org/TR/2013/NOTE-rif-primer-20130205/">RIF Primer (Second Edition)</a></li>
+</ol>
+
+    
+
+<!-- no eventStatusExtra -->
+
+<!-- no statusExtra -->
+
+<div></div>
+
+
+
+           <h4 class="no-toc no-num" id="status-changes">Document Unchanged</h4>
+
+<p>There have been no changes to the body of this document since the <a href="http://www.w3.org/TR/2012/NOTE-rif-in-rdf-20121211/">previous version</a>.   For details on earlier changes, see the <a href="#changelog">change log</a>.</p>
+
+
+
+<h4 class="no-toc no-num" id="please">Please Send Comments</h4><p>Please send any comments to <a class="mailto" href="mailto:public-rif-comments@w3.org">public-rif-comments@w3.org</a>
+    (<a class="http" href="http://lists.w3.org/Archives/Public/public-rif-comments/">public
+    archive</a>).  Although work on this document by the <a href="http://www.w3.org/2005/rules/wg.html">Rule Interchange Format (RIF) Working Group</a> is complete, comments may be addressed in the <a href="http://www.w3.org/2010/rif/errata">errata</a> or in future revisions.  Open discussion among developers is welcome at <a class="mailto" href="mailto:public-rif-dev@w3.org">public-rif-dev@w3.org</a> (<a class="http" href="http://lists.w3.org/Archives/Public/public-rif-dev/">public archive</a>).</p>
+    
+<h4 class="no-toc no-num" id="no-endorsement">No Endorsement</h4>
+    
+<p><em>Publication as a Working Group Note does not imply endorsement by the W3C Membership. This is a draft document and may be updated, replaced or obsoleted by other documents at any time. It is inappropriate to cite this document as other than work in progress.</em></p>
+
+
+<h4 class="no-toc no-num" id="patents">Patents</h4>
+    
+<p><em>This document was produced by a group operating under the <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 W3C Patent Policy</a>. W3C maintains a <a href="http://www.w3.org/2004/01/pp-impl/38457/status" rel="disclosure">public list of any patent disclosures</a> made in connection with the deliverables of the group; that page also includes instructions for disclosing a patent. An individual who has actual knowledge of a patent which the individual believes contains <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential Claim(s)</a> must disclose the information in accordance with <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure"> section 6 of the W3C Patent Policy</a>.</em></p>
+
+<hr title="Separator After Status Section" />
+
+
+<table class="toc" id="toc" summary="Contents"><tr><td><div id="toctitle"><h2>Table of Contents</h2></div>
+<ul>
+<li class="toclevel-1"><a href="#Introduction"><span class="tocnumber">1</span> <span class="toctext">Introduction</span></a></li>
+<li class="toclevel-1"><a href="#Use_Cases"><span class="tocnumber">2</span> <span class="toctext">Use Cases</span></a></li>
+<li class="toclevel-1"><a href="#Requirements"><span class="tocnumber">3</span> <span class="toctext">Requirements</span></a></li>
+<li class="toclevel-1"><a href="#Extensibility"><span class="tocnumber">4</span> <span class="toctext">Extensibility</span></a></li>
+<li class="toclevel-1"><a href="#Mapping_from_RIF_XML_to_RDF_Graphs"><span class="tocnumber">5</span> <span class="toctext">Mapping from RIF XML to RDF Graphs</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Namespaces"><span class="tocnumber">5.1</span> <span class="toctext">Namespaces</span></a></li>
+<li class="toclevel-2"><a href="#The_.3Cid.3E_and_.3Cmeta.3E_Elements"><span class="tocnumber">5.2</span> <span class="toctext">The &lt;id&gt; and &lt;meta&gt; Elements</span></a></li>
+<li class="toclevel-2"><a href="#The_.3CVar.3E_and_.3CConst.3E_Elements"><span class="tocnumber">5.3</span> <span class="toctext">The &lt;Var&gt; and &lt;Const&gt; Elements</span></a></li>
+<li class="toclevel-2"><a href="#General_Mapping"><span class="tocnumber">5.4</span> <span class="toctext">General Mapping</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#The_Reverse_Mapping_.28Extracting_RIF_XML.29"><span class="tocnumber">6</span> <span class="toctext">The Reverse Mapping (Extracting RIF XML)</span></a></li>
+<li class="toclevel-1"><a href="#Importing_RIF_into_RDF"><span class="tocnumber">7</span> <span class="toctext">Importing RIF into RDF</span></a></li>
+<li class="toclevel-1"><a href="#Semantics_of_RIF_in_RDF"><span class="tocnumber">8</span> <span class="toctext">Semantics of RIF in RDF</span></a></li>
+<li class="toclevel-1"><a href="#Acknowledgements"><span class="tocnumber">9</span> <span class="toctext">Acknowledgements</span></a></li>
+<li class="toclevel-1"><a href="#References"><span class="tocnumber">10</span> <span class="toctext">References</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Normative_References"><span class="tocnumber">10.1</span> <span class="toctext">Normative References</span></a></li>
+<li class="toclevel-2"><a href="#Nonnormative_References"><span class="tocnumber">10.2</span> <span class="toctext">Nonnormative References</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="#Appendix_Complete_Example"><span class="tocnumber">11</span> <span class="toctext">Appendix Complete Example</span></a></li>
+<li class="toclevel-1"><a href="#Changelog"><span class="tocnumber">12</span> <span class="toctext">Changelog</span></a>
+<ul>
+<li class="toclevel-2"><a href="#Changes_since_12_May_2011"><span class="tocnumber">12.1</span> <span class="toctext">Changes since 12 May 2011</span></a></li>
+<li class="toclevel-2"><a href="#Changes_since_22_June_2010"><span class="tocnumber">12.2</span> <span class="toctext">Changes since 22 June 2010</span></a></li>
+</ul>
+</li>
+</ul>
+</td></tr></table><script type="text/javascript"> if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } </script>
+<a id="Introduction" name="Introduction"></a><h2> <span class="mw-headline">1  Introduction </span></h2>
+<p>The <a class="external text" href="http://www.w3.org/TR/2013/NOTE-rif-overview-20130205/" rel="nofollow" title="http://www.w3.org/2005/rules/wiki/Overview">Rule Interchange Format (RIF)</a> [<a href="#RIF_Overview" title="">RIF Overview</a>] is an interlingua between rule systems.  It is an overlapping family of XML languages (called "dialects") designed for transmitting and storing various kinds of computer-processable rules and related data.  Three standard dialects have been defined: <a class="external text" href="http://www.w3.org/TR/2013/REC-rif-core-20130205/" rel="nofollow" title="http://www.w3.org/2005/rules/wiki/Core">RIF Core</a> [<a href="#RIF_Core" title="">RIF Core</a>], <a class="external text" href="http://www.w3.org/TR/2013/REC-rif-bld-20130205/" rel="nofollow" title="http://www.w3.org/2005/rules/wiki/BLD">RIF Basic Logic Dialect (BLD)</a> [<a href="#RIF_BLD" title="">RIF BLD</a>], and <a class="external text" href="http://www.w3.org/TR/2013/REC-rif-prd-20130205/" rel="nofollow" title="http://www.w3.org/2005/rules/wiki/PRD">RIF Production Rules Dialect (PRD)</a> [<a href="#RIF_PRD" title="">RIF PRD</a>].   RIF Core is a sublanguage of BLD and of PRD: every Core document is also a BLD document and a PRD document.
+</p><p>RIF was <a class="external text" href="http://www.w3.org/2005/rules/wg/charter.html" rel="nofollow" title="http://www.w3.org/2005/rules/wg/charter.html">envisioned</a> [<a href="#RIF_Charter" title="">RIF Charter</a>] to be extensible, allowing third parties to define non-standard extensions which could be combined into new dialects, as needed, to support interchange of rule sets which include features not defined in the standard dialects.  Despite this vision, no general mechanism for extensions has been detailed in the RIF specifications.  The <a class="external text" href="http://www.w3.org/TR/2013/REC-rif-fld-20130205/" rel="nofollow" title="http://www.w3.org/2005/rules/wiki/FLD">RIF Framework for Logic Dialects (FLD)</a> [<a href="#RIF_FLD" title="">RIF FLD</a>] does, however, specify a way to create more expressive logic dialects.
+</p><p>The <a class="external text" href="http://www.w3.org/RDF/" rel="nofollow" title="http://www.w3.org/RDF/">Resource Description Framework (RDF)</a> [<a href="#RDF" title="">RDF</a>] is a standard abstract way to represent data.  The units of data in RDF are triples consisting of a subject, property (or predicate), and value (or object).  These triples are similar to (and compatible with) RIF Frames (see <a href="http://www.w3.org/TR/2013/REC-rif-rdf-owl-20130205/#RIF-RDF_Combinations" title="SWC">RIF-RDF Combinations</a> [<a href="#RIF_RDF.2BOWL" title="">RIF RDF+OWL</a>]).  A set of triples can be viewed as a directed labeled graph, where the nodes are subjects and values and the arcs are labeled with property identifiers; we therefore speak of a set of RDF triples as an RDF graph.   RDF graphs can be serialized in multiple equivalent syntaxes, including <a class="external text" href="http://www.w3.org/TR/REC-rdf-syntax/" rel="nofollow" title="http://www.w3.org/TR/REC-rdf-syntax/">RDF/XML</a> [<a href="#RDF_XML" title="">RDF XML</a>], <a class="external text" href="http://www.w3.org/TR/rdfa-syntax/" rel="nofollow" title="http://www.w3.org/TR/rdfa-syntax/">RDFa</a> [<a href="#RDFa" title="">RDFa</a>], and <a class="external text" href="http://www.w3.org/TeamSubmission/turtle/" rel="nofollow" title="http://www.w3.org/TeamSubmission/turtle/">Turtle</a> [<a href="#Turtle" title="">Turtle</a>].   RDF can be processed with <a class="external text" href="http://www.w3.org/2001/sw/wiki/Tools" rel="nofollow" title="http://www.w3.org/2001/sw/wiki/Tools">a wide variety of software tools</a> [<a href="#RDF_Tools" title="">RDF Tools</a>].
+</p><p>This specification defines a reversible mapping from RIF syntactic structures to RDF graphs.  The definition is presented in tables where each row in the tables shows an XML template and a corresponding RDF graph template.   The mapping is performed, roughly speaking, by finding the first matching XML template, then producing the corresponding graph.   In some cases, the graph will require recursive translations of XML subtrees.   The resulting graph has one node, called the focus node, which represents the XML root node, which in RIF Core, BLD, and PRD is rif:Document.
+</p><p>A reverse mapping, described in section 6, is possible for standard RIF by simply matching the RDF template and generating the corresponding XML.   For extended RIF, so the reverse mapping can only done if the translator knows the XML grammar being generated.
+</p><p>Note that RDF serializations produced via this mapping are not standard RIF documents and cannot necessarily be understood by RIF implementations. 
+</p><p>The rest of this document is structured as follows:
+</p>
+<ul><li> design discussion, including use cases and requirements
+</li><li> specification of the RIF-in-RDF mapping
+</li><li> discussion of the reverse mapping
+</li><li> specification of rif:usedWithProfile, allowing import of RIF into RDF
+</li><li> a complete example
+</li></ul>
+<a id="Use_Cases" name="Use_Cases"></a><h2> <span class="mw-headline">2  Use Cases </span></h2>
+<p>In designing this mapping a few use cases were considered:
+</p>
+<ul><li> <b>UC1: Store RIF in an RDF Triplestore</b> &mdash; particularly when using RIF with RDF data, it may be useful to keep various RIF documents in the triplestore with the data, especially when there is associated metadata.
+</li></ul>
+<ul><li> <b>UC2: Access RIF Syntactic Structures with RDF Tools</b> &mdash; even more than storing whole RIF documents, it may be useful to be able to use RDF and Linked Data mechanisms to refer to and manipulate individual syntactic elements such as RIF rules, clauses, and groups. 
+</li></ul>
+<ul><li> <b>UC3: Transform RIF Syntax using RIF Rules</b> &mdash; many logic programming techniques build on the idea of having rules which transform other rules.  While RIF documents can be processed as XML, it may be desirable in some cases to process them as RDF triples or as RIF frames.
+</li></ul>
+<ul><li> <b>UC4: Provide Forward Compatibility via Fallback Rules</b> &mdash; it may be possible for RIF extensions to be completely or partially understood (used) by systems which do not directly implement the extensions, if the extensions are published with suitable fallback transformation rules.   This is a special case of UC3.
+</li></ul>
+<a id="Requirements" name="Requirements"></a><h2> <span class="mw-headline">3  Requirements </span></h2>
+<p>The following requirements were taken into account in this design:
+</p>
+<ul><li> <b>Req1: All Standard RIF Documents Map to RDF</b> &mdash; Every syntactically valid RIF Core, RIF BLD, and RIF PRD has a well-defined mapping to RDF triples. 
+</li></ul>
+<ul><li> <b>Req2: Extensions Can Be Written So They Will Be Automatically Mapped to RDF</b> &mdash; It is possible to write reasonable extensions which the mapping will handle, without the mapping being extended.   It is not a requirement that <i>all</i> possible extensions be handled by this mapping.
+</li></ul>
+<ul><li> <b>Req3: Transformations Require No External Data</b> &mdash; The transformation can be done without any external information, such as dereferencing namespace URIs or otherwise obtaining schema information.
+</li></ul>
+<ul><li> <b>Req4: Stable Roundtrips Under RDF Simple Entailment</b> &mdash; A RIF document may be mapped to RDF, then the graph may be altered following <a class="external text" href="http://www.w3.org/TR/rdf-mt/#entail" rel="nofollow" title="http://www.w3.org/TR/rdf-mt/#entail">RDF Simple Entailment</a> [<a href="#RDF_Semantics" title="">RDF Semantics</a>] (including being reduced to a subgraph), and <i>if</i> the document can be extracted by the reverse mapping, it will have the same entailments and metadata.  This is motivated by UC3 and especially UC4: without this property, incomplete running of transformation rules could undetectably result in incorrect results.  
+</li></ul>
+<ul><li> <b>Req5: RDF View Conforms to RDF Best Practices</b> &mdash; the RDF form of the RIF constructs should appear as normal, well-constructed RDF data, not as some odd or surprising formation.    Although this mapping uses rdf:List structures more than is common, for this application they are warranted.
+</li></ul>
+<ul><li> <b>Req6: RIF Extension are First Class in RDF View</b> &mdash; viewed as triples, there should be no indication of which features are in which dialects or extensions; the intent here is the allow the feature set to evolve and particular applications to use the appropriate set of features without regard to which features happen to be in RIF Core, RIF BLD, or RIF PRD.
+</li></ul>
+<a id="Extensibility" name="Extensibility"></a><h2> <span class="mw-headline">4  Extensibility </span></h2>
+<p>Conceptually, in RIF there are two kinds of extensions, divided by how consumers which do not implement the extension are to handle them.  Extensions which non-implementing consumers may ignore are encoded in RIF metadata; extensions which non-implementing consumers must understand before processing require altering the syntax so that the RIF document will not be schema valid, such as by introducing new XML elements.
+</p><p>In the RDF mapping, this distinction must be made somewhat differently.  In RDF, may-ignore extensions can be encoded with additional triples about RIF syntactic elements, while must-understand extensions require <i>removing</i> or <i>replacing</i> properties required for non-extended decoding.  This absence of a required arc prevents the decoding to a schema-valid XML RIF document, causing non-implementing consumers to abort.
+</p><p>These restrictions are necessary in order to meet the stated requirements.  In particular, without these restrictions, a RIF document (in RDF graph form) being transformed by an incomplete reasoner into another RIF document (also in RDF graph form) could produce an unintended and incorrect result just because the reasoning was incomplete.  With these restrictions, the result will not match the reverse-mapping until it is sufficiently complete.
+</p>
+<a id="Mapping_from_RIF_XML_to_RDF_Graphs" name="Mapping_from_RIF_XML_to_RDF_Graphs"></a><h2> <span class="mw-headline">5  Mapping from RIF XML to RDF Graphs </span></h2>
+<p>The mapping from RIF XML to RDF Graphs is expressed as a function <i>Tr</i>:
+</p>
+<pre><i>Tr</i>(<em style="color: green; text-decoration: underline;">rif-xml-tree</em>) <span style="font-size: 150%">&rarr;</span> &lt;<em style="color: green; text-decoration: underline;">focus-node</em>, <em style="color: green; text-decoration: underline;">triples</em>&gt;
+</pre>
+<p>For every standard RIF Document, and for certain subtrees of RIF documents and extended RIF documents, <i>Tr</i> maps to the pair of an RDF node and an RDF graph.   The node, called the <i>focus</i> node represents the same syntactic element as the root of the given XML tree.   The RDF graph is a standard RDF graph, a set of RDF triples, and always contains the focus node.  The focus node is usually a fresh blank node, but it might have a IRI label in certain cases, as detailed below.
+</p><p>In this document, the <a class="external text" href="http://www.w3.org/TeamSubmission/turtle/" rel="nofollow" title="http://www.w3.org/TeamSubmission/turtle/">Turtle</a> [<a href="#Turtle" title="">Turtle</a>] RDF serialization syntax is used for expressing triples and graphs.  Turtle has a very terse syntax for lists, <i>( item-1 ... item-n )</i> and for fresh blank nodes and the triples using them as the subject: <i>[ property-1 value-1; ... property-n value-n ]</i>.   These constructs allow the mapping to be presented and examples to be shown with relative simplicity.
+</p><p>The mapping is defined recursively, with each application of <i>Tr</i> converting an XML <i>class element</i> to a focus node, with additional triples.  Class elements in RIF XML have tags that begin with an uppercase letter and represent a particular syntactic entity.   Except for rif:Var and rif:Const class elements (detailed in Table 1, below), all the class elements follow a general form, containing a sequence of <i>property elements</i>, each containing additional class elements.   The mapping for these is detailed in Table 2 and Table 3, below.
+</p><p>For another example of a specification of a mapping to RDF graphs, which may lend insight into how to use this specification, see <a class="external text" href="http://www.w3.org/TR/owl2-mapping-to-rdf/" rel="nofollow" title="http://www.w3.org/TR/owl2-mapping-to-rdf/">OWL 2 Mapping to RDF Graphs</a> [<a href="#OWL2_Mapping" title="">OWL2 Mapping</a>].
+</p><p>If a system performing the mapping has determined the input document to be in one of the three standard dialects (Core, PRD, BLD), the rdf:type of the root focus-node <em class="rfc_2119" title="MAY in RFC 2119 context">may</em> be set corresponding to that dialect: rif:CoreDocument, rif:PRDDocument, or rif:BLDDocument, instead of rif:Document.  These classes for the standard dialects are defined to be disjoint: rif:BLDDocument contains those BLD documents which are not Core documents, and rif:PRDDocument contains those PRD documents which are not Core documents.   Extensions <em class="rfc_2119" title="MAY in RFC 2119 context">may</em> result in additional rdf:type arcs on the root focus-node.
+</p><p>Note that RIF XML allows for relative IRIs, which are expanded to absolute IRIs using the xml:base directive.  This expansion <em class="rfc_2119" title="MUST in RFC 2119 context">must</em> be done before <i>Tr</i>.
+</p>
+<a id="Namespaces" name="Namespaces"></a><h3> <span class="mw-headline">5.1  Namespaces </span></h3>
+<p>All standard elements in RIF XML have the namespace "<a class="external free" href="http://www.w3.org/2007/rif" rel="nofollow" title="http://www.w3.org/2007/rif#">http://www.w3.org/2007/rif#</a>", and the attributes have no namespace.  Extensions are expected to use other namespaces for the elements and are not allowed to introduce new attributes.
+</p><p>The RIF-in-RDF mapping produces RDF graphs that use the <b>same namespace</b>, although they use that namespace name in the normal RDF way (as an IRI prefix) instead of in the XML way (as a disambiguator).
+</p><p>By keeping the namespace the same, transformation software can correctly operate, without modification, on all RIF documents, even ones containing extensions.
+</p><p>Note that this use of the same namespace means that in certain cases RIF and RDF/XML documents cannot be distinguished simply by their namespace use.  Moreover, since the rdf:RDF root element is optional in RDF/XML, in some cases it is not possible to distinguish between RIF and RDF/XML documents just by schema-validating or RDF-parsing the XML.  In those cases, additional inspection of the structure is necessary.   In general, systems should therefore be careful to maintain external file type information.   This is typically done with either the media types ("application/rif+xml" and "application/rdf+xml") or the suggested filename extensions (".rif" and ".rdf").
+</p><p>In the tables below, the followng XML DOCTYPE declaration is assumed, allowing for abbreviation of the RDF and RIF namespaces:
+</p>
+<pre>
+ &lt;!DOCTYPE rif:Document [
+   &lt;!ENTITY rdf   "http://www.w3.org/1999/02/22-rdf-syntax-ns#"&gt;
+   &lt;!ENTITY rif   "http://www.w3.org/2007/rif#"&gt;
+ ]&gt;
+</pre>
+<p>Also, the default XML namespace is assumed to be "<a class="external free" href="http://www.w3.org/2007/rif" rel="nofollow" title="http://www.w3.org/2007/rif#">http://www.w3.org/2007/rif#</a>" and for use in Turtle, the following prefix declarations are assumed to be in effect:
+</p>
+<pre>@prefix rif: &lt;<a class="external free" href="http://www.w3.org/2007/rif" rel="nofollow" title="http://www.w3.org/2007/rif#">http://www.w3.org/2007/rif#</a>&gt;
+@prefix rdf: &lt;<a class="external free" href="http://www.w3.org/1999/02/22-rdf-syntax-ns" rel="nofollow" title="http://www.w3.org/1999/02/22-rdf-syntax-ns#">http://www.w3.org/1999/02/22-rdf-syntax-ns#</a>&gt;
+@prefix xs:  &lt;<a class="external free" href="http://www.w3.org/2001/XMLSchema" rel="nofollow" title="http://www.w3.org/2001/XMLSchema#">http://www.w3.org/2001/XMLSchema#</a>&gt;
+</pre>
+<a id="The_.3Cid.3E_and_.3Cmeta.3E_Elements" name="The_.3Cid.3E_and_.3Cmeta.3E_Elements"></a><h3> <span class="mw-headline">5.2  The &lt;id&gt; and &lt;meta&gt; Elements </span></h3>
+<p>Any RIF class element may have a first child of the form:
+</p>
+<pre>&lt;id&gt;
+   &lt;Const type="&amp;rif;iri"&gt;<em style="color: green; text-decoration: underline;">id</em>&lt;/Const&gt;
+&lt;/id&gt;
+</pre>
+<p>When this child is present, it is ignored for other processing and the <em style="color: green; text-decoration: underline;">id</em> text is used as the IRI (URI-Reference) label for the <span style="color: blue; font-weight: bold;">focus_node</span>, instead of it being left as a blank node. 
+</p><p>As a special case, if the rif:Document element does not have an &lt;id&gt; child, its <span style="color: blue; font-weight: bold;">focus_node</span> <em class="rfc_2119" title="SHOULD in RFC 2119 context">should</em> be given the Web address (IRI) of the input XML document, if it has one.
+</p><p>After this optional &lt;id&gt; element, any RIF class element may contain a &lt;meta&gt; element.  This element is processed according to general element processing rules, below.  
+</p><p>Systems performing this transformation <em class="rfc_2119" title="MAY in RFC 2119 context">may</em> also attempt to convert the metadata to RDF using the <a class="external text" href="http://www.w3.org/TR/2013/REC-rif-rdf-owl-20130205/#RDF_and_RIF_Interpretations" rel="nofollow" title="http://www.w3.org/2005/rules/wiki/SWC#RDF_and_RIF_Interpretations">standard Frame-RDF correspondence</a> [<a href="#RIF_RDF.2BOWL" title="">RIF RDF+OWL</a>] , and include it in the returned triples.  The conversion is not always possible, because some frame formulas are not expressible in RDF; systems which attempt this transformation and encounter such frame formulas in metadata <em class="rfc_2119" title="SHOULD in RFC 2119 context">should</em> issue a warning.  Even if the frames are converted to RDF like this, implementations <em class="rfc_2119" title="MUST in RFC 2119 context">must</em>, under default settings, still keep the rif:meta triples intact, to support stable roundtripping.
+</p>
+<a id="The_.3CVar.3E_and_.3CConst.3E_Elements" name="The_.3CVar.3E_and_.3CConst.3E_Elements"></a><h3> <span class="mw-headline">5.3  The &lt;Var&gt; and &lt;Const&gt; Elements </span></h3>
+<p>Table 1, below, defines a portion of <i>Tr</i>.   When a rif-xml-tree, X, matches the entry in column one, treating terms written <em style="color: green; text-decoration: underline;">like-this</em> as metavariables, the result of <i>Tr</i>(X) is the pair &lt;<span style="color: blue; font-weight: bold;">focus_node</span>,G&gt;, where G is the set of triples indicated by the second column.
+</p><p>Note that, although not shown in this table, &lt;id&gt; and &lt;meta&gt; child elements are allowed before the text in these elements.  Additional elements after &lt;id&gt; and &lt;meta&gt; and before the character data may be allowed by extended schemas and <em class="rfc_2119" title="MUST in RFC 2119 context">must</em> be processed as normal (extended) property elements.
+</p><p>Note that metadata about Consts is applied to the <span style="color: blue; font-weight: bold;">focus_node</span>, not to the RDF literal produced.  For example an explanation comment on a Const is understood to explain why that value is used in that spot, not state general properties of that value. 
+</p>
+<div class="syntax-translation-table" id="table1">
+<table>
+<caption>Table 1: RIF-RDF <i>Tr</i> Mapping Table for Var and Const
+</caption><tr>
+<th>Input XML Pattern, X
+</th><th>Output RDF Triples, G
+</th></tr>
+<tr>
+<td>
+<pre>&lt;Var&gt;<em style="color: green; text-decoration: underline;">variable-name</em>&lt;/Var&gt;
+</pre>
+</td><td>
+<pre><span style="color: blue; font-weight: bold;">focus_node</span> rdf:type rif:Var
+<span style="color: blue; font-weight: bold;">focus_node</span> rif:varname "<em style="color: green; text-decoration: underline;">variable-name</em>"
+</pre>
+</td></tr>
+<tr>
+<td>
+<pre>&lt;Const type="&amp;rif;iri"&gt;<em style="color: green; text-decoration: underline;">value</em>&lt;/Const&gt;
+</pre>
+</td><td>
+<pre><span style="color: blue; font-weight: bold;">focus_node</span> rdf:type rif:Const
+<span style="color: blue; font-weight: bold;">focus_node</span> rif:constIRI "<em style="color: green; text-decoration: underline;">value</em>"
+</pre>
+<p>Note that the value is an absolute IRI.  Relative IRIs must be converted using the xml:base.
+</p>
+</td></tr>
+<tr>
+<td>
+<pre>&lt;Const type="&amp;rif;local"&gt;<em style="color: green; text-decoration: underline;">value</em>&lt;/Const&gt;
+</pre>
+</td><td>
+<pre><span style="color: blue; font-weight: bold;">focus_node</span> rdf:type rif:Const
+<span style="color: blue; font-weight: bold;">focus_node</span> rif:constname "<em style="color: green; text-decoration: underline;">value</em>"
+</pre>
+</td></tr>
+<tr>
+<td>
+<pre>&lt;Const type="&amp;rdf;PlainLiteral"&gt;<em style="color: green; text-decoration: underline;">text</em>@&lt;/Const&gt;
+</pre>
+</td><td>
+<pre><span style="color: blue; font-weight: bold;">focus_node</span> rdf:type rif:Const
+<span style="color: blue; font-weight: bold;">focus_node</span> rif:value "<em style="color: green; text-decoration: underline;">value</em>"
+</pre>
+</td></tr>
+<tr>
+<td>
+<pre>&lt;Const type="&amp;rdf;PlainLiteral"&gt;<em style="color: green; text-decoration: underline;">text</em>@<em style="color: green; text-decoration: underline;">langtag</em>&lt;/Const&gt;
+</pre>
+</td><td>
+<pre><span style="color: blue; font-weight: bold;">focus_node</span> rdf:type rif:Const
+<span style="color: blue; font-weight: bold;">focus_node</span> rif:value "<em style="color: green; text-decoration: underline;">value</em>"@<em style="color: green; text-decoration: underline;">langtag</em>
+</pre>
+</td></tr>
+<tr>
+<td>
+<pre>&lt;Const type="<em style="color: green; text-decoration: underline;">type-iri</em>"&gt;<em style="color: green; text-decoration: underline;">value</em>&lt;/Const&gt;
+</pre>
+</td><td>
+<pre><span style="color: blue; font-weight: bold;">focus_node</span> rdf:type rif:Const
+<span style="color: blue; font-weight: bold;">focus_node</span> rif:value "<em style="color: green; text-decoration: underline;">value</em>"^^<em style="color: green; text-decoration: underline;">type-iri</em>
+</pre>
+</td></tr></table>
+</div>
+<a id="General_Mapping" name="General_Mapping"></a><h3> <span class="mw-headline">5.4  General Mapping </span></h3>
+<p>Except as noted above, the <i>Tr</i> mapping for any class element (denoted as <em style="color: green; text-decoration: underline;">parent</em> in Table 2) is to a new focus node and a set of triples which depend on each of the children of the class element.   The exact dependency is detailed in this section.
+</p><p>Each child of the class element being mapped (except as noted above) is a property element (denoted as <em style="color: green; text-decoration: underline;">child</em> in Table 2).  There are four kinds of property elements:
+</p>
+<dl><dt>Mode 0
+</dt><dd>These elements have the <b>ordered="yes"</b> attribute.  Their children are mapped to an RDF list (collection).
+</dd><dt>Mode 1
+</dt><dd>These elements are required by the XML schema to appear exactly once.  Their children are mapped directly to the value role of an RDF triple
+</dd><dt>Mode 2
+</dt><dd>All the (zero or more) values of these elements are gathered, in document order, into an RDF list.  When these elements do not appear in their class elements, an empty RDF list is generated.
+</dd><dt>Mode 3
+</dt><dd>Special handling for the &lt;slot&gt; property, converting name/arg and key/value pairs into explicit pairs
+</dd></dl>
+<p>The mapping for each mode is specified in Table 2 below.  The mapping depends on the identity of an RDF property, written as <em style="color: green; text-decoration: underline;">prop</em>, and the mode.   Table 3 specifies special-case values for <em style="color: green; text-decoration: underline;">prop</em> and mode, but otherwise they are determined as follows:
+</p>
+<ol><li> <em style="color: green; text-decoration: underline;">prop</em> is the concatenation of the property element's tag's namespace IRI followed by its local part.  For example, for the &lt;rif:args&gt; element, the RDF property <em style="color: green; text-decoration: underline;">prop</em> has the IRI "<a class="external free" href="http://www.w3.org/2007/rif#args" rel="nofollow" title="http://www.w3.org/2007/rif#args">http://www.w3.org/2007/rif#args</a>".
+</li><li> If the element has an attribute "ordered" with the value "yes", it is Mode 0; otherwise, it is Mode 1.   (As noted, RIF extensions must use required property elements, so Modes 2 and 3 are not available to them.)
+</li></ol>
+<div class="syntax-translation-table">
+<table style="width: 100%;">
+<caption>Table 2: General <i>Tr</i> Mapping Table
+</caption><tr>
+<th>Mode
+</th><th>Property Element XML Pattern (With Parent Shown)
+</th><th>RDF Triples added to <i>Tr</i> result
+</th></tr>
+<tr>
+<td>0
+</td><td>
+<pre>. . .
+&lt;<em style="color: green; text-decoration: underline;">parent</em>&gt;
+  . . .
+  &lt;<em style="color: green; text-decoration: underline;">child</em> ordered="yes"&gt;
+    <em style="color: green; text-decoration: underline;">item-1</em>
+    . . .
+    <em style="color: green; text-decoration: underline;">item-n</em>
+  &lt;/<em style="color: green; text-decoration: underline;">child</em>&gt;
+  . . .
+&lt;/<em style="color: green; text-decoration: underline;">parent</em>&gt;
+  . . .
+</pre>
+</td><td>
+<pre><span style="color: blue; font-weight: bold;">focus_node</span> rdf:type <em style="color: green; text-decoration: underline;">parent</em>
+<span style="color: blue; font-weight: bold;">focus_node</span> <em style="color: green; text-decoration: underline;">prop</em> ( <em style="color: green; text-decoration: underline;">id-1</em> . . . <em style="color: green; text-decoration: underline;">id-n</em> )
+<em style="color: green; text-decoration: underline;">triples-1</em>
+. . .
+<em style="color: green; text-decoration: underline;">triples-n</em>
+<b>where:</b>
+   &lt;<em style="color: green; text-decoration: underline;">id-1</em>, <em style="color: green; text-decoration: underline;">triples-1</em>&gt; = <i>Tr</i>(<em style="color: green; text-decoration: underline;">item-1</em>)
+   . . .
+   &lt;<em style="color: green; text-decoration: underline;">id-n</em>, <em style="color: green; text-decoration: underline;">triples-n</em>&gt; = <i>Tr</i>(<em style="color: green; text-decoration: underline;">item-n</em>)
+</pre>
+</td></tr>
+<tr>
+<td>1
+</td><td>
+<pre>. . .
+&lt;<em style="color: green; text-decoration: underline;">parent</em>&gt;
+  . . .
+  &lt;<em style="color: green; text-decoration: underline;">child</em>&gt;<em style="color: green; text-decoration: underline;">item</em>&lt;/<em style="color: green; text-decoration: underline;">child</em>&gt;
+  . . .
+&lt;/<em style="color: green; text-decoration: underline;">parent</em>&gt;
+. . .
+</pre>
+</td><td>
+<pre><span style="color: blue; font-weight: bold;">focus_node</span> rdf:type <em style="color: green; text-decoration: underline;">parent</em>
+<span style="color: blue; font-weight: bold;">focus_node</span> <em style="color: green; text-decoration: underline;">prop</em> <em style="color: green; text-decoration: underline;">id</em>
+<em style="color: green; text-decoration: underline;">triples</em>
+<b>where:</b>
+   &lt;<em style="color: green; text-decoration: underline;">id</em>, <em style="color: green; text-decoration: underline;">triples</em>&gt; = <i>Tr</i>(<em style="color: green; text-decoration: underline;">item</em>)
+</pre>
+<p>As a special case, if <em style="color: green; text-decoration: underline;">item</em> is merely character data (with no XML elements), <em style="color: green; text-decoration: underline;">id</em> is an RDF plain literal with the same value and <em style="color: green; text-decoration: underline;">triples-n</em> is empty.  This occurs in RIF Core, for example, with the rif:location property element.
+</p>
+</td></tr>
+<tr>
+<td>2
+</td><td>
+<pre>. . .
+&lt;<em style="color: green; text-decoration: underline;">parent</em>&gt;
+  . . .
+  &lt;<em style="color: green; text-decoration: underline;">child</em>&gt;<em style="color: green; text-decoration: underline;">item_1</em>&lt;/<em style="color: green; text-decoration: underline;">child</em>&gt;
+  . . .
+  &lt;<em style="color: green; text-decoration: underline;">child</em>&gt;<em style="color: green; text-decoration: underline;">item_n</em>&lt;/<em style="color: green; text-decoration: underline;">child</em>&gt;
+  . . .
+&lt;/<em style="color: green; text-decoration: underline;">parent</em>&gt;
+. . .
+</pre>
+</td><td>
+<pre><span style="color: blue; font-weight: bold;">focus_node</span> rdf:type <em style="color: green; text-decoration: underline;">parent</em>
+<span style="color: blue; font-weight: bold;">focus_node</span> <em style="color: green; text-decoration: underline;">prop</em> ( <em style="color: green; text-decoration: underline;">id-1</em> . . . <em style="color: green; text-decoration: underline;">id-n</em> )
+<em style="color: green; text-decoration: underline;">triples-1</em>
+. . .
+<em style="color: green; text-decoration: underline;">triples-n</em>
+<b>where:</b>
+   &lt;<em style="color: green; text-decoration: underline;">id-1</em>, <em style="color: green; text-decoration: underline;">triples-1</em>&gt; = <i>Tr</i>(<em style="color: green; text-decoration: underline;">item-1</em>)
+   ...
+   &lt;<em style="color: green; text-decoration: underline;">id-n</em>, <em style="color: green; text-decoration: underline;">triples-n</em>&gt; = <i>Tr</i>(<em style="color: green; text-decoration: underline;">item-n</em>)
+</pre>
+</td></tr>
+<tr>
+<td>3
+</td><td><i>As found in &lt;Atom&gt; and &lt;Expr&gt; in BLD (but not Core or PRD):</i>
+<pre>. . .
+&lt;<em style="color: green; text-decoration: underline;">parent</em>&gt;
+  . . .
+  &lt;slot ordered="yes"&gt;
+    &lt;Name&gt;<em style="color: green; text-decoration: underline;">name-1</em>&lt;/Name&gt;
+    <em style="color: green; text-decoration: underline;">value-1</em>
+  &lt;/slot&gt;
+   . . .
+  &lt;slot ordered="yes"&gt;
+    &lt;Name&gt;<em style="color: green; text-decoration: underline;">name-n</em>&lt;/Name&gt;
+    <em style="color: green; text-decoration: underline;">value-n</em>
+  &lt;/slot&gt;
+  . . .
+&lt;<em style="color: green; text-decoration: underline;">parent</em>&gt;
+. . .
+</pre>
+</td><td>
+<pre><span style="color: blue; font-weight: bold;">focus_node</span> rdf:type <em style="color: green; text-decoration: underline;">parent</em>
+<span style="color: blue; font-weight: bold;">focus_node</span> rif:namedargs (
+       [ rdf:type rif:NamedArg; 
+         rif:argname "<em style="color: green; text-decoration: underline;">name-1</em>"; 
+         rif:argvalue <em style="color: green; text-decoration: underline;">value-id-1</em> ]
+       . . . 
+       [ rdf:type rif:NamedArg;
+         rif:argname "<em style="color: green; text-decoration: underline;">name-n</em>"; 
+         rif:argvalue <em style="color: green; text-decoration: underline;">value-id-n</em> ] )
+<em style="color: green; text-decoration: underline;">triples-1</em>
+. . .
+<em style="color: green; text-decoration: underline;">triples-n</em>
+<b>where:</b>
+   &lt;<em style="color: green; text-decoration: underline;">value-id-1</em>, <em style="color: green; text-decoration: underline;">triples-1</em>&gt; = <i>Tr</i>(<em style="color: green; text-decoration: underline;">value-1</em>)
+   . . .
+   &lt;<em style="color: green; text-decoration: underline;">value-id-n</em>, <em style="color: green; text-decoration: underline;">triples-n</em>&gt; = <i>Tr</i>(<em style="color: green; text-decoration: underline;">value-n</em>)
+</pre>
+</td></tr>
+<tr>
+<td>3
+</td><td>
+<pre>...
+&lt;Frame&gt;
+  . . .
+  &lt;slot ordered="yes"&gt;
+    <em style="color: green; text-decoration: underline;">key-1</em>
+    <em style="color: green; text-decoration: underline;">value-1</em>
+  &lt;/slot&gt;
+   . . .
+  &lt;slot ordered="yes"&gt;
+    <em style="color: green; text-decoration: underline;">key-n</em>
+    <em style="color: green; text-decoration: underline;">value-n</em>
+  &lt;/slot&gt;
+  . . .
+&lt;/Frame&gt;
+...
+</pre>
+</td><td>
+<pre><span style="color: blue; font-weight: bold;">focus_node</span> rdf:type rif:Frame.
+<span style="color: blue; font-weight: bold;">focus_node</span> rif:slots (
+   [ rdf:type rif:Slot; rif:slotkey <em style="color: green; text-decoration: underline;">nk-1</em>; rif:slotvalue <em style="color: green; text-decoration: underline;">nv-1</em> ]
+   . . .
+   [ rdf:type rif:Slot; rif:slotkey <em style="color: green; text-decoration: underline;">nk-n</em>; rif:slotvalue <em style="color: green; text-decoration: underline;">nv-n</em> ] )
+<em style="color: green; text-decoration: underline;">tk-1</em>
+. . .
+<em style="color: green; text-decoration: underline;">tk-n</em>
+<em style="color: green; text-decoration: underline;">tv-1</em>
+. . .
+<em style="color: green; text-decoration: underline;">tv-n</em>
+<b>where:</b>
+   &lt;<em style="color: green; text-decoration: underline;">nk-1</em>, <em style="color: green; text-decoration: underline;">tk-1</em>&gt; = <i>Tr</i>(<em style="color: green; text-decoration: underline;">key-1</em>)
+   . . .
+   &lt;<em style="color: green; text-decoration: underline;">nk-n</em>, <em style="color: green; text-decoration: underline;">tk-n</em>&gt; = <i>Tr</i>(<em style="color: green; text-decoration: underline;">key-n</em>)
+   &lt;<em style="color: green; text-decoration: underline;">nv-1</em>, <em style="color: green; text-decoration: underline;">tv-1</em>&gt; = <i>Tr</i>(<em style="color: green; text-decoration: underline;">value-1</em>)
+   . . .
+   &lt;<em style="color: green; text-decoration: underline;">nv-n</em>, <em style="color: green; text-decoration: underline;">tv-n</em>&gt; = <i>Tr</i>(<em style="color: green; text-decoration: underline;">value-n</em>)
+</pre>
+</td></tr></table>
+</div>
+<p><br />
+This table specifies exceptions to the default rules for determining the value of <em style="color: green; text-decoration: underline;">prop</em> and the mode of the property element:
+</p>
+<div id="table3">
+<table class="wikitable">
+<caption>Table 3: Mapping from RIF Parent/Child XML Elements to RDF Properties
+</caption><tr>
+<th>Class Element (parent)
+</th><th>Property Element (child)
+</th><th>RDF Property (<em style="color: green; text-decoration: underline;">prop</em>)
+</th><th>Mode
+</th></tr>
+<tr>
+<td>Document</td><td>directive</td><td>rif:directives</td><td>2
+</td></tr>
+<tr>
+<td>Group</td><td>sentence</td><td>rif:sentences</td><td>2
+</td></tr>
+<tr>
+<td>Forall</td><td>declare</td><td>rif:vars</td><td>2
+</td></tr>
+<tr>
+<td>Exists</td><td>declare</td><td>rif:vars</td><td>2
+</td></tr>
+<tr>
+<td>And</td><td>formula</td><td>rif:formulas</td><td>2
+</td></tr>
+<tr>
+<td>Or</td><td>formula</td><td>rif:formulas</td><td>2
+</td></tr>
+<tr>
+<td>Frame</td><td>slot</td><td>rif:slots</td><td>3
+</td></tr>
+<tr>
+<td>Atom</td><td>slot</td><td>rif:namedargs</td><td>3
+</td></tr>
+<tr>
+<td>Expr</td><td>slot</td><td>rif:namedargs</td><td>3
+</td></tr></table>
+</div>
+<a id="The_Reverse_Mapping_.28Extracting_RIF_XML.29" name="The_Reverse_Mapping_.28Extracting_RIF_XML.29"></a><h2> <span class="mw-headline">6  The Reverse Mapping (Extracting RIF XML) </span></h2>
+<p><span id="reverse"></span>
+</p><p>We call the inverse mapping <i>XTr</i>:
+</p>
+<pre><i>XTr</i>( <em style="color: green; text-decoration: underline;">focus-node</em>, <em style="color: green; text-decoration: underline;">triples</em> ) <span style="font-size: 150%">&rarr;</span> <em style="color: green; text-decoration: underline;">rif-xml-tree</em>
+</pre>
+<p>For any RIF-XML document <em style="color: green; text-decoration: underline;">D</em>, valid according to some RIF dialect XML schema, given the transformation:
+</p>
+<pre><em style="color: green; text-decoration: underline;">D'</em> = <i>Xtr</i>( <i>Tr</i>(<em style="color: green; text-decoration: underline;">D</em>) )
+</pre>
+<p><em style="color: green; text-decoration: underline;">D'</em> and <em style="color: green; text-decoration: underline;">D</em> will differ only in presentation aspects (non-significant whitespace, XML comments, IRIs being made absolute using xml:base, etc),
+unrelated to the semantics.  That is, the semantics of D will be
+preserved so the rule sets corresponding to D and D' will have
+identical entailments under the relevant RIF Dialect semantics. 
+</p><p>The ordering of child property elements by <i>Xtr</i> is determined by the relevant dialect schema, if known; otherwise they are lexicographic, sorted first by namespace then by local part. <i>Xtr</i> implementations <em class="rfc_2119" title="MAY in RFC 2119 context">may</em> accept schema  parameters to
+constrain their extraction to conform to a particular
+dialect's schema, and handle non-lexicographic ordering, like:
+</p>
+<pre><i>XTr</i>( <em style="color: green; text-decoration: underline;">focus-node</em>, <em style="color: green; text-decoration: underline;">triples</em>, <em style="color: green; text-decoration: underline;">XML-schema</em>, <em style="color: green; text-decoration: underline;">XML-root-element-in-schema</em>) <span style="font-size: 150%">&rarr;</span> <em style="color: green; text-decoration: underline;">rif-xml-tree</em>
+</pre>
+<p>If they do not do this, they will not be able to correctly extract RIF
+XML documents in non-standard schemas using non-lexicographic element
+ordering.  (For this reason, extensions are advised to use lexicographic ordering of elements in their schema.)  For the three standard dialects, <i>Xtr</i> implementations
+<em class="rfc_2119" title="MUST in RFC 2119 context">must</em> emit the children in schema-valid order.
+</p>
+<a id="Importing_RIF_into_RDF" name="Importing_RIF_into_RDF"></a><h2> <span class="mw-headline">7  Importing RIF into RDF </span></h2>
+<p><a class="external text" href="http://www.w3.org/TR/rif-rdf-owl/#RDF_Compatibility" rel="nofollow" title="http://www.w3.org/TR/rif-rdf-owl/#RDF_Compatibility">RIF RDF and OWL Compatibility</a> [<a href="#RIF_RDF.2BOWL" title="">RIF RDF+OWL</a>] defines the entailments of combinations (R, G) where R (a RIF rule set) includes an import of G (an RDF graph). 
+</p><p>We hereby define an RDF predicate <code>rif:usedWithProfile</code> which enables an import to be specified from the graph G instead of from R.   <i>This definition also appears in <a class="external text" href="http://www.w3.org/TR/sparql11-entailment#RIFDocsAsNamedGraphs" rel="nofollow" title="http://www.w3.org/TR/sparql11-entailment#RIFDocsAsNamedGraphs">SPARQL 1.1 Entailment Regimes</a> [<a href="#SPARQL_ER" title="">SPARQL ER</a>].</i>
+</p><p>In the simple usage the graph G is a plain RDF graph and <code>rif:usedWithProfile</code> is used to combine that graph with one or more externally defined RIF rule sets. In this usage each subject of a <code>rif:usedWithProfile</code> assertion should be the URI for a RIF rule set (which may be encoded in RIF-XML or RIF-in-RDF) and the object should be an <a class="external text" href="http://www.w3.org/TR/rif-rdf-owl/#Profiles_of_Imports" rel="nofollow" title="http://www.w3.org/TR/rif-rdf-owl/#Profiles_of_Imports">import profile as defined in RIF RDF and OWL</a> Compatibility [<a href="#RIF_RDF.2BOWL" title="">RIF RDF+OWL</a>].
+</p><p>It is also possible for the graph G to itself contain an encoded ruleset along with additional RDF statements to which the ruleset is intended to apply. If graph G is obtained from a base IRI <code>U<sub>g</sub></code> then the statement:
+</p>
+<pre>   U<span><sub>g</sub></span> rif:usedWithProfile P .
+</pre>
+<p>within the graph causes it to be treated as both the graph G and the source of the rule set R in the combination (R, G). Syntactically such a statement can be made by using the empty relative IRI reference <code>&lt;&gt;</code> provided that the document base IRI has been set appropriately.
+</p><p>The semantics of <code>rif:usedWithProfile</code> is explained in the following section.
+</p>
+<a id="Semantics_of_RIF_in_RDF" name="Semantics_of_RIF_in_RDF"></a><h2> <span class="mw-headline">8  Semantics of RIF in RDF </span></h2>
+<p><i>Note: this definition also appears in <a class="external text" href="http://www.w3.org/TR/sparql11-entailment#RIFUsedWithProfile" rel="nofollow" title="http://www.w3.org/TR/sparql11-entailment#RIFUsedWithProfile">SPARQL 1.1 Entailment Regimes</a> [<a href="#SPARQL_ER" title="">SPARQL ER</a>].</i>
+</p><p>A RIF-in-RDF-aware processor shall treat any RDF graph G as a RIF-RDF or RIF-OWL combination (cf. [<a href="#RIF_RDF.2BOWL" title="">RIF RDF+OWL</a>]) as follows:
+</p><p>Let G' be the graph obtained from G by removing all triples with predicate <code>rif:usedWithProfile</code>.
+</p><p>Then G is to be treated by a RIF-in-RDF-aware processor as the ruleset R:
+</p>
+<pre>   Document (
+     Imports(R1') 
+     ...
+     Imports(Rn')
+     Imports(G' P1)
+     ...
+     Imports(G' Pn)
+   )
+</pre>
+<p>Where Ri and Pi are the subjects/objects respectively of triples of
+form:
+</p>
+<pre>   Ri rif:usedWithProfile Pi     
+</pre>
+<p>and Ri' denotes 
+</p>
+<ul><li> the RIF document Ri if Ri is a RIF/XML document, and
+</li><li> the RIF document obtained from applying the inverse mapping XTr to the graph Gi if Ri denotes an RDF graph Gi.
+</li></ul>
+<p><b>Remark 1:</b>
+Note that the fact that G' is treated as being imported with all profiles P1 ... Pn enforces G' to be treated according to the highest profiles among P1 ... Pn, cf. Section 5.2 of [<a href="#RIF_RDF.2BOWL" title="">RIF RDF+OWL</a>]. 
+</p><p><b>Remark 2:</b>
+If G also includes a <code>rif:usedWithProfile</code> statement referring to itself (i.e. with subject 
+<code>U<sub>g</sub></code> where the graph G can be obtained from <code>U<sub>g</sub></code>) then the rules encoded in that document will be included in the rule imports but the encoding of the rules will remain visible within G'.
+</p><p><b>Remark 3:</b> Note the discussion in the section 6 that the inversion of Tr
+is not a deterministic function.
+</p><p><b>Remark 4:</b>
+Note that in the case where the graph G includes encoded RIF
+rules then, as a result of RDF graph merge, it may encode more than one
+RIF document. A RIF-in-RDF process MAY choose to combine all the rules
+in each documents into a single RIF document or MAY issue a warning.
+Note that future RIF dialects may have semantics which depend on rule
+ordering.
+</p>
+<a id="Acknowledgements" name="Acknowledgements"></a><h1> <span class="mw-headline">9  Acknowledgements </span></h1>
+<p>This document is the product of the Rules Interchange Format (RIF) Working Group (see below) whose members deserve recognition for their time and commitment.  The editor extends special thanks to Dave Reynolds for his particularly attentive and insightful review comments.
+</p><p><br />
+The regular attendees at meetings of the Rule Interchange Format (RIF) Working Group at the time this document was developed were: Adrian Paschke (Freie Universitaet Berlin), Axel Polleres (DERI), Chris Welty (IBM), Christian de Sainte Marie (IBM), Dave Reynolds (HP), Gary Hallmark (ORACLE), Harold Boley (NRC), Jos de Bruijn (FUB), Leora Morgenstern (IBM), Michael Kifer (Stony Brook), Mike Dean (BBN), Sandro Hawke (W3C/MIT), and Stella Mitchell (IBM).
+[
+</p>
+<a id="References" name="References"></a><h1> <span class="mw-headline">10  References </span></h1>
+<a id="Normative_References" name="Normative_References"></a><h2> <span class="mw-headline">10.1  Normative References </span></h2>
+<dl><dt><span id="RDF_Concepts">[RDF Concepts]</span></dt><dd> <i><a class="external text" href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/" rel="nofollow" title="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/">Resource Description Framework (RDF): Concepts and Abstract Syntax</a></i>, G. Klyne, J. Carrol, Editors, W3C Recommendation, 10 February 2004, <a class="external free" href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/" rel="nofollow" title="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/">http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/</a>. <a class="external text" href="http://www.w3.org/TR/rdf-concepts/" rel="nofollow" title="http://www.w3.org/TR/rdf-concepts/">Latest version</a> available at <a class="external free" href="http://www.w3.org/TR/rdf-concepts/" rel="nofollow" title="http://www.w3.org/TR/rdf-concepts/">http://www.w3.org/TR/rdf-concepts/</a>.
+</dd></dl>
+<p><span class="anchor" id="RIF_Core"></span> 
+</p>
+<dl><dt> [RIF Core]
+</dt><dd> <i>RIF Core Dialect</i>, Harold Boley, Gary Hallmark, Michael Kifer, Adrian Paschke, Axel Polleres and Dave Reynolds (Editors), W3C Recommendation. Available at <a class="external free" href="http://www.w3.org/TR/rif-core/" rel="nofollow" title="http://www.w3.org/TR/rif-core/">http://www.w3.org/TR/rif-core/</a>.
+</dd><dt><span id="RIF_RDF.2BOWL">[RIF RDF+OWL]</span>
+</dt><dd> <i>RIF RDF and OWL Compatibility</i>, Jos de Bruijn (Editor), W3C Recommendation. Available at <a class="external free" href="http://www.w3.org/TR/rif-rdf-owl/" rel="nofollow" title="http://www.w3.org/TR/rif-rdf-owl/">http://www.w3.org/TR/rif-rdf-owl/</a>.
+</dd><dt><span id="Turtle">[Turtle]</span>
+</dt><dd><a class="external text" href="http://www.w3.org/TeamSubmission/2008/SUBM-turtle-20080114/" rel="nofollow" title="http://www.w3.org/TeamSubmission/2008/SUBM-turtle-20080114/"><i>Turtle - Terse RDF Triple Language</i></a>, David Beckett and Tim Berners-Lee, Authors, W3C Team Submission 14 January 2008.   Latest Version available at <a class="external free" href="http://www.w3.org/TeamSubmission/turtle/" rel="nofollow" title="http://www.w3.org/TeamSubmission/turtle/">http://www.w3.org/TeamSubmission/turtle/</a> .
+</dd></dl>
+<a id="Nonnormative_References" name="Nonnormative_References"></a><h2> <span class="mw-headline">10.2  Nonnormative References </span></h2>
+<dl><dt><span id="GRDDL">[GRDDL]</span>
+</dt><dd><a class="external text" href="http://www.w3.org/TR/2007/REC-grddl-20070911/" rel="nofollow" title="http://www.w3.org/TR/2007/REC-grddl-20070911/">Gleaning Resource Descriptions from Dialects of Languages (GRDDL)</a>, Dan Connolly, Editors, W3C Recommendation, 11 September 2007, <a class="external free" href="http://www.w3.org/TR/2007/REC-grddl-20070911/" rel="nofollow" title="http://www.w3.org/TR/2007/REC-grddl-20070911/">http://www.w3.org/TR/2007/REC-grddl-20070911/</a> .  Latest version available at <a class="external free" href="http://www.w3.org/TR/grddl/" rel="nofollow" title="http://www.w3.org/TR/grddl/">http://www.w3.org/TR/grddl/</a> .
+</dd><dt><span id="OWL2_Mapping">[OWL2 Mapping]</span>
+</dt><dd><a class="external text" href="http://www.w3.org/TR/2009/REC-owl2-mapping-to-rdf-20091027/" rel="nofollow" title="http://www.w3.org/TR/2009/REC-owl2-mapping-to-rdf-20091027/"><i>OWL 2 Web Ontology Language: Mapping to RDF Graphs</i></a>, Peter F. Patel-Schneider, Boris Motik, Eds., W3C Recommendation 27 October 2009, <a class="external free" href="http://www.w3.org/TR/2009/REC-owl2-mapping-to-rdf-20091027/" rel="nofollow" title="http://www.w3.org/TR/2009/REC-owl2-mapping-to-rdf-20091027/">http://www.w3.org/TR/2009/REC-owl2-mapping-to-rdf-20091027/</a> .  Latest version at <a class="external free" href="http://www.w3.org/TR/owl-mapping-to-rdf" rel="nofollow" title="http://www.w3.org/TR/owl-mapping-to-rdf">http://www.w3.org/TR/owl-mapping-to-rdf</a> .
+</dd><dt><span id="RDF_Semantics">[RDF Semantics]</span>
+</dt><dd><a class="external text" href="http://www.w3.org/TR/2004/REC-rdf-mt-20040210/" rel="nofollow" title="http://www.w3.org/TR/2004/REC-rdf-mt-20040210/"><i>RDF Semantics</i></a>, Patrick Hayes, Ed., W3C Recommendation 10 February 2004, <a class="external free" href="http://www.w3.org/TR/2004/REC-rdf-mt-20040210/" rel="nofollow" title="http://www.w3.org/TR/2004/REC-rdf-mt-20040210/">http://www.w3.org/TR/2004/REC-rdf-mt-20040210/</a> .  Latest version at <a class="external free" href="http://www.w3.org/TR/rdf-mt/" rel="nofollow" title="http://www.w3.org/TR/rdf-mt/">http://www.w3.org/TR/rdf-mt/</a> . 
+</dd><dt><span id="RDF_Tools">[RDF Tools]</span>
+</dt><dd><a class="external text" href="http://www.w3.org/2001/sw/wiki/Tools" rel="nofollow" title="http://www.w3.org/2001/sw/wiki/Tools"><i>Semantic Web Development Tools</i></a>, Website: <a class="external free" href="http://www.w3.org/2001/sw/wiki/Tools" rel="nofollow" title="http://www.w3.org/2001/sw/wiki/Tools">http://www.w3.org/2001/sw/wiki/Tools</a> retrieved on 21 June 2010.
+</dd><dt><span id="RDF_XML">[RDF XML]</span>
+</dt><dd><a class="external text" href="http://www.w3.org/TR/2004/REC-rdf-syntax-grammar-20040210/" rel="nofollow" title="http://www.w3.org/TR/2004/REC-rdf-syntax-grammar-20040210/"><i>RDF/XML Syntax Specification (Revised)</i></a>, Dave Beckett, Ed., W3C Recommendation 10 February 2004, <a class="external free" href="http://www.w3.org/TR/2004/REC-rdf-syntax-grammar-20040210/" rel="nofollow" title="http://www.w3.org/TR/2004/REC-rdf-syntax-grammar-20040210/">http://www.w3.org/TR/2004/REC-rdf-syntax-grammar-20040210/</a> .  Latest version at <a class="external free" href="http://www.w3.org/TR/rdf-syntax-grammar/" rel="nofollow" title="http://www.w3.org/TR/rdf-syntax-grammar/">http://www.w3.org/TR/rdf-syntax-grammar/</a> .
+</dd><dt><span id="RDFa">[RDFa]</span>
+</dt><dd><a class="external text" href="http://www.w3.org/TR/2008/REC-rdfa-syntax-20081014/" rel="nofollow" title="http://www.w3.org/TR/2008/REC-rdfa-syntax-20081014/"><i>RDFa in XHTML: Syntax and Processing</i></a>, Ben Adida, Mark Birbeck, Shane McCarron, Steven Pemberton, Eds., W3C Recommendation 14 October 2008, <a class="external free" href="http://www.w3.org/TR/2008/REC-rdfa-syntax-20081014/" rel="nofollow" title="http://www.w3.org/TR/2008/REC-rdfa-syntax-20081014/">http://www.w3.org/TR/2008/REC-rdfa-syntax-20081014/</a> .  Latest version at <a class="external free" href="http://www.w3.org/TR/rdfa-syntax/" rel="nofollow" title="http://www.w3.org/TR/rdfa-syntax/">http://www.w3.org/TR/rdfa-syntax/</a> . 
+</dd><dt><span id="RDF">[RDF]</span>
+</dt><dd><a class="external text" href="http://www.w3.org/RDF/" rel="nofollow" title="http://www.w3.org/RDF/"><i>Resource Description Framework (RDF)</i></a>, Website <a class="external free" href="http://www.w3.org/RDF/" rel="nofollow" title="http://www.w3.org/RDF/">http://www.w3.org/RDF/</a> retrieved on 21 Jun 2010.
+</dd><dt><span id="RIF_BLD">[RIF BLD]</span>
+</dt><dd><span><cite><a href="http://www.w3.org/TR/2013/REC-rif-bld-20130205/"><span>RIF Basic Logic Dialect (Second Edition)</span></a></cite> Harold Boley, Michael Kifer, eds. W3C Recommendation, 5 February 2013, <a href="http://www.w3.org/TR/2013/REC-rif-bld-20130205/">http://www.w3.org/TR/2013/REC-rif-bld-20130205/</a>.  Latest version available at <a href="http://www.w3.org/TR/rif-bld/">http://www.w3.org/TR/rif-bld/</a>.</span></dd><dt><span id="RIF_Charter">[RIF Charter]</span>
+</dt><dd><a class="external text" href="http://www.w3.org/2005/rules/wg/charter.html" rel="nofollow" title="http://www.w3.org/2005/rules/wg/charter.html"><i>Rule Interchange Format Working Group Charter</i></a>, Sandro Hawke, Ed., <a class="external free" href="http://www.w3.org/2005/rules/wg/charter" rel="nofollow" title="http://www.w3.org/2005/rules/wg/charter">http://www.w3.org/2005/rules/wg/charter</a> . 
+</dd><dt><span id="RIF_FLD">[RIF FLD]</span></dt><dd><span><cite><a href="http://www.w3.org/TR/2013/REC-rif-fld-20130205/"><span>RIF Framework for Logic Dialects (Second Edition)</span></a></cite> Harold Boley, Michael Kifer, eds. W3C Recommendation, 5 February 2013, <a href="http://www.w3.org/TR/2013/REC-rif-fld-20130205/">http://www.w3.org/TR/2013/REC-rif-fld-20130205/</a>.  Latest version available at <a href="http://www.w3.org/TR/rif-fld/">http://www.w3.org/TR/rif-fld/</a>.</span></dd><dt><span id="RIF_Overview">[RIF Overview]</span>
+</dt><dd><span><cite><a href="http://www.w3.org/TR/2013/NOTE-rif-overview-20130205/"><span>RIF Overview (Second Edition)</span></a></cite> Michael Kifer, Harold Boley, eds. W3C Working Group Note, 5 February 2013, <a href="http://www.w3.org/TR/2013/NOTE-rif-overview-20130205/">http://www.w3.org/TR/2013/NOTE-rif-overview-20130205/</a>.  Latest version available at <a href="http://www.w3.org/TR/rif-overview/">http://www.w3.org/TR/rif-overview/</a>.</span></dd><dt><span id="RIF_PRD">[RIF PRD]</span>
+</dt><dd><span><cite><a href="http://www.w3.org/TR/2013/REC-rif-prd-20130205/"><span>RIF Production Rule Dialect (Second Edition)</span></a></cite> Christian de Sainte Marie, Gary Hallmark, Adrian Paschke, eds. W3C Recommendation, 5 February 2013, <a href="http://www.w3.org/TR/2013/REC-rif-prd-20130205/">http://www.w3.org/TR/2013/REC-rif-prd-20130205/</a>.  Latest version available at <a href="http://www.w3.org/TR/rif-prd/">http://www.w3.org/TR/rif-prd/</a>.</span></dd><dt><span id="SPARQL_ER">[SPARQL ER]</span>
+</dt><dd><a class="external text" href="http://www.w3.org/TR/2011/WD-sparql11-entailment-20110512" rel="nofollow" title="http://www.w3.org/TR/2011/WD-sparql11-entailment-20110512"><i>SPARQL 1.1 Entailment Regimes</i></a>, Birte Glimm and Chimezie Ogbuji, Editors, W3C Working Draft, 12 May 2011, <a class="external free" href="http://www.w3.org/TR/2011/WD-sparql11-entailment-20110512" rel="nofollow" title="http://www.w3.org/TR/2011/WD-sparql11-entailment-20110512">http://www.w3.org/TR/2011/WD-sparql11-entailment-20110512</a>.  Latest version at <a class="external free" href="http://www.w3.org/TR/sparql11-entailment/" rel="nofollow" title="http://www.w3.org/TR/sparql11-entailment/">http://www.w3.org/TR/sparql11-entailment/</a>.
+</dd></dl>
+<div id="example">
+<a id="Appendix_Complete_Example" name="Appendix_Complete_Example"></a><h1> <span class="mw-headline">11  Appendix Complete Example </span></h1>
+<p>Examples, test cases, and links to implementations may be found at <a class="external free" href="http://www.w3.org/2011/rif-in-rdf" rel="nofollow" title="http://www.w3.org/2011/rif-in-rdf">http://www.w3.org/2011/rif-in-rdf</a>.
+</p><p>Here is <a class="external text" href="http://www.w3.org/TR/rif-bld/#ex-RIF-doc-with-annotation-serialization" rel="nofollow" title="http://www.w3.org/TR/rif-bld/#ex-RIF-doc-with-annotation-serialization">Example 8 from BLD</a> converted via the RIF-in-RDF mapping to Turtle:
+</p>
+<pre>@prefix&nbsp;: &lt;http://www.w3.org/2007/rif#&gt; .
+@prefix xs: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+[]      a&nbsp;:Document;
+       &nbsp;:directives ();
+       &nbsp;:payload &lt;http://sample.org&gt;.
+
+&lt;http://sample.org&gt;     a&nbsp;:Group;
+    &nbsp;:meta  [
+         a&nbsp;:Frame;
+        &nbsp;:object  [
+             a&nbsp;:Const;
+            &nbsp;:constname "pd" ];
+        &nbsp;:slots  (
+         [
+                 a&nbsp;:Slot;
+                &nbsp;:slotkey  [
+                     a&nbsp;:Const;
+                    &nbsp;:constIRI "http://purl.org/dc/terms/publisher"^^xs:anyURI ];
+                &nbsp;:slotvalue  [
+                     a&nbsp;:Const;
+                    &nbsp;:constIRI "http://www.w3.org/"^^xs:anyURI ] ]
+         [
+                 a&nbsp;:Slot;
+                &nbsp;:slotkey  [
+                     a&nbsp;:Const;
+                    &nbsp;:constIRI "http://purl.org/dc/terms/date"^^xs:anyURI ];
+                &nbsp;:slotvalue  [
+                     a&nbsp;:Const;
+                    &nbsp;:value "2008-04-04"^^xs:date ] ] ) ];
+    &nbsp;:sentences  (
+     [
+             a&nbsp;:Forall;
+            &nbsp;:formula  [
+                 a&nbsp;:Implies;
+                &nbsp;:if  [
+                     a&nbsp;:And;
+                    &nbsp;:formulas  (
+                     [
+                             a&nbsp;:Atom;
+                            &nbsp;:args  (
+                             [
+                                     a&nbsp;:Var;
+                                    &nbsp;:varname "item" ] );
+                            &nbsp;:op  [
+                                 a&nbsp;:Const;
+                                &nbsp;:constIRI "http://example.com/concepts#perishable"^^xs:anyURI ] ]
+                     [
+                             a&nbsp;:Atom;
+                            &nbsp;:args  (
+                             [
+                                     a&nbsp;:Var;
+                                    &nbsp;:varname "item" ]
+                             [
+                                     a&nbsp;:Var;
+                                    &nbsp;:varname "deliverydate" ]
+                             [
+                                     a&nbsp;:Const;
+                                    &nbsp;:constIRI "http://example.com/John"^^xs:anyURI ] );
+                            &nbsp;:op  [
+                                 a&nbsp;:Const;
+                                &nbsp;:constIRI "http://example.com/concepts#delivered"^^xs:anyURI ] ]
+                     [
+                             a&nbsp;:Atom;
+                            &nbsp;:args  (
+                             [
+                                     a&nbsp;:Var;
+                                    &nbsp;:varname "item" ]
+                             [
+                                     a&nbsp;:Var;
+                                    &nbsp;:varname "scheduledate" ] );
+                            &nbsp;:op  [
+                                 a&nbsp;:Const;
+                                &nbsp;:constIRI "http://example.com/concepts#scheduled"^^xs:anyURI ] ]
+                     [
+                             a&nbsp;:Equal;
+                            &nbsp;:left  [
+                                 a&nbsp;:Var;
+                                &nbsp;:varname "diffduration" ];
+                            &nbsp;:right  [
+                                 a&nbsp;:External;
+                                &nbsp;:content  [
+                                     a&nbsp;:Expr;
+                                    &nbsp;:args  (
+                                     [
+                                             a&nbsp;:Var;
+                                            &nbsp;:varname "deliverydate" ]
+                                     [
+                                             a&nbsp;:Var;
+                                            &nbsp;:varname "scheduledate" ] );
+                                    &nbsp;:op  [
+                                         a&nbsp;:Const;
+:constIRI "http://www.w3.org/2007/rif-builtin-function#subtract-dateTimes"^^xs:anyURI ] ] ] ]
+                     [
+                             a&nbsp;:Equal;
+                            &nbsp;:left  [
+                                 a&nbsp;:Var;
+                                &nbsp;:varname "diffdays" ];
+                            &nbsp;:right  [
+                                 a&nbsp;:External;
+                                &nbsp;:content  [
+                                     a&nbsp;:Expr;
+                                    &nbsp;:args  (
+                                     [
+                                             a&nbsp;:Var;
+                                            &nbsp;:varname "diffduration" ] );
+                                    &nbsp;:op  [
+                                         a&nbsp;:Const;
+:constIRI "http://www.w3.org/2007/rif-builtin-function#days-from-duration"^^xs:anyURI ] ] ] ]
+                     [
+                             a&nbsp;:External;
+                            &nbsp;:content  [
+                                 a&nbsp;:Atom;
+                                &nbsp;:args  (
+                                 [
+                                         a&nbsp;:Var;
+                                        &nbsp;:varname "diffdays" ]
+                                 [
+                                         a&nbsp;:Const;
+                                        &nbsp;:value 10 ] );
+                                &nbsp;:op  [
+                                     a&nbsp;:Const;
+:constIRI "http://www.w3.org/2007/rif-builtin-predicate#numeric-greater-than"^^xs:anyURI ] ] ] ) ];
+                &nbsp;:then  [
+                     a&nbsp;:Atom;
+                    &nbsp;:args  (
+                     [
+                             a&nbsp;:Const;
+                            &nbsp;:constIRI "http://example.com/John"^^xs:anyURI ]
+                     [
+                             a&nbsp;:Var;
+                            &nbsp;:varname "item" ] );
+                    &nbsp;:op  [
+                         a&nbsp;:Const;
+                        &nbsp;:constIRI "http://example.com/concepts#reject"^^xs:anyURI ] ] ];
+            &nbsp;:vars  (
+             [
+                     a&nbsp;:Var;
+                    &nbsp;:varname "item" ]
+             [
+                     a&nbsp;:Var;
+                    &nbsp;:varname "deliverydate" ]
+             [
+                     a&nbsp;:Var;
+                    &nbsp;:varname "scheduledate" ]
+             [
+                     a&nbsp;:Var;
+                    &nbsp;:varname "diffduration" ]
+             [
+                     a&nbsp;:Var;
+                    &nbsp;:varname "diffdays" ] ) ]
+     [
+             a&nbsp;:Forall;
+            &nbsp;:formula  [
+                 a&nbsp;:Implies;
+                &nbsp;:if  [
+                     a&nbsp;:Atom;
+                    &nbsp;:args  (
+                     [
+                             a&nbsp;:Var;
+                            &nbsp;:varname "item" ] );
+                    &nbsp;:op  [
+                         a&nbsp;:Const;
+                        &nbsp;:constIRI "http://example.com/concepts#unsolicited"^^xs:anyURI ] ];
+                &nbsp;:then  [
+                     a&nbsp;:Atom;
+                    &nbsp;:args  (
+                     [
+                             a&nbsp;:Const;
+                            &nbsp;:constIRI "http://example.com/Fred"^^xs:anyURI ]
+                     [
+                             a&nbsp;:Var;
+                            &nbsp;:varname "item" ] );
+                    &nbsp;:op  [
+                         a&nbsp;:Const;
+                        &nbsp;:constIRI "http://example.com/concepts#reject"^^xs:anyURI ] ] ];
+            &nbsp;:vars  (
+             [
+                     a&nbsp;:Var;
+                    &nbsp;:varname "item" ] ) ] ) .
+</pre>
+<p><br />
+</p>
+<div id="changelog">
+<a id="Changelog" name="Changelog"></a><h1> <span class="mw-headline">12  Changelog </span></h1>
+<a id="Changes_since_12_May_2011" name="Changes_since_12_May_2011"></a><h2> <span class="mw-headline">12.1  Changes since 12 May 2011 </span></h2>
+<p>Reference were updated as part of publishing RIF Second Edition
+</p>
+<a id="Changes_since_22_June_2010" name="Changes_since_22_June_2010"></a><h2> <span class="mw-headline">12.2  Changes since 22 June 2010 </span></h2>
+<p>The mapping was changed in several ways. In particular, rdf:type arcs are now used, and some properties were renamed to be closer to the RIF/XML names.
+</p><p>Two sections were added to define a mechanism for importing RIF documents into RDF documents, using a rif:usedWithProfile property.
+</p><p>Placeholder appendices were removed because we did not develop the anticipated extra materials.
+</p><p><br />
+</p>
+</div></div>
+
+
+</body>
+</html>

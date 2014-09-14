@@ -1,0 +1,307 @@
+<!-- http://www.w3.org/TR/NOTE-imagemap -->
+<HTML>
+<HEAD>
+  <!-- Created with AOLpress/2.0 -->
+  <TITLE>Imagemapped Images and Image-Incapable User Agents</TITLE>
+</HEAD>
+<BODY>
+<P>
+<H2 align=right>
+  <A HREF="/"><IMG BORDER="0" align=left ALT="W3C:" SRC="http://www.w3.org/pub/WWW/Icons/WWW/w3c_home.gif"></A>
+  NOTE-imagemap-961127
+</H2>
+<H1 align=center>
+  Imagemapped Images and Image-Incapable User Agents
+</H1>
+<H3 align=center>
+  W3C NOTE <I>27-Nov-1996</I>
+</H3>
+<DL>
+  <DT>
+  <DD>
+  <DT>
+    This version:
+  <DD>
+    http://www.w3.org/pub/WWW/TR/NOTE-imagemap-961127<BR>
+    $Id: NOTE-imagemap.html,v 1.5 1996/12/09 03:45:00 jigsaw Exp $
+  <DT>
+    Latest version:
+  <DD>
+    http://www.w3.org/pub/WWW/TR/NOTE-imagemap-961127
+  <DT>
+    Author:
+  <DD>
+    Ian Graham&lt;ian.graham@utoronto.ca&gt;
+</DL>
+<P>
+  <HR>
+<H2>
+  Status of this document
+</H2>
+<P>
+This is a W3C NOTE for review by W3C members and other interested parties.
+It is a draft document and may be updated, replaced or obsoleted by other
+documents at any time. It is inappropriate to use W3C NOTEs as reference
+material or to cite them as other than "work in progress". A list of current
+W3C NOTEs can be found at:
+<A href="http://www.w3.org/pub/WWW/TR">http://www.w3.org/pub/WWW/TR</A>
+<P>
+<B>Note:</B> since NOTEs are subject to frequent change, you are advised
+to reference the above URL, rather than the URLs for NOTEs themselves.
+<P>
+  <HR>
+<H2>
+  Introduction
+</H2>
+<P>
+This memo discusses appropriate handling of documents containing imagemapped
+images in cases where the user-agent cannot display or otherwise process
+inline images. Typical examples where this is so are (i) text-only browsers
+such as lynx, text-to-speech or braille browsers; (ii) graphical browsers
+with disabled image loading; or (iii) information-gathering robots that do
+not retrieve or process inlined image files.
+<P>
+Because imagemapped images are processed by the user agent and a server-side
+process, this memo discusses requirements of both these utilities. The focus
+is on three issues: appropriate HTML markup, and in particular the use of
+ALT attributes with IMG elements; appropriate URL encoding by user agents
+of imagemap requests in the absence of user agent-specified image coordinate
+data; and the appropriate processing by a server resource of imagemap requests
+in the absence of user agent-specified image coordinate data.
+<P>
+This memo addresses ISMAP and FORM-based imagemaps as specified in the official
+specification of HTML 2.0 (RFC 1866) [1].
+<P>
+Conformance to these recommendations will help provide a standard, graphic-free
+interface to Web documents, and will improve the accessiblity of web resources
+to users or automated web robots that are unable to view images or process
+image-based data.
+<H3>
+  Review: The ALT Attribute
+</H3>
+<P>
+The ALT attribute to an IMG element provides a text alternative to an image,
+used by user-agents that do not process inline images. Consequently, it is
+essential that document authors include appropriate ALT text descriptions
+if they wish their documents to be usable when images are not displayed.
+This is particularly important for images used as hypertext anchors or as
+imagemaps. In both these cases, the ALT text should clearly describe the
+purpose and intent of the link or of the imagemap and related image map database.
+<P>
+If an image is purely decorative, it is recommended that an author use an
+ALT attribute of the form ALT="" (a null string). This form should never
+be used for IMG elements inside an anchor, as some user agents will entirely
+hide such an anchor from the user.
+<H3>
+  Review of Imagemap Instances
+</H3>
+<P>
+There are two cases where imagemaps can be presented to a user-agent. The
+first is as an ISMAP image contained within a hypertext anchor. Here, an
+image element taking the ISMAP attribute is enclosed within an anchor element,
+the anchor element referencing a server resource (often a gateway program)
+that processes the coordinate data selected by the user. The second case
+is the TYPE="image" INPUT element within an HTML FORM. These cases are discussed
+in the next two sections. 
+  <HR>
+<H2>
+  ISMAP Imagemapped Hypertext Anchors
+</H2>
+<P>
+ISMAP imagemapped hypertext anchors take the form:
+<PRE>
+       &lt;A HREF="http://some.domain.name/path/resource"&gt;
+          &lt;IMG SRC="path/to/image.gif" 
+               ALT="[alternative text description]" 
+               ISMAP &gt;
+       &lt;/A&gt;
+</PRE>
+<P>
+where the ISMAP attribute declares the image to be active, and where the
+anchor element enclosing the IMG element specifies the server resource to
+which the coordinate data should be sent for processing. A user agent that
+can process imagemaps must take the user-selected integer pixel coordinates
+(x,y), measured from the upper left hand corner of the image, and send these
+to the server using the GET method, appending the selected coordinates to
+the URL as the encoded [2,3] query string "x,y". For example:
+<PRE>
+       http://some.domain.name/path/resource?23,111
+</PRE>
+<P>
+The behaviour in the absence of user-selected coordinate data is at present
+unspecified, and is the main subject of this memo.
+<H3>
+  Processing ISMAP Data by Image-Incapable User Agents and Servers
+</H3>
+<P>
+In the absence of a mechanism for specifying coordinates on the imagemapped
+image, a user agent should access the specified URL without any appended
+coordinate data: that is, using the URL specified in the anchor element,
+without appended query data. For example (following the example markup in
+Section 3):
+<PRE> 
+      http://some.domain.name/path/resource 
+</PRE>
+<P>
+The referenced server resource that processes this request should interpret
+a request containing no coordinate data as a request from a user agent that
+cannot display or process image files. As a result, the server resource should
+return a text-only HTML document providing alternative access to the imagemapped
+data: for example, a list of hypertext links, with related descriptions.
+<H4>
+  Legacy Support
+</H4>
+<P>
+Some current user agents, such as lynx, return the default coordinates (0,0)
+when accessing imagemapped anchors in that absence of user agent-selected
+coordinate data. This behaviour is deprecated, but authors of server-side
+programs that process imagemap data should treat the coordinate pair (0,0)
+as equivalent to the absence of coordinate data.
+<H3>
+  Query String Data Disallowed in Imagemap Anchors
+</H3>
+<P>
+Query string data is forbidden within the URL specifing the server resource
+for an ISMAP imagemapped hypertext anchor. Thus, markup of the form
+<PRE>
+      &lt;A HREF="http://some.domain.name/path/resource?query-data"&gt;
+         &lt;IMG SRC="path/image.gif" 
+          ALT="[alternative text]" 
+          ISMAP &gt;
+      &lt;/A&gt;
+</PRE>
+<P>
+is disallowed. If there is query data within the resource URL, the error
+handling mechanism of a user agent should truncate this query data, and append
+the appropriate coordinate data (if any) obtained from user input. This error
+should be reported to the user, as this change may reflects loss of information.
+<H3>
+  Fragment Identifiers Allowed in Imagemap Anchors
+</H3>
+<P>
+Fragment identifiers may be appended to the URL specifying the server resource
+for an ISMAP hypertext anchor. Thus, markup of the form:
+<PRE>
+      &lt;A HREF="http://some.domain.name/path/resource#fragment"&gt;
+         &lt;IMG SRC="path/image.gif" 
+              ALT="[alternative text]" 
+              ISMAP &gt;
+      &lt;/A&gt;
+</PRE>
+<P>
+is allowed. Since a fragment identifier is not part of a URL, the user agent
+must cache the fragment identifier, strip the string (including the leading
+# character) from the URL, and then append, as a query string, the appropriate
+coordinate data (if any) obtained from user input. When data are returned
+to the user agent from the server, the fragment identifier must be used to
+locate the appropriate named location in the returned document, where
+appropriate.
+<H4>
+  NOTE
+</H4>
+<P>
+Many current user-agents do not support fragment identifiers appended to
+the URL specifying the server resource for an ISMAP hypertext anchor. 
+  <HR>
+<H2>
+  TYPE=image INPUT Elements Within a FORM
+</H2>
+<P>
+Within a FORM, an author can declare an input element of the form
+<PRE>
+      &lt;INPUT TYPE="IMAGE" 
+             NAME="tstname" VALUE="testvalue" 
+             SRC="path/image.gif"&gt;
+</PRE>
+<P>
+This specifies an image resource to be displayed, in which the user can select
+pixel coordinates (x,y) measured from the upper left hand corner of the image.
+This input element type is analogous to a button of the form TYPE="submit"
+-- when the user selects coordinates in the TYPE="image" element, the form
+as a whole is immediately submitted, with the image coordinates being passed
+to the server as an URL query string field of the form:
+<PRE>
+      tstname.x=x_coord&amp;tstname.y=y_coord
+</PRE>
+<P>
+Here "tstname.x" and "tstname.y" are the variable names composed by combining
+the encoded [1] INPUT element NAME attribute value with the strings ".x"
+and ".y", and where "x_coord" and "y_coord" are the positive integer x and
+y pixel coordinates selected by the user, relative to the upper left-hand
+corner of the image. The VALUE attribute is unused, and is currently ignored
+by most user agents.
+<P>
+If the FORM is submitted without the user selecting image coordinates, for
+example by selecting a TYPE="input" element, then no data associated with
+the TYPE="image" input element are included with the message sent by the
+user agent. the the URL query string due to this element contains no data
+This is analogous to an unselected TYPE="checkbox" input element.
+<H3>
+  Processing TYPE=image Elements by Image-Incapable Agents
+</H3>
+<P>
+If a user agent incapable of processing images (for whatever reason) submits
+a FORM via the TYPE="image" input element, then the encoded string from the
+TYPE="image" element should take the (URL encoded) form:
+<PRE>
+        tstname.x=&amp;tstname.y=
+</PRE>
+<P>
+That is, there should be no coordinate data passed to the server (the coordinate
+data are null strings). The server resource processing the FORM data can
+use the presence of "tstname.x" and "tstsname.y" NAMEs, and the absence of
+coordinate data VALUEs, to infer that the user agent is not capable of processing
+images, but that the user did select the TYPE="image" input element. If possible,
+the server resource can then return a FORM more appropriate to the user agent's
+capabilities.
+<P>
+Some user agents currently send encoded data of the form
+<PRE>
+       tstname.x=0&amp;tstname.y=0
+</PRE>
+<P>
+when they are unable to process the image. This behavior is deprecated, but
+writers of server-side programs that process FORM data resulting from
+TYPE="image" INPUT elements should where possible treat the coordinate pair
+(0,0) as equivalent to the absence of coordinate data,
+<H4>
+  Recommended Use of the VALUE Attribute
+</H4>
+<P>
+It is recommended that authors use the VALUE attribute to contain a text
+alternative to the active image. User agents incapable of processing images
+can use this text in place of the image, providing some guidance to the user.
+Ideally, however, the document author should provide an alternative
+representation of the active image to such users, for example a series of
+NAMEd TYPE="submit" buttons. 
+  <HR>
+<H2>
+  Acknowledgements
+</H2>
+<P>
+The author would like to thank the following individuals who provided extensive
+feedback and commentary on initial drafts:
+<PRE>
+  Foteos Macrides &lt;MACRIDES@sci.wfbr.edu&gt;
+  Roy Fielding &lt;fielding@avron.ics.uci.edu&gt;
+  Dave Seibert &lt;seibert@prism.physics.mcgill.ca&gt;
+  Murray Altheim &lt;murray@spyglass.com&gt;
+</PRE>
+<P>
+  <HR>
+<H2>
+  References
+</H2>
+<P>
+[1] RFC 1866 - The Hypertext Markup Language, Version 2.0<BR>
+[2] RFC 1738 - Uniform Resource Locators (URL encoding of query strings)<BR>
+[3] RFC 1808 - Relative URLs
+<P>
+  <HR>
+<ADDRESS>
+  <A HREF="mailto:ian.graham@utoronto.ca">Ian
+  Graham</A><BR>
+  <A HREF="mailto:web-human@w3.org">Webmaster</A><BR>
+  $Date: 1996/12/09 03:45:00 $
+</ADDRESS>
+</BODY></HTML>

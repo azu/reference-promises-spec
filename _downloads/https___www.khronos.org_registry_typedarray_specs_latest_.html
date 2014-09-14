@@ -1,0 +1,1218 @@
+<!-- https://www.khronos.org/registry/typedarray/specs/latest/ -->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <title>Typed Array Specification</title>
+  <link rel="stylesheet" type="text/css" href="../../../webgl/resources/Khronos-WD.css" />
+  <script src="../../../webgl/resources/jquery-1.3.2.min.js" type="text/javascript"></script>
+  <script src="../../../webgl/resources/generateTOC.js" type="text/javascript"></script>
+
+
+    <style type="text/css">
+.view-example-table * {
+  text-align: center;
+}
+.view-example-table tr > td:first-child {
+  font-family: fixed;
+  text-align: right;
+  border: none;
+}
+.view-example-table td {
+  padding: 4px 8px 4px 8px;
+}
+
+.api tbody tr > td {
+  vertical-align: baseline;
+}
+    </style>
+</head>
+
+<body onload="generateTOC(document.getElementById('toc'))">
+  <h1>Typed Array Specification</h1>
+  <h2 class="no-toc">Editor's Draft 18 July 2013</h2>
+  <dl>
+    <dt>This version:
+      <dd>
+          <a href="https://www.khronos.org/registry/typedarray/specs/latest/">
+              https://www.khronos.org/registry/typedarray/specs/latest/
+          </a>
+          <br>
+          <a href="https://www.khronos.org/registry/typedarray/specs/latest/typedarray.idl">
+              <b>Web IDL:</b> https://www.khronos.org/registry/typedarray/specs/latest/typedarray.idl
+          </a>
+      </dd>
+    <dt>Latest version:
+      <dd>
+          <a href="https://www.khronos.org/registry/typedarray/specs/latest/">
+              https://www.khronos.org/registry/typedarray/specs/latest/
+          </a>
+          <br>
+          <a href="https://www.khronos.org/registry/typedarray/specs/latest/typedarray.idl">
+              <b>Web IDL:</b> https://www.khronos.org/registry/typedarray/specs/latest/typedarray.idl
+          </a>
+      </dd>
+    <dt>Previous version:
+      <dd>
+          <a href="https://www.khronos.org/registry/typedarray/specs/1.0/">
+              https://www.khronos.org/registry/typedarray/specs/1.0/
+          </a>
+          <br>
+          <a href="https://www.khronos.org/registry/typedarray/specs/1.0/typedarray.idl">
+              <b>Web IDL:</b> https://www.khronos.org/registry/typedarray/specs/1.0/typedarray.idl
+          </a>
+      </dd>
+    <dt>Editors:
+      <dd>
+        <a href="mailto:dherman@mozilla.com">David Herman</a>
+        <a href="http://www.mozilla.com/">(Mozilla Corporation)</a>
+      </dd>
+      <dd>
+        <a href="mailto:kbr@google.com">Kenneth Russell</a>
+        <a href="http://www.google.com/intl/en/about.html">(Google, Inc.)</a>
+      </dd>
+  </dl>
+
+  <hr />
+    
+    <h2 class="no-toc">Abstract</h2>
+    <p>
+      This specification provides an API for interoperability with
+      native binary data.  It defines a generic fixed-length buffer
+      type, as well as accessor types that allow access to the data
+      stored within the buffer.
+    </p>
+
+    <p>
+      The functionality described here originated in the WebGL
+      specification <a href="#refsWEBGL">[WEBGL]</a>.
+    </p>
+
+    <h2 class="no-toc">Status of this document</h2>
+    
+    <!--begin-status-->
+    <p>
+        This document is an editor's draft. Do not cite this document as other than work in
+        progress.  Public discussion of this specification is welcome on the
+        (<a href="https://www.khronos.org/webgl/public-mailing-list/archives/">archived</a>) WebGL
+        mailing list
+	<a href="mailto:public_webgl@khronos.org">public_webgl@khronos.org</a>
+        (see
+	<a href="http://www.khronos.org/webgl/public-mailing-list/">instructions</a>).
+    </p>
+    <p>
+        The latest version of this document, including all revision history, may be obtained via
+        Subversion:
+        <pre>
+svn co https://cvs.khronos.org/svn/repos/registry/trunk/public/typedarray
+        </pre>
+    </p>
+    <!--end-status-->
+    
+    <h2 class="no-toc">Table of contents</h2>
+    <div id="toc"></div>
+
+    <h2>Introduction</h2>
+
+    <div class="note">        
+    <p>
+      ECMAScript <a href="#refsECMA262">[ECMA-262]</a> has
+      traditionally been used in contexts where there is no access to
+      binary data.  Where binary data has needed to be manipulated, it
+      is often stored as a String and accessed using charCodeAt(), or
+      stored as an Array with conversion to and from base64 for
+      transmission.  Both of these methods are slow and error-prone.
+      For example, reading binary data as 32-bit integers requires
+      manual conversion of 4 source bytes to and from the target type.
+      Reading floating-point data is even more expensive.
+    </p>
+
+    <p>
+      As web applications gain access to new functionality, working
+      with binary data has become a much-demanded feature.  Current
+      specifications such as the File
+      API <a href="#refsFILE">[FILEAPI]</a> and Web
+      Sockets <a href="#refsWEBSOCKETS">[WEBSOCKETS]</a> would benefit
+      from being able to read and write binary data directly in its
+      native form.  Specifications such as
+      WebGL <a href="#refsWEBGL">[WEBGL]</a> require this
+      functionality to meet acceptable performance characteristics.
+    </p>
+
+    <p>
+      This specification defines a minimal set of functionality for
+      accessing binary data from ECMAScript.
+    </p>
+    </div>
+
+    <h2>Overview</h2>
+
+    <div class="note">        
+    <p>
+      This specification defines an ArrayBuffer type, representing a generic fixed-length binary buffer.  It is not possible to manipulate the contents of an ArrayBuffer directly.  Instead, a group of types are used to create <i>views</i> of the ArrayBuffer.  For example, to access the buffer as an array of 32-bit signed integers, an Int32Array would be created that refers to the ArrayBuffer.
+    </p>
+    <p>
+      Multiple typed array views can refer to the same ArrayBuffer, of different types, lengths, and offsets.  This allows for complex data structures to be built up in the ArrayBuffer.  As an example, given the following code:
+    </p>
+    <pre>
+      // create an 8-byte ArrayBuffer
+      var b = new ArrayBuffer(8);
+
+      // create a view v1 referring to b, of type Int32, starting at
+      // the default byte index (0) and extending until the end of the buffer
+      var v1 = new Int32Array(b);
+
+      // create a view v2 referring to b, of type Uint8, starting at
+      // byte index 2 and extending until the end of the buffer
+      var v2 = new Uint8Array(b, 2);
+
+      // create a view v3 referring to b, of type Int16, starting at
+      // byte index 2 and having a length of 2
+      var v3 = new Int16Array(b, 2, 2);
+    </pre>
+
+    <p>
+      The following buffer and view layout is created:
+    </p>
+
+    <center>
+    <table class="view-example-table">
+      <thead>
+	<tr>
+	  <th><i>var</i></th><th colspan="8"><i>index</i></th>
+	</tr>
+      </thead>
+      <tbody>
+	<tr style="font-size: small;">
+	  <td></td><td colspan="8"><i>bytes (not indexable)</i></td>
+	</tr>
+	<tr>
+	  <td>b = </td><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td>
+	</tr>
+	<tr style="font-size: small;">
+	  <td></td><td colspan="8"><i>indices</i></td>
+	</tr>
+	<tr>
+	  <td>v1 = </td><td colspan="4">0</td><td colspan="4">1</td>
+	</tr>
+	<tr>
+	  <td>v2 = </td><td colspan="2" style="background: #aaa"></td><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td>
+	</tr>
+	<tr>
+	  <td>v3 = </td><td colspan="2" style="background: #aaa"></td><td colspan="2">0</td><td colspan="2">1</td><td colspan="2" style="background: #aaa"></td>
+	</tr>
+      </tbody>
+    </table>
+    </center>
+
+    <p>
+      This defines an 8-byte buffer <code>b</code>, and three views of
+      that buffer, <code>v1</code>, <code>v2</code>, and <code>v3</code>.  Each of
+      the views refers to the same buffer -- so <code>v1[0]</code> refers
+      to bytes 0..3 as a signed 32-bit integer, <code>v2[0]</code> refers
+      to byte 2 as a unsigned 8-bit integer, and <code>v3[0]</code> refers
+      to bytes 2..3 as a signed 16-bit integer.  Any modification to
+      one view is immediately visible in the other: for example,
+      after <code>v2[0] = 0xff; v2[1] = 0xff;</code> then <code>v3[0] ==
+      -1</code> (where -1 is represented as <code>0xffff</code>).
+    </p>
+    </div>
+
+    <h3><a name="ENDIANNESS">Endianness</a></h3>
+
+    <div class="note">
+
+    <p>
+
+    Computer memory is fundamentally organized as a linear series of numbers. On all contemporary
+    computers, each of these values is an 8-bit binary number (a "byte"). Larger numbers are represented
+    by interpreting multiple bytes at a time as a single value. For example, this specification discusses
+    16-bit and 32-bit signed and unsigned integers, and 32-bit and 64-bit floating-point numbers.
+
+    </p>
+    <p>
+
+    There exists an ambiguity in the interpretation of such multi-byte values: specifically, which order
+    the bytes are assembled. <i>Little-endian</i> architectures treat the byte with the lowest address as
+    the least significant byte; <i>big-endian</i> architectures treat the byte with the lowest address as
+    the most significant byte. More possibilities exist, but are not commonly used. Little-endian
+    architectures are currently used in most consumer computing devices, but big-endian architectures are
+    still used in important use cases.
+
+    </p>
+    <p>
+
+    The following diagram illustrates the difference in storage of values between little-endian and
+    big-endian architectures. If the value <code>305419896</code> (<code>0x12345678</code> in
+    hexadecimal) were stored into an ArrayBuffer using a Uint32Array, then depending on the host
+    computer's endianness, the component bytes of the ArrayBuffer would contain the following (organized
+    from low address to high address):
+
+    <center>
+    <table>
+      <tbody>
+	<tr>
+	  <td>Little-endian:</td><td>78</td><td>56</td><td>34</td><td>12</td>
+	</tr>
+	<tr>
+	  <td>Big-endian:</td><td>12</td><td>34</td><td>56</td><td>78</td>
+	</tr>
+      </tbody>
+    </table>
+    </center>
+
+    </p>
+    <p>
+
+    In this specification, differences in endianness only become apparent in certain situations: for
+    example, when overlaying multiple types of views on the same region of
+    an <a href="#ARRAYBUFFER">ArrayBuffer</a>. The following normative rules apply to implementations of
+    the typed array views.
+
+    </p>
+
+    </div>
+
+    <p>
+
+    The <a href="#TYPEDARRAYS">typed array view types</a> operate with the endianness of the host
+    computer.
+
+    </p>
+    <p>
+
+    The <a href="#DATAVIEW">DataView type</a> operates upon data with a specified endianness (big-endian
+    or little-endian).
+
+    </p>
+
+    <div class="note">
+
+    <p>
+
+    The typed array view types (Uint8Array, Float32Array, etc.) are designed for in-memory assembly of
+    large blocks of data to be sent to the graphics card, audio system, etc. For these use cases, it is
+    required to use the native endianness of the host machine when writing the data to main memory. If
+    this specification had mandated for consistency that the typed array view types used a specified
+    endianness (for example, little-endian), the data would either be misinterpreted by the graphics card
+    on some processor architectures (in this example, big-endian architectures), or impose an
+    unacceptably high performance overhead on such architectures.
+
+    </p>
+    <p>
+
+    When receiving data from other computers, or reading files from disk, it is critical to specify the
+    byte order of the data so that it can be properly interpreted regardless of the endianness of the
+    host computer. Essentially every file format or network protocol in existence has a clearly specified
+    data format, including the byte order of all multi-byte data contained in the file or network
+    payload. The DataView view type is designed for input/output tasks and therefore operates upon data
+    with a specified byte order. The host computer's endianness is irrelevant when working with DataView;
+    it always reads or writes data assuming that data is stored with a particular endianness.
+
+    </p>
+    <p>
+
+    This <a href="http://www.html5rocks.com/en/tutorials/webgl/typed_arrays/">article on the design and
+    usage of the typed array views</a> may provide more background and in-depth discussion.
+
+    </p>
+
+    </div>
+
+    <h2><a name="CONVERSIONS">Type Conversion Rules</a></h2>
+
+    <p>
+
+    The specification below implicitly references certain type conversion rules; for example,
+    conversion of floating-point values to integer values of various sizes. The Web IDL
+    specification <a href="#refsWEBIDL">[WEBIDL]</a> defines these rules, and references the
+    ECMA-262 specification <a href="#refsECMA262">[ECMA-262]</a> for conversion algorithms such
+    as <code>ToInt32</code>.
+
+    </p>
+    <p>
+
+    The Web IDL specification does not currently define all of the numerical types referenced in
+    this specification; for example, <code>byte</code>, which is a signed 8-bit integer type. For
+    these types, the rules for the type of the closest size and signedness shall be extrapolated.
+
+    </p>
+
+    <div class="note">
+    <p>
+
+    As a hint to implementors of the algorithms in the ECMA-262 specification, conversion of
+    floating-point numbers to integer values uses the truncate, or round-to-zero, rounding mode.
+
+    </p>
+    </div>
+
+    <h2><a name="NAN">Handling of Not-a-Number (NaN) Values</a></h2>
+
+    <p>
+
+    When the not-a-number (NaN) value is stored into a <code>Float32Array</code>
+    or <code>Float64Array</code>, or into a <code>DataView</code> using the <code>setFloat32</code>
+    or <code>setFloat64</code> methods, the bit pattern written into the underlying ArrayBuffer is
+    not specified, but shall be one of the IEEE 754 bit patterns that represent
+    NaN <a href="#refsIEEE754">[IEEE-754]</a>.
+
+    </p>    
+    <p>
+
+    When a bit pattern representing an IEEE 754 NaN is loaded from a <code>Float32Array</code>
+    or <code>Float64Array</code>, or from a <code>DataView</code> using the <code>getFloat32</code>
+    or <code>getFloat64</code> methods, the language binding (for example, ECMAScript) may use an
+    alternative bit pattern to represent the NaN value.
+
+    </p>    
+    <p>
+
+    The Web IDL <a href="#refsWEBIDL">[WEBIDL]</a> and ECMA-262
+    <a href="#refsECMA262">[ECMA-262]</a> specifications govern all other handling of NaN values, in
+    particular the conversion to 0 when converting NaN to an integer value.
+
+    </p>    
+
+    <h2>The <code><a name="ARRAYBUFFER">ArrayBuffer</a></code> Type</h2>
+
+    <p>The <code>ArrayBuffer</code> type describes a buffer used to store
+    data for the array buffer views.  An ArrayBuffer has the following methods and properties:</p>
+
+    <pre class="idl">
+[ Constructor(unsigned long length) ]
+interface <dfn id="ArrayBuffer">ArrayBuffer</dfn> {
+    readonly attribute unsigned long byteLength;
+    ArrayBuffer slice(long begin, optional long end);
+    static boolean isView(any value);
+};
+ArrayBuffer implements <a href="#CLONING_AND_TRANSFERRING">Transferable</a>;
+</pre>
+
+    <table class="api">
+      <tbody>
+	<tr><th colspan="2">Constructors</th></tr>
+	<tr>
+	  <td colspan="2">
+            <dl>
+            <dt class="idl-code"><i>ArrayBuffer</i>(unsigned long length)</dt>
+            <dd>
+	    <p>Creates a new ArrayBuffer of the given length in bytes. The contents of the
+	    ArrayBuffer are initialized to 0. If the requested number of bytes could not be
+	    allocated an exception is raised.</p>
+            </dd>
+	  </td>
+	</tr>
+	<tr></tr>
+	<tr><th colspan="2">Properties</th></tr>
+	<tr>
+	  <td class="idl-code">unsigned long byteLength</td>
+	  <td>
+	    <p>Read-only property.</p>
+	    <p>The length of the ArrayBuffer in bytes, as fixed at construction time.</p>
+	    <p>Reading this property returns 0 if this <code>ArrayBuffer</code> has been neutered.</p>
+	  </td>
+	</tr>
+	<tr></tr>
+	<tr><th colspan="2">Methods</th></tr>
+	<tr>
+          <td colspan="2">
+            <dl>
+              <dt class="idl-code">ArrayBuffer <i>slice</i>(long begin, optional long end)</dt>
+              <dd>
+                <p>
+                  Returns a new ArrayBuffer whose contents are a copy of this ArrayBuffer's bytes
+                  from <code>begin</code>, inclusive, up to <code>end</code>, exclusive. If
+                  either <code>begin</code> or <code>end</code> is negative, it refers to an index
+                  from the end of the array, as opposed to from the beginning.
+                </p>
+                <p>
+                  If <code>end</code> is unspecified, the new ArrayBuffer contains all bytes
+                  from <code>begin</code> to the end of this ArrayBuffer.
+                </p>
+                <p>
+                 The range specified by the <code>begin</code> and <code>end</code> values is clamped to
+                 the valid index range for the current array. If the computed length of the new
+                 ArrayBuffer would be negative, it is clamped to zero.
+                </p>
+              </dd>
+            </dl>
+          </td>
+        </tr>
+	<tr>
+          <td colspan="2">
+            <dl>
+              <dt class="idl-code">static boolean <i>isView</i>(any value)</dt>
+              <dd>
+                <p>
+                  Returns <code>true</code> if <code>value</code> is an object implementing
+                  the <a href="#ARRAYBUFFERVIEW">ArrayBufferView</a> interface,
+                  and <code>false</code> otherwise.
+                </p>
+              </dd>
+            </dl>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>The <code><a name="ARRAYBUFFERVIEW">ArrayBufferView</a></code> Type</h2>
+
+    <p>The <code>ArrayBufferView</code> type holds information shared among all of the types of views of ArrayBuffers. An <code>ArrayBufferView</code> has the following properties:
+
+    <pre class="idl">
+[NoInterfaceObject]
+interface <dfn id="ArrayBufferView">ArrayBufferView</dfn> {
+    readonly attribute ArrayBuffer buffer;
+    readonly attribute unsigned long byteOffset;
+    readonly attribute unsigned long byteLength;
+};</pre>
+
+    <table class="api">
+      <tbody>
+	<tr><th colspan="2">Constructors</th></tr>
+	<tr><td colspan="2"><i>None</i></td></tr>
+	<tr></tr>
+	<tr><th colspan="2">Properties</th></tr>
+	<tr>
+	  <td class="idl-code">ArrayBuffer buffer</td>
+	  <td>
+	    <p>Read-only property.</p>
+	    <p>The <code>ArrayBuffer</code> that this <code>ArrayBufferView</code> references.</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td class="idl-code">unsigned long byteOffset</td>
+	  <td>
+	    <p>Read-only property.</p>
+	    <p>The offset of this <code>ArrayBufferView</code> from the start of its <code>ArrayBuffer</code>, in bytes, as fixed at construction time.</p>
+	    <p>Reading this property returns 0 if the referenced <code>ArrayBuffer</code> has been neutered.</p>
+	  </td>
+	</tr>
+	<tr>
+	  <td class="idl-code">unsigned long byteLength</td>
+	  <td>
+	    <p>Read-only property.</p>
+	    <p>The length of the <code>ArrayBufferView</code> in bytes, as fixed at construction time.</p>
+	    <p>Reading this property returns 0 if the referenced <code>ArrayBuffer</code> has been neutered.</p>
+	  </td>
+	</tr>
+	<tr></tr>
+	<tr><th colspan="2">Methods</th></tr>
+	<tr><td colspan="2"><i>None</i></td></tr>
+      </tbody>
+    </table>
+
+    <h2><a name="TYPEDARRAYS">The Typed Array View Types</a></h2>
+
+    <p>The typed array view types represent a view of
+    an <code>ArrayBuffer</code> that allows for indexing and manipulation.
+    The length of each of these is fixed.  Each of the typed array
+    view types follows the same template.</p>
+
+    <p>The following typed array view types are defined by this specification.  The size below is given in bytes, and corresponds to the <code>BYTES_PER_ELEMENT</code> constant for the given type.</p>
+
+    <center><table>
+      <thead>
+	<tr><th>Type</th><th>Size</th><th>Description</th><th>Web IDL type</th><th>Equivalent C Type</th></tr>
+      </thead>
+      <tbody>
+	<tr><td><code>Int8Array</code></td><td>1</td><td>8-bit 2's complement signed integer</td><td><code>byte</code></td><td><code>signed char</code></td></tr>
+	<tr><td><code>Uint8Array</code></td><td>1</td><td>8-bit unsigned integer</td><td><code>octet</code></td><td><code>unsigned char</code></td></tr>
+	<tr><td><code>Uint8ClampedArray</code></td><td>1</td><td>8-bit unsigned integer (clamped)</td><td><code>octet</code></td><td><code>unsigned char</code></td></tr>
+	<tr><td><code>Int16Array</code></td><td>2</td><td>16-bit 2's complement signed integer</td><td><code>short</code></td><td><code>short</code></td></tr>
+	<tr><td><code>Uint16Array</code></td><td>2</td><td>16-bit unsigned integer</td><td><code>unsigned short</code></td><td><code>unsigned short</code></td></tr>
+	<tr><td><code>Int32Array</code></td><td>4</td><td>32-bit 2's complement signed integer</td><td><code>long</code></td><td><code>int</code></td></tr>
+	<tr><td><code>Uint32Array</code></td><td>4</td><td>32-bit unsigned integer</td><td><code>unsigned long</code></td><td><code>unsigned int</code></td></tr>
+	<tr><td><code>Float32Array</code></td><td>4</td><td>32-bit IEEE floating point</td><td><code>unrestricted float</code></td><td><code>float</code></td></tr>
+	<tr><td><code>Float64Array</code></td><td>8</td><td>64-bit IEEE floating point</td><td><code>unrestricted double</code></td><td><code>double</code></td></tr>
+      </tbody>
+    </table></center>
+
+    <p>Each of the typed array types has the following constructors, properties, constants and
+    methods.  In the descriptions below, the generic term <i>TypedArray</i> is used to indicate that
+    any valid typed array view type is allowed. <code>Uint8ClampedArray</code> is defined in the
+    next section.</p>
+
+    <p>An object <code>array</code> implementing one of the <em>TypedArray</em>
+    interfaces <a href="http://dev.w3.org/2006/webapi/WebIDL/#dfn-supported-property-indices">supports
+    indexed properties</a> <a href="#refsWEBIDL">[WEBIDL]</a> with indices in the range 0 &le; index
+    &lt; <code>array.length</code>.</p>
+
+    <p>Typed array views operating upon multi-byte values use the host
+    computer's <a href="#ENDIANNESS">endianness</a> when reading or writing values from or to main
+    memory.<p>
+
+    <pre class="idl">
+[
+    Constructor(unsigned long length),
+    Constructor(<i>TypedArray</i> array),
+    Constructor(<i>type</i>[] array),
+    Constructor(ArrayBuffer buffer,
+                optional unsigned long byteOffset, optional unsigned long length)
+]
+interface <dfn id="TypedArray"><i>TypedArray</i></dfn> {
+    const unsigned long BYTES_PER_ELEMENT = <i>element size in bytes</i>;
+
+    readonly attribute unsigned long length;
+
+    getter <i>type</i> get(unsigned long index);
+    setter void set(unsigned long index, <i>type</i> value);
+    void set(<i>TypedArray</i> array, optional unsigned long offset);
+    void set(<i>type</i>[] array, optional unsigned long offset);
+    <i>TypedArray</i> subarray(long begin, optional long end);
+};
+<i>TypedArray</i> implements ArrayBufferView;</pre>
+
+    <table class="api">
+      <tbody>
+	<tr><th colspan="2">Constructors</th></tr>
+	<tr>
+	  <td colspan="2">
+          <dl>
+            <dt class="idl-code"><i>TypedArray</i>(unsigned long length)</dt>
+            <dd>
+	      Create a new ArrayBuffer with enough bytes to
+	      hold <code>length</code> elements of this typed array, then
+	      creates a typed array view referring to the full buffer. As
+	      with a directly constructed ArrayBuffer, the contents are
+	      initialized to 0. If the requested number of bytes could not
+	      be allocated an exception is raised.
+	    </dd>
+          </dl>
+          </td>
+        </tr>
+        <tr>
+	  <td colspan="2">
+          <dl>
+            <dt class="idl-code"><i>TypedArray</i>(<i>TypedArray</i> array)</dt>
+            <dt class="idl-code"><i>TypedArray</i>(<i>type</i>[] array)</dt>
+            <dd>
+	      Create a new ArrayBuffer with enough bytes to
+	      hold <code>array.length</code> elements of this typed array,
+	      then creates a typed array view referring to the full
+	      buffer.  The contents of the new view are initialized to
+	      the contents of the given array or typed array, with
+	      each element converted to the appropriate typed array
+	      type.
+            </dd>
+          </dl>
+	  </td>
+	</tr>
+	<tr>
+	  <td colspan="2">
+          <dl>
+            <dt class="idl-code"><i>TypedArray</i>(ArrayBuffer buffer,
+                optional unsigned long byteOffset, optional unsigned long length)</dt>
+            <dd>
+              Create a new <i>TypedArray</i> object using the passed
+              ArrayBuffer for its storage. Optional byteOffset and
+              length can be used to limit the section of the buffer
+              referenced. The byteOffset indicates the offset in bytes
+              from the start of the ArrayBuffer, and the length is the
+              count of elements from the offset that
+              this <i>TypedArray</i> will reference.  If both byteOffset
+              and length are omitted, the <i>TypedArray</i> spans the
+              entire ArrayBuffer range.  If the length is omitted, the
+              <i>TypedArray</i> extends from the given byteOffset until
+              the end of the ArrayBuffer.</p>
+
+              <p>The given byteOffset must be a multiple of the element size
+              of the specific type, otherwise an exception is raised.</p>
+
+              <p>If a given byteOffset and length references an area beyond
+              the end of the ArrayBuffer an exception is raised.</p>
+
+              <p>If length is not explicitly specified, the length of the
+              ArrayBuffer minus the byteOffset must be a multiple of the
+              element size of the specific type, or an exception is raised.</p>
+            </dd>
+          </dl>
+          </td>
+	</tr>
+	<tr></tr>
+	<tr><th colspan="2">Constants</th></tr>
+	<tr>
+	  <td class="idl-code">unsigned long BYTES_PER_ELEMENT</td>
+	  <td>The size in bytes of each element in the array.</td>
+	</tr>
+	<tr><th colspan="2">Properties</th></tr>
+	<tr>
+	  <td class="idl-code">unsigned long length</td>
+	  <td>
+	    <p>Read-only property.</p>
+	    <p>The length of the <i>TypedArray</i> in elements, as fixed at construction time.</p>
+	    <p>Reading this property returns 0 if the referenced <code>ArrayBuffer</code> has been neutered.</p>
+	  </td>
+	</tr>
+	<tr></tr>
+	<tr><th colspan="2">Methods</th></tr>
+	<tr>
+	  <td colspan="2">
+          <dl>
+            <dt class="idl-code">getter <i>type</i> get(unsigned long index)</dt>
+            <dd>
+              <p>This is an index getter.</p>
+              <p>Returns the element at the given numeric index.</p>
+
+              <p>See <a href="#NAN">handling of NaN values</a> for additional rules
+              covering <code>Float32Array</code> and <code>Float64Array</code>.</p>
+            </dd>
+          </dl>
+	  </td>
+	</tr>
+	<tr>
+	  <td colspan="2">
+          <dl>
+            <dt class="idl-code">setter void set(unsigned long index, <i>type</i> value)</dt>
+            <dd>
+              <p>This is an index setter.</p>
+
+              <p>Sets the element at the given numeric index to the given value.</p>
+
+              <p>Conversions of values to <i>type</i> are defined by the <a href="#CONVERSIONS">type
+              conversion rules</a> and <a href="#NAN">handling of NaN values</a>.</p>
+            </dd>
+          </dl>
+	  </td>
+	</tr>
+	<tr>
+	  <td colspan="2">
+          <dl>
+            <dt class="idl-code">void <i>set</i>(<i>TypedArray</i> array, optional unsigned long offset)</dt>
+            <dt class="idl-code">void <i>set</i>(<i>type</i>[] array, optional unsigned long offset)</dt>
+            <dd>
+              <p>
+                Set multiple values, reading input values from the array.
+              </p>
+              <p>
+                The optional offset value indicates the index in the current array where values are
+                written.  If omitted, it is assumed to be 0.  </p>
+              </p>
+              <p>
+                If the input array is a <i>TypedArray</i>, the two arrays may
+                use the same underlying <code>ArrayBuffer</code>. In this
+                situation, setting the values takes place as if all the data
+                is first copied into a temporary buffer that does not overlap
+                either of the arrays, and then the data from the temporary
+                buffer is copied into the current array.
+              </p>
+              <p>
+                If the offset plus the length of the given array is out of
+                range for the current <i>TypedArray</i>, an exception is raised.
+             </p>
+            </dd>
+          </dl>
+	  </td>
+	</tr>
+	<tr>
+          <td colspan="2">
+          <dl>
+            <dt class="idl-code"><i>TypedArray</i> <i>subarray</i>(long begin, optional long end)</dt>
+            <dd>
+              <p>
+                Returns a new <i>TypedArray</i> view of the <code>ArrayBuffer</code> store for
+                this <i>TypedArray</i>, referencing the elements at <code>begin</code>, inclusive,
+                up to <code>end</code>, exclusive.  If either <code>begin</code> or <code>end</code>
+                is negative, it refers to an index from the end of the array, as opposed to from the
+                beginning.
+              </p>
+              <p>
+                If <code>end</code> is unspecified, the subarray contains all elements
+                from <code>begin</code> to the end of the <i>TypedArray</i>.
+              </p>
+              <p>
+                The range specified by the <code>begin</code> and <code>end</code> values is clamped
+                to the valid index range for the current array. If the computed length of the
+                new <i>TypedArray</i> would be negative, it is clamped to zero.
+              </p>
+              <p>
+                The returned <i>TypedArray</i> will be of the same type as the array on which this
+                method is invoked.
+              </p>
+            </dd>
+          </dl>
+          </td>
+ 	</tr>
+      </tbody>
+    </table>
+
+    <h3><code><a name="UINT8CLAMPEDARRAY">Uint8ClampedArray</a></code></h3>
+
+    <p>
+
+    <code>Uint8ClampedArray</code> is defined in order to replace <code>CanvasPixelArray</code>. It
+    behaves identically to the other typed array views, except that the setters and constructor use
+    <a href="http://dev.w3.org/2006/webapi/WebIDL/#Clamp">clamping</a> <a href="#refsWEBIDL">[WEBIDL]</a>
+    rather than modulo arithmetic when converting incoming number values. The IDL
+    for <code>Uint8ClampedArray</code> follows.
+
+    <pre class="idl">
+// The 'unsigned byte' type does not currently exist in Web IDL, though
+// 'octet' is equivalent.
+[
+    Constructor(unsigned long length),
+    Constructor(<i>Uint8ClampedArray</i> array),
+    Constructor(octet[] array),
+    Constructor(ArrayBuffer buffer,
+                optional unsigned long byteOffset, optional unsigned long length)
+]
+interface <dfn id="Uint8ClampedArray">Uint8ClampedArray</dfn> {
+    const unsigned long BYTES_PER_ELEMENT = 1;
+
+    readonly attribute unsigned long length;
+
+    getter octet get(unsigned long index);
+    setter void set(unsigned long index, [Clamp] octet value);
+    void set(Uint8ClampedArray array, optional unsigned long offset);
+    void set(octet[] array, optional unsigned long offset);
+    Uint8ClampedArray subarray(long begin, optional long end);
+};
+Uint8ClampedArray implements ArrayBufferView;</pre>
+
+    </p>
+
+
+    <h2>The <code><a name="DATAVIEW">DataView</a></code> View Type</h2>
+
+    <p>An <code>ArrayBuffer</code> is a useful object for representing an arbitrary chunk of data.  In many cases, such data will be read from disk or from the network, and will not follow the alignment restrictions that are imposed on the typed array views described earlier.  In addition, the data will often be heterogeneous in nature and have a defined byte order.  The <code>DataView</code> view provides a low-level interface for reading such data from and writing it to an ArrayBuffer.</p>
+
+    <p>Regardless of the host computer's <a href="#ENDIANNESS">endianness</a>, DataView reads or writes
+    values to or from main memory with a specified endianness: big or little.</p>
+
+    <pre class="idl">
+[
+  Constructor(ArrayBuffer buffer,
+              optional unsigned long byteOffset,
+              optional unsigned long byteLength)
+]
+interface <dfn id="DataView">DataView</dfn> {
+    // Gets the value of the given type at the specified byte offset
+    // from the start of the view. There is no alignment constraint;
+    // multi-byte values may be fetched from any offset.
+    //
+    // For multi-byte values, the optional littleEndian argument
+    // indicates whether a big-endian or little-endian value should be
+    // read. If false or undefined, a big-endian value is read.
+    //
+    // These methods raise an exception if they would read
+    // beyond the end of the view.
+    byte getInt8(unsigned long byteOffset);
+    octet getUint8(unsigned long byteOffset);
+    short getInt16(unsigned long byteOffset,
+                   optional boolean littleEndian);
+    unsigned short getUint16(unsigned long byteOffset,
+                             optional boolean littleEndian);
+    long getInt32(unsigned long byteOffset,
+                  optional boolean littleEndian);
+    unsigned long getUint32(unsigned long byteOffset,
+                            optional boolean littleEndian);
+    float getFloat32(unsigned long byteOffset,
+                     optional boolean littleEndian);
+    double getFloat64(unsigned long byteOffset,
+                      optional boolean littleEndian);
+
+    // Stores a value of the given type at the specified byte offset
+    // from the start of the view. There is no alignment constraint;
+    // multi-byte values may be stored at any offset.
+    //
+    // For multi-byte values, the optional littleEndian argument
+    // indicates whether the value should be stored in big-endian or
+    // little-endian byte order. If false or undefined, the value is
+    // stored in big-endian byte order.
+    //
+    // These methods raise an exception if they would write
+    // beyond the end of the view.
+    void setInt8(unsigned long byteOffset,
+                 byte value);
+    void setUint8(unsigned long byteOffset,
+                  octet value);
+    void setInt16(unsigned long byteOffset,
+                  short value,
+                  optional boolean littleEndian);
+    void setUint16(unsigned long byteOffset,
+                   unsigned short value,
+                   optional boolean littleEndian);
+    void setInt32(unsigned long byteOffset,
+                  long value,
+                  optional boolean littleEndian);
+    void setUint32(unsigned long byteOffset,
+                   unsigned long value,
+                   optional boolean littleEndian);
+    void setFloat32(unsigned long byteOffset,
+                    float value,
+                    optional boolean littleEndian);
+    void setFloat64(unsigned long byteOffset,
+                    double value,
+                    optional boolean littleEndian);
+};
+DataView implements ArrayBufferView;</pre>
+
+    <p>The following constructors, properties, and methods are available on a <code>DataView</code>:</p>
+
+    <table class="api">
+      <tbody>
+	<tr><th colspan="2">Constructors</th></tr>
+	<tr>
+          <td colspan="2">
+          <dl>
+            <dt class="idl-code"><i>DataView</i>(ArrayBuffer buffer, optional unsigned long byteOffset, optional unsigned long byteLength)</dt>
+            <dd>
+              <p>Create a new <i>DataView</i> object using the passed
+              ArrayBuffer for its storage. Optional byteOffset and
+              byteLength can be used to limit the section of the buffer
+              referenced. The byteOffset indicates the offset in bytes
+              from the start of the ArrayBuffer, and the byteLength is
+              the number of bytes from the offset that
+              this <i>DataView</i> will reference.  If both byteOffset
+              and byteLength are omitted, the <i>DataView</i> spans the
+              entire ArrayBuffer range.  If the byteLength is omitted,
+              the <i>DataView</i> extends from the given byteOffset
+              until the end of the ArrayBuffer.</p>
+
+              <p>If the given byteOffset and byteLength references an
+              area beyond the end of the ArrayBuffer an exception is
+              raised.</p>
+            </dd>
+          </dl>
+	  </td>
+	</tr>
+	<tr></tr>
+	<tr><th colspan="2">Properties</th></tr>
+	<tr><td colspan="2"><i>None</i></td></tr>
+	<tr></tr>
+	<tr><th colspan="2">Methods</th></tr>
+	<tr>
+          <td colspan="2">
+            <dl>
+              <dt class="idl-code">byte <i>getInt8</i>(unsigned long byteOffset);</dt>
+              <dt class="idl-code">octet <i>getUint8</i>(unsigned long byteOffset);</dt>
+              <dt class="idl-code">short <i>getInt16</i>(unsigned long byteOffset, optional boolean littleEndian);</dt>
+              <dt class="idl-code">unsigned short <i>getUint16</i>(unsigned long byteOffset, optional boolean littleEndian);</dt>
+              <dt class="idl-code">long <i>getInt32</i>(unsigned long byteOffset, optional boolean littleEndian);</dt>
+              <dt class="idl-code">unsigned long <i>getUint32</i>(unsigned long byteOffset, optional boolean littleEndian);</dt>
+              <dt class="idl-code">float <i>getFloat32</i>(unsigned long byteOffset, optional boolean littleEndian);</dt>
+              <dt class="idl-code">double <i>getFloat64</i>(unsigned long byteOffset, optional boolean littleEndian);</dt>
+              <dd>
+                <p>Gets the value of the given type at the specified byte offset
+                from the start of the view. There is no alignment constraint;
+                multi-byte values may be fetched from any offset.</p>
+
+                <p>For multi-byte values, the optional littleEndian argument
+                indicates whether a big-endian or little-endian value should be
+                read. If false or undefined, a big-endian value is read.</p>
+           
+                <p>These methods raise an exception if they would read
+                beyond the end of the view.</p>
+
+                <p>See <a href="#NAN">handling of NaN values</a> for additional rules
+                covering <code>getFloat32</code> and <code>getFloat64</code>.</p>
+              </dd>
+            </dl>
+	  </td>
+	</tr>
+	<tr>
+          <td colspan="2">
+            <dl>
+              <dt class="idl-code">void <i>setInt8</i>(unsigned long byteOffset, byte value);</dt>
+              <dt class="idl-code">void <i>setUint8</i>(unsigned long byteOffset, octet value);</dt>
+              <dt class="idl-code">void <i>setInt16</i>(unsigned long byteOffset, short value, optional boolean littleEndian);</dt>
+              <dt class="idl-code">void <i>setUint16</i>(unsigned long byteOffset, unsigned short value, optional boolean littleEndian);</dt>
+              <dt class="idl-code">void <i>setInt32</i>(unsigned long byteOffset, long value, optional boolean littleEndian);</dt>
+              <dt class="idl-code">void <i>setUint32</i>(unsigned long byteOffset, unsigned long value, optional boolean littleEndian);</dt>
+              <dt class="idl-code">void <i>setFloat32</i>(unsigned long byteOffset, float value, optional boolean littleEndian);</dt>
+              <dt class="idl-code">void <i>setFloat64</i>(unsigned long byteOffset, double value, optional boolean littleEndian);</dt>
+              <dd>
+                <p>Stores a value of the given type at the specified byte offset
+                from the start of the view. There is no alignment constraint;
+                multi-byte values may be stored at any offset.</p>
+
+                <p>For multi-byte values, the optional littleEndian argument
+                indicates whether the value should be stored in big-endian or
+                little-endian byte order. If false or undefined, the value is
+                stored in big-endian byte order.</p>
+
+                <p>These methods raise an exception if they would write
+                beyond the end of the view.</p>
+
+                <p>Conversions of values to the given type are defined by the
+                <a href="#CONVERSIONS">type conversion rules</a> and <a href="#NAN">handling of NaN
+                values</a>.</p>
+              </dd>
+            </dl>
+	  </td>
+	</tr>
+      </tbody>
+    </table>
+
+    <h2><a name="CLONING_AND_TRANSFERRING">Cloning and Transferring ArrayBuffers and Views</a></h2>
+
+    <div class="note">
+    <p>
+
+    In order to enable repeated transfer of large amounts of data between Web
+    Workers <a href="#refsWEBWORKERS">[WEBWORKERS]</a>, <code>ArrayBuffer</code> implements
+    the <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/urls.html#transfer-a-transferable-object">Transferable</a>
+    interface <a href="#refsHTML">[HTML]</a>. This section defines the behavior of ArrayBuffers and
+    views under
+    the <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/urls.html#safe-passing-of-structured-data">structured
+    cloning</a> <a href="#refsHTML">[HTML]</a> and transfer algorithms.
+
+    </p>
+    </div>
+
+    <h3><a name="cloning-arraybuffer">Cloning an ArrayBuffer</a></h3>
+
+    <p>
+
+    When a user agent is asked to <b>clone</b> an <code>ArrayBuffer</code> object <em>old</em>, it must run the following steps, which return a new <code>ArrayBuffer</code> object. These steps must be run atomically.
+
+    </p>
+
+    <ol>
+
+    <li> Create a new <code>ArrayBuffer</code> object <em>new buffer</em> pointing at a copy of the
+    underlying data from <em>old</em>, and with the same <code>byteLength</code> property.
+
+    <li> Return <em>new buffer</em>. It is the clone.
+
+    </ol>
+
+    <h3>Transferring an ArrayBuffer</h3>
+
+    <p>
+
+    Add the following to the list
+    of <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/urls.html#transfer-a-transferable-object">Transferable</a> types:
+
+    <ul>
+
+    <li> <code>ArrayBuffer</code>
+
+    </ul>
+
+    </p>
+    <p>
+
+    To <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/common-dom-interfaces.html#transfer-a-transferable-object">transfer</a> <a href="#refsHTML">[HTML]</a> an <code>ArrayBuffer</code> object <em>old</em>, a user agent must run the following steps.
+
+    </p>
+    <p>
+
+    <ol>
+
+    <li> Create a new <code>ArrayBuffer</code> object <em>new buffer</em> pointing at the same
+    underlying data as <em>old</em>, and with the same <code>byteLength</code> property.
+
+    <li> <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/common-dom-interfaces.html#concept-transferable-neutered">Neuter</a> <a href="#refsHTML">[HTML]</a> object <em>old</em>.
+
+    <li> Return <em>new buffer</em>.
+
+    </ol>
+
+    </p>
+
+    <h3><a name="cloning-arraybufferview">Cloning an ArrayBufferView</a></h3>
+
+    <p>
+
+    When a user agent is asked to <b>clone</b> an <code>ArrayBufferView</code> object <em>old</em>, it must run the following steps, which return a new object. These steps must be run atomically.
+
+    </p>
+
+    <ol>
+
+    <li> Let <em>buffer</em> be the result of invoking the internal structured cloning algorithm
+         recursively on the <em>buffer</em> property of <em>old</em>.
+
+    <li> Let <em>new view</em> be a newly constructed <code>ArrayBufferView</code> subclass of the
+         same type as <em>old</em>, referring to <em>buffer</em>, and with the
+         same <code>byteOffset</code>, <code>byteLength</code>, and any subclass-specific properties
+         as <em>old</em>.
+
+    <li> Return <em>new view</em>. It is the clone.
+
+    </ol>
+
+    <div class="note">
+
+    <p>
+
+    The above sections define the following behavior:
+
+    <ul>
+
+    <li> If an <code>ArrayBuffer</code> is transferred during a <code>postMessage</code> call, then
+         any <code>ArrayBufferView</code> instances which refer to that <code>ArrayBuffer</code> and
+         which are cloned during that call refer to the newly allocated <code>ArrayBuffer</code>
+         object. After the <code>postMessage</code> call, the <code>ArrayBufferView</code> instances
+         referring to the old <code>ArrayBuffer</code> can no longer be used to reference the
+         buffer's data. Further attempts to clone them or the old <code>ArrayBuffer</code> will
+         cause a <code>DATA_CLONE_ERR</code> exception to be thrown.
+
+    <li> The behavior of cloning, rather than transferring, an <code>ArrayBuffer</code> and
+         any <code>ArrayBufferView</code> instances which refer to it is the same as for any other
+         object type.
+
+    <li> Only the <code>ArrayBuffer</code> type is transferable. It is not possible to transfer
+         certain <code>ArrayBufferView</code> instances, and clone others, if they refer to the same
+         underlying <code>ArrayBuffer</code>.
+
+    </ul>
+
+    </p>
+    </div>    
+    </div>    
+
+    <h2>Examples</h2>
+
+    <div class="note">
+
+    <dt>Creating a simple array of 128 32-bit floats:</dt>
+    <dd>
+      <pre>var f32s = new Float32Array(128);</pre>
+    </dd>
+
+    <dt>Filling each 8 consecutive floats of the new array:</dt>
+    <dd>
+      <pre>
+for (var i = 0; i &lt; 128/8; ++i) {
+  var sub_f32s = f32s.subarray(i, i+8);
+  for (var j = 0; j &lt; 8; ++j) {
+    sub_f32s[j] = j;
+  }
+}
+      </pre>
+      <p>Note that this code uses <code>subarray()</code> to create a new Float32Array
+that references the same data as the original, so that it can always index the sub-array using 0..7.</p>
+    </dd>
+
+    <dt>Interleaved array types</dt>
+    <dd>
+      <p>Some APIs, in particular WebGL <a
+      href="#refsWEBGL">[WEBGL]</a>, can benefit from being able to
+      use a single contiguous buffer, with interleaved data types.
+      For example, a point might have coordinate data (3 Float32
+      values) followed by color data (4 Uint8 values).</p>
+      <p>For 4 points and their associated colors, this can be set up in the following way:</p>
+      <pre>
+var elementSize = 3 * Float32Array.BYTES_PER_ELEMENT + 4 * Uint8Array.BYTES_PER_ELEMENT;
+var buffer = new ArrayBuffer(4 * elementSize);
+var coords = new Float32Array(buffer, 0);
+var colors = new Uint8Array(buffer, 3 * Float32Array.BYTES_PER_ELEMENT);
+      </pre>
+      <p>However, typed arrays don't have a way to explicitly encode the desired per-point structure, so some manual arithmetic must be done to correctly index into the right values.  Note that the <code>colors</code> Uint8Array view is created with an explicit offset (which is given in bytes), so that the <code>[0]</code> element points at the 13th byte in the underlying buffer.</p>
+      <p>In this example, each set of packed data is 16 bytes in size (3 4-byte floats followed by 4 bytes).  16 / Float32Array.BYTES_PER_ELEMENT is 4, so from any given Float32 element, to skip to the same Float32 element in the next point, 4 must be added to the index.  Similarly, to skip from any given Uint8 element to the same in the next point, 16 must be added:</p>
+      <pre>
+var coordOffset = elementSize / Float32Array.BYTES_PER_ELEMENT;
+var colorOffset = elementSize / Uint8Array.BYTES_PER_ELEMENT;
+
+coords[0] = coords[1] = coords[2] = 1.0; // The first point's three coordinate values
+colors[0] = colors[1] = colors[2] = colors[3] = 255; // The first point's four colors
+
+coords[0+N*coordOffset] = 5.0; // The Nth point's first coordinate value
+colors[0+N*colorOffset] = 128; // The Nth point's first color value
+
+coords[i+N*coordOffset] = 6.0; // The Nth point's i coordinate value;
+colors[j+N*colorOffset] = 200; // The Nth point's j color value
+      </pre>
+      <p>In the above example, note that for keeping the data consistent, i must be one of 0, 1, or 2; and j must be one of 0, 1, 2, or 3.  Any higher values will result in data segments that are reserved for 32-bit floats or for 8-bit integers being overwritten with incorrect data.</p>
+    </dd>
+
+
+    <dt>Slicing a large array into multiple regions</dt>
+    <dd>
+      <p>Another usage similar to the above is allocating one large buffer, and then using different regions of it for different purposes:</p>
+      <pre>
+var buffer = new ArrayBuffer(1024);
+      </pre>
+      <p>Carve out 128 floats, 128*4 = 512 bytes in size:</p>
+      <pre>
+var floats = new Float32Array(buffer, 0, 128);
+      </pre>
+      <p>Then 128 shorts, 128*2 = 256 bytes in size, immediately
+      following the floats.  Note  that the 512 byte offset
+      argument is equal to <code>floats.byteOffset + floats.byteLength</code>.</p>
+      <pre>
+var shorts = new Uint16Array(buffer, 512, 128);
+      </pre>
+      <p>Finally, 256 unsigned bytes.  We can write the byte offset
+      in the form suggested above to simplify the chaining.
+      We also let this array extend until the end of the ArrayBuffer
+      by not explicitly specifying a length.</p>
+      <pre>
+var bytes = new Uint8Array(buffer, shorts.byteOffset + shorts.byteLength);
+      </pre>
+      <p>If the data is no longer needed, the entire 1024-byte array
+      can be repurposed without causing additional allocations simply
+      by creating new views and discarding the old.</p>
+    </dd>
+    </div>
+
+    <!-- TODO(kbr): add example of ping-ponging ArrayBuffers between the main thread and a worker -->
+
+    <h2>Resolved Issues</h2>
+
+    <dt>Should <code>DataView</code> have methods for reading arrays of data?</dt>
+    <dd>
+      <p>While such methods would be useful, they are not present in this version of the specification
+      to reduce the API footprint.  Such methods may be added in the future.</p>
+    </dd>
+
+    <h2>References</h2>
+    <dt id="refsECMA262">[ECMA-262]</dt>
+    <dd><a href="http://www.ecma-international.org/publications/standards/Ecma-262.htm">ECMAScript
+    Language Specification, 5th Edition</a>, P. Lakshman and A. Wirfs-Brock, Editors. Ecma
+    International, December 2009. Available at
+    http://www.ecma-international.org/publications/standards/Ecma-262.htm.</dd>
+
+    <dt id="refsFILE">[FILEAPI]</dt>
+    <dd><a href="http://www.w3.org/TR/FileAPI/">File API</a>, A. Ranganathan, J. Sicking. W3C.</dd>
+
+    <dt id="refsHTML">[HTML]</dt>
+    <dd><a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/">HTML</a>, I. Hickson. WHATWG.</dd>
+
+    <dt id="refsIEEE754">[IEEE-754]</dt>
+    <dd>IEEE Standard for Binary Floating-Point Arithmetic (ANSI/IEEE Std 754-1985). Institute of Electrical and Electronics Engineers, 1985.</dd>
+
+    <dt id="refsWEBGL">[WEBGL]</dt>
+    <dd><a href="http://www.webgl.org/">WebGL Specification</a>, C. Marrin. Khronos.</dd>
+
+    <dt id="refsWEBIDL">[WEBIDL]</dt>
+    <dd><a href="http://dev.w3.org/2006/webapi/WebIDL/">Web IDL</a>, C. McCormack. W3C.</dd>
+
+    <dt id="refsWEBMESSAGING">[WEBMESSAGING]</dt>
+    <dd><a href="http://www.whatwg.org/specs/web-apps/current-work/complete/web-messaging.html">Web Messaging</a>, I. Hickson. WHATWG.</dd>
+
+    <dt id="refsWEBSOCKETS">[WEBSOCKETS]</dt>
+    <dd><a href="http://dev.w3.org/html5/websockets/">The WebSocket API</a>, I. Hickson. W3C.</dd>
+
+    <dt id="refsWEBWORKERS">[WEBWORKERS]</dt>
+    <dd><a href="http://www.whatwg.org/specs/web-workers/current-work/">Web Workers</a>, I. Hickson. WHATWG.</dd>
+
+    <dt id="refsXMLHTTPREQUEST">[XMLHTTPREQUEST]</dt>
+    <dd><a href="http://dev.w3.org/2006/webapi/XMLHttpRequest/">XMLHttpRequest</a>, A. Kesteren. WHATWG.</dd>
+
+    <h2>Acknowledgments</h2>
+
+    <p>
+
+    The editors would like to thank Erik Arvidsson (Google), Joshua Bell (Linden Lab), Mark Callow
+    (HI), Brendan Eich (Mozilla), Andreas Gal (Mozilla), Daniel Gessel (Apple), Dave Herman
+    (Mozilla), Oliver Hunt (Apple), Tim Johansson (Opera), Vangelis Kokkevis (Google), Chris Marrin
+    (Apple), Glenn Maynard, Cameron McCormack, Shiki Okasaka (Google), Arun Ranganathan (Mozilla),
+    Alex Russell (Google), Gregg Tavares (Google), Ben Vanik (Google), Cedric Vivier (Mozilla), and
+    the members of the WebGL working group for their contributions to this specification.
+
+    </p>
+    <p>
+
+    The editors would especially like to thank Vladimir Vukicevic for co-editing earlier versions of
+    this specification.
+
+    </p>
+
+</body>
+
+</html>

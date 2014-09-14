@@ -1,0 +1,1472 @@
+<!-- http://www.w3.org/TR/grddl-primer/ -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head profile="http://www.w3.org/2003/g/data-view
+               http://www.w3.org/2006/03/hcard">
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <title>GRDDL Primer</title>
+  <link rel="stylesheet" type="text/css" href="http://www.w3.org/StyleSheets/TR/W3C-WG-NOTE"/>
+  <link rel="transformation" href="http://www.w3.org/2001/10/trdoc2rdf" />
+</head>
+
+<body>
+
+<div class="head">
+<a href="http://www.w3.org/"><img src="http://www.w3.org/Icons/w3c_home"
+alt="W3C" height="48" width="72" />
+</a>
+
+<h1 id="title" style="clear:both">GRDDL Primer</h1>
+<h2 id="W3C-doctype">W3C Working Group Note 28 June 2007</h2>
+
+<dl>
+  <dt>This version:</dt>
+    <dd><a
+      href="http://www.w3.org/TR/2007/NOTE-grddl-primer-20070628/">http://www.w3.org/TR/2007/NOTE-grddl-primer-20070628/</a></dd>
+  <dt>Latest version:</dt>
+    <dd><a href="http://www.w3.org/TR/grddl-primer/">http://www.w3.org/TR/grddl-primer/</a></dd>
+  <dt>Previous version:</dt>
+    <dd><a href="http://www.w3.org/TR/2006/WD-grddl-primer-20061002/">http://www.w3.org/TR/2006/WD-grddl-primer-20061002/</a></dd>
+  <dt>Editors:</dt>
+ <dd id="hhalpin" class="vcard"><a class="url fn" href="http://www.ibiblio.org/hhalpin">Harry Halpin</a>, <span class="org">University of Edinburgh</span></dd>
+    <dd id="idavis" class="vcard"><a class="url fn" href="http://purl.org/NET/iand">Ian Davis</a>, <span class="org">Talis</span></dd>
+
+  <dt>Authors and Contributors:</dt>
+
+    <dd>see <a href="#acknowledgements">Acknowledgments</a></dd>
+</dl>
+
+<p class="copyright"><a
+href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a>
+&#169; 2006-2007 <a href="http://www.w3.org/"><acronym
+title="World Wide Web Consortium">W3C</acronym></a><sup>&#174;</sup> (<a
+href="http://www.csail.mit.edu/"><acronym
+title="Massachusetts Institute of Technology">MIT</acronym></a>, <a
+href="http://www.ercim.org/"><acronym
+title="European Research Consortium for Informatics and Mathematics">ERCIM</acronym></a>,
+
+<a href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C <a
+href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>,
+<a
+href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a>
+and <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document
+use</a> rules apply.</p>
+<hr />
+</div>
+
+<h2 class="notoc"><a id="abstract"></a>Abstract</h2>
+
+<p>GRDDL is a mechanism for <strong>G</strong>leaning
+<strong>R</strong>esource <strong>D</strong>escriptions from
+<strong>D</strong>ialects of <strong>L</strong>anguages. It is a technique
+for obtaining RDF data from XML documents and in particular XHTML pages.
+Authors may explicitly associate documents with transformation algorithms,
+typically represented in XSLT, using a <code>link</code> element in the
+<code>head</code> of the document. Alternatively, the information needed to
+obtain the transformation may be held in an associated metadata profile
+document or namespace document. Clients reading the document can follow links across the Web using techniques described in the <a href="http://www.w3.org/TR/grddl/">GRDDL specification</a> to discover the
+appropriate transformations. This document uses a number of examples from the
+
+<a href="http://www.w3.org/TR/grddl-scenarios/">GRDDL Use Cases</a> document to illustrate, in detail, the techniques GRDDL provides for associating documents with appropriate instructions for extracting any embedded data.</p>
+
+<div>
+<h2 id="Status">Status of this Document</h2>
+
+<p><em>This section describes the status of this document at the time
+of its publication. Other documents may supersede this document. A
+list of current W3C publications and the latest revision of this
+technical report can be found in the <a href="http://www.w3.org/TR/"
+shape="rect">W3C technical reports index</a> at
+http://www.w3.org/TR/.</em></p>
+
+<p>
+This document is a Working Group Note, developed by the <a
+href="http://www.w3.org/2001/sw/grddl-wg/">GRDDL Working Group</a>.
+
+</p>
+
+<p>As of the publication of this Working Group Note the <a
+href="http://www.w3.org/2001/sw/grddl-wg/">GRDDL Working Group</a> has completed work on
+this document. Changes from the previous Working Draft are indicated in
+a <a href="#changes">log of changes</a>. Comments on this document may be sent to
+<a href="mailto:public-grddl-comments@w3.org">public-grddl-comments@w3.org</a>
+(with <a href="http://lists.w3.org/Archives/Public/public-grddl-comments/">public archive</a>).
+Further discussion on this material may be sent to the Semantic Web Interest Group mailing list,
+<a href="mailto:semantic-web@w3.org">semantic-web@w3.org</a>
+(also with <a href="http://lists.w3.org/Archives/Public/semantic-web/">public archive</a>).
+
+</p>
+
+
+<p>Publication as a Working Group Note does not imply
+	endorsement by the W3C Membership. This is a draft document and may be
+	updated, replaced or obsoleted by other documents at any time.
+	It is inappropriate to cite this document as other than work in progress.</p>
+
+<p> This document was produced by a group operating under the
+	<a href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 W3C Patent Policy</a>.
+	W3C maintains a <a rel="disclosure" href="http://www.w3.org/2004/01/pp-impl/39407/status">
+		public list of any patent disclosures</a> made in connection with the deliverables of the group;
+		that page also includes instructions for disclosing a patent.
+		An individual who has actual knowledge of a patent which the individual believes contains
+		<a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential Claim(s)</a>
+
+		must disclose the information in accordance with
+		<a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section 6 of the W3C Patent Policy</a>.
+</p>
+</div>
+<hr />
+
+<!-- ____________________________________________ CONTENTS _________________________________________________ -->
+
+<div>
+<h2 id="toc">Table of Contents</h2>
+<ul>
+  <li><a href="#introduction">Introduction</a></li>
+  <li><a href="#scheduling">GRDDL and XHTML: Scheduling a Meeting</a></li>
+  <li><a href="#hotel">Mashing-Up Microformats: Booking a Hotel</a></li>
+  <li><a href="#spreadsheets-section">GRDDL and XML: Integrating Spreadsheets</a></li>
+  <li><a href="#hl7">GRDDL and Inference: Solving Health Care Problems</a></li>
+
+  <li><a href="#references">References</a></li>
+  <li><a href="#acknowledgements">Acknowledgements</a></li>
+  <li><a href="#changes">Change Log</a></li>
+</ul>
+</div>
+
+<h2 id="introduction">Introduction</h2>
+
+<p>GRDDL provides an inexpensive set of mechanisms for bootstrapping RDF content from XML and XHTML. GRDDL does this by shifting the burden of formulating RDF away from the author to transformation algorithms written specifically for XML dialects such as XHTML. In this document the term HTML is used to refer to the XHTML dialect of HTML <a href="#XHTML">[XHTML]</a>.</p>
+
+<p>GRDDL works through associating transformations  with an individual
+document either through direct inclusion of references or indirectly through
+profile and namespace documents. For XML dialects the transformations are commonly expressed using XSLT 1.0, although other methods are permissible. Generally, if the transformation can be fully expressed in XSLT 1.0 then it is preferable to use that format since GRDDL processors should be capable of interpreting an XSLT 1.0 document.</p>
+ 
+<p>While anyone can create a transformation, a <a href="http://www.w3.org/2001/sw/grddl-wg/library">standard transform library</a> has been provided that can extract RDF that's embedded directly in XML or HTML using <code>&lt;rdf:RDF&gt;</code> tags as well as extract any profile transformations. GRDDL transformations can be made for almost any dialect, including microformats.</p>
+
+<p>This document may be read in conjunction with the GRDDL Use Cases <a href="#GRDDL-SCENARIOS">[GRDDL-SCENARIOS]</a> which
+describes a series of common scenarios for which GRDDL may be suitable.
+Readers desiring the technical details of the GRDDL mechanism or wishing to implement GRDDL themselves should refer to the GRDDL Specification <a href="#GRDDL">[GRDDL]</a>. </p>
+
+
+<h2 id="scheduling">GRDDL and XHTML: Scheduling a Meeting</h2>
+
+<p>One persistent and troublesome problem is discovering precisely when and where your friends are  together so that you can <a href="http://www.w3.org/TR/grddl-scenarios/#scheduling_use_case">schedule</a> a meeting. In our example, a frequent traveller called Jane is trying see if at any point next year she can schedule a meeting with all three of her friends, despite the fact that all of her friends publish their calendar data in different ways. With GRDDL, she can discover if they can meet up without forcing her friends to all use the same centralized Web-based calendar system. </p>
+
+<p>GRDDL provides a number of ways for GRDDL transformations to be associated
+with content, each of which is appropriate in different situations. The
+simplest method for authors of HTML content is to embed a reference to the
+transformations directly using a <code>link</code> element in the head of the document.</p>
+
+<p><a href="http://microformats.org/">Microformats</a> are simple conventions
+for embedding semantic markup for a specific domain in human-readable
+documents. One of Jane's friends has marked up their <a
+href="robin-hcal-no-grddl.html">schedule</a> using the <a
+href="http://microformats.org/wiki/hcalendar">hCalendar</a> microformat. The
+hCalendar microformat uses HTML <code>class</code> attributes to associate event-related
+semantics with elements in the markup, as shown in <a href="robin-hcal-grddl.html">Robin's calendar</a>:</p>
+
+<pre>&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"&gt;
+  &lt;head&gt;
+    &lt;title&gt;Robin's Schedule&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;ol class="schedule"&gt;
+      &lt;li&gt;2006
+        &lt;ol&gt;
+          &lt;li class="vevent"&gt;
+            &lt;strong class="summary"&gt;Fashion Expo&lt;/strong&gt; in 
+            &lt;span class="location"&gt;Paris, France&lt;/span&gt;:
+            &lt;abbr class="dtstart" title="2006-10-20"&gt;Oct 20&lt;/abbr&gt; to 
+            &lt;abbr class="dtend" title="2006-10-23"&gt;22&lt;/abbr&gt;
+          &lt;/li&gt;
+          &lt;li class="vevent"&gt;
+            &lt;strong class="summary"&gt;New line review&lt;/strong&gt; in 
+            &lt;span class="location"&gt;Cologne, Germany&lt;/span&gt;:
+            &lt;abbr class="dtstart" title="2006-10-26"&gt;Oct 26&lt;/abbr&gt; to 
+            &lt;abbr class="dtend" title="2006-10-28"&gt;27&lt;/abbr&gt;
+          &lt;/li&gt;
+          &lt;li class="vevent"&gt;
+            &lt;strong class="summary"&gt;Clothing 2006&lt;/strong&gt; in 
+            &lt;span class="location"&gt;Rome, Italy&lt;/span&gt;:
+            &lt;abbr class="dtstart" title="2006-12-01"&gt;Dec 1&lt;/abbr&gt; to 
+            &lt;abbr class="dtend" title="2006-12-06"&gt;5&lt;/abbr&gt;
+          &lt;/li&gt;
+        &lt;/ol&gt;
+      &lt;/li&gt;
+      &lt;li&gt;2007
+        &lt;ol&gt;
+          &lt;li class="vevent"&gt;
+            &lt;strong class="summary"&gt;Web Design Conference&lt;/strong&gt; in 
+            &lt;span class="location"&gt;Edinburgh, UK&lt;/span&gt;:
+            &lt;abbr class="dtstart" title="2007-01-08"&gt;Jan 8&lt;/abbr&gt; to 
+            &lt;abbr class="dtend" title="2007-01-11"&gt;10&lt;/abbr&gt;
+          &lt;/li&gt;
+          &lt;li class="vevent"&gt;
+            &lt;strong class="summary"&gt;Board Review&lt;/strong&gt; in 
+            &lt;span class="location"&gt;New York, USA&lt;/span&gt;:
+            &lt;abbr class="dtstart" title="2007-02-23"&gt;Feb 23&lt;/abbr&gt; to 
+            &lt;abbr class="dtend" title="2007-02-25"&gt;24&lt;/abbr&gt;
+          &lt;/li&gt;
+        &lt;/ol&gt;
+      &lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</pre>
+
+<p>To explicitly relate the data in this document to the RDF data model the
+author needs to make two changes. First, she needs to add a <code>profile</code> attribute
+to the head element to denote that her document contains GRDDL metadata. In
+HTML, profiles are used to link documents to descriptions of the metadata
+schemes they employ (see HTML specification, <a
+href="http://www.w3.org/TR/html401/struct/global.html#h-7.4.4.3">Meta
+data profiles</a>). The profile URI for GRDDL is <code><a
+href="http://www.w3.org/2003/g/data-view">http://www.w3.org/2003/g/data-view</a></code>
+and by including this URI in her document Robin is declaring that her markup can be interpreted using GRDDL.</p>
+
+<p>The resulting HTML looks like this</p>
+<pre>&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"&gt;
+<span style="color: red">  &lt;head profile="http://www.w3.org/2003/g/data-view"&gt;</span>
+    &lt;title&gt;Robin's Schedule&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+  ...</pre>
+
+<p>Then she needs to add a <code>link</code> element containing the reference
+to the specific GRDDL transformation for converting HTML containing hCalendar
+patterns into RDF. She can either write her own GRDDL transformation or re-use an
+existing transformation, and in this case there's one available for calendar data. The <code>link</code> element contains the token <code>transformation</code> in the <code>rel</code> attribute and the URI of
+the GRDDL transformation itself for extracting RDF is given by the value of the <code>href</code> attribute.</p>
+
+<pre>&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"&gt;
+<span style="color: red"> &lt;head profile="http://www.w3.org/2003/g/data-view"&gt;</span>
+    &lt;title&gt;Robin's Schedule&lt;/title&gt;
+  <span style="color: red">  &lt;link rel="transformation" href="http://www.w3.org/2002/12/cal/glean-hcal"/&gt;</span>
+  &lt;/head&gt;
+  &lt;body&gt;
+  ...</pre>
+
+<p>The profile URI in the <a href="robin-hcal-grddl.html">Robin's new GRDDL-enabled calendar file</a> signals that the receiver of the document may look for link
+elements with a <code>rel</code> attribute containing the token <code>transformation</code> and use any or all of those links to determine
+how to extract the data as <a href="robin-hcal-grddl.rdf"> RDF from Robin's calendar</a>.</p>
+
+<p><img src="hCalendar.png" width="886" height="125" alt="A diagram
+indicating the sequence of steps described for obtaining RDF fro m a
+document using an explicit link to the transformation as described in
+the preceding paragraph."  />
+</p>
+
+
+<h3 id="profile">Referencing Through Profile Documents</h3>
+
+<p>Individual publishers of data using popular vocabularies can also give users of their data of being transformed into RDF without having to even add any new markup to individual documents. This is done by
+referencing GRDDL transformations in a <strong>profile document</strong> referenced in the
+head of the HTML. Other XML vocabularies
+may use their namespace documents for the same purpose. or namespace document.  This method requires no work from the content author of individual documents but requires that the profile document contain a reference to a GRDDL transformation and be accessible to the GRDDL client, and so may require work from the creator and maintainer of the dialect. Yet this is a good use of time, since once the transformation has been linked to the profile document, all the users of the dialect get the added value of RDF. </p>
+
+<p>Another of Jane's friends, David, has chosen to mark up his
+<a href="david-erdf.html">schedule</a> using <a href="http://research.talis.com/2005/erdf/wiki/Main/RdfInHtml">Embedded RDF</a>. Embedded RDF has a link to a GRDDL transformation in its profile document.</p>
+
+<pre>&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"&gt;
+  <span style="color: red">&lt;head profile="http://purl.org/NET/erdf/profile"&gt;</span>
+    &lt;title&gt;Where Am I&lt;/title&gt;
+    &lt;link rel="schema.cal" href="http://www.w3.org/2002/12/cal#" /&gt;
+  &lt;/head&gt;
+
+  &lt;body&gt;
+    &lt;p class="-cal-Vevent" id="tiddlywinks"&gt;
+      From &lt;span class="cal-dtstart" title="2006-10-07"&gt;7 October, 2006&lt;/span&gt;
+      to &lt;span class="cal-dtend"  title="2006-10-13"&gt;12 October, 2006&lt;/span&gt; 
+      I will be attending the &lt;span class="cal-summary"&gt;National Tiddlywinks
+      Championship&lt;/span&gt; in 
+      &lt;span class="cal-location"&gt;Bognor Regis, UK&lt;/span&gt;.
+    &lt;/p&gt;
+
+   
+    &lt;p class="-cal-Vevent" id="holiday"&gt;
+      Then I'm &lt;span class="cal-summary"&gt;on holiday&lt;/span&gt; in the 
+      &lt;span class="cal-location"&gt;Cayman Islands&lt;/span&gt; between
+      &lt;span class="cal-dtstart" title="2006-11-14"&gt;14 November, 2006&lt;/span&gt;
+
+      and &lt;span class="cal-dtend"  title="2007-01-02"&gt;1 January, 2007&lt;/span&gt;. 
+    &lt;/p&gt;
+
+    &lt;p class="-cal-Vevent" id="award"&gt;
+      I then visit Scotland on &lt;span class="cal-dtstart" title="2007-01-08"&gt;the 8th
+      January&lt;/span&gt; to &lt;span class="cal-summary"&gt;pick up a lifetime
+      achievement award from the world gamers association&lt;/span&gt;. This time
+      the ceremony is in &lt;span class="cal-location"&gt;Edinburgh, UK&lt;/span&gt;. I'll be
+      taking the train home on the &lt;span class="cal-dtend"  title="2007-01-11"&gt;10th&lt;/span&gt;. 
+    &lt;/p&gt;
+
+  &lt;/body&gt;
+&lt;/html&gt;
+  </pre>
+
+<p>Note that in this document the profile attribute does not contain a
+reference to the GRDDL profile. Instead it references the standard profile
+URI for Embedded RDF which <em>does</em> contain the GRDDL metadata. Anyone
+wishing to get the RDF data out of David's page can fetch the <a
+href="http://purl.org/NET/erdf/profile">Embedded RDF profile URI</a> to
+obtain the following profile document:</p>
+<pre>&lt;html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"&gt;
+
+  &lt;head profile="http://www.w3.org/2003/g/data-view"&gt;
+    &lt;title&gt;Embedded RDF HTML Profile&lt;/title&gt;
+   <span style="color: red"> &lt;link rel="transformation" href="http://www.w3.org/2003/g/glean-profile" /&gt;</span>
+  &lt;/head&gt;
+  &lt;body&gt;
+
+    &lt;p&gt;
+  <span style="color: red">    &lt;a rel="profileTransformation" 
+          href="http://purl.org/NET/erdf/extract-rdf.xsl"&gt;GRDDL transform&lt;/a&gt;</span>
+    &lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+  </pre>
+
+<p>This document contains a reference to the GRDDL profile which again
+indicates that the profile may contain references to GRDDL transformations that can be applied to David's calendar, even if David does not explicitly link these transformations to his calendar. Jane's agent applies a standard transformation for profile documents to the <a
+href="http://purl.org/NET/erdf/profile">Embedded RDF profile document</a> in order to find a link to a transformation for all Embedded RDF documents, including David's HTML document. This transformation for all Embedded RDF documents, <a href="http://purl.org/NET/erdf/extract-rdf.xsl">http://purl.org/NET/erdf/extract-rdf.xsl</a>, is identified in the profile document using the <code>rel</code> attribute of<code>profileTransformation</code>. This process may be replicated with any vocabulary that has a profile URI.</p>
+
+
+<p><img src="embeddedRDF.png" width="890" height="308"
+alt="A diagram indicating the sequence of steps for obtaining RDF from a document using the profile URI as described in the preceding paragraph"
+/>
+</p>
+
+<p>Microformat-enabled web-pages on the Web may not be  valid XHTML. For this purpose, one may wish to use <a href="http://www.w3.org/TR/grddl-scenarios/#html_tidy_use_case">a program like Tidy (or some other algorithm) to make the web-page equivalent to valid XHTML</a> before applying GRDDL <a href="#GRDDL-SCENARIOS">[GRDDL-SCENARIOS]</a>.  Also, many microformats may not have profiles with transformations. A user can always take matters into their own hands  by applying <a href="http://esw.w3.org/topic/CustomRdfDialects">a GRDDL transformation for a microformat</a> directly to the web page in order to get RDF. This is risky since if the author of the document or microformat vocabulary does not explicitly license a GRDDL transformation, the responsibility for those RDF is now in the hands of the user. </p>
+
+<p>Jane would like to meet with David and Robin, but does not want to manually check all their calendars, a process that is tiresome and prone to human error. To solve this problem, Jane decides to use a <a href="http://www.w3.org/2004/01/rdxh/spec#implExp">GRDDL implementation</a> that converts both Robin and David's calendar to RDF.  Jane stores <a href="janeschedule.html">her calendar</a> directly in <a href="#RDFA">RDFa</a>, a way of embedding RDF directly into HTML. She can use a <a href="RDFa2RDFXML.xsl">GRDDL Transformation for RDFa</a> to convert RDFa to RDF/XML, in order to get her <a href="janeschedule.rdf">entire schedule in RDF/XML</a>.</p>
+
+<p>One of the advantages of the RDF data model is that RDF data can be easily merged by adding it to a RDF store, so Jane can merge and query all the calendars together once they are transformed into RDF.  Jane uses
+SPARQL <a href="#SPARQL">[SPARQL]</a> to query her data, which automatically merges the calendar data sources before running the query. SPARQL (The SPARQL Protocol and RDF Query Language) is a query language for RDF with a syntax similar to well-known data-base query languages. Online forms for submitting SPARQL queries can be found at <a href="http://esw.w3.org/topic/SparqlEndpoints">on the this wiki.</a>. Her <a href="schedulequery.rq">scheduling SPARQL query</a>  looks like this:</p>
+ 
+<pre><code>
+PREFIX ical: &lt;http://www.w3.org/2002/12/cal/icaltzd#>
+PREFIX xs: &lt;http://www.w3.org/2001/XMLSchema#>
+
+SELECT ?start1 ?stop1 ?loc1 ?summ1 ?summ2 ?summ3
+
+FROM &lt;http://www.w3.org/TR/grddl-primer/janeschedule.rdf>
+FROM &lt;http://www.w3.org/TR/grddl-primer/robin-hcal-grddl.rdf>
+FROM &lt;http://www.w3.org/TR/grddl-primer/david-erdf.rdf>
+
+WHERE
+  { 
+	?event1 a ical:Vevent;
+              ical:summary ?summ1 ;
+  	      ical:dtstart ?start1 ;
+              ical:dtend ?stop1 ;
+              ical:location ?loc1.
+  	?event2 a ical:Vevent;
+              ical:summary ?summ2 ;
+  	      ical:dtstart ?start2;
+              ical:dtend ?stop2;
+              ical:location ?loc2.
+  	?event3 a ical:Vevent;
+              ical:summary ?summ3 ;
+  	      ical:dtstart ?start3;
+              ical:dtend ?stop3;
+              ical:location ?loc3.
+      FILTER (  ?event1 != ?event2 &amp;&amp;  ?event2 != ?event3  &amp;&amp;  ?event1 != ?event3  ) .
+      FILTER ( xs:string(?start1) = xs:string(?start2) ).
+      FILTER ( xs:string(?stop1) = xs:string(?stop2) ).
+      FILTER ( xs:string(?loc1) = xs:string(?loc2) ).
+      FILTER ( xs:string(?start1) = xs:string(?start3) ).
+      FILTER ( xs:string(?stop1) = xs:string(?stop3) ).
+      FILTER ( xs:string(?loc1) = xs:string(?loc3) ).
+      FILTER ( xs:string(?start3) = xs:string(?start2) ).
+      FILTER ( xs:string(?stop3) = xs:string(?stop2) ).
+      FILTER ( xs:string(?loc3) = xs:string(?loc2) ).
+      FILTER ( xs:string(?summ1) &lt;= xs:string(?summ2) ). 
+      FILTER ( xs:string(?summ2) &lt;= xs:string(?summ3) ).
+}
+</code></pre>
+
+
+<p>The SELECT line determines which variable will appear in the results,
+here one of the start dates, one of the stop dates, a location and a
+summary. The FROM lines identify the data sources to use in the query,
+in this case the RDF/XML derived from Jane, David and Robin's original
+documents. The WHERE section provides a pattern which can match three
+events. The first block of FILTERs match up identical start and stop
+dates as well as locations between the three events. These values,
+which may be differently typed, are simplified to simple literals with
+the <code>str()</code> operator. The final two FILTER lines are idiomatic
+expressions which prevent multiple results returning due to the
+interchangeability of the variables. </p>
+
+
+<p>The relevant results of querying the results of GRDDL is:</p>
+
+<table border="1">
+<tr>
+<td>start1</td><td>stop1</td><td>loc1</td><td>summ1</td>    
+</tr>
+<tr>
+<td>"2007-01-08</td><td>"2007-01-11"</td><td>Edinburgh, UK"</td><td>Web Design Conference"</td>
+</tr> 
+</table>
+
+<p>So Jane discovers her friends Robin and David are both in town with her in Edinburgh on January 8th through 10th for the Web Design Conference. Since this is such as useful SPARQL script, she considers bundling it up as a web service so her friends can use it easily without writing SPARQL from scratch.</p>
+
+<h2 id="hotel">Mashing-Up Microformats: Booking a Hotel</h2>
+
+<p> In this example, we will combine data dialects as different as reviews and social networks in order to guarantee the booking a hotel with a high review from a trusted friend. This process of booking a hotel highlights the role of GRDDL in aggregating data from a variety of different formats and of using RDF as a common format to &quot;mashup&quot; all sorts of data, not just calendar data. We can of course write code in our favorite language to extract and
+combine these calendar data formats without using RDF. This ability to combine and query multiple kinds of microformat data from different web-pages shows functionality that RDF delivers that simple extraction of microformats to a custom data format can not. This example is similar to <a href="http://www.w3.org/2001/sw/grddl-wg/doc43/scenario-gallery.htm#use_case_3">the guitar review use case</a>.</p>
+
+<p>Jane is pleased that she has found out all her friends can finally meet up in Edinburgh. However, she is not sure of where to stay in Edinburgh, so she decides to check reviews. There are various special interest publications online which feature hotel reviews, and blogs which contain reviews by individuals. The reviewers include friends and colleagues of Jane and people whose opinion Jane values (e.g. friends  and people whose reviews Jane has found useful in the past). There may also be reviews planted by hotel advertisers which offer biased views in an attempt to attract customers.</p> 
+
+<p>First, Jane needs to get a list of people she considers trusted sources
+into some sort of machine readable document. One choice would be <a
+href="http://www.foaf-project.org/">FOAF</a> (Friend of a Friend), a popular
+RDF vocabulary for describing social networks of friends and personal data.
+Other choices include a collection of contacts stored in vCard using RDF <a href="#VCARD">[VCARD]</a>.</p>
+
+<p> Another choice is to use microformats. A microformat that allows for
+more information about friends to be gleaned from the document is <a href="http://gmpg.org/xfn/">XFN</a>,
+" <strong>X</strong>HTML <strong>F</strong>riends <strong>N</strong>etwork". Examples of such relationships are friends, colleagues, co-workers, and so on, as given in this <a href="janefriends.html">example file</a>.</p>
+
+<p>Since XFN relationships are embedded in anchor (<code>a</code>) elements,
+they can be expressed in RDF in a variety of ways. Given Jane's HTML document uses the XFN microformat, a GRDDL transformation can extract RDF data. These descriptions would allow a RDF spider (a "scutter") to follow links to additional RDF content that may include more XFN, vCard, or FOAF descriptions. Jane's <a href="janefriends.html">XFN list</a>, is given as:</p>
+
+<pre>
+<code>
+&lt;html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"&gt;
+	&lt;head profile="
+	<span style="color: red">	http://www.w3.org/2003/g/data-view</span>
+		http://dublincore.org/documents/dcq-html/
+		http://gmpg.org/xfn/11"&gt;
+<span style="color: red">&lt;link rel="transformation" href="grokXFN.xsl" /&gt;</span>
+		&lt;title&gt;Jane's XFN List&lt;/title&gt;
+	&lt;/head&gt;
+	&lt;body&gt;
+		&lt;h1&gt;Jane's &lt;abbr title="XHTML Friends Network"&gt;XFN&lt;/abbr&gt; List&lt;/h1&gt;
+
+		&lt;ul class="xoxo"&gt;
+			&lt;li class="vcard"&gt;<span class="attn">&lt;a href="http://peter.example.org" class="url fn" rel="met collegue friend"&gt;Peter Smith&lt;/a&gt;&lt;/li&gt;</span>
+			&lt;li class="vcard"&gt;&lt;a href="http://john.example.org" class="url fn" rel="met"&gt;John Doe&lt;/a&gt;&lt;/li&gt;
+			&lt;li class="vcard"&gt;&lt;a href="http://paul.example.org" class="url fn" rel="met"&gt;Paul Revere&lt;/a&gt;&lt;/li&gt;
+		&lt;/ul&gt;
+	&lt;/body&gt;
+&lt;/html&gt;
+</code>
+</pre>
+
+
+<p>This XFN file can be converted to RDF with the use of another <a href="grokXFN.xsl">GRDDL Transform for XFN</a>, resulting in the <a href="janefriends.rdf"> example RDF result file</a>.</p>
+
+<p>Hotel review sites include a number of reviews, including some in Edinburgh. This <a href="hotel-data.html">particular hotel review file</a> is also marked up with the <a href="http://microformats.org/wiki/hreview">hReview</a> that we can also convert to RDF using a <a href="hreview2rdfxml.xsl">transform</a>, resulting in <a href="review.rdf">a RDF version of the hotel reviews</a>. A portion of the <a href="hotel-data.html">hotel file example in HTML</a> is given below to illustrate the use of the hReview microformat: </p> 
+
+<pre>
+<code>
+&lt;html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"&gt;
+<span style="color: red">  &lt;head profile="http://www.w3.org/2003/g/data-view"&gt;</span>
+    &lt;title&gt;Hotel Reviews from Example.com&lt;/title&gt;
+ <span style="color: red">   &lt;link rel="transformation" 
+       href="http://www.w3.org/TR/grddl-primer/hreview2rdfxml.xsl"/&gt;</span> 
+&lt;/head&gt;
+&lt;div class="hreview" id="_665"&gt;
+  &lt;div class="item vcard"&gt;
+  &lt;b class="fn org"&gt;Witch's Caldron Hotel, Edinburgh&lt;/b&gt;
+  &lt;ul&gt;
+    &lt;li&gt;
+      &lt;a class="url" href="http://witches.example.com/"&gt;Homepage&lt;/a&gt;    &lt;/li&gt;
+  &lt;/ul&gt;
+  <span class="attn">&lt;span&gt;&lt;span class="rating"&gt;5&lt;/span&gt; out of 5 stars&lt;/span&gt;</span>
+  &lt;ul&gt;
+    &lt;li class="adr"&gt;
+	  &lt;div class="type"&gt;intl postal parcel work&lt;/div&gt;
+      &lt;div class="street-address"&gt;313 Cannongate&lt;/div&gt;
+      &lt;div&gt;&lt;span class="locality"&gt;Edinburgh&lt;/span&gt;, &lt;span class="postal-code"&gt;EH8 8DD &lt;/span&gt; &lt;span class="country-name"&gt;United Kingdom&lt;/span&gt;&lt;/div&gt;
+    &lt;/li&gt;
+  &lt;/ul&gt;
+  &lt;div class="tel"&gt;&lt;abbr class="type" title="work msg"&gt;Homepage&lt;/abbr&gt;: &lt;a class="value" href="tel:+44 1317861235"&gt;+44 1317862235&lt;/a&gt;&lt;/div&gt;
+</code>
+</pre>
+
+<p>With this combined &quot;mashed-up&quot; data we can find Jane's friends and find the hotel reviews that those friends created. Using GRDDL we can glean
+information, including the ratings, about the hotels. Once we have this data as RDF we can &quot;mash-up&quot; the data of the friends and the hotel reviews.</p>
+
+<div class="figure" style="text-align: center;">
+  <img src="hotel-answer.png" alt="Diagram of hotel data relationships"/>
+
+  <p class="label" style="font-weight: bold;"
+    >Diagram of hotel data relationships</p>
+</div>
+
+<p>In order to find hotels with specific ratings or higher from a group of her trusted friends, we can now query the &quot;mashed-up&quot; data with SPARQL. <a href="http://www.w3.org/TR/rdf-sparql-query/">SPARQL (The SPARQL Protocol and RDF Query Language)</a> is a query language for RDF that can automatically &quot;mash-up&quot; data from multiple sources.</p>
+
+<pre><code>
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rev: &lt;http://www.purl.org/stuff/rev#>
+PREFIX vcard: &lt;http://www.w3.org/2006/vcard/ns#>
+PREFIX dc: &lt;http://purl.org/dc/elements/1.1/>
+PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/>
+
+SELECT DISTINCT ?rating ?name ?region ?hotelname
+
+FROM &lt;http://www.w3.org/TR/grddl-primer/hotel-data.rdf>
+
+WHERE {
+?x rev:hasReview ?review;
+	vcard:ADR ?address;
+	vcard:FN ?hotelname .
+?review rev:rating ?rating .
+?address vcard:Locality ?region.
+
+FILTER (?rating > "2").
+
+?review rev:reviewer ?reviewer.
+?reviewer foaf:name ?name;
+	foaf:homepage ?homepage
+
+}
+</code></pre>
+
+
+
+<p>This query results in:</p>
+<table border="1">
+      <tr><th>rating</th><th>name</th><th>region</th><th>hotelname</th></tr>
+      <tr><td>
+      "5"
+    </td><td>
+      "RexR"
+    </td><td>
+      "Edinburgh"
+    </td><td>
+      "McRae Palace, Edinburgh"
+    </td></tr><tr><td>
+      "5"
+    </td><td>
+      "MaryV"
+    </td><td>
+      "Philadelphia"
+    </td><td>
+      "Franklin Hotel Philadelphia"
+    </td></tr><tr><td>
+      "5"
+    </td><td>
+      "JohnD"
+    </td><td>
+      "Helsinki"
+    </td><td>
+      "Elena Plaza Hotel"
+    </td></tr><tr><td>
+      "5"
+    </td><td>
+      "PeterS"
+    </td><td>
+      "Amsterdam"
+    </td><td>
+      "Enlightenment Amsterdam Hotel"
+    </td></tr><tr><td>
+      "4"
+    </td><td>
+      "PeterS"
+    </td><td>
+      "Cambridge"
+    </td><td>
+      "Fano Hotel"
+    </td></tr><tr><td>
+      "5"
+    </td><td>
+      "PeterS"
+    </td><td>
+      "Edinburgh"
+    </td><td>
+      "Witch's Caldron Hotel, Edinburgh"
+    </td></tr><tr><td>
+      "3"
+    </td><td>
+      "JennyR"
+    </td><td>
+      "Atlanta"
+    </td><td>
+      "Merton Atlanta"
+    </td></tr><tr><td>
+      "5"
+    </td><td>
+      "RexR"
+    </td><td>
+      "LEIDEN"
+    </td><td>
+      "Pilgrim Hostel"
+    </td></tr><tr><td>
+      "5"
+    </td><td>
+      "Simon"
+    </td><td>
+      "Edinburgh"
+    </td><td>
+      "Forest Cafe Youth Hostel, Edinburgh"
+    </td></tr><tr><td>
+      "5"
+    </td><td>
+      "PeterS"
+    </td><td>
+      "Cambridge"
+    </td><td>
+      "Royal Moon Hotel Boston"
+    </td></tr><tr><td>
+      "3"
+    </td><td>
+      "RexR"
+    </td><td>
+      "Washington"
+    </td><td>
+      "Bond Plaza Hotel"
+    </td></tr><tr><td>
+      "5"
+    </td><td>
+      "RexR"
+    </td><td>
+      "Edinburgh"
+    </td><td>
+      "Ritchie Centre, Edinburgh"
+    </td></tr><tr><td>
+      "4"
+    </td><td>
+      "JohnD"
+    </td><td>
+      "Edinburgh"
+    </td><td>
+      "Walter Scot Hotel, Edinburgh"
+    </td></tr><tr><td>
+      "5"
+    </td><td>
+      "PeterS"
+    </td><td>
+      "New York"
+    </td><td>
+      "Maximus New York Hotel &amp; Towers"
+    </td></tr></table>
+
+<p>The query unfortunately gets us all hotels from anywhere in the world with more than 2 stars, so we need to further restrict the results to only hotels in Edinburgh, as we do in <a href="hotelquery2.rq">this improved query</a>.</p>
+
+<pre><code>
+PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/>
+PREFIX rev: &lt;http://www.purl.org/stuff/rev#>
+PREFIX vcard: &lt;http://www.w3.org/2006/vcard/ns#>
+
+SELECT DISTINCT ?rating ?name ?hotelname ?region
+
+FROM &lt;http://www.w3.org/TR/grddl-primer/hotel-data.rdf>
+
+WHERE {
+?x rev:hasReview ?review;
+	vcard:ADR ?address;
+	vcard:FN ?hotelname .
+?review rev:rating ?rating .
+?address vcard:Locality ?region.
+
+FILTER (?rating > "2" &amp;&amp; ?region = "Edinburgh").
+
+?review rev:reviewer ?reviewer.
+?reviewer foaf:name ?name;
+	foaf:homepage ?homepage
+
+}
+</code></pre>
+
+<p>This results in:</p>
+
+<table border="1">
+<tr>
+<td><b> rating</b>  </td><td> <b>name</b>      </td><td> <b>hotelname</b>                              </td><td> <b>region</b>      </td>
+</tr><tr>
+<td> "5"       </td><td> "RexR"     </td><td>"Ritchie Centre, Edinburgh"            </td><td> "Edinburgh" </td>
+</tr><tr>
+<td> "5"       </td><td> "PeterS"  </td><td> "Witch's Caldron Hotel, Edinburgh"      </td><td>"Edinburgh" </td>
+</tr><tr>
+<td> "5"       </td><td> "Simon"   </td><td> "Forest Cafe Youth Hostel, Edinburgh"   </td><td>"Edinburgh" </td>
+</tr><tr>
+<td> "5"       </td><td> "RexR"     </td><td>"McRae Palace, Edinburgh"              </td><td> "Edinburgh" </td>
+</tr><tr>
+<td> "4"       </td><td> "JohnD"    </td><td>"Walter Scott Hotel, Edinburgh"          </td><td>"Edinburgh" </td>
+</tr>
+</table>
+
+<p>Now the results will be hotels with a rating of 2 stars or higher that
+are located in Edinburgh. The problem with the possible list of
+results is that there could be biased reviews. The next step is to
+further restrict the results to only reviews by our trusted list of
+contacts. Using the XFN links in Jane's page which identifies the URIs of people Jane trusts, by matching URIs we can select only those reviewers who are Jane's friends, as done in <a href="hotelquery3.rq">this further improved query</a>. </p>
+
+<pre><code>
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#>
+PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/>
+PREFIX rev: &lt;http://www.purl.org/stuff/rev#>
+PREFIX vcard: &lt;http://www.w3.org/2006/vcard/ns#>
+PREFIX xfn: &lt;http://gmpg.org/xfn/11#>
+
+SELECT DISTINCT ?rating ?name ?region ?homepage ?xfnhomepage ?hotelname
+
+FROM &lt;http://www.w3.org/TR/grddl-primer/janefriends.rdf>
+FROM &lt;http://www.w3.org/TR/grddl-primer/hotel-data.rdf>
+
+
+WHERE {
+?x rev:hasReview ?review;
+   vcard:ADR ?address;
+   vcard:FN ?hotelname.
+?review rev:rating ?rating .
+?address vcard:Locality ?region.
+
+FILTER (?rating > "2" &amp;&amp; ?region = "Edinburgh").
+
+?review rev:reviewer ?reviewer.
+?reviewer foaf:name ?name;
+              foaf:homepage ?homepage.
+
+?y xfn:friend ?xfnfriend.
+?xfnfriend foaf:homepage ?xfnhomepage.
+
+FILTER (?xfnhomepage = ?homepage).
+}
+</code></pre>
+
+
+<p>We finally get the result we want: A hotel with a ranking of 5 reviewed by a trusted friend.</p>
+
+<table border="1">
+<tr>
+<td> <b>rating</b> </td><td> <b>name</b>     </td><td> <b>region</b>  </td><td> <b>homepage</b> </td><td> <b>xfnhomepage</b> </td><td> <b>hotelname </b>  </td>
+</tr><tr>
+<td> "5"        </td><td>"PeterS"  </td><td> "Edinburgh"  </td><td> &lt;http://peter.example.org/&gt;  </td><td> &lt;http://peter.example.org/&gt;  </td><td> "Witch's Caldron Hotel, Edinburgh" </td>
+</tr>
+</table>
+
+<p>SPARQL results can be obtained as XML or JSON and can easily be
+consumed by another application. This can display the results on
+screen, email them to Jane or it can be pulled into another
+application to search the web for the best prices on the short list of
+hotels. </p>
+
+<div id="spreadsheets-section">
+<h2 id="spreadsheets">GRDDL and XML: Integrating Spreadsheets</h2>
+
+<p>GRDDL is also useful for integrating data from general-purpose XML
+dialects produced by everyday applications. A trove of accumulated
+information is stored in spreadsheets, and spreadsheets can be saved using a
+general-purpose XML format. Integrating, reusing, and "mashing-up"
+information stored in spreadsheets can be valuable, and GRDDL provides a
+mechanism for accessing this information as RDF in order to accomplish this.
+In this example, we will specifically consider the problem of gleaning
+information from Microsoft&#xae; Excel spreadsheets, although other
+spreadsheet-like XML dialects would be able to take advantage of the same
+basic mechanism.</p>
+
+<p>Jane serves as the secretary for a small group with her two friends,
+David and Robin, that meets once a month.  She tracks the attendance at
+these meetings using a simple Excel spreadsheet, and she starts a new
+spreadsheet each year.  She wants the members of this group to be able to
+query these accumulated statistics freely, and she recognizes that RDF would
+support this kind of merging and querying functionality.  She decides to use
+GRDDL to allow any of the members of the group to glean RDF from any of
+these attendance records and query the data along with any other RDF that
+may be available.</p>
+
+<p>Jane intends to use a GRDDL transformation called <a
+href="xcel-mf2rdf.xsl"><code>xcel-mf2rdf.xsl</code></a>, which requires the
+Excel spreadsheet to conform to a particular profile.  She first
+must identify which cells in her spreadsheet are <em>data cells</em>.  In
+the case of an attendance spreadsheet, the data cells are the attendance
+indicators, and she identifies these cells by giving them the name "Data".
+She must also identify the <em>header cells</em>.  In this case, the header
+cells are the cells containing names and dates; Jane identifies these cells
+by giving them the name "Header".  Next, Jane gives each data and header
+cell an additional name, which serves as the local name of the property for
+that cell.  She names the date cells "date", the member name cells "name",
+and the attendance cells "present".  Finally, Jane must set two custom
+properties globally on the spreadsheet.  The first property is called
+"profile", and this particular profile has profile URI
+<code>http://www.mnot.net/2005/08/xcel-mf</code>.  The second property is
+called "namespace", and provides the namespace to be used for RDF properties
+in the GRDDL results; Jane chooses the namespace URI
+<code>http://example.org/attendance/</code>.</p>
+
+<div class="figure" style="text-align: center;">
+  <img src="attendance-screenshot.png" alt="Resulting Excel spreadsheet screenshot"/>
+
+  <p class="label" style="font-weight: bold;"
+    >Attendance spreadsheet with header cells selected</p>
+</div>
+
+<p>Since GRDDL operates on XML documents, she saves her Excel files using
+the XML dialect that Excel provides.  After saving them as XML, she adds the
+reference to this transformation to the root element of each attendance
+document.  Following the directives of the Excel profile, and
+including the appropriate GRDDL reference, this is a slice of <a
+href="attendance.xml">the resulting spreadsheet document</a>:</p>
+
+<pre>
+&lt;?xml version="1.0"?>
+&lt;?mso-application progid="Excel.Sheet"?>
+&lt;Workbook
+  xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:dt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40"
+  <span style="color: red">xmlns:grddl="http://www.w3.org/2003/g/data-view#"
+  grddl:transformation="xcel-mf2rdf.xsl"</span>&gt;
+ <span style="color: #ccc;">&lt;!-- ... --></span>
+ &lt;CustomDocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
+  &lt;profile dt:dt="string">http://www.mnot.net/2005/08/xcel-mf&lt;/profile>
+  &lt;namespace dt:dt="string">http://example.org/attendance/&lt;/namespace>
+ &lt;/CustomDocumentProperties>
+ <span style="color: #ccc;">&lt;!-- ... --></span>
+ &lt;Worksheet ss:Name="Sheet1">
+  &lt;Table>
+   <span style="color: #ccc;">&lt;!-- ... --></span>
+   &lt;Row ss:Index="3">
+    <span style="color: #ccc;">&lt;!-- ... --></span>
+    &lt;Cell ss:StyleID="s26">&lt;Data ss:Type="String">2006-04&lt;/Data>&lt;NamedCell
+      ss:Name="Header"/>&lt;NamedCell ss:Name="date"/>&lt;/Cell>
+    <span style="color: #ccc;">&lt;!-- ... --></span>
+   &lt;/Row>
+   <span style="color: #ccc;">&lt;!-- ... --></span>
+   &lt;Row>
+    &lt;Cell ss:StyleID="s25">&lt;Data ss:Type="String">Robin&lt;/Data>&lt;NamedCell
+      ss:Name="name"/>&lt;NamedCell ss:Name="Header"/>&lt;/Cell>
+    <span style="color: #ccc;">&lt;!-- ... --></span>
+    &lt;Cell>&lt;Data ss:Type="String">n&lt;/Data>&lt;NamedCell ss:Name="present"/>&lt;NamedCell
+      ss:Name="Data"/>&lt;/Cell>
+    <span style="color: #ccc;">&lt;!-- ... --></span>
+   &lt;/Row>
+   <span style="color: #ccc;">&lt;!-- ... --></span>
+  &lt;/Table>
+  <span style="color: #ccc;">&lt;!-- ... --></span>
+ &lt;/Worksheet>
+&lt;/Workbook>
+</pre>
+
+<p>When processed by a GRDDL-aware agent, a document such as this will be
+transformed into <a href="attendance.rdf">RDF that preserves the meaning of the
+spreadsheet</a>:</p>
+
+<pre>
+&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;rdf:RDF
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns="http://example.org/attendance/">
+ <span style="color: #ccc;">&lt;!-- ... --></span>
+ &lt;rdf:Description>
+  &lt;name>Robin&lt;/name>
+  &lt;date>2006-04&lt;/date>
+  &lt;present>n&lt;/present>
+ &lt;/rdf:Description>
+ <span style="color: #ccc;">&lt;!-- ... --></span>
+&lt;/rdf:RDF>
+</pre>
+
+<p>Jane and the other members of the group can now use this data in a
+variety of situations.  For example, suppose there exist other records of
+decisions that were made at these meetings, and  <a href="events.rdf">the record of one of those meeting was also stored in a spreadsheet that was converted to RDF</a>.</p>
+
+
+
+<p>Merging these triples with the GRDDL results from the attendance record
+spreadsheets, Jane can now ask questions such as "who attended the meeting at
+which we decided to choose the new meeting location?"  In SPARQL, <a
+href="spreadsheetquery.rq">the corresponding spreadsheet query</a> is:</p>
+
+<pre><code>
+PREFIX att: &lt;http://example.org/attendance/>
+PREFIX ev: &lt;http://example.org/events/>
+
+SELECT ?name 
+
+FROM &lt;http://www.w3.org/TR/grddl-primer/events.rdf>
+FROM &lt;http://www.w3.org/TR/grddl-primer/attendance.rdf>
+
+WHERE
+{
+  ?event ev:label "choose new meeting location" .
+  ?event ev:date ?date .
+  ?attendance att:date ?date .
+  ?attendance att:name ?name .
+  ?attendance att:present "y" .
+}
+</code></pre>
+
+<p>Which would give the following results:</p>
+
+<table border="1">
+<tr><td> <b>name</b> </td></tr>
+
+<tr><td>Jane</td></tr>
+
+<tr><td>David</td></tr>
+</table>
+
+<p>This indicates that Jane and David were present at the meeting where that
+decision was made.</p>
+
+<p>In this example, the link to the GRDDL transformation was added by hand.
+However, as shown in detail  in the GRDDL specification <a
+href="#GRDDL">[GRDDL]</a> for <a href="http://www.w3.org/TR/grddl/#ns-bind">XML Schema, RDF, and HTML namespace documents</a> may also have links to transformations for XML dialects; so a GRDDL-aware agent can also retrieve the namespace document of an XML dialect to find a GRDDL transformation by "following its nose" from the namespace on the root element of the GRDDL
+source document to the namespace document. The use of a namespace on the
+root element represents a declaration that the document conforms to the
+authoritative definition of that namespace as defined by the namespace
+owner, which may include a transformation from that XML dialect into RDF
+using GRDDL.</p>
+
+<p>
+There are a few rules of thumb for XML namespace owners wanting to make GRDDL transformations available for their particular dialect of XML. Given an XML document representation, a GRDDL-aware agent that wishes to
+determine namespace or profile transformations may resolve the
+namespace or profile URI to obtain a representation.  Because of content
+negotiation and other factors, different GRDDL-aware agents resolving
+the same namespace or profile URI could receive different
+representations, which could in turn specify different namespace or
+profile transformations, which could in turn produce different GRDDL
+results.  In particular, a GRDDL-aware agent that receives a namespace
+or profile representation that specifies GRDDL transformations may not
+even be aware that some other representation, specifying more or
+different transformations, is available.  This may pose problems to
+users that intend to retrieve all of the available GRDDL results
+associated with the original XML document representation.
+</p>
+<p>
+To help prevent this problem, namespace and profile document authors
+that choose to serve representations that indicate namespace or profile
+transformations are advised to ensure that all such representations
+specify the <i>same</i> namespace or profile transformations.
+</p>
+
+</div>
+
+<h2 id="hl7">GRDDL and Inference: Solving Health Care Problems</h2>
+
+<p>GRDDL can not only be used for combining HTML data, but for XML data as well. This section uses HL7 CDA, a widely deployed XML vocabulary for use in clinical data, as an example of how an XML dialect can be gleaned for RDF. This part of the primer walks through step-by-step the <a href="http://www.w3.org/TR/grddl-scenarios/#health_care_use_case">Health Care: Querying XML-based clinical data</a> use-case.</p>
+
+<p>Kayode wants  to write software components which can extract RDF descriptions from <a href="http://www.hl7.org/">XML HL7  CDA</a> documents transmitted from various devices in a healthcare system using a clinical ontology so that he can merge together clinical reports and use inferences to detect possible problems.  CDA is a very well-designed information model and heavily optimized for messaging between computerized hospital systems, and <a href="hl7-sample.xml">an example CDA document</a> is given. Below is a section of this document that describes the author of a clinical document and the patient that the document describes.</p>
+
+<p>This <a href="hl7-sample-grddl.xml">GRDDL-enhanced CDA document</a>  can be processed by an XSLT pipeline resulting in <a href="hl7-sample.rdf">a corresponding RDF graph</a>  which expresses clinical content in expressive, heavily deployed consensus vocabularies such as <a href="http://www.opengalen.org/">Open GALEN</a>, <a href="http://www.loa-cnr.it/DOLCE.html">DOLCE: Descriptive Ontology of Linguistics and Cognitive Engineering</a>, <a href="http://xmlns.com/foaf/0.1/">FOAF</a>, and an OWL translation of HL7 RIM <a href="#OWL">[OWL]</a>.  An <a href="RIMV3OWL.owl">example OWL ontology</a> describes the basic concepts in a medical record for the purposes of this example.</p>
+
+
+<p> In a manner similar to enabling the use of GRDDL with HTML, we can add a <code>glean:transformation</code> attribute to the root of the document in order for a GRDDL-aware agent to interpret an HL7 CDA message transmitted using widely-used and interoperable ontologies.</p> 
+<pre>
+<code>
+&lt;ClinicalDocument
+  xmlns="urn:hl7-org:v3" xmlns:voc="urn:hl7-org:v3/voc"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  templateId="2.16.840.1.113883.3.27.1776"
+  <span style="color: red">xmlns:grddl="http://www.w3.org/2003/g/data-view#" 
+  grddl:transformation="http://www.w3.org/TR/grddl-primer/hl7-rim-to-pomr.xslt"&gt;</span>
+...
+ 	&lt;Observation&gt;
+
+ 	&lt;id root="10.23.4573.15877"/&gt;
+
+ 	&lt;code code="282290005" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Imaging interpretation"/&gt;
+ 	&lt;value xsi:type="CD" code="249674001" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Chest hyperinflated"/&gt;
+ 	&lt;reference typeCode="SPRT"&gt;
+ 		&lt;ExternalObservation classCode="DGIMG"&gt;
+ 			&lt;id root="123.456.2557"/&gt;
+
+ 			&lt;code code="56350004" codeSystem="2.16.840.1.113883.6.96" codeSystemName="SNOMED CT" displayName="Chest-X-ray"/&gt;
+
+ 		&lt;/ExternalObservation&gt;
+ 	&lt;/reference&gt;
+&lt;/Observation&gt;
+</code>
+</pre>
+
+
+<p>
+Once the transformation has been added to the root node of the <a href="hl7-sample-grddl.xml">example HL7 document</a>, a GRDDL-aware agent can then transform the data into <a href="hl7-sample.rdf">this HL7 RDF</a> using the linked XSLT. People sometimes confuse RDF, an abstract graph-based data model <a href="#RDFC">[RDFC]</a>, with one of its common syntactic serializations, RDF/XML <a href="#RDFXML">[RDFXML]</a>. RDF can be serialized into a number of different data formats, ranging from RDF/XML to a more  human-readable serialization known as <a href="http://www.dajobe.org/2004/01/turtle/">Turtle</a>, and so RDF gives the user or application the freedom to choose the syntax most useful for the task at hand. All the merging and querying of data is done on the level of the abstract graphs, not the concrete syntax.  So an RDF parser can parse the same  GRDDL result expressed in either Turtle, RDF/XML, or another syntax like <a href="http://www.w3.org/TR/rdf-testcases/#ntriples">NTriples</a>, and on the level of the data model, the graph produced will be equivalent. </p>  
+
+
+<p>
+<img src="rdf-syntaxes.png" width="434" height="590" 
+alt="A diagram indicating the relationship between concrete RDF serializations and abstract syntax."
+/>
+</p>
+
+<p>Once the data is expressed in RDF, one can discover several useful facts about the patient's diagnosis that would be unclear in the original XML document. Most important is that the patient's chest X-ray (a <code>cyc:XRayImage</code> or <code>foaf:Image</code>) concludes a medical problem (<code>cpr:medical-sign</code>).  A SNOMED CT code is used which corresponds to a specific term in the description-logic inspired language which <a href="http://www.snomed.org/snomedct/index.html">SNOMED CT</a> is expressed in. Here's a snippet from the result of running the GRDDL transformation, expressed in the brief <a href="http://www.dajobe.org/2004/01/turtle/">Turtle</a> syntax for RDF.</p>
+
+<pre>
+<code>
+[ a cpr:patient-record;
+         dc:date "2000-04-07";
+         edns:about [ a galen:Patient;
+                      foaf:family_name "Levin";
+                      foaf:firstName "Henry"];
+         foaf:maker [ a foaf:Person;
+                      foaf:family_name "Dolin";
+                      foaf:firstName "Robert"]]
+
+
+[ a cpr:clinical-description;
+                 cpr:description-of [ a cpr:screening-act;
+                                      edns:realizes [ a cpr:medical-sign;
+                                      cpr:interpretant-of [
+                                         a foaf:Image;
+                                         skos:prefLabel "Chest-X-ray"];
+                                      skos:prefLabel "Chest hyperinflated"];
+                                      skos:prefLabel "Imaging interpretation"]]
+
+</code>
+</pre>
+<p>
+Given the amount of images in a collection of patient record system, it would be useful if there was some sort of way to easily detect images that were actually diagnoses of medical problems. We can use an OWL class called <code>DiagnosingImage</code>  (both a <a href="diagnosingimage.rdf">RDF/XML example </a> and <a href="diagnosingimage.turtle">Turtle example</a>) that detects if images in the record have been interpreted as having some medical significance. 
+</p>
+
+<pre><code>
+@prefix : &lt;http://www.w3.org/2002/07/owl#> .
+@prefix g: &lt;http://www.example.org/grddl-primer#> .
+@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#> .
+
+g:DiagnosingImage     a :Class;
+     :intersectionOf  (
+    &lt;http://xmlns.com/foaf/0.1/Image>
+     [
+             a :Restriction;
+             :onProperty g:indicates;
+             :someValuesFrom &lt;http://purl.org/cpr/0.5#medical-problem> ] ) .
+
+g:indicates     a :ObjectProperty;
+     rdfs:comment """Property relating a foaf:Image to a medical sign it 
+indicates""";
+     rdfs:domain &lt;http://xmlns.com/foaf/0.1/Image>;
+     rdfs:range &lt;http://purl.org/cpr/0.5#medical-sign>;
+     :inverseOf &lt;http://purl.org/cpr/0.5#interpretant-of> .
+
+&lt;http://xmlns.com/foaf/0.1/Image>     a :Thing .
+</code></pre>
+
+
+<p>
+Once an <a href="http://infomesh.net/2001/cwm/">OWL reasoner such as the Closed World Machine</a> is run against the
+merge of the resulting RDF graph with the ontology,  the size of our
+data-set is increased by additional RDF statements indicating that some
+of the images were actually members  <code>DiagnosingImage</code> class. These can then be discovered in the resulting RDF graph by the use of the following <a href="medicalquery.rq">example SPARQL medical query</a>:  
+</p>
+
+<pre><code>
+PREFIX cpr: &lt;http://purl.org/cpr/0.5#>
+PREFIX ex: &lt;http://www.example.org/grddl-primer#>
+PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#>
+SELECT ?sign ?image
+
+FROM &lt;http://www.w3.org/TR/grddl-primer/hl7-sample-plus-owl.rdf>
+
+WHERE {
+  ?image a ex:DiagnosingImage;
+         ex:indicates [ skos:prefLabel ?sign ]
+}
+</code></pre>
+
+<p>If we run this SPARQL query over our <a href="hl7-sample-plus-owl.rdf">data-set that has been enlarged by the use of OWL reasoning</a>, then we can detect that a chest has been hyperinflated. Knowing that the original CDA contains the an image with medical significance would be of importance to the patient.  </p>
+
+<table border="1">
+<tr><td> <b>image</b>  </td><td>   <b>sign</b></td></tr>
+
+<tr><td>_:foo</td><td> "Chest hyperinflated"</td></tr>
+</table>
+
+<p>In this manner GRDDL allows one to bootstrap Semantic Web data from common XML dialects, and so help these XML dialects  interoperate by reference to well-known ontologies and allow their content to be extended by the use of inference.</p> 
+
+
+
+<h3 id="moreinfo">Further Information</h3>
+
+<p>This concludes the GRDDL Primer. Full technical detail of the GRDDL
+mechanism may be found in the corresponding <a href="http://www.w3.org/TR/grddl/">Gleaning Resource Descriptions from Dialects of Languages (GRDDL) Working Draft</a>.</p>
+
+<h2 id="references">References</h2>
+
+
+ <dl>
+         <dt>
+            <a name="GRDDL" id="GRDDL">[GRDDL]</a>
+
+         </dt>
+         <dd>
+            <cite>
+               <a href="http://www.w3.org/TR/2007/CR-grddl-20070502/">Gleaning Resource Descriptions from Dialects of Languages (GRDDL)</a>
+            </cite>, D. Connolly,  Editor, W3C Candidate Recommendation (work in progress), 2 May 2007, http://www.w3.org/TR/2007/CR-grddl-20070502/ . <a href="http://www.w3.org/TR/grddl/"
+               title="Latest version of Gleaning Resource Descriptions from Dialects of Languages (GRDDL)">Latest version</a> available at http://www.w3.org/TR/grddl/ .</dd>
+      </dl>
+
+
+ <dl>
+         <dt>
+            <a name="GRDDL-SCENARIOS" id="GRDDL-SCENARIOS">[GRDDL-SCENARIOS]</a>
+
+         </dt>
+         <dd>
+            <cite>
+               <a href="http://www.w3.org/TR/2007/NOTE-grddl-scenarios-20070406/">GRDDL Use Cases: Scenarios of extracting RDF data from XML documents</a>
+            </cite>, F. Gandon,  Editor, W3C Working Group Note, 6 April 2007, http://www.w3.org/TR/2007/NOTE-grddl-scenarios-20070406/ . <a href="http://www.w3.org/TR/grddl-scenarios/"
+               title="Latest version of GRDDL Use Cases: Scenarios of extracting RDF data from XML documents">Latest version</a> available at http://www.w3.org/TR/grddl-scenarios/ .</dd>
+      </dl>
+
+
+<dl><dt><a name="HTML" id="HTML">[HTML]</a></dt><dd><cite><a href="http://www.w3.org/TR/1999/REC-html401-19991224">HTML 4.01 Specification</a> </cite>, I. Jacobs, D. Raggett, A. Le Hors, Editors, W3C Recommendation, 24 December 1999, http://www.w3.org/TR/1999/REC-html401-19991224 . <a href="http://www.w3.org/TR/html401" title="Latest version of HTML 4.01 Specification">Latest version</a> available at http://www.w3.org/TR/html401 .</dd></dl>
+
+<dl><dt><a name="OWL" id="OWL">[OWL]</a></dt>
+<dd>
+            <cite>
+               <a href="http://www.w3.org/TR/2004/REC-owl-features-20040210/">OWL Web Ontology Language Overview</a>
+
+            </cite>, F. van Harmelen, D. L. McGuinness,  Editors, W3C Recommendation, 10 February 2004, http://www.w3.org/TR/2004/REC-owl-features-20040210/ . <a href="http://www.w3.org/TR/owl-features/"
+               title="Latest version of OWL Web Ontology Language Overview">Latest version</a> available at http://www.w3.org/TR/owl-features/ .</dd></dl>
+
+
+ <dl><dt><a name="RDFA" id="RDFA">[RDFA]</a>
+
+         </dt>
+         <dd>
+            <cite>
+
+               <a href="http://www.w3.org/TR/2007/WD-xhtml-rdfa-primer-20070312/">RDFa Primer 1.0</a>
+            </cite>, B. Adida, M. Birbeck,  Editors, W3C Working Draft (work in progress), 12 March 2007, http://www.w3.org/TR/2007/WD-xhtml-rdfa-primer-20070312/ . <a href="http://www.w3.org/TR/xhtml-rdfa-primer/"
+               title="Latest version of RDFa Primer 1.0">Latest version</a> available at http://www.w3.org/TR/xhtml-rdfa-primer/ .</dd>
+      </dl>
+
+
+
+<dl><dt><a name="RDFC" id="RDFC">[RDFC]</a></dt><dd><cite><a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/">Resource Description Framework (RDF): Concepts and Abstract Syntax</a> </cite>, G. Klyne, J. J. Carroll, Editors, W3C Recommendation, 10 February 2004, http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/ . <a href="http://www.w3.org/TR/rdf-concepts/" title="Latest version of Resource Description Framework (RDF): Concepts and Abstract Syntax">Latest version</a> available at http://www.w3.org/TR/rdf-concepts/ .</dd></dl>
+
+<dl><dt><a id="RDFXML"  name="RDFXML"></a>[RDFXML]</dt>
+
+          <dd><cite><a
+          href="http://www.w3.org/TR/2004/REC-rdf-syntax-grammar-20040210/">
+          RDF/XML Syntax Specification (Revised)</a></cite>, Beckett
+          D.  (Editor), W3C Recommendation, 10 February 2004. <a href = "http://www.w3.org/TR/2004/REC-rdf-syntax-grammar-20040210/">This version</a> http://www.w3.org/TR/2004/REC-rdf-syntax-grammar-20040210/. The <a
+          href="http://www.w3.org/TR/rdf-syntax-grammar/">latest
+          version</a> is
+          http://www.w3.org/TR/rdf-syntax-grammar/.</dd></dl>
+
+    <dl>
+         <dt>
+            <a name="SPARQL" id="SPARQL">[SPARQL]</a>
+
+         </dt>
+         <dd>
+            <cite>
+               <a href="http://www.w3.org/TR/2007/WD-rdf-sparql-query-20070326/">SPARQL Query Language for RDF</a>
+
+            </cite>, E. Prud'hommeaux, A. Seaborne,  Editors, W3C Working Draft (work in progress), 26 March 2007, http://www.w3.org/TR/2007/WD-rdf-sparql-query-20070326/ . <a href="http://www.w3.org/TR/rdf-sparql-query/"
+               title="Latest version of SPARQL Query Language for RDF">Latest version</a> available at http://www.w3.org/TR/rdf-sparql-query/ .</dd>
+      </dl>
+
+
+<dl><dt><a name="VCARD" id="VCARD">[VCARD]</a></dt><dd><cite><a href="http://www.w3.org/2006/vcard/ns">VCard Ontology</a></cite>, H. Halpin, B. Suda, and N. Walsh, W3C Semantic Web Interest Group Note (in progress). <a href="http://www.w3.org/2006/vcard/ns" title="Latest version of avaiable">Latest version</a> available at <a href="http://www.w3.org/2006/vcard/ns">http://www.w3.org/2006/vcard/ns</a>.</dd></dl>
+
+<dl><dt><a name="XHTML" id="XHTML">[XHTML]</a></dt><dd><cite><a href="http://www.w3.org/TR/2004/WD-xhtml-modularization-20040218">Modularization of XHTML 1.0 -  Second Edition </a> </cite>, Editor, W3C Working Draft (work in progress), 18 February 2004, http://www.w3.org/TR/2004/WD-xhtml-modularization-20040218 . <a href="http://www.w3.org/TR/xhtml-modularization/" title="Latest version of Modularization of XHTML 1.0 - Second Edition">Latest version</a> available at http://www.w3.org/TR/xhtml-modularization/ .</dd></dl>
+
+<dl><dt><a name="XSLT" id="XSLT">[XSLT]</a></dt><dd><cite><a href="http://www.w3.org/TR/1999/REC-xslt-19991116">XSL Transformations (XSLT) Version 1.0</a> </cite>, J. Clark, Editor, W3C Recommendation, 16 November 1999, http://www.w3.org/TR/1999/REC-xslt-19991116 . <a href="http://www.w3.org/TR/xslt" title="Latest version of XSL Transformations (XSLT) Version 1.0">Latest version</a> available at http://www.w3.org/TR/xslt .</dd></dl>
+
+
+<p>This output can be regenerated by putting the following input in the <a href="http://www.w3.org/2002/01/tr-automation/tr-biblio-ui">Technical Reports Bibliography extractor</a>:</p>
+
+<pre>HTML http://www.w3.org/TR/1999/REC-html401-19991224
+RDFC http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/
+SPARQL http://www.w3.org/TR/2006/WD-rdf-sparql-query-20061004/
+VCARD http://www.w3.org/2006/vcard/ns
+XHTML http://www.w3.org/TR/xhtml-modularization/
+XSLT http://www.w3.org/TR/1999/REC-xslt-19991116
+</pre><hr/>
+
+<h3><a id="acknowledgements"></a>Acknowledgements</h3>
+
+<p>The editor would like to thank the following Working Group members for
+authoring this document:</p>
+<ul>
+
+
+   <li>Jeremy Carroll and David Booth, Hewlett-Packard </li>
+ <li>John Clark, Cleveland Clinic Foundation </li>
+<li><a
+    href="http://www-sop.inria.fr/acacia/personnel/Fabien.Gandon/">Fabien
+    Gandon</a>, INRIA</li>
+
+  <li><a href="http://copia.ogbuji.net/">Chimezie Ogbuji</a>, Cleveland
+    Clinic Foundation</li>
+  <li>Ronald P. Reck</li>
+  <li><a href="http://suda.co.uk">Brian Suda</a></li>
+</ul>
+
+<p>This document is a product of the <a
+href="http://www.w3.org/2001/sw/grddl-wg/">GRDDL Working Group</a>.</p>
+
+<p>The <a href="#spreadsheets-section">spreadsheets example</a>
+is based on work by Mark Nottingham in <a
+href="http://www.mnot.net/blog/2005/08/13/excel_microformats">"Adding
+Semantics to Excel with Microformats and GRDDL"</a>.  The version of the transformation script used in that example has a few significant changes from Mark's original.</p>
+
+
+<h3 id="changes">Change Log</h3>
+
+<p>Changes since the <a
+href="http://lists.w3.org/Archives/Public/public-grddl-wg/2006Sep/att-0185/27-grddl-wg-irc.html#item03">WG
+decision to publish on 27 Sep</a> include</p>
+
+<pre>
+
+$Log: Overview.html,v $
+Revision 1.1  2007/06/27 18:39:11  jean-gui
+primer renamed to Overview
+
+Revision 1.1  2007/06/27 18:38:18  jean-gui
+NOTE-grddl-primer-20070628
+
+Revision 1.125  2007/06/27 17:30:29  hhalpin
+updated acknowledgements
+
+Revision 1.123  2007/06/27 17:24:48  hhalpin
+updated URIs of versions
+
+Revision 1.122  2007/06/27 17:21:53  hhalpin
+updated URIs of versions
+
+Revision 1.121  2007/06/27 17:20:51  hhalpin
+updated URIs of versions
+
+Revision 1.120  2007/06/27 17:18:09  jclark4
+Add diagram to hotel-finding example.
+
+Revision 1.119  2007/06/27 17:10:15  hhalpin
+fixed dates for Note pub
+
+Revision 1.118  2007/06/27 16:58:53  jclark4
+Undo the iframe scariness.
+
+Revision 1.117  2007/06/27 16:44:37  hhalpin
+updated with danja and chime's comments
+
+Revision 1.116  2007/06/27 14:55:25  connolly
+remove "microformat" from excel section; move mnot to acks section
+
+Revision 1.115  2007/06/27 14:52:37  connolly
+ids for authors to join across hCard and trdoc transformations
+
+Revision 1.114  2007/06/27 14:51:07  connolly
+add hCard markup for authors (with profile)
+
+Revision 1.113  2007/06/27 00:55:10  hhalpin
+moved link of hl7 tranform from test-cases to primer directory
+
+Revision 1.112  2007/06/27 00:49:19  hhalpin
+replaced doc29 with primer URI
+
+
+Revision 1.86  2007/06/26 18:56:16  jclark4
+Make the inline SPARQL equivalent to the linked SPARQL in the
+spreadsheet section, and fix several well-formedness errors.
+
+Revision 1.85  2007/06/26 14:14:04  jclark4
+Minor consistency changes to the primer and the spreadsheet for the
+spreadsheet example and some typo and wording changes to the primer.
+
+Revision 1.84  2007/06/24 20:04:49  hhalpin
+added danja's edits
+
+Revision 1.83  2007/06/22 18:53:03  bsuda
+fixed sparql #3 and updated primer
+
+Revision 1.82  2007/06/22 18:48:58  bsuda
+updated sparql queries, rdf and html and primer document to reflect the new queries
+
+Revision 1.81  2007/06/20 14:05:38  connolly
+uncomment embeddedRDF.png image; add hCalendar.png image back in
+
+Revision 1.80  2007/06/20 02:02:34  hhalpin
+minor updates to spreadsheet section, linking files
+
+Revision 1.77  2007/06/14 10:56:48  jcarroll
+switched to using local RDFa2RDFXML rather than td one
+
+Revision 1.76  2007/06/13 17:43:27  jclark4
+Convert SPARQL results to an HTML table in the "Reusing Spreadsheets"
+section and fix numerous well-formedness errors.
+
+Revision 1.75  2007/06/13 17:27:47  jclark4
+Add entry in the table of contents for the new "Reusing Spreadsheets"
+section.
+
+Revision 1.74  2007/06/13 17:15:23  connolly
+@@ around transition between spreadsheets and health care
+
+Revision 1.73  2007/06/13 17:11:09  connolly
+paste in spreadsheet example
+from John Clark Tue, 12 Jun 2007 16:16:36 -0400
+
+Revision 1.72  2007/06/13 16:54:06  hhalpin
+updated xslt for hl7
+
+Revision 1.71  2007/05/06 04:46:50  hhalpin
+hotel-data.rdf replacced by review.rdf
+
+Revision 1.70  2007/05/06 00:55:12  connolly
+linebreaks in the ClinicalDocument
+
+Revision 1.69  2007/05/06 00:53:02  connolly
+linebreaks to make the examples less wide
+
+Revision 1.68  2007/05/05 22:09:26  connolly
+fix pre/p markup problem, copyright unicode characters
+
+Revision 1.67  2007/05/05 20:43:24  hhalpin
+removed errant SPARQL query, added XFN and hReview code back in
+
+Revision 1.66  2007/05/05 20:36:11  hhalpin
+reverting to 1.55 plus fixes in 1.65 in Healthcare section
+
+Revision 1.55  2007/04/24 17:57:37  hhalpin
+added more of Chime's test case and changed some text for easier reading
+
+Revision 1.54  2007/04/11 08:21:45  hhalpin
+added transform library mention
+
+Revision 1.50  2007/04/11 08:18:35  hhalpin
+added transform library mention
+
+Revision 1.49  2007/03/21 04:35:42  hhalpin
+cleaned up healthcare example
+
+Revision 1.48  2007/03/14 08:11:13  hhalpin
+fixed rdfa transform, fixed part 2
+
+Revision 1.45  2007/02/21 06:52:53  hhalpin
+added danja's comments
+
+Revision 1.43  2007/02/19 19:07:53  idavis
+Updated date of draft
+
+Revision 1.42  2007/02/19 19:02:21  idavis
+Fixed typo in SPARQL reference
+
+Revision 1.41  2007/02/19 18:55:36  idavis
+Addresses rreck comment, fixed typos and minor layout changes, added references in clinical data section
+
+Revision 1.40  2007/02/12 01:38:28  hhalpin
+added RDFa example
+
+Revision 1.39  2007/02/12 00:57:18  hhalpin
+added chime's test case
+
+Revision 1.37  2007/02/07 15:09:22  hhalpin
+updated sparql query
+
+Revision 1.36  2007/01/13 00:00:26  hhalpin
+edited some links
+
+Revision 1.31  2007/01/12 18:57:21  hhalpin
+dates fixed
+
+Revision 1.30  2007/01/12 18:55:16  hhalpin
+dates fixed
+
+Revision 1.29  2007/01/12 03:56:21  hhalpin
+edited
+
+Revision 1.28  2007/01/12 03:50:11  hhalpin
+minor edits
+
+Revision 1.27  2007/01/12 03:49:45  hhalpin
+minor edits
+
+Revision 1.25  2007/01/09 23:54:10  hhalpin
+fixed formatting
+
+Revision 1.22  2007/01/09 23:43:15  hhalpin
+using new vcard RDF
+
+Revision 1.21  2006/12/13 00:34:29  hhalpin
+fixing syntactic quibbles
+
+Revision 1.18  2006/10/19 07:56:45  idavis
+Revised references, corrected title from WD to editors draft
+
+
+Revision 1.17  2006/10/19 07:07:51  idavis
+Various minor editorial changes, spellings, grammar etc
+
+Revision 1.16  2006/10/02 22:51:19  connolly
+turned public-grddl-comments mailbox into a link
+
+Revision 1.15  2006/09/30 00:38:47  connolly
+note in the status section that some examples are incomplete
+
+Revision 1.14  2006/09/30 00:35:01  connolly
+removed some links to the glossary that were copied from the use cases document
+updated link to suda.co.uk
+
+Revision 1.13  2006/09/30 00:27:26  connolly
+fix link from title page to acknowledgements section
+
+Revision 1.12  2006/09/30 00:26:10  connolly
+update parts of the status section that are different between
+use cases and primer
+
+Revision 1.11  2006/09/30 00:24:34  connolly
+- remove "previous version" link to talis copy from title page
+- move pubrules check to status section
+- expand change log to give full audit trail since WG decision
+- remove XHTML 1.1 icon, since pubrules requires 1.0 :-/
+
+Revision 1.10  2006/09/29 23:54:08  hhalpin
+fixed minor errors and links
+
+revision 1.9
+date: 2006/09/29 23:20:05;  author: hhalpin;  state: Exp;  lines: +5 -90
+primer chnages for pubrules
+----------------------------
+revision 1.8
+date: 2006/09/29 23:10:58;  author: hhalpin;  state: Exp;  lines: +1 -1
+primer changes again
+----------------------------
+revision 1.7
+date: 2006/09/29 23:07:42;  author: hhalpin;  state: Exp;  lines: +170 -42
+primer changes again
+----------------------------
+revision 1.6
+date: 2006/09/29 22:43:53;  author: hhalpin;  state: Exp;  lines: +2 -2
+primer changes again spelling errors
+----------------------------
+revision 1.5
+date: 2006/09/29 22:35:39;  author: hhalpin;  state: Exp;  lines: +6 -7
+primer changes again
+----------------------------
+revision 1.4
+date: 2006/09/29 22:33:00;  author: hhalpin;  state: Exp;  lines: +33 -70
+primer changes
+----------------------------
+
+Revision 1.3  2006/09/29 22:05:17  connolly
+"under construction" sign atop the section with XFN in it
+
+Revision 1.2  2006/09/29 19:49:46  connolly
+copied from devcvs v 1.4 2006/09/29 19:00:43 idavis
+
+Revision 1.4  2006/09/29 19:00:43  idavis
+Fixed formatting of CVS log at end of document
+
+----------------------------
+revision 1.3
+date: 2006/09/29 18:58:18;  author: idavis;  state: Exp;  lines: +22 -13
+Revised abstract to align more with use cases; checked in supporting HTML and PNG files
+----------------------------
+revision 1.2
+date: 2006/09/29 18:22:17;  author: idavis;  state: Exp;  lines: +591 -437
+Inserted current, latest and previous version links; revised abstract completely; normalised to linefeed line endings
+----------------------------
+revision 1.1
+date: 2006/09/29 16:38:15;  author: connolly;  state: Exp;
+6180 2006-09-27 13:29:57Z http://research.talis.com/2006/grddl-wg/primer.html</pre>
+</body>
+</html>

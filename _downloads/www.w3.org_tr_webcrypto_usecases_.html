@@ -1,0 +1,778 @@
+<!-- http://www.w3.org/TR/webcrypto-usecases/ -->
+<!DOCTYPE html>
+<html lang="en" dir="ltr" typeof="bibo:Document w3p:NOTE" about="" property="dcterms:language" content="en" prefix="bibo: http://purl.org/ontology/bibo/ w3p: http://www.w3.org/2001/02pd/rec54#">
+<head>
+    <title>Web Cryptography API Use Cases</title>
+    <meta charset="utf-8">
+    
+    
+  <style>/*****************************************************************
+ * ReSpec 3 CSS
+ * Robin Berjon - http://berjon.com/
+ *****************************************************************/
+
+/* --- INLINES --- */
+em.rfc2119 { 
+    text-transform:     lowercase;
+    font-variant:       small-caps;
+    font-style:         normal;
+    color:              #900;
+}
+
+h1 acronym, h2 acronym, h3 acronym, h4 acronym, h5 acronym, h6 acronym, a acronym,
+h1 abbr, h2 abbr, h3 abbr, h4 abbr, h5 abbr, h6 abbr, a abbr {
+    border: none;
+}
+
+dfn {
+    font-weight:    bold;
+}
+
+a.internalDFN {
+    color:  inherit;
+    border-bottom:  1px solid #99c;
+    text-decoration:    none;
+}
+
+a.externalDFN {
+    color:  inherit;
+    border-bottom:  1px dotted #ccc;
+    text-decoration:    none;
+}
+
+a.bibref {
+    text-decoration:    none;
+}
+
+cite .bibref {
+    font-style: normal;
+}
+
+code {
+    color:  #ff4500;
+}
+
+/* --- TOC --- */
+.toc a, .tof a {
+    text-decoration:    none;
+}
+
+a .secno, a .figno {
+    color:  #000;
+}
+
+ul.tof, ol.tof {
+    list-style: none outside none;
+}
+
+.caption {
+    margin-top: 0.5em;
+    font-style:   italic;
+}
+
+/* --- TABLE --- */
+table.simple {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    border-bottom:  3px solid #005a9c;
+}
+
+.simple th {
+    background: #005a9c;
+    color:  #fff;
+    padding:    3px 5px;
+    text-align: left;
+}
+
+.simple th[scope="row"] {
+    background: inherit;
+    color:  inherit;
+    border-top: 1px solid #ddd;
+}
+
+.simple td {
+    padding:    3px 10px;
+    border-top: 1px solid #ddd;
+}
+
+.simple tr:nth-child(even) {
+    background: #f0f6ff;
+}
+
+/* --- DL --- */
+.section dd > p:first-child {
+    margin-top: 0;
+}
+
+.section dd > p:last-child {
+    margin-bottom: 0;
+}
+
+.section dd {
+    margin-bottom:  1em;
+}
+
+.section dl.attrs dd, .section dl.eldef dd {
+    margin-bottom:  0;
+}
+</style><style>/* --- EXAMPLES --- */
+div.example-title {
+    min-width: 7.5em;
+    color: #b9ab2d;
+}
+div.example-title span {
+    text-transform: uppercase;   
+}
+aside.example, div.example, div.illegal-example {
+    padding: 0.5em;
+    margin: 1em 0;
+    position: relative;
+    clear: both;
+}
+div.illegal-example { color: red }
+div.illegal-example p { color: black }
+aside.example, div.example {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+    border-color: #e0cb52;
+    background: #fcfaee;    
+}
+
+aside.example div.example {
+    border-left-width: .1em;
+    border-color: #999;
+    background: #fff;
+}
+aside.example div.example div.example-title {
+    color: #999;
+}
+</style><style>/* --- ISSUES/NOTES --- */
+div.issue-title, div.note-title {
+    padding-right:  1em;
+    min-width: 7.5em;
+    color: #b9ab2d;
+}
+div.issue-title { color: #e05252; }
+div.note-title { color: #2b2; }
+div.issue-title span, div.note-title span {
+    text-transform: uppercase;
+}
+div.note, div.issue {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+.note > p:first-child, .issue > p:first-child { margin-top: 0 }
+.issue, .note {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+}
+div.issue, div.note {
+    padding: 1em 1.2em 0.5em;
+    margin: 1em 0;
+    position: relative;
+    clear: both;
+}
+span.note, span.issue { padding: .1em .5em .15em; }
+
+.issue {
+    border-color: #e05252;
+    background: #fbe9e9;
+}
+.note {
+    border-color: #52e052;
+    background: #e9fbe9;
+}
+
+
+</style><style>/* HIGHLIGHTS */
+code.prettyprint {
+    color:  inherit;
+}
+
+/* this from google-code-prettify */
+.pln{color:#000}@media screen{.str{color:#080}.kwd{color:#008}.com{color:#800}.typ{color:#606}.lit{color:#066}.pun,.opn,.clo{color:#660}.tag{color:#008}.atn{color:#606}.atv{color:#080}.dec,.var{color:#606}.fun{color:red}}@media print,projection{.str{color:#060}.kwd{color:#006;font-weight:bold}.com{color:#600;font-style:italic}.typ{color:#404;font-weight:bold}.lit{color:#044}.pun,.opn,.clo{color:#440}.tag{color:#006;font-weight:bold}.atn{color:#404}.atv{color:#060}}ol.linenums{margin-top:0;margin-bottom:0}li.L0,li.L1,li.L2,li.L3,li.L5,li.L6,li.L7,li.L8{list-style-type:none}li.L1,li.L3,li.L5,li.L7,li.L9{background:#eee}
+</style><link rel="stylesheet" href="http://www.w3.org/StyleSheets/TR/W3C-WG-NOTE" /></head>
+  <body class="h-entry" role="document" id="respecDocument"><div class="head" role="contentinfo" id="respecHeader">
+  <p>
+    
+      <a href="http://www.w3.org/"><img width="72" height="48" src="https://www.w3.org/Icons/w3c_home" alt="W3C"></a>
+    
+  </p>
+  <h1 class="title p-name" id="title" property="dcterms:title">Web Cryptography API Use Cases</h1>
+  
+  <h2 property="dcterms:issued" datatype="xsd:dateTime" content="2013-08-22T19:09:42.000Z" id="w3c-working-group-note-10-september-2013"><abbr title="World Wide Web Consortium">W3C</abbr> Working Group Note <time class="dt-published" datetime="2013-09-10">10 September 2013</time></h2>
+  <dl>
+    
+      <dt>This version:</dt>
+      <dd><a class="u-url" href="http://www.w3.org/TR/2013/NOTE-webcrypto-usecases-20130910/">http://www.w3.org/TR/2013/NOTE-webcrypto-usecases-20130910/</a></dd>
+      <dt>Latest published version:</dt>
+      <dd><a href="http://www.w3.org/TR/webcrypto-usecases/">http://www.w3.org/TR/webcrypto-usecases/</a></dd>
+    
+    
+      <dt>Latest editor's draft:</dt>
+      <dd><a href="https://dvcs.w3.org/hg/webcrypto-usecases/raw-file/tip/Overview.html">https://dvcs.w3.org/hg/webcrypto-usecases/raw-file/tip/Overview.html</a></dd>
+    
+    
+    
+    
+    
+      <dt>Previous version:</dt>
+      <dd><a rel="dcterms:replaces" href="http://www.w3.org/TR/2013/WD-webcrypto-usecases-20130108/">http://www.w3.org/TR/2013/WD-webcrypto-usecases-20130108/</a></dd>
+    
+    
+    <dt>Editor:</dt>
+    <dd class="p-author h-card vcard" rel="bibo:editor" inlist=""><span typeof="foaf:Person"><a class="u-url url p-name fn" rel="foaf:homepage" property="foaf:name" content="Arun Ranganathan" href="http://arunranga.com">Arun Ranganathan</a>, <a rel="foaf:workplaceHomepage" class="p-org org h-org h-card" href="http://www.mozilla.org/">Mozilla</a></span>
+</dd>
+
+    
+    
+  </dl>
+  
+  
+  
+  
+    
+      <p class="copyright">
+        <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> ©
+        2013
+        
+        <a href="http://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>®</sup>
+        (<a href="http://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>,
+        <a href="http://www.ercim.eu/"><abbr title="European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>,
+        <a href="http://www.keio.ac.jp/">Keio</a>, <a href="http://ev.buaa.edu.cn/">Beihang</a>), All Rights Reserved.
+        <abbr title="World Wide Web Consortium">W3C</abbr> <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>,
+        <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and
+        <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply.
+      </p>
+    
+  
+  <hr>
+</div>
+    <section id="abstract" class="introductory" property="dcterms:abstract" datatype="" typeof="bibo:Chapter" resource="#abstract" rel="bibo:chapter"><h2 aria-level="1" role="heading" id="h2_abstract">Abstract</h2><p>
+      This document is NOT a recommendation track document, and should be read as an informative overview of the target use cases for a cryptographic API for the web. These use cases, described as scenarios, represent some of the set of expected functionality that may be achieved by the Web Cryptography API [<cite><a class="bibref" href="#bib-WebCryptoAPI">WebCryptoAPI</a></cite>]  which provides an API for cryptographic operations such as encryption and decryption, and the Key Discovery API [<cite><a class="bibref" href="#bib-webcrypto-key-discovery">webcrypto-key-discovery</a></cite>], which specifically covers the ability to access cryptographic keys that have been pre-provisioned. As both APIs are under construction, the reader should consult each specification for changes, and should treat sample code provided here as illustrative only. Presented here are primary use cases, showing what the working group hopes to achieve first. 
+    </p></section><section id="sotd" class="introductory" typeof="bibo:Chapter" resource="#sotd" rel="bibo:chapter"><h2 aria-level="1" role="heading" id="h2_sotd">Status of This Document</h2>
+  
+    
+      
+        <p>
+          <em>This section describes the status of this document at the time of its publication. Other
+          documents may supersede this document. A list of current <abbr title="World Wide Web Consortium">W3C</abbr> publications and the latest revision
+          of this technical report can be found in the <a href="http://www.w3.org/TR/"><abbr title="World Wide Web Consortium">W3C</abbr> technical reports
+          index</a> at http://www.w3.org/TR/.</em>
+        </p>
+        
+        <p>
+          This document was published by the <a href="http://www.w3.org/2012/webcrypto/">Web Cryptography Working Group</a> as a Working Group Note.
+          
+          
+          If you wish to make comments regarding this document, please send them to 
+          <a href="mailto:public-webcrypto@w3.org">public-webcrypto@w3.org</a> 
+          (<a href="mailto:public-webcrypto-request@w3.org?subject=subscribe">subscribe</a>,
+          <a href="http://lists.w3.org/Archives/Public/public-webcrypto/">archives</a>).
+          
+          
+          
+          
+            All comments are welcome.</p>
+          
+        
+          <p>
+            Publication as a Working Group Note does not imply endorsement by the <abbr title="World Wide Web Consortium">W3C</abbr> Membership.
+            This is a draft document and may be updated, replaced or obsoleted by other documents at 
+            any time. It is inappropriate to cite this document as other than work in progress.
+          </p>
+        
+        
+        <p>
+          
+            This document was produced by a group operating under the 
+             
+                <a id="sotd_patent" about="" rel="w3p:patentRules" href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>.
+            
+          
+          
+          
+            
+              <abbr title="World Wide Web Consortium">W3C</abbr> maintains a <a href="http://www.w3.org/2004/01/pp-impl/54174/status" rel="disclosure">public list of any patent disclosures</a> 
+            
+            made in connection with the deliverables of the group; that page also includes instructions for 
+            disclosing a patent. An individual who has actual knowledge of a patent which the individual believes contains
+            <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential Claim(s)</a> must disclose the
+            information in accordance with <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section
+            6 of the <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>.
+          
+          
+        </p>
+        
+      
+    
+  
+</section><section id="toc"><h2 class="introductory" aria-level="1" role="heading" id="h2_toc">Table of Contents</h2><ul class="toc" role="directory" id="respecContents"><li class="tocline"><a href="#nonGoals" class="tocxref"><span class="secno">1. </span>Some Non-Goals</a></li><li class="tocline"><a href="#reqs" class="tocxref"><span class="secno">2. </span>Requirements Covered By Use Cases</a></li><li class="tocline"><a href="#use-case-scenarios" class="tocxref"><span class="secno">3. </span>Use Case Scenarios</a><ul class="toc"><li class="tocline"><a href="#banking-transactions" class="tocxref"><span class="secno">3.1 </span>Banking Transactions</a></li><li class="tocline"><a href="#authenticated-video-services" class="tocxref"><span class="secno">3.2 </span>Authenticated Video Services</a></li><li class="tocline"><a href="#code-sanctity-and-bandwidth-saver" class="tocxref"><span class="secno">3.3 </span>Code Sanctity and Bandwidth Saver</a></li><li class="tocline"><a href="#encrypted-communications-via-webmail" class="tocxref"><span class="secno">3.4 </span>Encrypted Communications via Webmail</a></li><li class="tocline"><a href="#off-the-record-real-time-messaging" class="tocxref"><span class="secno">3.5 </span>Off The Record Real Time Messaging</a></li><li class="tocline"><a href="#documents-in-the-cloud" class="tocxref"><span class="secno">3.6 </span>Documents In The Cloud</a></li><li class="tocline"><a href="#browserid-use-of-cryptography-for-identity-protocols" class="tocxref"><span class="secno">3.7 </span>BrowserID: Use of Cryptography for Identity Protocols</a></li></ul></li><li class="tocline"><a href="#acknowledgements" class="tocxref"><span class="secno">A. </span>Acknowledgements</a></li><li class="tocline"><a href="#references" class="tocxref"><span class="secno">B. </span>References</a><ul class="toc"><li class="tocline"><a href="#informative-references" class="tocxref"><span class="secno">B.1 </span>Informative references</a></li></ul></li></ul></section>
+    <section id="nonGoals" typeof="bibo:Chapter" resource="#nonGoals" rel="bibo:chapter">
+      <!--OddPage--><h2 aria-level="1" role="heading" id="h2_nonGoals"><span class="secno">1. </span>Some Non-Goals</h2>
+      <p>Certain popular use cases for cryptography on the web do not correspond to the combined capabilities of the Key Discovery API [<cite><a class="bibref" href="#bib-webcrypto-key-discovery">webcrypto-key-discovery</a></cite>] or the Web Cryptography API [<cite><a class="bibref" href="#bib-WebCryptoAPI">WebCryptoAPI</a></cite>], and these use cases are not addressed here.  These include:
+      </p>
+      <ol>
+        <li><p>Any use case requiring a relaxation or violation of the same-origin policy in JavaScript, implemented by all the major web browsers [<cite><a class="bibref" href="#bib-HTML">HTML</a></cite>].  This includes use cases that require direct access to cryptographic material that is not domain-specific from a key store that is not domain specific.  Currently, certain banking transactions require citizens to obtain certificates that are centrally issued, and that are user specific yet not domain specific, and that are used by multiple institutions, each having separate domains, each of which can call upon a hardware-based cryptographic material store.  Such use cases aren't directly addressed by the combination of the Web Cryptography API [<cite><a class="bibref" href="#bib-WebCryptoAPI">WebCryptoAPI</a></cite>] or the Key Discovery API [<cite><a class="bibref" href="#bib-webcrypto-key-discovery">webcrypto-key-discovery</a></cite>].  Instead, use cases that require cryptographic material to be shared between domains can leverage cross-origin messaging [<cite><a class="bibref" href="#bib-HTML">HTML</a></cite>] and the structured clonability of key objects in JavaScript [<cite><a class="bibref" href="#bib-WebCryptoAPI">WebCryptoAPI</a></cite>], or the importing and exporting of cryptographic keys across domains; such use cases <em>are</em> covered in this document.  Another use case not addressed here for the same reason is the case of a centrally issued electronic identity (eID) that exposes a certificate chain to web applications for use with digital signatures.</p> </li>
+        <li><p>Any use case that expressly requires the use of auxiliary cryptographic hardware, including smart cards or USB dongles.  Other standardization activities may provide mechanisms for these technologies to interact with web applications, but such use cases fall beyond the scope of this document.  Examples of this type of use case include "advanced electronic signatures" which rely on certificates issued on secure hardware by certifying authorities, typically acting under the aegis of state governments.</p></li>
+      </ol>
+    </section>
+    <section id="reqs" typeof="bibo:Chapter" resource="#reqs" rel="bibo:chapter">
+      <!--OddPage--><h2 aria-level="1" role="heading" id="h2_reqs"><span class="secno">2. </span>Requirements Covered By Use Cases</h2>
+      <p>This section presents required features of a cryptographic API, particularly the features that this use cases document will rely on.  It is possible that there is more than one algorithm and more than one mechanism to accomplish each of these features.  The section presents code names for each of the features, which will be used alongside each scenario, illustrating which feature is used.  The term <dfn id="document">document</dfn> is used to refer to any data exchange format usable within HTML [<cite><a class="bibref" href="#bib-HTML">HTML</a></cite>] web applications, which ranges from plain text to images and videos, inclusive of marked-up formats.</p>
+    <ul>
+      <li><p><dfn title="digest" id="digest">DIGEST</dfn>, the ability to perform a cryptographic hash, where an algorithm that takes an arbitrary block of data returns a fixed-size bit sequence, called the <dfn id="hash-value">hash value</dfn>, such that any change to the block of data changes the hash value.</p></li>
+      <li><p><dfn title="mac" id="mac">MAC</dfn>, the ability to generate a <em>message authentication code</em>, using an algorithm, with <dfn id="hmac">HMAC</dfn> being a specific kind of message authentication code, with a specific algorithm.</p></li>
+      <li><p><dfn title="sign" id="sign">SIGN</dfn>, the ability to digitally sign a document with a private key, such that upon verification of the signature with the corresponding public key, the document's authenticity from the point of view of the signature can be determined.  </p></li>
+      <li><p><dfn title="verify" id="verify">VERIFY</dfn>, the ability to verify a digitally signed document, as well as verify a MAC or HMAC.</p></li>
+      <li><p><dfn title="encrypt" id="encrypt">ENCRYPT</dfn>, the ability to encode a document using an encryption algorithm.  <dfn id="encrypt-sym">ENCRYPT-SYM</dfn> is a specific type of encryption using symmetric cryptographic keys, and <dfn id="encrypt-assym">ENCRYPT-ASSYM</dfn> is a specific type of encryption using assymetric cryptographic keys, typically a public and private key pair.</p></li> 
+      <li><p><dfn title="decrypt" id="decrypt">DECRYPT</dfn>, the ability to decrypt a digitally signed document.  <dfn id="decrypt-sym">DECRYPT-SYM</dfn> is a specific type of decryption using symmetric keys, and <dfn id="decrypt-assym">DECRYPT-ASSYM</dfn> is a specific type of decryption using assymetric keys, typically a public and private key pair.</p></li>
+      <li><p><dfn title="derive" id="derive">DERIVE</dfn>, the ability to derive a key or key pair used in cryptographic operations, starting with a base key, and factors such as algorithms appropriate for key derivation; <dfn id="derive-assym">DERIVE-ASSYM</dfn> is the ability to derive assymetric keys, typically a public and private key pair, for use with assymetric cryptographic operations, and <dfn id="derive-sym">DERIVE-SYM</dfn> is the ability to derive a symmetric key for use with symmetric cryptographic operations.</p></li>
+      <li><p><dfn title="keygen" id="keygen">KEYGEN</dfn>, the ability to generate a key or key pair used in cryptographic operations, without an initial base key, and using factors such as the entropy of the computing system and algorithms appropriate for key or key pair generation; <dfn id="keygen-assym">KEYGEN-ASSYM</dfn> is the ability to generate assymetric keys, typically a public and private key pair, for use with assymetric cryptographic operations, and <dfn id="keygen-sym">KEYGEN-SYM</dfn> is the ability to derive a symmetric key for use with symmetric cryptographic operations.</p></li>
+      <li><p><dfn title="import" id="import">IMPORT</dfn>, the ability to import a key or key pair that have already been created elsewhere, for use within the web application that is invoking the import function, for use within the importing web application's origin.  This necessiates an interoperable key format, such as JSON Web Key [<cite><a class="bibref" href="#bib-JWK">JWK</a></cite>] which may be represented as octets.</p></li>
+      <li><p><dfn title="export" id="export">EXPORT</dfn>, the ability to export a key or key pair that can be accessed from within the application that is invoking the export function.  This necessiates an interoperable key format, such as JSON Web Key [<cite><a class="bibref" href="#bib-JWK">JWK</a></cite>] which may be represented as octets, that other web applications can then import.</p></li>
+      <li><p><dfn title="keyex" id="keyex">KEYEX</dfn>, the ability for two entities to exchange key(s) without interception by a third party, with <dfn id="keyex-dh">KEYEX-DH</dfn> representing Diffie-Hellman key exchange, a common application of safe key exchange. </p>
+      <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_1"><span>Note</span></div><div class="">This feature doesn't imply that every aspect of key exchange is covered, since much of key exchange often includes a network component, which isn't covered by the API.  The <a title="derive" href="#derive" class="internalDFN">DERIVE</a> feature, coupled with an a network exchange of key data outside the scope of this API, may be all that is required.</div></div>
+      </li>
+      <li><p><dfn title="keycall" id="keycall">KEYCALL</dfn>, the ability to access a particular key (or key pair) from within a web application's key storage, which is within the web application's origin only, and has been generated, derived, or imported by that web application.  Here, the key storage might be IndexedDB [<cite><a class="bibref" href="#bib-INDEXEDDB">INDEXEDDB</a></cite>] or <code>localStorage</code> [<cite><a class="bibref" href="#bib-webstorage">webstorage</a></cite>].  This feature should be compared and contrasted with <a title="namedkey" href="#namedkey" class="internalDFN">NAMEDKEY</a>.</p></li>
+      <li><p><dfn title="sym" id="sym">-SYM</dfn>, an abbreviation for <em>symmetric key cryptographic operations</em>, used in this document as a suffix to other features to specifically clarify the feature being invoked by the web application.</p></li>
+      <li><p><dfn title="assym" id="assym">-ASSYM</dfn>, an abbreviation for <em>assymetric key cryptographic operations</em>, typically involving a public and private key pair, used in this document as a suffix to other features to specifically clarify the feature being invoked by the web application.</p></li>
+      <li><p><dfn title="random" id="random">RANDOM</dfn>, the ability to generate cryptographically secure random numbers.</p></li>
+      <li><p><dfn title="JSONWebKey" id="JSONWebKey">JWK</dfn>, the ability to represent public keys in the JSON Web Key format [<cite><a class="bibref" href="#bib-JWK">JWK</a></cite>].  JWK keys can be imported [<a title="import" href="#import" class="internalDFN">IMPORT</a>] and exported [<a title="export" href="#export" class="internalDFN">EXPORT</a>].</p></li>
+      <li><p><dfn title="wrap" id="wrap">WRAP</dfn> which allows a web application to use a key to <em>wrap another key</em>, so that the wrapped key can be unwrapped by a party with the corresponding wrapping key.  While it is possible to create a key-wrapping and unwrapping mechanism with the other features listed, this feature provides a way to do so without exposing the key to be wrapped to JavaScript. <dfn title="wrap-sym" id="wrap-sym">WRAP-SYM</dfn> refers to symmetric key wrapping, and <dfn title="wrap-assym" id="dfn-wrap-assym">WRAP-ASSYM</dfn> refers to assymetric key wrapping.</p>
+      </li><li><p><dfn id="unwrap">UNWRAP</dfn> which allows a web application to use a key to unwrap another encrypted key or key pair, which can then be used in standard cryptographic operations.  While it is possible to create a key-wrapping and unwrapping mechanism with the other features listed, this feature provides a way to do so without exposing the key to be wrapped to JavaScript.  <dfn id="unwrap-sym" title="unwrap-sym">UNWRAP-SYM</dfn> refers to symmetric unwrapping, and <dfn id="unwrap-assym" title="unwrap-assym">UNWRAP-ASSYM</dfn> refers to assymetric unwrapping.</p>
+      <div class="issue"><div class="issue-title" aria-level="2" role="heading" id="h_issue_1"><span>Issue 1</span></div><div class=""><p>This feature is subject to discussion. See <a href="https://www.w3.org/2012/webcrypto/track/issues/35">ISSUE-35</a> logged by the WebCrypto WG.</p></div></div>
+    </li>
+      <li><p><dfn id="namedkey">NAMEDKEY</dfn> which allows an application in JavaScript to discover a <dfn id="pre-prov">pre-provisioned</dfn> key within the scope of the application's origin, which exists at the time of the application's first invocation, and has not been derived, generated or imported by the application using any of the features listed above; such keys may have been provisioned by a device manufacturer, for example, and the JavaSript application can access them for initial authorization and authentication at time of first invocation. </p>
+      <div class="note"><div class="note-title" aria-level="2" role="heading" id="h_note_2"><span>Note</span></div><div class=""><p>This feature is developed in the Key Discovery API [<cite><a class="bibref" href="#bib-webcrypto-key-discovery">webcrypto-key-discovery</a></cite>].</p></div></div>
+    </li>
+  </ul>
+    </section>
+    <section id="use-case-scenarios">
+      <!--OddPage--><h2 aria-level="1" role="heading" id="h2_use-case-scenarios"><span class="secno">3. </span>Use Case Scenarios</h2>
+      <p>This section collates use case scenarios that leverages the WebCrypto API [<cite><a class="bibref" href="#bib-WebCryptoAPI">WebCryptoAPI</a></cite>] or the Key Discovery API [<cite><a class="bibref" href="#bib-webcrypto-key-discovery">webcrypto-key-discovery</a></cite>]; in particular, these use cases leverage all the features listed above as <a href="#reqs">requirements</a>.  Where possible, sample code is provided, and should be considered illustrative only, since the underlying API specifications are changing.</p>
+    
+      <section id="banking-transactions">
+      <h3 aria-level="2" role="heading" id="h3_banking-transactions"><span class="secno">3.1 </span>Banking Transactions</h3>
+      <p>Park Jae-sang opens up a bank account with Gangnam Bank, and wishes to log-in and engage in online transactions, including account balance checking, online payments (with some automated scheduled payments), and account transfers between domestic and investment accounts.  The first time Park logs in to the Gangnam Bank website (abbreviated "GB") with a temporary verification code sent to his cell phone, the bank asks him to ascertain if the browser he is using is not at a kiosk; moreover, he is asked if it is a web browser and machine configuration he will use often.</p>
+      <p>He confirms that it is.  The GB web site then generates a public key/private key pair and stores the key pair in client-side storage, along with a one-time key escrow by the bank.  Additionally, Jae-sang is presented with the bank's public key, such that documents issued by the bank can be verified and decrypted.  Jae-sang is also presented with a user guide that explains the validity period of the key pair, and for how long they will persist.  [<a title="keygen" href="#keygen" class="internalDFN">KEYGEN-ASSYM</a>].</p>
+      <p>GB may generate assymetric keys as in the example below. </p>
+
+      <div class="example"><div class="example-title"><span>Example 1</span></div><pre class="example hightlight prettyprint"><span class="com">// Algorithm Object</span><span class="pln">
+</span><span class="kwd">var</span><span class="pln"> algorithmKeyGen </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+name</span><span class="pun">:</span><span class="pln"> </span><span class="str">"RSASSA-PKCS1-v1_5"</span><span class="pun">,</span><span class="pln">
+</span><span class="com">// RsaKeyGenParams</span><span class="pln">
+  </span><span class="kwd">params</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    modulusLength</span><span class="pun">:</span><span class="pln"> </span><span class="lit">2048</span><span class="pun">,</span><span class="pln">
+    publicExponent</span><span class="pun">:</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">Uint8Array</span><span class="pun">([</span><span class="lit">0x01</span><span class="pun">,</span><span class="pln"> </span><span class="lit">0x00</span><span class="pun">,</span><span class="pln"> </span><span class="lit">0x01</span><span class="pun">]),</span><span class="pln">  </span><span class="com">// Equivalent to 65537</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+</span><span class="pun">};</span><span class="pln">
+
+
+window</span><span class="pun">.</span><span class="pln">crypto</span><span class="pun">.</span><span class="pln">subtle</span><span class="pun">.</span><span class="pln">generateKey</span><span class="pun">(</span><span class="pln">algorithmKeyGen</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">false</span><span class="pun">,</span><span class="pln"> </span><span class="pun">[</span><span class="str">"sign"</span><span class="pun">]).</span><span class="kwd">then</span><span class="pun">(</span><span class="pln">
+  </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">keyPair</span><span class="pun">)</span><span class="pln">
+  </span><span class="pun">{</span><span class="pln">
+    </span><span class="com">// Store the key pair in IndexedDB</span><span class="pln">
+  </span><span class="pun">},</span><span class="pln">
+  console</span><span class="pun">.</span><span class="pln">error</span><span class="pun">.</span><span class="pln">bind</span><span class="pun">(</span><span class="pln">console</span><span class="pun">,</span><span class="pln"> </span><span class="str">"Unable to generate keys -- call your Banker or retry later."</span><span class="pun">));</span><span class="pln"> </span></pre></div>
+ 
+<p>Subsequent access to the GB website -- always over TLS -- may use keypairs for Jae-sang generated by GB.  For instance, JavaScript initially loaded by GB may contain a message that only Jae-sang can decipher, since it is encrypted with his public key; moreover, that message is signed by GB, which gives Jae-sang confidence that the message originates from GB, whose public key is used to verify signed messages by GB. The message is deciphered, and the deciphered message is then digitally signed and sent back to the GB server. </p>
+<p>  [<a title="keycall" href="#keycall" class="internalDFN">KEYCALL</a> | <a title="verify" href="#verify" class="internalDFN">VERIFY</a> | <a title="decrypt-assym" href="#decrypt-assym" class="internalDFN">DECRYPT-ASSYM</a> | <a title="sign" href="#sign" class="internalDFN">SIGN</a>]</p>  
+<p>In the example below, an encrypted message is signed by GB. The signature is verified, and upon successful verification of the digital signature, the encrypted message is decrypted. The decrypted message is then processed. This example should be seen as a simplification for illustrative purposes only. </p>
+<div class="issue"><div class="issue-title" aria-level="3" role="heading" id="h_issue_2"><span>Issue 2</span></div><div class=""><p>Semantics of the verify operation are still TBD in the group.  Moreover, some of this is best demonstrated using WRAP/UNWRAP, which still has unstable semantics. TODO: create another example using WRAP/UNWRAP.</p></div></div>
+<div class="example"><div class="example-title"><span>Example 2</span></div><pre class="example highlight prettyprint"><span class="com">// Encrypted and Signed Message generated by GB... the ellipsis are added. </span><span class="pln">
+</span><span class="com">// This could be in a parsable JWT format such that portions with signature and message are easily understood</span><span class="pln">
+
+</span><span class="kwd">var</span><span class="pln"> cat </span><span class="pun">=</span><span class="pln"> </span><span class="str">"qANQR1DBw04Dk2uPpEjcJT8QD/0VCfFK2XDM5Cg4iTRwmXrB+Pp8SMK5x09WkYqc... "</span><span class="pun">;</span><span class="pln">
+
+</span><span class="com">/** 
+  1. Generate an ArrayBufferView of the overall message.
+  2. Bit-manipulate this with the ArrayBufferView API to obtain the portion of bytes 
+  constituting the signature as an ArrayBufferView, and the message as an ArrayBufferView.
+  This could use JWT objects.
+  3. Obtain the public key of GB from IndexedDB -- pubGBKeySign -- a step not shown here.
+  4. Verify the signature.
+  5. Upon verification, decrypt the message.  This message can be decrypted only by Jae-Sang, using his private key          
+
+**/</span><span class="pln">
+
+</span><span class="kwd">var</span><span class="pln"> data </span><span class="pun">=</span><span class="pln"> createArrayBufferView</span><span class="pun">(</span><span class="pln">cat</span><span class="pun">);</span><span class="pln">
+</span><span class="kwd">var</span><span class="pln"> signature </span><span class="pun">=</span><span class="pln"> extractSignature</span><span class="pun">(</span><span class="pln">data</span><span class="pun">);</span><span class="pln">
+</span><span class="kwd">var</span><span class="pln"> pMessage </span><span class="pun">=</span><span class="pln"> extractMessage</span><span class="pun">(</span><span class="pln">data</span><span class="pun">);</span><span class="pln">
+</span><span class="kwd">var</span><span class="pln"> mRSARFC3447 </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  name</span><span class="pun">:</span><span class="pln"> </span><span class="str">"RSASSA-PKCS1-v1_5"</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">params</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+                    hash</span><span class="pun">:</span><span class="pln"> </span><span class="str">"SHA-256"</span><span class="pln">
+                </span><span class="pun">}</span><span class="pln">
+</span><span class="pun">};</span><span class="pln">
+</span><span class="com">// Verify GB signature</span><span class="pln">
+window</span><span class="pun">.</span><span class="pln">crypto</span><span class="pun">.</span><span class="pln">subtle</span><span class="pun">.</span><span class="pln">verify</span><span class="pun">(</span><span class="pln">mRSARFC3447</span><span class="pun">,</span><span class="pln"> pubGBKeySign</span><span class="pun">,</span><span class="pln"> signature</span><span class="pun">).</span><span class="kwd">then</span><span class="pun">(</span><span class="pln">
+</span><span class="kwd">function</span><span class="pun">(</span><span class="pln">verified</span><span class="pun">){</span><span class="pln">
+
+</span><span class="com">/* 
+  If verified, obtain a prvKeyEncrypt from IndexedDB representing Jae-sang's private key and:
+  1. Decrypt the message.  Note that here, typically the encryption key might be symmetric
+     and wrapped.  This sample simplifies this by not demonstrating key wrapping.
+  2. Do further operations, like sign the decrypted message and send it back
+  Else the signature is invalid -- abort
+*/</span><span class="pln">
+
+  </span><span class="kwd">return</span><span class="pln"> window</span><span class="pun">.</span><span class="pln">crypto</span><span class="pun">.</span><span class="pln">subtle</span><span class="pun">.</span><span class="pln">decrypt</span><span class="pun">(</span><span class="str">"RSAES-PKCS1-v1_5"</span><span class="pun">,</span><span class="pln"> prvKeyEncrypt</span><span class="pun">,</span><span class="pln"> pMessage</span><span class="pun">);</span><span class="pln">
+
+</span><span class="pun">},</span><span class="pln">
+console</span><span class="pun">.</span><span class="pln">log</span><span class="pun">.</span><span class="pln">bind</span><span class="pun">(</span><span class="pln">console</span><span class="pun">,</span><span class="pln"> </span><span class="str">"Verification Error!  Contact Bank."</span><span class="pun">)).</span><span class="kwd">then</span><span class="pun">(</span><span class="pln">
+</span><span class="kwd">function</span><span class="pln"> decrypted</span><span class="pun">(</span><span class="pln">message</span><span class="pun">){</span><span class="pln">
+
+  </span><span class="com">// Conduct operations on GB message</span><span class="pln">
+  </span><span class="com">// This could include signing the decrypted message and sending it back to GB</span><span class="pln">
+
+</span><span class="pun">},</span><span class="pln">
+console</span><span class="pun">.</span><span class="pln">error</span><span class="pun">.</span><span class="pln">bind</span><span class="pun">(</span><span class="pln">console</span><span class="pun">,</span><span class="pln"> </span><span class="str">"Decryption Error!  Contact Bank."</span><span class="pun">)</span><span class="pln">
+
+</span><span class="pun">);</span></pre></div>
+<p>
+As long as Jae-sang uses the same browser, within the validity period of the keys that he generated, he can use them as credentials by signing, verifying,  encrypting and decrypting bits of data sent by GB.  Additionally, Jae-sang can digitally sign online checks, authorize payments, and sign tax forms that he submits to the bank site using similarly generated assymetric keys. He can also perform the following tasks:</p>
+<ol>
+    <li>Submit documents to GB that only GB can read, with the assurance that these have come from Jae-sang. Such documents include confidential financial information, and may be encrypted at submission. This can follow the well-understood pattern of wrapping keys using assymetric encryption, but encrypting and decrypting larger documents using symmetric encryption. [<a title="sign" href="#sign" class="internalDFN">SIGN</a> | <a title="derive-sym" href="#derive-sym" class="internalDFN">DERIVE-SYM</a> | <a title="encrypt-sym" href="#encrypt-sym" class="internalDFN">ENCRYPT-SYM</a> | <a title="wrap" href="#wrap" class="internalDFN">WRAP-ASSYM</a>]</li>
+  <li>Receive encrypted documents from GB that only he can read, with the assurance that they have come from GB and only GB. These include his private bank statements and tax documents, which are signed with his public key, already generated and obtained by GB in a previous step. [<a title="verify" href="#verify" class="internalDFN">VERIFY</a> | <a title="unwrap" href="#unwrap" class="internalDFN">UNWRAP-ASSYM</a> | <a title="decrypt-sym" href="#decrypt-sym" class="internalDFN">DECRYPT-SYM</a>]</li>
+
+</ol>
+     </section>
+<section id="authenticated-video-services">
+  <h3 aria-level="2" role="heading" id="h3_authenticated-video-services"><span class="secno">3.2 </span>Authenticated Video Services</h3>
+      <p>A Video Service Provider wishes to distribute high quality commercial video to users of web-enabled TVs and Set Top Boxes. The video in question can only be delivered to devices with certain capabilities that meet the service provider's security requirements, which may vary based on the content and content quality to be delivered. In order to determine whether the device is indeed approved to be used with the video service, the service provider arranges for suitable devices to each be pre-provisioned with a cryptographic key and associated identifier by the device manufacture, which are made known to the service provider.</p>
+<p>
+Ryan has just bought a new TV and wishes to watch video content from the service provider. He connects the TV to the Internet, and navigates to the video provider's website. The video provider's site establishes a secure communication channel between the video provider's page on the TV and the video provider's servers, proving to the servers that Ryan's TV is indeed one of those that meets the security requirements by use of the cryptographic key and identifier pre-provisioned on the TV. The video provider's page on the TV likewise verifies that it is talking to a genuine server, preventing the hijacking of Ryan's video watching by a malicious third party. To ensure the highest security, the pre-provisoned key is used minimally in this process to deliver session keys.
+</p>
+
+<p>[<a title="namedkey" href="#namedkey" class="internalDFN">NAMEDKEY</a> | <a title="verify" href="#verify" class="internalDFN">VERIFY</a> | <a title="unwrap" href="#unwrap" class="internalDFN">UNWRAP</a> | <a title="mac" href="#mac" class="internalDFN">MAC</a> | <a title="encrypt-sym" href="#encrypt-sym" class="internalDFN">ENCRYPT-SYM</a> | <a title="decrypt-sym" href="#decrypt-sym" class="internalDFN">DECRYPT-SYM</a> | <a title="sign" href="#sign" class="internalDFN">SIGN</a>]</p>
+<p>The Key Discovery API [<cite><a class="bibref" href="#bib-webcrypto-key-discovery">webcrypto-key-discovery</a></cite>] provides a mechanism for an application in JavaScript to detect the presence of a pre-provisioned key using the name of a disclosed identifier.  Unlike other examples presented here, this example presumes a key store that is not IndexedDB [<cite><a class="bibref" href="#bib-INDEXEDDB">INDEXEDDB</a></cite>] or <code>localStorage</code> [<cite><a class="bibref" href="#bib-webstorage">webstorage</a></cite>]. </p>
+<div class="example"><div class="example-title"><span>Example 3</span></div><pre class="example highlight prettyprint"><span class="pln">window</span><span class="pun">.</span><span class="pln">cryptoKeys</span><span class="pun">.</span><span class="pln">getKeysByName</span><span class="pun">(</span><span class="str">"VetFlxL33t_Device.p1a.b11"</span><span class="pun">).</span><span class="kwd">then</span><span class="pun">(</span><span class="pln">
+</span><span class="kwd">function</span><span class="pln"> authorize</span><span class="pun">(</span><span class="pln">namedKey</span><span class="pun">)</span><span class="pln">
+</span><span class="pun">{</span><span class="pln">
+  </span><span class="kwd">if</span><span class="pun">(</span><span class="pln">namedKey</span><span class="pun">.</span><span class="pln">name </span><span class="pun">=</span><span class="pln"> </span><span class="str">"VetFlxL33t_Device.p1a.b11"</span><span class="pun">)</span><span class="pln">
+  </span><span class="com">// Authorize</span><span class="pln">
+  </span><span class="com">// else console.log.bind(console, "Device Not Authorized!")</span><span class="pln">
+</span><span class="pun">}</span><span class="pln">
+</span><span class="kwd">function</span><span class="pln"> signUp</span><span class="pun">()</span><span class="pln">
+</span><span class="pun">{</span><span class="pln">
+  </span><span class="com">// Named Key not found scenario</span><span class="pln">
+  </span><span class="com">// Convert new device to New User</span><span class="pln">
+
+  </span><span class="pun">.....</span><span class="pln">
+</span><span class="pun">}</span><span class="pln">
+</span><span class="pun">);</span></pre></div>
+
+<p>Ryan creates an account with the service provider and signs up for the lowest level of service, which enables him to connect five devices to the service at any one time. Ryan's account creation involved the creation of a specific key pair to uniquely identify him, and safely exchanges keys with the video service's servers. [<a title="keygen-assym" href="#keygen-assym" class="internalDFN">KEYGEN-ASSYM</a> | <a title="keyex" href="#keyex" class="internalDFN">KEYEX</a> | <a title="keycall" href="#keycall" class="internalDFN">KEYCALL</a> | <a title="sign" href="#sign" class="internalDFN">SIGN</a> | <a title="verify" href="#verify" class="internalDFN">VERIFY</a>]</p>
+<p>The video service provider is able to track the number of devices Ryan has connected to the service by virtue of the pre-provisioned keys and identifiers, so that when he attempts to connect a sixth device, the service can prompt him to upgrade his service level or deactivate one of the existing devices. [<a title="keycall" href="#keycall" class="internalDFN">KEYCALL</a> | <a title="namedkey" href="#namedkey" class="internalDFN">NAMEDKEY</a>]</p>
+<p> Ryan finally attempts to play some video through the service. By virtue of the secure connection, the video service provider is able to make content authorization decisions that are tailored to the security capabilities of the exact make, model and version of TV that Ryan has purchased, thereby ensuring that the content providers security requirements are met in respect of the specific content requested. Ryan's devices send encrypted messages about quality of service and watching behavior to the video service provider. [<a title="namedkey" href="#namedkey" class="internalDFN">NAMEDKEY</a> | <a title="keycall" href="#keycall" class="internalDFN">KEYCALL</a> | <a title="sign" href="#sign" class="internalDFN">SIGN</a> | <a title="verify" href="#verify" class="internalDFN">VERIFY</a> | <a title="mac" href="#mac" class="internalDFN">MAC</a> | <a title="wrap" href="#wrap" class="internalDFN">WRAP</a> | <a title="encrypt" href="#encrypt" class="internalDFN">ENCRYPT</a>]</p>
+</section>
+<section id="code-sanctity-and-bandwidth-saver">
+  <h3 aria-level="2" role="heading" id="h3_code-sanctity-and-bandwidth-saver"><span class="secno">3.3 </span>Code Sanctity and Bandwidth Saver</h3>
+<p>A major social networking site wishes to optimize website performance by storing JavaScript libraries that are served from a CDN in <code>localStorage</code> [<cite><a class="bibref" href="#bib-webstorage">webstorage</a></cite>] or in <code>IndexedDB</code> [<cite><a class="bibref" href="#bib-INDEXEDDB">INDEXEDDB</a></cite>], preventing server rountrips to the CDN.  When the code in the libraries has undergone critical modifications, the social networking site wishes to determine whether the version stored in the client needs updating.  </p>
+<p>Using the Web Crypto API, the social networking site might verify a digest of the code from the CDN and compare it to a digest of the code in <code>localStorage</code> [<cite><a class="bibref" href="#bib-webstorage">webstorage</a></cite>].  The social network can generate a digest of the material extracted from the client storage, and compare this to a pristine version of the digest that the social networking site makes available to the client. If the two digests match, the code is deemed the latest from the CDN, and does not need to be refreshed. [<a title="digest" href="#digest" class="internalDFN">DIGEST</a>]</p>
+<div class="example"><div class="example-title"><span>Example 4</span></div><pre class="example highlight prettyprint"><span class="com">// Retrieve a SHA-256 digest of the pristine version of the code</span><span class="pln">
+</span><span class="com">// This is retrieved from the server</span><span class="pln">
+        </span><span class="kwd">var</span><span class="pln"> src_hash </span><span class="pun">=</span><span class="pln"> getHashFromCDN</span><span class="pun">();</span><span class="pln">
+        </span><span class="kwd">function</span><span class="pln"> init</span><span class="pun">()</span><span class="pln">
+        </span><span class="pun">{</span><span class="pln">
+          </span><span class="kwd">var</span><span class="pln"> src </span><span class="pun">=</span><span class="pln"> window</span><span class="pun">.</span><span class="pln">localStorage</span><span class="pun">.</span><span class="pln">getItem</span><span class="pun">(</span><span class="str">'src'</span><span class="pun">);</span><span class="pln">
+
+          </span><span class="com">/*  Create a Digester and compare 
+
+            1. Assume utility function createArrayBufferView that creates an ArrayBufferView of the src
+            (and note that the comparison does depend on this being consistent on client and server).
+
+            2. Compare the two values after digest is successfully generated.
+
+            In practice including an onprogress handler and onerror handler is recommended - the code here
+            is terse for readability.
+
+            */</span><span class="pln">
+          bufferData </span><span class="pun">=</span><span class="pln"> createArrayBufferView</span><span class="pun">(</span><span class="pln">src</span><span class="pun">);</span><span class="pln">  
+          window</span><span class="pun">.</span><span class="pln">crypto</span><span class="pun">.</span><span class="pln">subtle</span><span class="pun">.</span><span class="pln">digest</span><span class="pun">(</span><span class="str">"SHA-256"</span><span class="pun">,</span><span class="pln"> bufferData</span><span class="pun">).</span><span class="kwd">then</span><span class="pun">(</span><span class="pln">
+          </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">digest</span><span class="pun">){</span><span class="pln">
+            </span><span class="kwd">if</span><span class="pun">(</span><span class="pln">digest </span><span class="pun">===</span><span class="pln"> src_hash</span><span class="pun">)</span><span class="pln">
+            </span><span class="pun">{</span><span class="pln">
+              </span><span class="kwd">var</span><span class="pln"> transformed </span><span class="pun">=</span><span class="pln"> JSON</span><span class="pun">.</span><span class="pln">parse</span><span class="pun">(</span><span class="pln">src</span><span class="pun">);</span><span class="pln">
+        
+              </span><span class="com">/* Now do stuff with transformed -- it is legitimately from the mothership */</span><span class="pln">
+
+
+            </span><span class="pun">}</span><span class="pln">
+            </span><span class="kwd">else</span><span class="pln">
+            </span><span class="pun">{</span><span class="pln">
+              request</span><span class="pun">.</span><span class="pln">pull</span><span class="pun">(</span><span class="str">"https://cdn.example/src.js"</span><span class="pun">)</span><span class="pln">
+
+              </span><span class="com">// Put it in localStore</span><span class="pln">
+            </span><span class="pun">}</span><span class="pln">  
+           </span><span class="pun">},</span><span class="pln">
+           </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">error</span><span class="pun">){</span><span class="pln">
+           </span><span class="com">// Fetch the code anew </span><span class="pln">
+
+            request</span><span class="pun">.</span><span class="pln">pull</span><span class="pun">(</span><span class="str">"https://cdn.example/src.js"</span><span class="pun">);</span><span class="pln">
+
+           </span><span class="com">// Put it in localStore</span><span class="pln">
+
+         </span><span class="pun">});</span><span class="pln">
+
+        </span><span class="pun">}</span><span class="pln">
+</span></pre></div>
+<div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_3"><span><span class="typ">Note</span></span></div><div class=""><span class="typ">The</span><span class="pln"> conversion to an </span><code><span class="typ">ArrayBufferView</span></code><span class="pln"> must be consistent </span><span class="kwd">with</span><span class="pln"> the conversion to the bits on the server</span><span class="pun">-</span><span class="pln">side</span><span class="pun">,</span><span class="pln"> so that the SHA</span><span class="pun">-</span><span class="lit">256</span><span class="pln"> digests can be compared accurately</span><span class="pun">.</span></div></div>
+<p>In this case, <code>getHashFromCDN()</code> runs within the origin of the page of the social networking site, accessed through TLS, and allows the CDN to transform the code blob into an ArrayBufferView, perform a digest operation, and then allow client-side code to do the same with what is in <code>localStorage</code>; if the two digests are exactly equivalent, the code in <code>localStorage</code> is sanctioned for use, and if not, code is fetched anew from the CDN.</p>
+</section>
+<section id="encrypted-communications-via-webmail">
+  <h3 aria-level="2" role="heading" id="h3_encrypted-communications-via-webmail"><span class="secno">3.4 </span>Encrypted Communications via Webmail</h3>
+  <p>Tantek wishes to communicate with Ryan securely. Moreover, Tantek wishes to use an email web application (EWA) provided by a third party, which is a web site that allows users who have accounts to set up email accounts of their own choosing -- that is, users can enter in existing POP/IMAP/SMTP username and password credentials, or simply use an email address provided by the EWA at its own address. The EWA serves to send messages, as well as provide a message store available from anywhere. It allows for the possibility of sending encrypted messages.</p>
+  <p>Ryan provides a PGP key on his website, encoded in the relevant conventions. For instance, he follows the common practice of including a Base64 text string that represents his public key.</p>
+  <p>Ryan uses the hCard format [<cite><a class="bibref" href="#bib-hCard">hCard</a></cite>] to encapsulate contact information with some semantic annotation within the markup of his webpage. Within the hCard ([<cite><a class="bibref" href="#bib-hCard">hCard</a></cite>]), he may include a snippet like this:</p>
+  <div class="example"><div class="example-title"><span>Example 5</span></div><pre class="example highlight prettyprint"><span class="tag">&lt;span</span><span class="pln"> </span><span class="atn">class</span><span class="pun">=</span><span class="atv">"key"</span><span class="tag">&gt;</span><span class="pln">
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG/MacGPG2 v2.0.17 (Darwin)
+Comment: GPGTools - http://gpgtools.org
+ 
+nQENBE4sjPMBCAC0ublKDnsdwD9B71bygmwVxn3hX6zw4H1Qlc6wPc0/OepjqVyq
+...
+-----END PGP PUBLIC KEY BLOCK-----
+</span><span class="tag">&lt;/span&gt;</span></pre></div>
+<p>Logging on to EWA, Tantek is prompted to import Ryan's contact information from his web page, and is notified that Ryan's public key will also be imported. EWA then begins the process of importing Ryan's PGP key, since it understands how to parse public keys within hCard content in markup. In order to import the key for storage under EWA's origin, it must first "scrub" the key format to be in one of the accepted import formats of the WebCrypto API.</p>
+<p>Here, a standardized Contacts API could be used to procure Ryan's contact information, and can be one way of importing the key for use by an application such as EWA. Due the same origin policy [<cite><a class="bibref" href="#bib-HTML">HTML</a></cite>], EWA must import the key, so that operations conducted with it fall under the domain of EWA. The key is converted to JSON Web Key format [<cite><a class="bibref" href="#bib-JWK">JWK</a></cite>], which the WebCrypto API accepts and then imports it for use within the web application.</p>
+<div class="example"><div class="example-title"><span>Example 6</span></div><pre class="example highlight prettyprint"><span class="com">/**
+  1. First convert the PGP key format into an "importable" format by the WebCrypto API; assume "keyString" is the PGP format
+     Utility functions are assumed here as well. JWK by JOSE is supported format.
+  2. Import the key using the WebCrypto API
+  **/</span><span class="pln">
+
+</span><span class="kwd">var</span><span class="pln"> alg </span><span class="pun">=</span><span class="pln"> </span><span class="str">"RSA"</span><span class="pun">;</span><span class="pln">
+
+</span><span class="kwd">var</span><span class="pln"> jwkKey </span><span class="pun">=</span><span class="pln"> convertToJWK</span><span class="pun">(</span><span class="pln">keyString</span><span class="pun">,</span><span class="pln"> alg</span><span class="pun">);</span><span class="pln">
+
+</span><span class="kwd">var</span><span class="pln"> jwkKeyObject </span><span class="pun">=</span><span class="pln"> JSON</span><span class="pun">.</span><span class="pln">parse</span><span class="pun">(</span><span class="pln">jwkKey</span><span class="pun">);</span><span class="pln">
+
+</span><span class="com">/**
+
+  Key import syntax is still undefined in the spec.
+
+  1. The key gets imported, and is used to sign messages.
+  2. The key can also be used to WRAP-ASSYM a symmetric key
+  3. The symmetric key from 2. above can be used to encrypt messages
+
+**/</span><span class="pln">
+
+  window</span><span class="pun">.</span><span class="pln">crypto</span><span class="pun">.</span><span class="pln">subtle</span><span class="pun">.</span><span class="pln">importKey</span><span class="pun">(</span><span class="str">"jwk"</span><span class="pun">,</span><span class="pln"> jwkKey</span><span class="pun">,</span><span class="pln"> </span><span class="str">"RSAES-PKCS1-v1_5"</span><span class="pun">,</span><span class="pln"> </span><span class="str">"true"</span><span class="pun">,</span><span class="pln"> </span><span class="pun">[</span><span class="str">"encrypt"</span><span class="pun">,</span><span class="pln"> </span><span class="str">"verify"</span><span class="pun">]).</span><span class="kwd">then</span><span class="pun">(</span><span class="pln">handleImport</span><span class="pun">);</span><span class="pln">
+
+  </span><span class="kwd">function</span><span class="pln"> handleImport</span><span class="pun">(</span><span class="kwd">bool</span><span class="pun">)</span><span class="pln">
+  </span><span class="pun">{</span><span class="pln">
+    </span><span class="com">// If successfully imported, store key in IndexedDB</span><span class="pln">
+    </span><span class="com">// Retrieve key later for encypted communications and signature verification</span><span class="pln">
+    </span><span class="com">// If not, console.error.bind(console, "Error Importing Key")</span><span class="pln">
+  </span><span class="pun">}</span></pre></div>
+<p>The key now serves as a key within the origin of EWA. EWA can then offer Tantek the option of encrypting messages to Ryan, which may follow the pattern below:</p>
+<ol>
+  <li>Tantek imports the key into the EWA, and composes a message that he wishes to send only to Ryan. [<a title="JSONWebKey" href="#JSONWebKey" class="internalDFN">JWK</a>]</li>
+  <li>EWA generates a symmetric key on Tantek's behalf, and uses Ryan's public key, just imported, to wrap that key. [<a title="derive-sym" href="#derive-sym" class="internalDFN">DERIVE-SYM</a> | <a title="keycall" href="#keycall" class="internalDFN">KEYCALL</a> | <a title="wrap" href="#wrap" class="internalDFN">WRAP-ASSYM</a>].</li>
+  <li>EWA then signs the encrypted message and wrapped key, and sends them from Tantek's email account on Tantek's behalf [<a title="sign" href="#sign" class="internalDFN">SIGN</a> | <a title="encrypt-sym" href="#encrypt-sym" class="internalDFN">ENCRYPT-SYM</a>].</li>
+  <li>Ryan also logs into EWA. Separately, he has also imported Tantek's public key to EWA using a similar mechanism that Ryan did. In this case, as long as Ryan has Tantek's public key, he does not strictly need to log into the same EWA as Tantek does; instead, Ryan may choose another email web application with a different origin, but with similar functionality, such that the public key is imported to be used within the origin of the web application. Ryan receives the message, verifies that it is indeed from Tantek, decrypts and reads the message using his corresponding private key. [<a title="keycall" href="#keycall" class="internalDFN">KEYCALL</a> | <a title="verify" href="#verify" class="internalDFN">VERIFY</a> | <a title="unwrap" href="#unwrap" class="internalDFN">UNWRAP-ASSYM</a> | <a title="decrypt-sym" href="#decrypt-sym" class="internalDFN">DECRYPT-SYM</a>].</li>
+</ol>
+<div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_4"><span>Note</span></div><div class="">Importing keys from across the web is safest when the provenance of the keys is known.</div></div>
+</section>
+<section id="off-the-record-real-time-messaging">
+  <h3 aria-level="2" role="heading" id="h3_off-the-record-real-time-messaging"><span class="secno">3.5 </span>Off The Record Real Time Messaging</h3>
+  <p>David and Nadim wish to have an "Off The Record" chat in real time, completely between them, primarily using text, as well as the ability to share digital data such as photographs. They log on to a chat server, and connect to each other's machines directly. The server merely serves up the UI for the chat client, and does not log their conversation (and in fact, cannot). The respective web pages on David and Nadim's browsers may use the WebCrypto API to do the following things:</p>
+  <div class="issue"><div class="issue-title" aria-level="3" role="heading" id="h_issue_3"><span>Issue 3</span></div><div class="">ISSUE: The OTR use case needs more protocol breakdown, including possible use of Socialist Millionaire methodology.  Additionally, references may need to be added to the respec - biblio.js for OTR and for the Socialist Millionaire protocol; currently, this seems normative: <a href="http://www.cypherpunks.ca/otr/Protocol-v3-4.0.0.html">http://www.cypherpunks.ca/otr/Protocol-v3-4.0.0.html</a>. </div></div>
+  <ol>
+    <li>Generate assymetric keys for David and Nadim respectively, such that both get public and private keys. [<a title="derive-assym" href="#derive-assym" class="internalDFN">DERIVE-ASSYM</a>]</li>
+    <li>Engage in a key exchange, so that David and Nadim get each other's public keys. It is conceivable that using the WebCrypto API the chat application can enable David and Nadim to use a Diffie-Hellman key exchange, or a mechanism such as SIGMA over WebSockets [<cite><a class="bibref" href="#bib-WEBSOCKETS-API">WEBSOCKETS-API</a></cite>][<cite><a class="bibref" href="#bib-WEBSOCKETS-PROTOCOL">WEBSOCKETS-PROTOCOL</a></cite>]. The key exchange which accompanies message exchanges involves the generation of cryptographically secure random numbers. [<a title="random" href="#random" class="internalDFN">RANDOM</a> | <a title="keyex" href="#keyex" class="internalDFN">KEYEX</a> | <a title="keyex-dh" href="#keyex-dh" class="internalDFN">KEYEX-DH</a>]</li>
+    <li>David or Nadim may now compose a message to each other. Each message exchange involves authentication, message authentication codes, further key derivation, and further key exchanges. [<a title="sign" href="#sign" class="internalDFN">SIGN</a> | <a title="verify" href="#verify" class="internalDFN">VERIFY</a> | <a title="mac" href="#mac" class="internalDFN">MAC</a> | <a title="random" href="#random" class="internalDFN">RANDOM</a> | <a title="derive" href="#derive" class="internalDFN">DERIVE</a> | <a title="keyex" href="#keyex" class="internalDFN">KEYEX</a> | <a title="keyex-dh" href="#keyex-dh" class="internalDFN">KEYEX-DH</a>] </li>
+  </ol>
+</section>
+<section id="documents-in-the-cloud">
+<h3 aria-level="2" role="heading" id="h3_documents-in-the-cloud"><span class="secno">3.6 </span>Documents In The Cloud</h3>
+<p>Vijay wishes to confidentially store certain documents of various file types using a web service that he pays a monthly subscription to for such confidential storage. The confidential storage web application (abbreviated "SWA") makes the claim that all storage is encrypted, and that even it cannot access the contents of what a user stores. He can drag and drop content from his laptop onto a web page of the service, and it automatically encrypts it and stores it in an encrypted manner. Vijay can do the following:</p>
+<ol>
+<li>Log on to the service using his credentials; after the service determines that Vijay is using his primary browser, which he will use to access the service subsequently, it generates both signature and encryption key pairs. Key generation may be similar to the banking use case. [<a title="derive-assym" href="#derive-assym" class="internalDFN">KEYGEN-ASSYM</a> | <a title="keyex-dh" href="#keyex-dh" class="internalDFN">KEYEX-DH</a> | <a title="verify" href="#verify" class="internalDFN">VERIFY</a> | <a title="unwrap" href="#unwrap" class="internalDFN">UNWRAP</a> | <a title="decrypt-sym" href="#decrypt-sym" class="internalDFN">DECRYPT-SYM</a> | <a title="sign" href="#sign" class="internalDFN">SIGN</a>] </li>
+<li>Drag over content from his underlying file system that he wishes to store. The SWA signs and encrypts the content, and uploads it. It may make multipart cryptographic operations on a given file, and it may also "chunk upload" large content, depending on file-size. [<a title="sign" href="#sign" class="internalDFN">SIGN</a> | <a title="hmac" href="#hmac" class="internalDFN">HMAC</a> | <a title="derive-sym" href="#derive-sym" class="internalDFN">DERIVE-SYM</a> | <a title="encrypt-sym" href="#encrypt-sym" class="internalDFN">ENCRYPT-SYM</a> | <a title="keycall" href="#keycall" class="internalDFN">KEYCALL</a> | <a title="wrap" href="#wrap" class="internalDFN">WRAP</a>] </li>   
+<li>Store that content on the server, with the assurance that it is stored there in a way that is virtually undecipherable to third-parties, including those running the SWA.</li>
+<li>Later, Vijay can retrieve the content, and save it back to his local file system. He has the assurance that the content has not been tampered with since it was stored, and that it in fact is from SWA. [<a title="keycall" href="#keycall" class="internalDFN">KEYCALL</a> | <a title="verify" href="#verify" class="internalDFN">VERIFY</a> | <a title="hmac" href="#hmac" class="internalDFN">HMAC</a> | <a title="unwrap" href="#unwrap" class="internalDFN">UNWRAP</a> | <a title="decrypt-sym" href="#decrypt-sym" class="internalDFN">DECRYPT-SYM</a>] </li> 
+</ol>
+
+    </section>
+    <section id="browserid-use-of-cryptography-for-identity-protocols">
+<h3 aria-level="2" role="heading" id="h3_browserid-use-of-cryptography-for-identity-protocols"><span class="secno">3.7 </span>BrowserID: Use of Cryptography for Identity Protocols</h3>
+<p>
+Karen, an avid photographer, has been looking for a site to store all the photos that she posts on various websites.  Instead of creating yet another online identity for another photo storage website, Karen is pleased to find a photo-storage service that uses the BrowserID protocol [<cite><a class="bibref" href="#bib-BrowserID">BrowserID</a></cite>], allowing her to use any email address as an identity.  The photo-storage service (PSS) is a <em>Relying Party</em> of the protocol, and Karen elects to use Persona.org as an <em>Identity Provider</em>, since she sees a "log-in with Persona" button on the PSS website.  She notes that her preferred email provider is not yet an Identity Provider for use with BrowserID [<cite><a class="bibref" href="#bib-BrowserID">BrowserID</a></cite>], and thus uses Persona.org as an interim or fallback option.
+</p>
+<p>
+Karen first creates a "verified email" identity with Persona.org.  Persona.org sends out an email with a hyperlink in it to an email address that she chooses to use as one of her identities (she chooses "karen@webcrypto.com"), especially for use with PSS.  She then logs in to this email account and clicks on the verification link sent by Persona.org.  Persona.org is thus able to determine that Karen owns this email address.  The following now happens:</p>
+<ol>
+<li><p>Persona.org creates assymetric keys, public and private, on behalf of the user. [<a title="keygen-assym" href="#keygen-assym" class="internalDFN">KEYGEN-ASSYM</a>]</p></li>
+<li><p>Persona.org's web page then sends the public key just created over TLS for storage on Persona.org's servers, and stores the keypair in the browser's client-side storage.  This could include [<cite><a class="bibref" href="#bib-INDEXEDDB">INDEXEDDB</a></cite>] and <code>localStorage</code> [<cite><a class="bibref" href="#bib-webstorage">webstorage</a></cite>], although in browsers with a native implementation of BrowserID [<cite><a class="bibref" href="#bib-BrowserID">BrowserID</a></cite>], this might include another key store.</p></li>
+<li><p>Persona.org then generates a certificate, which involves signing the public key just created, the email address, and a validity interval; the signature here is performed by Persona.org.  This certificate takes the form of a JSON Web Token [<cite><a class="bibref" href="#bib-JWT">JWT</a></cite>] object. The [<cite><a class="bibref" href="#bib-JWT">JWT</a></cite>] object -- the certificate created above -- is itself stored in the browser's client storage, which can be [<cite><a class="bibref" href="#bib-INDEXEDDB">INDEXEDDB</a></cite>] or <code>localStore</code> [<cite><a class="bibref" href="#bib-webstorage">webstorage</a></cite>]; if the browser implementation has a native implementation of [<cite><a class="bibref" href="#bib-BrowserID">BrowserID</a></cite>], another key and certificate store could exist. [<a title="keycall" href="#keycall" class="internalDFN">KEYCALL</a> | <a title="sign" href="#sign" class="internalDFN">SIGN</a>]</p></li>
+</ol>
+<p>Karen now has at least one identity, namely her email of choice, verified on Persona.org, along with a certificate issued by Persona.org.  She then decides to log in to the PSS website using that identity.  The following sequence then takes place:</p>
+<ol>
+<li><p>Karen accesses the website of the PSS, and then clicks on the "Log in with Persona" link.  The log-in link loads script from Persona.org in an <code>iframe</code>, which creates an assertion structure as a JWT [<cite><a class="bibref" href="#bib-JWT">JWT</a></cite>].  The assertion consists of the name of the Relying Party, also referred to as an <em>audience</em>, and a validity period.  This assertion is signed using the private key that was created previously. [<a title="keycall" href="#keycall" class="internalDFN">KEYCALL</a> | <a title="sign" href="#sign" class="internalDFN">SIGN</a>]</p></li>
+<li>Within script loaded by Persona.org, the signed assertion is then combined with the certificate created previously into a new [<cite><a class="bibref" href="#bib-JWT">JWT</a></cite>] structure, which might look like this:
+  <div class="example"><div class="example-title"><span>Example 7</span></div><pre class="example highlight prettyprint"><span class="com">// This is for illustrative purposes only</span><span class="pln">
+</span><span class="com">// Proper use of JWT uses Base64 </span><span class="pln">
+
+assertionPlusCert </span><span class="pun">=</span><span class="pln"> 
+</span><span class="pun">{</span><span class="pln">
+  </span><span class="str">"assertion"</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    </span><span class="str">"audience"</span><span class="pun">:</span><span class="pln"> </span><span class="str">"photosharingsite.example"</span><span class="pun">,</span><span class="pln">
+    </span><span class="str">"valid-until"</span><span class="pun">:</span><span class="pln"> </span><span class="lit">1308859352261</span><span class="pun">,</span><span class="pln">
+  </span><span class="pun">},</span><span class="pln"> </span><span class="com">// signed using Karen's private key minted by Persona.org for karen@webcrypto.com</span><span class="pln">
+  </span><span class="str">"certificate"</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+      </span><span class="str">"email"</span><span class="pun">:</span><span class="pln"> </span><span class="str">"karen@webcrypto.com"</span><span class="pun">,</span><span class="pln">
+      </span><span class="str">"public-key"</span><span class="pun">:</span><span class="pln"> </span><span class="str">"</span><span class="str">"</span><span class="pun">,</span><span class="pln">
+      </span><span class="str">"valid-until"</span><span class="pun">:</span><span class="pln"> </span><span class="lit">1308860561861</span><span class="pun">,</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln"> </span><span class="com">// certificate is signed by Persona.org</span><span class="pln">
+</span><span class="pun">};</span><span class="pln">
+</span></pre></div>
+</li>
+<li><p>Persona.org then sends this over to script hosted by PSS using cross-origin messaging.</p>
+
+<div class="example"><div class="example-title"><span>Example 8</span></div><pre class="example highlight prettyprint"><span class="com">/** 
+   This code is for illustrative purposes only and runs on Persona.org.
+
+   1. Assume a combined assertion and certificate structure in JWT format for use with postMessage()
+      var assertionPlusCert is a JWT like above
+   2. Obtain the karen@webcrypto.com private key for signing assertion from client-side storage
+   3. Send the certificate structure assertionPlusCert over for verification
+   
+   Caveat emptor: step 3 can be made more efficient in terms of WebCrypto API usage if
+   Karen's public key can be sent over using the structured clone algorithm.  Currently
+   we proceed with it as a JWK embedded in a JWT.
+
+**/</span><span class="pln">
+
+</span><span class="com">// Retrieve Karens public key</span><span class="pln">
+
+transaction</span><span class="pun">.</span><span class="pln">objectStore</span><span class="pun">(</span><span class="str">"publicBrowserIDKeys"</span><span class="pun">).</span><span class="kwd">get</span><span class="pun">(</span><span class="str">"karen@webcrypto.com"</span><span class="pun">).</span><span class="pln">onsuccess </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">evt</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="kwd">var</span><span class="pln"> privateKey </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">event</span><span class="pun">.</span><span class="pln">target</span><span class="pun">.</span><span class="pln">result</span><span class="pun">;</span><span class="pln">
+
+</span><span class="com">// Sign the assertion -- signature syntax resembles verification syntax in banking example</span><span class="pln">
+</span><span class="com">// Send the assertionPlusCert structure to script on photosharingsite.example</span><span class="pln">
+
+  pssHandle</span><span class="pun">.</span><span class="pln">postMessage</span><span class="pun">(</span><span class="pln">assertionPlusCert</span><span class="pun">,</span><span class="pln"> </span><span class="str">"http://photosharingsite.example"</span><span class="pun">);</span><span class="pln">
+  
+  window</span><span class="pun">.</span><span class="pln">addEventListener</span><span class="pun">(</span><span class="str">"message"</span><span class="pun">,</span><span class="pln"> receiveCallBackFromPSS</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">false</span><span class="pun">);</span><span class="pln">
+
+
+  </span><span class="kwd">function</span><span class="pln"> receveCallBackFromPSS</span><span class="pun">(</span><span class="kwd">event</span><span class="pun">)</span><span class="pln">
+  </span><span class="pun">{</span><span class="pln">
+    </span><span class="kwd">if</span><span class="pun">(</span><span class="kwd">event</span><span class="pun">.</span><span class="pln">origin </span><span class="pun">!=</span><span class="pln"> </span><span class="str">"http://photosharingsite.example"</span><span class="pun">)</span><span class="pln">
+      </span><span class="kwd">return</span><span class="pun">;</span><span class="pln">
+    </span><span class="kwd">if</span><span class="pun">(</span><span class="kwd">event</span><span class="pun">.</span><span class="pln">data </span><span class="pun">===</span><span class="pln"> </span><span class="str">"OK"</span><span class="pun">)</span><span class="pln"> 
+      </span><span class="com">// Auth was successful</span><span class="pln">
+    </span><span class="kwd">else</span><span class="pln">
+      </span><span class="com">// Auth Fail on PSS side</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+
+</span><span class="com">/** 
+  On the receiving end, namely http://photosharingsite.example:
+
+  0. Register to receive message events
+  1. Obtain the public key from Persona.org to verify the signed certificate
+  2. Use karen@webcrypto.org's public key to verify the signature on the assertion
+
+**/</span><span class="pln">
+
+window</span><span class="pun">.</span><span class="pln">addEventListener</span><span class="pun">(</span><span class="str">"message"</span><span class="pun">,</span><span class="pln"> receiveCryptoFromIDP</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">false</span><span class="pun">);</span><span class="pln">
+
+</span><span class="kwd">function</span><span class="pln"> receiveCryptoFromIDP</span><span class="pun">(</span><span class="kwd">event</span><span class="pun">)</span><span class="pln">
+</span><span class="pun">{</span><span class="pln">
+
+  </span><span class="kwd">if</span><span class="pun">(</span><span class="kwd">event</span><span class="pun">.</span><span class="pln">origin</span><span class="pun">!=</span><span class="str">"http://login.persona.org/"</span><span class="pun">)</span><span class="pln">
+  </span><span class="pun">{</span><span class="pln">
+    </span><span class="kwd">event</span><span class="pun">.</span><span class="pln">source</span><span class="pun">.</span><span class="pln">postMessage</span><span class="pun">(</span><span class="str">"authFail"</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">event</span><span class="pun">.</span><span class="pln">origin</span><span class="pun">);</span><span class="pln">
+    </span><span class="kwd">return</span><span class="pln"> </span><span class="str">"authFail"</span><span class="pun">;</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+
+  
+  </span><span class="com">/* 
+     Note that event.data is assertionPlusCert with two signatures
+     JWT specifies a way this can be represented, following use of
+     Base64 encoding and "." as a delimiter separating components
+
+     1. Assume a utility function to obtain a JWK from a well-known location
+        Import the JWK key from Persona.org -- see Example 6
+     2. Verify the part signed by Persona.org
+     3. Assume utility functions to parse the event.data into subcomponents
+     4. Obtain Karen's public key from event.data using utility function
+     5. Import Karen's public key for use within PSS
+     6. Verify the assertion signed by Karen's private key
+     7. Step 2. and 6. succeeding allow authentication to occur
+  */</span><span class="pln">
+  
+  </span><span class="kwd">var</span><span class="pln"> mRSARFC3447 </span><span class="pun">=</span><span class="pln"> 
+  </span><span class="pun">{</span><span class="pln">
+    name</span><span class="pun">:</span><span class="pln"> </span><span class="str">"RSASSA-PKCS1-v1_5"</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">params</span><span class="pun">:</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+                            hash</span><span class="pun">:</span><span class="pln"> </span><span class="str">"SHA-256"</span><span class="pln">
+                        </span><span class="pun">}</span><span class="pln">
+  </span><span class="pun">};</span><span class="pln">
+
+  </span><span class="kwd">var</span><span class="pln"> </span><span class="typ">JWKIDPKey</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> createJWK</span><span class="pun">(</span><span class="str">"https://login.persona.org/.well-known/browserid"</span><span class="pun">);</span><span class="pln">
+
+  </span><span class="kwd">var</span><span class="pln"> certificateSignature </span><span class="pun">=</span><span class="pln"> parseCertSignature</span><span class="pun">(</span><span class="kwd">event</span><span class="pun">.</span><span class="pln">data</span><span class="pun">);</span><span class="pln">
+
+  </span><span class="kwd">var</span><span class="pln"> assertionSignature </span><span class="pun">=</span><span class="pln"> parseAssertionSignature</span><span class="pun">(</span><span class="kwd">event</span><span class="pun">.</span><span class="pln">data</span><span class="pun">);</span><span class="pln">
+  </span><span class="com">// Import the JWK key -- see Example 6 -- this results in publicKeyIDP</span><span class="pln">
+
+  </span><span class="kwd">var</span><span class="pln"> </span><span class="typ">JWKuserPubKey</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> parseUserPublicKey</span><span class="pun">(</span><span class="kwd">event</span><span class="pun">.</span><span class="pln">data</span><span class="pun">);</span><span class="pln">
+  </span><span class="com">// Import the user public key -- see Example 6 -- this results in userPublicKey</span><span class="pln">
+  
+  window</span><span class="pun">.</span><span class="pln">crypto</span><span class="pun">.</span><span class="pln">subtle</span><span class="pun">.</span><span class="pln">verify</span><span class="pun">(</span><span class="pln">mRSARFC3447</span><span class="pun">,</span><span class="pln"> publicKeyIDP</span><span class="pun">,</span><span class="pln"> certificateSignature</span><span class="pun">).</span><span class="kwd">then</span><span class="pun">(</span><span class="pln">
+  </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">successCert</span><span class="pun">)</span><span class="pln">
+  </span><span class="pun">{</span><span class="pln">
+    window</span><span class="pun">.</span><span class="pln">crypto</span><span class="pun">.</span><span class="pln">subtle</span><span class="pun">.</span><span class="pln">verify</span><span class="pun">(</span><span class="pln">mRSARFC3447</span><span class="pun">,</span><span class="pln"> userPublicKey</span><span class="pun">,</span><span class="pln"> assertionSignature</span><span class="pun">).</span><span class="kwd">then</span><span class="pun">(</span><span class="pln">
+    </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">successUserClaim</span><span class="pun">)</span><span class="pln">
+    </span><span class="pun">{</span><span class="pln">
+      </span><span class="kwd">event</span><span class="pun">.</span><span class="pln">source</span><span class="pun">.</span><span class="pln">postMessage</span><span class="pun">(</span><span class="str">"OK"</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">event</span><span class="pun">.</span><span class="pln">origin</span><span class="pun">);</span><span class="pln">
+      </span><span class="kwd">return</span><span class="pln"> </span><span class="str">"OK"</span><span class="pun">;</span><span class="pln">
+    </span><span class="pun">},</span><span class="pln">
+    </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">failUserClaim</span><span class="pun">)</span><span class="pln">
+    </span><span class="pun">{</span><span class="pln">
+      </span><span class="kwd">event</span><span class="pun">.</span><span class="pln">source</span><span class="pun">.</span><span class="pln">postMessage</span><span class="pun">(</span><span class="str">"authFail"</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">event</span><span class="pun">.</span><span class="pln">origin</span><span class="pun">);</span><span class="pln">
+      </span><span class="kwd">return</span><span class="pln"> </span><span class="str">"authFail"</span><span class="pun">;</span><span class="pln">
+    </span><span class="pun">}</span><span class="pln">
+    </span><span class="pun">);</span><span class="pln">
+  </span><span class="pun">},</span><span class="pln">
+  </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">failCert</span><span class="pun">)</span><span class="pln">
+  </span><span class="pun">{</span><span class="pln">
+    </span><span class="kwd">event</span><span class="pun">.</span><span class="pln">source</span><span class="pun">.</span><span class="pln">postMessage</span><span class="pun">(</span><span class="str">"authFail"</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">event</span><span class="pun">.</span><span class="pln">origin</span><span class="pun">);</span><span class="pln">
+    </span><span class="kwd">return</span><span class="pln"> </span><span class="str">"authFail"</span><span class="pun">;</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+  </span><span class="pun">);</span><span class="pln">
+</span><span class="pun">}</span></pre></div>
+</li>
+<li><p>The PSS website receives the message, sent via cross-origin messaging, and proceeds to validate the assertion.  In order to do this, the PSS website first obtains Persona.org's public key, hosted at a well-known location, and verifies the signature on the certificate.  The script at PSS may choose to "import" the public key of Persona.org in order to verify the signature, and store it within PSS's application storage. [<a title="import" href="#import" class="internalDFN">IMPORT</a> | <a title="verify" href="#verify" class="internalDFN">VERIFY</a>]</p>
+</li>
+<li><p>The PSS website then verifies the signature of the user on the assertion.  Karen's public key has also been sent to script hosted on PSS. [<a title="verify" href="#verify" class="internalDFN">VERIFY</a>]</p></li>
+<li>Upon successful verification of both signatures, Karen is granted access to PSS, which now identifies her and considers her authenticated.</li>
+</ol>
+
+    </section>
+  </section>
+
+    <section class="appendix" id="acknowledgements">
+      <!--OddPage--><h2 aria-level="1" role="heading" id="h2_acknowledgements"><span class="secno">A. </span>Acknowledgements</h2>
+      <p>
+        Thanks to Mark Watson, Ryan Sleevi, Ben Adida, Mountie Lee, Aymeric Vitte, LuHongQian Karen, Tobie Langel, Brad Hill, Richard Barnes, David Dahl, Tantek Celik.
+      </p>
+    </section>
+  
+
+<section id="references" class="appendix" typeof="bibo:Chapter" resource="#references" rel="bibo:chapter"><!--OddPage--><h2 aria-level="1" role="heading" id="h2_references"><span class="secno">B. </span>References</h2><section id="informative-references" typeof="bibo:Chapter" resource="#informative-references" rel="bibo:chapter"><h3 aria-level="2" role="heading" id="h3_informative-references"><span class="secno">B.1 </span>Informative references</h3><dl class="bibliography" about=""><dt id="bib-BrowserID">[BrowserID]</dt><dd rel="dcterms:references">Ben Adida; Tim Kuijsten; Axel Nennker; Anant Narayanan. <a href="https://github.com/mozilla/id-specs/blob/prod/browserid/index.md"><cite>BrowserID</cite></a>. 26 February 2013. URL: <a href="https://github.com/mozilla/id-specs/blob/prod/browserid/index.md">https://github.com/mozilla/id-specs/blob/prod/browserid/index.md</a>
+</dd><dt id="bib-HTML">[HTML]</dt><dd rel="dcterms:references">Ian Hickson. <a href="http://www.whatwg.org/specs/web-apps/current-work/"><cite>HTML</cite></a>. Living Standard. URL: <a href="http://www.whatwg.org/specs/web-apps/current-work/">http://www.whatwg.org/specs/web-apps/current-work/</a>
+</dd><dt id="bib-INDEXEDDB">[INDEXEDDB]</dt><dd rel="dcterms:references">Nikunj Mehta; Jonas Sicking; Eliot Graff; Andrei Popescu; Jeremy Orlow; Joshua Bell. <a href="http://www.w3.org/TR/IndexedDB/"><cite>Indexed Database API</cite></a>. 4 July 2013. W3C Candidate Recommendation. URL: <a href="http://www.w3.org/TR/IndexedDB/">http://www.w3.org/TR/IndexedDB/</a>
+</dd><dt id="bib-JWK">[JWK]</dt><dd rel="dcterms:references">Mike Jones. <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-key-11"><cite>JSON Web Key (JWK)</cite></a>. 28 May 2013. Internet Draft. URL: <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-key-11">http://tools.ietf.org/html/draft-ietf-jose-json-web-key-11</a>
+</dd><dt id="bib-JWT">[JWT]</dt><dd rel="dcterms:references">M. Jones; J. Bradley; N. Sakimura. <a href="http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-01"><cite>JSON Web Token (JWT)</cite></a>. 6 July 2012. Internet Draft. URL: <a href="http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-01">http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-01</a>
+</dd><dt id="bib-WEBSOCKETS-API">[WEBSOCKETS-API]</dt><dd rel="dcterms:references">Ian Hickson. <a href="http://www.w3.org/TR/websockets/"><cite>The WebSocket API</cite></a>. 20 September 2012. W3C Candidate Recommendation. URL: <a href="http://www.w3.org/TR/websockets/">http://www.w3.org/TR/websockets/</a>
+</dd><dt id="bib-WEBSOCKETS-PROTOCOL">[WEBSOCKETS-PROTOCOL]</dt><dd rel="dcterms:references">C. Holmberg, S. Hakansson, G. Eriksson. <a href="http://tools.ietf.org/id/draft-ietf-hybi-thewebsocketprotocol-09.txt"><cite>The WebSocket protocol.</cite></a> URL: <a href="http://tools.ietf.org/id/draft-ietf-hybi-thewebsocketprotocol-09.txt">http://tools.ietf.org/id/draft-ietf-hybi-thewebsocketprotocol-09.txt</a> 
+</dd><dt id="bib-WebCryptoAPI">[WebCryptoAPI]</dt><dd rel="dcterms:references">David Dahl; Ryan Sleevi. <a href="http://www.w3.org/TR/WebCryptoAPI/"><cite>Web Cryptography API</cite></a>. 25 June 2013. W3C Working Draft. URL: <a href="http://www.w3.org/TR/WebCryptoAPI/">http://www.w3.org/TR/WebCryptoAPI/</a>
+</dd><dt id="bib-hCard">[hCard]</dt><dd rel="dcterms:references">Tantek Celik; Brian Suda. <a href="http://microformats.org/wiki/hcard"><cite>hCard 1.0</cite></a>. 23 June 2013. URL: <a href="http://microformats.org/wiki/hcard">http://microformats.org/wiki/hcard</a>
+</dd><dt id="bib-webcrypto-key-discovery">[webcrypto-key-discovery]</dt><dd rel="dcterms:references">Mark Watson. <a href="http://www.w3.org/TR/webcrypto-key-discovery/"><cite>WebCrypto Key Discovery</cite></a>. 8 January 2013. W3C Working Draft. URL: <a href="http://www.w3.org/TR/webcrypto-key-discovery/">http://www.w3.org/TR/webcrypto-key-discovery/</a>
+</dd><dt id="bib-webstorage">[webstorage]</dt><dd rel="dcterms:references">Ian Hickson. <a href="http://www.w3.org/TR/webstorage/"><cite>Web Storage</cite></a>. 30 July 2013. W3C Recommendation. URL: <a href="http://www.w3.org/TR/webstorage/">http://www.w3.org/TR/webstorage/</a>
+</dd></dl></section></section></body></html>

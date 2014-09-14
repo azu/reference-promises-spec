@@ -1,0 +1,65 @@
+<!-- http://www.w3.org/TR/xml-names11-req/ -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html lang="EN"><head>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>Namespaces in XML 1.1 Requirements</title><style type="text/css">
+code           { font-family: monospace; }
+
+div.constraint,
+div.issue,
+div.note,
+div.notice     { margin-left: 2em; }
+
+dt.label       { display: run-in; }
+
+li p           { margin-top: 0.3em;
+                 margin-bottom: 0.3em; }
+      </style><link rel="stylesheet" type="text/css" href="http://www.w3.org/StyleSheets/TR/W3C-WD.css"></head><body><div class="head"><p><a href="http://www.w3.org/"><img src="http://www.w3.org/Icons/w3c_home" alt="W3C" height="48" width="72"></a></p>
+<h1>Namespaces in XML 1.1 Requirements</h1>
+<h2>W3C Working Draft 03 April 2002</h2><dl><dt>This version:</dt><dd><a href="http://www.w3.org/TR/2002/WD-xml-names11-req-20020403/">http://www.w3.org/TR/2002/WD-xml-names11-req-20020403/</a></dd><dt>Latest version:</dt><dd><a href="http://www.w3.org/TR/xml-names11-req/">http://www.w3.org/TR/xml-names11-req/</a></dd><dt>Editor:</dt><dd>Jonathan Marsh, Microsoft <a href="mailto:jmarsh@microsoft.com">&lt;jmarsh@microsoft.com&gt;</a></dd></dl><p class="copyright"><a href="http://www.w3.org/Consortium/Legal/ipr-notice-20000612#Copyright">Copyright</a>���2002�<a href="http://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>�</sup> (<a href="http://www.lcs.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>, <a href="http://www.inria.fr/"><abbr lang="fr" title="Institut National de Recherche en Informatique et Automatique">INRIA</abbr></a>, <a href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C <a href="http://www.w3.org/Consortium/Legal/ipr-notice-20000612#Legal_Disclaimer">liability</a>, <a href="http://www.w3.org/Consortium/Legal/ipr-notice-20000612#W3C_Trademarks">trademark</a>, <a href="http://www.w3.org/Consortium/Legal/copyright-documents-19990405">document use</a>, and <a href="http://www.w3.org/Consortium/Legal/copyright-software-19980720">software licensing</a> rules apply.</p></div><hr><div>
+<h2><a name="abstract">Abstract</a></h2><p>This document contains requirements on the development of Namespaces in XML version 1.1, which is intended to have a single new feature - the ability to undeclare namespaces.  In addition, all errata of version 1.0 will be incorporated.</p></div><div>
+<h2><a name="status">Status of this Document</a></h2><p>This is a W3C
+                 Working Draft produced as a deliverable of the <a
+                 href="http://www.w3.org/XML/Group/Core.html">XML Core
+                 WG</a> according to its charter and the current <a href="/XML/Activity">XML Activity</a> process. A list of current W3C working drafts and notes can be found at <a href="http://www.w3.org/TR">http://www.w3.org/TR</a>.</p><p>This document is a work in progress representing the current consensus of the W3C XML Core Working Group. It is published for review by W3C members and other interested parties. Publication as a Working Draft does not imply endorsement by the W3C membership. Comments should be sent to <a href="mailto:www-xml-blueberry-comments@w3.org">www-xml-blueberry-comments@w3.org</a>, which is an automatically and <a href="http://lists.w3.org/Archives/Public/www-xml-blueberry-comments/">archived email list</a>.</p></div><div class="toc">
+<h2><a name="contents">Table of Contents</a></h2><p class="toc">1 <a href="#IDAWMYDC">Introduction</a><br>2 <a href="#IDAEOYDC">Design Principles</a><br>3 <a href="#IDAJOYDC">Requirements</a><br></p>
+<h3 id="id-required-by-pubrules">Appendix</h3><p class="toc">A <a href="#IDA1OYDC">References</a><br></p></div><hr><div class="body"><div class="div1">
+<h2><a name="IDAWMYDC"></a>1 Introduction</h2><p>Namespaces in XML 1.1 is intended to have a single new feature - the ability to undeclare namespaces.  In addition, all <a href="#errata">[Namespaces in XML 1.0 errata]</a> will be incorporated.  The Core Working Group is currently evaluating potential errata which it expects to publish and include in Namespaces in XML 1.1.</p><p><a href="#NS">[Namespaces in XML 1.0]</a> has the ability to undeclare the default namespace, but doesn't provide a facility to undeclare namespaces with prefixes.  An obvious syntax for such functionality would be an empty namespace attribute value (<code>xmlns:prefix=""</code>).  This omission has had adverse consequences on infoset manipulations and serializers.</p><p>For example, <a href="#XInclude">[XInclude 1.0]</a> allows information items to be added to an element as children.  These information items come from another document, and may have fewer in-scope namespaces than their parent.  There is no mechanism for accurately serializing this situation.  If the infoset is naively serialized and reparsed, the children will end up with additional namespace information items which serve no useful purpose.  Even worse, the inability to roundtrip an infoset through XML accurately prevents accurate canonicalization, and the security features based upon it (<a href="#DSig">[XML Digital Signatures]</a>, <a href="#XEnc">[XML Encryption]</a>).</p><p>Transmission of XML in a <a href="#SOAP">[SOAP]</a> envelope has similar problems.  A piece of XML placed within the SOAP envelope for transmission, and extracted at the other end, will have additional namespace information items that have "bled through" from the envelope.</p><p><a href="#XQuery">[XQuery]</a> and the <a href="#DM">[XPath 2.0 and XQuery 1.0 Data Model]</a> increase the likelihood that large data sets will be exposed as XML documents.  In a gigabyte database modeled as a single XML document, it is likely that leaf nodes in the data will have a large number of namespace nodes, many of which are relevant only higher up in the hierarchy.</p><p>It is the view of the <a href="#XMLCore">[XML Core Working Group]</a> that <a href="#XML11">[XML 1.1]</a> provides an opportunity to correct this omission.  The version declaration <code>version="1.1"</code> provides a versioning marker that can also serve to indicate Namespaces in XML 1.1.</p></div><div class="div1">
+<h2><a name="IDAEOYDC"></a>2 Design Principles</h2><ol><li><p>The XML 1.0 goals listed in section 1.1 of the XML 
+					Recommendation are reaffirmed.</p></li></ol></div><div class="div1">
+<h2><a name="IDAJOYDC"></a>3 Requirements</h2><ol><li><p>Namespaces in XML 1.1 must be a superset of Namespaces in XML 1.0 in both functionality and syntax.</p></li><li><p>Namespaces in XML 1.1 will correspond to XML 1.1.</p></li><li><p>Namespaces in XML 1.1 must be prepared quickly.</p></li><li><p>Namespaces in XML 1.1 must be advanced to Recommendation concurrently with XML 1.1.</p></li><li><p>The changes required for Namespaces in XML 1.0 processors to also process Namespaces in XML 1.1 must be as few and as small as possible.</p></li><li><p>The Namespaces in XML 1.1 specification must incorporate all published errata to Namespaces in XML 1.0.</p></li><li><p>In creating Namespaces in XML 1.1, the working group should not consider any revisions to Namespaces in XML 1.0 except those needed to accomplish these requirements.</p></li></ol></div></div><div class="back"><div class="div1">
+<h2><a name="IDA1OYDC"></a>A References</h2><dl><dt class="label"><a name="errata"></a>Namespaces in XML 1.0 errata</dt><dd><a href="http://www.w3.org/XML/xml-names-19990114-errata"><cite>Namespaces in XML 1.0 errata</cite></a>
+World Wide Web Consortium, 2002.
+				  (See <a href="http://www.w3.org/XML/xml-names-19990114-errata">http://www.w3.org/XML/xml-names-19990114-errata</a>.)</dd><dt class="label"><a name="NS"></a>Namespaces in XML 1.0</dt><dd>
+  Tim Bray, Dave Hollander, and Andrew Layman, editors.
+  <a href="http://www.w3.org/TR/REC-xml-names/"><cite>Namespaces in XML</cite></a>.
+  World Wide Web Consortium, 1999.
+  (See <a href="http://www.w3.org/TR/REC-xml-names/">http://www.w3.org/TR/REC-xml-names/</a>.)</dd><dt class="label"><a name="XML11"></a>XML 1.1</dt><dd>
+John Cowan
+<a href="http://www.w3.org/TR/xml11/"><cite>XML 1.1</cite></a>
+World Wide Web Consortium, 2002.
+				  (See <a href="http://www.w3.org/TR/xml11/">http://www.w3.org/TR/xml11/</a>.)</dd><dt class="label"><a name="XInclude"></a>XInclude 1.0</dt><dd>
+				Jonathan Marsh, David Orchard
+				<a href="http://www.w3.org/TR/xinclude/"><cite>XML Inclusions (XInclude) 1.0</cite></a>
+World Wide Web Consortium, 2002.
+				  (See <a href="http://www.w3.org/TR/xinclude/">http://www.w3.org/TR/xinclude/</a>.)</dd><dt class="label"><a name="XQuery"></a>XQuery</dt><dd>
+				Scott Boag, Don Chamberlin, Mary F. Fernandez, Daniela Florescu, Jonathan Robie, J�r�me Sim�on, Mugur Stefanescu.
+				<a href="http://www.w3.org/TR/xquery/"><cite>XQuery 1.0, An XML Query Language</cite></a>
+World Wide Web Consortium, 2002.
+				  (See <a href="http://www.w3.org/TR/xquery/">http://www.w3.org/TR/xquery/</a>.)</dd><dt class="label"><a name="DM"></a>XPath 2.0 and XQuery 1.0 Data Model</dt><dd>
+				Mary F. Fernandez, Jonathan Marsh, Martin Nagy.
+				<a href="http://www.w3.org/TR/query-datamodel/"><cite>XPath 2.0 and XQuery 1.0 Data Model</cite></a>
+World Wide Web Consortium, 2002.
+				  (See <a href="http://www.w3.org/TR/query-datamodel/">http://www.w3.org/TR/query-datamodel/</a>.)</dd><dt class="label"><a name="DSig"></a>XML Digital Signatures</dt><dd>
+				Donald Eastlake, Joseph Reagle, David Solo, editors.
+<a href="http://www.w3.org/TR/xmldsig-core/"><cite>XML-Signature Syntax and Processing</cite></a>
+World Wide Web Consortium, 2002.
+				  (See <a href="http://www.w3.org/TR/xmldsig-core/">http://www.w3.org/TR/xmldsig-core/</a>.)</dd><dt class="label"><a name="XEnc"></a>XML Encryption</dt><dd>
+				Donald Eastlake, Joseph Reagle.
+<a href="http://www.w3.org/TR/xmlenc-core/"><cite>XML Encryption Syntax and Processing</cite></a>
+World Wide Web Consortium, 2002.
+  (See <a href="http://www.w3.org/TR/xmlenc-core/">http://www.w3.org/TR/xmlenc-core/</a>.)</dd><dt class="label"><a name="SOAP"></a>SOAP</dt><dd>
+Martin Gudgin, Marc Hadley, Jean-Jacques Moreau, Henrik Frystyk Nielsen.
+
+<a href="http://www.w3.org/TR/soap12-part1/"><cite>SOAP Version 1.2 part 1: Messaging Framework</cite></a>
+World Wide Web Consortium, 2002.
+  (See <a href="http://www.w3.org/TR/soap12-part1/">http://www.w3.org/TR/soap12-part1/</a>.)</dd><dt class="label"><a name="XMLCore"></a>XML Core Working Group</dt><dd><a href="http://www.w3.org/XML/Group/Core.html"><cite>XML Core Working Group Home Page</cite></a>  (See <a href="http://www.w3.org/XML/Group/Core.html">http://www.w3.org/XML/Group/Core.html</a>.)</dd></dl></div></div></body></html>

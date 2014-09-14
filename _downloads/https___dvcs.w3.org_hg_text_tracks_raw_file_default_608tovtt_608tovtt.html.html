@@ -1,0 +1,1645 @@
+<!-- https://dvcs.w3.org/hg/text-tracks/raw-file/default/608toVTT/608toVTT.html -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Conversion of 608/708 captions to WebVTT</title>
+    <meta http-equiv='Content-Type' content='text/html;charset=utf-8'/>
+    <!-- local copy:
+    <script src='../../respec/js/require.js' data-main='../../respec/js/profile-w3c-common' async class='remove'></script>
+    -->
+    <script src='https://www.w3.org/Tools/respec/respec-w3c-common' class='remove' async></script>
+    <script class='remove'>
+      var respecConfig = {
+          // specification status (e.g. WD, LCWD, NOTE, etc.). If in doubt use ED.
+          specStatus:           "CG-DRAFT",
+          
+          // the specification's short name, as in http://www.w3.org/TR/short-name/
+          shortName:            "webvtt-608-708",
+
+          // if your specification has a subtitle that goes below the main
+          // formal title, define it here
+          // subtitle   :  "",
+
+          // if you wish the publication date to be other than today, set this
+          // publishDate:  "2009-08-06",
+
+          // if the specification's copyright date is a range of years, specify
+          // the start date here:
+          copyrightStart: "2012",
+
+          // if there is a previously published draft, uncomment this and set its YYYY-MM-DD date
+          // and its maturity status
+          // previousPublishDate:  "1977-03-15",
+          // previousMaturity:  "WD",
+
+          // if there a publicly available Editor's Draft, this is the link
+          edDraftURI:           "http://dvcs.w3.org/hg/text-tracks/raw-file/default/608toVTT/608toVTT.html",
+
+          // if this is a LCWD, uncomment and set the end of its review period
+          // lcEnd: "2009-08-05",
+
+          // if you want to have extra CSS, append them to this list
+          // it is recommended that the respec.css stylesheet be kept
+          extraCSS:             ["http://dev.w3.org/2009/dap/ReSpec.js/css/respec.css"],
+
+          // editors, add as many as you like
+          // only "name" is required
+          editors:  [
+              { name: "Silvia Pfeiffer", url: "http://www.gingertech.net/",
+                company: "Google Inc.", companyURL: "http://google.com/" },
+          ],
+
+          // authors, add as many as you like. 
+          // This is optional, uncomment if you have authors as well as editors.
+          // only "name" is required. Same format as editors.
+
+          //authors:  [
+          //    { name: "Your Name", url: "http://example.org/",
+          //      company: "Your Company", companyURL: "http://example.com/" },
+          //],
+          
+          // name of the WG
+          wg:           "Text Tracks Community Group",
+          
+          // URI of the public WG page
+          wgURI:        "http://www.w3.org/community/texttracks/",
+          
+          // name (without the @w3c.org) of the public mailing to which comments are due
+          wgPublicList: "public-texttracks",
+          
+          // URI of the patent status for this WG, for Rec-track documents
+          // !!!! IMPORTANT !!!!
+          // This is important for Rec-track documents, do not copy a patent URI from a random
+          // document unless you know what you're doing. If in doubt ask your friendly neighbourhood
+          // Team Contact.
+          wgPatentURI:  "",
+      };
+    </script>
+  </head>
+  <body>
+    <p class="note">
+    <strong>This document is subject to change without notice.</strong><br/>
+    Note in particular that the multi-line header format used in this specification for styling has not been finalized in WebVTT yet.</strong>
+    </p>
+
+    <section id='abstract'>
+
+        <p>This document specifies a method for converting CEA-608/708 data streams to [[WEBVTT]]. This document details how such a conversion can be made, and defines some constraints on the translation process so that the resulting [[WEBVTT]] file is interoperable between WebVTT implementations.</p>
+
+        <p>This document does not target user agent developers. User agents (UAs) are expected to implement the [[WEBVTT]] specification. Any conversion tool that follows the suggestions in this document and delivers WebVTT files as converted by the suggestions in this document together with an appropriate HTML page and a style sheet as explained in <a href="#browsers" class="sectionRef"></a> can expect UAs to render their WebVTT file on their videos correctly.</p>
+
+        <p>The aim of this document is to help developers of tools that convert between different caption formats to implement best practice for creating WebVTT files that support CEA-608 or CEA-708 features.</p>
+
+        <p>Note that CEA-608 has been defined for US television and therefore only horizontal ltr rendered text is created in WebVTT cues. CEA-708 has some support for vertically rendered and rtl text through caption text settings.</p>
+    </section>
+    
+
+    <section>
+      <h2>Translation</h2>
+      <p>
+        This document defines conversion from CEA-608 or CEA-708 data streams to a WebVTT document.
+      </p>
+
+      <p>
+        A CEA-608 or CEA-708 data stream consist of a sequence of bytes transferred to a video device which interprets the bytes as a combination of characters, character attributes, and commands to place the characters on screen in a pre-defined area. CEA-608 defines two 32x15 character memories one of which is currently displayed while the other is for off-screen composition in preparation for display. CEA-708 defines different windows on top of the video viewport into which text is rendered.
+      </p>
+
+      <p>
+        A WebVTT file consists at its core of a series of so-called cues, which contain a start time, an end time, cue settings, and the cue text, which is rendered in browsers for WebVTT files of kind "subtitles" or "captions". Styling of character attributes is provided through markup of the text in a similar fashion to how HTML marks up text. Cues are either rendered directly to the video viewport, or into a so-called <a href="https://dvcs.w3.org/hg/text-tracks/raw-file/default/608toVTT/region.html">WebVTT "Regions"</a>. Regions are similar to CEA-708 windows.
+      </p>
+
+      <p>
+        The command-based CEA-608 and CEA-708 streams are mapped in the following to the file-based WebVTT format. The aim is to achieve the same visual experience, so for CEA-608 it is important what is in the display memory and not what is in the off-screen composition memory. Similarly, for CEA-708 it is important what is in the visible windows. The translation shall in particular preserve the positioning, colour, background, spacing, and timing of captions, including individual character timings in rollup and paint on mode.
+      </p>
+
+      <section>
+        <h2>Background Information</h2>
+        <p>
+          The following conversion rules apply:
+        </p>
+
+        <ul>
+          <li>Each channel of a CEA-608 or CEA-708 service creates a separate WebVTT file.</li>
+          <li>CEA-608 and CEA-708 commands that have no visual effect are not considered significant alterations and are not translated to WebVTT.</li>
+          <li>Each significant CEA-608/708 command or command sequence that has a visual effect on screen will be mapped to a WebVTT cue with the exact time mapping of the video frame that contains that command sequence to cue start and end times. The video frame’s timing defines the timing of the WebVTT cues.</li>
+        </ul>
+
+        <p>
+          For example, one particular CEA-608 control event that will normally result in a significant alteration in the caption display is the swapping of the offscreen and onscreen buffers caused by an End of Caption command in pop on mode. Similar commands that also cause creation of a new cue are the Erase Display Memory command, the Backspace command, and the Delete to End of Row command. Typically in these situations a new cue will replace the current one in WebVTT at the time instant of the effect.
+        </p>
+      </section>
+
+      <section>
+        <h2>Header</h2>
+        <p>
+          When a WebVTT file is created from a CEA-608 or CEA-708 caption data stream using the conversion methods proposed in this document, it is suggested to use the following header for the WebVTT file, including an identification of the type of data contained:
+        </p>
+        <pre>
+WEBVTT
+Style:
+@import(cea608.css)
+##
+Kind: captions
+Language: en-US
+        </pre>
+
+        <p>
+          Notice the metadata fields that this header includes: "Style", "Kind" and "Language". It is recommended to always provide these three with the "Kind" field set to "captions" or "subtitles" and the "Language" field set to a BCP 47 language tag [[BCP47]].
+        </p>
+
+        <p>
+          For CEA-708 it is further recommended to add a "AspectRatio" field, which indicates whether a display area of 4:3 or 16:9 is the basis for the calculations. An example CEA-708 WebVTT file header may be:
+        </p>
+        <pre>
+WEBVTT
+Style:
+@import(cea608.css)
+@import(cea708.css)
+##
+Kind: captions
+Language: en-US
+AspectRatio: 16:9
+        </pre>
+        
+        <p>
+          The @import command on the "Style" field imports the CSS directives defined in the "Rendering in Browsers" section into the WebVTT file. Browsers will use these CSS directives to make use of their rendering engines for styling cues and cue sections of text.
+        </p>
+
+        <p>
+          It is also possible to avoid importing an external style sheet and include the styles directly in the WebVTT header. Here is an example:
+        </p>
+        <pre>
+WEBVTT
+Style:
+::cue {
+  line-height: 5.33vh;
+  font-size: 4.1vh;
+  font-family: monospace;
+  font-style: normal;
+  font-weight: normal;
+  background-color: black;
+  color: white;
+}
+##
+Kind: captions
+Language: en-US
+        </pre>
+      </section>
+
+      <section>
+        <h2>Metadata / XDS</h2>
+        <p>
+          Place metadata such as CEA-608 external data service (XDS) data after the header in the [[WEBVTT]] file.
+        </p>
+        <p>
+          Example metadata:
+        </p>
+        <pre>
+WEBVTT
+Style:
+@import(cea608.css)
+##
+Kind: captions
+Language: en-US
+Channel: CC1
+Station: Online ABC
+ProgramID: SH010855880000
+ProgramType: TV series
+ProgramName: Castle
+Title: Law & Murder
+Season: 3
+Episode: 19
+PublishDate: 2011-03-28
+ContentAdvisory: TV-14
+        </pre>
+      </section>
+
+      <section>
+        <h2>Positioning in CEA-608</h2>
+        <p>
+          CEA-608 defines a safe caption area as 80% of the TV picture height and 80% of TV picture width, centered. Within this area, it defines one or more areas (called “boxes”) within which caption characters are displayed.
+        </p>
+
+        <p>
+          If the safe caption area is to be preserved when using WebVTT, the video player can  set the "edge margin" variable to 10% in the WebVTT rendering instructions. The edge margin only affects WebVTT cues that are not provided with explicit, percentage-based line positioning. So it mostly only affects cues that are rendered in their default position.
+        </p>
+
+        <p>
+          The CEA-608 boxes can be positioned on a grid of 15 character rows of equal height and 32 columns of equal width to provide accurate placement of text on screen.
+        </p>
+
+        <p>
+          In WebVTT CEA-608, each CEA-608 box is mapped to a tree of WebVTT Node Objects, which are displayed into the WebVTT rendering area, i.e. the video viewport. A tree of WebVTT Node Objects contains a parsed representation of the cue content that is to be rendered. They map easily to HTML DOM nodes which simplifies rendering when a browser rendering engine is available. We call the root of a WebVTT Node Object tree the "WebVTT cue box".
+        </p>
+
+        <p>
+          When rendering a WebVTT CEA-608 cue box, their sizes and positions are defined in relation to the size of the video viewport using the features of CEA-608:
+        </p>
+        <ul>
+          <li>The line height is defined as 5.33% of the video height, because CEA-608 requires 15 character rows to be rendered on 80% of the video rendering area’s height.</li>
+          <li>The font size is defined from the line height by dividing it by 1.3; this is to make sure there is enough space for the characters in a line.</li>
+          <li>The column width is defined as 2.5% of the video width, because CEA-608 requires 32 columns of characters to be rendered on 80% of the video rendering area’s width.</li>
+          <li>CEA-608 indent positions are every 10% of the video width, because CEA-608 defines a new indent position every 4 columns/characters.</li>
+          <li>CEA-608 does not distinguish between different alignment, so all captions are left aligned and require a WebVTT align cue setting to override the default middle alignment:</li>
+        </ul>
+        <pre>
+align:start
+        </pre>
+        <p>
+          When translating to WebVTT only the final position of the caption text shall be translated. CEA-608 captions are generally translated to WebVTT cues with their position specified in cue settings. Only CEA-608 captions that are roll-up captions are rendered into WebVTT "Regions".
+        </p>
+
+        <p>
+          CEA-608 defines two different modes of addressing positions on the grid of columns and rows:
+        </p>
+
+        <h3>(1) Preamble Address Code (PAC)</h3>
+        <p>
+          PAC addresses by row number and 8 different indent positions.
+        </p>
+
+        <p>
+          The PAC row number maps to a line cue setting in WebVTT CEA-608. For rollup captions the calculation is the same, but the resulting number is applied to the Region rather than the cue directly, as described in the "Rollup Captions" section. Since WebVTT defines its line numbering scheme based on the height of the font in use, WebVTT CEA-608 makes use of the percentage line setting of WebVTT:
+        </p>
+        <pre>
+line:x%
+        </pre>
+
+        <p>
+          Use the following percentage values to represent CEA-608 row numbers:
+        </p>
+        <table border="1">
+          <thead>
+            <tr>
+              <td>CEA-608 PAC row</td>
+              <td>WebVTT cue line setting</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>line:10%</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>line:15.33%</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>line:20.66%</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>line:26%</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>line:31.33%</td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td>line:36.66%</td>
+            </tr>
+            <tr>
+              <td>7</td>
+              <td>line:42%</td>
+            </tr>
+            <tr>
+              <td>8</td>
+              <td>line:47.33%</td>
+            </tr>
+            <tr>
+              <td>9</td>
+              <td>line:52.66%</td>
+            </tr>
+            <tr>
+              <td>10</td>
+              <td>line:58%</td>
+            </tr>
+            <tr>
+              <td>11</td>
+              <td>line:63.33%</td>
+            </tr>
+            <tr>
+              <td>12</td>
+              <td>line:68.66%</td>
+            </tr>
+            <tr>
+              <td>13</td>
+              <td>line:74%</td>
+            </tr>
+            <tr>
+              <td>14</td>
+              <td>line:79.33%</td>
+            </tr>
+            <tr>
+              <td>15</td>
+              <td>line:84.66%</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>
+          The PAC indent position provides a column indent for lines of caption text. PAC can be different for different lines of captions. It is recommended to create a separate WebVTT cue when a different PAC is used for lines of captions that are on screen at the same time. A PAC indent position maps to a position cue setting in WebVTT CEA-608, which is a percentage offset within the video viewport:
+        </p>
+        <pre>
+position:x%
+        </pre>
+
+        <p>
+          Use the following position settings for PAC indent. Note that all WebVTT cues need to be explicitly left aligned for this position setting to be accurate, because WebVTT by default has middle aligned cues.
+        </p>
+
+        <table border="1">
+          <thead>
+            <tr>
+              <td>CEA-608 PAC indent code</td>
+              <td>WebVTT cue position value</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>indent 0/column 1</td>
+              <td>position:10%</td>
+            </tr>
+            <tr>
+              <td>indent 4/column 5</td>
+              <td>position:20%</td>
+            </tr>
+            <tr>
+              <td>indent 8/column 9</td>
+              <td>position:30%</td>
+            </tr>
+            <tr>
+              <td>indent 12/column 13</td>
+              <td>position:40%</td>
+            </tr>
+            <tr>
+              <td>indent 16/column 17</td>
+              <td>position:50%</td>
+            </tr>
+            <tr>
+              <td>indent 20/column 21</td>
+              <td>position:60%</td>
+            </tr>
+            <tr>
+              <td>indent 24/column 25</td>
+              <td>position:70%</td>
+            </tr>
+            <tr>
+              <td>indent 28/column 29</td>
+              <td>position:80%</td>
+            </tr>
+          </tbody>
+        </table>
+
+
+        <h3>(2) Tab Offset</h3>
+        <p>
+          CE-608 Tab Offset commands provide relative positioning based on the current cursor position and move the cursor 1, 2, or 3 columns to the right.
+        </p>
+        
+        <p>
+          When used at the beginning of a line, they will be mapped to a WebVTT position cue settings. Other uses of tab offsets will either be mapped to independent cues or ignored based on whether they influence the rendering.
+        </p>
+
+        <p>
+          The Tab Offset maps to an absolute text position cue setting in WebVTT CEA-608.
+          Multiply the Tab Offset value with 2.5 and add the resulting value to an existing position cue setting value of a cue to achieve the correct offset:
+        </p>
+        <pre>
+t=tabOffset*2.5+position
+position:t%
+        </pre>
+
+        <p>
+          For example, for an existing cue position setting of 20% (column 5), a Tab Offset of 3 will create a cue position setting of 27.5%.
+        </p>
+
+        <p>
+          For rollup captions the position setting is set on the cue, too, but since the cue is already positioned by the Region that it belongs it, its position is simply calculated from the tab offset:
+        </p>
+        <pre>
+t=tabOffset*2.5
+position:t%
+        </pre>
+        
+      </section>
+
+      <section>
+        <h2>Positioning in CEA-708</h2>
+        <p>
+          CEA-708 captions make use of what is called a "Caption Screen", which for WebVTT is the video viewport. CEA-708 defines a grid on the Caption Screen that depends on the dimensions of the video - e.g. it is different for 16:9 video to 4:3 video.
+        </p>
+
+        <p>
+          Within the Caption Screen, CEA-708 defines "Caption Windows" through which the caption text is rendered. For WebVTT we map CEA-708 "Caption Windows" to <a href="https://dvcs.w3.org/hg/text-tracks/raw-file/default/608toVTT/region.html">WebVTT Regions</a>. It is also possible to use plain WebVTT cues, but those have limited functionality, e.g. don't allow styling of the Region (e.g. Window background colors or fade in), or position with anchor points and anchor location, or do roll-up, so will not result in a perfect representation of CEA-708 captions. We will not regard this option further here.
+        </p>
+          
+        <p>
+          In CEA-708 there are at most 8 Caption Windows - in WebVTT we can define an unlimited number of Regions.
+        </p>
+
+        <p>
+          This is an example Region definition in WebVTT for a Region with its bottom center anchored in the middle of the screen, 4 lines high and 100% wide:
+        </p>
+        <pre>
+Region: id=window1 width=100% height=4 regionanchor=50%,100% viewportanchor=50%,50% scroll=up
+        </pre>
+
+        <p>
+           Note that Regions in WebVTT cannot be moved at this time, so if there is a need to move to a different on-screen location, because a different PAC row number is given, it is best to define another Region for that location and copy the caption text. Its duration will then be split between the two regions. Such a region move happens only if the base row of the PAC of a caption is different from the previous caption's PAC base row. A different PAC indent can be dealt with within the existing region by applying the indent as a position indent to the caption cue as described in the section on "Positioning in CEA-608".
+        </p>
+
+
+        <h3>Caption Window Priority</h3>
+
+        <p>
+          CEA-708 Caption Windows define a priority between the 8 captions windows with lower priority windows overlaying higher priority windows. Priority values are mapped to the WebVTT "layer" attribute of Regions as follows:
+        </p>
+
+        <table border="1">
+          <thead>
+            <tr>
+              <td>CEA-708 Caption Window Priority</td>
+              <td>WebVTT Region layer attribute</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>0</td>
+              <td>7</td>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td>6</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>5</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>4</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>3</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>2</td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>7</td>
+              <td>0</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>
+          Note that if two Regions end up being active at the same time (i.e. having cues at the same time) and being in the same "layer" and overlapping on the viewport, the one defined last is on top of the one defined earlier.
+        </p>
+
+
+        <h3>Caption Window Anchor Points</h3>
+
+        <p>
+          CEA-708 Caption Windows are positioned by specifying one of 9 different "Anchor points" covering a 9 field grid of the window. An Anchor Point is anchored to a specific location on the Caption Screen. Anchor points are mapped to the WebVTT "regionanchor" attribute of Regions:
+        </p>
+        <pre>
+regionanchor:x%,y%
+        </pre>
+
+        <table border="1">
+          <thead>
+            <tr>
+              <td>CEA-708 Caption Window Anchor Point</td>
+              <td>WebVTT Region regionanchor attribute</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>0 (top-left corner)</td>
+              <td>regionanchor:0%,0%</td>
+            </tr>
+            <tr>
+              <td>1 (top middle)</td>
+              <td>regionanchor:50%,0%</td>
+            </tr>
+            <tr>
+              <td>2 (top-right corner)</td>
+              <td>regionanchor:100%,0%</td>
+            </tr>
+            <tr>
+              <td>3 (left middle)</td>
+              <td>regionanchor:0%,50%</td>
+            </tr>
+            <tr>
+              <td>4 (middle/center)</td>
+              <td>regionanchor:50%,50%</td>
+            </tr>
+            <tr>
+              <td>5 (right middle)</td>
+              <td>regionanchor:100%,50%</td>
+            </tr>
+            <tr>
+              <td>6 (bottom-left corner)</td>
+              <td>regionanchor:0%,100%</td>
+            </tr>
+            <tr>
+              <td>7 (bottom middle)</td>
+              <td>regionanchor:50%,100%</td>
+            </tr>
+            <tr>
+              <td>8 (bottom-right corner)</td>
+              <td>regionanchor:100%,100%</td>
+            </tr>
+          </tbody>
+        </table>
+
+
+        <h3>Caption Window Location</h3>
+
+        <p>
+          For CEA-708 WebVTT we assume that the grid that is defined on the Caption Screen consists of 100 horizontal cells and 100 vertical cells, i.e. we can position using percentages.
+        </p>
+
+        <p>
+          If the CEA-708 Caption Screen grid is not provided as a 100x100 grid, we need to convert the given grid to percentages. For 16:9 video we thus convert the 210 horizontal by 75 vertical cells, and for 4:3 the 160 horizontal by 75 vertical cells to a percentage. We end up with grid locations (x%,y%) in a percentage coordinate system with (0%,0%) at the top left and (100%,100%) on the bottom right.
+        </p>
+
+        <p>
+          The grid is used to position the Caption Windows through the "Anchor Location" property. It is given in WebVTT in the "viewportanchor" Region attribute:
+        </p>
+        <pre>
+viewportanchor:x%,y%
+        </pre>
+
+
+        <h3>Caption Window size</h3>
+
+        <p>
+          In CEA-708, the size of the Caption Windows is provided through a number of character rows and columns. There is a maximum of 15 rows and a maximum of 32 columns, just like in CEA-608. Similar to CEA-608, these numbers represent the maximum number of rows and columns that a Caption Window that covers the full Caption Screen can provide.
+        </p>
+
+        <p>
+          The width of a Caption Window is converted to a WebVTT Region width by multiplying by 2.5 if a <b>display area of 4:3</b> is used, resulting in a percentage Region width setting:
+        </p>
+        <pre>
+w=columns*2.5
+width:w%
+        </pre>
+
+        <p>
+          If a <b>display area of 16:9</b> is used, the column width is defined as 1.9% of the video width, because 16x9 requires 42 columns of characters to be rendered on 80% of the video rendering area’s width.</li>
+        <pre>
+w=columns*1.9
+width:w%
+        </pre>
+
+        <p>
+          The height of a Caption Window is converted to a WebVTT Region height by multiplying by 5.33, resulting in a percentage Region height setting:
+        </p>
+        <pre>
+h=rows*5.33
+height:h%
+        </pre>
+
+        <p>
+          The actual height and width of the caption window depends, however, on the actual font size. Thus, the width is calculated by multiplying the number of columns with the character width and the height by multiplying the number of rows with the character height.
+        </p>
+
+
+        <h3>Caption Window Row and Column Locking</h3>
+
+        <p>
+          The "Lock Rows" and “Lock Columns” Caption Window parameters of CEA-708 when set fix the maximum number of rows and columns of caption text that a window may have. This means that lines that were rendered at the default font size are not changed when the user changes the font size. Thus, when the user changes the font size, the window's size scales to become smaller or larger to accommodate the smaller or bigger space required to render the caption text.
+        </p>
+
+        <p>
+          If rows or columns are unlocked, rendering can change the line breaks. This means that if e.g. rows are unlocked, the defined caption window width remains fixed, such that for smaller fonts more words will fit in each line, and for larger fonts less words will fit in. Similarly for unlocked columns. If both are unlocked, the agreement is that the same happens as when both dimensions are locked.
+        </p>
+
+        <p>
+          In WebVTT we don't currently have a means to specify row and column locking. We currently only support the concept of <i>unlocked rows and columns</i>, i.e. when the user increases or decreases the font size, the Region will grow accordingly, but it is possible for lines to reflow.
+        </p>
+
+
+        <h3>Caption Window Word Wrapping</h3>
+
+        <p>
+          CEA-708 defines that when a caption text line doesn't fit into a Caption Window's width and thus needs a new line break, the line break at the end of the line is removed and replaced with a space character if necessary. The idea is that when the caption text had multiple lines the manually created line breaks created a balanced text layout. Insertion of new line breaks would break that balance and therefore the line breaks have to be removed.
+        </p>
+
+        <p>
+          WebVTT supports line wrapping, but does not currently support the removal of line breaks when new line wrapping is necessary.
+        </p>
+      </section>
+
+      <section>
+        <h2>Caption Text and Region Settings in CEA-708</h2>
+        <p>
+          CEA-708 defines several settings of caption text within a Caption Window. This section explains how to convert them to WebVTT cue settings.
+        </p>
+
+        <h3>Justification and alignment</h3>
+        <p>
+          CEA-708 defines several different text justification settings for text within a Caption Window. These settings are translated into WebVTT cue settings, since there is no justification attributes on WebVTT Regions. The relevant cue setting is called "align":
+        </p>
+
+        <table border="1">
+          <thead>
+            <tr>
+              <td>CEA-708 Caption Window Justification</td>
+              <td>WebVTT Cue align setting</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>left</td>
+              <td>align:start</td>
+            </tr>
+            <tr>
+              <td>right</td>
+              <td>align:end</td>
+            </tr>
+            <tr>
+              <td>center</td>
+              <td>align:middle</td>
+            </tr>
+            <tr>
+              <td>full</td>
+              <td>no equivalent in WebVTT - use "middle" instead.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>
+          Note that WebVTT does not have an equivalent for fully justified text. It would be possible to add such a value or to use the CSS text-align:justify directive, but neither is currently supported in WebVTT. Since fully justifying text is not usually recommended for good quality subtitles or captions, there should be no need for this.
+        </p>
+
+
+        <h3>Text direction</h3>
+        <p>
+          CEA-708 defines several different text rendering directions within a Caption Window. These settings are translated into WebVTT cue settings, since there is no direction attributes on WebVTT Regions. The default cue text rendering direction is "horizontal". The relevant cue setting to introduce vertical text is called "vertical". The following explains how the mapping is achieved:
+        </p>
+
+        <table border="1">
+          <thead>
+            <tr>
+              <td>CEA-708 Caption Window Print Direction</td>
+              <td>WebVTT Cue text and settings</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>left-to-right</td>
+              <td>horizontal is the default; no special cue setting</td>
+            </tr>
+            <tr>
+              <td>right-to-left</td>
+              <td>horizontal is the default; use UTF-8 characters to change to rtl text</td>
+            </tr>
+            <tr>
+              <td>top-to-bottom</td>
+              <td>vertical:rl or vertical:lr</td>
+            </tr>
+            <tr>
+              <td>bottom-to-top</td>
+              <td>vertical:rl or vertical:lr; use UTF-8 characters to change directionality</td>
+            </tr>
+          </tbody>
+        </table>
+
+
+        <h3>Scroll direction</h3>
+        <p>
+          CEA-708 defines several different scroll directions within a Caption Window. These settings are translated into the WebVTT Region attribute "scroll":
+        </p>
+
+        <table border="1">
+          <thead>
+            <tr>
+              <td>CEA-708 Caption Window Scroll Direction</td>
+              <td>WebVTT Region attribute</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>top-to-bottom for horizontal text</td>
+              <td>scroll:down</td>
+            </tr>
+            <tr>
+              <td>bottom-to-top for horizontal text</td>
+              <td>scroll:up</td>
+            </tr>
+            <tr>
+              <td>left-to-right for vertical text</td>
+              <td>if vertical:lr, then scroll:down; else scroll:up</td>
+            </tr>
+            <tr>
+              <td>right-to-left</td>
+              <td>if vertical:rl, then scroll:down; else scroll:up</td>
+            </tr>
+          </tbody>
+        </table>
+
+
+        <h3>Window Display Effects</h3>
+        <p>
+          CEA-708 defines a couple of animation effects for when a Window becomes visible/invisible. These effects don't map into WebVTT. It may be possible to eventually provide fade in/out and wipe in/out through CSS but not at this time.
+        </p>
+
+
+        <h3>Window Colors and Borders</h3>
+        <p>
+          CEA-708 defines different colors, opacity, borders, and border effects for Caption Windows. Some of these effects can be provided through CSS. Flashing backgrounds and drop-shadows are not supported. Note that the default background color in CSS is "transparent".
+        </p>
+
+        <table border="1">
+          <thead>
+            <tr>
+              <td>CEA-708 Caption Window Properties</td>
+              <td>WebVTT CSS property</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>clear Window</td>
+              <td>
+                <pre>
+::cue-region(name) {
+  background-color: transparent;
+}</pre>
+              </td>
+            </tr>
+            <tr>
+              <td>translucent Window</td>
+              <td>
+                <pre>
+::cue-region(name) {
+  background-color: rgba(0,0,0,0.5);
+}</pre>
+              </td>
+            </tr>
+            <tr>
+              <td>solid Window</td>
+              <td>
+                <pre>
+::cue-region(name) {
+  background-color: rgba(0,0,0,1);
+}</pre>
+(choose color from color list)
+              </td>
+            </tr>
+            <tr>
+              <td>raised border for Window</td>
+              <td>
+                <pre>
+::cue-region(name) {
+  outline: black ridge 2px;
+}</pre>
+              </td>
+            </tr>
+            <tr>
+              <td>depressed border for Window</td>
+              <td>
+                <pre>
+::cue-region(name) {
+  outline: black inset 2px;
+}</pre>
+              </td>
+            </tr>
+            <tr>
+              <td>uniform border for Window</td>
+              <td>
+                <pre>
+::cue-region(name) {
+  outline: black solid 2px;
+}</pre>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+
+        <h3>64 colors in use by CEA-708</h3>
+        <p>
+          CEA-708 defines 64 colors based on 4 values of each of R,G and B components. This means we can map a CEA-708 color to a CSS value:
+        </p>
+        <pre>
+css-color-component(x) = cea708-color-component(x*85), x in {r,g,b}
+        </pre>
+
+        <p>
+          CEA-708 also defines 8 named colors: black, white, red, green, blue, yellow, magenta, cyan. They map to appropriate CSS colors.
+        </p>
+      </section>
+
+      <section>
+        <h2>Pop-on Captions</h2>
+        <p>
+          CEA-608 has a maximum of 4 rows of captions, which can be placed anywhere in the safe caption area.
+        </p>
+
+        <p>
+          In WebVTT, pop-on captions are mapped to cues. Their start time and end time are determined by the time that the CEA-608 memory is flipped such that the caption text becomes visible/removed. The caption text of the CEA-608 pop-on caption is placed in the cue content. Cue settings such as line and position settings are set as described in the section on "Positioning in CEA-608".
+        </p>
+
+        <p>
+          If the rows of text of one CEA-608 caption are to be rendered into vastly different positions on screen, you should subdivide the rows into separate cues that are active for the exact same interval, but have different locations in their cue settings.
+        </p>
+
+        <p>
+          Example of a typical WebVTT file with pop-on captions:
+        <p>
+        <pre>
+WEBVTT
+Style:
+@import(cea608.css)
+##
+Kind: captions
+Language: en-US
+
+00:00:01.373 --> 00:00:02.322
+There are two kinds of folks
+
+00:00:02.379 --> 00:00:03.979
+who sit around thinking
+about how to kill people:
+
+00:00:04.313 --> 00:00:06.039
+Psychopaths
+and mystery writers.
+
+00:00:06.277 --> 00:00:07.299 
+I'm the kind that pays better.
+        </pre>
+
+        <p>
+          CEA-708 pop-on captions rely on a Caption Window to be defined and mapped to a WebVTT Region as described in the section on "Positioning in CEA-708". Further attributes of the Region are described in section "Caption Text and Region Settings in CEA-708". Pop-on captions are the typical way in which cues in Regions are displayed. Regions are not displayed when there is no text in them.
+        </p>
+      </section>
+
+      <section>
+        <h2>Roll-up Captions</h2>
+        <p>
+          CEA-608 roll-up caption mode display 2, 3, or 4 rows of captions into which old lines are scrolled as new lines are added below. Scrolling up a line must take no more than 0.433 sec. CEA-708 roll-up captions may have any number of lines.
+        </p>
+
+        <p>
+          Both CEA-608 and CEA-708 captions are mapped to WebVTT through definition of a Region. In CEA-708 that Region is defined by the Caption Window. For CEA-608 we define a rollup Region as follows with n being the number of rows:
+        </p>
+        <pre>
+Region: id=rollup width=80% height=n scroll=up regionanchor=0%,100% viewportanchor=10%,90% start=bottom
+        </pre>
+
+        <p>
+          The roll-up display mode is translated to WebVTT by providing cues that overlap in time. As a second cue comes on, the first one scrolls up one line and the new one is added below. The translation software will ascertain that the cue intervals are appropriately timed such that at most n rows of captions are shown at one time.
+        </p>
+
+        <p>
+      </section>
+
+      <section>
+        <h2>Paint-on Captions</h2>
+        <p>
+          In CEA-608, paint-on captions mean that subsequent data is displayed immediately upon receipt.
+        </p>
+
+        <p>
+          Wherever possible, it is preferable to generate simple pop-on cues from paint-on captions. However, where the paint-on captions are a stylistic choice, it is possible to translate them into WebVTT by using time stamps for individual characters or sequences of characters within a cue.
+        </p>
+
+        <p>
+          For example:
+        </p>
+        <pre>
+WEBVTT
+Style:
+@import(cea608.css)
+##
+Kind: captions
+Language: en-US
+
+00:00:00.000 --> 00:00:15.000
+T&lt;00:00:00.100>h&lt;00:00:00.200>i&lt;00:00:00.300>s
+&lt;00:00:00.400>p&lt;00:00:00.500>a&lt;00:00:00.600>i&lt;00:00:00.700>n&lt;00:00:00.800>t&lt;00:00:00.900>s
+&lt;00:00:01.000>o&lt;00:00:01.100>n&lt;00:00:01.200>e
+&lt;00:00:01.300>c&lt;00:00:01.400>h&lt;00:00:01.500>a&lt;00:00:01.600>r
+&lt;00:00:01.700>p&lt;00:00:01.800>e&lt;00:00:01.900>r
+&lt;00:00:02.000>m&lt;00:00:02.100>s
+        </pre>
+      </section>
+    </section>
+
+    <section>
+      <h2>Character Style Conversion</h2>
+      <p>
+        The default style applied to WebVTT caption cues when converting from CEA-608 and CEA-708 shall be white foreground, black background, monospace font, no text decoration, no font style, weight, or effect, single line and character height and non-outlined text. This state corresponds to the presumed conditions at the beginning of each displayed row.
+      </p>
+
+      <p>
+        Most character styling is mapped to WebVTT by providing segments of text with a class markup, which provides the appropriate styling to that text segment. A class markup is a &lt;c> tag with one or more class names that is provided before the beginning of the relevant text segment and ends the text segment with a &lt;/c>.
+      </p>
+
+      <p>
+        This is an example WebVTT cue that is marked up with a color class:
+      </p>
+      <pre>
+WEBVTT
+Style:
+@import(cea608.css)
+##
+Kind: captions
+Language: en-US
+
+00:00:00.000 --> 00:00:15.000
+A &lt;c.red>red piece of text&lt;/c>.
+      </pre>
+
+      <p>
+        In CEA-708, the concept of a Pen is defined, which governs the font size, font, colors and style of the text within a Window. Pen characteristics remain consistent within a Window - and therefore within a WebVTT Region - unless specifically changed.
+      </p>
+
+
+      <section>
+        <h2>Font Size</h2>
+        <p>
+          CEA-608 and CEA-708 both define a default ("intended") font size relative to which columns and lines are defined and positioning on screen is identified (see section on "Positioning in CEA-608").
+        </p>
+
+        <p>
+          Both CEA-608 and CEA-708 expect that the user is able to change the size of the font during playback. CEA-708 for example suggests three different font sizes (small, standard and large) per available font. This user override is player-specific and not encoded into WebVTT.
+        </p>
+      </section>
+
+      <section>
+        <h2>Character Codes</h2>
+        <p>
+          In CEA-608, there are captions rendered from 3 different sets of character codes. In 708 the printable characters in use are ASCII with the substitution of the music note character for the ASCII DEL character, LATIN-1, and an extended character set.
+        </p>
+
+        <p>
+          WebVTT uses only unicode code points, rendered as UTF-8 characters. All of the CEA-608 and CEA-708 character codes - standard and extended character codes - are mapped to unicode.
+        </p>
+
+        <p>
+          Single-byte codes 0x20-0x7f map to the same Unicode code point, except for:
+        </p>
+
+        <table border="1">
+          <tr>
+            <td>0x2a</td>
+            <td>U+00E1</td>
+          </tr>
+          <tr>
+            <td>0x5c</td>
+            <td>U+00E9</td>
+          </tr>
+          <tr>
+            <td>0x5e</td>
+            <td>U+00ED</td>
+          </tr>
+          <tr>
+            <td>0x5f</td>
+            <td>U+00F3</td>
+          </tr>
+          <tr>
+            <td>0x60</td>
+            <td>U+00FA</td>
+          </tr>
+          <tr>
+            <td>0x7b</td>
+            <td>U+00E7</td>
+          </tr>
+          <tr>
+            <td>0x7c</td>
+            <td>U+00F7</td>
+          </tr>
+          <tr>
+            <td>0x7d</td>
+            <td>U+00D1</td>
+          </tr>
+          <tr>
+            <td>0x7e</td>
+            <td>U+00F1</td>
+          </tr>
+          <tr>
+            <td>0x7f</td>
+            <td>U+2588</td>
+          </tr>
+        </table>
+
+        <p>
+          Two-byte special characters where the second byte maps as follows:
+        </p>
+
+        <table border="1">
+          <tr>
+            <td>0x30</td>
+            <td>U+00AE</td>
+          </tr>
+          <tr>
+            <td>0x31</td>
+            <td>U+00B0</td>
+          </tr>
+          <tr>
+            <td>0x32</td>
+            <td>U+00BD</td>
+          </tr>
+          <tr>
+            <td>0x33</td>
+            <td>U+00BF</td>
+          </tr>
+          <tr>
+            <td>0x34</td>
+            <td>U+2122</td>
+          </tr>
+          <tr>
+            <td>0x35</td>
+            <td>U+00A2</td>
+          </tr>
+          <tr>
+            <td>0x36</td>
+            <td>U+00A3</td>
+          </tr>
+          <tr>
+            <td>0x37</td>
+            <td>U+266A</td>
+          </tr>
+          <tr>
+            <td>0x38</td>
+            <td>U+00E0</td>
+          </tr>
+          <tr>
+            <td>0x39</td>
+            <td>transparent space</td>
+          </tr>
+          <tr>
+            <td>0x3a</td>
+            <td>U+00E8</td>
+          </tr>
+          <tr>
+            <td>0x3b</td>
+            <td>U+00E2</td>
+          </tr>
+          <tr>
+            <td>0x3c</td>
+            <td>U+00EA</td>
+          </tr>
+          <tr>
+            <td>0x3d</td>
+            <td>U+00EE</td>
+          </tr>
+          <tr>
+            <td>0x3e</td>
+            <td>U+00F4</td>
+          </tr>
+          <tr>
+            <td>0x3f</td>
+            <td>U+00FB</td>
+          </tr>
+        </table>
+
+        <p>
+          When multiple characters on-screen talk simultaneously, transparent space is sometimes used to position the text for each character in the same line. In these cases, use the transparent space as a cue break, and calculate the positioning for the next part in a new cue similar to the recommendation for converting mid-row PACs.
+        </p>
+      </section>
+
+      <section>
+        <h2>Character Colors</h2>
+        <p>
+          The foreground text can be rendered in different colors. These colors are defined for CEA-608 - use these classes in WebVTT to provide them:
+        </p>
+        <table border="1">
+          <tr>
+            <td>white</td>
+            <td>.white</td>
+          </tr>
+          <tr>
+            <td>green</td>
+            <td>.green</td>
+          </tr>
+          <tr>
+            <td>blue</td>
+            <td>.blue</td>
+          </tr>
+          <tr>
+            <td>cyan</td>
+            <td>.cyan</td>
+          </tr>
+          <tr>
+            <td>red</td>
+            <td>.red</td>
+          </tr>
+          <tr>
+            <td>yellow</td>
+            <td>.yellow</td>
+          </tr>
+          <tr>
+            <td>magenta</td>
+            <td>.magenta</td>
+          </tr>
+        </table>
+
+        <p>
+          CEA-708 also knows "black" as a named color, which is the default text color in WebVTT. It would similarly map to a ".black" class. For other CEA-708 text color mappings see the section about "Positioning in CEA-708", subsection on "Window Colors and Borders". All colors mentioned there can be used for text color.
+        </p>
+
+        <p>
+          CEA-708 further has the following three transparency states for text:
+        </p>
+
+        <table border="1">
+          <tr>
+            <td>transparent</td>
+            <td>.transparent</td>
+          </tr>
+          <tr>
+            <td>semi-transparent</td>
+            <td>.semi-transparent</td>
+          </tr>
+          <tr>
+            <td>opaque</td>
+            <td>.opaque</td>
+          </tr>
+        </table>
+      </section>
+
+      <section>
+        <h2>Italics and Underline</h2>
+        <p>
+          Italics and underline exist in WebVTT as markup and are thus directly converted from CEA-608 or CEA-708 pen style.
+        </p>
+
+        <p>
+          For example:
+        </p>
+        <pre>
+WEBVTT
+Style:
+@import(cea608.css)
+##
+Kind: captions
+Language: en-US
+
+00:00:00.000 --> 00:00:15.000
+Nice &lt;u>underlined&lt;/u> and &lt;i>italicized&lt;/i> text.
+        </pre>
+      </section>
+
+      <section>
+        <h2>Blinking Characters</h2>
+        <p>
+          The .blink class provides the appropriate styling in WebVTT.
+        </p>
+
+        <p>
+          For example a blinking, red and italics text fragment is convert to the following:
+        </p>
+        <pre>
+WEBVTT
+Style:
+@import(cea608.css)
+##
+Kind: captions
+Language: en-US
+
+00:00:00.000 --> 00:00:15.000
+A &lt;c.red.italics.blink>flashing piece of text&lt;/c>.
+        </pre>   
+      </section>
+
+      <section>
+        <h2>CEA-708 Background Colour</h2>
+        <p>
+          In CEA-708 it is possible to change the background color of the caption text characters.
+        </p>
+
+        <p>
+          Use one of the following classes to provide the setting for a section of caption text:
+        </p>
+
+        <table border="1">
+          <tr>
+            <td>background white</td>
+            <td>.bg_white</td>
+          </tr>
+          <tr>
+            <td>background green</td>
+            <td>.bg_green</td>
+          </tr>
+          <tr>
+            <td>background blue</td>
+            <td>.bg_blue</td>
+          </tr>
+          <tr>
+            <td>background cyan</td>
+            <td>.bg_cyan</td>
+          </tr>
+          <tr>
+            <td>background red</td>
+            <td>.bg_red</td>
+          </tr>
+          <tr>
+            <td>background yellow</td>
+            <td>.bg_yellow</td>
+          </tr>
+          <tr>
+            <td>background magenta</td>
+            <td>.bg_magenta</td>
+          </tr>
+          <tr>
+            <td>background black</td>
+            <td>.bg_black</td>
+          </tr>
+        </table>
+
+        <p>
+          There are further the following three transparency states:
+        </p>
+
+        <table border="1">
+          <tr>
+            <td>background transparent</td>
+            <td>.bg_transparent</td>
+          </tr>
+          <tr>
+            <td>background semi-transparent</td>
+            <td>.bg_semi-transparent</td>
+          </tr>
+          <tr>
+            <td>background opaque</td>
+            <td>.bg_opaque</td>
+          </tr>
+        </table>
+      </section>
+
+      <section>
+        <h2>CEA-708 Font Tags</h2>
+        <p>
+          CEA-708 defines the following fonts, which are mapped to the following WebVTT classes:
+        </p>
+
+        <table border="1">
+          <tr>
+            <td>0 - default (undefined)</td>
+            <td>default WebVTT font, i.e. 'sans-serif'</td>
+          </tr>
+          <tr>
+            <td>1 - monospaced with serifs</td>
+            <td>.mono_serif</td>
+          </tr>
+          <tr>
+            <td>2 - Proportionally spaced with serifs</td>
+            <td>.prop_serif</td>
+          </tr>
+          <tr>
+            <td>3 - Monospaced without serifs</td>
+            <td>.mono_sans</td>
+          </tr>
+          <tr>
+            <td>4 - Proportionally spaced without serifs</td>
+            <td>.prop_sans</td>
+          </tr>
+          <tr>
+            <td>5 - Casual font type</td>
+            <td>.casual</td>
+          </tr>
+          <tr>
+            <td>6 - Cursive font type</td>
+            <td>.cursive</td>
+          <tr>
+            <td>7 - Small capital</td>
+            <td>.small_caps</td>
+          </tr>
+        </table>
+
+        <p>
+          For example:
+        </p>
+        <pre>
+WEBVTT
+Style:
+@import(cea608.css)
+##
+Kind: captions
+Language: en-US
+
+00:00:00.000 --> 00:00:15.000
+A &lt;c.mono_serif>different font&lt;/c> text.
+        </pre>
+      </section>
+
+      <section>
+        <h2>CEA-708 Character Offsetting</h2>
+        <p>
+          In CEA-708 it is possible to offset caption text characters from the baseline. WebVTT doesn't currently support the CSS for such offsetting, which would make use of the CSS vertical-align property.
+        </p>
+      </section>
+
+      <section>
+        <h2>Further CEA-708 Features</h2>
+        <p>
+          The remainder of the CEA-708 advanced features can be mapped easily using HTML and CSS. However, the styling language of WebVTT is restricted and consists only of the following:
+        </p>
+
+        <ul>
+          <li>text color</li>
+          <li>text-decoration</li>
+          <li>text-shadow</li>
+          <li>text-outline</li>
+          <li>background-color</li>
+          <li>background-position</li>
+          <li>outline-color</li>
+          <li>outline-style</li>
+          <li>outline-width</li>
+          <li>font-style</li>
+          <li>font-variant</li>
+          <li>font-weight</li>
+          <li>font-size/line-height</li>
+          <li>line height</li>
+          <li>white-space</li>
+        </ul>
+
+        <table border="1">
+          <tr>
+            <td>CEA-708 Feature</td>
+            <td>WebVTT/&lt;track> example</td>
+          </tr>
+          <tr>
+            <td>
+              <b>Further character attribute changes:</b><br>
+              Font size change (small, standard, large).<br>
+              Text style changes (font change, italicised, underlined).<br>
+              Text shadow.<br>
+              Depressed, raised edges.<br>
+              Depressed is typically also called "engraved" and raised is called "embossed".<br>
+            </td>
+            <td>
+              For HTML pages, these may have attributes in CSS. For example:<br>
+              <pre>
+&lt;style>
+  ::cue(.small) {
+    font-size: 70%;
+  }
+  ::cue(.standard) {
+    font-size: 100%
+  }
+  ::cue(.large) {
+    font-size: 130%
+  }
+  ::cue(.italics) {
+    font-style: italic;
+  }
+  ::cue(.underlined) {
+    text-decoration: underline;
+  }
+  ::cue(.textshadow) {
+    text-shadow: 1px 1px 2px #000;
+  }
+  ::cue(.raised) {
+    text-shadow: -1px 0 0 silver, 0 -1px 0 silver, 0 1px 0 #111111, 1px 0 0 #111111;
+    color: gray;
+  }
+  ::cue(.depressed) {
+    text-shadow: 1px 0 0 silver, 0 1px 0 silver, 0 -1px 0 #111111, -1px 0 0 #111111;
+    color: gray;
+  }
+&lt;/style>
+              </pre>
+              For typical 708 needs, classes will be defined that map the same features.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <b>Window effects:</b><br>
+              Display Effects (SNAP, FADE, WIPE, x), Effect Direction (L2R, R2L, T2B, B2T), Effect Speed (.5-sec units for WIPE and FADE ops)<br><br>
+              <b>Window Borders:</b><br>
+              Border Type (none, raised, etc), Border Color
+            </td>
+            <td>
+              Each of the defined effects can be recreated in modern CSS3 transitions and transformations in Web browsers. Thus, for typical 708 needs, classes will be defined that map the same feature.
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Text Type tag (Dialog, Source, Voice, ...)
+            </td>
+            <td>
+              WebVTT has the &lt;v> voice spans which allow association of a text type name with a span of text.<br>
+              For example to associate a speaker with a caption text segment, use the v tag:<br>
+              <pre>
+WEBVTT
+
+00:00:00.000 - 00:00:15.000
+&lt;v.Mary>Good morning and welcome to our company.
+              </pre>
+            </td>
+          </tr>
+        </table>
+      </section>
+    </section>
+
+    <section id="browsers">
+      <h2>Rendering in Web Browsers</h2>
+      <p>
+        The following HTML snippet is an example of how a WebVTT CEA-608 file may be included in a Web browser in relation to a video:
+      </p>
+      <pre>
+&lt;video controls>
+  &lt;source src=”video.mp4” type=”video/mp4”>
+  &lt;source src=”video.webm” type=”video/webm”>
+  &lt;track id=”cc1” label=”channel1” kind=”captions” srclang=”en” src=”channel1.vtt”>
+  &lt;track id=”cc2” label=”channel2” kind=”captions” srclang=”de” src=”channel2.vtt”>
+  &lt;track id=”cc3” label=”channel3” kind=”captions” srclang=”fr” src=”channel3.vtt”>
+  &lt;track id=”cc4” label=”channel4” kind=”captions” srclang=”sp” src=”channel4.vtt”>
+&lt;/video>
+      </pre>
+
+      <p>
+        CEA-608 further suggests use of caption tracks formatted for "easy reader" (3rd grade level for language learners). Such an "easy reader" track is marked up in HTML by use of the @label attribute. It can also be internationalized. For example:
+      </p>
+      <pre>          
+&lt;video controls>
+  &lt;source src=”video.mp4” type=”video/mp4”>
+  &lt;source src=”video.webm” type=”video/webm”>
+  &lt;track id=”cc1” label=”easy reader” kind=”captions” srclang=”en” src=”easy_reader_en.vtt”>
+  &lt;track id=”cc2” label=”einfacher Leser” kind=”captions” srclang=”de” src=”easy_reader_de.vtt”>
+&lt;/video>
+      </pre>     
+
+      <p>
+        The following CSS style sheet is provided for rendering of WebVTT CEA-608 files in Web browsers.
+      </p>
+      <pre>
+cea608.css
+
+/* default values */
+::cue {
+  line-height: 5.33vh;
+  font-size: 4.1vh;
+  font-family: monospace;
+  font-style: normal;
+  font-weight: normal;
+  background-color: black;
+  color: white;
+}
+/* special cue parts */
+::cue(c.transparent) {
+  color: transparent;
+}
+/* need to set this before changing color, otherwise the color is lost */
+::cue(c.semi-transparent) {
+  color: rgba(0, 0, 0, 0.5);
+}
+/* need to set this before changing color, otherwise the color is lost */
+::cue(c.opaque) {
+  color: rgba(0, 0, 0, 1);
+}
+::cue(c.blink) {
+  text-decoration: blink;
+}
+::cue(c.white) {
+  color: white;
+}
+::cue(c.red) {
+  color: red;
+}
+::cue(c.green) {
+  color: lime;
+}
+::cue(c.blue) {
+  color: blue;
+}
+::cue(c.cyan) {
+  color: cyan;
+}
+::cue(c.yellow) {
+  color: yellow;
+}
+::cue(c.magenta) {
+  color: magenta;
+}
+::cue(c.bg_transparent) {
+  background-color: transparent;
+}
+/* need to set this before changing color, otherwise the color is lost */
+::cue(c.bg_semi-transparent) {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+/* need to set this before changing color, otherwise the color is lost */
+::cue(c.bg_opaque) {
+  background-color: rgba(0, 0, 0, 1);
+}
+::cue(c.bg_white) {
+  background-color: white;
+}
+::cue(c.bg_green) {
+  background-color: lime;
+}
+::cue(c.bg_blue) {
+  background-color: blue;
+}
+::cue(c.bg_cyan) {
+  background-color: cyan;
+}
+::cue(c.bg_red) {
+  background-color: red;
+}
+::cue(c.bg_yellow) {
+  background-color: yellow;
+}
+::cue(c.bg_magenta) {
+  background-color: magenta;
+}
+::cue(c.bg_black) {
+  background-color: black;
+}
+/* Examples of combined colors */
+::cue(c.bg_white.bg_semi-transparent) {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+::cue(c.bg_green.bg_semi-transparent) {
+  background-color: rgba(0, 256, 0, 0.5);
+}
+::cue(c.bg_blue.bg_semi-transparent) {
+  background-color: rgba(0, 0, 255, 0.5);
+}
+::cue(c.bg_cyan.bg_semi-transparent) {
+  background-color: rgba(0, 255, 255, 0.5);
+}
+::cue(c.bg_red.bg_semi-transparent) {
+  background-color: rgba(255, 0, 0, 0.5);
+}
+::cue(c.bg_yellow.bg_semi-transparent) {
+  background-color: rgba(255, 255, 0, 0.5);
+}
+::cue(c.bg_magenta.bg_semi-transparent) {
+  background-color: rgba(255, 0, 255, 0.5);
+}
+::cue(c.bg_black.bg_semi-transparent) {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+      </pre>
+
+      <p>
+        Additionally, this CSS style sheet is provided for CEA-708 captions:
+      </p>
+      <pre>
+cea708.css
+
+::cue(c.mono_serif) {
+  font-family:'Courier, monospace, serif';
+}
+::cue(c.prop_serif) {
+  font-family:'Times New Roman, serif';
+}
+::cue(c.mono_sans) {
+  font-family:'Helvetica, monospace, sans-serif';
+}
+::cue(c.prop_sans) {
+  font-family:'Arial, Swiss, sans-serif';
+}
+::cue(c.casual) {
+  font-family:'Dom, Impress, casual';
+}
+::cue(c.cursive) {
+  font-family:'Coronet, Marigold, cursive';
+}
+::cue(c.small_caps) {
+  font-family:'Engravers Gothic, monospace, sans-serif';
+  font-variant:small-caps;
+}
+      </pre>
+    </section>
+
+    <section class='appendix'>
+      <h2>CEA-608 and CEA-708 References</h2>
+      <ul>
+        <li><a href="http://edocket.access.gpo.gov/cfr_2007/octqtr/pdf/47cfr15.119.pdf">608 specification</a></li>
+        <li><a href="http://www.cpcweb.com/hdtv/708.htm">708 information</a></li>
+        <li><a href="https://dvcs.w3.org/hg/text-tracks/raw-file/default/608toVTT/region.html">"Region" extension spec for WebVTT</a></li>
+      </ul>
+    </section>
+    
+    <section class='appendix'>
+      <h2>Contributors</h2>
+      <p>Thanks go to:</p>
+      <ul>
+        <li>Ian Hickson, Google</li>
+        <li>Simon Pieters, Opera</li>
+        <li>Loretta Guarino Reed, Google</li>
+        <li>David Singer, Apple</li>
+        <li>Christian Vogler,  Gallaudet University</li>
+        <li>David Ronca, Netflix</li>
+        <li>Michael Borthwick</li>
+      </ul>
+  </body>
+</html>

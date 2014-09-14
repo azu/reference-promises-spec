@@ -1,0 +1,667 @@
+<!-- http://www.w3.org/TR/app-uri/ -->
+<!DOCTYPE html>
+<html lang="en" dir="ltr" typeof="bibo:Document " about="" property="dcterms:language" content="en">
+<head>
+    <meta charset="UTF-8">
+    <title>
+      The app: URL Scheme
+    </title>
+    
+    
+    <script>
+function hideWIP(elem){
+      elem.parentNode.parentNode.id = '';
+      elem.parentNode.id = '';
+      elem.style.display = 'none';
+    }
+    </script>
+    <style>
+/**/
+    #wipcontainer {
+        display: none;
+        position: fixed;
+        bottom: 0px;
+        margin: 0 0 0 -37.5%;
+        width: 75%;
+        left: 50%;
+        z-index: 1000;
+    }
+    @media print {
+      #wip{
+        display: none;
+      }
+    }
+    @media (max-width: 50em) {
+        #wipcontainer {
+            margin: 0 0 0 0;
+            left:0;
+            width: auto;
+        }
+        #wip {
+            padding: 1em 4em 1.5em 4em;
+            width: auto;
+        }
+    }
+    #wip strong {
+        font-weight: normal;
+        display: block;
+        text-transform: uppercase;
+        text-shadow: 0 2px 2px rgba(0, 0, 0, 0.6);
+        margin: 0.25em auto 0.5em auto;
+    }
+    #wip a {
+        color: #fff;
+    }
+    #wip a:hover {
+        background: transparent;
+    }
+    #wip strong:before, #wip strong:after {
+        position: relative;
+        content:'\26A0';
+        padding: 0 0.5em 0 0.5em;
+        text-shadow: none;
+        font-size: 1.25em;
+    }
+    #wip > input {
+        position: absolute;
+        right: 5px;
+        top: 5px;
+        background: none;
+        border: none;
+        color: rgb(243, 245, 246);
+        font-weight: bold;
+        font-size: 1.2em;
+        cursor: pointer;
+        border: thin solid rgba(127, 127, 127, .0);
+        border-radius: .3em;
+    }
+    #wip > input:hover {
+        border: thin outset rgba(127, 127, 127, .5);
+    }
+    #wip > input:active {
+        border: thin inset rgba(127, 127, 127, .5);
+    }
+    </style>
+  <style>/*****************************************************************
+ * ReSpec 3 CSS
+ * Robin Berjon - http://berjon.com/
+ *****************************************************************/
+
+/* --- INLINES --- */
+em.rfc2119 { 
+    text-transform:     lowercase;
+    font-variant:       small-caps;
+    font-style:         normal;
+    color:              #900;
+}
+
+h1 acronym, h2 acronym, h3 acronym, h4 acronym, h5 acronym, h6 acronym, a acronym,
+h1 abbr, h2 abbr, h3 abbr, h4 abbr, h5 abbr, h6 abbr, a abbr {
+    border: none;
+}
+
+dfn {
+    font-weight:    bold;
+}
+
+a.internalDFN {
+    color:  inherit;
+    border-bottom:  1px solid #99c;
+    text-decoration:    none;
+}
+
+a.externalDFN {
+    color:  inherit;
+    border-bottom:  1px dotted #ccc;
+    text-decoration:    none;
+}
+
+a.bibref {
+    text-decoration:    none;
+}
+
+cite .bibref {
+    font-style: normal;
+}
+
+code {
+    color:  #ff4500;
+}
+
+/* --- TOC --- */
+.toc a, .tof a {
+    text-decoration:    none;
+}
+
+a .secno, a .figno {
+    color:  #000;
+}
+
+ul.tof, ol.tof {
+    list-style: none outside none;
+}
+
+.caption {
+    margin-top: 0.5em;
+    font-style:   italic;
+}
+
+/* --- TABLE --- */
+table.simple {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    border-bottom:  3px solid #005a9c;
+}
+
+.simple th {
+    background: #005a9c;
+    color:  #fff;
+    padding:    3px 5px;
+    text-align: left;
+}
+
+.simple th[scope="row"] {
+    background: inherit;
+    color:  inherit;
+    border-top: 1px solid #ddd;
+}
+
+.simple td {
+    padding:    3px 10px;
+    border-top: 1px solid #ddd;
+}
+
+.simple tr:nth-child(even) {
+    background: #f0f6ff;
+}
+
+/* --- DL --- */
+.section dd > p:first-child {
+    margin-top: 0;
+}
+
+.section dd > p:last-child {
+    margin-bottom: 0;
+}
+
+.section dd {
+    margin-bottom:  1em;
+}
+
+.section dl.attrs dd, .section dl.eldef dd {
+    margin-bottom:  0;
+}
+
+@media print {
+    .removeOnSave {
+        display: none;
+    }
+}
+</style><style>/* --- EXAMPLES --- */
+div.example-title {
+    min-width: 7.5em;
+    color: #b9ab2d;
+}
+div.example-title span {
+    text-transform: uppercase;   
+}
+aside.example, div.example, div.illegal-example {
+    padding: 0.5em;
+    margin: 1em 0;
+    position: relative;
+    clear: both;
+}
+div.illegal-example { color: red }
+div.illegal-example p { color: black }
+aside.example, div.example {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+    border-color: #e0cb52;
+    background: #fcfaee;    
+}
+
+aside.example div.example {
+    border-left-width: .1em;
+    border-color: #999;
+    background: #fff;
+}
+aside.example div.example div.example-title {
+    color: #999;
+}
+</style><style>/* HIGHLIGHTS */
+code.prettyprint {
+    color:  inherit;
+}
+
+/* this from google-code-prettify */
+.pln{color:#000}@media screen{.str{color:#080}.kwd{color:#008}.com{color:#800}.typ{color:#606}.lit{color:#066}.pun,.opn,.clo{color:#660}.tag{color:#008}.atn{color:#606}.atv{color:#080}.dec,.var{color:#606}.fun{color:red}}@media print,projection{.str{color:#060}.kwd{color:#006;font-weight:bold}.com{color:#600;font-style:italic}.typ{color:#404;font-weight:bold}.lit{color:#044}.pun,.opn,.clo{color:#440}.tag{color:#006;font-weight:bold}.atn{color:#404}.atv{color:#060}}ol.linenums{margin-top:0;margin-bottom:0}li.L0,li.L1,li.L2,li.L3,li.L5,li.L6,li.L7,li.L8{list-style-type:none}li.L1,li.L3,li.L5,li.L7,li.L9{background:#eee}
+</style>
+
+<link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/W3C-WD">
+<!--[if lt IE 9]><script src='https://www.w3.org/2008/site/js/html5shiv.js'></script><![endif]--></head>
+  <body class="h-entry" role="document" id="respecDocument"><div class="head" role="contentinfo" id="respecHeader">
+  <p>
+    
+      <a href="http://www.w3.org/"><img width="72" height="48" src="https://www.w3.org/Icons/w3c_home" alt="W3C"></a>
+    
+  </p>
+  <h1 class="title p-name" id="title" property="dcterms:title">The app: URL Scheme</h1>
+  
+  <h2 property="dcterms:issued" datatype="xsd:dateTime" content="2014-05-02T19:40:24.000Z" id="w3c-editor-s-draft-02-may-2014"><abbr title="World Wide Web Consortium">W3C</abbr> Last Call Working Draft <time class="dt-published" datetime="2014-05-29">29 May 2014</time></h2>
+  <dl>
+    
+      <dt>This version:</dt>
+      <dd><a class="u-url" href=
+        "http://www.w3.org/TR/2014/WD-app-uri-20140529/">http://www.w3.org/TR/2014/WD-app-uri-20140529/</a></dd>
+      <dt>Latest version:</dt>
+      <dd><a href="http://www.w3.org/TR/app-uri/">http://www.w3.org/TR/app-uri/</a></dd>
+    
+      <dt>Editor's draft:</dt>
+      <dd><a href="http://app-uri.sysapps.org/">http://app-uri.sysapps.org/</a></dd>
+    
+    
+      <dt>Previous version:</dt>
+
+      <dd>
+        <a class="u-url" href=
+        "http://www.w3.org/TR/2013/WD-app-uri-20130516/">http://www.w3.org/TR/2013/WD-app-uri-20130516/</a>
+      </dd>
+
+      <dt>Feedback:</dt>
+      <dd><a href="mailto:public-sysapps@w3.org/">public-sysapps@w3.org/</a>
+      with subject line “[appuri] … message topic …” (<a href="http://lists.w3.org/Archives/Public/public-sysapps/">archives</a>)</dd>
+
+    
+    <dt>Editor:</dt>
+    <dd class="p-author h-card vcard" rel="bibo:editor" inlist=""><span typeof="foaf:Person"><span property="foaf:name" class="p-name fn">Marcos Caceres</span>, <a rel="foaf:workplaceHomepage" class="p-org org h-org h-card" href="http://mozilla.com">Mozilla Corporation</a></span>
+</dd>
+
+
+      
+        
+          <dt>Repository:</dt>
+          
+             
+                
+                  <dd>
+                    <a href="https://github.com/sysapps/app-uri">
+                      We are on Github.
+                    </a>
+                  </dd>
+                
+             
+                
+                  <dd>
+                    <a href="https://github.com/sysapps/app-uri/issues">
+                      File a bug.
+                    </a>
+                  </dd>
+                
+             
+                
+                  <dd>
+                    <a href="https://github.com/sysapps/app-uri/commits/gh-pages">
+                      Commit history.
+                    </a>
+                  </dd>
+                
+             
+          
+        
+      
+    
+  </dl>
+  
+  
+  
+  
+    
+      <p class="copyright">
+        <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> ©
+        2014
+        
+        <a href="http://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>®</sup>
+        (<a href="http://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>,
+        <a href="http://www.ercim.eu/"><abbr title="European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>,
+        <a href="http://www.keio.ac.jp/">Keio</a>, <a href="http://ev.buaa.edu.cn/">Beihang</a>), 
+        
+        All Rights Reserved.
+        
+        <abbr title="World Wide Web Consortium">W3C</abbr> <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>,
+        <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and
+        
+          <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a>
+        
+        rules apply.
+      </p>
+    
+  
+  <hr>
+</div>
+    <section id="abstract" class="introductory" property="dcterms:abstract" datatype="" typeof="bibo:Chapter" resource="#abstract" rel="bibo:Chapter"><h2 aria-level="1" role="heading" id="h2_abstract">Abstract</h2>
+      <p>
+        This specification defines the app: URL scheme.
+      </p>
+      <p>
+        The app: URL scheme can be used by packaged applications to obtain
+        resources that are inside a container. These resources can then be used
+        with web platform features that accept URLs.
+      </p>
+    </section>
+<section id="sotd" class="introductory" typeof="bibo:Chapter"
+ resource="#sotd" rel="bibo:Chapter">
+<h2 aria-level="1" role="heading" id="h2_sotd">Status of This Document</h2>
+        <p>
+          <em>This section describes the status of this document at the time
+          of its publication. Other documents may supersede this document.
+          A list of current <abbr title="World Wide Web Consortium">W3C</abbr>
+          publications and the latest revision of this technical report can
+          be found in the <a href="http://www.w3.org/TR/"><abbr
+          title="World Wide Web Consortium">W3C</abbr> technical reports
+          index</a> at http://www.w3.org/TR/.</em>
+        </p>
+        
+        <p>
+          This document was published by the <a href="http://www.w3.org/2012/sysapps/">System Applications Working Group</a> as a Last Call Working Draft.
+          If you wish to make comments regarding this document, please send
+          them to <a href="mailto:public-sysapps@w3.org">public-sysapps@w3.org</a>
+          (<a href="mailto:public-sysapps-request@w3.org?subject=subscribe">subscribe</a>,
+            <a href="http://lists.w3.org/Archives/Public/public-sysapps/">archives</a>).
+          All comments are welcome.
+        </p>
+        
+        <p>
+          Publication as a Last Call Working Draft does not imply endorsement
+          by the <abbr title="World Wide Web Consortium">W3C</abbr> Membership.
+          This is a draft document and may be updated, replaced or obsoleted
+          by other documents at any time. It is inappropriate to cite this
+          document as other than work in progress.
+        </p>
+
+        <p>
+          
+          This document was produced by a group operating under the 
+          <a id="sotd_patent" about="" rel="w3p:patentRules"
+          href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5
+          February 2004 <abbr title="World Wide Web Consortium">W3C</abbr>
+          Patent Policy</a>. <abbr title="World Wide Web Consortium">W3C</abbr>
+          maintains a <a href="http://www.w3.org/2004/01/pp-impl/58119/status"
+          rel="disclosure">public list of any patent disclosures</a> made
+          in connection with the deliverables of the group; that page also
+          includes instructions for disclosing a patent. An individual who
+          has actual knowledge of a patent which the individual believes
+          contains <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential Claim(s)</a> must disclose the information in accordance
+          with <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section 6 of the <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>.
+        </p>
+        
+        <p>
+        This specification is a <strong>Last Call Working Draft</strong>. All
+	persons are encouraged to review this document and <strong>send comments
+	to the <a href=http://lists.w3.org/Archives/Public/public-sysapps/>public-sysapps</a>
+	mailing list</strong> as described above. The <strong>deadline for
+	comments</strong> is <strong>24 June 2014</strong>.
+        </p>
+    
+  
+</section><section id="toc"><h2 class="introductory" aria-level="1" role="heading" id="h2_toc">Table of Contents</h2><ul class="toc" role="directory" id="respecContents"><li class="tocline"><a href="#app-url" class="tocxref"><span class="secno">1. </span>
+        app: URL
+      </a></li><li class="tocline"><a href="#instance-identifier" class="tocxref"><span class="secno">2. </span>
+        Instance identifier
+      </a><ul class="toc"><li class="tocline"><a href="#privacy" class="tocxref"><span class="secno">2.1 </span>
+          Privacy Considerations
+        </a></li></ul></li><li class="tocline"><a href="#fetching-a-resource-from-a-container" class="tocxref"><span class="secno">3. </span>
+        Fetching a resource from a container
+      </a><ul class="toc"><li class="tocline"><a href="#security-considerations" class="tocxref"><span class="secno">3.1 </span>
+          Security considerations
+        </a></li></ul></li><li class="tocline"><a href="#conformance" class="tocxref"><span class="secno">4. </span>Conformance</a></li><li class="tocline"><a href="#usecases" class="tocxref"><span class="secno">A. </span>
+        Use Cases
+      </a></li><li class="tocline"><a href="#examples" class="tocxref"><span class="secno">B. </span>
+        Examples
+      </a></li><li class="tocline"><a href="#acknowledgments" class="tocxref"><span class="secno">C. </span>
+        Acknowledgments
+      </a></li><li class="tocline"><a href="#references" class="tocxref"><span class="secno">D. </span>References</a><ul class="toc"><li class="tocline"><a href="#normative-references" class="tocxref"><span class="secno">D.1 </span>Normative references</a></li><li class="tocline"><a href="#informative-references" class="tocxref"><span class="secno">D.2 </span>Informative references</a></li></ul></li></ul></section>
+    
+    <section id="app-url">
+      <!--OddPage--><h2 aria-level="1" role="heading" id="h2_app-url"><span class="secno">1. </span>
+        app: URL
+      </h2>
+      <p>
+        An <dfn id="dfn-app-url">app: URL</dfn> is a [<cite><a class="bibref" href="#bib-URL">URL</a></cite>] that can be used by a packaged
+        application to address resources within its container (e.g., a .zip
+        file).
+      </p>
+    </section>
+    <section id="instance-identifier">
+      <!--OddPage--><h2 aria-level="1" role="heading" id="h2_instance-identifier"><span class="secno">2. </span>
+        Instance identifier
+      </h2>
+      <p>
+        The <dfn id="dfn-instance-identifier">instance identifier</dfn> is a string that uniquely identifies
+        an instance of a packaged application.
+      </p>
+      <p>
+        When the <a href="#dfn-instance-identifier" class="internalDFN">instance identifier</a> is not provided by the developer, a
+        user agent <em class="rfc2119" title="MUST">MUST</em> synthesize one. The structure and length of identifier
+        represented by the authority is application specific, but it <em class="rfc2119" title="MUST">MUST</em> be
+        suitable to use as a <code>Document</code>'s origin. See also <a href="#privacy">privacy and security considerations</a>.
+      </p>
+      <section id="privacy" class="informative" typeof="bibo:Chapter" resource="#privacy" rel="bibo:Chapter">
+        <h3 aria-level="2" role="heading" id="h3_privacy"><span class="secno">2.1 </span>
+          Privacy Considerations
+        </h3><p><em>This section is non-normative.</em></p>
+        <p>
+          Using unique identifiers (e.g., a <a href="http://tools.ietf.org/html/rfc4122">UUID</a>) as an <a href="#dfn-instance-identifier" class="internalDFN">instance
+          identifier</a> can be exploited by an adversary as a digital finger
+          print. This can allow a developer to, for example, restore cookies
+          even if the user has cleared cookies from a user agent. As such, if
+          the user agent relies on unique identifiers as the host component,
+          then it should provide end-users with a means of regenerating the
+          authority component. For instance, A user agent can the regenerate
+          the <a href="#dfn-instance-identifier" class="internalDFN">instance identifier</a> when the user clears the user agent's
+          private data.
+        </p>
+      </section>
+    </section>
+    <section class="informative" id="fetching-a-resource-from-a-container">
+      <!--OddPage--><h2 aria-level="1" role="heading" id="h2_fetching-a-resource-from-a-container"><span class="secno">3. </span>
+        Fetching a resource from a container
+      </h2><p><em>This section is non-normative.</em></p>
+      <p>
+        To <dfn id="dfn-fetch-a-resource-using-the-app-url">fetch a resource using the app: URL</dfn> using a
+        <var>request</var> <a href="http://fetch.spec.whatwg.org/#concept-request">request</a>:
+      </p>
+      <ol>
+        <li>If <var title="">request</var>'s <a href="http://fetch.spec.whatwg.org/#concept-request-method">method</a> is
+        not `<code title="">GET</code>`, or if <var>origin</var> does not match
+        the <a href="#dfn-instance-identifier" class="internalDFN">instance identifier</a> for this application, return a
+          <a href="http://fetch.spec.whatwg.org/#concept-network-error">network
+          error</a>.
+        </li>
+        <li>Let <var>path</var> be the <a href="http://url.spec.whatwg.org/#concept-url-path">path</a> of
+        <var>URL</var>.
+        </li>
+        <li>Let <var>response</var> be a <a href="http://fetch.spec.whatwg.org/#concept-response">response</a>.
+        </li>
+        <li>If attempting to access the resource at <var>path</var> results in
+        an error (e.g., not found, the file is corrupt, locked, etc.), return a
+        <a href="http://fetch.spec.whatwg.org/#concept-network-error">network
+        error</a> and terminate this algorithm.
+        </li>
+        <li>If <var>request</var> includes a `<code>Range`</code> <a href="http://fetch.spec.whatwg.org/#concept-request-headers">header</a>:
+          <ol>
+            <li>If the value of the `<code>Range`</code> header is a valid byte
+            range [<cite><a class="bibref" href="#bib-HTTP11">HTTP11</a></cite>]:
+              <ol>
+                <li>Set <var>response</var> <a href="http://fetch.spec.whatwg.org/#concept-response-body">body</a>
+                to be the data from <var>path</var> at the start and end of
+                `<code>Range</code>`.
+                </li>
+                <li>Set <var>response</var> <a href="http://fetch.spec.whatwg.org/#concept-response-status">status</a>
+                to 206.
+                </li>
+              </ol>
+            </li>
+          </ol>
+        </li>
+        <li>Otherwise, set the <var>response</var> <a href="http://fetch.spec.whatwg.org/#concept-response-body">body</a> to be
+        the data at <var>path</var>.
+        </li>
+        <li>Set the <var>response</var> <a href="http://fetch.spec.whatwg.org/#concept-response-headers">headers</a>:
+          <ol>
+            <li>`<code>Content-Length</code>`, computed as per [<cite><a class="bibref" href="#bib-HTTP11">HTTP11</a></cite>].
+            </li>
+            <li>`<code>Content-Type</code>`, the MIME type of the resource at
+            <var>path</var> computed as per [<cite><a class="bibref" href="#bib-SNIFF">SNIFF</a></cite>].
+            </li>
+          </ol>
+        </li>
+        <li>Return <var>response</var>.
+        </li>
+      </ol>
+      <section id="security-considerations">
+        <h3 aria-level="2" role="heading" id="h3_security-considerations"><span class="secno">3.1 </span>
+          Security considerations
+        </h3>
+        <p>
+          When <a href="http://fetch.spec.whatwg.org/#concept-fetch">fetching</a> data from
+          an app: URL, a user agent needs to make sure that only files that
+          were in the container can be accessed (i.e., those files should be
+          sand-boxed). User agents need to watch out for <a href="http://en.wikipedia.org/wiki/Symbolic_link">symbolic links</a> (or
+          similar) inside a container, which can attempt to trick the user
+          agent into accessing files that are on other parts of the file
+          system.
+        </p>
+      </section>
+    </section>
+    <section id="conformance" typeof="bibo:Chapter" resource="#conformance" rel="bibo:Chapter"><!--OddPage--><h2 aria-level="1" role="heading" id="h2_conformance"><span class="secno">4. </span>Conformance</h2>
+<p>
+  As well as sections marked as non-normative, all authoring guidelines, diagrams, examples,
+  and notes in this specification are non-normative. Everything else in this specification is
+  normative.
+</p>
+<p>
+  The key words <em class="rfc2119" title="MUST">MUST</em>, <em class="rfc2119" title="MUST NOT">MUST NOT</em>, <em class="rfc2119" title="REQUIRED">REQUIRED</em>, <em class="rfc2119" title="SHOULD">SHOULD</em>, <em class="rfc2119" title="SHOULD NOT">SHOULD NOT</em>, <em class="rfc2119" title="RECOMMENDED">RECOMMENDED</em>, <em class="rfc2119" title="MAY">MAY</em>,
+  and <em class="rfc2119" title="OPTIONAL">OPTIONAL</em> in this specification are to be interpreted as described in [<cite><a class="bibref" href="#bib-RFC2119">RFC2119</a></cite>].
+</p>
+
+      <p>
+        There is one class of product that can claim conformance to this
+        specification: a <a href="#dfn-user-agent" class="internalDFN">user agent</a>.
+      </p>
+      <p>
+        A <dfn id="dfn-user-agent">user agent</dfn> is an implementation of this specification.
+      </p>
+    </section>
+    <section id="usecases" class="appendix" typeof="bibo:Chapter" resource="#usecases" rel="bibo:Chapter">
+      <!--OddPage--><h2 aria-level="1" role="heading" id="h2_usecases"><span class="secno">A. </span>
+        Use Cases
+      </h2>
+      <p>
+        For developers, this specification attempts to address the following
+        use cases:
+      </p>
+      <ol>
+        <li>Provide a URL scheme that is compatible with the features and
+        security model of [<cite><a class="bibref" href="#bib-HTML">HTML</a></cite>], so that applications that are packaged can
+        make full use of web platform's capabilities. For example, the app: URL
+        scheme should be usable as a <a href="http://www.whatwg.org/specs/web-apps/current-work/#the-document's-address">
+          document's address</a> so that it can serve as its <a href="http://www.whatwg.org/specs/web-apps/current-work/#origin">origin</a>,
+          and it should be compatible with APIs like [<cite><a class="bibref" href="#bib-XHR">XHR</a></cite>].
+        </li>
+        <li>Provide fetching model that constrains retrieval of files to a
+        specific container.
+        </li>
+        <li>Provide an addressing scheme that is easy to work with - and that
+        developers are already accustomed to working with. The developer should
+        not be bothered as to whether they are using <code>http://</code> or
+        <code>app://</code> - the Web's capabilities and APIs need to just
+        work!
+        </li>
+        <li>Support the ability to playback audio and video files within a
+        packaged web application, including the ability to seek without needing
+        to load the full resource.
+        </li>
+      </ol>
+    </section>
+    <section class="appendix" id="examples">
+      <!--OddPage--><h2 aria-level="1" role="heading" id="h2_examples"><span class="secno">B. </span>
+        Examples
+      </h2>
+      <p>
+        The following example shows [HTML]'s <code>window.location</code> using
+        then app: URL.
+      </p>
+      <div class="example"><div class="example-title"><span>Example 1</span></div><pre class="example highlight prettyprint prettyprinted"><span class="dec">&lt;!doctype html&gt;</span><span class="pln">
+</span><span class="tag">&lt;script&gt;</span><span class="pln">
+</span><span class="com">//Example using HTML's Location object</span><span class="pln">
+</span><span class="kwd">var</span><span class="pln"> loc </span><span class="pun">=</span><span class="pln">  window</span><span class="pun">.</span><span class="pln">location</span><span class="pun">;</span><span class="pln"> 
+console</span><span class="pun">.</span><span class="pln">log</span><span class="pun">(</span><span class="pln">loc</span><span class="pun">.</span><span class="pln">protocol </span><span class="pun">===</span><span class="pln"> </span><span class="str">"app:"</span><span class="pun">);</span><span class="pln"> </span><span class="com">//true </span><span class="pln">
+console</span><span class="pun">.</span><span class="pln">log</span><span class="pun">(</span><span class="pln">loc</span><span class="pun">.</span><span class="pln">host </span><span class="pun">===</span><span class="pln"> </span><span class="str">"com.foo.bar"</span><span class="pun">);</span><span class="pln"> </span><span class="com">//true </span><span class="pln">
+console</span><span class="pun">.</span><span class="pln">log</span><span class="pun">(</span><span class="pln">loc</span><span class="pun">.</span><span class="pln">href </span><span class="pun">===</span><span class="pln"> </span><span class="str">"app://com.foo.bar/index.html"</span><span class="pun">);</span><span class="pln"> </span><span class="com">//true </span><span class="pln">
+console</span><span class="pun">.</span><span class="pln">log</span><span class="pun">(</span><span class="pln">loc</span><span class="pun">.</span><span class="pln">origin </span><span class="pun">===</span><span class="pln"> </span><span class="str">"app://com.foo.bar"</span><span class="pun">);</span><span class="pln"> </span><span class="com">//true </span><span class="pln">
+console</span><span class="pun">.</span><span class="pln">log</span><span class="pun">(</span><span class="pln">loc</span><span class="pun">.</span><span class="pln">pathname </span><span class="pun">===</span><span class="pln"> </span><span class="str">"/index.html"</span><span class="pun">);</span><span class="pln"> </span><span class="com">//true </span><span class="pln">
+console</span><span class="pun">.</span><span class="pln">log</span><span class="pun">(</span><span class="pln">loc</span><span class="pun">.</span><span class="pln">hash </span><span class="pun">===</span><span class="pln"> </span><span class="str">"#example"</span><span class="pun">);</span><span class="pln"> </span><span class="com">//true </span><span class="pln">
+console</span><span class="pun">.</span><span class="pln">log</span><span class="pun">(</span><span class="pln">loc</span><span class="pun">.</span><span class="pln">port </span><span class="pun">===</span><span class="pln"> </span><span class="str">""</span><span class="pun">);</span><span class="pln"> </span><span class="com">//true</span><span class="pln">
+</span><span class="tag">&lt;/script&gt;</span></pre></div>
+      <p>
+        This example shows an app: URL being <a href="http://www.whatwg.org/specs/web-apps/current-work/#resolve-a-url">resolved</a>
+        in [<cite><a class="bibref" href="#bib-HTML">HTML</a></cite>].
+      </p>
+      <div class="example"><div class="example-title"><span>Example 2</span></div><pre class="example highlight prettyprint prettyprinted"><span class="kwd">var</span><span class="pln"> img </span><span class="pun">=</span><span class="pln"> document</span><span class="pun">.</span><span class="pln">createElement</span><span class="pun">(</span><span class="str">"img"</span><span class="pun">);</span><span class="pln">
+
+</span><span class="com">//the following setter triggers HTML's resolve algorithm </span><span class="pln">
+img</span><span class="pun">.</span><span class="pln">src </span><span class="pun">=</span><span class="pln"> </span><span class="str">"example.gif"</span><span class="pun">;</span><span class="pln"> 
+
+</span><span class="com">//and the expected output: </span><span class="pln">
+console</span><span class="pun">.</span><span class="pln">log</span><span class="pun">(</span><span class="pln">img</span><span class="pun">.</span><span class="pln">src </span><span class="pun">===</span><span class="pln"> </span><span class="str">"app://c13c6f30/example.gif"</span><span class="pun">)</span><span class="pln"> </span><span class="com">//true</span><span class="pln">
+
+</span><span class="com">//Append the image to the document</span><span class="pln">
+document</span><span class="pun">.</span><span class="pln">body</span><span class="pun">.</span><span class="pln">appendChild</span><span class="pun">(</span><span class="pln">img</span><span class="pun">);</span><span class="pln"> 
+</span><span class="pun">&lt;/</span><span class="pln">script</span><span class="pun">&gt;</span></pre></div>
+      <p>
+        This example shows a resource within a packaged application being
+        retrieved over [<cite><a class="bibref" href="#bib-XHR">XHR</a></cite>].
+      </p>
+      <div class="example"><div class="example-title"><span>Example 3</span></div><pre class="example highlight prettyprint prettyprinted"><span class="kwd">function</span><span class="pln"> process</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="com">// process the resulting data </span><span class="pln">
+</span><span class="pun">}</span><span class="pln">
+
+</span><span class="kwd">var</span><span class="pln"> xhr </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">XMLHttpRequest</span><span class="pun">();</span><span class="pln">
+xhr</span><span class="pun">.</span><span class="pln">onload </span><span class="pun">=</span><span class="pln"> </span><span class="pun">()</span><span class="pln"> </span><span class="pun">=&gt;</span><span class="pln"> process</span><span class="pun">(</span><span class="kwd">this</span><span class="pun">.</span><span class="pln">responseText</span><span class="pun">);</span><span class="pln">
+xhr</span><span class="pun">.</span><span class="pln">open</span><span class="pun">(</span><span class="pln"> </span><span class="str">"GET"</span><span class="pun">,</span><span class="pln"> </span><span class="str">"playlist.json"</span><span class="pun">);</span><span class="pln">
+xhr</span><span class="pun">.</span><span class="pln">send</span><span class="pun">();</span></pre></div>
+      <p>
+        This example shows how an <a href="#dfn-app-url" class="internalDFN">app: URL</a> can be used in conjunction
+        with a HTTP `<code>Range`</code> header to request a range of bytes
+        from a file inside a package.
+      </p>
+      <div class="example"><div class="example-title"><span>Example 4</span></div><pre class="example highlight prettyprint prettyprinted"><span class="kwd">var</span><span class="pln"> url </span><span class="pun">=</span><span class="pln"> </span><span class="str">"sample.mp3"</span><span class="pun">;</span><span class="pln"> 
+</span><span class="kwd">var</span><span class="pln"> xhr </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">XMLHttpRequest</span><span class="pun">();</span><span class="pln"> 
+xhr</span><span class="pun">.</span><span class="pln">open</span><span class="pun">(</span><span class="str">'GET'</span><span class="pun">,</span><span class="pln"> url</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">true</span><span class="pun">);</span><span class="pln"> 
+xhr</span><span class="pun">.</span><span class="pln">responseType </span><span class="pun">=</span><span class="pln"> </span><span class="str">"arraybuffer"</span><span class="pun">;</span><span class="pln"> 
+xhr</span><span class="pun">.</span><span class="pln">setRequestHeader</span><span class="pun">(</span><span class="str">'Range'</span><span class="pun">,</span><span class="pln"> </span><span class="str">'bytes=100-199'</span><span class="pun">);</span><span class="pln"> 
+xhr</span><span class="pun">.</span><span class="pln">send</span><span class="pun">();</span><span class="pln"> 
+console</span><span class="pun">.</span><span class="pln">log</span><span class="pun">(</span><span class="typ">Uint8Array</span><span class="pun">(</span><span class="pln">xhr</span><span class="pun">.</span><span class="pln">response</span><span class="pun">).</span><span class="pln">byteLength </span><span class="pun">===</span><span class="pln"> </span><span class="lit">100</span><span class="pun">);</span><span class="com">// true</span></pre></div>
+    </section>
+    <section class="appendix" id="acknowledgments">
+      <!--OddPage--><h2 aria-level="1" role="heading" id="h2_acknowledgments"><span class="secno">C. </span>
+        Acknowledgments
+      </h2>
+      <p>
+        The bulk of the text in this specifications was derived from the
+        <cite><a href="http://www.w3.org/TR/widgets-uri/">Widget URI
+        scheme</a></cite> specification. The Systems Application working group
+        acknowledge the hard work of the <a href="http://www.w3.org/2008/webapps/">Web Applications Working Group</a> in
+        laying down the foundations for this specification.
+      </p>
+    </section>
+  
+
+<section id="references" class="appendix" typeof="bibo:Chapter" resource="#references" rel="bibo:Chapter"><!--OddPage--><h2 aria-level="1" role="heading" id="h2_references"><span class="secno">D. </span>References</h2><section id="normative-references" typeof="bibo:Chapter" resource="#normative-references" rel="bibo:Chapter"><h3 aria-level="2" role="heading" id="h3_normative-references"><span class="secno">D.1 </span>Normative references</h3><dl class="bibliography" about=""><dt id="bib-HTTP11">[HTTP11]</dt><dd rel="dcterms:requires">R. Fielding et al. <a href="http://www.ietf.org/rfc/rfc2616.txt"><cite>Hypertext Transfer Protocol - HTTP/1.1</cite></a>. June 1999. RFC. URL: <a href="http://www.ietf.org/rfc/rfc2616.txt">http://www.ietf.org/rfc/rfc2616.txt</a>
+</dd><dt id="bib-RFC2119">[RFC2119]</dt><dd rel="dcterms:requires">S. Bradner. <a href="http://www.ietf.org/rfc/rfc2119.txt"><cite>Key words for use in RFCs to Indicate Requirement Levels.</cite></a> March 1997. Internet RFC 2119.  URL: <a href="http://www.ietf.org/rfc/rfc2119.txt">http://www.ietf.org/rfc/rfc2119.txt</a> 
+</dd><dt id="bib-SNIFF">[SNIFF]</dt><dd rel="dcterms:requires">Gordon P. Hemsley. <a href="http://mimesniff.spec.whatwg.org/"><cite>MIME Sniffing Standard</cite></a>. Living Standard. URL: <a href="http://mimesniff.spec.whatwg.org/">http://mimesniff.spec.whatwg.org/</a>
+</dd><dt id="bib-URL">[URL]</dt><dd rel="dcterms:requires">Anne van Kesteren. <a href="http://url.spec.whatwg.org/"><cite>URL Standard</cite></a>. Living Standard. URL: <a href="http://url.spec.whatwg.org/">http://url.spec.whatwg.org/</a>
+</dd></dl></section><section id="informative-references" typeof="bibo:Chapter" resource="#informative-references" rel="bibo:Chapter"><h3 aria-level="2" role="heading" id="h3_informative-references"><span class="secno">D.2 </span>Informative references</h3><dl class="bibliography" about=""><dt id="bib-HTML">[HTML]</dt><dd rel="dcterms:references">Ian Hickson. <a href="http://www.whatwg.org/specs/web-apps/current-work/"><cite>HTML</cite></a>. Living Standard. URL: <a href="http://www.whatwg.org/specs/web-apps/current-work/">http://www.whatwg.org/specs/web-apps/current-work/</a>
+</dd><dt id="bib-XHR">[XHR]</dt><dd rel="dcterms:references">Anne van Kesteren. <a href="http://xhr.spec.whatwg.org/"><cite>XMLHttpRequest</cite></a>. Living Standard . URL: <a href="http://xhr.spec.whatwg.org/">http://xhr.spec.whatwg.org/</a>
+</dd></dl></section></section></body></html>

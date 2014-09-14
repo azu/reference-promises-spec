@@ -1,0 +1,79 @@
+<!-- http://www.w3.org/2007/xmlsec/ws/papers/20-thompson/ -->
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta name="copyright" content="Copyright (C) 2007 Henry S. Thompson"/><meta http-equiv="Content-type" content="text/html; charset=utf-8"/><style type="text/css">
+       pre.code {font-family: monospace}
+       pre {margin-left: 0em}
+       ul.naked li { list-style-type: none }
+       ol ol {list-style-type: lower-alpha}
+       .math {font-family: 'Arial Unicode MS', 'Lucida Sans Unicode', serif}
+       .sub {font-size: 80%; vertical-align: sub}
+       .termref {text-decoration: none; color: #606000}
+       div.toc h2 {font-size: 120%; margin-top: 0em; margin-bottom: 0em}
+       div.toc h4 {font-size: 100%; margin-top: 0em; margin-bottom: 0em;
+                   margin-left: 1em}
+       div.toc h1 {font-size: 140%; margin-bottom: 0em}
+       div.toc ul {margin-top: 1ex}
+       .byline {font-size: 120%}
+    </style><title>Radical proposal for Vnext of XML Signature</title></head><body style="font-family: times; background: rgb(254,250,246)">
+ <div style="text-align: center">
+  <h1>Radical proposal for Vnext of XML Signature</h1>
+  <div class="byline">Henry S. Thompson</div>
+  <div class="byline">26 Sep 2007</div>
+ </div>
+ 
+  <div xmlns="">
+   <h2 xmlns="http://www.w3.org/1999/xhtml">1.  Introduction</h2>
+   <p xmlns="http://www.w3.org/1999/xhtml">Using XML Canonicalization as the preprocessor for signature
+generation and verification has proved less than satisfactory.  I think it's
+worth considering replacing C14N with something designed specifically for this
+role, with the benefit of hindsight wrt the problems that have been uncovered
+with the existing architecture.</p>
+  </div>
+  <div xmlns="">
+   <h2 xmlns="http://www.w3.org/1999/xhtml">2.  What are we signing?</h2>
+   <p xmlns="http://www.w3.org/1999/xhtml">In order to play the role of guaranteeing the integrity of a document,
+what must be signed?  I think the right way to address this is to look at
+infoset items and properties.  Here's a suggested set of things which must be covered:</p>
+   <dl xmlns="http://www.w3.org/1999/xhtml">
+    <dt><b><a name="Document_Information_Item">Document Information Item</a></b></dt><dd>children, base URI, all declarations
+processed, version</dd>
+    <dt><b><a name="Element_Information_Item">Element Information Item</a></b></dt><dd>namespace name, local name, children,
+attributes, base URI</dd>
+    <dt><b><a name="Attribute_Information_Item">Attribute Information Item</a></b></dt><dd>namespace name, local name,
+normalized value, attribute type</dd>
+    <dt><b><a name="Processing_Model_Information_Item">Processing Model Information Item</a></b></dt><dd>target, content, base URI</dd>
+    <dt><b><a name="Character_Information_Item">Character Information Item</a></b></dt><dd>character code</dd>
+    <dt><b><a name="Comment_Information_Item">Comment Information Item</a></b></dt><dd>content</dd>
+   </dl>
+   <p xmlns="http://www.w3.org/1999/xhtml">Note in particular that <i>no</i> information about namespace
+bindings is required/involved here -- no prefixes, no namespace attributes, no
+in-scope namespaces.</p>
+  </div>
+  <div xmlns="">
+   <h2 xmlns="http://www.w3.org/1999/xhtml">3.  What should we <i>really</i> be signing</h2>
+   <p xmlns="http://www.w3.org/1999/xhtml">The previous section doesn't really answer the question -- we need a
+byte sequence to digest, not a tree of abstract information items and
+properties.  You could imagine as trivial an answer as "Treat the
+infoitem/property story as a simple object model, and serialize per e.g. JSON".
+That <i>might</i> be too easy an answer for some, and in particular it
+would be horribly inefficient wrt namespace names.</p>
+   <p xmlns="http://www.w3.org/1999/xhtml">The alternative I think would be worth exploring would be a variant of
+<a href="http://db.cis.upenn.edu/research/xmill.html">XMill</a>.  This
+would massively reduce the redundancy, as well as possibly improving the
+quality of the digest produced.</p>
+  </div>
+  <div xmlns="">
+   <h2 xmlns="http://www.w3.org/1999/xhtml">4.  Can we stand to lose consistency of prefixes?</h2>
+   <p xmlns="http://www.w3.org/1999/xhtml">I think Ed Simon's attitude is correct here -- if fidelity of prefixes in
+content is an issue, type-aware processing would be required to convert e.g.
+QNames and XPaths in content into an expanded-name form.</p>
+  </div>
+  <div xmlns="">
+   <h2 xmlns="http://www.w3.org/1999/xhtml">5.  Summary</h2>
+   <p xmlns="http://www.w3.org/1999/xhtml">I think a new XML Signature WG should include in its charter exploring
+the possibility of replacing C14N completely in the signature architecture.</p>
+  </div>
+ 
+</body></html>

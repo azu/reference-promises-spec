@@ -1,0 +1,1071 @@
+<!-- http://www.w3.org/TR/xlink2rdf/ -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
+<html lang="en">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   
+      <title>Harvesting RDF Statements from XLinks</title>
+      <link rel="stylesheet" type="text/css" href="http://www.w3.org/StyleSheets/TR/W3C-NOTE.css"><style type="text/css">
+code           { font-family: monospace; }
+
+div.constraint,
+div.issue,
+div.note,
+div.notice     { margin-left: 2em; }
+
+dt.label       { display: run-in; }
+
+li p           { margin-top: 0.3em;
+                 margin-bottom: 0.3em; }
+</style></head>
+   <body>
+      
+      <div class="head">
+         <p><a href="http://www.w3.org/"><img src="http://www.w3.org/Icons/w3c_home" alt="W3C" height="48" width="72"></a></p>
+         <h1>Harvesting RDF Statements from XLinks</h1>
+         <h2>W3C Note 29 September 2000</h2>
+         <dl>
+            <dt>This version:</dt>
+            <dd><a href="http://www.w3.org/TR/2000/NOTE-xlink2rdf-20000929/">http://www.w3.org/TR/2000/NOTE-xlink2rdf-20000929/</a> (available as <a href="Overview.xml">XML</a> and <a href="Overview.html">HTML</a>)
+            </dd>
+            <dt>Latest version:</dt>
+            <dd><a href="http://www.w3.org/TR/xlink2rdf">http://www.w3.org/TR/xlink2rdf</a>
+            </dd>
+            <dt>Editor:</dt>
+            
+            <dd>
+               Ron Daniel Jr.
+                (Metacode Technologies Inc.)
+                <a href="mailto:rdaniel@metacode.com">&lt;rdaniel@metacode.com></a>
+               
+            </dd>
+            
+         </dl>
+         <p class="copyright"><a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a>&nbsp;&copy;&nbsp;2000&nbsp;<a href="http://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>&reg;</sup> (<a href="http://www.lcs.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>, <a href="http://www.inria.fr/"><abbr lang="fr" title="Institut National de Recherche en Informatique et Automatique">INRIA</abbr></a>, <a href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a>, <a href="http://www.w3.org/Consortium/Legal/copyright-documents-19990405">document use</a>, and <a href="http://www.w3.org/Consortium/Legal/copyright-software-19980720">software licensing</a> rules apply.
+         </p>
+      </div>
+      <hr>
+      <div>
+         <h2><a name="abstract">Abstract</a></h2>
+         
+         <p>Both XLink <a href="#XLink">[XLink]</a> and RDF <a href="#rdf">[RDF]</a> provide a way
+            of asserting relations between resources. RDF is primarily for describing
+            resources and their relations, while XLink is primarily for specifying and
+            traversing hyperlinks. However, the overlap between the two is sufficient
+            that a mapping from XLink links to statements in an RDF model can be defined.
+            Such a mapping allows XLink elements to be harvested as a source of RDF statements.
+            XLink links (hereafter, "links") thus provide an alternate syntax
+            for RDF information that may be useful in some situations.
+         </p>
+         
+         <p>This Note specifies such a mapping, so that links can be harvested and
+            RDF statements generated. The purpose of this harvesting is to create RDF
+            models that, in some sense, represent the <em>intent</em> of the XML
+            document.
+            The purpose is <em>not</em> to represent the XLink structure in enough
+            detail that a set of links could be round-tripped through an RDF model.
+         </p>
+         
+      </div>
+      <div>
+         <h2><a name="status">Status of This Document</a></h2>
+         
+         <p>This Note is made available by the W3C
+<a href="http://www.w3.org/XML/Activity#linking-wg">XML Linking Working Group</a>
+            for the consideration of the XLink and RDF communities in the hopes that
+            it may prove useful. However, it is not a formal product of the XML
+            Linking Working Group. Thus, it should not be construed as representing
+            the consensus of the XML Linking Working Group. Comments should be sent
+	    to the public mailing-list <a href="mailto:www-rdf-interest@w3.org"
+	    >www-rdf-interest@w3.org</a>(<a
+	    href="http://lists.w3.org/Archives/Public/www-rdf-interest/"
+	    >archive</a>). However, readers are advised that the XML Linking Working
+            Group has no plans to update this document.
+            
+         </p>
+         
+         <p>Publication of this Note by W3C indicates no endorsement by
+            W3C or the W3C Team, or any W3C Members.
+         </p>
+	 <p>A list of <a href="http://www.w3.org/TR">current W3C Recommendations and
+	 other technical documents</a> is available.</p>
+         
+      </div>
+      
+      <div class="toc">
+         <h2><a name="contents">Table of Contents</a></h2>
+         <p class="toc">1 <a href="#introduction">Introduction</a><br>&nbsp;&nbsp;&nbsp;&nbsp;1.1 <a href="#terminology">Terminology</a><br>&nbsp;&nbsp;&nbsp;&nbsp;1.2 <a href="#b2d248b3b1c17">Notation and Document Conventions</a><br>2 <a href="#principles">Principles of the Mapping</a><br>3 <a href="#spec">Mapping Specification</a><br>&nbsp;&nbsp;&nbsp;&nbsp;3.1 <a href="#xptr_synth">Synthesizing XPointers</a><br>&nbsp;&nbsp;&nbsp;&nbsp;3.2 <a href="#predicates">Generating RDF Predicates</a><br>&nbsp;&nbsp;&nbsp;&nbsp;3.3 <a href="#simple_links">Simple Linking Elements</a><br>&nbsp;&nbsp;&nbsp;&nbsp;3.4 <a href="#extended_links">Extended XML Links</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.4.1 <a href="#arcs">arc-Type Element</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.4.2 <a href="#locators">locator-Type Element</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.4.3 <a href="#resources">resource-Type Element</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.4.4 <a href="#titles">title-Type Element</a><br>&nbsp;&nbsp;&nbsp;&nbsp;3.5 <a href="#linkbases">Linkbases</a><br>4 <a href="#bibliography">References</a><br></p>
+         <h3>Appendix</h3>
+         <p class="toc">A <a href="#xslt">Implementing the Harvesting in XSLT</a><br></p>
+      </div>
+      <hr>
+      <div class="body">
+         
+         <div class="div1">
+            
+            <h2><a name="introduction">1 Introduction</a></h2>
+            
+            <p>The XLink specification <a href="#XLink">[XLink]</a> defines ways for
+               XML documents to establish hyperlinks between resources. The Resource
+               Description Framework specification <a href="#rdf">[RDF]</a> defines a
+               framework for the provision of machine-understandable information
+               about web resources.
+            </p>
+            
+            <p>Both XLink and RDF provide a way of asserting relations between resources.
+               RDF is primarily for describing resources and their relations, while XLink
+               is primarily for specifying and traversing hyperlinks. However, the overlap
+               between the two is sufficient that a mapping from XLink links to statements
+               in an RDF model can be defined. Such a mapping allows XLink elements to be <a href="#harvest" title="Harvesting">harvested</a> as a source of RDF statements. XLink links
+               (hereafter, "links") thus provide an alternate syntax for RDF
+               information that may be useful in some situations.
+            </p>
+            
+            <p>This Note specifies such a mapping, so that links can be harvested
+               and RDF statements generated. The purpose of this harvesting is to
+               create RDF models that, in some sense, represent the <em>intent</em>
+               of the XML document.  The purpose is <em>not</em> to represent the
+               XLink structure in enough detail that a set of links could be
+               round-tripped through an RDF model.
+            </p>
+            
+            <p>Readers of this Note are assumed to be familiar with
+               <a href="#XLink">[XLink]</a> and <a href="#rdf">[RDF]</a>. Terms that are defined
+               in those specifications will not be defined here. Readers should also
+               be familiar with XML Base <a href="#xbase">[XML Base]</a>.
+               Familiarity with the RDF Schema Candidate Recommendation
+               <a href="#rdfs">[RDFSchema]</a> will be necessary for those who wish to make
+               use of the mappings provided here that use RDF Schema Classes.
+            </p>
+            
+            
+            
+            <div class="div2">
+               
+               <h3><a name="terminology">1.1 Terminology</a></h3>
+               
+               <p>[Definition: <a name="dt-must" title="Must, May, etc.">The key words</a> <b>must</b>, <b>
+                        must not
+                     </b>, <b>required</b>, <b>shall</b>, <b>shall
+                        not
+                     </b>, <b>should</b>, <b>should
+                        not
+                     </b>, <b>recommended</b>, <b>may</b>, and
+                     <b>optional</b> in this specification are to be interpreted
+                     as described in <a href="#rfc2119">[IETF RFC 2119]</a>.
+                  ]
+               </p>
+               
+               <p>Some special terms are defined here in order to clarify
+                  their relationship to similar terms used in the technologies
+                  on which the mapping is based. Refer to <a href="#XLink">[XLink]</a> and
+                  <a href="#rdf">[RDF]</a> for definitions of other technical
+                  terms used here.
+               </p>
+               
+               <dl>
+                  
+                  <dt class="label">[Definition: <a name="harvest" title="Harvesting">harvesting</a>]
+                  </dt>
+                  
+                  <dd>
+                     
+                     <p>The process of generating RDF statements from XLink elements.</p>
+                     
+                  </dd>
+                  
+                  <dt class="label">[Definition: <a name="resource" title="resource">Resource</a>]
+                  </dt>
+                  
+                  <dd>
+                     
+                     <p>A "resource" is anything identified by a URI.</p>
+                     
+                  </dd>
+                  
+                  <dt class="label">[Definition: <a name="participating_resource" title="participating resource">Participating resource</a>]
+                  </dt>
+                  
+                  <dd>
+                     
+                     <p>A resource that has been identified in a link to serve as a
+                        potential starting or ending point of traversal.
+                     </p>
+                     
+                  </dd>
+                  
+               </dl>
+               
+            </div>
+            
+            
+            <div class="div2">
+               
+               <h3><a name="b2d248b3b1c17">1.2 Notation and Document Conventions</a></h3>
+               
+               <p>The <code>xlink:</code> and <code>rdf:</code> prefixes are used throughout
+                  to stand for the declaration of the XLink and RDF namespaces, respectively,
+                  on elements in whose scope the so-marked element or attribute appears (on
+                  the same element or on some ancestor element), whether or not a namespace
+                  declaration is present in the example. The use of specific namespace prefixes
+                  is an editorial convienience; as dictated by the Names in XML
+                  Recommendation <a href="#XML-Names">[XML-Names]</a>, any prefix
+                  <a href="#dt-must" title="Must, May, etc.">may</a> be used
+                  as long as the URI it maps to is the correct one.
+               </p>
+               
+            </div>
+            
+            
+         </div>
+         
+         <div class="div1">
+            
+            <h2><a name="principles">2 Principles of the Mapping</a></h2>
+            
+            <p>Simple RDF statements are comprised of a subject, a predicate, and an object.
+               The subject and predicate are identified by URI references, and
+               the object may be a URI reference or a literal string. To map an
+               XLink link into an RDF statement, we need
+               to be able to determine the URI references of the subject and predicate. We must also
+               be able to determine the object, be it a URI reference or a literal.
+            </p>
+            
+            <p>The general principle behind the mapping specified here is that each arc
+               in a link gives rise to one RDF statement. The starting resource of the arc
+               is mapped to the subject of the RDF statement. The ending resource of the
+               arc is mapped to the object of the RDF statement. The arc role is mapped to
+               the predicate of the RDF statement. However, a number of corner cases arise,
+               described in <a href="#spec"><b>3 Mapping Specification</b></a>.
+            </p>
+            
+            <p>RDF statements are typically collected together into "models."
+               The details of how models are structured are implementation dependent. This
+               Note assumes that harvested statements are added to "the current
+               model," which is the model being constructed when the
+               statement was harvested.
+               But this Note, like <a href="#rdfs">[RDFSchema]</a>, does not specify exactly how models
+               must be structured.
+            </p>
+            
+         </div>
+         
+         
+         <div class="div1">
+            
+            <h2><a name="spec">3 Mapping Specification</a></h2>
+            
+            <p>The following sections describe the mapping in detail.</p>
+            
+            <div class="div2">
+               
+               <h3><a name="xptr_synth">3.1 Synthesizing XPointers</a></h3>
+               
+               <p>RDF is based on the use of URIs for identifying resources. In XLink, the
+                  linking element itself (in the case of a simple link) or a subelement of the
+                  linking element (in the case of an extended link) often serves as one of the
+                  participating resources in the link. This requires that we be able to
+                  define URI references that identify those linking elements.
+                  Those URI references
+                  <a href="#dt-must" title="Must, May, etc.">must</a> follow the XPointer specification.
+                  
+               </p>
+               
+               <p>Any legal XPointer that identifies the proper element is allowed.
+                  However, in order that
+                  different implementations harvest equivalent RDF statements from
+                  an XLink, the procedure in this section <a href="#dt-must" title="Must, May, etc.">
+                     should
+                  </a> be used when synthesizing XPointers for such
+                  linking elements.
+                  The general approach recommended is for the synthesized XPointer
+                  to do element-wise navigation down the tree to reach the linking
+                  element. The navigation begins at the nearest identified point
+                  in the tree.
+               </p>
+               
+               <p>More formally, the base of the synthesized URI reference
+                  <a href="#dt-must" title="Must, May, etc.">shall</a> be specified as defined
+                  in <a href="#xbase">[XML Base]</a>.
+               </p>
+               
+               <p>The fragment identifier of the synthesized URI reference
+                  <a href="#dt-must" title="Must, May, etc.">shall</a> be delimited from the
+                  URI by the '#' character, as
+                  required by RFC 2396<a href="#rfc2396">[RFC 2396]</a>. The fragment identifier
+                  of the synthesized URI reference <a href="#dt-must" title="Must, May, etc.">shall</a>
+                  be an XPointer<a href="#xptr">[XPTR]</a>.
+               </p>
+               
+               <p>The XPointer <a href="#dt-must" title="Must, May, etc.">should</a> follow the
+                  production:
+                  
+                  <h5>Recommended Syntax for Synthesized XPointers</h5>
+                  <table class="scrap">
+                     <tbody>
+                        <tr>
+                           <td><pre>
+     XPointer    ::= Name
+                   | ChildSeq
+
+     ChildSeq    ::=  '/' [1-9] [0-9]* ('/' [1-9] [0-9]*)*
+                   |  Name ('/' [1-9] [0-9]*)+ 
+</pre></td>
+                        </tr>
+                     </tbody>
+                  </table>
+                  
+                  <div class="note">
+                     <p class="prefix"><b>Note:</b></p>
+                     <p>This is an edited version of the 
+                        <a href="http://www.w3.org/TR/xptr#NT-ChildSeq">ChildSeq</a>
+                        production, assuming
+                        that the production is updated in line with recent working group
+                        discussions. In the case of any differences between this document and
+                        the final XPointer specification, the XPointer specification's definition
+                        of ChildSeq should be followed.
+                     </p>
+                     
+                  </div>
+                  
+               
+               <p>The initial locator term
+                  of the XPointer <a href="#dt-must" title="Must, May, etc.">should</a> be an ID
+                  reference to the nearest ancestor of the linking element, including
+                  the linking element itself, that bears an attribute of type
+                  <code>ID</code>. If no such attribute exists on any ancestor of
+                  the linking element, the '/' character
+                  <a href="#dt-must" title="Must, May, etc.">should</a> be the first linking term,
+                  indicating that navigation proceeds from the document element.
+                  
+               </p>
+               
+               <p>As an example, consider a document that contains the following
+                  simple link:
+               </p>
+               
+               <table class="eg" cellpadding="5" border="1" bgcolor="#99ffff" width="100%">
+                  <tr>
+                     <td><pre>In heavy trading, &lt;org
+  xlink:type='simple'
+  xlink:href="http://www.foo.com/"
+  xml:base="http://www.bar.com/report1"
+  ID="com231"
+>Foo Manufacturing&lt;/org> closed sharply lower...</pre></td>
+                  </tr>
+               </table>
+               
+               <p>The synthesized XPointer for this linking element is:</p>
+               
+               <table class="eg" cellpadding="5" border="1" bgcolor="#99ffff" width="100%">
+                  <tr>
+                     <td><pre>http://www.bar.com/report1#com231</pre></td>
+                  </tr>
+               </table>
+               
+            </div>
+            
+            
+            <div class="div2">
+               
+               <h3><a name="predicates">3.2 Generating RDF Predicates</a></h3>
+               
+               <p>Unless stated otherwise, RDF statements are generated to represent the
+                  information for the arcs in a link. The value of
+                  the <code>xlink:arcrole</code> attribute, if one
+                  is given on an "arc"-type element or
+                  "simple"-type element,
+                  <a href="#dt-must" title="Must, May, etc.">must</a> be mapped to
+                  the predicate of the RDF statement. Note that the value of
+                  the <code>xlink:arcrole</code> attribute is already required,
+                  by the XLink specification, to be a URI reference.
+                  
+               </p>
+               
+               <p>If no <code>xlink:arcrole</code> attribute is specified,
+                  harvesting software <a href="#dt-must" title="Must, May, etc.">should not</a> generate
+                  an RDF statement. That is certainly the safest course. However, 
+                  many XML files may not have arcrole attributes. Implementations that
+                  wish to attempt to harvest RDF statements from such files
+                  <a href="#dt-must" title="Must, May, etc.">may</a> map
+                  the element type of the linking element to the predicate
+                  of the RDF statement, as long as the element type is namespace
+                  qualified. This ensures that an an absolute URI reference can
+                  be constructed from the namespace
+                  URI and the local part. In this case the namespace name and the
+                  local part are concatenated to synthesize the absolute URI
+                  reference for the predicate. Implementations 
+                  <a href="#dt-must" title="Must, May, etc.">should</a> examine the namespace
+                  URI to test if it ends in one of the URI characters '#', '?', or
+                  '/'. If it does then the namespace URI and the local part 
+                  <a href="#dt-must" title="Must, May, etc.">shall</a> be concatenated using the
+                  simple approach documented in <a href="#rdf">[RDF]</a>. If the namespace
+                  URI does not end in such a character, implementations
+                  <a href="#dt-must" title="Must, May, etc.">may</a> create a URI reference by
+                  inserting a '#' character. Note however that such URI references
+                  <a href="#dt-must" title="Must, May, etc.">must not</a> be exchanged with external
+                  parties, as they are not guaranteed to actually exist.
+                  
+               </p>
+               
+            </div>
+            
+            
+            <div class="div2">
+               
+               <h3><a name="simple_links">3.3 Simple Linking Elements</a></h3>
+               
+               <p>If a simple link's <code>xlink:arcrole</code> attribute has the
+                  value "http://www.w3.org/1999/xlink/properties/linkbase",
+                  the link <a href="#dt-must" title="Must, May, etc.">shall</a> be harvested according
+                  to section <a href="#linkbases"><b>3.5 Linkbases</b></a>.
+                  Otherwise the mapping defined in this section
+                  <a href="#dt-must" title="Must, May, etc.">shall</a> be used.
+               </p>
+               
+               <p>All simple links define zero or one traversal arcs. No traversal
+                  arc is specified if the <code>xlink:href</code> attribute is not specified.
+                  Therefore, harvesting software <a href="#dt-must" title="Must, May, etc.">shall not</a>
+                  generate an RDF statements if there is no <code>xlink:href</code> attribute
+                  in the link.
+               </p>
+               
+               <p>The starting resource of the simple link
+                  <a href="#dt-must" title="Must, May, etc.">shall</a> be mapped to the
+                  subject of the RDF statement. Note that the starting resource of a
+                  simple link is the linking element itself. Therefore, the harvesting
+                  software <a href="#dt-must" title="Must, May, etc.">must</a> create a URI
+                  reference that identifies the linking element, as defined in 
+                  section <a href="#xptr_synth"><b>3.1 Synthesizing XPointers</b></a>.
+               </p>
+               
+               <p>The predicate of the RDF statement is obtained from the simple
+                  Link as defined in <a href="#predicates"><b>3.2 Generating RDF Predicates</b></a>.
+                  
+               </p>
+               
+               <p>The ending resource of the simple link
+                  <a href="#dt-must" title="Must, May, etc.">shall</a> be mapped to the object of
+                  the RDF statement. Note that the ending resource
+                  of a simple link is always a URI reference, provided as the value of
+                  the <code>xlink:href</code> attribute.
+               </p>
+               
+               
+               
+               
+               <p>If an <code>xlink:role</code> attribute is specified on the simple
+                  link, it <a href="#dt-must" title="Must, May, etc.">shall</a> result in an
+                  additional statement being added to the model. The subject of
+                  the statement is the ending resource of the simple link,
+                  its predicate is "<code>rdf:type</code>", and its
+                  object is the resource identified by the role attribute.
+                  
+               </p>
+               
+               <p>If an implementation wishes to use facilities defined in the
+                  RDF Schema specification <a href="#rdfs">[RDFSchema]</a>, it
+                  <a href="#dt-must" title="Must, May, etc.">may</a> add a second statement to the
+                  RDF model when an <code>xlink:role</code> attribute is specified.
+                  The subject of the second statement is the resource identified by
+                  the <code>role</code> attribute, its predicate is
+                  "<code>rdf:type</code>", and its object is the
+                  resource "rdfs:Class". The second statement
+                  <a href="#dt-must" title="Must, May, etc.">should</a> only be added to
+                  the model if an equivalent statement is not already part of the
+                  model.
+               </p>
+               
+               <p>An example of a simple linking element is:</p>
+               
+               <table class="eg" cellpadding="5" border="1" bgcolor="#99ffff" width="100%">
+                  <tr>
+                     <td><pre>... In a &lt;x:extRef
+  xlink:type="simple"
+  xlink:href="http://www.foo.com/papers/crops.txt"
+  xlink:arcrole="http://links.org/namespace/cite"
+  xlink:role="http://links.org/namespace/screed"
+>recent paper&lt;/x:extRef>, Dr. Taylor assumes that ...</pre></td>
+                  </tr>
+               </table>
+               
+               <p>Mapping that link according to this specification (and assuming it was
+                  the fourth child element within the third child element of the document)
+                  results in the RDF model shown below:
+               </p>
+               <img src="xlink2rdf-fig1.gif" alt="RDF model with 3 arcs">
+               
+               <p>If the <code>xlink:role</code> attribute had not been specified, then
+                  the result would have been the RDF model shown below:
+               </p>
+               <img src="xlink2rdf-fig2.gif" alt="RDF model with 1 arc">
+               
+            </div>
+            
+            
+            <div class="div2">
+               
+               <h3><a name="extended_links">3.4 Extended XML Links</a></h3>
+               
+               
+               <p>We first describe the rules for harvesting the components of an
+                  extended link (arcs, locators, and resources). Then we describe the
+                  rules for the extended link as a whole.
+               </p>
+               
+               
+               <div class="div3">
+                  
+                  <h4><a name="arcs">3.4.1 <code>arc</code>-Type Element
+                     </a>
+                  </h4>
+                  
+                  <p>If an arc contains an <code>xlink:arcrole</code> attribute whose
+                     value is "http://www.w3.org/1999/xlink/properties/linkbase",
+                     it <a href="#dt-must" title="Must, May, etc.">shall</a> be harvested according to the
+                     procedure in section <a href="#linkbases"><b>3.5 Linkbases</b></a>. Otherwise the procedures
+                     in this section <a href="#dt-must" title="Must, May, etc.">shall</a> be used.
+                     
+                  </p>
+                  
+                  <p>
+                     XLink elements of the <code>arc</code> type use the <code>xlink:to</code>
+                     and <code> xlink:from</code> attributes to specify the endpoints of
+                     zero or more possible traversals by referencing, not URIs, but
+                     rather labels that have been defined in the <code>xlink:label</code>
+                     attributes of <code>locator</code>-type and <code>resource</code>-type elements.
+                     
+                  </p>
+                  
+                  <p>
+                     The number of RDF statements harvested from a single <code>arc</code>-type
+                     element is equal to the number of possible traversals specified by that
+                     element.
+                     That quantity is the multiplicative product of the number of resource and/or
+                     locator elements identified by the <code>xlink:to</code> and <code>xlink:from
+                        
+                     </code> attributes. Each RDF statement will correspond to one and only one
+                     of the traversals.
+                     
+                  </p>
+                  
+                  <p>
+                     The starting resources of the traversals
+                     <a href="#dt-must" title="Must, May, etc.">shall</a> be mapped to the subject of
+                     the RDF statement(s). The ending resources of
+                     the traversals <a href="#dt-must" title="Must, May, etc.">shall</a> be mapped to
+                     the object of the RDF statement(s). The predicate of the RDF statement
+                     is obtained as specified in <a href="#predicates"><b>3.2 Generating RDF Predicates</b></a>.
+                     
+                  </p>
+                  
+                  <p>Note that any element content of an arc is not harvested.</p>
+                  
+               </div>
+               
+               
+               <div class="div3">
+                  
+                  <h4><a name="locators">3.4.2 <code>locator</code>-Type Element
+                     </a>
+                  </h4>
+                  
+                  <p>Each XLink <code>locator</code>-type element gives rise to zero or
+                     more statements in the RDF model. The subject of all of those
+                     statements is the value of the <code>xlink:href</code> attribute of
+                     the locator, except as noted below.
+                     
+                  </p>
+                  
+                  <p>
+                     If the locator element provides an <code>xlink:role</code> attribute,
+                     one additional statement <a href="#dt-must" title="Must, May, etc.">shall</a> be
+                     added to the model. The value of the locator's <code>xlink:href</code>
+                     attribute <a href="#dt-must" title="Must, May, etc.">shall</a> be mapped to the
+                     subject of the statement. The value of the <code>xlink:role</code>
+                     attribute <a href="#dt-must" title="Must, May, etc.">shall </a> be mapped to the
+                     object, and the predicate <a href="#dt-must" title="Must, May, etc."> shall</a>
+                     be "rdf:type". Harvesting software that uses the
+                     facilities of the RDF Schema specification <a href="#dt-must" title="Must, May, etc.">
+                        may
+                     </a> generate an additional statement whose subject is the
+                     value of the <code>xlink:role</code> attribute, whose predicate is
+                     "rdf:type" and whose object is "rdfs:Class".
+                     The second statement <a href="#dt-must" title="Must, May, etc.">should not</a> be
+                     added to the RDF model if an equivalent statement already exists in
+                     the model.
+                     
+                  </p>
+                  
+                  
+                  <p>
+                     If the locator element provides an <code>xlink:label</code> attribute, an
+                     RDF statement is added to the model. The value of the href attribute <a href="#dt-must" title="Must, May, etc.">shall</a> be mapped to the subject of the statement. The
+                     predicate of the statement <a href="#dt-must" title="Must, May, etc.">shall</a> be <code>
+                        xlink:label
+                     </code>. The object of the statement <a href="#dt-must" title="Must, May, etc.">shall
+                        
+                     </a> be the value of the <code>xlink:label</code> attribute.
+                     
+                  </p>
+                  
+                  <p>If the locator element provides an <code>xlink:title</code> attribute, an
+                     RDF statement <a href="#dt-must" title="Must, May, etc.">shall</a> be added to the model.
+                     The value of the <code>xlink:href</code> attribute <a href="#dt-must" title="Must, May, etc.">shall
+                        
+                     </a> be mapped to the subject of the statement. The predicate of the
+                     statement <a href="#dt-must" title="Must, May, etc.">shall</a> be
+                     "<code>xlink:title</code>".
+                     The object of the statement <a href="#dt-must" title="Must, May, etc.">shall</a> be the
+                     value of the title attribute.
+                     
+                  </p>
+                  
+                  <p>If the resource element contains one or more title elements, they
+                     are harvested as described in section <a href="#titles"><b>3.4.4 title-Type Element</b></a>.
+                  </p>
+                  
+               </div>
+               
+               
+               <div class="div3">
+                  
+                  <h4><a name="resources">3.4.3 <code>resource</code>-Type Element
+                     </a>
+                  </h4>
+                  
+                  <p>Each XLink <code>resource</code>-type element gives rise to zero or
+                     more statements in the RDF model. Unless noted
+                     otherwise, the subject of all of those statements is the resource element
+                     itself, identified by an XPointer synthesized according to the procedure described
+                     in section <a href="#xptr_synth"><b>3.1 Synthesizing XPointers</b></a>.
+                  </p>
+                  
+                  <p>If the resource element provides an <code>xlink:role</code> attribute, one
+                     RDF statement <a href="#dt-must" title="Must, May, etc.">shall</a> be added to the model,
+                     and a second RDF statement <a href="#dt-must" title="Must, May, etc.">may</a> be added to
+                     the model. The subject of the first statement is the synthesized URI reference
+                     for the resource. The value of the xlink:role attribute is mapped to the object
+                     of the statement. The predicate of the statement is '<code>rdf:type</code>'.
+                     A second statement <a href="#dt-must" title="Must, May, etc.">may</a> be added to the model
+                     if the software supports the RDF Schema specification <a href="#rdfs">[RDFSchema]</a>.
+                     The value of the <code>xlink:role</code> attribute is mapped to the subject
+                     of the optional statement. The predicate of the statement is "rdf:type
+                     " and the object is "rdfs:Class". The second
+                     statement <a href="#dt-must" title="Must, May, etc.">should not</a> be added to the
+                     model if an identical statement already exists in the model.
+                     
+                  </p>
+                  
+                  <p>If the resource element provides an <code>xlink:label</code> attribute,
+                     another RDF statement <a href="#dt-must" title="Must, May, etc.">shall</a> be added to
+                     the model. The subject of the statement is the synthesized URI reference
+                     for the resource. The predicate of the statement is
+                     "xlink:label". The object of the statement is the value of
+                     the label attribute.
+                     
+                  </p>
+                  
+                  <p>If the resource element provides an <code>xlink:title</code> attribute, another
+                     RDF statement <a href="#dt-must" title="Must, May, etc.">shall</a> be added to the model.
+                     The subject of the statement is the synthesized URI reference for the resource.
+                     The predicate of the statement is "xlink:title". The object of
+                     the statement is the value of the title attribute.
+                  </p>
+                  
+                  <p>If the resource element contains one or more title elements, they are harvested
+                     as described in section <a href="#titles"><b>3.4.4 title-Type Element</b></a>.
+                  </p>
+                  
+               </div>
+               
+               
+               <div class="div3">
+                  
+                  <h4><a name="titles">3.4.4 <code>title</code>-Type Element
+                     </a>
+                  </h4>
+                  
+                  <p>XLink <code>title</code>-type elements have an XLink-defined meaning
+                     only if they appear as a child element within an extended, locator,
+                     or resource element.
+                     
+                     
+                  </p>
+                  
+                  <p>If an XLink <code>extended</code>-, <code>locator</code>-, or
+                     <code>resource</code>-type element contains one or more
+                     <code>title</code>-type elements, one RDF statement <a href="#dt-must" title="Must, May, etc.">shall</a> be added to the model for each
+                     title element.
+                     The subject of the statement <a href="#dt-must" title="Must, May, etc.">shall</a>
+                     be either the value of the <code>xlink:href</code> attribute (in the
+                     case of a <code>locator</code> element) or a synthesized XPointer identifying
+                     the <code>extended</code> or <code>resource</code> element. The predicate
+                     of the statement
+                     <a href="#dt-must" title="Must, May, etc.">shall</a> be <code>xlink:title</code>. 
+                     The object of the statement
+                     <a href="#dt-must" title="Must, May, etc.">shall</a> be a synthesized XPointer
+                     identifying the title element. (Identifying the title element, rather
+                     than just its content, allows attributes such as <code>xml:lang</code>
+                     to be captured along with the title.)
+                     
+                  </p>
+                  
+                  <div class="note">
+                     <p class="prefix"><b>Note:</b></p>
+                     
+                     <p>
+                        Implementations <a href="#dt-must" title="Must, May, etc.">may</a> add a second
+                        RDF statement to the model for each <code>title</code>-type element. 
+                        The object of the second statement shall be a synthesized XPointer
+                        identifying the title element. The predicate of the second statement
+                        shall be <code>rdf:value</code>. The object of the second statement 
+                        shall be the content of the title element. (If the title element
+                        contains mixed content, the object is a string containing XML markup.
+                        The implementation's facilities for dealing with situations
+                        where the <code>rdf:parseType</code> attribute has the value
+                        "literal" will be needed.)
+                        
+                     </p>
+                     
+                  </div>
+                  
+                  <p>As an example, consider the following fragment of an extended
+                     link:
+                  </p>
+                  
+                  <table class="eg" cellpadding="5" border="1" bgcolor="#99ffff" width="100%">
+                     <tr>
+                        <td><pre>&lt;annotation xlink:type='extended' ID='genid22'>
+  &lt;caption xlink:type='title' ID='genid23'>&lt;i>Recent&lt;/i> comments&lt;/caption>
+  &lt;link xlink:type='arc' ...</pre></td>
+                     </tr>
+                  </table>
+                  
+                  <p>The RDF statements harvested from the title are shown below:</p>
+                  <img src="xlink2rdf-fig3.gif" alt="RDF model with 2 arcs, second one pointing at &lt;i>Recent&lt;/i>"></div>
+               
+               
+            </div>
+            
+            
+            <div class="div2">
+               
+               <h3><a name="linkbases">3.5 Linkbases</a></h3>
+               
+               <p>A linkbase is an XML document which functions like a database of
+                  links. A linkbase arc is an XLink element (<code>simple</code>- or
+                  <code>arc</code>-type) whose <code>xlink:arcrole</code> attribute takes the value
+                  of "http://www.w3.org/1999/xlink/properties/linkbase".
+                  The ending resource of a linkbase arc is a linkbase.
+               </p>
+               
+               <p>When harvesting software encounters a linkbase arc, it
+                  <a href="#dt-must" title="Must, May, etc.">shall not</a> generate an RDF statement for
+                  the arc. It <a href="#dt-must" title="Must, May, etc.">should</a> traverse the arc to
+                  retrieve the linkbase, and harvest the links from the linkbase to add to
+                  the current model using the methods specified in this Note.
+               </p>
+               
+               <div class="note">
+                  <p class="prefix"><b>Note:</b></p>
+                  
+                  <p>Different applications might make different tradeoffs on depth of
+                     traversal in light of varying network conditions. This Note does not
+                     mandate specific behavior, but does <a href="#dt-must" title="Must, May, etc.">recommend
+                        
+                     </a> that all havesting applications attempt to obtain at
+                     least the immediately referenced linkbase.
+                     
+                  </p>
+                  
+               </div>
+               
+            </div>
+            
+            
+         </div>
+         
+         
+         <div class="div1">
+            
+            <h2><a name="bibliography">4 References</a></h2>
+            
+            <dl>
+               
+               <dt class="label"><a name="XLink">XLink</a></dt>
+               <dd>
+                  Steve DeRose, Eve Maler, David Orchard, and Ben Trafford, editors. <cite>
+                     XML Linking Language (XLink)
+                  </cite>. World Wide Web Consortium, 2000.
+                    (See <a href="http://www.w3.org/TR/xlink">http://www.w3.org/TR/xlink</a>.)
+               </dd>
+               
+               
+               <dt class="label"><a name="XML-Names">XML-Names</a></dt>
+               <dd>Tim Bray, Dave Hollander, and Andrew Layman, editors. <cite>
+                     Namespaces in XML
+                  </cite>. Textuality, Hewlett-Packard, and Microsoft.
+                  World Wide Web Consortium, 1999.  (See <a href="http://www.w3.org/TR/REC-xml-names">http://www.w3.org/TR/REC-xml-names</a>.)
+               </dd>
+               
+               
+               <dt class="label"><a name="rfc2119">IETF RFC 2119</a></dt>
+               <dd>S. Bradner, editor. <cite>
+                     Key words for use in RFCs to Indicate Requirement Levels
+                  </cite>. March
+                  1997. (See <a href="http://www.ietf.org/rfc/rfc2119.txt">http://www.ietf.org/rfc/rfc2119.txt
+                     
+                  </a>.)
+               </dd>
+               
+               
+               <dt class="label"><a name="rdf">RDF</a></dt>
+               <dd>Ora Lassila and Ralph Swick, editors. <cite>Resource Description
+                     Framework (RDF) Model and Syntax Specification
+                  </cite>. World Wide Web
+                  Consortium, 1999.  (See <a href="http://www.w3.org/TR/REC-rdf-syntax">http://www.w3.org/TR/REC-rdf-syntax</a>.)
+               </dd>
+               
+               
+               <dt class="label"><a name="xptr">XPTR</a></dt>
+               <dd>Ron
+                  Daniel, Steve DeRose, and Eve Maler, editors.<cite> XML Pointer Language
+                     (XPointer) V1.0
+                  </cite>. World Wide Web Consortium, 1998.
+                    (See <a href="http://www.w3.org/TR/xptr">http://www.w3.org/TR/xptr</a>.)
+               </dd>
+               
+               
+               <dt class="label"><a name="rfc2396">RFC 2396</a></dt>
+               <dd>
+                  RFC 2396: Uniform Resource Identifiers. Internet Engineering Task Force,
+                  1995.  (See <a href="http://www.ietf.org/rfc/rfc2396.txt">http://www.ietf.org/rfc/rfc2396.txt</a>.)
+               </dd>
+               
+               
+               <dt class="label"><a name="rdfs">RDFSchema</a></dt>
+               <dd>
+                  Dan Brickley, R.V. Guha, editors. <cite>Resource Description
+                     Framework (RDF) Schema Specification 1.0
+                  </cite>. World Wide Web
+                  Consortium, 2000.
+                    (See <a href="http://www.w3.org/TR/rdf-schema">http://www.w3.org/TR/rdf-schema</a>.)
+               </dd>
+               
+               
+               <dt class="label"><a name="xbase">XML Base</a></dt>
+               <dd>Jonathan Marsh, editor. <cite>XML Base (XBase)
+                     
+                  </cite>. World Wide Web Consortium, 1999.  (See <a href="http://www.w3.org/TR/xmlbase">http://www.w3.org/TR/xmlbase</a>.)
+               </dd>
+               
+            </dl>
+            
+         </div>
+         
+      </div>
+      
+      
+      <div class="back">
+         
+         <div class="div1">
+            
+            <h2><a name="xslt">A Implementing the Harvesting in XSLT</a></h2>
+            
+            <p>One way of harvesting RDF statements from XML documents that contain
+               XLinks is through the use of XSLT. This appendix presents a simple
+               example of such a harvester. It has a number of limitations. It does
+               not generate the synthesized XPointers which are preferred for reasons
+               of interoperability. Second, it uses a Java extension function for
+               adding statements to an RDF storage manager. There is no standard API
+               for such a storage manager. Accordingly,
+               this appendix is provided as an example only. It does not
+               specify any normative behavior.
+            </p>
+            
+            <p>
+               The stylesheet itself is given in listing 1. Its operation is
+               very simple. It looks for simple XLinks, stores the subject, object,
+               and predicate in variables, then calls an extension function to add
+               the RDF statement to some storage mechanism.
+               
+            </p>
+            
+            <p>
+               
+               <table class="eg" cellpadding="5" border="1" bgcolor="#99ffff" width="100%">
+                  <tr>
+                     <td><pre>
+
+&lt;!--
+
+  Simple XSLT stylesheet to harvest RDF statements from simple
+  XLinks. XLinks are detected and an extension function called
+  to add RDF statements to an RDF repository. The extension function
+  is a very simple mockup that just prints its arguments to stdout.
+
+  Note that the repository is updated as a side effect of
+  examining the document. While practical, this is somewhat at odds
+  with the philosophy behind XSLT. Any application that actually
+  cares about the order in which RDF statements are made is
+  cautioned about using this approach.
+
+  Credit where due: I got a head start on this by using Dan Connolly's 
+  stylesheet that tried to turn XLinks into RDF's XML syntax.
+
+  Ron Daniel Jr.
+  rdaniel@metacode.com   2000-09-15
+-->
+
+&lt;xsl:stylesheet 
+    version="1.0"
+    xmlns:xsl  ="http://www.w3.org/1999/XSL/Transform"
+    xmlns:rdf  ="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:rdfs ="http://www.w3.org/TR/rdf-schema/"
+
+    xmlns:Radix="http://www.example.com/com.example.Radix"
+>
+
+  &lt;!-- Some 'useful' declarations. -->
+  &lt;xsl:variable name='rdf-type'
+	      select='"http://www.w3.org/1999/02/22-rdf-syntax-ns#type"'/>
+  &lt;xsl:variable name='rdfs-class'
+	      select='"http://www.w3.org/TR/rdf-schema#Class"'/>
+
+  &lt;xsl:output method="text"/>
+
+  &lt;!-- Look for simple links that are linkbase references, ignore them.
+       (This rule is explicitly given a higher priority
+        than the system-assigned priorities of the other rules so
+        that it will match and discard linkbase references.)
+  -->
+  &lt;xsl:template priority="2"
+       match='*[@xlink:type="simple"][@xlink:arcrole=
+               "http://www.w3.org/1999/xlink/properties/linkbase"]'>
+      &lt;!-- For now, do nothing. A more complete example could pull in
+           the linkbase and harvest its content.
+      -->
+  &lt;/xsl:template>
+
+
+  &lt;!-- Process the simple links that are not linkbase references.
+       Pull the various bits of info into variables and then call the
+       extension function.
+       (Make sure that we have an href specified. If not, there is no
+       arc to add to the RDF model.)
+  -->
+  &lt;xsl:template match='*[@xlink:type="simple"][@xlink:href]'>
+
+    &lt;!-- Subject - Synthesizing the XPointer in an interoperable way is
+         left for more ambitious examples. For simplicity, just generate
+         a unique ID.
+    -->
+    &lt;xsl:variable name='subject'
+		  select='concat("#xpointer-for-", generate-id())'/>
+
+    &lt;!-- Predicate name comes from arcrole (preferred) or element type
+	 (allowed). Look for arcrole, but if it doesn't exist, use
+	 element name. (Note that we have to concatenate the namespace
+         URI and the local name according to the RDF spec to make a URI
+         reference. This should really test to see if namespace URI
+         ends with #, /, or ?)
+     -->
+    &lt;xsl:variable name='predicate'>
+      &lt;xsl:choose>
+        &lt;!-- Get arcrole attribute if possible. -->
+	&lt;xsl:when test='@xlink:arcrole'>
+	  &lt;xsl:value-of select='@xlink:arcrole'/>
+	&lt;/xsl:when>
+        &lt;!-- If no arcrole, use element type as long as there is a
+             namespace URI so it can be made into a URI reference.
+        -->
+	&lt;xsl:when test='namespace-uri()'>
+	  &lt;xsl:value-of select='concat(namespace-uri() , name())'/>
+	&lt;/xsl:when>
+      &lt;/xsl:choose>
+    &lt;/xsl:variable>
+
+    &lt;xsl:variable name='object' select='string(@xlink:href)'/>
+    &lt;xsl:variable name='objType' select='string(@xlink:role)'/>
+
+    &lt;!--  Here it is - the main call to add a statement to the
+          RDF database.
+    -->
+    &lt;xsl:if test='$predicate'>
+      &lt;xsl:value-of select='Radix:addStatement($subject,
+	       string($predicate), $object)'/>
+    &lt;/xsl:if>
+
+    &lt;!-- Additional call if xlink:role specified. (We rely on the
+         underlying RDF storage implementation to deal with possible
+         multiple additions of the  rdf:type(objType, rdfs:Class)
+         statement).
+    -->
+    &lt;xsl:if test='$objType'>
+      &lt;xsl:value-of select='Radix:addStatement($object,
+	       $rdf-type, $objType)'/>
+      &lt;xsl:value-of select='Radix:addStatement($objType,
+	       $rdf-type, $rdfs-class)'/>
+    &lt;/xsl:if>
+  &lt;/xsl:template>
+
+
+  &lt;!-- don't pass text thru -->
+  &lt;xsl:template match="text()|@*">
+  &lt;/xsl:template>
+
+&lt;/xsl:stylesheet>
+
+</pre></td>
+                  </tr>
+               </table>
+               
+            <p>The stylesheet makes use of an extension function,
+               <code>Radix:addStatement(subject, predicate, object)</code>, which
+               would actually add the statement to an RDF storage manager. For
+               demonstration purposes, a dummy implementation of that extension
+               function is given in listing 2. This was tested using the Saxon
+               implementation of XSLT. Other implementations may have different
+               conventions for the use of extension functions.
+               
+            </p>
+            
+            <p>
+               
+               <table class="eg" cellpadding="5" border="1" bgcolor="#99ffff" width="100%">
+                  <tr>
+                     <td><pre>
+
+package com.example;
+/** Simple demo of a RDF interface. This one is trivial, it has
+  * one call that lets statements be added.
+  */
+public class Radix
+{
+
+  /** Mockup of a routine to add RDF statements to a model being
+    * constructed. Prints the subject, predicate, and object on 
+    * different lines with progressive indention to make it easy
+    * to read.
+    */
+  public static String
+  addStatement(String subject, String predicate, String object)
+  {
+    System.out.println(predicate + "\n  " + subject + "\n    " + object);
+    return "";
+  }
+}
+
+</pre></td>
+                  </tr>
+               </table>
+            
+            
+         </div>
+         
+      </div>
+      
+   </body>
+</html>

@@ -1,0 +1,180 @@
+<!-- http://www.w3.org/TR/audioproc/ -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <title>Audio Processing API</title>
+  <link rel="stylesheet" type="text/css" href="http://www.w3.org/StyleSheets/TR/W3C-WD.css" />
+</head>
+
+<body>
+
+<div class="head">
+<p><a href="http://www.w3.org/"><img src="http://www.w3.org/Icons/w3c_home"
+alt="W3C" height="48" width="72" /></a></p>
+
+<h1><a id="d3e4"></a>Audio Processing API</h1>
+
+<h2><a id="w3c-doctype"></a>W3C Working Draft 15 December 2011</h2>
+<dl>
+  <dt>This version:</dt>
+    <dd><a
+      href="http://www.w3.org/TR/2011/WD-audioproc-20111215/">http://www.w3.org/TR/2011/WD-audioproc-20111215/</a>
+    </dd>
+  <dt>Latest version:</dt>
+    <dd><a
+      href="http://www.w3.org/TR/audioproc/">http://www.w3.org/TR/audioproc/</a></dd>
+  <dt>Editors:</dt>
+    <dd>Robert O'Callahan, Mozilla Corporation &lt;robert@ocallahan.org&gt;</dd>
+    <dd>Chris Rogers, Google &lt;crogers@google.com&gt;</dd>
+</dl>
+
+<p class="copyright"><a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> &copy; 2011 <a href="http://www.w3.org/"><acronym title="World Wide Web Consortium">W3C</acronym></a><sup>&reg;</sup> (<a href="http://www.csail.mit.edu/"><acronym title="Massachusetts Institute of Technology">MIT</acronym></a>, <a href="http://www.ercim.eu/"><acronym title="European Research Consortium for Informatics and Mathematics">ERCIM</acronym></a>, <a href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply.</p>
+</div>
+<hr />
+
+<div>
+<h2><a id="abstract"></a>Abstract</h2>
+
+<p>This specification introduces and compares two client-side APIs for processing and synthesizing real-time audio streams in the browser.</p>
+
+</div>
+
+<div>
+<h2><a id="status"></a>Status of this Document</h2>
+
+<p><em>This section describes the status of this document at the time of its
+publication. Other documents may supersede this document. A list of current W3C
+publications and the latest revision of this technical report can be found in
+the <a href="http://www.w3.org/TR/">W3C technical reports index</a> at
+http://www.w3.org/TR/.</em></p>
+
+<p>This is the <a href="http://www.w3.org/2005/10/Process-20051014/tr.html#first-wd">First Public Working Draft</a> of the Audio Processing API specification. It has been produced by the <a href="http://www.w3.org/2011/audio/">W3C Audio Working Group</a>, which is part of the <a href="http://www.w3.org/2006/rwc/Activity.html">W3C Rich Web Client Activity</a>.</p>
+
+<p>This publication references two proposals for advance audio API functionality: <a href="#WebAudio">Google's Web Audio API specification</a> and <a href="#MediaStream">Mozilla's MediaStream Processing API specification</a>.</p>
+
+<p>Please send comments about this document to <a href="mailto:public-audio@w3.org">public-audio@w3.org</a> mailing list (<a
+href="http://lists.w3.org/Archives/Public/public-audio/">public archive</a>).</p>
+
+<p>Publication as a Working Draft does not imply endorsement by the W3C Membership. This is a draft document and may be updated, replaced or obsoleted by other documents at any time. It is inappropriate to cite this document as other than work in progress. </p>
+
+<p>This document was produced by a group operating under the <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 <acronym title="World Wide Web Consortium">W3C</acronym> Patent Policy</a>. <acronym title="World Wide Web Consortium">W3C</acronym> maintains a <a href="http://www.w3.org/2004/01/pp-impl/46884/status" rel="disclosure">public list of any patent disclosures</a> made in connection with the deliverables of the group; that page also includes instructions for disclosing a patent. An individual who has actual knowledge of a patent which the individual believes contains <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential Claim(s)</a> must disclose the information in accordance with <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section 6 of the <acronym title="World Wide Web Consortium">W3C</acronym> Patent Policy</a>.</p>
+</div>
+
+<div class="toc">
+<h2><a id="contents"></a>Table of Contents</h2>
+<ol>
+  <li><a href="#introduction">Introduction</a></li>
+  <li><a href="#L5625">API Proposals</a>
+    <ol>
+      <li><a href="#WebAudio">Web Audio API proposal</a></li>
+      <li><a href="#MediaStream">MediaStream Processing API</a></li>
+    </ol>  
+  </li>
+  <li><a href="#acknowledgments">Acknowledgements</a></li>
+</ol>
+
+</div>
+<hr />
+
+<div class="body">
+
+<div class="div1">
+<h2><a id="introduction"></a>1 Introduction</h2>
+
+<p><em>This section is informative.</em></p>
+
+<p>The HTML5 <code>audio</code> and <code>video</code> elements allow for the playback of prerecorded audio files.  For many purposes, this functionality is not enough.  The specifications described here extend the capabilities of the browser to add more advanced audio capabilities than are currently offered by these simple multimedia elements.</p>
+
+<p>These APIs will support the features required by advanced interactive
+applications including the ability to process and synthesize audio streams
+directly in script. This API can be used for interactive applications, games,
+3D environments, musical applications, educational applications, and for the
+purposes of accessibility. It includes the ability to synchronize, visualize,
+or enhance sound information when used in conjunction with graphics APIs. Sound
+synthesis can be used to enhance user interfaces, or produce music. </p>
+
+<h2><a id="L5625">2. API Proposals</a></h2>
+
+<p><em>This section is informative.</em></p>
+
+<p>The W3C Audio Working Group has produced two proposals for the Audio API: <a href="http://www.w3.org/TR/webaudio/">Google's Web Audio API specification</a> and <a href="http://www.w3.org/TR/streamproc/">Mozilla's MediaStream Processing API specification</a>.</p>
+
+<p>Each specification covers many of the same use cases, but in some areas the specifications are complementary.  The group is evaluating the technical merits of each specification, in terms of its ease of use, implementability, and satisfaction of use cases and requirements of the <a href="http://www.w3.org/2011/audio/">Audio</a> and <a href="http://www.w3.org/2011/04/webrtc/">WebRTC</a> Working Groups.  The group welcomes feedback from interested Web developers and audio experts, as well as implementers of browsers and authoring tools, and hardware manufacturers.</p>
+
+</div>
+
+<div class="div1">
+
+<div class="div2">
+<h3><a id="WebAudio"></a>2.1 Web Audio API proposal</h3>
+
+<p>Google's Web Audio API proposal describes a high-level JavaScript API for
+processing and synthesizing audio in web applications. The primary paradigm is
+of an audio routing graph, where a number of AudioNode objects are connected
+together to define the overall audio rendering. The actual processing will
+primarily take place in the underlying implementation (typically optimized
+Assembly / C / C++ code), but direct JavaScript processing and synthesis is
+also supported.</p>
+
+<p>This API is designed to be used in conjunction with other APIs and elements
+on the web platform, notably: XMLHttpRequest (using the responseType and
+response attributes). For games and interactive applications, it is anticipated
+to be used with the canvas 2D and WebGL 3D graphics APIs. </p>
+
+<p>To learn more, refer to the <a href="http://www.w3.org/TR/webaudio/">Web Audio API</a> proposal.</p>
+
+<h3>2.2 <a id="MediaStream">MediaStream Processing API</a></h3>
+
+<p>Mozilla's MediaStream Processing API specifies a number of existing or
+proposed features for the Web platform deal with continuous real-time media:</p>
+<ul>
+  <li>HTML media elements</li>
+  <li>Synchronization of multiple HTML media elements (e.g. proposed HTML
+    MediaController)</li>
+  <li>Capture and recording of local audio and video input (e.g. proposed HTML
+    Streams)</li>
+  <li>Peer-to-peer streaming of audio and video streams (e.g. proposed WebRTC
+    and HTML Streams)</li>
+  <li>Advanced audio APIs that allow complex mixing and effects processing
+    (e.g. Mozilla's AudioData, Chrome's AudioNode)</li>
+  <li>Many use-cases require these features to work together. This proposal
+    makes HTML Streams the foundation for integrated Web media processing by
+    creating a mixing and effects processing API for HTML Streams. </li>
+</ul>
+
+<p>To learn more, refer to the <a href="http://www.w3.org/TR/streamproc/">MediaStream Processing API</a> proposal.</p>
+
+</div>
+</div>
+</div>
+
+<div class="back">
+
+<div class="div1">
+<h2><a id="acknowledgments"></a>3. Acknowledgements</h2>
+
+<p><em>This section is informative.</em></p>
+
+<p>This document is the work of the <a href="http://www.w3.org/2011/audio/">W3C Audio Working Group</a>.</p>
+
+<p>Members of the Working Group are (at the time of writing, and by
+alphabetical order): </p>
+
+<p>Berkovitz, Joe (public Invited expert); Gregan, Matthew (Mozilla
+Foundation); Jägenstedt, Philip (Opera Software); Kalliokoski, Jussi (public
+Invited expert); Lowis, Chris (British Broadcasting Corporation); MacDonald,
+Alistair (W3C Invited Experts); Michel, Thierry (W3C/ERCIM); Raman, T.V.
+(Google, Inc.); Rogers, Chris (Google, Inc.); Schepers, Doug (W3C/MIT); Shires,
+Glen (Google, Inc.); Smith, Michael (W3C/Keio); and Thereaux, Olivier (British Broadcasting Corporation).</p>
+
+<p>The co-chairs of the Working Group are Alistair MacDonald and Olivier Thereaux.</p>
+
+<p>The people who have contributed to <a href="http://lists.w3.org/Archives/Public/public-audio/">discussions on
+public-audio@w3.org</a> are also gratefully acknowledged. </p>
+</div>
+</div>
+</body>
+</html>

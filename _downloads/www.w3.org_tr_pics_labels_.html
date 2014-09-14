@@ -1,0 +1,1724 @@
+<!-- http://www.w3.org/TR/PICS-labels/ -->
+<HTML>
+<HEAD>
+  <TITLE>REC-PICS-labels-961031</TITLE>
+</HEAD>
+<BODY BACKGROUND="http://www.w3.org/TR/recbg.jpg">
+<P>
+<A HREF="http://www.w3.org/"><IMG BORDER="0" align=left ALT="W3C" SRC="http://www.w3.org/pub/WWW/Icons/WWW/w3c_home.gif"></A>
+<A HREF="http://www.w3.org/pub/WWW/PICS/"><IMG BORDER="0" SRC="http://www.w3.org/pub/WWW/Icons/WWW/pics_48x48"
+    ALT="PICS" WIDTH="48" HEIGHT="48"></A>
+<H3 align=right>
+  REC-PICS-labels-20091124
+</H3>
+<H1 align=center>
+  PICS Label Distribution Label Syntax and Communication Protocols
+</H1>
+<H3>
+  <CENTER>
+  </CENTER>
+</H3>
+<H3 align=center>
+  Version 1.1
+</H3>
+<H3 align=center>
+  W3C Recommendation 31-October-96 (revised 24-Nov-2009)
+</H3>
+
+<p style="border: solid thick red; padding: 1em"><strong>Note:<em>This paragraph is informative.</em> This document is
+currently not maintained. PICS has been superseded by the Protocol for Web Description Resources (<a href="/2007/powder/">POWDER</a>). W3C encourages authors and
+implementors to refer to POWDER (or its successor) rather than PICS when developing systems to describe Web content or agents to
+act on those descriptions. A brief document outlining the advantages offered by POWDER compared with PICS is <a href="/2009/08/pics_superseded.html">available
+separately</a>.</strong> The <a href="/TR/REC-PICS-labels-961031">31 October 1996 PICS Recommendation</a> remains available on the W3C Web site.</p>
+
+
+<P>
+<DL>
+  <DT>
+  <DT>
+    Editor:
+  <DD>
+    Jim Miller <A HREF="mailto:jmiller@w3.org">&lt;jmiller@w3.org&gt;</A>
+  <DT>
+    Authors:
+  <DD>
+    Tim Krauskopf
+    <A HREF="mailto:timk@spyglass.com">&lt;timk@spyglass.com&gt;</A>
+  <DD>
+    Jim Miller
+    <A HREF="mailto:jmiller@w3.org">&lt;jmiller@w3.org&gt;</A><BR>
+    Paul Resnick
+    <A HREF="mailto:presnick@research.att.com">&lt;presnick@research.att.com&gt;</A><BR>
+    Win Treese
+    <A HREF="mailto:treese@OpenMarket.com">&lt;treese@OpenMarket.com&gt;</A>
+  <DD>
+</DL>
+<P>
+  <HR>
+<H2>
+  Status of this document
+</H2>
+<P>
+This document has been reviewed by W3C members and other interested parties
+and has been endorsed by the Director as a W3C Recommendation. It is a stable
+document and may be used as reference material or cited as a normative reference
+from another document. W3C's role in making the Recommendation is to draw
+attention to the specification and to promote its widespread deployment.
+This enhances the functionality and interoperability of the Web.
+<P>
+A list of current W3C Recommendations and other technical documents can be
+found at
+<A href="http://www.w3.org/pub/WWW/TR/">http://www.w3.org/pub/WWW/TR/</A>.
+<P>
+<H2>
+  Abstract
+</H2>
+<P>
+This document has been prepared for the technical subcommittee of PICS (Platform
+for Internet Content Selection). It defines a general format for labels and
+three methods by which these labels may be transmitted:
+<UL>
+  <LI>
+    In an HTML document.
+  <LI>
+    With a document transported via a protocol that uses RFC-822 headers.
+  <LI>
+    Separately from the document.
+</UL>
+<H2>
+    <HR>
+  <P>
+  Table of Contents
+</H2>
+<P>
+<A HREF="#Overview">Overview</A>
+<P>
+<A HREF="#General">General Format</A>
+<P>
+<A HREF="#Example">Example</A>
+<P>
+<A HREF="#Detailed">Detailed Syntax</A>
+<P>
+<A HREF="#Semantics">Semantics of PICS Labels and Label Lists</A>
+<P>
+<A HREF="#Embedding">Embedding Labels in HyperText Markup Language (HTML)</A>
+<P>
+<A HREF="#Using">Using HTTP to Request Labels With A Document</A>
+<P>
+<A HREF="#Requesting">Requesting Labels Separately</A>
+<P>
+<A HREF="#MICs">MICs and Digital Signatures</A>
+<P>
+<A HREF="#Glossary">Glossary</A>
+<P>
+<A HREF="#Acknowledgements">Acknowledgments</A>
+<P>
+<A HREF="#Appendix A">Appendix A: An Algorithm for Locating a Label Bureau</A>
+<P>
+<A HREF="#Appendix B">Appendix B: Sample Label Bureau Queries and
+Responses</A><A NAME="queries"> </A>
+<P>
+  <HR>
+<H2>
+  <A NAME="Overview">Overview</A>
+</H2>
+<P>
+This document has been prepared for the technical subcommittee of PICS (Platform
+for Internet Content Selection). It defines a general format for labels and
+three methods by which these labels may be transmitted:
+<DL COMPACT>
+  <DT>
+    In an HTML document.
+  <DD>
+    We specify a mechanism, using the existing META tag, for embedding one or
+    more labels in (the header of) an HTML document.
+  <DT>
+    With a document transported via a protocol that uses RFC-822 headers.
+  <DD>
+    Labels can be transmitted using <EM>any</EM> protocol that uses RFC-822-style
+    headers. In addition, we define an extension specific to the HTTP protocol
+    that allows an HTTP client (Web browser) to request which labels (if any)
+    it would like to have sent along with a document. The PICS committee hopes
+    that other network protocols will be extended in a similar way.
+  <DT>
+    Separately from the document.
+  <DD>
+    A client can request labels from a "label bureau" that runs the HTTP protocol.
+    The labels may refer to any document that has a URL (see
+    <A HREF="ftp://ds.internic.net/rfc/rfc1738.txt">RFC-1738</A>), including
+    those available through protocols other than HTTP, such as ftp, gopher, or
+    netnews. Notice that PICS defines a new URL scheme for referencing IRC chat
+    rooms (see <A href="http://w3.org/PICS/services.html">Rating Services and
+    Rating Systems</A>). The simplest implementation of a label bureau is an
+    off-the-shelf HTTP server running a special CGI script.
+</DL>
+<H2>
+  <A NAME="General">General Format</A>
+</H2>
+<P>
+A label consists of a <I>service identifier</I>, <I>label options</I>, and
+a <I>rating</I>. The service identifier is the URL chosen by the rating service
+(see <A href="http://w3.org/PICS/services.html">Rating Services and Rating
+Systems</A>) as its unique identifier. Label options give additional properties
+of the document being rated as well as properties of the rating itself, such
+as the time the document was rated. The rating itself is a set of attribute-value
+pairs that describe a document along one or more dimensions. One or more
+labels may be distributed together as a list. The general form for a label
+list (formatted for presentation, and not showing error status codes) is:
+<PRE>
+         (PICS-1.1
+           <I>&lt;service url&gt; </I>[<I>option...</I>] 
+           labels [<I>option...</I>] ratings (&lt;category&gt; &lt;value&gt; ...)
+                  [option...] ratings (&lt;category&gt; &lt;value&gt; ...)
+                  ...
+           &lt;<I>service url</I>&gt; [<I>option...</I>] 
+           labels [<I>option...</I>] ratings (&lt;category&gt; &lt;value&gt; ...)
+                  [option...] ratings (&lt;category&gt; &lt;value&gt; ...)
+                  ...
+           ...)
+</PRE>
+<P>
+A <EM>specific</EM> label applies to a single document. If the document is
+in HTML format, it may refer to other documents, either by external reference
+(for example, using the &lt;A href=...&gt; tag) or by requesting that they
+be displayed in-line (for example, using the &lt;img ...&gt; or &lt;object
+...&gt; tag). A label applies to the given document only, <EM>not</EM> to
+the referenced documents.
+<P>
+A <EM>generic</EM> label (identified by the use of the <B>generic</B> option)
+applies to any document whose URL begins with a specific string of characters
+(specified using the <B>for</B> option). A generic label does <EM>not</EM>
+have the expected semantics of a "default" label that can be overridden by
+more specific labels. While a specific label does override a generic label
+when a client has access to both, the two labels may be distributed separately,
+and thus a client may have access to only the generic label. A server can
+keep track of defaults and overrides and generate a specific label based
+on a default that is not overridden in its local database. However, a generic
+label for a site or directory should only be distributed if it applies to
+all the documents in that site or directory.
+<P>
+A rating service may provide a generic label for any or all prefixes of a
+given URL, but should provide only one specific label for that URL. When
+the specific label for a document can be found, it should be used in preference
+to any generic label. Lacking a specific label, any generic label may be
+substituted, but preference should be given to the generic label which has
+the longest string. Some PICS client software may impose restrictions on
+the use of generic labels. For example, a client may choose to ignore a generic
+label that applies to a node in the URL tree more than two levels above the
+node where the document is located.
+<P>
+Label options can be divided into three groups. Options from the first group
+supply information about the document to which the label applies. Options
+from the second group supply information about the label itself. The last
+group provides miscellaneous information.
+<OL>
+  <LI>
+    <B>Information about the document that is labeled.</B>
+    <DL COMPACT>
+      <DT>
+	at <I>quoted-ISO-date</I>
+      <DD>
+	The last modification date of the item to which this rating applies, at the
+	time the rating was assigned. This can serve as a less expensive, but less
+	reliable, alternative to the message integrity check (MIC) options.
+      <DT>
+	MIC-md5 "<I>Base64-string</I>"
+      <DT>
+	-or- md5 "<I>Base64-string</I>"
+      <DD>
+	A message integrity check (MIC) of the item being rated. The MD5 Message
+	Digest Algorithm (see
+	<A HREF="ftp://ds.internic.net/rfc/rfc1321.txt">RFC1321</A>) is used to compute
+	the MIC. One way to create this message digest is to use the RSAREF (version
+	2.0) software available for this purpose at no charge from RSA Laboratories.
+	See <A href="#MICs">MICs and Digital Signatures</A> below.
+    </DL>
+  <LI>
+    <B>Information about the label itself.</B>
+    <DL>
+      <DT>
+	by <I>quotedname</I>
+      <DD>
+	An identifier for the person or entity within the rating service who was
+	responsible for creating this particular label. This may be human readable,
+	or it may be used to contain a (base-64 encoded) set of certificates and
+	other information used to verify the signature on the label.
+      <DT>
+	for <I>quotedURL</I>
+      <DD>
+	The URL (or prefix string of a URL) of the item to which this rating applies.
+	This option is required for generic labels and in certain other cases (see
+	"Requesting Labels Separately," below); it is optional in other cases. Since
+	a single document can have many URLs, the URL used to retrieve a document
+	may differ from the URL in the <B>for</B> option of a label that accompanies
+	the document.
+      <DT>
+	generic <I>boolean</I>
+      <DT>
+	-or- gen <I>boolean</I>
+      <DD>
+	If this option is set to true, the label can be applied to any URL starting
+	with the prefix given in the <B>for</B> option. This is used to supply ratings
+	for entire sites or any subparts of sites. All generic labels must also include
+	the <B>for</B> option. As mentioned earlier, a generic label should not be
+	created unless it can be legitimately applied to <EM>all</EM> documents whose
+	URL begins with the prefix specified in the <B>for</B> option (even if a
+	more specific label exists).
+      <DT>
+	on <I>quoted-ISO-date</I>
+      <DD>
+	The date on which this rating was issued.
+      <DT>
+	signature-RSA-MD5 "<I>Base64-string</I>"
+      <DD>
+	An RSA digital signature encompassing the label. The signature is computed
+	using the MD5 algorithm by the rating service that issued the label. One
+	way to create this signature is to use the RSAREF (version 2.0) software
+	available for this purpose at no charge from RSA Laboratories. See
+	<A href="#MICs">MICs and Digital Signatures</A> below.
+      <DT>
+	until <I>quoted-ISO-date</I>
+      <DT>
+	-or- exp <I>quoted-ISO-date</I>
+      <DD>
+	The date on which this rating expires.
+    </DL>
+  <LI>
+    <B>Other information.</B>
+    <DL>
+      <DT>
+	comment <I>quotedname</I>
+      <DD>
+	Information for humans who may see the label; no associated semantics.
+      <DT>
+	complete-label <I>quotedURL</I>
+      <DT>
+	-or- full <I>quotedURL</I>
+      <DD>
+	Dereferencing this URL returns a complete label that can be used in place
+	of the current one. The complete label has values for as many attributes
+	as possible. This is used when a short label is transmitted for performance
+	purposes but additional information is also available. When the URL is
+	dereferenced it returns an item of type application/pics-labels that contains
+	a labellist with exactly one label.
+      <DT>
+	extension (optional <I>quotedURL data</I>*)
+      <DT>
+	-or- extension (mandatory <I>quotedURL data</I>*)
+      <DD>
+	Future extension mechanism. To avoid duplication of extension names, each
+	extension is identified by a <I>quotedURL</I>. The URL can be dereferenced
+	to get a human-readable description of the extension. If the extension is
+	<B>optional</B> then software which does not understand the extension can
+	simply ignore it; if the extension is <B>mandatory</B> then software which
+	does not understand the extension should act as though no label had been
+	supplied. Each item of <I>data</I> must be one of a fixed set of simple-to-parse
+	data types as specified in the detailed syntax below. See
+	<A href="http://w3.org/PICS/extensions/"> http://w3.org/PICS/extensions/</A>
+	to find out what extensions are currently in use.
+    </DL>
+</OL>
+<H2>
+  <A NAME="Example">Example</A>
+</H2>
+<P>
+For example, a label list for two documents, using the example rating system
+from <A HREF="REC-PICS-services-961031.html">PICS Rating Services and Rating
+Systems</A>, might be as follows (in all examples, the spacing and indentation
+is provided for readability; the specification treats multiple white space
+characters as if they were compressed into a single space):
+<PRE>
+     (PICS-1.1 "http://www.gcf.org/v2.5"
+       by "John Doe"
+       labels on "1994.11.05T08:15-0500"
+              until "1995.12.31T23:59-0000"
+              for "http://w3.org/PICS/Overview.html"
+              ratings (suds 0.5 density 0 color/hue 1)
+              for "http://w3.org/PICS/Underview.html"
+              by "Jane Doe"
+              ratings (subject 2 density 1 color/hue 1))
+</PRE>
+<P>
+The same label list may be transmitted more compactly by converting all of
+the line breaks and subsequent indentation characters into a single space,
+and by replacing the word "labels" with "l", "ratings" with "r" and long
+option names with their abbreviations. It may be compressed for transmission
+purposes even further by removing all of the optional information to a separate
+document and referencing that document by a URL:
+<PRE>
+     (PICS-1.1 "http://www.gcf.org/v2.5" l
+       full "http://www.gcf.org/labels/13242123"
+       r (suds 0.5 density 0 color/hue 1)
+       full "http://www.gcf.org/labels/123412278"
+       r (subject 2 density 1 color/hue 1))
+</PRE>
+<P>
+Finally, the optional information may be omitted entirely, reducing the
+information content of the labels but making the transmission even smaller.
+The resulting label list would then be:
+<PRE>
+(PICS-1.1 "http://www.gcf.org/v2.5" 
+  l r (suds 0.5 density 0 color/hue 1)
+    r (subject 2 density 1 color/hue 1))
+</PRE>
+<H2>
+  <A NAME="Detailed">Detailed Syntax</A>
+</H2>
+<P>
+The following grammar, in modified BNF, describes the syntax of labels. The
+methods by which labels are embedded in specific protocols are detailed below.
+<P>
+<B>Notes:</B>
+<OL>
+  <LI>
+    The string "PICS-1.1" in <B>version</B> corresponds to the version number
+    1.1 of the PICS specification in <A HREF="REC-PICS-services-961031.html">PICS
+    Rating Services and Rating Systems</A>. While it is inelegant that the service
+    description uses the notation "(PICS-version 1.1)" while the label itself
+    uses "PICS-1.1", it is intentional.
+  <LI>
+    Whitespace is ignored except in quoted strings. Multiple contiguous whitespace
+    characters can be treated as though they were a single space character.
+  <LI>
+    Transmit-names and quoted strings are case sensitive. Option names and other
+    tokens in the BNF grammar are case insensitive.
+  <LI>
+    This specification is strictly about information carried over the wire from
+    the client to the server, and it requires the use of US-ASCII. The companion
+    document <A HREF="REC-PICS-services-961031.html">PICS Rating Services and
+    Rating Systems</A> describes how a client can map these transmit-names to
+    descriptive strings using other character sets. Clients are advised to cache
+    the descriptions of rating services they use so that the information in labels
+    can be conveniently presented to the user.
+  <LI>
+    An option that appears in the <I>service-info</I> applies to all labels in
+    that <I>service-info</I> unless overridden by an option in a specific
+    <I>label</I>. That is, a <I>label</I> is effectively lexically nested within
+    the enclosing <I>service-info</I> for the purpose of understanding the applicable
+    options. This is most likely to be useful in the case of the <B>by</B>,
+    <B>generic</B>, <B>on, until </B>and experimental or future options. In the
+    first example above, the <B>by</B> option (with the value "John Doe") supplied
+    with the <I>service-info</I> applies to the first label, but is overridden
+    in the second (by the value "Jane Doe").
+  <LI>
+    Numbers in PICS labels may be integers or fractions with no greater range
+    or precision than that provided by IEEE single-precision floating point numbers.
+    Implementors concerned about the vagaries of floating point comparisons may
+    choose to represent numbers internally as ASCII strings.
+  <LI>
+    The <I>multi-value</I> syntax <I>must</I> be used when there is more than
+    one value for a particular category. This syntax <I>may</I> be used when
+    there is exactly one value, but the more compact version may also be used
+    in that case. When there is no value, the category may be omitted entirely
+    or transmitted using the multi-value syntax.
+  <LI>
+    The only options that may occur more than once in a particular
+    <I>single-label</I> or <I>service-info</I> are <B>comment</B> and
+    <B>extension</B>; if the <B>extension</B> option is supplied more than once,
+    the <I>quotedURL</I>s defining the extensions must be distinct.
+  <LI>
+    Categories may appear in any order in a <I>rating</I>; they need not match
+    the order in which they appear in the <TT>application/pics-service</TT>.
+  <LI>
+    For parsing purposes, notice that a label ends with either "ratings" or "r"
+    followed by a parenthesized list of categories and values. If this does not
+    end the label list, it is followed by either another label (possibly starting
+    with options), a new service URL (recognizable because it must be surrounded
+    by quotation marks), or an error (starting with the word "error").
+</OL>
+<PRE>
+<B>labellist ::</B> '(' <I>version</I> <I>service-info</I>+<I> </I>')'
+<B>version ::</B> 'PICS-1.1'
+<B>service-info :: </B>'error' '(no-ratings' <I>explanation</I>* ')'
+              | <I>serviceID service-error </I>| <I>serviceID option</I>*<I> labelword label</I>*
+<B>serviceID ::</B> <I>quotedURL</I>
+<B>labelword :: </B>'labels' | 'l'
+<B>label ::</B> <I>label-error </I>| <I>single-label </I>| '(' <I>single-label</I>* ')'
+<B>single-label ::</B> <I>option</I>* <I>ratingword</I> '(' <I>rating</I>+  ')'
+<B>ratingword :: </B>'ratings' | 'r'
+<B>quotedURL ::</B> '"' <I>URL</I> '"' as described and extended in
+             <A HREF="REC-PICS-services-961031.html">Rating Services and Rating Systems</A>.
+<B>option ::</B> <I>labeloption</I> | <I>documentoption</I> | <I>otheroption</I>
+<B>labeloption ::</B>
+          'by' <I>quotedname</I>
+        | 'generic' <I>boolean</I>          | 'gen' <I>boolean</I> 
+        | 'for' <I>quotedURL</I>
+        | 'on' <I>quoted-ISO-date</I>        
+        | 'signature-RSA-MD5' "<I>base64-string</I>"
+        | 'until' <I>quoted-ISO-date</I>    | 'exp' <I>quoted-ISO-date</I>
+<B>documentoption ::</B>
+          'at' <I>quoted-ISO-date</I>        
+        | 'MIC-md5' "<I>base64-string</I>"  | 'md5' "<I>base64-string</I>"
+<B>otheroption ::</B>
+          'comment' <I>quotedname</I>        
+        | 'complete-label' <I>quotedURL</I> | 'full' <I>quotedURL</I>
+        | 'extension' '(' <I>mand/opt quotedURL data</I>* ')'
+<B>mand/opt :: </B>'optional' | 'mandatory'
+<B>data :: </B><I>quoted-ISO-date </I>| <I>quotedURL</I>
+        | <I>number</I> | <I>quotedname</I> | '(' <I>data</I>* ')'
+<B>quoted-ISO-date ::</B> '"'YYYY'.'MM'.'DD'T'hh':'mmStz'"'
+     based on the ISO 8601:1988 date and time standard, restricted
+     to the specific form described here:
+     <B>YYYY ::</B> four-digit year
+     <B>MM ::</B> two-digit month (01=January, etc.)
+     <B>DD ::</B> two-digit day of month (01 through 31)
+     <B>hh ::</B> two digits of hour (00 through 23) (am/pm NOT allowed)
+     <B>mm ::</B> two digits of minute (00 through 60)
+     <B>S  ::</B> sign of time zone offset from UTC ('+' or '-')
+     <B>tz ::</B> four digit amount of offset from UTC
+           (e.g., 1512 means 15 hours and 12 minutes)
+     For example, "1994.11.05T08:15-0500" is a valid <I>quoted-ISO-date</I>
+     denoting November 5, 1994, 8:15 am, US Eastern Standard Time
+     <B>Note:</B> The ISO standard allows considerably greater
+     flexibility than that described here.  PICS requires <I>precisely</I>
+     the syntax described here -- neither the time nor the time zone may
+     be omitted, none of the alternate formats are permitted, and
+     the punctuation must be as specified here.
+<B>rating ::</B> <I>transmit-name</I> <I>number</I> | <I>transmit-name </I>'(' <I>multi-value</I>*<I> </I>')'
+<B>multi-value :: </B><I>number </I>| <I>number </I>':' <I>number</I>
+<B>transmit-name ::</B> <I>transmit-name-char</I>+ ['/' <I>transmit-name</I>]
+<B>number ::</B> [<I>sign</I>]<I>unsignedint</I>['.' [<I>unsignedint</I>]]
+<B>sign ::</B> '+' | '-'
+<B>unsignedint :: </B>[0-9]+
+<B>quotedname ::</B> '"' <I>urlchar-or-space</I>+ '"'
+<B>alphanumpm ::</B> 'A' | ... | 'Z' | 'a' | ... | 'z' | '0' | ... | '9' | <I>sign</I>
+<B>transmit-name-char ::</B> <I>alphanumpm</I> | '.' | '$' | ',' | ';' | ':' 
+                | '&amp;' | '=' | '?' | '!' | '*' | '~' | '@'
+                | '#' | '_' | '%' <I>hex hex</I>
+    <I>Note</I>: Use the "%" escape technique (% followed by the two
+          hex digits that represent the character in the ASCII character
+          set) to insert single or double quotation marks or parentheses.
+<B>urlchar ::</B> <I>transmit-name-char</I> | '(' | ')'
+<B>hex ::</B> '0' | ... | '9' | 'A' | ... | 'F' | 'a' | ... | 'f'
+<B>urlchar-or-space ::</B> <I>urlchar</I> | ' '
+<B>base64-string</B> <B>:: </B>as defined in <A HREF="ftp://ds.internic.net/rfc/rfc1521.txt">RFC-1521</A>.
+<B>service-error :: </B>'error' '(' 'request-denied' <I>explanation</I>* ')'
+<I>               </I>| 'error' 'service-unavailable'
+<B>label-error</B> :: 'error' '(' 'request-denied' [<I>quotedURL</I> <I>explanation</I>*] ')'
+<I>             </I>| 'error' '(' 'not-labeled' <I>quotedURL</I>* ')'
+<B>explanation :: </B><I>quotedname</I>
+</PRE>
+<H2>
+  <A NAME="Semantics">Semantics of PICS Labels and Label Lists</A>
+</H2>
+<P>
+A <I>labellist</I> is used to transmit a set of PICS labels. The format specified
+here is intended to be registered with IANA as the MIME type
+"application/pics-labels." It allows for transmission of both labels and
+reasons why labels are not available, and is the format used when labels
+must be conveyed in a document, along with a document, or from a PICS label
+bureau. The <I>labellist</I> will always be surrounded by parentheses and
+begin with the PICS version number (1.1 in this specification).
+<P>
+A label list either specifies that there are no labels available at all (e.g.,
+"error (no-ratings ...)") or is separated into sections of labels, one section
+for each rating service. The URL of each service must be specified (the
+<I>serviceID</I>). This is either followed by an error message indicating
+why no labels are available from that service (<I>service-error) </I>or an
+overall set of optional information (<I>option</I>*) followed by the keyword
+"labels" (or "l") and the <I>label</I>s from the service. The optional
+information provided here applies to every label from the service, unless
+overridden in the specific label itself.
+<P>
+A <I>label</I> encompasses three separate cases. The first is an error that
+applies to retrieving the label for a particular URL (<I>label-error</I>).
+The second, and most common, is a <I>single-label</I> consisting of options
+(which override those specified with the service), the marker word "ratings"
+(or "r") and the ratings themselves (a list of category names and values).
+Finally, in the special case where the ratings for an entire tree of documents
+have been requested, any number of <I>single-label</I>s can be transmitted,
+enclosed in parentheses. This case is described in more detail in the section
+on "Requesting Labels Separately."
+<P>
+A label may apply to a specific URL, or it may be generic. A generic label
+implicitly rates every URL for which the specified one is a prefix. For example,
+a generic label for the URL "http://w3.org" implicitly rates every document
+available at that site. A specific (non-generic) label for the same URL,
+"http://w3.org", does not give any implicit ratings: it merely rates the
+organization's home page that is fetched by the command "<CODE>GET /</CODE>"
+sent by HTTP to the host <CODE>w3.org</CODE>. A generic label <I>must
+</I>include the "<B>for</B>" option specifying the URL to which it applies.
+As mentioned above, a generic label should be supplied only if it can be
+legitimately applied to <EM>all</EM> documents with URLs that begin with
+the string specified in the label's <B>for</B> option.
+<P>
+When a <I>multi-value</I> is provided, any combination of numbers and ranges
+of numbers may be specified, with the endpoints of a range separated by a
+":". Thus, in the labellist
+<PRE>
+(PICS-1.1 "http://www.gcf.org/v2.5" l
+  r (suds 0.5 density 0 color/hue 1 subject (0.5:1.5 2))) 
+</PRE>
+<P>
+all subject values between 0.5 and 1.5 (including both endpoints) apply to
+the item, as does the subject value 2. Given the example service description
+in <A href="http://w3.org/PICS/services.html">Rating Services and Rating
+Systems</A>, two document subjects apply, "water" (subject value 1) and
+"soapdish" (subject value 2.) The third, "soap," has subject value 0, so
+it does not apply.
+<H2>
+  RFC-822 Headers
+</H2>
+<P>
+Many protocols, such as Internet electronic mail, the HyperText Transfer
+Protocol, and USENET News, use US-ASCII headers as described in RFC-822.
+For use in such protocols, we define a new header, PICS-Label, used to contain
+the labels described in this document. The syntax is:
+<PRE>
+PICS-Label: &lt;labellist&gt;
+</PRE>
+<P>
+where <I>labellist</I> is described according to the syntax above. Continuation
+lines beginning with whitespace may be used following the specification given
+in RFC-822.
+<H2>
+  <A NAME="Embedding">Embedding Labels in HyperText Markup Language (HTML)</A>
+</H2>
+<P>
+Labels may be embedded in HTML files as meta-information, using the META
+element defined in the HTML specification. This embedding uses the HTTP header
+equivalence mechanism:
+<PRE>
+       &lt;META http-equiv="PICS-Label" content='<I>labellist</I>'&gt;
+</PRE>
+<P>
+Note that the content attribute uses single quotes, because the PICS label
+syntax uses double quotes. Any of the following characters appearing within
+the content must be escaped using SGML entities:
+<PRE>
+        '       &amp;#39;           /* single quote */
+        &amp;       &amp;amp;           /* ampersand   */
+        &gt;       &amp;gt;            /* greater than */
+</PRE>
+<P>
+See the <A HREF="http://ds.internic.net/rfc/rfc1866.txt">HTML 2.0 Proposed
+Standard</A>.
+<P>
+A label that is embedded in a document may omit the "for" option, which would
+normally specify a URL to which the label applies. A specific (non-generic)
+label embedded in a document applies to that document, regardless of what
+URL is used to locate the document. A generic label, when embedded in a document
+that can be retrieved via a "home" URL (i.e., a URL path ending in /), applies
+to all URLs that include the home URL as a prefix.
+<P>
+For example, if a client is interested in a label for the document
+"http://www.greatdocs.com/foo/bar/bat.htm", it can first check whether the
+document has a specific label embedded in it. If not, the client can ask
+for the document "http://www.greatdocs.com/foo/bar/". The server sends back
+the home document for foo/bar, which may be foo/bar/index.html,
+foo/bar/home.html, or something else, depending on the server. If that document
+contains an embedded generic label, then the client may interpret it as applying
+to the document bat.htm. If the client does not find a generic label there,
+it may check further up the hierarchy, in "http://www.greatdoc.com/foo/"
+or even at "http://www.greatdocs.com/".
+<P>
+Web site operators who wish to provide specific labels for their html documents
+are encouraged to embed them in the documents. Those who wish to provide
+generic labels for their sites or subparts of their sites are encouraged
+to include them in the home documents at as many levels of the document naming
+hierarchy as they think are appropriate. They are also encouraged to use
+the more elegant and functional method, described in the next section, of
+sending labels in the http header stream, whenever tools are available for
+doing so.
+<H2>
+  <A NAME="Using">Using HTTP to Request Labels With A Document</A>
+</H2>
+<P>
+We specify a simple extension to HTTP that allows a client to request that
+one or more labels be included in a header along with the document. We deal
+here only with the HTTP protocol; we hope that other protocols will be similarly
+extended. HTTP servers should include PICS label headers only if requested
+to do so by the client, and should only include the labels from services
+requested by the client. As with labels embedded in documents, the client
+may assume that a label returned in the http header stream applies to the
+document requested, regardless of the URL specified in the "for" option of
+the label.
+<H3>
+  Example
+</H3>
+<P>
+<B>Client sends to HTTP server www.greatdocs.com, a PICS-enabled server:</B>
+<PRE>
+GET /foo.html HTTP/1.0
+Protocol-Request: {PICS-1.1 {params full 
+                    {services "http://www.gcf.org/v2.5"}}}
+</PRE>
+<P>
+<B>Server responds to client:</B>
+<PRE>
+HTTP/1.0 200 OK
+Date: Thu, 30 Jun 1995 17:51:47 GMT
+Last-modified: Thursday, 29-Jun-95 17:51:47 GMT
+Protocol: {PICS-1.1 {headers PICS-Label}}
+PICS-Label:
+ (PICS-1.1 "http://www.gcf.org/v2.5" labels
+  on "1994.11.05T08:15-0500"
+  exp "1995.12.31T23:59-0000"
+  for "http://www.greatdocs.com/foo.html"
+  by "George Sanderson, Jr."
+  ratings (suds 0.5 density 0 color/hue 1))
+Content-type: text/html
+
+...contents of foo.html...
+</PRE>
+<H3>
+  Explanation of example
+</H3>
+<P>
+The client requests the document foo.html. In addition, the client requests
+the full label of the document from the rating service "http://www.gcf.org/v2.5".
+The server responds by sending back the label, in the PICS-Label header,
+as well as the document. The format of the PICS-Label header field (a
+<I>labellist</I>) allows the server to respond either with a label or an
+explanation of why the label is not available, since it would be inappropriate
+for the server to generate an HTTP error status if the document is available
+but (some of) the labels are not.
+<P>
+Following the usual HTTP distinction between HEAD and GET, a client that
+wishes to examine a rating before retrieving the full document can substitute
+the word HEAD for GET in the request. The server responds with exactly the
+headers shown above, but does not send back the document foo.html.
+<H3>
+  Detailed Syntax of HTTP Requests for Labels With Document
+</H3>
+<P>
+The following grammar, in modified BNF, describes the syntax of the additional
+header line to be included in an HTTP request for a document and associated
+labels.
+<PRE>
+<B>request-header</B> :: 
+ 'Protocol-Request: {PICS-1.1 {params ' [<I>completeness</I>] 
+                                         <I>extension</I>* 
+                                         <I>services</I> '}}'
+<B>completeness ::</B> 'minimal' | 'short' | 'full' | 'signed'
+<B>extension ::</B> '{' <I>token-or-quoted-string</I>+ '}'
+     where the first <I>token-or-quoted-string</I> is not '<B>services</B>'.
+<B>token-or-quoted-string ::</B> <I>token</I> | <I>quotedname</I>
+<B>token ::</B> <I>alphanumpm</I>+
+<B>services</B> :: '{' 'services' <I>quotedURL</I>+ '}'
+</PRE>
+<P>
+A request for a <B>minimal</B> label asks that all options be omitted, unless
+a generic label is returned, in which case the <B>generic</B> and <B>for</B>
+options must also be included in the label. A <B>short</B> label includes
+everything that is included in a <B>minimal</B> label, plus additional options
+that the server deems appropriate. A request for a <B>full</B> label asks
+that as much information as possible should be sent back in the label, either
+directly or through the use of a <B>complete-label</B> (or <B>full</B>) option,
+but no <B>signature-RSA-MD5</B> option is needed.
+<P>
+A request for <B>signed</B> labels asks that all the information in a
+<B>full</B> label should be sent, along with a digital signature on the label
+itself. In a signed label the information must be transmitted directly as
+part of the label (and included in the computation of the signature); the
+<B>complete-label</B> (or <B>full</B>) option may be sent, but it would be
+redundant. Details of signing labels are included in the section
+<A href="#MICs">MICs and Digital Signature</A>.
+<P>
+It is acceptable for a server to ignore the <I>completeness</I>, either by
+delivering more or fewer options than requested. If the <I>completeness</I>
+is omitted, it should be treated as though <B>minimal</B> had been supplied.
+For future extensibility, any alphanumeric string may be used for a value
+of the <B>completeness</B> option. Servers which receive a value of
+<B>completeness</B> that they do not recognize must treat it as though
+<B>minimal</B> had been specified.
+<P>
+The <I>extension</I>s are for future extensions to the protocol; any extensions
+which are not understood by the server must be ignored by it. It is recommended
+that experimental extensions use a URL, which dereferences to a description
+of the extension, as the initial <I>token-or-quoted-string</I>.
+<P>
+Each <I>quotedURL </I>in a <I>service</I> specifies a rating service from
+which the client is requesting a label for the document. There may be as
+many repetitions of the <I>quotedURL </I>part of the <I>service</I> as desired,
+so it is possible to request labels from any number of rating services in
+a single HTTP request.
+<H3>
+  Detailed Syntax For HTTP Response Headers For Labels With Document
+</H3>
+<P>
+Two additional headers are specified:
+<PRE>
+<B>protocol-header :: </B>'Protocol: {PICS-1.1 {headers PICS-Label}}'
+<B>label-header ::</B> 'PICS-Label: ' <I>labellist</I>
+</PRE>
+<H2>
+  <A NAME="Requesting">Requesting Labels Separately</A>
+</H2>
+<P>
+PICS labels can also be retrieved separately from the documents to which
+they refer. To request labels in this way, a client contacts a <B>label
+bureau</B>. A label bureau is an HTTP server that understands a particular
+query syntax, defined below. It can provide labels for documents that reside
+on other servers, and, indeed, for documents available through protocols
+other than HTTP. It is anticipated that there will be "well-known" label
+bureaus which dispense (possibly for a fee) labels created by many rating
+services.
+<P>
+Rating services are also encouraged to act as label bureaus, providing on-line
+access to their own labels. By default, the URL that identifies a rating
+service also identifies its label bureau. If a client requests the URL that
+identifies a rating service, a human-readable description of the service
+is returned, as specified in <A href="http://w3.org/PICS/services.html">Rating
+Services and Rating Systems</A>. If, on the other hand, a client requests
+the same URL and includes query parameters as defined below, it should be
+interpreted as a request for labels. A rating service, however, is not required
+to act as a label bureau, and it may choose a different URL (perhaps even
+on a different HTTP server) to act as its label bureau.
+<H3>
+  Sample Query
+</H3>
+<P>
+(For more complex queries and responses, see <A href="#queries">Appendix
+B.</A>)
+<P>
+Imagine a rating service, identified by the URL http://www.labels.org/Ratings,
+which decides to run a label bureau to dispense (at least) its own labels
+for documents. The following sample request, made to the HTTP server
+www.labels.org, is illustrative (line breaks are inserted for presentation
+purposes only):
+<PRE>
+GET /Ratings?opt=generic&amp;
+             u="http%3A%2F%2Fwww.questionable.org%2Fimages"&amp;
+             s="http%3A%2F%2Fwww.gcf.org%2Fv2.5"
+             HTTP/1.0
+</PRE>
+<P>
+The query asks the label bureau http://www.labels.org/Ratings to send a single
+label that applies to everything in the images hierarchy at site
+www.questionable.org. The desired label should have been created by the service
+http://www.gcf.org/v2.5. Notice the use of %3A to represent a ":" and %2F
+for "/." This is required for encoding characters within a URL. See
+<A HREF="ftp://ds.internic.net/rfc/rfc1738.txt">RFC-1738</A>.
+<P>
+The label bureau responds by sending back a document of type
+"application/pics-labels." The labels should be as complete as possible,
+either by including as many options as possible or by supplying the
+<B>complete-label </B>(or <B>full</B>) option.
+<H3>
+  Detailed Syntax of HTTP Query for Labels Separate From Documents
+</H3>
+<P>
+The following grammar, in modified BNF, describes the syntax of GET and POST
+requests to a label bureau. The use of the POST request is specified only
+for backward compatibility with HTTP servers that cannot handle a long GET
+query. Its use, while described in the
+<A href="ftp://ds.internic.net/rfc/rfc1866.txt">HTML 2.0</A> specification
+(for use in submitting forms, see section 8.2.1 and 8.2.3), is deprecated.
+<PRE>
+<B>request ::</B> <I>get</I> | <I>post</I>
+<B>get ::</B> 'get' <I>url-fragment</I> '?' [<I>opt</I>] [<I>format</I>]
+                              <I>extension</I>* <I>url</I>+ <I>service</I>+
+<B>post ::</B> 'post' <I>url-fragment crlf crlf formencodeddata</I>
+<B>url-fragment ::</B> the part of the original URL after the host
+    name, as specified in HTTP 1.0.
+<B>crlf ::</B> carriage return (hex D) followed by line feed (hex A)
+<B>opt ::</B> 'opt=' <I>option</I>
+<B>option ::</B> 'generic' | 'normal' | 'tree' | 'generic+tree'
+<B>format ::</B> [and] 'format=' <I>form</I>
+<B>form ::</B> 'minimal' | 'short' | 'full' | 'signed'
+<B>extension ::</B> <I>token</I> '=' <I>token-or-quoted-string</I>
+     where the <I>token</I> is not one of <B>opt</B>, <B>format</B>,
+     <B>u</B>, or <B>s</B>; and <I>token-or-quoted-string</I> follows
+     the quoting conventions specified in <A HREF="ftp://ds.internic.net/rfc/rfc1738.txt">RFC-1738</A>
+<B>token-or-quoted-string ::</B> <I>token</I> | <I>quotedname</I>
+<B>token ::</B> <I>alphanumpm</I>+
+<B>url ::</B> [and] 'u=' encodedURL 
+<B>service ::</B> [and] 's=' encodedURL 
+<B>boolean :: </B>'t' | 'f' | 'true' | 'false'
+<B>and ::</B> '&amp;' this must be included unless it immediately
+     follows the ? in the query.
+<B>encodedURL ::</B> a quoted URL. Following <A HREF="ftp://ds.internic.net/rfc/rfc1738.txt">RFC-1738</A>, quotation and some
+     special characters inside the URL are encoded using "%xx" notation. 
+     Alphabetic characters, digits, and the special characters
+     $_-.+!*'(), need not be quoted,  but other characters must be. 
+     This <I>does</I> imply that the colon (:) must be encoded as %3A
+     and slash (/) as %2F.
+<B>formencodeddata ::</B> The query as specified for <I>get</I> but encoded into
+     MIME type application/x-www-form-encoded as described in
+     sections 8.2.1 and 8.2.3 of <A href="ftp://ds.internic.net/rfc/rfc1866.txt">HTML 2.0</A>.
+</PRE>
+<H3>
+  Response to Query for Labels Separate From Documents
+</H3>
+<UL>
+  <LI>
+    The label bureau responds by sending back a document of type
+    "application/pics-labels."
+  <LI>
+    Unless the document indicates an overall error, there should be one
+    <I>service-info</I> for each rating service requested in the query. Each
+    <I>service-info</I> should have an error message or a label (or list of labels,
+    in the case of a "tree" query) for each requested URL.
+  <LI>
+    The query's ordering must be preserved in the response. That is, the information
+    from the rating services must be presented in the same order the rating services
+    appear in the query, and the labels from each service must be presented in
+    the same order the URLs appear in the query. If a rating service or label
+    is not provided, the error message should appear in the same position that
+    the <I>service-info</I> or label would appear. Because order is preserved,
+    it is acceptable (except where indicated below) to omit from the labels the
+    "<B>for</B>" option which indicates the URL being rated. The client should
+    match the label positionally with the URL for which it requested a rating.
+  <LI>
+    <B>Definitions.</B> Given a URL (e.g., "http://www.greatdocs.com/foo/"),
+    a <B>descendant</B> URL is any URL that contains the original as a prefix
+    (e.g., "http://www.greatdocs.com/foo/bar/bat.htm"). A <B>child</B> URL is
+    any descendant URL that does not contain any additional '/' characters (e.g.,
+    "http://www.greatdocs.com/foo/ba"). An <B>ancestor</B> URL is any URL that
+    is a prefix of the original (e.g., "http://www.greatdocs.com/f"). Note that
+    ancestry and descendence is determined strictly by case-sensitive string
+    matching on URLs, not by any links that may appear in html documents retrieved
+    using those URLs. Note that any quotation such as %3A for colon (:) or %2F
+    for slash (/) is unencoded prior to comparing URL strings.
+  <LI>
+    <B>opt=normal</B>, or omitting the <I>opt </I>completely, requests specific
+    labels for the URLs specified. If no specific label is available for a requested
+    URL, the server may choose to send a generic label for the requested URL
+    or for an ancestor URL. For example, in response to a label request for URL
+    "http://w3.org/PICS/Overview.html" a generic label for the URL
+    "http://w3.org/PICS" (or even "http://w3.org") may be returned. In this case,
+    it is required that the "<B>for</B>" and "<B>generic</B>" options be included
+    in the label, to specify exactly what rating is being returned. Note that
+    the "for" option may specify a URL string which does not appear to match
+    the request URL, perhaps due to the server knowing about the existence of
+    an alternative URL for the same document. In that case, the server is suggesting
+    that the label applies to the request URL, though a suspicious client may
+    choose not to believe the suggestion.
+  <LI>
+    <B>opt=generic</B> requests generic labels. It is useful for requesting a
+    rating of a site or subpart of a site. For each requested URL, the desired
+    response is a generic label that applies to the requested URL and all descendant
+    URLs. A generic label for the requested URL, or a generic label for any ancestor
+    URL, would satisfy this request, as such a generic label would apply to all
+    URLs containing the requested URL as a prefix. If no such generic label is
+    available, the server should include the "no-label" message rather than sending
+    back a specific label.
+  <LI>
+    <B>opt=tree</B> requests a tree of labels. This is a way to request all the
+    labels that apply to items in a site or subpart of a site. For each requested
+    URL, the desired response is a set of labels (both specific and generic)
+    that apply to descendants of the requested URL. In the response, everywhere
+    a <I>label</I> would normally be expected in the response, a set of
+    <I>simple-label</I>s will be returned, surrounded by parentheses. This enables
+    the client to match the entire set positionally with the single request URL.
+    All labels produced in response to this query must include a <B>for</B> option.
+    The minimum response expected is the set of labels that would have been generated
+    if a query had been issued, with <B>opt=normal</B> specified, for each known
+    child of the requested URL. Additional labels may also be returned, typically
+    either generic labels for ancestor URLs or labels for descendant URLs farther
+    down the hierarchy than children.
+  <LI>
+    <B>opt=generic+tree</B> is similar to the <B>opt=tree</B> request, but returns
+    only generic labels. As with <B>opt=tree</B>, the server can choose the amount
+    of detail. The minimum response expected is the set of labels that would
+    have been generated if a query had been issued, with <B>opt=generic</B>
+    specified, for each known child of the requested URL. Additional labels may
+    also be returned, typically generic labels for ancestor URLs. All labels
+    produced in response to this query must include a <B>for</B> option.
+  <LI>
+    It is permitted to include more than one URL and/or service in the request.
+    Requesting <B>u</B> URLs and <B>s</B> services results in a total of <B>u</B>
+    x <B>s</B> labels being generated (or label sets in the case of tree and
+    generic+tree queries.)
+  <LI>
+    The <B>format=</B> specifies the optional information that should be transmitted
+    with the labels. It is treated precisely as the similar keywords would be
+    when sent to a document server as the <I>completeness</I> (see
+    <A href="#with">Detailed Syntax of HTTP Requests for Labels With Document</A>),
+    except that the default is <B>full</B> (rather than <B>minimal</B>). Servers
+    which receive a value of <B>completeness</B> that they do not recognize must
+    treat it as though the default, <B>full</B>, had been specified. All labels
+    produced in response to this query must include a <B>for</B> option.
+</UL>
+<H2>
+  <A NAME="MICs">MICs and Digital Signatures</A>
+</H2>
+<P>
+This specification includes two independent security features, each intended
+to prevent a different problem that can arise in a PICS system. They may
+be used independently or together. Both features rely on patented cryptographic
+technology whose use is subject to a variety of legal restrictions (including
+possible U.S. export controls). The PICS technical committee cannot provide
+any information about the exact legal status of the code or algorithms.
+<P>
+Within the United States, RSA Laboratories (100 Marine Parkway, Redwood City,
+CA, 94065-1031) distributes a source code kit called
+<A href="http://www.rsa.com/rsalabs/faq/faq_misc.html">RSAREF</A> which provides
+all of the code required to implement the cryptographic components of the
+PICS spec. The president of RSA Data Security, Inc., Mr. Jim Bidzos, has
+advised us that RSAREF will be made available at no cost for use in implementing
+the PICS specifications. Questions about the legal status, etc., should be
+directed to Mr. Bidzos.
+<P>
+The first problem arises when a document has been examined and a label generated,
+and then the document is modified without updating the label. While this
+can happen legitimately (as when Time-Warner updates the page containing
+the current issue of Time Magazine and believes that the label is still valid)
+it can also happen as a result of tampering with the document by an unauthorized
+party. PICS labels contain three option fields intended to help deter this
+kind of problem:
+<DL>
+  <DT>
+    <B>At</B>
+  <DD>
+    If the objective is to simply detect accidental changes, then the date of
+    last modification of the document can be calculated when the label is created
+    and stored in the <B>at</B> field. Assuming that the last modification time
+    is accurately maintained, this will detect updates to the document made after
+    the label was created.
+  <DT>
+    <B>Until</B> or <B>exp</B>
+  <DD>
+    If the document is expected to be updated infrequently or periodically, the
+    label can contain an expiration date that should cause the label to be invalid
+    before the document is next updated. This, too, does not guard against a
+    concerted malicious attack.
+  <DT>
+    <B>MIC-md5</B> or <B>md5</B>
+  <DD>
+    If the label is intended to apply only to the data that was actually rated,
+    then a form of checksum (called a "message digest") can be applied to the
+    data when the label is created. The message digest is converted into US-ASCII
+    characters using <A href="ftp://ds.internic.net/rfc/rfc1521.txt">MIME</A>
+    base-64 encoding and stored in the <B>MIC-md5</B> (also called <B>md5</B>)
+    field. When the document is later retrieved, the same algorithm can be used
+    to recompute the message digest and the two digests can be compared. The
+    MD5 algorithm is designed so that it is extremely unlikely that the two digests
+    will be the same if the document has been tampered with in any way. <BR>
+    This technique is well-known in the cryptographic community and has been
+    adopted by the electronic mail community, where it is part of the
+    <A href="ftp://ds.internic.net/rfc/rfc1848.txt">MOSS</A> specification. For
+    use with electronic mail, an elaborate technique is required to assure that
+    the two message digests will match, since electronic mail gateways can modify
+    the data before it is delivered (by wrapping lines, for example). We have
+    chosen <EM>not</EM> to adopt MOSS directly for PICS, largely because of this
+    complexity. <BR>
+    Instead, we recommend the direct use of the MD5 algorithm on the source document
+    and conversion of the result to base64 encoding. This resulting string is
+    included directly in the <B>mic-md5</B> (<B>md5</B>) label option. The MD5
+    algorithm and the conversion of the result into US-ASCII characters is provided
+    by the RSAREF (version 2.0) software. <BR>
+    Because PICS labels can be embedded inside of the documents they label, care
+    must be taken to ensure that the message digest is computed excluding
+    <EM>all</EM> PICS labels in the document. For HTML documents, this means
+    that the digest must be computed after removing all META elements that include
+    PICS labels (and any whitespace immediately following the end of each of
+    these meta elements).
+</DL>
+<P>
+The second problem is that of tampering with or forging labels. Here the
+problem is that the end user needs some way of being reassured that the label
+they receive was created by the rating service they expected and that it
+has not been altered since it was created. PICS addresses this problem by
+allowing labels to be "digitally signed". A digital signature, while not
+currently legally recognized, is a cryptographic technique to provide exactly
+this assurance. The RSA signature technique works as follows:
+<UL>
+  <LI>
+    In order to sign a label, the rating service (or people authorized to generate
+    labels on behalf of the service) needs a "public key pair." (The RSAREF software
+    includes routines to create these pairs.) One of these (the private key)
+    must be kept secret by the service; the other (the public key) must be
+    distributed to anyone who is interested in verifying the signatures on the
+    service's labels.
+  <LI>
+    After creating a label, the service converts it to a special form specified
+    below and computes the MD5 message digest of the label. It then uses the
+    service's private key to encrypt the digest. This encrypted digest is the
+    digital signature, and it is converted to US-ASCII using the same base64
+    encoding technique mentioned above. The US-ASCII version (split into 60 character
+    lines) is stored in the <B>signature-rsa-md5</B> option of the label when
+    it is transmitted to the client. (The RSAREF software includes routines to
+    generate the signature and convert it to US-ASCII.)
+  <LI>
+    When the client receives a label and wants to verify the signature it takes
+    the label it received and converts it back into the same special form in
+    which it was originally signed. The client recomputes the message digest
+    on this special form. It also takes the contents of the
+    <B>signature-rsa-md5</B> option, combines all of the lines back into a single
+    string of US-ASCII characters, converts these from base64 into their original
+    (binary) form, and decrypts them using the service's public key. If the result
+    isn't the same as the message digest it computed the signature is invalid.
+    (RSAREF contains routines to do all of this work except for the combining
+    of the lines into a long string.)
+</UL>
+<P>
+The problem of distributing these keys (and invalidating them in case the
+service's key is compromised) is an active area of commercial competition.
+Since there is no clearly established solution available today, PICS assumes
+that each service will distribute the public keys in some way it chooses.
+It also assumes that no keys will ever have to be invalidated. While this
+is clearly not a perfect solution, it seems to be the limit of what can be
+done today without committing to specific proprietary technology.
+<P>
+There is one additional problem with the digital signature solution outlined
+above. If a rating service allows other people to generate labels under its
+name (for example, a service that supports self-ratings by content producers)
+then the labels may need to be signed by <EM>both</EM> the service and the
+content producer. This can be done (each signs the label without the other's
+signature), but it becomes quite difficult to distribute the public keys
+needed to verify the signature. The PICS specification does not propose a
+solution to this problem (it, too, is part of active commercial competition).
+<H3>
+  Signature Details
+</H3>
+<OL>
+  <LI>
+    PICS specifically requires the use of the RSA signature algorithm with the
+    MD5 message digest. Should this system become outdated, the PICS specification
+    can be easily updated to add a new label option that supports a different
+    pair of algorithms.
+  <LI>
+    PICS does not specify the key length to be used for the digital signatures.
+    Individual services will need to investigate the legal and technical
+    ramifications involved and make a choice. Should a single answer become common,
+    this specification may be re-issued with this detail filled in.
+  <LI>
+    The special form of the label that is used for signatures is computed as
+    follows:
+    <UL>
+      <LI>
+	The service must decide which options it will include in the signed label
+	when it is transmitted. Any options not transmitted with the signature cannot
+	be used in the computation of the signature. We recommend that <EM>all</EM>
+	options with known values be included with the exception of
+	<B>signature-rsa-md5</B>. Any option may be omitted, but it will be common
+	for the options <B>mic-md5</B> (or <B>md5</B>) and <B>full</B> (or
+	<B>complete-label</B>) to be omitted. The <B>signature-rsa-md5</B> option
+	is <EM>never</EM> included in the list of options.
+      <LI>
+	The selected options are sorted alphabetically by their shortest name (i.e.
+	use <B>full</B> instead of <B>complete-label</B>). If a selected option has
+	a default value and it is the same as the value to be used in the label,
+	the option is omitted from this list.
+      <LI>
+	For each option in the list (in order), the short name is put into the label
+	followed by a single space followed by the value of the option, followed
+	by a space. The shortest form of a value is used, and strings are output
+	in lower case if they are case insensitive.
+      <LI>
+	After all of the options has been output, output the characters "r (".
+      <LI>
+	Output the transmission names and their values, in alphabetical order by
+	transmission name (using the US-ASCII character collating sequence for
+	"alphabetical order"), separating the transmission name from the value by
+	a single space. In outputting the value, no whitespace is permitted except
+	for a single space used to separate items in a <I>multi-value</I>.
+      <LI>
+	Output a ")"
+    </UL>
+  <LI>
+    When the client computes the special label format described above, it will
+    use all options available to it: both those in the <EM>single-label</EM>
+    and in the <EM>service-info</EM>. This implies a constraint on the server
+    when it decides what options to include in the transmitted set. The transmitted
+    set must include any options that the server ships as part of the
+    <EM>service-info</EM>, unless either the value specified in the
+    <EM>service-info</EM> or the value of the option for this label is the default
+    value of the option.
+</OL>
+<H2>
+  <A NAME="Glossary">Glossary</A>
+</H2>
+<DL COMPACT>
+  <DT>
+    application/pics-labels
+  <DD>
+    A new MIME data type used to transmit one or more <I>labels</I>, defined
+    in this document.
+  <DT>
+    application/pics-service
+  <DD>
+    A new MIME data type used to describe a <I>rating service</I>, defined in
+    <A href="http://w3.org/PICS/services.html">Rating Services and Rating
+    Systems</A>.
+  <DT>
+    BNF
+  <DD>
+    Backus-Naur Form (or Backus Normal Form). A notation for describing a formal
+    syntax, used extensively in describing programming languages and
+    computer-readable data formats.
+  <DT>
+    category
+  <DD>
+    The part of a rating system which describes a particular criterion used for
+    rating. For example, a rating system might have three categories named "sexual
+    material," "violence," and "vocabulary." Also called a <I>dimension</I>.
+  <DT>
+    content label
+  <DD>
+    A data structure containing information about a given document's contents.
+    Also called a <I>rating</I> or <I>content rating</I>. The content label may
+    accompany the document it is about or be available separately.
+  <DT>
+    content rating
+  <DD>
+    See <I>content label</I>.
+  <DT>
+    dimension
+  <DD>
+    See <I>category</I>.
+  <DT>
+    document
+  <DD>
+    Any item that can be referred to by a URL. Also known, in other contexts,
+    as a "hypertext page" or a "resource."
+  <DT>
+    HTML
+  <DD>
+    HyperText Markup Language. A means of representing <I>hypertext</I> documents.
+    Based on <I>SGML</I>. See the
+    <A HREF="http://ds.internic.net/rfc/rfc1866.txt">HTML 2.0 Proposed
+    Standard</A>.
+  <DT>
+    HTTP
+  <DD>
+    HyperText Transfer Protocol. Used for retrieving document contents and/or
+    descriptive header information. See the
+    <A href="http://w3.org/pub/WWW/Protocols/HTTP1.0/draft-ietf-http-spec.html">draft
+    HTTP specification</A>.
+  <DT>
+    hypertext
+  <DD>
+    Text, graphics, and other media connected through links.
+  <DT>
+    label
+  <DD>
+    See <I>content label</I>.
+  <DT>
+    label bureau
+  <DD>
+    A computer system which supplies, via a computer network, ratings of documents.
+    It may or may not provide the documents themselves.
+  <DT>
+    MD5
+  <DD>
+    An algorithm, see
+    <A HREF="ftp://ds.internic.net/rfc/rfc1321.txt">RFC1321</A>, that can be
+    used to compute a <I>MIC.</I> PICS specifies this particular algorithm for
+    use in PICS labels.
+  <DT>
+    MIC
+  <DD>
+    Message Integrity Check. Also known as a "cryptographic checksum." For PICS,
+    the importance of a MIC is that a rating service can compute the MIC of a
+    piece of information when the label is created and that MIC can be put into
+    the label itself. A client can retrieve the label and the information to
+    which it is supposed to be attached, recompute the MIC and compare it to
+    the one in the label. If they match, for all practical purposes, it is a
+    proof that the label really belongs to the information that has been retrieved.
+    The particular algorithm specified by PICS to compute the MIC is <I>MD5.</I>
+  <DT>
+    MIME
+  <DD>
+    Multimedia Internet Message Extension. A technique for sending arbitrary
+    data through electronic mail on the Internet. See
+    <A href="ftp://ds.internic.net/rfc/rfc1521.txt">RFC-1521</A>
+  <DT>
+    PICS
+  <DD>
+    Platform for Internet Content Selection, the name for both the suite of
+    specification documents of which this is a part, and for the organization
+    writing the documents. For more information, see http://w3.org/PICS
+  <DT>
+    rating
+  <DD>
+    See <I>content label</I>.
+  <DT>
+    rating server
+  <DD>
+    See <I>label bureau</I>.
+  <DT>
+    rating service
+  <DD>
+    An individual or organization that assigns labels according to some rating
+    system, and then distributes them, perhaps via a label bureau or via CD-ROM.
+  <DT>
+    rating system
+  <DD>
+    A method for rating information. A rating system consists of one or more
+    <I>categories</I>.
+  <DT>
+    scale
+  <DD>
+    The range of permissible values for a category.
+  <DT>
+    SGML
+  <DD>
+    Standard Generalized Markup Language. See
+    <A href="http://www.iso.ch/cate/d16387.html">ISO 8879</A>.
+  <DT>
+    transmission name
+  <DD>
+    (of a <I>category</I>) The short name intended for use over a network to
+    refer to the category. This is distinct from the category name in as much
+    as the transmission name must be language-independent, encoded in US-ASCII,
+    and as short as reasonably possible. Within a single <I>rating system</I>
+    the transmission names of all categories must be distinct. URLs, while generally
+    longer than desired, can be used as transmission names. Hence transmission
+    names are case sensitive.
+  <DT>
+    URL
+  <DD>
+    Uniform Resource Locator. Described in
+    <A HREF="ftp://ds.internic.net/rfc/rfc1738.txt">RFC-1738</A>. A URL describes
+    the location and means of retrieval for a single document. It consists of
+    three components: the "scheme" (protocol used to retrieve a document, like
+    "http" or "ftp"), a host name, and a hierarchical document name within that
+    host. For example "http://w3.org/PICS" is the URL of the PICS home page.
+    The scheme for retrieving it is "http," the host is "w3.org" and the name
+    within that host is "PICS". Notice that PICS defines an additional scheme
+    beyond those listed in RFC-1738, described in
+    <A href="http://w3.org/PICS/services.html">Rating Services and Rating
+    Systems</A>, which allows Chat (IRC) rooms to be named.
+</DL>
+<H2>
+  References
+</H2>
+<OL>
+  <LI>
+    PICS, <A href="http://w3.org/PICS/services.html">Rating Services and Rating
+    Systems</A>, Internet Draft, "draft-pics-services-00.txt", 11/21/95.
+  <LI>
+    R. Rivest, "The MD5 Message-Digest Algorithm",
+    <A href="ftp://ds.internic.net/rfc/rfc1321.txt">RFC 1321</A>, 04/16/1992.
+  <LI>
+    N. Borenstein, N. Freed, "MIME (Multipurpose Internet Mail Extensions) Part
+    One: Mechanisms for Specifying and Describing the Format of Internet Message
+    Bodies", <A href="ftp://ds.internic.net/rfc/rfc1521.txt">RFC 1521</A>,
+    09/23/1993.
+  <LI>
+    T. Berners-Lee, D. Connolly, "Hypertext Markup Language - 2.0",
+    <A href="ftp://ds.internic.net/rfc/rfc1866.txt">RFC 1866</A>, 11/03/1995.
+  <LI>
+    T. Berners-Lee, L. Masinter, M. McCahill, "Uniform Resource Locators (URLs)",
+    <A href="ftp://ds.internic.net/rfc/rfc1738.txt">RFC 1738</A>, 12/20/94.
+</OL>
+<H2>
+  <A NAME="Acknowledgments">Acknowledgments</A>
+</H2>
+<P>
+Comments and suggestions from the following people are gratefully acknowledged:
+<PRE>
+Bob Atkinson, Microsoft
+Anselm Baird-Smith, W3C
+Brenda Baker, Lucent
+Scott Berkun, Microsoft
+Tim Berners-Lee, W3C
+Roxana Bradescu, AT&amp;T
+Daniel W. Connolly, W3C
+Roy Fielding, W3C
+Jay Friedland, SurfWatch
+Henrik Frystyk Nielsen, W3C
+Philip Gladstone, Raptor Systems
+Michael Gordon, Prodigy
+Wayne Gramlich, Sun
+Woodson Hobbs, NewView
+David Karger, MIT
+Rohit Khare, W3C
+Charlie Kim, Apple
+John C. Klensin, MCI
+Breen Liblong, IFSI
+Ann McCurdy, Microsoft
+Rich Petke, CompuServe
+Eric Prud'hommeaux, W3C
+Dave Raggett, W3C
+Gordon Ross, NetNanny
+Bob Schloss, IBM
+David Singer, IBM
+Ray Soular, SafeSurf
+Michael Smith, Prodigy
+Marcy Swenson, Providence Systems
+Jason Thomas, MIT
+</PRE>
+<H2>
+  <A NAME="Appendix A">Appendix A: An Algorithm for Locating a Label Bureau</A>
+</H2>
+<P>
+<P>
+As the use of PICS grows, we must consider its impact on overall network
+performance. In general, the PICS techniques for transmitting labels in or
+with documents add only a very small amount of traffic to the net, since
+the additional PICS headers will ordinarily contain only a few hundred bytes
+of data and the documents themselves are more likely to be several thousand
+bytes of data. Furthermore, since the labels come from the same source as
+the document itself there is no network hot spot created by PICS (although
+popular servers may themselves already be such hot spots).
+<P>
+Label bureaus, however, are a new component proposed by PICS. And if a single
+label bureau becomes popular then there is a significant risk of it becoming
+a hot spot and hence a performance bottleneck for the PICS system. The Internet
+is in need of a good solution to this problem, and there is work (both underway
+and proposed) that may solve the problem in the long term.
+<P>
+In the short term, however, there is no truly good solution. The following
+suggestion comes from Prof. David Karger at MIT. It is a variant on several
+well-known algorithms for distributing load in a system.
+<P>
+First, we assume that popular label bureaus will be able to establish a number
+of mirror sites around the network. This is already common practice, and
+we have no suggestions for the details of determining the sites or keeping
+them updated as new labels are generated. Our algorithm simply assumes that
+they exist and are equivalent, and that the network's Domain Name System
+(DNS) has records which map the single well-defined name for the label bureau
+to multiple Internet addresses, in the usual manner.
+<P>
+When client software starts, it should attempt to resolve the name of the
+label bureau it wishes to use (we assume one label bureau, but the algorithm
+extends in an obvious manner to multiple bureaus) through DNS. If it receives
+more than one host address, it saves the entire list and chooses two at random,
+labeling one the "primary" and the other the "secondary" bureau. Alternatively,
+these may be configuration parameters of the client software that are then
+validated when the software starts. It also divides 60 minutes by the total
+number of address it can find for the label bureau, sets a timer to this
+value, and remembers this as the "threshold" value.
+<P>
+Every time the client wishes to contact the label bureau it does the following.
+If the timer is below the threshold, the primary bureau address is used.
+Otherwise, the query is sent to both the primary and the secondary label
+bureau address. When the first answer arrives the connection to both label
+bureaus is closed down. The bureau which answered first becomes the primary
+bureau. In any case, a new secondary bureau address is chosen at random and
+the timer is reset to the threshold value.
+<P>
+A simple variant on this algorithm will probably become feasible in the near
+future. When the HTTP protocol is updated to allow "keep alive" connections
+to a server, the PICS client should keep its connection to the primary label
+bureau alive as long as possible. Then, instead of simply accepting the first
+response and considering the responder as the primary, a more careful measurement
+must be made. The time required to send the query and receive the response
+must be measured, rather than the total transaction time: connection setup
+costs can be quite high, and would distort the measurement if one compared
+the round trip time to the primary bureau through an existing connection
+to the time to establish the connection to the secondary bureau plus the
+round trip time.
+<H2>
+  <A NAME="Appendix B">Appendix B: Sample Label Bureau Queries and
+  Responses</A><A NAME="queries"> </A>
+</H2>
+<P>
+The following queries and responses illustrate many of the features of client
+interactions with label bureaus that dispense labels separately from documents.
+All four queries request labels for the same three documents, provided by
+the same three services. They differ only in the query mode (Generic, Normal,
+Tree, Generic+Tree).
+<P>
+Labels are requested for the following URLs:
+<UL>
+  <LI>
+    http://www.w3.org/pub/WWW/
+  <LI>
+    http://www.w3.org/pub/WWW/TheProject.html
+  <LI>
+    http://www.w3.org/unknown
+</UL>
+<P>
+Labels are requested from the following services:
+<UL>
+  <LI>
+    http://www.ages.org/our-service/v1.0/
+  <LI>
+    http://www.rsac.org/v1.0
+  <LI>
+    http://unknown.com
+</UL>
+<P>
+The server has the following relevant labels:
+<UL>
+  <LI>
+    Ages rating service
+    <OL>
+      <LI>
+	"http://www.w3.org/pub" (generic)
+      <LI>
+	"http://www.w3.org/pub/WWW/" (generic)
+      <LI>
+	"http://www.w3.org/pub/WWW/Daemon" (generic)
+      <LI>
+	"http://www.w3.org/pub/WWW/PICS" (generic)
+      <LI>
+	"http://www.w3.org/pub/WWW/Overview.html"
+    </OL>
+  <LI>
+    RSAC rating service
+    <OL>
+      <LI>
+	"http://www.w3.org/pub/WWW" (generic)
+      <LI>
+	"http://www.w3.org/pub/WWW/Daemon" (generic)
+      <LI>
+	"http://www.w3.org/pub/WWW/PICS" (generic)
+      <LI>
+	"http://www.w3.org/pub/WWW/Daemon/Overview.html"
+      <LI>
+	"http://www.w3.org/pub/WWW/TheProject.html"
+    </OL>
+  <LI>
+    unknown.com rating service<BR>
+    None.
+</UL>
+<P>
+The query responses have been pretty-printed for readability. Comment lines,
+beginning with ';' have been added to explain the responses. Query requests
+have been split onto multiple lines for display purposes; they are actually
+sent as single (very long) lines.
+<H3>
+  Generic request
+</H3>
+<P>
+This request is for full generic labels that apply to the three documents.
+<P>
+<B>Client sends request to server:</B>
+<PRE>
+GET /ratings?opt=generic&amp;format=full&amp;
+u="http%3A%2F%2Fwww.w3.org%2Fpub%2FWWW%2F+&amp;"
+u="http%3A%2F%2Fwww.w3.org%2Fpub%2FWWW%2FTheProject.html&amp;"
+u="http%3A%2F%2Fwww.w3.org%2Funknown&amp;"
+s="http%3A%2F%2Fwww.ages.org%2Four-service%2Fv1.0%2F&amp;"
+s="http%3A%2F%2Fwww.rsac.org%2Fv1.0&amp;"
+s="http%3A%2F%2Funknown.com" HTTP/1.0
+</PRE>
+<P>
+<B>Server responds to client:</B>
+<PRE>
+HTTP/1.0 200 OK
+Content-Length: 550
+Content-Type: application/pics-labels
+Server: Jigsaw 0/0
+Date: 15 Apr 1996 18:20:47 GMT
+
+(PICS-1.1 
+ "http://www.ages.org/our-service/v1.0/"        <I>;first service</I>
+ labels 
+  for "http://www.w3.org/pub/WWW/" 
+  generic true
+  by "abaird@w3.org" 
+  ratings (age 11)       <I>;end of first label, since 'ratings' is always </I>
+<I>                         ;last part of a label.  The same generic label</I>
+<I>                         ;applies also to any URL beginning</I>
+<I>                         ;http://www.w3.org/pub/WWW/TheProject.html </I>
+  for "http://www.w3.org/pub/WWW/" 
+  generic true
+  by "abaird@w3.org" 
+  ratings (age 11)       <I>;end of second label</I> 
+
+  error (not-labeled "http://www.w3.org/unknown")
+  <I>;no label available for third document</I>
+ <I> ;three labels requested, so end of first service</I>
+ "http://www.rsac.org/v1.0" 
+ labels 
+  for "http://www.w3.org/pub/WWW" 
+  generic true 
+  by "abaird@w3.org"
+  ratings (v 0 s 0 n 0 l 0) 
+  for "http://www.w3.org/pub/WWW" 
+  generic true 
+  by "abaird@w3.org"
+  ratings (v 0 s 0 n 0 l 0) 
+  error (not-labeled "http://www.w3.org/unknown") 
+
+ <I>;;no labels for third service</I>
+ error (no-ratings "unknown service"))
+</PRE>
+<H3>
+  Normal query
+</H3>
+<P>
+This query requests full specific labels for each of the documents.
+<P>
+<B>Client sends request to server:</B>
+<PRE>
+GET /ratings?opt=normal&amp;format=full&amp;
+u="http%3A%2F%2Fwww.w3.org%2Fpub%2FWWW%2F+&amp;"
+u="http%3A%2F%2Fwww.w3.org%2Fpub%2FWWW%2FTheProject.html&amp;"
+u="http%3A%2F%2Fwww.w3.org%2Funknown&amp;"
+s="http%3A%2F%2Fwww.ages.org%2Four-service%2Fv1.0%2F&amp;"
+s="http%3A%2F%2Fwww.rsac.org%2Fv1.0&amp;"
+s="http%3A%2F%2Funknown.com" HTTP/1.0
+</PRE>
+<P>
+<B>Server responds to client:</B>
+<PRE>
+HTTP/1.0 200 OK
+Content-Length: 569
+Content-Type: application/pics-labels
+Server: Jigsaw 0/0
+Date: 15 Apr 1996 18:20:54 GMT
+(PICS-1.1
+ "http://www.ages.org/our-service/v1.0/" 
+  labels 
+  <I>;;no specific label available, so generic label returned</I>
+  for "http://www.w3.org/pub/WWW/"
+  generic true 
+  by "abaird@w3.org" 
+  ratings (age 11) 
+  <I>;;no specific label available, so generic label returned</I>
+  for "http://www.w3.org/pub/WWW/" 
+  generic true 
+  by "abaird@w3.org" 
+  ratings (age 11) 
+  error (not-labeled "http://www.w3.org/unknown") 
+ "http://www.rsac.org/v1.0" 
+ labels 
+  <I>;;no specific label available, so generic label returned</I>
+  for "http://www.w3.org/pub/WWW" 
+  generic true 
+  by "abaird@w3.org"
+  ratings (v 0 s 0 n 0 l 0) 
+  <I>;;here a specific label is returned.</I>
+  for "http://www.w3.org/pub/WWW/TheProject.html" 
+  generic false 
+  by "abaird@w3.org" 
+  ratings (v 0 s 0 n 0 l 0) 
+  error (not-labeled "http://www.w3.org/unknown")
+ error (no-ratings "unknown service"))
+</PRE>
+<H3>
+  Tree query
+</H3>
+<P>
+This request is for full specific labels for all URLs that have the requested
+URLs as a prefix. This label bureau responds to tree queries by sending only
+labels for documents in the current directory.
+<P>
+<B>Client sends request to server:</B>
+<PRE>
+GET /ratings?opt=tree&amp;format=full&amp;
+u="http%3A%2F%2Fwww.w3.org%2Fpub%2FWWW%2F+&amp;"
+u="http%3A%2F%2Fwww.w3.org%2Fpub%2FWWW%2FTheProject.html&amp;"
+u="http%3A%2F%2Fwww.w3.org%2Funknown&amp;"
+s="http%3A%2F%2Fwww.ages.org%2Four-service%2Fv1.0%2F&amp;"
+s="http%3A%2F%2Fwww.rsac.org%2Fv1.0&amp;"
+s="http%3A%2F%2Funknown.com" HTTP/1.0
+</PRE>
+<P>
+<B>Server responds to client:</B>
+<PRE>
+HTTP/1.0 200 OK
+Content-Length: 1075
+Content-Type: application/pics-labels
+Server: Jigsaw 0/0
+Date: 15 Apr 1996 18:21:00 GMT
+(PICS-1.1 
+ "http://www.ages.org/our-service/v1.0/" 
+ labels
+ <I>;;several labels delimited by ()</I>
+ (for "http://www.w3.org/pub/WWW/" 
+  generic true 
+  by "abaird@w3.org"
+  ratings (age 11) 
+  for "http://www.w3.org/pub/WWW/Overview.html"
+  by "abaird@w3.org" 
+  generic false
+  ratings (age 12) 
+  by "abaird@w3.org" 
+  for "http://www.w3.org/pub/WWW/PICS" 
+  generic true 
+  ratings (age 5) 
+  by "abaird@w3.org" 
+  for "http://www.w3.org/pub/WWW/Daemon" 
+  generic true
+  ratings (age 5))
+  <I>;;end of labels for directory http://www.w3.org/pub/WWW/</I>
+  <I>;;no labels available for URLs containing</I>
+<I>  ;;http://www.w3.org/pub/WWW/TheProject.html as a prefix</I>
+  error (not-labeled "http://www.w3.org/pub/WWW/TheProject.html")
+  error (not-labeled "http://www.w3.org/unknown")
+ "http://www.rsac.org/v1.0" 
+ labels
+  (for "http://www.w3.org/pub/WWW" 
+   generic true 
+   by "abaird@w3.org"
+   ratings (v 0 s 0 n 0 l 0) 
+   for "http://www.w3.org/pub/WWW/TheProject.html" 
+   generic false 
+   by "abaird@w3.org" 
+   ratings (v 0 s 0 n 0 l 0) 
+   for "http://www.w3.org/pub/WWW/Daemon"
+   generic true 
+   by "abaird@w3.org"
+   ratings (v 0 s 0 n 0 l 0) 
+   for "http://www.w3.org/pub/WWW/PICS" 
+   generic true 
+   by "abaird@w3.org"
+   ratings (v 0 s 0 n 0 l 0))
+  error (not-labeled "http://www.w3.org/pub/WWW/TheProject.html") 
+
+  error (not-labeled "http://www.w3.org/unknown") 
+
+ error (no-ratings "unknown service"))
+</PRE>
+<H3>
+  generic+tree
+</H3>
+<P>
+This query requests all generic labels for URLs that contain the requested
+URLs as prefixes. A subset of the labels returned for the previous query
+are returned here: only those that are generic.
+<P>
+<B>Client sends request to server:</B>
+<PRE>
+GET /ratings?opt=generic%2Btree&amp;
+format=full&amp;
+u="http%3A%2F%2Fwww.w3.org%2Fpub%2FWWW%2F+&amp;"
+u="http%3A%2F%2Fwww.w3.org%2Fpub%2FWWW%2FTheProject.html&amp;"
+u="http%3A%2F%2Fwww.w3.org%2Funknown&amp;"
+s="http%3A%2F%2Fwww.ages.org%2Four-service%2Fv1.0%2F&amp;"
+s="http%3A%2F%2Fwww.rsac.org%2Fv1.0&amp;"
+s="http%3A%2F%2Funknown.com" HTTP/1.0
+</PRE>
+<P>
+<B>Server responds to client:</B>
+<PRE>
+HTTP/1.0 200 OK
+Content-Length: 872
+Content-Type: application/pics-labels
+Server: Jigsaw 0/0
+Date: 15 Apr 1996 18:38:28 GMT
+(PICS-1.1 
+ "http://www.ages.org/our-service/v1.0/"
+ labels 
+  (for "http://www.w3.org/pub/WWW/" 
+   generic true
+   by "abaird@w3.org" 
+   ratings (age 11) 
+   by "abaird@w3.org" 
+   for "http://www.w3.org/pub/WWW/PICS" 
+   generic true 
+   ratings (age 5) 
+   by "abaird@w3.org" 
+   for "http://www.w3.org/pub/WWW/Daemon" 
+   generic true
+   ratings (age 5))
+
+   error (not-labeled "http://www.w3.org/pub/WWW/TheProject.html")
+
+   error (not-labeled "http://www.w3.org/unknown")
+ "http://www.rsac.org/v1.0" 
+ labels
+  (for "http://www.w3.org/pub/WWW" 
+   generic true 
+   by "abaird@w3.org"
+   ratings (v 0 s 0 n 0 l 0)
+   for "http://www.w3.org/pub/WWW/Daemon"
+   generic true 
+   by "abaird@w3.org" 
+   ratings (v 0 s 0 n 0 l 0) 
+   for "http://www.w3.org/pub/WWW/PICS" 
+   generic true 
+   by "abaird@w3.org"
+   ratings (v 0 s 0 n 0 l 0)) 
+
+  error (not-labeled "http://www.w3.org/pub/WWW/TheProject.html")
+
+  error (not-labeled "http://www.w3.org/unknown") 
+
+ error (no-ratings "unknown service"))
+
+<P>
+<A href="http://www.w3.org/Consortium/Legal/ipr-notice.html#Copyright">Copyright</A> &nbsp;&copy;&nbsp; 1996 <A href="http://www.w3.org">W3C</A> (<A href="http://www.lcs.mit.edu">MIT</A>, <A href="http://www.inria.fr/">INRIA</A>, <A href="http://www.keio.ac.jp/">Keio</A> ), All Rights Reserved. W3C <A href="http://www.w3.org/Consortium/Legal/ipr-notice.html#Legal Disclaimer">liability,</A> <A href="http://www.w3.org/Consortium/Legal/ipr-notice.html#W3C Trademarks">trademark</A>, <A href="http://www.w3.org/Consortium/Legal/copyright-documents.html">document use </A>and <A href="http://www.w3.org/Consortium/Legal/copyright-software.html">software licensing </A>rules apply.
+<HR>
+<ADDRESS><A HREF="mailto:web-human@w3.org">Webmaster</A><BR>$Date: 2009/11/24 18:23:30 $
+</ADDRESS></PRE>
+</BODY></HTML>

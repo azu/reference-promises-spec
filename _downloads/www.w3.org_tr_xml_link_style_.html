@@ -1,0 +1,2184 @@
+<!-- http://www.w3.org/TR/xml-link-style/ -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="EN"><head>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>XML Linking and Style</title><style type="text/css">
+code           { font-family: monospace; }
+
+div.constraint,
+div.issue,
+div.note,
+div.notice     { margin-left: 2em; }
+
+dt.label       { display: run-in; }
+
+li p           { margin-top: 0.3em;
+                 margin-bottom: 0.3em; }
+      
+.startrsrc { background-color: #BBF9C0;
+             text-decoration: underline; }
+.endrsrc   { background-color: #BBDCF9;
+             font-style: italic; }
+.bothrsrc  { background-color: #F9BBE0;
+             font-style: italic;
+             font-weight: bold; }
+.present   { background-color: #BBDCF9;
+             font-style: italic; }
+.target    { background-color: #F9BBE0;
+             font-weight: bold; }
+p.element-syntax { border: solid thin }
+</style><link rel="stylesheet" type="text/css" href="http://www.w3.org/StyleSheets/TR/W3C-NOTE.css"></head><body>
+
+<div class="head"><p><a href="http://www.w3.org/"><img src="http://www.w3.org/Icons/w3c_home" alt="W3C" height="48" width="72"></a></p>
+<h1>XML Linking and Style</h1>
+<h2>W3C NOTE 5 June 2001</h2><dl><dt>This version:</dt><dd><a href="http://www.w3.org/TR/2001/NOTE-xml-link-style-20010605/">http://www.w3.org/TR/2001/NOTE-xml-link-style-20010605/</a>
+(<a href="http://www.w3.org/TR/2001/NOTE-xml-link-style-20010605/xml-link-style.html">HTML</a>,
+<a href="http://www.w3.org/TR/2001/NOTE-xml-link-style-20010605/xml-link-style.xml">XML</a>)</dd><dt>Latest version:</dt><dd><a href="http://www.w3.org/TR/xml-link-style/">http://www.w3.org/TR/xml-link-style/</a>
+</dd><dt>Editor:</dt>
+<dd>Norman Walsh, Sun Microsystems, Inc. <a href="mailto:Norman.Walsh@East.Sun.COM">&lt;Norman.Walsh@East.Sun.COM&gt;</a></dd>
+</dl><p class="copyright"><a href="http://www.w3.org/Consortium/Legal/ipr-notice-20000612#Copyright">Copyright</a>&nbsp;�&nbsp;2001&nbsp;<a href="http://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>�</sup> (<a href="http://www.lcs.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>, <a href="http://www.inria.fr/"><abbr lang="fr" title="Institut National de Recherche en Informatique et Automatique">INRIA</abbr></a>, <a href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C <a href="http://www.w3.org/Consortium/Legal/ipr-notice-20000612#Legal_Disclaimer">liability</a>, <a href="http://www.w3.org/Consortium/Legal/ipr-notice-20000612#W3C_Trademarks">trademark</a>, <a href="http://www.w3.org/Consortium/Legal/copyright-documents-19990405">document use</a>, and <a href="http://www.w3.org/Consortium/Legal/copyright-software-19980720">software licensing</a> rules apply.</p></div><hr><div>
+<h2><a name="abstract">Abstract</a></h2>
+<p>The interaction of XLink linking elements and styling has not
+previously been carefully described. This note, the result of an XML
+Linking/XSL joint task force, attempts to rectify that oversight by
+providing a clear conceptual model for linking and styling and
+suggestions for the practical application of that model using current
+W3C Recommendations (and Working Drafts, Candidate Recommendations, and
+Proposed Recommendations).</p>
+</div><div>
+<h2><a name="status">Status of this Document</a></h2>
+
+<p>This document is a Note made available by
+the World Wide Web Consortium (W3C) for information only.  Publication of this Note by W3C does not imply endorsement by W3C or the W3C Team, or any W3C Members, nor that the W3C has, is, or will be allocating any resources to the issues addressed by this Note.
+</p>
+
+<p>It was produced by a joint task force of the XML Linking
+and XSL Working Groups.  We plan to update this Note according to
+comments received and, if there is enough interest, consider promoting
+parts of it into Recommendation-track specifications where appropriate.
+Comments may be directed to the task force mailing list <a href="mailto:w3c-xsl-link-tf@w3.org">w3c-xsl-link-tf@w3.org</a>
+(Member-only <a href="http://lists.w3.org/Archives/Member/w3c-xsl-link-tf/">archive</a>).</p>
+
+<p>A list of current W3C Recommendations and other
+technical documents, including Working Drafts and Notes, can be found at
+<a href="http://www.w3.org/TR/">http://www.w3.org/TR/</a>.</p>
+
+<p><em>This section represents the status of this document at the time
+this version was published. It will become outdated if and when a new
+version is published. The latest status is maintained at the W3C.</em></p>
+</div>
+<div class="toc">
+<h2><a name="contents">Table of Contents</a></h2><p class="toc">1 <a href="#sec-intro">Introduction</a><br>&nbsp;&nbsp;&nbsp;&nbsp;1.1 <a href="#N448">Design Principles</a><br>&nbsp;&nbsp;&nbsp;&nbsp;1.2 <a href="#N478">Requirements Framework</a><br>2 <a href="#sec-xlink">Processing XLink Linking Elements</a><br>&nbsp;&nbsp;&nbsp;&nbsp;2.1 <a href="#sec-xlink-identification">XML Link Identification</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.1 <a href="#xlink-infoset">XLink Infoset Contributions</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.1.1 <a href="#linknamespace">Link Element Namespace</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.1.2 <a href="#linkinfoitem">Link Information Item</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.1.3 <a href="#arcinfoitem">Arc Information Item</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.1.4 <a href="#partinfoitem">Participant Information Item</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.1.5 <a href="#infoset-examples">Infoset Contribution Examples</a><br>&nbsp;&nbsp;&nbsp;&nbsp;2.2 <a href="#sec-xlink-traversal">XLink Traversal</a><br>3 <a href="#sec-style">Styling Link Resources</a><br>&nbsp;&nbsp;&nbsp;&nbsp;3.1 <a href="#sec-style-content-10">With Current Technologies</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.1.1 <a href="#sec-xsltx-functions">XSLT Extension Functions</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.1.2 <a href="#N1512">Function Example</a><br>&nbsp;&nbsp;&nbsp;&nbsp;3.2 <a href="#sec-style-content-auto">With a Link-Aware XSLT Processor</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.1 <a href="#N1622">Controlling Link Selection</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.2 <a href="#N1658">Identifying Link Targets Explicitly</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.3 <a href="#N1720">Adding Style Properties</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.3.1 <a href="#N1746">Style Properties Example</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.4 <a href="#N1760">Style-based Structural Changes</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.4.1 <a href="#N1795">Next Match Example</a><br>&nbsp;&nbsp;&nbsp;&nbsp;3.3 <a href="#style-elements">Style Elements</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.1 <a href="#N1867">xsl:link</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.2 <a href="#N1903">xsl:arc</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.3 <a href="#N1978">xsl:start- and xsl:end-participant</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.4 <a href="#N2045">Using the Link Elements</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.5 <a href="#N2058">Merging Link Sets</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.6 <a href="#N2112">What's Missing</a><br>4 <a href="#sec-link-traversal">Styling Link Traversal</a><br>&nbsp;&nbsp;&nbsp;&nbsp;4.1 <a href="#sec-link-traversal-concepts">A Conceptual Model for Styling Link Traversal</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.1.1 <a href="#sec-embed-complication">Special Considerations for Embedded Resources</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.1.2 <a href="#N2396">Result Tree Numbering</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.1.3 <a href="#xinclude-vs-xlink">XInclude vs. XLink Embedding</a><br>&nbsp;&nbsp;&nbsp;&nbsp;4.2 <a href="#N2504">The Semantics of Nested Linking</a><br>5 <a href="#sec-discon-results">Discontiguous Resources</a><br>&nbsp;&nbsp;&nbsp;&nbsp;5.1 <a href="#sec-discon-functions">Implementing Consistent Behavior</a><br>&nbsp;&nbsp;&nbsp;&nbsp;5.2 <a href="#sec-style-discon">Discontinuity Introduced by Styling</a><br>6 <a href="#sec-ranges">Ranges are Challenging</a><br>&nbsp;&nbsp;&nbsp;&nbsp;6.1 <a href="#spec-range-display">Styling Ranges in a Larger Presentation Context</a><br>&nbsp;&nbsp;&nbsp;&nbsp;6.2 <a href="#spec-range-embed">Ranges that are Presentation Context</a><br>&nbsp;&nbsp;&nbsp;&nbsp;6.3 <a href="#range-ligs">Ranges and Glyph/Character Boundaries</a><br></p>
+<h3>Appendices</h3><p class="toc">A <a href="#sec-bibliography">References</a><br>&nbsp;&nbsp;&nbsp;&nbsp;A.1 <a href="#N3007">Normative References</a><br>&nbsp;&nbsp;&nbsp;&nbsp;A.2 <a href="#N3117">Other References</a><br>B <a href="#N3262">Summary of Proposed Changes to XSLT</a> (Non-Normative)<br>&nbsp;&nbsp;&nbsp;&nbsp;B.1 <a href="#N3272">link-target</a><br>&nbsp;&nbsp;&nbsp;&nbsp;B.2 <a href="#N3293">xsl:link-style</a><br>&nbsp;&nbsp;&nbsp;&nbsp;B.3 <a href="#N3312">XSL Linking Elements</a><br>&nbsp;&nbsp;&nbsp;&nbsp;B.4 <a href="#N3333">xsl:next-match</a><br>C <a href="#sec-xml-wg">W3C XLink/XSL Joint Task Force</a> (Non-Normative)<br></p></div><hr><div class="body">
+
+<div class="div1">
+
+<h2><a name="sec-intro"></a>1 Introduction</h2>
+
+<p>Linking and styling have significant interactions. On the one hand,
+style may be applied to elements because they participate in links.
+On the other, selecting a link may modify, replace, or create a new
+document which must then be styled.</p>
+
+<p>This note introduces a conceptual model for describing the
+interactions of XLink linking elements and styling. It then shows how
+this model may be applied in two different ways:</p>
+
+<ol>
+<li><p>Using current and anticipated technologies supported by existing W3C
+Recommendations (and Working Drafts, Candidate Recommendations, and
+Proposed Recommendations).</p>
+</li>
+<li><p>In an environment where the XSLT processor provides
+significantly more functionality for linking and contains several
+new features.</p></li>
+</ol>
+
+<p>The full generality of the conceptual model cannot be represented
+with current Recommendations. Rather than attempt to restrict the
+model, we observe that by accepting default values for parts of the
+model, a useful, practical subset can be implemented today. </p>
+
+<div class="div2">
+<h3><a name="N448"></a>1.1 Design Principles</h3>
+
+<p>The task force used the following principles to develop the model
+described in this note:</p>
+
+<ol>
+<li><p>The model must support applications of linking and styling
+for the purpose of presentation to a human audience.</p>
+<p>There are countless XML linking applications that are not related to
+style at all (robots, indexing applications, etc.). At best, the
+conceptual framework described in this note may aid in developing
+interoperable, standard applications of this sort. At the very least,
+nothing in this note should inhibit the development of XML linking
+applications that are not related to style.</p></li>
+<li><p>The model must not compromise accessibility.</p></li>
+<li><p>This model must apply equally well to XSL and CSS.</p></li>
+<li><p>The consequences of linking to or from non-XML resources is
+outside the scope of this note.</p></li>
+</ol>
+
+</div>
+
+<div class="div2">
+<h3><a name="N478"></a>1.2 Requirements Framework</h3>
+
+<p>In considering this design, we felt the following requirements
+had to be met by any proposed solution:</p>
+
+<ol>
+<li><p>The overall treatment of the ending resource is controlled
+by the <code>xlink:show</code> attribute.</p></li>
+<li><p>The overall treatment of link traversal is controlled by
+the <code>xlink:actuate</code> attribute.</p></li>
+<li><p>It must be possible to style both starting and ending
+resources.</p></li>
+<li><p>It must be possible to process inbound, outbound, and third
+party arcs.</p></li>
+<li><p>It must be possible to process starting resources regardless
+of "well-balancedness": whole documents, one or more whole nodes,
+an arbitrary range, including partial nodes, and non-contiguous
+selections of all of the above.</p></li>
+<li><p>It must be possible to process ending resources regardless
+of "well-balancedness".</p></li>
+<li><p>It must be possible to control the context in which ending
+resources are displayed. While whole documents are the standard context for
+web browsers, it is easy to imagine situations where it would be desirable
+to show a portion of the document that contains the target, or even just
+the target itself.</p></li>
+<li><p>We must consider the consequences of encountering different
+sequences and nestings
+of starting resources with various combinations of behavior
+settings.</p></li>
+</ol>
+</div>
+
+</div>
+<div class="div1">
+
+<h2><a name="sec-xlink"></a>2 Processing XLink Linking Elements</h2>
+
+<p>Processing XLink linking elements can be divided into two functions: link
+identification and link traversal. It is useful for our purposes to
+consider these functions separately.</p>
+
+<div class="div2">
+
+<h3><a name="sec-xlink-identification"></a>2.1 XML Link Identification</h3>
+
+<p>XLink
+<a href="http://www.w3.org/TR/xlink/#dt-link">linking elements</a>
+may or may not participate in the
+link they identify. Consider the following example:</p>
+
+<table class="eg" cellpadding="1" border="1" bgcolor="white" width="100%" summary="Example"><tr><td><pre>&lt;doc&gt;
+&lt;p&gt;<span class="startrsrc">&lt;name&nbsp;xlink:type='simple'
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xlink:href='students/patjones62.xml'&gt;Pat Jones&lt;/name&gt;</span>
+is taking <span class="startrsrc">&lt;course&nbsp;xlink:type='simple'
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xlink:href='#CS101'&gt;CS-101&lt;/course&gt;</span>.&lt;/p&gt;
+&lt;courselist&gt;
+<span class="endrsrc">&lt;course&nbsp;id='CS101'&gt;Computer Science 101&lt;/course&gt;</span>
+&lt;course&nbsp;id='CS201'&gt;Computer Science 201&lt;/course&gt;
+&lt;/courselist&gt;
+&lt;/doc&gt;</pre></td></tr></table>
+
+<p>In this example, the two green (and underlined) elements are starting
+resources.  The blue (and italic) element is an ending
+resource. There is no explicit markup to identify ending resources,
+but an XLink-aware application can identify them because they are
+pointed to by URI references.</p>
+
+<p>Linking relationships can be less obvious. Consider the case where
+an extended link is used:</p>
+
+<table class="eg" cellpadding="1" border="1" bgcolor="white" width="100%" summary="Example"><tr><td><pre>&lt;doc&gt;
+&lt;extendedlink&nbsp;xlink:type='extended'&gt;
+  &lt;loc&nbsp;xlink:type='locator'&nbsp;xlink:label='cs101'
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xlink:href='#xpointer(//course[@id='CS101'])'&gt;&lt;/loc&gt;
+  &lt;loc&nbsp;xlink:type='locator'&nbsp;xlink:label='cs201'
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xlink:href='#xpointer(//course[@id='CS201'])'&gt;&lt;/loc&gt;
+  &lt;loc&nbsp;xlink:type='locator'&nbsp;xlink:label='cs101desc'
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xlink:href='courses/cs101.xml'&gt;&lt;/loc&gt;
+  &lt;loc&nbsp;xlink:type='locator'&nbsp;xlink:label='cs201desc'
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xlink:href='courses/cs201.xml'&gt;&lt;/loc&gt;
+  &lt;arc&nbsp;xlink:type='arc'&nbsp;xlink:from='cs101'&nbsp;xlink:to='cs101desc'&gt;&lt;/arc&gt;
+  &lt;arc&nbsp;xlink:type='arc'&nbsp;xlink:from='cs201'&nbsp;xlink:to='cs201desc'&gt;&lt;/arc&gt;
+&lt;/extendedlink&gt;
+&lt;p&gt;<span class="startrsrc">&lt;name&nbsp;xlink:type='simple'
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xlink:href='students/patjones62.xml'&gt;Pat Jones&lt;/name&gt;</span>
+is taking <span class="startrsrc">&lt;course&nbsp;xlink:type='simple'
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xlink:href='#CS101'&gt;CS-101&lt;/course&gt;</span>.&lt;/p&gt;
+&lt;courselist&gt;
+<span class="bothrsrc">&lt;course&nbsp;id='CS101'&gt;Computer Science 101&lt;/course&gt;</span>
+<span class="startrsrc">&lt;course&nbsp;id='CS201'&gt;Computer Science 201&lt;/course&gt;</span>
+&lt;/courselist&gt;
+&lt;/doc&gt;</pre></td></tr></table>
+
+<p>With the addition of an extended link element, the courses in the
+course list also become starting resources. Note that this makes the
+first course in the course list (identified in red and bold-italic)
+both a starting resource and an ending resource. This example could be
+complicated further by placing the extended link in a physically
+separate resource from the documents in question.</p>
+
+<p>In order for links to be styled, they must be identified. The XLink-aware
+application must somehow provide additional information beyond what is
+explicitly marked up in the document available to the styling engine.
+This can be described in terms of Infoset contributions.</p>
+
+<div class="div3">
+
+<h4><a name="xlink-infoset"></a>2.1.1 XLink Infoset Contributions</h4>
+
+<p>Conceptually, the XLink-aware application must provide additional
+information to the styling engine about links in a document.  This
+can be modeled in terms of contributions to the document's Infoset.
+</p>
+
+<div class="note"><p class="prefix"><b>Note:</b></p><p>We use the Infoset here as a conceptual model. We are not
+suggesting that applications be required to build or maintain
+any specific set of data structures for this purpose, merely that they
+be able to provide certain information to the application.</p>
+
+<p>Because it is convenient to describe some aspects of link
+processing in terms of the XPath data model, we use mostly Element Information Item in
+our contributions, but that does mean that implementations are required
+to construct their internal data models that way.</p>
+</div>
+
+<p>An XLink-aware processor has at its disposal some
+collection of XLinks. They may come from
+<a href="http://www.w3.org/TR/xlink/#simple-links">simple</a>
+and/or
+<a href="http://www.w3.org/TR/xlink/#extended-link">extended</a>
+links in the source document, or from external
+<a href="http://www.w3.org/TR/xlink/#dt-linkbase">linkbases</a>.
+We treat them all equally.</p>
+
+<p>To augment the Infoset, we introduce a new data structure, the
+Link Set, and three new properties to access it. The Link Set holds an
+interpretation of the XLink data model: the links, arcs, and participants
+that are known as well as any additional metadata about them
+that may be available.</p>
+
+<p>We construct the Link Set using Element Information Items. Note, however, that
+these elements are not the children of any information items in the
+document's Infoset. They are accessible only through new
+properties. We elected to use Element Information Items for the Link Set because:
+</p>
+
+<ol>
+<li><p>It is a hierarchical data structure with a natural tree
+structure.</p></li>
+<li><p>Style engines already have well-understood mechanisms for navigating
+through a tree of elements and attributes.</p></li>
+<li><p>XLinks can have additional metadata elements inside them, and it
+is possible for these elements to have semantic meaning, it is therefore
+necessary to provide a means for XLink processors to access them.
+</p></li>
+</ol>
+
+<p>There are three types of Element Information Items in the Link Set: Link Information Items,
+which represent links, Arc Information Items which represent single arcs, and two
+Participant Information Items which represent the start and end of an arc.
+</p>
+
+<p>More formally:</p>
+
+<ul>
+<li><p>[<a name="dt-linkii" title="Link Information Item">Definition</a>: There is
+one <b>Link Information Item</b> for every XLink that the
+processor knows about.]
+</p>
+</li>
+
+<li><p>[<a name="dt-arcii" title="Arc Information Item">Definition</a>: Every
+Link Information Item contains an
+<b>Arc Information Item</b> for every arc associated with that
+XLink.]</p>
+
+<p>In the case of simple links, there will only ever be a single arc,
+but extended links may include many. Note that the number of Arc Information Items
+is not necessarily the same as the number of <code>arc</code>-type elements in the
+XLink. XLink <code>arc</code>-type elements can define any number of arcs;
+Arc Information Items define exactly one arc.</p>
+</li>
+
+<li>
+<p>Finally, [<a name="dt-partii" title="Participant Information Item">Definition</a>: Every Arc Information Item contains exactly two <b>Participant Information
+Items</b>: one Start Participant Information Item for the starting resource and one End
+Participant Information Item for the ending resource.]</p>
+</li>
+</ul>
+
+<p>Once constructed, the new information items must be inserted into
+the Infoset. We define new properties for this purpose.</p>
+
+<ul>
+<li>
+<p>[<a name="dt-linkset" title="Link Set">Definition</a>: 
+The Document Information Item is extended with a new Link Set property.
+The <b>Link Set</b> property contains the set of Link Information Items
+associated with this document.]</p>
+</li>
+</ul>
+
+<p>Every Element, Character, Processing Instruction, and Comment
+Information Item in the document is augmented with two new
+properties: Starting Participant Arcs and Ending Participant Arcs.</p>
+
+<ul>
+<li>
+<p>[<a name="dt-startpa" title="Starting Participant Arcs">Definition</a>: The
+<b>Starting Participant Arcs</b> property is a list of the
+Arc Information Items for which this information item is a part of the Start Participant Information Item for
+the arc.] In other words, if this
+element is part of the starting resource of a link, it has a pointer
+to the arc(s) that define the traversal from this resource.</p>
+</li>
+
+<li>
+<p>[<a name="dt-endpa" title="Ending Participant Arcs">Definition</a>: The
+<b>Ending Participant Arcs</b> property is a list of the
+Arc Information Items for which this information item is a part of the End Participant Information Item for
+for the arc.] Again, in other words, if this
+element is part of the ending resource of a link, it has a pointer
+to the arc(s) that define the traversal to this resource.
+</p>
+</li>
+</ul>
+
+<p>If an information item has more than one Arc Information Item associated with it,
+they are ordered. That is, one can refer to the first
+Arc Information Item, the second Arc Information Item, etc. There is no requirement for different
+implementations to select the same order, or even for the same implementation
+to select the same order over multiple runs. They need only be consistent
+for the logical duration of any given information set.</p>
+
+<p>If more than one information item in the document is associated
+with an arc (for example, if the starting or ending resources are
+comprised of several elements or a range of characters), the
+Starting Participant Arcs or Ending Participant Arcs of each
+relevant information item in the Infoset is augmented.
+</p>
+
+<p>Once the Infoset has been augmented with these items, linking
+applications can process links in a uniform way, independent of
+whether the elements in question are simple, extended, or even third
+party links.</p>
+
+<div class="note"><p class="prefix"><b>Note:</b></p><p>We observe that this interface extends even beyond XLink.
+Processors for schemas that have linking semantics defined independent
+of XLink, such as HTML, can augment the Infoset and
+take advantage of this linking framework without literally making every
+link an XLink.</p></div>
+
+<p>An XLink can be quite complex. In the most general case, linking
+semantics may be influenced by the roles of the <code>link</code>-type
+element, the <code>arc</code>-type element, and the roles on the
+participating resources involved in the link. In designing
+this model, our goal was to provide link processors with access to all
+of this information.</p>
+
+<div class="div4">
+
+<h5><a name="linknamespace"></a>2.1.1.1 Link Element Namespace</h5>
+
+<p>In order to provide fully qualified names for the linking information
+items, they are placed in the linking and style namespace with
+<a href="http://www.w3.org/TR/REC-xml-names/#dt-NSName">Namespace
+name</a> "http://www.w3.org/2001/06/xml-link-style".</p>
+<p>This namespace name (URI) will only be used to refer to this
+version of this Note: different URIs will
+be used for any and all new versions of the specification except that this namespace name may be reused in any update of this
+Note which is made for the purpose of
+    clarification or bug fixes. These changes will be minor in that
+they will not (a) change the meaning or
+    validity of existing documents written using the namespace, or (b) 
+affect the operation of existing
+    software written to process such documents.</p>
+</div>
+
+<div class="div4">
+
+<h5><a name="linkinfoitem"></a>2.1.1.2 Link Information Item</h5>
+
+<p>A Link Information Item is an Element Information Item. It must conform to the following
+<a href="#xmlschema-cr">[XML Schema (Structures)]</a> type definition:</p>
+
+<table class="eg" cellpadding="5" border="1" bgcolor="#99ffff" width="100%" summary="Example"><tr><td><pre>&lt;xsd:schema targetNamespace="http://www.w3.org/2001/06/xml-link-style"
+            elementFormDefault="qualified"
+            xmlns:xsd="http://www.w3.org/2000/10/XMLSchema"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+            xmlns:link='http://www.w3.org/2001/06/xml-link-style'&gt;
+&lt;xsd:complexType&nbsp;name='linkType'&gt;
+  &lt;xsd:sequence&nbsp;minOccurs='1'&nbsp;maxOccurs='1'&gt;
+    &lt;xsd:element&nbsp;ref='link:arc'&nbsp;minOccurs='1'&nbsp;maxOccurs='unbounded'/&gt;
+    &lt;xsd:choice&nbsp;minOccurs='0'&nbsp;maxOccurs='unbounded'&gt;
+      &lt;xsd:element&nbsp;name='xlink:title'&nbsp;type='opaqueType'/&gt;
+      &lt;xsd:any&nbsp;namespace='##other'&nbsp;minOccurs='0'&nbsp;maxOccurs='unbounded'/&gt;
+    &lt;/xsd:choice&gt;
+  &lt;/xsd:sequence&gt;
+  &lt;xsd:attribute&nbsp;name='type'&gt;
+    &lt;xsd:simpleType&gt;
+      &lt;xsd:restriction&nbsp;base='xsd:string'&gt;
+        &lt;xsd:enumeration&nbsp;value='simple'/&gt;
+        &lt;xsd:enumeration&nbsp;value='extended'/&gt;
+      &lt;/xsd:restriction&gt;
+    &lt;/xsd:simpleType&gt;
+  &lt;/xsd:attribute&gt;
+  &lt;xsd:attribute&nbsp;name='role'&nbsp;type='xsd:uriReference'/&gt;
+  &lt;xsd:attribute&nbsp;name='title'&nbsp;type='xsd:string'/&gt;
+  &lt;xsd:anyAttribute&nbsp;namespace='##other'&nbsp;processContents='strict'/&gt;
+&lt;/xsd:complexType&gt;
+&lt;xsd:element&nbsp;name='link'&nbsp;type='link:linkType'/&gt;
+&lt;/xsd:schema&gt;</pre></td></tr></table>
+
+<p>It has the following properties:</p>
+
+<dl>
+<dt class="label">type</dt>
+<dd>
+<p>The value of the <code>xlink:type</code> attribute for this link: either
+"simple" or "extended".</p>
+</dd>
+
+<dt class="label">role</dt>
+<dd>
+<p>The
+<a href="http://www.w3.org/TR/REC-xml#AVNormalize">normalized</a>
+value of the <code>xlink:role</code> attribute for this link.</p>
+<p>This property is null if the <code>extended</code>-type element does
+not have an <code>xlink:role</code> attribute value or if the link is of
+the <code>simple</code> type.</p>
+</dd>
+
+<dt class="label">title</dt>
+<dd>
+<p>The
+<a href="http://www.w3.org/TR/REC-xml#AVNormalize">normalized</a>
+value of the <code>xlink:title</code> attribute for this link.</p>
+<p>This property is null if the <code>extended</code>-type element does
+not have an <code>xlink:title</code> attribute value or if the link is of
+the <code>simple</code> type.</p>
+</dd>
+
+<dt class="label">##other:*</dt>
+<dd><p>It may have any other properties as long as they are from
+a different namespace.</p>
+</dd>
+
+</dl>
+
+<p>A Link Information Item must contain at least one Arc Information Item and may contain any
+number of <code>xlink:title</code> elements and
+elements from other namespaces.</p>
+
+</div>
+
+<div class="div4">
+
+<h5><a name="arcinfoitem"></a>2.1.1.3 Arc Information Item</h5>
+
+<p>An Arc Information Item is an Element Information Item. It must conform to the following XML
+Schema type definition:</p>
+
+<table class="eg" cellpadding="5" border="1" bgcolor="#99ffff" width="100%" summary="Example"><tr><td><pre>&lt;xsd:schema targetNamespace="http://www.w3.org/2001/06/xml-link-style"
+            elementFormDefault="qualified"
+            xmlns:xsd="http://www.w3.org/2000/10/XMLSchema"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+            xmlns:link='http://www.w3.org/2001/06/xml-link-style'&gt;
+&lt;xsd:complexType&nbsp;name='arcType'&gt;
+  &lt;xsd:sequence&nbsp;minOccurs='1'&nbsp;maxOccurs='1'&gt;
+    &lt;xsd:element&nbsp;ref='link:startParticipant'/&gt;
+    &lt;xsd:element&nbsp;ref='link:endParticipant'/&gt;
+    &lt;xsd:choice&nbsp;minOccurs='0'&nbsp;maxOccurs='unbounded'&gt;
+      &lt;xsd:element&nbsp;name='xlink:title'&nbsp;type='opaqueType'/&gt;
+      &lt;xsd:any&nbsp;namespace='##other'&nbsp;minOccurs='0'&nbsp;maxOccurs='unbounded'/&gt;
+    &lt;/xsd:choice&gt;
+  &lt;/xsd:sequence&gt;
+  &lt;xsd:attribute&nbsp;name='role'&nbsp;type='xsd:uriReference'/&gt;
+  &lt;xsd:attribute&nbsp;name='title'&nbsp;type='xsd:string'/&gt;
+  &lt;xsd:attribute&nbsp;name='show'&gt;
+    &lt;xsd:simpleType&gt;
+      &lt;xsd:restriction&nbsp;base='xsd:string'&gt;
+        &lt;xsd:enumeration&nbsp;value='new'/&gt;
+        &lt;xsd:enumeration&nbsp;value='replace'/&gt;
+        &lt;xsd:enumeration&nbsp;value='embed'/&gt;
+        &lt;xsd:enumeration&nbsp;value='other'/&gt;
+        &lt;xsd:enumeration&nbsp;value='none'/&gt;
+      &lt;/xsd:restriction&gt;
+    &lt;/xsd:simpleType&gt;
+  &lt;/xsd:attribute&gt;
+  &lt;xsd:attribute&nbsp;name='actuate'&gt;
+    &lt;xsd:simpleType&gt;
+      &lt;xsd:restriction&nbsp;base='xsd:string'&gt;
+        &lt;xsd:enumeration&nbsp;value='onLoad'/&gt;
+        &lt;xsd:enumeration&nbsp;value='onRequest'/&gt;
+        &lt;xsd:enumeration&nbsp;value='other'/&gt;
+        &lt;xsd:enumeration&nbsp;value='none'/&gt;
+      &lt;/xsd:restriction&gt;
+    &lt;/xsd:simpleType&gt;
+  &lt;/xsd:attribute&gt;
+  &lt;xsd:attribute&nbsp;name='target-stylesheet'&nbsp;type='xsd:uriReference'/&gt;
+  &lt;xsd:attribute&nbsp;name='target-processing-context'&nbsp;type='xsd:uriReference'/&gt;
+  &lt;xsd:attribute&nbsp;name='target-presentation-context'&nbsp;type='xsd:uriReference'/&gt;
+  &lt;xsd:anyAttribute&nbsp;namespace='##other'&nbsp;processContents='strict'/&gt;
+&lt;/xsd:complexType&gt;
+&lt;/xsd:schema&gt;</pre></td></tr></table>
+
+<p>It has the following properties:</p>
+
+<dl>
+<dt class="label">role</dt>
+<dd>
+<p>The
+<a href="http://www.w3.org/TR/REC-xml#AVNormalize">normalized</a>
+value of the <code>xlink:arcrole</code> attribute for this arc.</p>
+<p>This property is null if the relevant <code>arc</code>- or
+<code>simple</code>-type element does not have an <code>xlink:arcrole</code>
+attribute value.</p>
+</dd>
+
+<dt class="label">title</dt>
+<dd>
+<p>The
+<a href="http://www.w3.org/TR/REC-xml#AVNormalize">normalized</a>
+value of the <code>xlink:title</code> attribute for this arc.</p>
+<p>This property is null if the <code>extended</code>-type element does
+not have an <code>xlink:title</code> attribute value or if the link is of
+the <code>simple</code> type.</p>
+</dd>
+
+<dt class="label">show</dt>
+<dd>
+<p>The
+<a href="http://www.w3.org/TR/REC-xml#AVNormalize">normalized</a>
+value of the <code>xlink:show</code> attribute for the arc for which
+this is the starting resource.</p>
+<p>This property is null if the relevant <code>arc</code>- or
+<code>simple</code>-type element does not have an <code>xlink:show</code>
+attribute value.</p>
+</dd>
+
+<dt class="label">actuate</dt>
+<dd>
+<p>The
+<a href="http://www.w3.org/TR/REC-xml#AVNormalize">normalized</a>
+value of the <code>xlink:actuate</code> attribute for the arc for which
+this is the starting resource.</p>
+<p>This property is null if the relevant <code>arc</code>- or
+<code>simple</code>-type element does not have an <code>xlink:actuate</code>
+attribute value.</p>
+</dd>
+
+<dt class="label">target-stylesheet</dt>
+<dd>
+<p>The stylesheet that should be used when this arc
+is traversed.
+(See <a href="#sec-link-traversal"><b>4 Styling Link Traversal</b></a>)</p>
+</dd>
+
+<dt class="label">target-processing-context</dt>
+<dd>
+<p>A URI reference that identifies the processing context associated
+with traversal of this arc.
+(See <a href="#sec-link-traversal"><b>4 Styling Link Traversal</b></a>)</p>
+</dd>
+
+<dt class="label">target-presentation-context</dt>
+<dd>
+<p>A URI reference that identifies the presentation context associated
+with traversal of this arc.
+(See <a href="#sec-link-traversal"><b>4 Styling Link Traversal</b></a>)</p>
+</dd>
+
+<dt class="label">##other:*</dt>
+<dd><p>It may have any other attributes as long as they are from
+a different namespace.</p>
+</dd>
+
+</dl>
+
+<p>An Arc Information Item must contain a Start Participant Information Item and an End Participant Information Item.
+It may also contain any
+number of other elements from other namespaces.</p>
+
+</div>
+
+<div class="div4">
+
+<h5><a name="partinfoitem"></a>2.1.1.4 Participant Information Item</h5>
+
+<p>A Participant Information Item is an Element Information Item. It must conform to the following XML
+Schema type definition:</p>
+
+<table class="eg" cellpadding="5" border="1" bgcolor="#99ffff" width="100%" summary="Example"><tr><td><pre>&lt;xsd:schema targetNamespace="http://www.w3.org/2001/06/xml-link-style"
+            elementFormDefault="qualified"
+            xmlns:xsd="http://www.w3.org/2000/10/XMLSchema"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+            xmlns:link='http://www.w3.org/2001/06/xml-link-style'&gt;
+&lt;xsd:complexType&nbsp;name='participantType'&gt;
+  &lt;xsd:choice&nbsp;minOccurs='0'&nbsp;maxOccurs='unbounded'&gt;
+    &lt;xsd:element&nbsp;name='xlink:title'&nbsp;type='opaqueType'/&gt;
+    &lt;xsd:any&nbsp;namespace='##other'&nbsp;minOccurs='0'&nbsp;maxOccurs='unbounded'/&gt;
+  &lt;/xsd:choice&gt;
+  &lt;xsd:attribute&nbsp;name='role'&nbsp;type='xsd:uriReference'/&gt;
+  &lt;xsd:attribute&nbsp;name='title'&nbsp;type='xsd:string'/&gt;
+  &lt;xsd:attribute&nbsp;name='resource'&nbsp;type='xsd:string'/&gt;
+  &lt;xsd:anyAttribute&nbsp;namespace='##other'&nbsp;processContents='strict'/&gt;
+&lt;/xsd:complexType&gt;
+&lt;/xsd:schema&gt;</pre></td></tr></table>
+
+<p>It has the following properties:</p>
+
+<dl>
+<dt class="label">role</dt>
+<dd>
+<p>The
+<a href="http://www.w3.org/TR/REC-xml#AVNormalize">normalized</a>
+value of the <code>xlink:role</code> attribute for the <code>locator</code>-
+or <code>resource</code>-type element that specifies this starting
+resource.</p>
+<p>This property is null if the relevant <code>locator</code>- or
+<code>resource</code>-type element does not have an <code>xlink:role</code>
+attribute value or if the link is of the <code>simple</code> type.</p>
+</dd>
+
+<dt class="label">title</dt>
+<dd>
+<p>The
+<a href="http://www.w3.org/TR/REC-xml#AVNormalize">normalized</a>
+value of the <code>xlink:title</code> attribute for this participant.</p>
+<p>This property is null if the relevant <code>locator</code>- or
+<code>resource</code>-type element does not have an <code>xlink:title</code>
+attribute value or if the link is of the <code>simple</code> type.</p>
+</dd>
+
+<dt class="label">resource</dt>
+<dd>
+<p>A reference to the
+<a href="http://www.w3.org/TR/xlink/#dt-resource">resource</a>
+this participant identifies. We intentionally do not stipulate the type
+of this reference. Often it will be a URI reference
+(obtained from the <code>xlink:href</code>
+attribute on the relevant <code>locator</code>- or <code>simple</code>-type element),
+but in cases
+where there is no extant URI (for example, to identify the starting
+participant of a <code>simple</code>-type link), we do not wish to require
+that a URI reference be manufactured.</p>
+</dd>
+
+<dt class="label">##other:*</dt>
+<dd><p>It may have any other properties as long as they are from
+a different namespace.</p>
+</dd>
+
+</dl>
+
+<p>A Participant Information Item may contain any
+number of other elements from other namespaces.</p>
+
+</div>
+
+<div class="div4">
+
+<h5><a name="infoset-examples"></a>2.1.1.5 Infoset Contribution Examples</h5>
+
+<p>The Element Information Item for the <code>a</code> element in the
+following document:</p>
+
+<div class="example">
+<h5>Example: Simple Link in http://www.example.org/test.xml</h5>
+<table class="eg" cellpadding="5" border="1" bgcolor="#99ffff" width="100%" summary="Example"><tr><td><pre>&lt;doc&gt;
+&lt;a xlink:href="foo.xml"
+      xlink:show="new" xlink:actuate="onRequest"&gt;Click here&lt;/a&gt;
+&lt;/doc&gt;</pre></td></tr></table>
+</div>
+
+<p>can be represented with one Link Information Item:</p>
+
+<table class="eg" cellpadding="5" border="1" bgcolor="#99ffff" width="100%" summary="Example"><tr><td><pre>&lt;link&gt;
+  &lt;arc show="new" actuate="onRequest"&gt;
+    &lt;startParticipant resource="/doc/a[1]"/&gt;
+    &lt;endParticipant resource="foo.xml"/&gt;
+  &lt;/arc&gt;
+&lt;/link&gt;</pre></td></tr></table>
+
+<p>For an information item that participates in several links, the
+situation is slightly more complex. Consider the following document:</p>
+
+<div class="example">
+<h5>Example: Extended Links in http://www.example.org/test2.xml</h5>
+<table class="eg" cellpadding="5" border="1" bgcolor="#99ffff" width="100%" summary="Example"><tr><td><pre>&lt;doc&gt;
+&lt;extendedlink&nbsp;xlink:type='extended'
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xlink:role='http://example.com/props/link1'&gt;
+  &lt;loc&nbsp;xlink:type='locator'&nbsp;xlink:label='a'&nbsp;xlink:href='#a'&gt;&lt;/loc&gt;
+  &lt;loc&nbsp;xlink:type='locator'&nbsp;xlink:label='b'
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xlink:role='http://example.com/props/loc1'
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xlink:href='#b1'&gt;&lt;/loc&gt;
+  &lt;loc&nbsp;xlink:type='locator'&nbsp;xlink:label='b'&nbsp;xlink:href='#b2'&gt;&lt;/loc&gt;
+  &lt;arc&nbsp;xlink:type='arc'&nbsp;xlink:from='a'&nbsp;xlink:to='b'
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xlink:arcrole='http://example.com/props/loc1'&gt;&lt;/arc&gt;
+&lt;/extendedlink&gt;
+&lt;p&gt;&lt;phrase&nbsp;id='a'&gt;This&lt;/phrase&gt; links to
+&lt;phrase&nbsp;id='b1'&gt;this&lt;/phrase&gt; and
+&lt;phrase&nbsp;id='b2'&gt;this&lt;/phrase&gt;.&lt;/p&gt;
+&lt;/doc&gt;</pre></td></tr></table>
+</div>
+
+<p>In this document, there is one link with two arcs:</p>
+
+<table class="eg" cellpadding="5" border="1" bgcolor="#99ffff" width="100%" summary="Example"><tr><td><pre>&lt;link role="http://example.com/props/link1"&gt;
+  &lt;arc role="http://example.com/props/loc1"&gt;
+    &lt;participant resource="#a"/&gt;
+    &lt;participant resource="#b1" role="http://example.com/props/loc1"/&gt;
+  &lt;/arc&gt;
+  &lt;arc role="http://example.com/props/loc1"&gt;
+    &lt;participant resource="#a"/&gt;
+    &lt;participant resource="#b2"/&gt;
+  &lt;/arc&gt;
+&lt;/link&gt;</pre></td></tr></table>
+
+</div>
+</div>
+</div>
+
+<div class="div2">
+
+<h3><a name="sec-xlink-traversal"></a>2.2 XLink Traversal</h3>
+
+<p>Link
+<a href="http://www.w3.org/TR/xlink/#dt-traversal">traversal</a>
+always involves exactly two participating resources. In the context of
+a styling application, it can have several possible results:</p>
+
+<ol>
+<li><p>The document currently being presented may be replaced by
+the new resource identified as the
+<a href="http://www.w3.org/TR/xlink/#dt-ending-resource">ending
+resource</a> of the traversal.</p></li>
+<li><p>A new viewing context (window, frame, pane, etc.) may be
+created in which to present the
+<a href="http://www.w3.org/TR/xlink/#dt-ending-resource">ending
+resource</a> of the traversal.</p></li>
+<li><p>The
+<a href="http://www.w3.org/TR/xlink/#dt-ending-resource">ending
+resource</a> may be styled and the styled result may be
+embedded within the document currently being presented (instead of,
+or perhaps in addition to, the starting resource).</p></li>
+<li><p>Application-specific semantics outside the scope of this
+note.</p></li>
+</ol>
+
+<p>In the context of styling, each of these operations
+can be considered a presentation or style issue.
+This is particularly the case since XLink linking elements leave
+the processing of the attributes controlling presentation
+(<code>xlink:show</code> and <code>xlink:actuate</code>) at the discretion of
+the application.</p>
+
+<p>Consequently, we will address these issues under style.</p>
+
+</div>
+</div>
+
+<div class="div1">
+
+<h2><a name="sec-style"></a>3 Styling Link Resources</h2>
+
+<p>Broadly speaking, style processing can be divided into two
+processes: styling of resources based upon how they participate in
+linking and styling the results of link traversal.</p>
+
+<p>In this section, we consider the process of styling link resources.
+This model may be applied in two different ways:</p>
+
+<ol>
+<li><p>Using current and anticipated technologies supported by existing W3C
+Recommendations (and Working Drafts, Candidate Recommendations, and
+Proposed Recommendations).</p>
+</li>
+<li><p>In an environment where the XSLT processor provides
+significantly more functionality for linking and contains several
+new features.</p></li>
+</ol>
+
+<div class="div2">
+
+<h3><a name="sec-style-content-10"></a>3.1 With Current Technologies</h3>
+
+<p>Once the XLink-aware application has identified the information items that
+are participants in a link, styling the link becomes relatively
+straightforward. One can easily imagine an augmented CSS application or
+even a Perl script that made styling choices based upon the information
+obtained from the augmented Infoset.</p>
+
+<p>Styling linking resources in XSL V1.0
+can be achieved with small set of extension functions.  The addition of
+a standard extension function API, anticipated for XSLT 1.1, makes this
+a practical solution for the present.</p>
+
+<p>There are significant drawbacks to using extension functions for
+styling links, principal among them the fact that it places all of the
+burden on the stylesheet author. In order to handle links between
+arbitrary elements, <em>every</em> template would have to include
+conditional logic using the extension functions.  This makes the
+extension function approach impractical as a long-term solution, but
+it is a solution that can be made to work today.</p>
+
+<div class="div3">
+
+<h4><a name="sec-xsltx-functions"></a>3.1.1 XSLT Extension Functions</h4>
+
+<p>In the descriptions that follow, <code>ext:</code> must be
+an <a href="http://www.w3.org/TR/xslt#section-Extension-Functions">extension
+function namespace</a> as defined in <a href="#xslt-rec">[XSLT]</a>.</p>
+
+<p><em>node-set</em> <b>ext:link</b>()</p>
+
+<p>The <code>ext:link</code> function returns a node
+set containing the Link Information Items known to the processor.
+</p>
+
+<p><em>node-set</em> <b>ext:arc-start</b>()</p>
+
+<p>The <code>ext:arc-start</code> function returns a node
+set containing the Arc Information Items in the Starting Participant Arcs property of the context
+node. It takes no arguments.</p>
+
+<p><em>node-set</em> <b>ext:arc-end</b>()</p>
+
+<p>The <code>ext:arc-end</code> function returns a node
+set containing the Arc Information Items in the Ending Participant Arcs property of the context
+node. It takes no arguments.</p>
+
+</div>
+
+<div class="div3">
+
+<h4><a name="N1512"></a>3.1.2 Function Example</h4>
+
+<p>The following templates show how one might format a <code>phrase</code>
+element in the source document differently depending on whether or not
+it was identified as the starting resource of a link:</p>
+
+<table class="eg" cellpadding="5" border="1" bgcolor="#99ffff" width="100%" summary="Example"><tr><td><pre>&lt;xsl:template match="phrase[count(ext:arc-start()) &gt; 0]"&gt;
+  &lt;-- If the phrase is part of a link, make it a link to the target
+         of the first arc. This does not adequately handle the case where
+         the phrase participates as the starting resource in more than
+         one link. --&gt;
+  &lt;fo:basic-link
+      external-destination="{ext:arc-start()/endParticipant/@resource}"&gt;
+    &lt;xsl:apply-templates/&gt;
+  &lt;/fo:basic-link&gt;
+&lt;/xsl:template&gt;
+
+&lt;xsl:template match="phrase"&gt;
+  &lt;xsl:apply-templates/&gt;
+&lt;/xsl:template&gt;</pre></td></tr></table>
+
+</div>
+</div>
+
+
+
+<div class="div2">
+
+<h3><a name="sec-style-content-auto"></a>3.2 With a Link-Aware XSLT Processor</h3>
+
+<p>[This section describes hypothetical additions to XSLT and/or
+XSL. These additions have not been reviewed by the WG and their
+presence here does not indicate that they will be added to any future
+version of XSL.]</p>
+
+<p>In order to address the problems associated with placing all of the
+burden of link maintenance on the stylesheet author, we need to add
+XLink support into XSLT in a much more significant manner.</p>
+
+<p>We observe that once the XSLT processor is aware of the link
+relationships that exist in the source document, it could conceivably
+maintain those relationships across transformation. Consider a simple
+document with a link from node B to node D:</p>
+
+<img src="link-xform.gif" alt="Automatic Link Transformation">
+
+<p>During transformation, for every node in the result tree, the XSLT
+processor knows what the context node in the source tree was when the
+result node was created. It follows that XSLT can, in principle,
+maintain the link relationships across transformation.</p>
+
+<p>Some difficulties need to be addressed:</p>
+
+<ol>
+<li><p>How does the stylesheet author control the selection of links?</p>
+<p>Suppose that the source document links an element, A, in the source
+document with three other elements in the source document, B, C, and
+D. The XLink-aware processor can maintain that relationship in the
+result tree (linking A' with B', C', and D'), but what if the
+stylesheet author wishes to suppress the arc between A and C?</p>
+<p>We suggest two new top-level XSLT elements, <code>xsl:strip-links</code>
+and <code>xsl:preserve-links</code>, to provide this capability.</p>
+</li>
+<li><p>What happens if a source node is never processed, or produces no
+nodes in the result tree?</p>
+<p>If that source node is the sole participant at one end of an arc (or if
+all of the nodes in the participant resource have vanished), then that link
+does not occur in the result tree.</p>
+</li>
+<li><p>What happens if the source node is processed several times, producing
+disjoint nodes in the result tree?</p>
+<p>We observe that heuristics have been described for this case in
+<a href="#HookerMaden2000">[HookerMaden2000]</a>. Since heuristics are known to be imperfect,
+we suggest a new boolean attribute, <code>xsl:link-target</code>, described
+below.</p>
+</li>
+<li><p>How do you add new links to the Link Set model?</p>
+<p>Modelling the links as Infoset augmentation has the appealing property
+that it allows all of the links to be processed in the same way. But what
+if the stylesheet wants to add new links that should also be processed
+in the same way?</p>
+<p>We propose new XSLT elements for this purpose, see
+<a href="#style-elements"><b>3.3 Style Elements</b></a>.</p>
+</li>
+
+</ol>
+
+<p>The serializer for the result tree could
+instantiate the link relationships that it knows about using XLink,
+making this a nicely self-contained system: an XLink-aware XSLT processor
+produces a result tree that contains XLinks.</p>
+
+<p>The problem of styling these links remains.</p>
+
+<div class="div3">
+
+<h4><a name="N1622"></a>3.2.1 Controlling Link Selection</h4>
+
+<p>In some cases, stylesheet authors may wish to control the selection
+of links. We suggest two new top-level elements to do this:
+<code>xsl:strip-links</code> and <code>xsl:preserve-links</code>. As their names
+suggest, these work in a way roughly analagous to the way that
+<code>xsl:strip-space</code> and <code>xsl:preserve-space</code> work.</p>
+
+<p>Each of these elements has a <code>select</code> attribute. The set
+of arcs selected by <code>xsl:strip-links</code> are not represented in the
+transformed document. The set selected by <code>xsl:preserve-links</code>
+are represented. Initially, all links are preserved.</p>
+
+<p>If the select expression in either of these elements selects nodes
+other than Arc and Link elements in the Link Set, they are ignored.</p>
+
+</div>
+
+<div class="div3">
+
+<h4><a name="N1658"></a>3.2.2 Identifying Link Targets Explicitly</h4>
+
+<p>Presented with a complex transformation that produces several disjoint
+nodes (perhaps from different modes), it may be impossible for the XSLT
+processor to accurately identify the link targets automatically.</p>
+
+<p>Although we expect heuristics to be used for most cases, we propose
+a new boolean attribute to make the selection explicit:
+<code>link-target</code>.</p>
+
+<p>The <code>link-target</code> attribute can appear on <code>xsl:element</code>,
+and <code>xsl:text</code> elements and (as <code>xsl:link-target</code>)
+on literal result tree elements.
+When <code>true()</code>,
+the element on which it occurs is the link target for all links associated
+with the current context node. The use of <code>link-target</code> overrides
+any heuristic for the links which are associated with the context node.</p>
+
+<table border="1" summary="Editorial note: Link Target Granularity"><tr><td align="left" valign="top" width="50%"><b>Editorial note: Link Target Granularity</b></td><td align="right" valign="top" width="50%">&nbsp;</td></tr><tr><td colspan="2" align="left" valign="top">Is this definition of <code>link-target</code> too coarse? It makes
+<em>all</em> links to the context node point to the nodes in the result
+tree identified as the link target. Might it be necessary to change this
+on a per-link basis?</td></tr></table>
+
+<p>To better understand how this works, let's consider a concrete example.
+Suppose that you have a link to a chapter title and that title appears
+in three different places in your result tree: in the Table
+of Contents, at the top of the page where the chapter begins, and in
+the running header on the pages of that chapter.</p>
+
+<p>Imagine that the heuristics would select the inline at the top of
+the page where the chapter begins, but you wish to make a link to the
+entry in the table of contents. Conceptually, the heuristic algorithm
+must consider all of the possible link targets and select the "best
+one".</p>
+
+<p>By adding a <code>xsl:link-target</code> to the literal result element
+that instantiates the chapter title in the Table of Contents, we give the
+the stylesheet author a way to inform the heuristic which element should
+explicitly be used, even if it is not the "best one" according to its
+algorithm.</p>
+
+</div>
+
+<div class="div3">
+<h4><a name="N1720"></a>3.2.3 Adding Style Properties</h4>
+
+<p>Automatic link identification is only half the battle. We still
+need to provide mechanisms for applying style to the transformed
+links.</p>
+
+<p>There are two different types of styling that can be applied to
+links: property styling and structural styling. Property styling
+consists of those style changes that can be achieved by changing
+property values (or attributes) in the result tree. Structural styling
+consists of those style changes that require a restructured result
+tree.</p>
+
+<p>Changes to fonts, foreground, and background
+colors are all things that can be achieved with property styling. Adding
+a horizontal rule above and below a resource, or putting a resource in
+a table, can only be achieved by structural styling.</p>
+
+<p>We propose a new XSL element to provide style properties.</p>
+
+<table class="eg" cellpadding="5" border="1" bgcolor="#99ffff" width="100%" summary="Example"><tr><td><pre>
+&lt;!-- Category: instruction --&gt;
+&lt;xsl:link-style
+  select = expression
+  xsl:use-attribute-sets = qnames&gt;
+  &lt;!-- Content: xsl:attribute* --&gt;
+&lt;/xsl:link-style&gt;
+</pre></td></tr></table>
+
+<p>The select expression of <code>xsl:link-style</code> should always select
+Link Information Items. The attributes provided are associated with the links selected.</p>
+
+<div class="div4">
+
+<h5><a name="N1746"></a>3.2.3.1 Style Properties Example</h5>
+
+<p>The following templates show how one might make starting resources
+with the "HTML" role appear blue and underlined in the result tree.</p>
+
+<table class="eg" cellpadding="5" border="1" bgcolor="#99ffff" width="100%" summary="Example"><tr><td><pre>&lt;xsl:link-style select="link::*/@role='http://www.w3.org/1999/xhtml'"&gt;
+  &lt;xsl:attribute name="color"&gt;blue&lt;/xsl:attribute&gt;
+  &lt;xsl:attribute name="text-decoration"&gt;underlined&lt;/xsl:attribute&gt;</pre></td></tr></table>
+</div>
+</div>
+
+<div class="div3">
+<h4><a name="N1760"></a>3.2.4 Style-based Structural Changes</h4>
+
+<p>In order to support structural styling, it is essentially necessary
+for a stylesheet to apply more than one template to a given source
+node. At the moment, this can be accomplised with <code>xsl:import</code>
+and <code>xsl:apply-imports</code>. It has already been suggested that a
+general facility be provided for this feature.</p>
+
+<p>For example, <code>xsl:next-match</code> could be added to XSLT. It
+would apply the next-highest-priority template to the current context
+node. Using next match, we could put links in HTML tables as follows:</p>
+
+<table class="eg" cellpadding="5" border="1" bgcolor="#99ffff" width="100%" summary="Example"><tr><td><pre>
+&lt;xsl:template match="*[count(arc-start::*) &gt; 0]" priority="100"&gt;
+  &lt;table&gt;
+    &lt;tr&gt;
+      &lt;td&gt;
+        &lt;xsl:next-match/&gt;
+      &lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/table&gt;
+&lt;/xsl:template&gt;</pre></td></tr></table>
+
+<p>By assigning this template a very high priority, we can assure that
+it will always match first. The <code>xsl:next-match</code> inside will
+apply the next highest priority template so that the formatting for
+each individual element is correct.</p>
+
+<p>Consider our earlier example of a styling a phrase that
+participated in a link. While we previously had to add conditional
+logic to all of our phrase-level elements, using
+<code>xsl:next-match</code>, we can handle all of them simultaneously.</p>
+
+<div class="div4">
+
+<h5><a name="N1795"></a>3.2.4.1 Next Match Example</h5>
+
+<p>The following templates show how one might format elements in the
+source document differently depending on whether or not they are
+identified as the starting resource of a link:</p>
+
+<table class="eg" cellpadding="5" border="1" bgcolor="#99ffff" width="100%" summary="Example"><tr><td><pre>&lt;xsl:template match="*[arc-start::*]" priority="100"&gt;
+  &lt;-- If the element is part of a link, make it a link to the target
+         of the first arc. This does not adequately handle the case where
+         the phrase participates as the starting resource in more than
+         one link. --&gt;
+  &lt;fo:basic-link
+      external-destination="{arc-start::*[1]/endParticipant/@resource}"&gt;
+    &lt;xsl:next-match/&gt;
+  &lt;/fo:basic-link&gt;
+&lt;/xsl:template&gt;
+
+&lt;xsl:template match="phrase"&gt;
+  &lt;xsl:apply-templates/&gt;
+&lt;/xsl:template&gt;
+
+&lt;xsl:template match="emphasis"&gt;
+  &lt;em&gt;&lt;xsl:apply-templates/&gt;&lt;/em&gt;
+&lt;/xsl:template&gt;
+
+&lt;!-- etc. --&gt;</pre></td></tr></table>
+</div>
+</div>
+</div>
+
+<div class="div2">
+<h3><a name="style-elements"></a>3.3 Style Elements</h3>
+
+<p>Our original goal in writing this note was to explore how linking
+and style effect each other and how a processing system might
+reasonably deal with these issues. Several early reviewers suggested
+that this work could be taken further to provide a mechanism not only
+for providing uniform treatment of source document links, but also
+uniform treatment of links created by the stylesheet. In this section,
+we explore some of those ideas.</p>
+
+<p>Consider this simple document:</p>
+
+<table class="eg" cellpadding="1" border="1" bgcolor="white" width="100%" summary="Example"><tr><td><pre>&lt;doc&gt;
+&lt;p&gt;&lt;name&gt;Pat Jones&lt;/name&gt; is taking <span class="startrsrc">&lt;course&nbsp;xlink:type='simple'
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;xlink:href='courses/CS101.xml'&gt;CS-101&lt;/course&gt;</span>.&lt;/p&gt;
+&lt;/doc&gt;</pre></td></tr></table>
+
+<p>Imagine for the moment that our goal is to link the persons name
+with some online address book. One way to do that would be to construct
+the link natively in the result tree vocabulary with a template like
+this (assuming our target is HTML):</p>
+
+<table class="eg" cellpadding="1" border="1" bgcolor="white" width="100%" summary="Example"><tr><td><pre>&lt;xsl:template match="name"&gt;
+  &lt;a href="http://example.com/address?{.}"&gt;
+    &lt;xsl:apply-templates/&gt;
+  &lt;/a&gt;
+&lt;/xsl:template&gt;</pre></td></tr></table>
+
+<p>But that has the unsatisfactory result that the link is unknown to the
+"link aware" processor we've been describing. That processor has already
+constructed a link set for the source document:</p>
+
+<table class="eg" cellpadding="1" border="1" bgcolor="white" width="100%" summary="Example"><tr><td><pre>&lt;linkset xmlns="&amp;namespaceName;"&gt;
+  &lt;link&gt;
+    &lt;arc&gt;
+      &lt;startParticipant resource="/doc/p/course[1]"/&gt;
+      &lt;endParticipant resource="courses/CS101.xml"/&gt;
+    &lt;/arc&gt;
+  &lt;/link&gt;
+&lt;/linkset&gt;</pre></td></tr></table>
+
+<p>What would seem more appropriate would be to insert the resulting link
+into the "result document link set". The result document link set is
+conceptually analagous to the source document link set: it describes the
+linking relationships in the result document.</p>
+
+<p>Up to now, the result document link set has been discussed only
+implicitly because it was derived solely from the source document link
+set.</p>
+
+<p>We introduce four new XSL elements for constructing links in the
+result tree link set: <code>xsl:link</code>, <code>xsl:arc</code>,
+<code>xsl:start-participant</code>, and <code>xsl:end-participant</code>.</p>
+
+<div class="div3">
+<h4><a name="N1867"></a>3.3.1 xsl:link</h4>
+
+<p class="element-syntax"><a name="element-link"></a><code>&lt;xsl:link<br>&nbsp;&nbsp;id = <var>id</var>&gt;<br>&nbsp;&nbsp;&lt;!-- Content: (<a href="#element-arc">xsl:arc</a>+, <var>other-namespace-elements</var>) --&gt;<br>&lt;/xsl:link&gt;</code></p>
+
+<p>An <code>xsl:link</code> element selects or constructs a link in the
+result tree link set. If an ID is given, it is logically an ID in the
+result tree link set.  By using the same ID value, it is possible for
+different templates to add arcs to the same <code>xsl:link</code>.</p>
+
+<p>Additional elements in other namespaces can be provided, the effect
+that they have on rendering the link is undefined.</p>
+
+</div>
+<div class="div3">
+<h4><a name="N1903"></a>3.3.2 xsl:arc</h4>
+
+<p class="element-syntax"><a name="element-arc"></a><code>&lt;xsl:arc<br>&nbsp;&nbsp;role = <var>uri-reference</var><br>&nbsp;&nbsp;title = <var>string</var><br>&nbsp;&nbsp;show = "new" | "replace" | "embed" | "other" | "none"<br>&nbsp;&nbsp;actuate = "onLoad" | "onRequest" | "other" | "none"&gt;<br>&nbsp;&nbsp;&lt;!-- Content: (<a href="#element-start-participant">xsl:start-participant</a>, <a href="#element-end-participant">xsl:end-participant</a>, <var>other-namespace-elements</var>*) --&gt;<br>&lt;/xsl:arc&gt;</code></p>
+
+<p>An <code>xsl:arc</code> adds an arc to the result tree link set.</p>
+
+<p>Additional elements in other namespaces can be provided, the effect
+that they have on rendering the link is undefined.</p>
+
+</div>
+<div class="div3">
+<h4><a name="N1978"></a>3.3.3 xsl:start- and xsl:end-participant</h4>
+
+<p class="element-syntax"><a name="element-start-participant"></a><code>&lt;xsl:start-participant<br>&nbsp;&nbsp;select = <var>node-set-expression</var><br>&nbsp;&nbsp;resource = <var>uri-reference</var>&gt;<br>&nbsp;&nbsp;&lt;!-- Content: (<var>other-namespace-elements</var>*) --&gt;<br>&lt;/xsl:start-participant&gt;</code></p>
+
+<p class="element-syntax"><a name="element-end-participant"></a><code>&lt;xsl:end-participant<br>&nbsp;&nbsp;select = <var>node-set-expression</var><br>&nbsp;&nbsp;resource = <var>uri-reference</var>&gt;<br>&nbsp;&nbsp;&lt;!-- Content: (<var>other-namespace-elements</var>*) --&gt;<br>&lt;/xsl:end-participant&gt;</code></p>
+
+<p>The <code>xsl:start-participant</code> and <code>xsl:end-participant</code>
+elements identify the beginning and ending resources of the arc. Each
+resource can be identified by <em>either</em> a <code>select</code>
+or a <code>resource</code> attribute.
+</p>
+</div>
+
+<div class="div3">
+<h4><a name="N2045"></a>3.3.4 Using the Link Elements</h4>
+
+<p>With these elements, we can recast our earlier template as follows:</p>
+
+<table class="eg" cellpadding="1" border="1" bgcolor="white" width="100%" summary="Example"><tr><td><pre>&lt;xsl:template match="name"&gt;
+  &lt;xsl:link&gt;
+    &lt;xsl:arc&gt;
+      &lt;xsl:start-participant select="."/&gt;
+      &lt;xsl:end-participant resource="http://example.com/address?{.}"/&gt;
+    &lt;/xsl:arc&gt;
+  &lt;/xsl:link&gt;
+&lt;/xsl:template&gt;</pre></td></tr></table>
+</div>
+
+<div class="div3">
+<h4><a name="N2058"></a>3.3.5 Merging Link Sets</h4>
+
+<p>The links created by <code>xsl:link</code> are placed in the result tree
+link set. They are explicitly not placed in the source tree link set and
+are not available for querying by the stylesheet.</p>
+
+<p>If an explicit result tree link set is desired, when the styling
+process completes, it must be constructed by merging the relevant
+links from the source document link set (with appropriate translation
+into the result tree) with the links explicitly created in the result
+document link set.</p>
+
+<p>If this is our result tree:</p>
+
+<table class="eg" cellpadding="1" border="1" bgcolor="white" width="100%" summary="Example"><tr><td><pre>&lt;div&gt;
+  &lt;p&gt;&lt;em&gt;Pat Jones&lt;/em&gt; is taking &lt;span&gt;CS 101&lt;span&gt;&lt;/p&gt;
+&lt;/div&gt;</pre></td></tr></table>
+
+<p>Then the source document link set would contribute the following links
+to the result document link set:</p>
+
+<table class="eg" cellpadding="1" border="1" bgcolor="white" width="100%" summary="Example"><tr><td><pre>&lt;linkset xmlns="&amp;namespaceName;"&gt;
+  &lt;link&gt;
+    &lt;arc&gt;
+      &lt;start-participant resource="result-tree:/div/p/span[1]"/&gt;
+      &lt;end-participant resource="courses/cs101.xml"/&gt;
+    &lt;/arc&gt;
+  &lt;link&gt;
+</pre></td></tr></table>
+
+<div class="note"><p class="prefix"><b>Note:</b></p><p>We've introduced the "scheme" <code>result-tree:</code> to
+express pointers into the result tree. This is just a convention for
+presentation here. In a real implementation, pointers or some other
+mechanism would more likely be used and if the link set were serialized,
+a proper base URI would be known.</p></div>
+
+<p>The template that constructed an explicit link would contribute:</p>
+
+<table class="eg" cellpadding="1" border="1" bgcolor="white" width="100%" summary="Example"><tr><td><pre>&lt;linkset xmlns="&amp;namespaceName;"&gt;
+  &lt;link&gt;
+    &lt;arc&gt;
+      &lt;start-participant resource="result-tree:/div/p/em[1]"/&gt;
+      &lt;end-participant resource="http://example.com/address?Pam Jones"/&gt;
+    &lt;/arc&gt;
+  &lt;link&gt;
+</pre></td></tr></table>
+
+<p>So the resulting link set is <code>linkset</code> that contains these two
+<code>link</code>s.</p>
+
+</div>
+
+<div class="div3">
+<h4><a name="N2112"></a>3.3.6 What's Missing</h4>
+
+<p>These elements allow the stylesheet author to construct links that
+become part of the unified processing model. One obvious weakness that
+remains is that it is not possible for these elements to link to generated
+text. Suppose that I have a cross reference element that is processed
+as follows:</p>
+
+<table class="eg" cellpadding="1" border="1" bgcolor="white" width="100%" summary="Example"><tr><td><pre>&lt;xsl:template match="xref"&gt;
+  &lt;xsl:text&gt;See also: &lt;/xsl:text&gt;
+  &lt;xsl:apply-templates/&gt;
+&lt;/xsl:template&gt;</pre></td></tr></table>
+
+<p>There's no way to use the <code>xsl:link</code> elements to construct a
+link from the generated text "See also: ", because there's no source tree
+select expression that can identify it.</p>
+
+<p>One possible way to move forward would be to add a new attribute,
+<code>result-tree-id</code> which would allow the generated text to be
+addressed:</p>
+
+<table class="eg" cellpadding="1" border="1" bgcolor="white" width="100%" summary="Example"><tr><td><pre>&lt;xsl:template match="xref"&gt;
+  &lt;xsl:text result-tree-id="xref{generate-id(.)}"&gt;See also: &lt;/xsl:text&gt;
+  &lt;xsl:apply-templates/&gt;
+  &lt;xsl:link&gt;
+    &lt;xsl:arc&gt;
+      &lt;xsl:start-participant select="result-tree:/id(xref{generate-id(.)}"/&gt;
+      &lt;xsl:end-participant resource="whatever-is-appropriate"/&gt;
+    &lt;/xsl:arc&gt;
+  &lt;/xsl:link&gt;
+&lt;/xsl:template&gt;</pre></td></tr></table>
+
+<p>But this seems contrived and unsatisfactory. We invite suggestions.</p>
+</div>
+
+</div>
+</div>
+
+<div class="div1">
+
+<h2><a name="sec-link-traversal"></a>4 Styling Link Traversal</h2>
+
+<p>After much consideration, we arrived at the conceptual model which
+follows. This model exposes a significant issue in the interaction between
+the current technologies for linking and styling: <a href="#xpointer-cr">[XPointer]</a>
+can address documents at the character level whereas
+<a href="#xslt-rec">[XSLT]</a> can only address documents at the text-node level.</p>
+
+<p>We show that by selecting specific defaults within the model, we
+can provide expected functionality with current technology. As the
+technology of linking and styling matures, we'll be able to exploit
+more of the model with standard technologies. (Implementations will
+be able to exploit the entire model immediately by employing extensions
+to standard functionality.)</p>
+
+<div class="div2">
+
+<h3><a name="sec-link-traversal-concepts"></a>4.1 A Conceptual Model for Styling Link Traversal</h3>
+
+<p>From a styling perspective, link traversal requires the styling
+application to retrieve the document which contains the ending
+resource, style it, and present it. In addition, the ending resource
+may get special treatment. It might, for example, be shown in reverse
+video
+or the document view might be adjusted so that the ending resource
+appears at the top of the viewing context.</p>
+
+<p>Displaying the styled result is a complex problem because links are
+between <em>source documents</em>, not between their styled results.
+Consider, for example, an XLink cross-reference:</p>
+
+<table class="eg" cellpadding="1" border="1" bgcolor="white" width="100%" summary="Example"><tr><td><pre>See &lt;xref xlink:type="simple" xlink:href="#ch5"&gt;Chapter 5&lt;/xref&gt;</pre></td></tr></table>
+
+<p>This link expresses a relationship between the text "Chapter 5" and
+the element with an ID of "ch5" elsewhere in the document. It provides
+no specific information about the formatted result that might be
+presented to the reader. Online, this might become a hypertext link to
+some other location whereas in print it might be rendered simply as a
+page number in parenthesis (or not at all).</p>
+
+<p>The arbitrary nature of styling transformations can make this
+problem even more complex, as when the target in the source document
+is rendered in multiple locations in the presented result
+(See <a href="#sec-discon-results"><b>5 Discontiguous Resources</b></a>).</p>
+
+<p>We may also want to consider how much of the document that contains
+the ending resource we wish to display. HTML browsers traditionally
+retrieve the entire resource and display it, moving the viewing
+context to the point where the ending resource occurs. In the case of
+XML documents, we may wish to have more control.  We add one additional
+generalization to the conceptual model for this purpose.</p>
+
+<p>Rather than presenting the entire resource, we might want to
+display a subresource within the document <em>that is
+different</em> from the subresource that is the ending resource of
+the link. For example, to style a link to a figure within a book, we
+might want to display the whole chapter that contains the figure:
+</p>
+
+<table class="eg" cellpadding="1" border="1" bgcolor="white" width="100%" summary="Example"><tr><td><pre>&lt;doc&nbsp;id='process'&gt;
+  &lt;chap&gt;...&lt;/chap&gt;
+  &lt;chap&gt;...&lt;/chap&gt;
+  <span class="present">&lt;chap&nbsp;id='present'&gt;
+    &lt;p&gt;...&lt;/p&gt;
+    <span class="target">&lt;figure&nbsp;id='target'&gt;
+      ...
+    &lt;/figure&gt;</span>
+    &lt;p&gt;...&lt;/p&gt;
+    &lt;p&gt;...&lt;/p&gt;
+  &lt;/chap&gt;</span>
+  &lt;chap&gt;...&lt;/chap&gt;
+&lt;/doc&gt;</pre></td></tr></table>
+
+<p>In other words, we might wish to style a link by processing a whole
+document (in order to get chapter numbering correct, for
+example), present the third chapter in the user agent, and highlight
+the figure.</p>
+
+<p>We describe this in terms of three distinct contexts, each identified
+by a URI reference (probably including an <a href="#xpointer-cr">[XPointer]</a>
+fragment identifier in most cases):</p>
+
+<ol>
+<li><p>[<a name="dt-processing-context" title="Processing Context">Definition</a>: The
+<b>Processing Context</b> of a link traversal is the resource (or
+portion of a resource) that is available to the style engine.]
+</p>
+<p>Informally, this is the tree that is available to the styling
+application. Usually this is the whole document.</p>
+</li>
+
+<li><p>[<a name="dt-presentation-context" title="Presentation Context">Definition</a>: The
+<b>Presentation Context</b> of a link traversal is the resource (or
+portion of a resource) that is effectively the source resource to be
+styled.]</p>
+<p>In other words, the results of styling the [Presentation Context] is
+the content that is presented in the user agent. Often this is the whole
+document.</p>
+</li>
+
+<li><p>[<a name="dt-target" title="Target">Definition</a>: The
+<b>Target</b> of a link traversal is the ending resource of the link.
+]</p>
+</li>
+</ol>
+
+<p>These components, plus the stylesheet to be used,
+are present in the Infoset contributions
+described in <a href="#xlink-infoset"><b>2.1.1 XLink Infoset Contributions</b></a>. However, the current XLink
+specification does not provide standard ways to provide all of these
+components. Rather than request possibly contentious additions to XLink
+at this late date, we recommend using default values for several
+components.</p>
+
+
+
+<p>For embedded resources, we recommend that the default processing
+and presentation contexts be the same as the target (see <a href="#spec-range-embed"><b>6.2 Ranges that are Presentation Context</b></a>). For resources displayed with "new" or
+"replace" semantics, we recommend that the default processing and
+presentation contexts be the whole document that contains the ending
+resource.</p>
+
+<p>In any case, the application
+has considerable freedom in selecting the appropriate stylesheet. In some
+applications it may make sense to use the same stylesheet as the source
+document (particularly, perhaps, in the "embed" case); in others it may
+make sense to use the XML Stylesheet PI (<a href="#style-pi">[XML Stylesheet PI]</a>)
+from the target document or some other application-specific selection.</p>
+
+<p>Application-specific behavior can be modeled with extension metadata
+in the XLink linking elements. If useful subsets of this behavior become
+common, a future version of XLink may promote them to standard elements.</p>
+
+<div class="div3">
+
+<h4><a name="sec-embed-complication"></a>4.1.1 Special Considerations for Embedded Resources</h4>
+
+<p>The model articulated here is the most consistent and
+rational model that we could imagine. It does not,
+however, produce exactly the results that might be expected in all
+cases. In particular, embedding resources requires special
+consideration. (Embedding resources identified by XPointer ranges
+is even worse; see <a href="#spec-range-embed"><b>6.2 Ranges that are Presentation Context</b></a>.)</p>
+
+<p>Consider the following documents, <code>doc1.xml</code>:</p>
+
+<table class="eg" cellpadding="5" border="1" bgcolor="#99ffff" width="100%" summary="Example"><tr><td><pre>&lt;doc&gt;
+&lt;?xml-stylesheet href="style1.xsl" type="text/xsl"?&gt;
+&lt;list&gt;
+&lt;item&gt;x xxxx&lt;/item&gt;
+&lt;item&gt;xxx xx xxxx&lt;/item&gt;
+&lt;embed xlink:type="simple"
+       xlink:show="embed" xlink:actuate="onLoad"
+       xlink:href="doc2.xml#xpointer(//list[1]/item[2])"/&gt;
+&lt;item&gt;xxxxx&lt;/item&gt;
+&lt;/list&gt;
+&lt;/doc&gt;</pre></td></tr></table>
+
+<p>and <code>doc2.xml</code>:</p>
+
+<table class="eg" cellpadding="5" border="1" bgcolor="#99ffff" width="100%" summary="Example"><tr><td><pre>&lt;doc&gt;
+&lt;?xml-stylesheet href="style2.xsl" type="text/xsl"?&gt;
+&lt;list&gt;
+&lt;item&gt;y yyyy&lt;/item&gt;
+&lt;item&gt;yyy yy yyy&lt;/item&gt;
+&lt;item&gt;yyyy&lt;/item&gt;
+&lt;/list&gt;
+&lt;/doc&gt;
+</pre></td></tr></table>
+
+<p>Suppose that <code>style1.xsl</code> styles lists with Arabic
+numerals and <code>style2.xsl</code> styles them with Roman numerals
+(and no other significant transformations are performed). What will
+the results be?</p>
+
+<p>If the embedded fragment is processed with <code>style1.xsl</code>,
+the result will be something like this:</p>
+
+<table class="eg" cellpadding="5" border="1" bgcolor="#99ffff" width="100%" summary="Example"><tr><td><pre>1. x xxxx
+2. xxx xx xxxx
+2. yyy yy yyy
+4. xxxxx</pre></td></tr></table>
+
+<p>(In fact, it is even possible that the last item will be numbered "3"
+if the stylesheet is only counting <code>&lt;item&gt;</code>s, but that
+can be avoided in the stylesheet.)</p>
+
+<p>If the embedded fragment is processed with <code>style2.xsl</code>,
+the result will be something like this:</p>
+
+<table class="eg" cellpadding="5" border="1" bgcolor="#99ffff" width="100%" summary="Example"><tr><td><pre>1. x xxxx
+2. xxx xx xxxx
+ii. yyy yy yyy
+4. xxxxx</pre></td></tr></table>
+
+<p>In neither case will the result that the author probably had in mind
+(namely 1, 2, 3, 4) be the result.</p>
+
+<p>In fact, the desired result can be achieved, but only by constructing
+the <em>source</em> document in an appropriate way:</p>
+
+<table class="eg" cellpadding="5" border="1" bgcolor="#99ffff" width="100%" summary="Example"><tr><td><pre>&lt;doc&gt;
+&lt;?xml-stylesheet href="style1.xsl" type="text/xsl"?&gt;
+&lt;list&gt;
+&lt;item&gt;x xxxx&lt;/item&gt;
+&lt;item&gt;xxx xx xxxx&lt;/item&gt;
+&lt;item&gt;&lt;embed xlink:type="simple"
+       xlink:show="embed" xlink:actuate="onLoad"
+       xlink:href="doc2.xml#xpointer(//list[1]/item[2]/node())"/&gt;
+&lt;/item&gt;
+&lt;item&gt;xxxxx&lt;/item&gt;
+&lt;/list&gt;
+&lt;/doc&gt;</pre></td></tr></table>
+
+<p>By selecting only the content of the target list item, we allow the
+stylesheet for the source document to number all of the items in a logical
+way.</p>
+
+<p>This is hardly the best possible situation, but no superior alternative
+seems evident.</p>
+
+<p>Since both of these documents seem to use the same tag set,
+it may have been closer to the author's original intention to style a
+document that contained <em>a merged source document</em> (as
+might be achieved with <a href="#xinclude-wd">[XInclude]</a>)
+rather than <em>merging the
+styled results</em>
+(as is achieved with <a href="#xlink-cr">[XLink]</a>).
+See <a href="#xinclude-vs-xlink"><b>4.1.3 XInclude vs. XLink Embedding</b></a>.</p>
+</div>
+
+<div class="div3">
+<h4><a name="N2396"></a>4.1.2 Result Tree Numbering</h4>
+
+<p>To compound the situation further, the two most popular
+presentation formats for XML documents, HTML and XSL Formatting
+Objects, perform numbering in completely different ways.
+</p>
+
+<p>In the HTML, list item numbering is actually done by the formatter,
+whereas it is done by the transformation that produces FOs in
+XSL. This means that the first example described above will
+actually work for HTML but not for XSL FOs.</p>
+
+<p>Conversely, if the desired result was a mixture of numbering systems
+(as might be the case in a legal document, perhaps), the former result
+could not be achieved in HTML without considerable effort.</p>
+
+<p>Consider how the stylesheets would likely produce formatting objects
+for the <code>doc1.xml</code>:</p>
+
+<table class="eg" cellpadding="5" border="1" bgcolor="#99ffff" width="100%" summary="Example"><tr><td><pre>&lt;list-block&gt;
+&lt;list-item&gt;
+  &lt;list-item-label&gt;&lt;block&gt;1.&lt;/block&gt;&lt;/list-item-label&gt;
+  &lt;list-item-body&gt;&lt;block&gt;x xxxx&lt;/block&gt;&lt;/list-item-body&gt;
+&lt;/list-item&gt;
+&lt;list-item&gt;
+  &lt;list-item-label&gt;&lt;block&gt;2.&lt;/block&gt;&lt;/list-item-label&gt;
+  &lt;list-item-body&gt;&lt;block&gt;xxx xx xxxx&lt;/block&gt;&lt;/list-item-body&gt;
+&lt;/list-item&gt;
+&lt;list-item&gt;
+  &lt;list-item-label&gt;&lt;block&gt;2.&lt;/block&gt;&lt;/list-item-label&gt;
+  &lt;list-item-body&gt;&lt;block&gt;yyy yy yyy&lt;/block&gt;&lt;/list-item-body&gt;
+&lt;/list-item&gt;
+&lt;list-item&gt;
+  &lt;list-item-label&gt;&lt;block&gt;4.&lt;/block&gt;&lt;/list-item-label&gt;
+  &lt;list-item-body&gt;&lt;block&gt;xxxxx&lt;/block&gt;&lt;/list-item-body&gt;
+&lt;/list-item&gt;
+&lt;/list-block&gt;</pre></td></tr></table>
+
+<p>As you can see, the list item numbers are textually part of the
+result tree. This is not so in the HTML case:</p>
+
+<table class="eg" cellpadding="5" border="1" bgcolor="#99ffff" width="100%" summary="Example"><tr><td><pre>&lt;ol&gt;
+&lt;li&gt;x xxxx&lt;/li&gt;
+&lt;li&gt;xxx xx xxxx&lt;/li&gt;
+&lt;li&gt;yyy yy yyy&lt;/li&gt;
+&lt;li&gt;xxxxx&lt;/li&gt;
+&lt;/ol&gt;</pre></td></tr></table>
+
+<p>The list items are enumerated by the browser in the HTML case,
+so the numbering will be sequential.</p>
+
+</div>
+
+<div class="div3">
+<h4><a name="xinclude-vs-xlink"></a>4.1.3 XInclude vs. XLink Embedding</h4>
+
+<p>The distinction between <a href="#xinclude-wd">[XInclude]</a> and
+<a href="#xlink-cr">[XLink]</a> deserves special consideration.</p>
+
+<p>At a high level, <a href="#xinclude-wd">[XInclude]</a> is similar to
+external entity references in <a href="#xml-rec">[XML]</a>. That is,
+the inclusion is done at or shortly after parsing, before style
+is applied. As you can see in the following figure, the element
+"E" is identified as an XInclude element and the content
+<em>of the source tree</em> is modified <em>prior</em>
+to styling:</p>
+
+<img src="include-style.gif" alt="xinclude styling">
+
+<p>Embedded XLinks, as we've described them, are handled during the
+styling process. When an embedded XLink is processed, the
+<em>result of styling the ending resource</em>
+of the link <em>is merged</em> into the
+<em>result of styling the document into which it is embedded</em>.</p>
+
+<img src="embed-style.gif" alt="xlink embed styling">
+
+<p>The decision about whether to use an <a href="#xinclude-wd">[XInclude]</a> or
+an embedded <a href="#xlink-cr">[XLink]</a> is very dependent on the
+application.  As a general rule, if the resource being embedded is
+from the same schema as the embedding document, and it will be styled
+with the same stylesheet, <a href="#xinclude-wd">[XInclude]</a> is probably a
+good choice. If the embedded document is from a different schema, or
+requires a different stylesheet, <a href="#xlink-cr">[XLink]</a> is probably
+the right choice.</p>
+
+</div>
+
+</div>
+
+<div class="div2">
+<h3><a name="N2504"></a>4.2 The Semantics of Nested Linking</h3>
+
+<p>The actuate axis of an XLink linking element has two standard, defined values,
+<code>onRequest</code> and <code>onLoad</code>. For links which have
+the <code>onRequest</code> semantics, style processing is straightforward:
+processing continues (possibly to completion) until a user event
+initiates the link.</p>
+
+<p>For links which have the <code>onLoad</code> semantic, however,
+things are slightly more complicated. The styling application is
+expected to process these links during the styling process
+(effectively, "when the document is loaded").</p>
+
+<p>There are several cases to consider:</p>
+
+<dl>
+
+<dt class="label">An "onLoad" link with an <code>xlink:show</code> of "new"</dt>
+<dd><p>The styling application should create a
+new viewing context (window, frame, pane, etc.) and display the ending
+resource of the link in that context.</p></dd>
+
+
+
+<dt class="label">An "onLoad" link with an <code>xlink:show</code> of "replace"</dt>
+<dd><p>The styling application should replace the document currently
+being styled with the ending resource of the link.</p>
+<p>The <a href="#xlink-cr">[XLink]</a> specification says that the first such
+link in document order is the one that should be processed. However, because
+a styling application has the freedom to process the nodes of a document
+in any order, this definition seems restrictive. We recommend instead that
+it simply state that the first such link encountered should be
+processed. (Subsequent nodes will clearly not be processed since the
+original document is abandoned.) By extension, if the first link encountered
+has multiple arcs, the first arc should be processed.
+</p>
+
+<div class="note"><p class="prefix"><b>Note:</b></p><p>The fact that this behavior can lead to infinite loops through
+one or more documents is a problem outside the scope of this note.</p>
+</div>
+</dd>
+
+
+
+<dt class="label">An "onLoad" link with an <code>xlink:show</code> of "embed"</dt>
+<dd><p>The styling application should embed the result of styling
+the ending resource of the link in the current document.</p></dd>
+
+</dl>
+
+<p>The possibility of a resource that is <em>being embedded</em>
+containing an "onLoad" link must also be considered:</p>
+
+<dl>
+
+<dt class="label">An "onLoad" link with an <code>xlink:show</code> of "new" encountered
+in a resource being embedded</dt>
+<dd><p>The styling application should create a
+new viewing context (window, frame, pane, etc.) and display the ending
+resource of the link in that context.</p>
+<p>In other words, if A embeds B which contains an onLoad/new link
+to C, the result will be B embedded in A in one viewing context and
+C in another viewing context.</p></dd>
+
+
+
+<dt class="label">An "onLoad" link with an <code>xlink:show</code> of "replace" encountered
+in a resource being embedded</dt>
+<dd><p>The style processor should replace the <em>resource being
+embedded</em> with the result of styling the ending resource of the
+link.</p>
+<p>In other words, if A embeds B which contains an onLoad/replace link
+to C, the result will be C embedded in A, with no trace of B.</p></dd>
+
+
+
+<dt class="label">An "onLoad" link with an <code>xlink:show</code> of "embed" encountered
+in a resource being embedded</dt>
+<dd><p>The styling application should embed the result of styling
+the ending resource of the link in the current document.</p>
+<p>In other words, if A embeds B which contains an onLoad/embed link
+to C, the result will be C embedded in B embedded in A.</p></dd>
+
+</dl>
+</div>
+</div>
+
+<div class="div1">
+
+<h2><a name="sec-discon-results"></a>5 Discontiguous Resources</h2>
+
+<p>Styling discontiguous resources presents a special set of problems.
+One set of problems arises because we may wish to offer behavior in the
+presentation engine that is independent of whether or not the resource
+is discontiguous. A more significant issue involves the way in which
+style transformations may create discontiguous resources from a single
+resource in the source document.</p>
+
+<div class="div2">
+
+<h3><a name="sec-discon-functions"></a>5.1 Implementing Consistent Behavior</h3>
+
+<p>Some presentation systems implement special behaviors with respect
+to linking resources. For example, browsers may present links in a
+different color or speak them in a different tone of voice.</p>
+
+<p>Often, discontiguous resources can be viewed as distinct.  That is,
+a single resource consisting of three phrases can generally be treated
+like three resources, each consisting of a single phrase.</p>
+
+<p>When this is not sufficient, for example, when the stylesheet
+author wishes to implement "mouse-over" highlighting of links and she
+wants discontiguous parts of the same link to be highlighted together,
+additional effort may be required.</p>
+
+<p>The enhanced Infoset constructed by XLink identification, provides
+the raw materials from which such a feature could be implemented.</p>
+
+<p>The XSL Formatting Objects include properties for selecting alternate
+presentations based on conditions. These properties, in conjunction with
+a presentation system that has access to the enhanced Infoset would
+allow an application to support this behavior.</p>
+
+<p>Likewise for other presentation systems, access to the enhanced
+Infoset provides enough information to implement the required
+functionality.</p>
+
+</div>
+<div class="div2">
+
+<h3><a name="sec-style-discon"></a>5.2 Discontinuity Introduced by Styling</h3>
+
+<p>Transforming source documents for presentation may introduce
+discontinuities. For example, consider a link to a chapter title. In
+the document that contains the ending resource, that title is a
+single, unambiguous element. But when that document is styled, the
+chapter title may occur in several places (in the table of contents,
+on the chapter title page, and in a dozen cross references). Which one
+of these represents the ending resource?
+</p>
+
+<p>No perfect algorithm for finding the target is readily apparent,
+but reasonable heuristics have been described
+<a href="#HookerMaden2000">[HookerMaden2000]</a>.</p>
+
+<p>To the extent that it is practical, we think applications should
+provide users with access to all of the possible targets.</p>
+</div>
+</div>
+
+<div class="div1">
+
+<h2><a name="sec-ranges"></a>6 Ranges are Challenging</h2>
+
+<p>XPointer ranges present a number of exceptional challenges to the
+styling process. In the simplest case, they may be used to style
+components that are smaller than the components exposed by the
+data model of a particular styling language. Consider this link:</p>
+
+<table class="eg" cellpadding="1" border="1" bgcolor="white" width="100%" summary="Example"><tr><td><pre>&lt;doc&gt;
+&lt;p&gt;Some text about <span class="startrsrc">Pat Jones</span> that participates in a third
+party link.&lt;/p&gt;
+&lt;/doc&gt;</pre></td></tr></table>
+
+<p>The link is composed only of characters in the middle of a text node.</p>
+
+<p>Ranges can also span normal element boundaries, producing ranges
+of text that are not well-formed in the XML sense:</p>
+
+<table class="eg" cellpadding="1" border="1" bgcolor="white" width="100%" summary="Example"><tr><td><pre>&lt;doc&gt;
+&lt;p&gt;This text demonstrates
+&lt;emph&gt;a <span class="startrsrc">link&lt;/emph&gt; that spans a &lt;emph&gt;not well</span>-formed&lt;/emph&gt;
+range.&lt;/p&gt;
+&lt;/doc&gt;</pre></td></tr></table>
+
+<div class="div2">
+
+<h3><a name="spec-range-display"></a>6.1 Styling Ranges in a Larger Presentation Context</h3>
+
+<p>Styling ranges (starting or ending resources expressed with XPointer ranges)
+in a larger context is problematic when the data model of the style language
+has a coarser granularity than the XML character. In particular, the
+XSLT 1.0 data model exposes text nodes, but not individual characters.</p>
+
+<p>We propose that a reasonable processing model in this case is simply
+to style the smallest available node in the data model. For example,
+we expect <code>ext:arc-start()</code> to return a non-empty
+node set on every text node that contains one or more characters
+that are starting resources.</p>
+
+<p>This will generally result in the "sloppy" application of style. For
+example,</p>
+
+<table class="eg" cellpadding="1" border="1" bgcolor="white" width="100%" summary="Example"><tr><td><pre>&lt;doc&gt;
+&lt;p&gt;Some text about <span class="startrsrc">Pat Jones</span> that participates in a third
+party link.&lt;/p&gt;
+&lt;/doc&gt;</pre></td></tr></table>
+
+<p>will be styled as if the link were:</p>
+
+<table class="eg" cellpadding="1" border="1" bgcolor="white" width="100%" summary="Example"><tr><td><pre>&lt;doc&gt;
+&lt;p&gt;<span class="startrsrc">Some text about Pat Jones that participates in a third
+party link.</span>&lt;/p&gt;
+&lt;/doc&gt;</pre></td></tr></table>
+
+<p>and</p>
+
+<table class="eg" cellpadding="1" border="1" bgcolor="white" width="100%" summary="Example"><tr><td><pre>&lt;doc&gt;
+&lt;p&gt;This text demonstrates
+&lt;emph&gt;a <span class="startrsrc">link&lt;/emph&gt; that spans a &lt;emph&gt;not well</span>-formed&lt;/emph&gt;
+range.&lt;/p&gt;
+&lt;/doc&gt;</pre></td></tr></table>
+
+<p>will be styled as if the link were:</p>
+
+<table class="eg" cellpadding="1" border="1" bgcolor="white" width="100%" summary="Example"><tr><td><pre>&lt;doc&gt;
+&lt;p&gt;This text demonstrates
+<span class="startrsrc">&lt;emph&gt;a link&lt;/emph&gt; that spans a &lt;emph&gt;not well-formed&lt;/emph&gt;</span>
+range.&lt;/p&gt;
+&lt;/doc&gt;</pre></td></tr></table>
+
+<p>If styling markup of this sort is a requirement for XSLT 2.0, as we
+think it is, then the data model of XSLT will have to be extended to
+include characters.</p>
+
+<p>A few additional extension functions could be added
+which would offer a laborious solution to a subset of the range
+problems that can occur inside a text node through extensive use of
+the <code>substring</code> function. But it is not clear that any
+rational substring-based approach will handle all of the possible
+cases (e.g. discontiguous character ranges within a single text node
+that taken together form a linking resource).</p>
+
+</div>
+<div class="div2">
+
+<h3><a name="spec-range-embed"></a>6.2 Ranges that are Presentation Context</h3>
+
+<p>The problem of ranges in the <a title="Presentation Context" href="#dt-presentation-context">presentation context</a> is much more serious. When
+the <a title="Presentation Context" href="#dt-presentation-context">presentation context</a> is a range, a "sloppy" approach is unsuitable. If the
+link author requests that a specific range of the target document is
+to be presented, displaying more or or less than that range may be
+disastrous. Consider the case where a warning is accidentally lost or
+an adjacent range that has security implications is accidentally
+displayed.</p>
+
+<p>The problem is especially troublesome when we consider embedded
+links. In the embedded case, we have suggested that
+the <a title="Presentation Context" href="#dt-presentation-context">presentation context</a> be the same as the <a title="Target" href="#dt-target">target</a>. If an embedded link uses ranges
+to point to a portion of a text node, it would be entirely unacceptable
+to embed the entire text node.</p>
+
+<div class="note"><p class="prefix"><b>Note:</b></p><p>Because the "sloppy" approach is unsuitable in this
+case, it follows that ranges cannot be implemented using tools that have
+a data model that does not address individual characters.</p></div>
+
+<p>To tackle the difficult case introduced by ranges, we suggest that
+a subset of XPointer that did not include ranges would be a useful product.
+Such a subset could then be used as the data type for
+<a title="Presentation Context" href="#dt-presentation-context">presentation context</a> and <code>show="embed"</code> ending resources.</p>
+
+<p>However, we suggest the following approach of "pruning" as a possible
+work-around for applications which must support <a title="Presentation Context" href="#dt-presentation-context">presentation context</a>s that are
+defined in terms of ranges:</p>
+
+<ol>
+<li><p>Identify the smallest contiguous set of whole information
+items which completely
+contains the resource in question:</p>
+
+<table class="eg" cellpadding="1" border="1" bgcolor="white" width="100%" summary="Example"><tr><td><pre>&lt;doc&gt;
+&lt;p&gt;This text demonstrates
+<span class="startrsrc">&lt;emph&gt;a <span class="bothrsrc">link&lt;/emph&gt; that spans a &lt;emph&gt;not well</span>-formed&lt;/emph&gt;</span>
+range.&lt;/p&gt;
+&lt;/doc&gt;</pre></td></tr></table>
+</li>
+
+<li><p>Within this set, it is possible to identify three
+classes of information items:</p>
+  <ol>
+    <li><p>Those that are wholly within the range: e.g. all the character
+information items that occurs between the two <code>emph</code> elements.</p>
+    </li>
+    <li><p>Those that are wholly outside the range: e.g. the character
+information items that comprise the string "-formed".</p></li>
+    <li><p>Those that are partially within the range: e.g. the
+<code>emph</code> Element Information Items.</p></li>
+  </ol>
+
+</li>
+<li><p>Remove all information items that are wholly
+<em>outside</em> the range:</p>
+
+<table class="eg" cellpadding="1" border="1" bgcolor="white" width="100%" summary="Example"><tr><td><pre><span class="startrsrc">&lt;emph&gt;<span class="bothrsrc">link&lt;/emph&gt; that spans a &lt;emph&gt;not well</span>&lt;/emph&gt;</span></pre></td></tr></table>
+
+<p>In this example, only text was removed, but if additional
+elements had been included by the initial set of information items,
+they would have been removed as well.</p>
+
+</li>
+</ol>
+
+<p>The node set that remains after this process becomes <em>both</em>
+the <a title="Presentation Context" href="#dt-presentation-context">presentation context</a> <em>and</em> the <a title="Processing Context" href="#dt-processing-context">processing context</a> for the link.</p>
+
+<p>It is necessary for the <a title="Processing Context" href="#dt-processing-context">processing context</a> to be restricted as well as the
+<a title="Presentation Context" href="#dt-presentation-context">presentation context</a> because there is no practical way, in the general case,
+under arbitrary transformation, for an application to trim the
+<em>styled</em> result to just the nodes that resulted from
+processing the target. The tree must be pruned <em>before</em>
+styling. We feel that this additional complication provides further
+evidence in favor of a range-free subset of XPointer.</p>
+
+<div class="note"><p class="prefix"><b>Note:</b></p><p>Pruning prior to styling introduces the possibility that
+nodes which contributed to the style of the result may have been lost
+and therefore unexpected styling may occur.</p>
+</div>
+
+</div>
+
+<div class="div2">
+<h3><a name="range-ligs"></a>6.3 Ranges and Glyph/Character Boundaries</h3>
+
+<p>Ranges can also be problematic if they have boundaries that occur
+at certain glyph and character locations.</p>
+
+<p>Consider the following range:</p>
+
+<table class="eg" cellpadding="1" border="1" bgcolor="white" width="100%" summary="Example"><tr><td><pre>&lt;doc&gt;
+&lt;p&gt;...a brief <span class="startrsrc">history of f</span>lying machines.&lt;/p&gt;
+&lt;/doc&gt;</pre></td></tr></table>
+
+<p>In a visual presentation system, what is the extent of that link if
+the word "flying" begins with the "fl" ligature?</p>
+
+<p>This problem is not limited to subtle issues of appropriate glyph
+selection for aesthetic purposes. In some Indic languages, for
+example, the actual order of the displayed glyphs may be different
+from the order of characters in the source. Similar problems occur
+in Thai, Arabic, and Hebrew, where the order and position of displayed
+glyphs depends on linguistic factors, not simply on the order of the
+characters in the source document.</p>
+
+<p>It's unclear if there are any specific recommendations that can be
+made about this issue globally, except that avoiding character ranges,
+especially ranges that occur inside words, is probably best.</p>
+
+</div>
+</div>
+</div>
+<div class="back">
+<div class="div1">
+
+<h2><a name="sec-bibliography"></a>A References</h2>
+
+<p>The distinction between normative and non-normative references is
+made only to emphasize the distinction between references to stable
+documents (W3C Recommendations, IETF RFCs, etc.) and documents that
+are in some sense unstable (W3C Working Drafts, etc.). W3C Notes have
+no normative status whatsoever.</p>
+
+<div class="div2">
+<h3><a name="N3007"></a>A.1 Normative References</h3>
+
+<dl>
+<dt class="label"><a name="xml-rec"></a>XML</dt><dd>Tim Bray, Jean Paoli, and C. M. Sperberg-McQueen, editors.
+  <cite>Extensible Markup Language (XML) 1.0</cite>.
+  World Wide Web Consortium, 1998.
+  (See <a href="http://www.w3.org/TR/REC-xml">http://www.w3.org/TR/REC-xml</a>.)</dd>
+<dt class="label"><a name="xml-names"></a>XML Names</dt><dd>Tim Bray, Dave Hollander, and Andrew Layman, editors.
+  <cite>Namespaces in XML</cite>.
+  World Wide Web Consortium, 1999.
+  (See <a href="http://www.w3.org/TR/REC-xml-names/">http://www.w3.org/TR/REC-xml-names/</a>.)</dd>
+<dt class="label"><a name="xpath-rec"></a>XPath</dt><dd>James Clark, Steve DeRose, editors.
+  <cite>XML Path Language (XPath) Version 1.0</cite>.
+  World Wide Web Consortium, 2000.
+  (See <a href="http://www.w3.org/TR/xpath">http://www.w3.org/TR/xpath</a>.)</dd>
+<dt class="label"><a name="xslt-rec"></a>XSLT</dt><dd>James Clark, editor.
+  <cite>XSL Transformations (XSLT) Version 1.0</cite>.
+  World Wide Web Consortium, 1999.
+  (See <a href="http://www.w3.org/TR/xslt">http://www.w3.org/TR/xslt</a>.)</dd>
+<dt class="label"><a name="style-pi"></a>XML Stylesheet PI</dt><dd>James Clark, editor.
+  <cite>Associating Style Sheets with XML Documents Version 1.0</cite>
+  World Wide Web Consortium, 1999.
+  (See <a href="http://www.w3.org/TR/xml-stylesheet/">http://www.w3.org/TR/xml-stylesheet/</a>.)</dd>
+<dt class="label"><a name="rfc2396"></a>IETF RFC 2396</dt><dd>IETF (Internet Engineering Task Force).
+  <cite>RFC 2396: Uniform Resource Identifiers (URI): Generic Syntax</cite>.
+  T. Berners-Lee, R. Fielding, L. Masinter. 1998.
+  (See <a href="http://www.ics.uci.edu/pub/ietf/uri/rfc2396.txt">http://www.ics.uci.edu/pub/ietf/uri/rfc2396.txt</a>.)</dd>
+</dl>
+</div>
+<div class="div2">
+<h3><a name="N3117"></a>A.2 Other References</h3>
+<dl>
+<dt class="label"><a name="HookerMaden2000"></a>HookerMaden2000</dt><dd>Hooker, Deborah,
+      and Christopher Maden.
+  <cite>�sop: A Browser for XML Documents and Open eBook
+  Publication Structures</cite>.
+  In XTech 2000, San Jos�, February 2000.
+  (See <a href="http://www.oreilly.com/%7Ecrism/xtech2k/">http://www.oreilly.com/%7Ecrism/xtech2k/</a>.)</dd>
+<dt class="label"><a name="xsl-wd"></a>XSL</dt><dd>Sharon Adler, Anders Berglund, Jeff Caruso, et. al., editors.
+  <cite>Extensible Stylesheet Language (XSL) Version 1.0</cite>.
+  World Wide Web Consortium, 2000.
+  (See <a href="http://www.w3.org/TR/xsl/">http://www.w3.org/TR/xsl/</a>.)</dd>
+<dt class="label"><a name="xmlbase-wd"></a>XML Base</dt><dd>Jonathan Marsh, editor.
+  <cite>XML Base</cite>.
+  World Wide Web Consortium, 2000.
+  (See <a href="http://www.w3.org/TR/xmlbase/">http://www.w3.org/TR/xmlbase/</a>.)</dd>
+<dt class="label"><a name="xinclude-wd"></a>XInclude</dt><dd>Jonathan Marsh, David Orchard, editors.
+  <cite>XML Inclusions (XInclude) Version 1.0</cite>.
+  World Wide Web Consortium, 2000.
+  (See <a href="http://www.w3.org/TR/xinclude/">http://www.w3.org/TR/xinclude/</a>.)</dd>
+<dt class="label"><a name="xml-infoset-wd"></a>XML Infoset</dt><dd>John Cowan, editor.
+  <cite>XML Information Set</cite>.
+  World Wide Web Consortium, 2000.
+  (See <a href="http://www.w3.org/TR/xml-infoset/">http://www.w3.org/TR/xml-infoset/</a>.)</dd>
+<dt class="label"><a name="xlink-cr"></a>XLink</dt><dd>Steve DeRose, Eve Maler, David Orchard, Ben Trafford, editors.
+  <cite>XML Linking Language (XLink) Version 1.0</cite>.
+  World Wide Web Consortium, 2000.
+  (See <a href="http://www.w3.org/TR/xlink/">http://www.w3.org/TR/xlink/</a>.)</dd>
+<dt class="label"><a name="xpointer-cr"></a>XPointer</dt><dd>Ron Daniel Jr., Steve DeRose, Eve Maler, editors.
+  <cite>XML Pointer Language (XPointer) Version 1.0</cite>.
+  World Wide Web Consortium, 2000.
+  (See <a href="http://www.w3.org/TR/xpath">http://www.w3.org/TR/xpath</a>.)</dd>
+<dt class="label"><a name="xmlschema-cr"></a>XML Schema (Structures)</dt><dd>Henry S. Thompson,
+      David Beech, Murray Maloney, et. al. editors.
+  <cite>XML Schema Part 1: Structures</cite>.
+  World Wide Web Consortium, 2000.
+  (See <a href="http://www.w3.org/TR/xmlschema-1/">http://www.w3.org/TR/xmlschema-1/</a>.)</dd>
+</dl>
+</div>
+</div>
+<div class="div1">
+
+<h2><a name="N3262"></a>B Summary of Proposed Changes to XSLT (Non-Normative)</h2>
+
+<p>This appendix summarizes the proposed changes to XSLT/XSL to provide
+better support for linking.</p>
+
+
+
+<div class="div2">
+
+<h3><a name="N3272"></a>B.1 link-target</h3>
+
+<p>The <code>link-target</code> attribute can appear on <code>xsl:element</code>
+elements and on literal result tree elements. When <code>true()</code>,
+the element on which it occurs is the link target for any links associated
+with the current context node. The use of <code>link-target</code> overrides
+any heuristic for the links which are associated with the context node.</p>
+
+</div>
+
+<div class="div2">
+
+<h3><a name="N3293"></a>B.2 xsl:link-style</h3>
+
+<p>We propose a new XSL element to provide style properties.</p>
+
+<table class="eg" cellpadding="5" border="1" bgcolor="#99ffff" width="100%" summary="Example"><tr><td><pre>
+&lt;!-- Category: instruction --&gt;
+&lt;xsl:link-style
+  select = expression
+  xsl:use-attribute-sets = qnames&gt;
+  &lt;!-- Content: xsl:attribute* --&gt;
+&lt;/xsl:link-style&gt;
+</pre></td></tr></table>
+
+<p>The select expression of <code>xsl:link-style</code> should always select
+Link Information Items. The attributes provided are associated with the links selected.</p>
+
+</div>
+
+<div class="div2">
+
+<h3><a name="N3312"></a>B.3 XSL Linking Elements</h3>
+
+<p>The <code>xsl:link</code>, <code>xsl:arc</code>, <code>xsl:start-participant</code>,
+and <code>xsl:end-participant</code> elements allow a stylesheet author to
+construct links that can be treated uniformly with links that are manifest
+in the source or in a link base.</p>
+</div>
+
+<div class="div2">
+
+<h3><a name="N3333"></a>B.4 xsl:next-match</h3>
+
+<p>The <code>xsl:next-match</code> element selects the next highest priority
+template for the current context node and applies it.</p>
+
+</div>
+</div>
+<div class="div1">
+
+<h2><a name="sec-xml-wg"></a>C W3C XLink/XSL Joint Task Force (Non-Normative)</h2>
+<p>This note was prepared and approved for publication by the W3C
+XLink/XSL Joint Task Force (TF). TF approval of this note
+does not necessarily imply that all TF members agreed with all aspects of the
+note. The members of the XLink/XSL Joint TF are:</p>
+<ul>
+<li>Sharon Adler
+, IBM
+</li>
+<li>Anders Berglund
+, IBM
+</li>
+<li>Paul Grosso
+, Arbortext
+</li>
+<li>Eduardo Gutentag
+, Sun
+</li>
+<li>Chris Maden
+</li>
+<li>Eve Maler
+, Sun
+ (<i>Chair</i>) 
+</li>
+<li>Norman Walsh
+, Sun
+ (<i>Editor</i>) 
+</li>
+</ul>
+</div>
+
+</div>
+</body></html>

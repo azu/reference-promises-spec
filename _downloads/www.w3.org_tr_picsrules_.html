@@ -1,0 +1,1850 @@
+<!-- http://www.w3.org/TR/PICSRules/ -->
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.01 [en] (WinNT; I) [Netscape]">
+   <TITLE>PICSRules Specification</TITLE>
+<!-- $Id: Overview.html,v 1.1 2009/11/24 18:23:30 bertails Exp $ -->
+<LINK rel="STYLESHEET" href="style/default.css" type="text/css">
+</HEAD>
+<BODY BACKGROUND="http://www.w3.org/Icons/Backgrounds/recbg.jpg">
+
+<DIV class="navbar"><A HREF="http://www.w3.org/"><IMG SRC="http://www.w3.org/pub/WWW/Icons/WWW/w3c_home.gif" ALT="W3C" BORDER=0  ALIGN=LEFT></A>&nbsp;<A HREF="http://www.w3.org/pub/WWW/PICS/"><IMG SRC="http://www.w3.org/pub/WWW/Icons/WWW/pics_48x48" ALT="PICS" BORDER=0 HEIGHT=48 WIDTH=48></A>
+<DIV ALIGN=right>
+<H3>
+REC-PICSRules-20091124</H3></DIV>
+
+<CENTER>
+<H1>
+PICSRules 1.1</H1></CENTER>
+
+<CENTER>
+<H3>
+W3C Recommendation 29 Dec 1997 (revised 24-Nov-2009)</H3></CENTER>
+
+<DL>
+<DT>
+This is:</DT>
+
+<DD>
+<A HREF="http://www.w3.org/TR/2009/REC-PICSRules-20091124">http://www.w3.org/TR/2009/REC-PICSRules-20091124</A></DD>
+
+<DT>
+Latest version:</DT>
+
+<DD>
+<A HREF="http://www.w3.org/TR/REC-PICSRules">http://www.w3.org/TR/REC-PICSRules</A></DD>
+
+<DT>
+Previous version:</DT>
+
+<DD>
+<A HREF="http://www.w3.org/TR/REC-PICSRules-971229">http://www.w3.org/TR/REC-PICSRules-971229</A></DD>
+</DL>
+
+
+<p style="border: solid thick red; padding: 1em"><strong>Note:<em>This paragraph is informative.</em> This document is
+currently not maintained. PICS has been superseded by the Protocol for Web Description Resources (<a href="/2007/powder/">POWDER</a>). W3C encourages authors and
+implementors to refer to POWDER (or its successor) rather than PICS when developing systems to describe Web content or agents to
+act on those descriptions. A brief document outlining the advantages offered by POWDER compared with PICS is <a href="/2009/08/pics_superseded.html">available
+separately</a>.</strong></p>
+
+
+<DL>
+<DT>
+Editor:</DT>
+
+<DD>
+Martin Presler-Marshall, IBM &lt;mpresler@us.ibm.com></DD>
+
+<DT>
+Authors:</DT>
+
+<DD>
+Christopher Evans, Microsoft &lt;cevans@microsoft.com></DD>
+
+<DD>
+Clive D.W. Feather, Demon Internet Ltd. &lt;clive@demon.net></DD>
+
+<DD>
+Alex Hopmann, Microsoft &lt;alexhop@microsoft.com></DD>
+
+<DD>
+Martin Presler-Marshall, IBM &lt;mpresler@us.ibm.com></DD>
+
+<DD>
+Paul Resnick, University of Michigan &lt;presnick@umich.edu></DD>
+</DL>
+
+<HR>
+<H3>
+Status of this document</H3>
+This document has been reviewed by W3C Members and other interested parties
+and has been endorsed by the Director as a W3C Recommendation. It is a
+stable document and may be used as reference material or cited as a normative
+reference from another document. W3C's role in making the Recommendation
+is to draw attention to the specification and to promote its widespread
+deployment. This enhances the functionality and interoperability of the
+Web.
+
+<P>This document is part of the <A HREF="http://www.w3.org/">W3C</A> (<A HREF="http://www.w3.org/">http://www.w3.org/</A>)
+<A HREF="http://www.w3.org/Metadata/">Metadata</A> activity.
+
+<P>A list of current W3C Recommendations and other technical documents
+can be found at <A HREF="http://www.w3.org/TR">http://www.w3.org/TR</A>.
+<BR>
+<HR>
+<DIV class="spec">
+<H2>
+Abstract</H2>
+This document defines a language for writing profiles, which are filtering
+rules that allow or block access to URLs based on PICS labels that describe
+those URLs. This language is intended as a transmission format; individual
+implementations must be able to read and write their specifications in
+this language, but need not use this format internally.
+<H2>
+Introduction</H2>
+The purposes for a common profile-specification language are:
+<UL>
+<LI>
+<B>Sharing and installation of profiles.</B> Sophisticated profiles may
+be difficult for end-users to specify, even through well-crafted user interfaces.
+An organization can create a recommended profile for children of a certain
+age. Users who trust that organization can install the profile rather than
+specifying one from scratch.&nbsp; It will be easy to change the active
+profile on a single computer, or to carry a profile to a new computer.</LI>
+
+<LI>
+<B>Communication to agents, search engines, proxies, or other servers.</B>
+Servers of various kinds may wish to tailor their output to better meet
+users' preferences, as expressed in a profile. For example, a search service
+can return only links that match a user's profile, which may specify criteria
+based on quality, privacy, age suitability, or the safety of downloadable
+code.</LI>
+
+<LI>
+<B>Portability betwen filtering products.</B> The same profile will work
+with any PICSRules-compatible product.</LI>
+</UL>
+This language complements the two existing PICS specifications, which provide
+a <A HREF="http://www.w3.org/TR/REC-PICS-services-961031">machine-readable
+format for describing a rating service</A> and provide a <A HREF="http://www.w3.org/TR/REC-PICS-labels-961031">format
+for labels and three ways to distribute them</A>. In particular, a PICSRules
+rule can specify one or more PICS rating services to use, one or more PICS
+label bureaus to query for labels, and criteria about the contents of labels
+that would be sufficient to make an accept or reject decision. PICSRules
+does not explicitly include constructs that deal with the verification
+of <A HREF="http://www.w3.org/TR/PR-DSig-label">DSIG digital signatures</A>,
+but there are hints to implementors about where to leave hooks for expected
+future extensions to the PICSRules language to accommodate signature verification.
+<H2>
+Definitions</H2>
+This specification uses the same words as RFC 1123 [RFC1123] for defining
+the significance of each particular requirement. These words are:
+<DL>
+<DT>
+MUST</DT>
+
+<DD>
+This word or the adjective "required" means that the item is an absolute
+requirement of the specification.</DD>
+
+<DT>
+SHOULD</DT>
+
+<DD>
+This word or the adjective "recommended" means that there may exist valid
+reasons in particular circumstances to ignore this item, but the full implications
+should be understood and the case carefully weighed before choosing a different
+course.</DD>
+
+<DT>
+MAY</DT>
+
+<DD>
+This word or the adjective "optional" means that this item is truly optional.
+One vendor may choose to include the item because a particular marketplace
+requires it or because it enhances the product, for example; another vendor
+may omit the same item.</DD>
+</DL>
+An implementation is not compliant if it fails to satisfy one or more of
+the MUST requirements for the protocols it implements. An implementation
+that satisfies all the MUST and all the SHOULD requirements for its protocols
+is said to be "unconditionally compliant"; one that satisfies all the MUST
+requirements but not all the SHOULD requirements for its protocols is said
+to be "conditionally compliant." User-agents which process PICSRules are
+free to choose <U>any interpretation they wish</U> for constructs which
+fail to meet one of the MUST requirements.
+
+<P>This document assumes that the reader has a working knowledge of PICS-1.1.
+All labels referred to here are assumed to be PICS-1.1 compliant labels.
+See <A HREF="#References">references</A> [PicsServices] and [PicsLabels]
+for details.
+<H2>
+The PICSRules language: examples</H2>
+
+<H3>
+Example 1: Forbid access to certain URLs</H3>
+
+<PRE>&nbsp;1 (PicsRule-1.1&nbsp;&nbsp;
+
+&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp; (
+
+&nbsp;3&nbsp;&nbsp;&nbsp;&nbsp; Policy (RejectByURL ("http://*@www.grody.com:*/*"&nbsp;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "http://*@www.gross.net:*/*"))
+
+&nbsp;4&nbsp;&nbsp;&nbsp;&nbsp; Policy (AcceptIf "otherwise")
+
+&nbsp;5&nbsp;&nbsp;&nbsp;&nbsp; )
+
+&nbsp;6 )</PRE>
+<I>The numbers on the left are line numbers for ease of reference; they
+aren't part of the actual rule.</I>
+
+<P>This example forbids access to a specific set of URLs, without using
+any PICS labels. Any URL that specifies the host www.grody.com or www.gross.net
+will be blocked, regardless of the username, port number, or particular
+file path that is specified in the URL; any other URLs are considered acceptable.
+<H3>
+Example 2: Forbid access based on PICS labels</H3>
+
+<PRE>&nbsp;1 (PicsRule-1.1
+
+&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp; (
+
+&nbsp;3&nbsp;&nbsp;&nbsp;&nbsp; serviceinfo (
+
+&nbsp;4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "http://www.coolness.org/ratings/V1.html"
+
+&nbsp;5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; shortname "Cool"
+
+&nbsp;6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; bureauURL "http://labelbureau.coolness.org/Ratings"
+
+&nbsp;7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; UseEmbedded "N"
+
+&nbsp;8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )
+
+&nbsp;9&nbsp;&nbsp;&nbsp;&nbsp; Policy (RejectIf "((Cool.Coolness &lt;= 3) or (Cool.Graphics >= 3))")
+
+10&nbsp;&nbsp;&nbsp;&nbsp; Policy (AcceptIf "otherwise")
+
+11&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp;
+
+12 )</PRE>
+This rule checks the rating given to documents according to the "Cool"
+rating service ("http://www.coolness.org/ratings/V1.html"). Labels will
+be fetched from the label bureau "http://labelbureau.coolness.org/Ratings".
+Labels embedded in the document are ignored because the document authors
+can't be trusted to assess their own coolness.&nbsp; Documents which are
+not sufficiently cool or have too many graphics will be blocked. Everything
+else, including unlabeled documents, will be allowed.
+<H3>
+Example 3: Allow access based on PICS labels: block everything else</H3>
+
+<PRE>&nbsp;1 (PicsRule-1.1
+
+&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp; (
+
+&nbsp;3&nbsp;&nbsp;&nbsp;&nbsp; ServiceInfo (
+
+&nbsp;4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name "http://www.coolness.org/ratings/V1.html"
+
+&nbsp;5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; shortname "Cool"
+
+&nbsp;6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; bureauURL "http://labelbureau.coolness.org/Ratings"
+
+&nbsp;7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )
+
+&nbsp;8&nbsp;&nbsp;&nbsp;&nbsp; Policy (RejectUnless "(Cool.Coolness)")
+
+&nbsp;9&nbsp;&nbsp;&nbsp;&nbsp; Policy (AcceptIf "((Cool.Coolness > 3) and (Cool.Graphics &lt; 3))")
+
+10&nbsp;&nbsp;&nbsp;&nbsp; Policy (RejectIf "otherwise")
+
+11&nbsp;&nbsp;&nbsp;&nbsp; )&nbsp;
+
+12 )</PRE>
+This rule also checks the rating given to documents according to the "Cool"
+rating service. In this case, because UseEmbedded is not specified, it
+defaults to using embedded labels in addition to labels it fetches from
+the label bureau. Line 8 says that documents will be blocked unless we
+have a rating on the "Coolness" scale of the "Cool" rating system ("http://www.coolness.org").
+Line 9 says that documents which are sufficiently cool, and don't have
+too many graphics, will be passed. Line 10 says to block all other documents.
+<H3>
+Example 4: A more complex example</H3>
+
+<PRE>&nbsp;1 (PicsRule-1.1
+
+&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp; (
+
+&nbsp;3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name&nbsp;&nbsp;&nbsp; (rulename "Example 4"
+
+&nbsp;4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; description "Example 4 from PICSRules spec; simply shows&nbsp;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; how PICSRules rules are formed. This rule is&nbsp;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; not actually intended for use by real users.")&nbsp;
+
+&nbsp;5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; source (sourceURL&nbsp;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "http://www1.raleigh.ibm.com/pics/PICSRulz/Example1.html")
+
+&nbsp;6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ServiceInfo (name "http://www.coolness.org/ratings/V1.html"
+
+&nbsp;7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; shortname "Cool"
+
+&nbsp;8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; bureauURL "http://labelbureau.coolness.org/Ratings")
+
+&nbsp;9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ServiceInfo ("http://www.kid-protectors.org/ratingsv01.html"
+
+10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; shortname "KP")
+
+11&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Policy (RejectByURL ("http://*@www.badnews.com:*/*"&nbsp;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "http://*@www.worsenews.com:*/*"
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "*://*@18.0.0.0!8:*/*"))
+
+12&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Policy (AcceptByURL "http://*rated-g.org/movies*")
+
+13&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Policy (AcceptIf "(KP.educational = 1)"&nbsp;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Explanation "Always allow educational content.")
+
+14&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Policy (RejectIf "(KP.violence >= 3)"&nbsp;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Explanation "Blood's a %22scary%22 thing.")
+
+15&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Policy (RejectUnless "(Cool.Graphics &lt; 4)" )
+
+16&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Policy (AcceptIf "otherwise")
+
+17&nbsp;&nbsp;&nbsp;&nbsp; )
+
+18 )</PRE>
+
+<H3>
+Explanation of example</H3>
+
+<DL>
+<DT>
+<B>Line</B></DT>
+
+<DD>
+Explanation</DD>
+
+<DT>
+1</DT>
+
+<DD>
+Defines this construct as a PICSRules rule, and gives the version number.</DD>
+
+<DT>
+3</DT>
+
+<DD>
+Provides a short, human-readable name for this rule. There is no requirement
+for uniqueness on this name; it's meant as a mnemonic for users when manipulating
+rules in some sort of a user interface.</DD>
+
+<DT>
+4</DT>
+
+<DD>
+Provides a longer, human-readable description of this rule. This is meant
+to be use for an explanation of the semantics of this rule, and is also
+intended for users when manipulating rules in some sort of a user interface.</DD>
+
+<DT>
+5</DT>
+
+<DD>
+Specifies "where the rule came from". This URL is intended to point to
+a human-readable Web page which will give more information about this rule,
+who created it, why it was created, possible updates, etc.</DD>
+
+<DT>
+6-8</DT>
+
+<DD>
+Defines the rating service "http://www.coolness.org/ratings/V1.html", with
+short name <B>Cool</B> and identifies a label bureau from which to fetch
+its labels.</DD>
+
+<DT>
+9-10</DT>
+
+<DD>
+Defines the rating service "http://www.kid-protectors.org/ratingsv01.html",
+with short name <B>KP</B>. No label bureau is defined for this service;
+only embedded labels will be used.</DD>
+
+<DT>
+11</DT>
+
+<DD>
+Reject any HTTP URLs from the www.badnews.com and www.worsenews.com hosts,
+and all URLs that specify a host whose ip address has 18 as its first eight
+bits (these are the addresses corresponding to mit.edu).</DD>
+
+<DT>
+12</DT>
+
+<DD>
+Accept URLs whose domain names end in rated-g.org and whose pathnames begin
+"movies", but only if no username or port number is specified. For example
+"http://www.mystuff.rated-g.org/movies/hello" would be accepted, but neither
+"http://joe@www.mystuff.rated-g.org/movies/hello" nor "http://www.mystuff.rated-g.org:8009/movies/hello"
+would be accepted at this point in the rule processing (although they might
+be accepted by one of the subsequent policy statements).</DD>
+
+<DT>
+13</DT>
+
+<DD>
+Specifies that documents which have an <FONT FACE="Courier New"><FONT SIZE=-1>educational</FONT></FONT>
+rating of 1 in the <B>KP</B> rating system (defined above) will be allowed.
+Documents which have no rating under this rating system, or which have
+a rating other than 1 will be examined according to the rules which follow.</DD>
+
+<DT>
+14</DT>
+
+<DD>
+Specifies that documents which have a <TT>violence</TT> rating of 3 or
+more in the <B>KP</B> rating system (defined above) will be blocked; explanatory
+text is provided for user-agents to display to users: after decoding, the
+text is: Blood's a "scary" thing. Documents which have no rating under
+this rating system, or which have a lower rating will be examined according
+to the rules which follow.</DD>
+
+<DT>
+15</DT>
+
+<DD>
+Specifies that documents which have a <TT>Graphics</TT> rating of 3 or
+more under the <B>Cool</B> rating will be blocked. Documents which have
+no rating under the Cool system, or whose rating does not include the <TT>Graphics</TT>
+category will be blocked. Documents which have a <TT>Graphics</TT> rating
+less than 3 will be examined according to the rules which follow.</DD>
+
+<DT>
+16</DT>
+
+<DD>
+Specifies that documents which have not been either passed or blocked by
+the filter rules above will be passed.</DD>
+</DL>
+The summary of this rule is the following:
+<OL>
+<LI>
+Reject things from two sites; otherwise accept certain other things from
+the rated-g.org domain.</LI>
+
+<LI>
+Educational pages are OK, regardless of whether they have violence or any
+other objectionable content.</LI>
+
+<LI>
+Pages showing a lot of violence will be blocked unless they are educational.</LI>
+
+<LI>
+Except for educational pages, pages with too many graphics will be blocked.</LI>
+
+<LI>
+Anything else is fair game.</LI>
+</OL>
+
+<HR width="80%">
+<H2>
+<A NAME="Syntax"></A>Full syntax</H2>
+It is intended that this syntax will be registered as a MIME type, application/pics-rules.
+<DL>
+<DT>
+Let us first consider the basic underpinnings of a PICSRules rule, then
+the general format of the rule, and finally the format of the expressions
+found in filter clauses.</DT>
+
+<DD>
+&nbsp;</DD>
+</DL>
+
+<H3>
+<A NAME="S_Expressions"></A>Basic structure</H3>
+
+<DL>
+<DT>
+PICSRules rules are based on a limited form of an S-expression, namely
+a parenthesized attribute-value pair. A value is either a quoted string
+or a parenthesized list of additional attribute-value pairs, thus allowing
+nesting. When a value for an attribute is a list of further pairs, there
+is a concept known as a "primary attribute". The name of the primary attribute
+may be omitted, for the sake of readability, so that only the value of
+the primary attribute is specified. A parser can syntactically distinguish
+values from attributes (values begin with either a quote or left parenthesis);
+any values that are not paired with attribute names automatically belong
+to the primary attribute. When a value for an attribute is a list of pairs,
+the list MUST include the primary attribute-value pair (with or without
+the primary attribute name specified); it MAY contain additional attribute-value
+pairs. The general grammar for these limited S-expressions is:</DT>
+</DL>
+
+<PRE><B>attrvalpair</B>:: <I>attribute whitespace value</I> | <I>value
+
+
+
+</I><B>attribute</B>:: <I>alphanumstr</I>&nbsp;
+
+
+
+<B>value</B>:: <I>quotedstring</I> |'(' <I>attrvalpair+</I> ')'
+
+
+
+<B>quotedstring</B>:: '"'<I>notdoublequotechar</I>*'"' | "'"<I>notsinglequotechar</I>*"'"
+
+
+
+<B>alphanumstr</B>:: (<I>alphanum </I>| '.')+
+
+
+
+<B>whitespace</B>:: ' ' | '\t' | '\r' | '\n'&nbsp;
+
+
+
+<B>alphanum</B>:: '0' - '9' | 'A' - 'Z' | 'a' - 'z'
+
+
+
+<B>notdoublequotechar </B>:: any Unicode character except "</PRE>
+
+<PRE><B>notsinglequotechar </B>:: any Unicode character except '</PRE>
+The grammar uses " to quote strings, but ' may be used instead, provided
+that the same character starts and ends the string:
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "string"
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'string'
+<BR>&nbsp;&nbsp;&nbsp; but not:
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "string'
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'string"
+
+<P>As a shorthand in the rest of the BNF, we will use "double quotes" for
+all quoted strings, with the understanding that single quotes are equally
+valid as a delimiter. Also as a shorthand, we use <I>notquotechar</I> to
+mean any Unicode character other than the quoting delimiter (either " or
+')&nbsp; used for the current string.
+
+<P>The other quoting character may appear within a string. In order to
+accommodate the use of both single and double quotes inside strings, the
+following escaping conventions apply:
+<OL>
+<LI>
+" may be encoded as %22</LI>
+
+<LI>
+' may be encoded as %27</LI>
+
+<LI>
+% may be encoded as %25</LI>
+
+<LI>
+% followed by anything other than 22, 27, or 25 is syntactically invalid</LI>
+</OL>
+Note that, although ", ', and % are encoded using the % hex hex encoding
+rule used for special characters in URLs, other % hex hex combinations
+are not valid and are not considered encodings of other characters.
+<BR>&nbsp;
+<BR>&nbsp;
+<TABLE BORDER COLS=2 WIDTH="100%" >
+<TR>
+<TD><B><U>Character string as represented in a PICS Rule</U></B></TD>
+
+<TD><B><U>Parsed and decoded character string</U></B></TD>
+</TR>
+
+<TR>
+<TD>"string"</TD>
+
+<TD>string</TD>
+</TR>
+
+<TR>
+<TD>'string'</TD>
+
+<TD>string</TD>
+</TR>
+
+<TR>
+<TD>'This is "quoted" text.'&nbsp;</TD>
+
+<TD>This is "quoted" text.</TD>
+</TR>
+
+<TR>
+<TD>"It's nice to quote."&nbsp;</TD>
+
+<TD>It's nice to quote.</TD>
+</TR>
+
+<TR>
+<TD>"It%27s nice to %22quote.%22"</TD>
+
+<TD>It's nice to "quote."</TD>
+</TR>
+
+<TR>
+<TD>"50%25 of test scores are above the median"</TD>
+
+<TD>50% of test scores are above the median</TD>
+</TR>
+
+<TR>
+<TD>"50% are below the median"</TD>
+
+<TD>&lt;syntactically invalid string></TD>
+</TR>
+</TABLE>
+&nbsp;
+<H4>
+Internationalization</H4>
+RFC 2070 [RFC2070] on internationalization of HTML describes the more general
+SGML distinction between the internal character encoding and external character
+encoding. In those terms, Unicode is the internal character set for PICSRules
+rules. Unicode is a character set that includes characters from most languages;
+it is a 16-bit character set. We designate UTF-8 as the official external
+encoding for PICSRules. UTF-8 [UTF-8] has the useful properties that all
+USASCII characters are represented by themselves, and that they do not
+appear as part of the encoding of anything else. This means that most processing
+need not know about UTF-8 provided that it does not strip the top bit of
+8-bit bytes.
+
+<P>Note that in order to properly interpret a PICSRules rule, the UTF-8
+transformation is applied first, to convert the rule into a sequence of
+Unicode characters. Each quoted string must then be passed through a converter
+that unescapes quotes,
+<BR>converting %22 to ", %27 to ', and %25 to %.
+
+<P>Note that all attribute names are case <B>in</B>sensitive, while the
+case of values MUST be preserved. However, individual clauses and/or attributes
+MAY define their values to be case-insensitive.
+<H3>
+<A NAME="Comments"></A>Comments</H3>
+The PICSRules syntax, which will be presented below, has a facility for
+descriptive text which can be shown to a user, in addition to various statements
+which influence the behavior of user-agents. However, it is frequently
+useful to have "source-level" comments - comments which are intended to
+individuals writing and/or editing rules, but which are not intended for
+display to end users. This is analogous to placing comments in source code;
+in an effort to encourage rule authors to write clear rules, we provide
+a facility for placing comments into PICSRules rules.
+
+<P>The syntax of a comment is:
+<PRE><B>comment</B>:: '{' <I>comment-text*</I> '}'
+
+<B>comment-text</B>:: any characters except '}'</PRE>
+Note that a result of the above syntax is that comments may not be nested.
+
+<P>Comments may appear anywhere in PICSRules rules. A user-agent MAY remove
+the comments during lexical analysis of the rule; text within comments
+MUST NOT influence the interpretation of the rule in any manner. Note also
+that user-agents which generate or export PICSRules rules MAY choose to
+strip out comments before generating, exporting, or transmitting them.
+<H3>
+PICSRules Rules</H3>
+The general format of a PICSRules rule, in modified BNF, is as follows.
+Some elements, such as "policy-expression" and "URLpattern" are used here
+but defined later in the document.
+<PRE><B>rule</B>:: '(' 'PicsRule-'<I>verMajor</I>'.'<I>verMinor</I> <I>rule-body</I> ')'
+
+
+
+<B>verMajor</B> :: <I>integer
+
+
+
+</I><B>verMinor</B> :: <I>integer
+
+
+
+</I><B>rule-body</B> :: '(' <I>rule-clauses</I> ')'
+
+
+
+<B>rule-clauses</B> :: <I>rule-clause+
+
+
+
+</I><B>rule-clause</B> :: <I>policy-clause</I> |&nbsp;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>name-clause</I> |
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>source-clause</I> |
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>service-clause</I> |
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>opt-extension-clause</I> |
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>req-extension-clause</I> |
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>extension-aval
+
+
+
+</I><B>policy-clause</B> :: 'Policy' '(' <I>policy-attribute+</I> ')'
+
+
+
+<B>policy-attribute</B> :: ['Explanation'] <I>quotedstring</I> |
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'RejectByURL' <I>URL-strings </I>|
+
+<I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </I>'AcceptByURL' <I>URL-strings </I>|<I>&nbsp;
+
+</I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'RejectIf' <I>policy-string </I>|
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'RejectUnless' <I>policy-string </I>|
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'AcceptIf' <I>policy-string </I>|
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'AcceptUnless' <I>policy-string </I>|
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>extension-aval</I></PRE>
+
+<PRE><B>URL-strings :: </B><I>URL-string </I>|<I> </I>'(' ['patterns'] <I>URL-string</I>+ ')'</PRE>
+
+<PRE><B>URL-string :: </B>'"'<I>URLpattern</I>'"'</PRE>
+
+<PRE><B>policy-string ::</B><I> </I>'"'<I>policy-expression</I>'"'
+
+
+
+<B>name-clause</B> :: 'name' '(' <I>name-attribute+</I> ')'
+
+
+
+<B>name-attribute</B> :: ['Rulename'] <I>quotedstring</I> |
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'Description' <I>quotedstring</I> |
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>extension-aval
+
+
+
+</I><B>source-clause</B> :: 'source' '(' <I>source-attribute+</I> ')'
+
+
+
+<B>source-attribute</B> :: ['SourceURL'] <I>quotedURL</I> |
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'CreationTool' <I>quotedstring</I> |
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'author' <I>quoted-address</I> |
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'LastModified' <I>quoted-date</I> |
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>extension-aval
+
+
+
+</I><B>service-clause</B> :: 'serviceinfo' '(' <I>service-attribute+</I> ')'
+
+
+
+<B>service-attribute</B> :: ['Name'] <I>quotedURL</I> |
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'shortname' <I>quotedstring</I> |
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'BureauURL' <I>quotedURL</I> |
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'UseEmbedded' <I>yes-no</I> |
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'Ratfile' <I>quotedstring</I> |
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'BureauUnavailable' <I>pass-fail</I> |
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>extension-aval</I></PRE>
+
+<PRE><B>yes-no :: </B>'"'<I>Y-N</I>'"'</PRE>
+
+<PRE><B>Y-N</B> :: 'Y' | 'N'</PRE>
+
+<PRE><B>pass-fail</B> :: '"'<I>P-F</I>'"'</PRE>
+
+<PRE><B>P-F</B> :: 'PASS' | 'FAIL'</PRE>
+
+<PRE><B>opt-extension-clause</B> :: 'optextension' '(' <I>extension-name+</I> ')'
+
+
+
+<B>extension-name</B> :: ['extension-name'] <I>quotedURL</I> | 'shortname' <I>quotedstring </I>|
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <I>extension-aval
+
+
+
+</I><B>req-extension-clause</B> :: 'reqextension' '(' <I>extension-name+</I> ')'
+
+
+
+<B>extension-aval</B> :: <I>attrvalpair</I></PRE>
+
+<PRE><B>quotedURL</B> :: '"'<I>URL</I>'"'</PRE>
+
+<PRE><B>URL</B> :: as defined in RFC-1738 for URLs.
+
+
+
+<B>quoted-address</B> :: '"'<I>e-mail-address</I>'"'
+
+
+
+<B>e-mail-address</B> :: as defined in RFC-822 for addresses.</PRE>
+
+<PRE><B>quoted-ISO-date ::</B> '"'YYYY'-'MM'-'DD'T'hh':'mmStz'"'
+
+&nbsp;&nbsp;&nbsp;&nbsp; based on the ISO 8601:1988 date and time standard, restricted
+
+&nbsp;&nbsp;&nbsp;&nbsp; to the specific form described here:
+
+&nbsp;&nbsp;&nbsp;&nbsp; <B>YYYY ::</B> four-digit year
+
+&nbsp;&nbsp;&nbsp;&nbsp; <B>MM ::</B> two-digit month (01=January, etc.)
+
+&nbsp;&nbsp;&nbsp;&nbsp; <B>DD ::</B> two-digit day of month (01 through 31)
+
+&nbsp;&nbsp;&nbsp;&nbsp; <B>hh ::</B> two digits of hour (00 through 23) (am/pm NOT allowed)
+
+&nbsp;&nbsp;&nbsp;&nbsp; <B>mm ::</B> two digits of minute (00 through 59)
+
+&nbsp;&nbsp;&nbsp;&nbsp; <B>S&nbsp; ::</B> sign of time zone offset from UTC ('+' or '-')
+
+&nbsp;&nbsp;&nbsp;&nbsp; <B>tz ::</B> four digit amount of offset from UTC
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (e.g., 1512 means 15 hours and 12 minutes)
+
+&nbsp;&nbsp;&nbsp;&nbsp; For example, "1994-11-05T08:15-0500" is a valid <I>quoted-ISO-date
+
+</I>&nbsp;&nbsp;&nbsp;&nbsp; denoting November 5, 1994, 8:15 am, US Eastern Standard Time
+
+&nbsp;&nbsp;&nbsp;&nbsp; <B>Note:</B> The ISO standard allows considerably greater
+
+&nbsp;&nbsp;&nbsp;&nbsp; flexibility than that described here.&nbsp; PICS requires <I>precisely
+
+</I>&nbsp;&nbsp;&nbsp;&nbsp; the syntax described here -- neither the time nor the time zone may
+
+&nbsp;&nbsp;&nbsp;&nbsp; be omitted, none of the alternate formats are permitted, and
+
+&nbsp;&nbsp;&nbsp;&nbsp; the punctuation must be as specified here.</PRE>
+
+<UL>
+<PRE><B>Note:</B> The PICS-1.1 label format spec inadvertently used a date format&nbsp;
+
+that was slightly incompatible with the ISO date format. In particular,&nbsp;
+
+that spec required '.' instead of '-' as the separator between year and&nbsp;
+
+month, and between month and day. This spec corrects that error, so that
+
+it is incompatible with the PICS-1.1 label spec's date format, but&nbsp;
+
+compatible with the ISO date format.</PRE>
+</UL>
+
+<H2>
+<A NAME="OrderOfOperations"></A>General Semantics</H2>
+An application program will invoke a rule evaluator, providing a rule and
+a URL, and perhaps labels that were embedded in the document associated
+with the URL or passed in the HTTP headers along with the document associated
+with the URL. A yes (accept) or no (reject) answer is returned. The rule
+evaluator SHOULD also return the explanation string associated with the
+policy clause that determines the final answer, if such an explanation
+string is provided.
+
+<P>The <B>serviceinfo </B>clause or clauses specify how to find labels
+associated with a given URL (from one or more label bureaus or embedded
+in the document). The <B>Policy </B>clause or clauses determine whether
+an accept or reject answer is returned. Extension clauses (either required
+or optional) may cause additional labels to be collected or discarded,
+or otherwise change the meaning of a rule. The semantics of a rule are
+defined based on a user agent making a&nbsp; best-effort attempt to retrieve
+labels from all the specified sources and using all the retrieved labels
+in evaluating policy clauses. A user agent may, however, perform optimizations,
+such as consulting a local source (a cache or a CD-ROM) that provides the
+same labels as those provided at a specified URL, or not collecting labels
+at all when those labels could not possibly change the rule's result.
+
+<P><A HREF="#OrderOfOperations">Later in this document,</A> we suggest
+that implementors adopt a particular <A HREF="#OrderOfOperations">evaluation
+order.</A> Implementors should be very careful about any deviations from
+this suggested evalution order. Note that it is possible to write rules
+that are non-monotonic in the receipt of labels: as more labels are received,
+the result could flip from accept to reject and back again. In some situations,&nbsp;
+however, it may be possible to infer that additional labels can not alter
+the result of a rule: for example, the first policy clause may specify
+that a particular URL is to be accepted, based solely on its URL, regardless
+of any labels that are available. As an optimization, a user agent may
+use the policy clause(s) to determine an answer even before labels are
+available from all of the sources specifies in the serviceinfo clause(s),
+but implementors should be careful to do this only in those situations
+where the additional labels, even if they were available, could not change
+the results of the evaluation.
+<H3>
+Semantics &amp; details of individual clauses</H3>
+
+<DL>
+<DT>
+<B>Policy</B></DT>
+
+<DD>
+The Policy clause has seven defined attributes: RejectByURL, AcceptByURL,
+RejectIf, AcceptIf, RejectUnless, AcceptUnless,&nbsp; and <B>explanation</B>.
+See the section on <A HREF="#URLfilter">URL filtering</A> for an explanation
+of the first two, which accept or reject items based solely on their URLs.
+See the section on <A HREF="#FilterClauses">Label Filtering&nbsp;</A> for
+an explanation of the next four, which accept or reject items based on
+the available labels that describe them. The primary attribute is <B>explanation</B>,
+and it has no default value. Any given Policy clause MUST have exactly
+one attribute from the set of {<B>RejectIf</B>, <B>AcceptIf</B>, <B>RejectUnless</B>,
+<B>AcceptUnless, RejectByURL, AcceptByURL</B>}. It is not acceptable for
+a <B>Policy</B> clause to have more than one of these attributes. The <B>Policy</B>
+clause may be repeated multiple times in a rule to impose a set of restrictions.</DD>
+
+<DD>
+If multiple <B>Policy</B> clauses are given in a rule, the clauses are
+evaluated in the order given in the rule. Evaluation stops at the first
+clause which is satisfied, and the associated action is taken. The following
+table defines the attributes, how they are satisfied, and their meaning:</DD>
+
+<BR>&nbsp;
+<CENTER><TABLE BORDER COLS=3 WIDTH="79%" rows="5" >
+<TR>
+<TD><U><FONT COLOR="#000000">Attribute in clause</FONT></U></TD>
+
+<TD><U><FONT COLOR="#000000">Satisfied by&nbsp;</FONT></U></TD>
+
+<TD><U><FONT COLOR="#000000">Action</FONT></U></TD>
+</TR>
+
+<TR>
+<TD><B>RejectByURL</B></TD>
+
+<TD>URL matches any of the patterns specified</TD>
+
+<TD>Block document</TD>
+</TR>
+
+<TR>
+<TD><B>AcceptByURL</B></TD>
+
+<TD>URL matches any of the patterns specified</TD>
+
+<TD>Pass document</TD>
+</TR>
+
+<TR>
+<TD><B>RejectIf</B></TD>
+
+<TD><I>expression</I> = <B><I>true</I></B>&nbsp;</TD>
+
+<TD>Block document</TD>
+</TR>
+
+<TR>
+<TD><B>AcceptIf</B></TD>
+
+<TD><I>expression</I> = <B><I>true</I></B>&nbsp;</TD>
+
+<TD>Pass document</TD>
+</TR>
+
+<TR>
+<TD><B>RejectUnless</B></TD>
+
+<TD><I>expression</I> = <B><I>false</I></B>&nbsp;</TD>
+
+<TD>Block document</TD>
+</TR>
+
+<TR>
+<TD><B>AcceptUnless</B></TD>
+
+<TD><I>expression</I> = <B><I>false</I></B>&nbsp;</TD>
+
+<TD>Pass document</TD>
+</TR>
+</TABLE></CENTER>
+&nbsp;
+<DD>
+&nbsp;</DD>
+
+<DL>If none of the policy clauses is satisfied, then the document is passed.
+This is equivalent to making the final policy clause be AcceptIf "otherwise".</DL>
+</DL>
+
+<DL>
+<DT>
+<B>name</B></DT>
+
+<DD>
+This clause provides a short, human-readable name for the rule being presented.
+It is intended that these names could be shown on a user-agent's user interface,
+to show a human operator which rules are loaded, active/inactive, etc.</DD>
+
+<DD>
+There are 2 attributes, <B>rulename </B>and <B>description</B>, defined
+for the <B>name</B> clause. <B>Rulename</B> is the primary attribute for
+a <B>name</B> clause, and its value is the human-readable name of this
+rule. The value for <B>description</B> is a more-detailed analogue of <B>name</B>;
+it provides a human-readable description of the rule being presented. The
+description is intended for display in a user-agent's user interface, to
+allow a human operator to get some understanding of who created the rule,
+its semantics, etc. The exact contents of the value associated with <B>description</B>
+are left up to the rule author.</DD>
+
+<DD>
+Note that this mechanism does not provide a transparent method for supporting
+multiple national languages. This is intentionally not being addressed
+in this version of PICSRules. If you wish to produce PicsRules-1.1 rules
+in multiple languages, you will have to produce multiple copies of the
+rule - one for each target language.</DD>
+
+<DT>
+<B>source</B></DT>
+
+<DD>
+This clause gives information about where the rule came from. There are
+4 attributes defined for source: <B>sourceURL</B>, <B>creationTool</B>,
+<B>author</B>, and <B>lastModified</B>. The primary attribute is <B>sourceURL</B>.</DD>
+
+<DD>
+The <B>sourceURL</B> attribute gives the "rule's URL". It provides a location
+where a human user of this rule can go to get more information about the
+rule and/or its creator. The value of this attribute should be a URL here
+a user can find a human-readable description of this rule.</DD>
+
+<DD>
+The <B>creationTool</B> attribute gives the ability to identify the tool,
+if any, that was used to create this rule. This is analogous to the User-Agent
+string in HTTP. The value of the <B>creationTool</B> is a quoted string.
+The string should be in the format <I>toolname/version</I>, as in<I> </I>"Cool-PICS-Rule-Editor/1.04".</DD>
+
+<DD>
+The <B>author</B> attribute gives the e-mail address of the individual
+or organization who produced this rule. The value associated with this
+attribute MUST be a quoted e-mail address.</DD>
+
+<DD>
+The <B>lastModified</B> attribute gives the date and time that this rule
+was last modified. The value MUST be a <I>quoted-ISO-date</I>, as defined
+in the PICS-1.1 Label Syntax and Communication Protocols.</DD>
+
+<DT>
+<B>serviceinfo</B></DT>
+
+<DD>
+This clause specifies information about a rating service. There are 6 attributes
+defined for <B>serviceinfo</B>: <B>name</B>, <B>shortname</B>, <B>bureauURL,
+UseEmbedded, ratfile, </B>and <B>bureauUnavailable</B>. The primary attribute
+is <B>name</B>.</DD>
+
+<DD>
+The <B>name</B> attribute is the servicename URL of a rating service. Its
+value specifies the name of the service which is being described.</DD>
+
+<DD>
+The <B>shortname</B> attribute gives a shorter name to this rating service.
+The <B>shortname</B> will be used in writing filter clauses; its value
+is a string. For example, for the rating service "http://coolness.raleigh.ibm.com/ratings/V1.html",
+the <B>shortname</B> might be "Cool".</DD>
+
+<DD>
+The <B>bureauURL</B> attribute specifies the URL of a label bureau that
+has ratings from this rating service. The value for this attribute is the
+URL of a label bureau.&nbsp; This attribute MAY occur multiple times. The
+user agent MUST attempt to retrieve labels from all the URLs specified
+and use all of those labels in evaluating policies.</DD>
+
+<DD>
+The <B>UseEmbedded</B> attribute determines whether to use labels transmitted
+in the HTTP header stream along with a document or embedded in an HTML
+document using the META element. If this attribute is omitted, the default
+is to use such labels. If the attribute is supplied with the value "N",
+then labels for this service that are embedded in the document are ignored,
+as are labels trasmitted in the HTTP header stream. This may be useful
+if the writer of the rule does not trust authors of documents to be truthful
+in the labels they supply, and more reliable labels are available from
+a label bureau.</DD>
+
+<DD>
+The <B>bureauUnavailable</B> attribute specifies what to do when none of
+the label bureau(s) listed in bureauURL attributes can be contacted. The
+defined values for this attribute are "PASS" and "FAIL", which cause the
+rule to return the corresponding value, regardless of what other labels
+are found.</DD>
+
+<DD>
+The <B>ratfile</B> attribute presents the machine-readable rating system
+description (also know as "RAT file") that is used by this rating service.
+This may be specified in one of two ways: the value may be a quoted string
+which contains the entire machine-readable service description, or it may
+be of the syntax "[<I>RATFile-URL</I>]", where <I>RATFile-URL</I> is the
+URL of the rating system description; a user-agent SHOULD assume that dereferencing
+this URL will produce a document of type <TT>application/pics-service</TT>.
+There is no default value for the <B>ratfile</B> attribute. If the quoted
+string contains the machine-readable service description, then it MUST
+be escaped as mentioned <A HREF="#S_Expressions">above</A>.</DD>
+
+<DT>
+<B>opt-extension-clause</B></DT>
+
+<DD>
+<B>opt-extension-clause</B> and <B>req-extension-clause</B> are the extension
+mechanisms in PICSRules; they are modeled after the extension mechanism
+in the PICS label format. More information on the extension mechanism is
+given <A HREF="#ExtensionMechanism">below</A>.</DD>
+
+<DD>
+The <B>opt-extension-clause</B> has two defined attributes: <B>extension-name
+</B>and <B>shortname</B>. The value of the <B>extension-name</B> attribute
+specifies the name of an extension that will be used by this rule. The
+name of the extension is the <I>quotedURL</I>; this URL should point to
+a human-readable description of this extension. URLs are used for extension
+names to insure uniqueness without requiring a central naming body. The
+value of the <B>shortname </B>attribute is a quoted string, but MUST use
+only valid attribute name characters (a-z, A-Z, 0-9). The shortname is
+used as a prefix of attribute names, to identify attributes defined by
+this extension.</DD>
+
+<DD>
+If a user-agent receives a rule which contains an <B>optextension</B> which
+it does not recognize, the user-agent should process the rule, ignoring
+any clauses it does not recognize. This means that any optional extensions
+MUST use the attribute-value syntax given <A HREF="#S_Expressions">above</A>,
+so as to not break existing parsers. Note that declaring the use of an
+optional extension may appear to be redundant, as unrecognized attribute-value
+pairs are discarded by user-agents. The purpose of the optextension construct
+is for use as a documentation mechanism. User-agents MAY also display the
+names of optional extensions used by a rule, asking the user for confirmation,
+before making use of a rule.</DD>
+
+<DT>
+<B>req-extension-clause</B></DT>
+
+<DD>
+This clause has two defined attributes: <B>extension-name </B>and <B>shortname</B>.
+The value of the <B>extension-name</B> attribute specifies the name of
+an extension that will be used by this rule. The name of the extension
+is the <I>quotedURL</I>; this URL should point to a human-readable description
+of this extension. URLs are used for extension names to insure uniqueness
+without requiring a central naming body. The value of the <B>shortname
+</B>attribute is a quoted string, but MUST use only valid attribute name
+characters (a-z, A-Z, 0-9). The shortname is used as a prefix of attribute
+names, to identify attributes defined by this extension.</DD>
+
+<DD>
+If a user-agent is asked to process a request about the acceptability of
+a URL, using a rule which contains a <B>req-extension-clause </B>which
+the user agent does not recognize, the user agent should signal an error.</DD>
+
+<DT>
+<B>verMajor</B></DT>
+
+<DD>
+The major version number of PICSRules which this rule conforms to. This
+version of PICSRules uses '1' as its major version number.</DD>
+
+<DT>
+<B>verMinor</B></DT>
+
+<DD>
+The minor version number of PICSRules which this rule conforms to. This
+version of PICSRules uses '1' as its minor version number.</DD>
+</DL>
+
+<H4>
+Restrictions</H4>
+The following semantic restrictions are imposed on rules:
+<OL>
+<LI>
+The <B>name</B>, and <B>source</B> clauses MUST NOT appear more than once
+each in a PICSRules rule.</LI>
+
+<LI>
+The <B>optextension</B>, <B>reqextension</B>, and <B>serviceinfo</B> clauses
+MAY appear more than once in a PICSRules rule.</LI>
+
+<LI>
+Each <B>Policy</B> clause MUST have exactly one attribute from the set
+of {<B>AcceptIf</B>, <B>RejectIf</B>, <B>AcceptUnless</B>, <B>RejectUnless,
+AcceptByURL, RejectByURL</B>}.</LI>
+
+<LI>
+A rule MAY contain any number of <B>Policy</B> clauses.</LI>
+
+<LI>
+A <B>Policy </B>clause MUST NOT contain more than one explanation attribute.</LI>
+
+<LI>
+The shortname attribute of an extension clause or a service clause takes
+a quoted string as a value, but that string MUST include only characters
+that are acceptable for use in attribute names.</LI>
+
+<LI>
+A PICSRules parser MUST maintain the order of the values (or value-lists)
+given for the attributes in a rule.</LI>
+</OL>
+
+<H3>
+URL-Based Filtering<A NAME="URLfilter"></A></H3>
+In policy clauses, the AcceptByURL and RejectByURL attributes employ the
+URLpattern element, whose BNF is given below.
+<PRE><B>URLpattern :: </B><I>internet-pattern</I> | <I>other-pattern</I></PRE>
+
+<PRE><B>internet-pattern :: </B><I>internet-scheme</I> '://'&nbsp;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [<I>user</I> '@'] <I>hostoraddr</I> [':' <I>port</I>] ['/' <I>pathmatch</I>]</PRE>
+
+<PRE><B>internet-scheme :: </B>'*' | 'ftp' | 'http' | 'gopher' | 'nntp' |
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'irc' | 'prospero' | 'telnet'</PRE>
+
+<PRE><B>user ::</B> ['*' | '%*'] <I>notquotechar</I>* ['*' | '%*']
+
+
+
+<B>hostoraddr ::</B> ['*' | '%*'] <I>host </I>| <I>ipwild </I>['!' <I>bitlength</I>]
+
+
+
+<B>ipwild ::</B> <I>ipcomponent </I>'.' <I>ipcomponent </I>'.' <I>ipcomponent </I>'.' <I>ipcomponent</I></PRE>
+
+<PRE><B>ipcomponent :: </B>integer between '0' and '255' inclusive</PRE>
+
+<PRE><B>bitlength ::</B> integer between '0' and '32' inclusive
+
+
+
+<B>host ::</B> substring of a fully qualified domain name as described&nbsp;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; in Section 3.5 of [RFC1034]</PRE>
+
+<PRE><B>port ::</B> '*' | <I>integerorwild </I>[ '-' <I>integerorwild </I>]</PRE>
+
+<PRE><B>pathmatch :: </B>['*' | '%*'] <I>notquotechar</I>* ['*' | '%*']</PRE>
+
+<PRE><B>integerorwild :: </B><I>digit+</I> | '*'</PRE>
+
+<PRE><B>digit :: </B>'0' - '9'
+
+
+
+<B>other-pattern :: </B><I>scheme : </I>['*' | '%*'] <I>notquotechar</I>* ['*' | '%*']</PRE>
+
+<PRE><B>scheme :: </B>'*' | <I>schemechar</I>+</PRE>
+
+<PRE><B>schemechar :: </B>'a' - 'z' | 'A' - 'Z' | <I>digit</I> | '+' | '.' | '-'&nbsp;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (as specified in [RFC1738])</PRE>
+A RejectbyURL policy clause causes the overall rule to "reject" if the
+URL match evaluates to TRUE. Similarly, an AcceptbyURL policy clause causes
+the overall rule to "accept" if the URL match evaluates to TRUE. In either
+case, the explanation associated with policy clause is returned. If a list
+of URL patterns is provided, the URL match evaluates to TRUE if any one
+of the patterns matches. If the URL match evaluates to FALSE, the policy
+clause is ignored and evaluation continues with the next policy clause.
+
+<P>When comparing a URLpattern to a URL, the rule interpreter MUST NOT
+unencode the URL (e.g., do not convert %2F&nbsp; to&nbsp; /). If the pattern
+can be interpreted as an internet-pattern, then the pattern is divided
+into its component parts and the URL matches the pattern if a match occurs
+on every component that is included in the pattern.
+<DT>
+&nbsp; <B>scheme</B></DT>
+
+<DD>
+'*' for the pattern matches every scheme. Otherwise, an exact string match
+is required, but the&nbsp; comparison is case-insensitive. The scheme component
+MUST NOT be omitted from the pattern.</DD>
+
+<DT>
+<B>user</B></DT>
+
+<DD>
+'*' at the beginning or end of the pattern matches any number of characters
+in the URL string. '%*' at the beginning or end of the pattern matches
+the single character '*' in the URL string. Characters in the middle of
+the pattern must match exactly the characters in the URL string; this comparison
+is case-sensitive. A user component of "*" in the pattern also matches
+URLs that omit the user component. If the user component is omitted from
+the pattern, there is a match only if the user component is also omitted
+from the URL.</DD>
+
+<DT>
+<B>password</B></DT>
+
+<DD>
+PICSRules patterns do not specify passwords. A pattern matches URLs that
+specify any password, as well as URLs that omit the password component.</DD>
+
+<DT>
+<B>ipwild</B></DT>
+
+<DD>
+If the hostoraddress in the pattern is an ipaddress, then the corresponding
+host component of the URL is first resolved into a set of IP addresses.
+The pattern matches if it matches any of the IP addresses. If ! and a bitlength
+is specified, both the pattern and the URL are converted from decimal into
+binary notation and the first bitlength bits of the strings are compared.
+Thus, the '!' has the same semantics that '/' normally has when specifying
+subnets or CIDR blocks: we use ! because / could be misinterpreted as the
+delimiter after which the scheme appears. 18.23.7.22!16 is equivalent to
+18.23.0.0!16, because comparisons will be done only on the first 16 bits.</DD>
+
+<DT>
+<B>host</B></DT>
+
+<DD>
+'*' at the beginning of the pattern matches any number of characters in
+the URL string. '%*' at the beginning of the pattern matches the single
+character '*' in the URL string. Subsequent characters in the pattern must
+exactly match the remaining characters in the URL string; this comparison
+is case-insensitive.&nbsp; Note that if the pattern specifies a host name
+(or a host name with wildcards), it does not match a URL that specifies
+an IP address, even if the host name in the pattern would resolve to the
+IP address in the URL. This avoids the need to perform expensive reverse
+DNS lookups based on IP addresses in URLs. Either a host or&nbsp; an ipwild
+component MUST be specified in the URL pattern.</DD>
+
+<DT>
+<B>port</B></DT>
+
+<DD>
+If the pattern specifies two numbers, it matches against any port number
+in that range. For example, if the pattern's port component is "80-82",
+it would match a URL whose port is 80, 81, or 82. The wildcard * as part
+of a range indicates an extreme value. That is, if the pattern's port is
+"*-82", it matches all ports less than or equal to 82; if the pattern's
+port is "80-*", it matches all ports greater than or equal to 80. If the
+pattern's port is simply "*", it matches URLs with any port number, including
+URLs that omit the port number component. If the pattern's port is omitted,
+it matches only URLs that also omit the port number.</DD>
+
+<DT>
+<B>path</B></DT>
+
+<DD>
+'*' at the beginning or end of the pattern matches any number of characters
+in the URL string. '%*' at the beginning or end of the pattern matches
+the single character '*' in the URL string. Characters in the middle of
+the pattern must match exactly the characters in the URL string; this comparison
+is case-sensitive. A path component of "*" in the pattern also matches
+URLs that omit the path component. If the path component is omitted from
+the pattern, there is a match only if the path component is also omitted
+from the URL.</DD>
+
+
+<P><B>WARNING: </B>if a component is not specified in the pattern, the
+pattern matches only URLs that omit the pattern. It is necessary to specify
+'*' for pattern components if the intention is to ignore that component
+of URLs. For example, to block access to all URLs contain the string "buy"
+in the pathname, the correct pattern is "*://*@*:*/*buy*". While it might
+seems natural to write the pattern "*://*/*buy*" or even "*buy*", the first
+would match only URLs that omit the username and port number, and the second
+is simply not a valid pattern.
+
+<P>If the pattern can not be interpreted as an Internet scheme, it is divided
+into a scheme name and a scheme-specific part. '*' for the scheme name
+matches any URL's scheme; otherwise exact string matching is required;
+this comparison is case-insensitive. '*' at the beginning or end of the
+scheme-specific part of the pattern matches any number of characters in
+the URL string. '%*' at the beginning or end of the pattern matches the
+single character '*' in the URL string. Characters in the middle of the
+scheme-specific part of the pattern must match exactly the characters in
+the URL string; this comparison is case-sensitive.
+<BR>&nbsp;
+<BR><B>NOTE:</B> It is not possible to write a URLpattern that matches
+exactly the URL string characters '%*'. This is not a limitation of the
+pattern matching language, however, because, in a valid URL, the '%' character
+must be followed by two hex digits. Thus, there are no URL strings containing
+the character sequence '%*'.
+<H4>
+Known Limitations</H4>
+Since %-encoded characters in URLs are not unencoded before comparison,
+a server may choose to treat two URLs as synonyms that the PICS rule evaluator
+will not treat as synonyms. That is, the URLs &lt;http://www.student1.mit.edu/sex>,
+&lt;http://www.student1.mit.edu/%73%65%78> and
+<BR>&lt;http://www.student1.mit.edu/se%78> might all cause the server to
+send back the same page, if the server follows a rule of unencoding the
+URL path (%73 becomes 's', %65 becomes 'e' and %78 becomes 'x').
+
+<P>Unfortunately, the alternative matching rule, of always unencoding URLs
+before comparing to the pattern, can cause ambiguities. For example, in
+HTTP, ? is reserved as the query string delimiter; any naturally occurring
+? is encoded as %3F. After unencoding it would no longer be possible to
+distinguish a query string delimiter from a naturally occurring ?. We felt
+it was better to make the pattern matching precise, at the expense of missing
+some synonyms.
+
+<P>Another, similar limitation is that IP addresses in URLs are not converted
+into host names for comparison to rule patterns. This means that host name-based
+patterns will miss matching against certain synonymous IP-address based
+URLs. The pattern "http://*.mit.edu" will match against fewer URLs than
+the pattern "http://18.0.0.0!8". The latter pattern will match against
+web site ending in mit.edu, because they all will resolve to ip addresses
+beginning with 18. The reason that URLs containing IP addresses will not
+match against patterns that specify domain names is that performing a reverse
+lookup of the IP address in the URL is too expensive an operation to perform
+routinely. Hence, whenever it is practical to do so, rules may want to
+specify IP address matching rather than host name maching; beware, however,
+that this may require updating of the rule whenever a host name switches
+to a different IP address.
+<H3>
+Label-Based Filtering<A NAME="FilterClauses"></A></H3>
+The attributes <B>AcceptIf</B>, <B>RejectIf</B>, <B>AcceptUnless</B>, and
+<B>RejectUnless</B> to the <B>Policy</B> clause all take a policy-expression
+as an argument. It is an expression operating on various labels; this section
+defines the syntax and semantics for those expressions.
+<PRE><B>policy-expression</B> :: <I>simple-expression</I> |&nbsp;
+
+<I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; or-expression</I> |&nbsp;
+
+<I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; and-expression</I> |&nbsp;
+
+<I>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; degenerate-expression
+
+
+
+</I><B>simple-expression</B> :: '(' <I>service</I> ['.' <I>category</I> [<I>op</I> <I>constant</I> ] ] ')'
+
+
+
+<B>service</B> :: <I>any <B>shortname</B> defined in a serviceinfo clause within this rule</I></PRE>
+
+<PRE><B>category</B> :: <I>transmit-name-char</I>+ ['/' <I>category</I>]
+
+&nbsp;&nbsp;&nbsp; Note: as in the [<A HREF="#References">PicsLabels</A>] spec, if the rating service defines&nbsp;
+
+&nbsp;&nbsp;&nbsp; hierarchically nested categories, the outermost category name goes&nbsp;
+
+&nbsp;&nbsp;&nbsp; at the left, followed by a slash, then the next category name, etc.</PRE>
+
+<PRE><B>transmit-name-char ::</B> <I>alphanumpm </I>| '.' | '$' | ',' | ';' | ':'&nbsp;
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | '&amp;' | '=' | '?' | '!' | '*' | '~' | '@'
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | '#' | '_' | '%' <I>hex hex
+
+
+
+</I><B>alphanumpm :: </B>'A' | ... | 'Z' | 'a' | ... | 'z' | '0' | ... | '9' | '+' | '-'</PRE>
+
+<PRE><B>hex ::</B> '0' | ... | '9' | 'A' | ... | 'F' | 'a' | .... | 'f'</PRE>
+
+<PRE><B>op</B> :: '>' | '&lt;' | '=' | '>=' | '&lt;='
+
+
+
+<B>constant</B> :: [<I>sign</I>] <I>alphanum</I>* ['.' <I>alphanum</I>*]
+
+
+
+<B>or-expression</B> :: '(' <I>policy-expression</I> [<I>or policy-expression]+</I> ')'
+
+
+
+<B>or</B> :: 'or'&nbsp;
+
+
+
+<B>and-expression</B> :: '(' <I>policy-expression</I> [<I>and policy-expression]+</I> ')'
+
+
+
+<B>and</B> :: 'and'&nbsp;
+
+
+
+<B>sign</B> :: '-'
+
+
+
+<B>degenerate-expression</B> :: 'otherwise'</PRE>
+When evaluating a clause, the user-agent may use zero, one, or more labels
+from a given rating service (for more details, see the <A HREF="#ControlFlow">control
+flow</A> section). A simple-expression evaluates to true if <I>any</I>
+available label from the specified service satisfies the condition of the
+expression. Intuitively, a rule evaluator will try to prove that an expression
+is satisfied, using any available labels as evidence.
+
+<P>We must deal with the situation where a simple-expression calls for
+a value from a label, and either no label is available, or the available
+labels do not have values for the specified category. In those situations,
+the simple-expression evaluates to <B><I>false</I></B>. This leads to an
+intuitive semantics: if a simple-expression has no associated label available,
+that expression cannot contribute evidence toward proving the claim made
+by the expression.
+
+<P>Simple-expressions, as defined above, can use any types of operators
+on any types of data. More specifically, the semantics of expression evaluation
+are as follows:
+<UL>
+<LI>
+The <B>degenerate-expression</B> <TT>otherwise</TT> evaluates to <B><I>true</I></B>.</LI>
+
+<LI>
+All of the operators defined in the <B>op</B> clause are valid on numeric,
+single-valued categories. The semantics of each of the operators should
+be obvious by inspection; the result of applying the operator will be a
+Boolean value, <B><I>true</I></B> or <B><I>false.</I></B></LI>
+
+<LI>
+The only operator defined for string-valued&nbsp; categories is =.</LI>
+
+<LI>
+When the results of simple-expressions are combined with <TT>and</TT> and
+<TT>or</TT>, Boolean logic is to be used.</LI>
+
+<LI>
+For categories which have the <TT>multivalue true</TT> attribute set, a
+simple-expression is <B><I>true</I></B> if <I>any</I> of the values in
+the label satisfy the condition given. For example, if a label contains
+a value <TT>(s (2 4))</TT>, a simple-expression <TT>(Service.s &lt; 3)</TT>
+would evaluate to <B><I>true</I></B>, as the value 2 from the label satisfies
+the condition - even though the value 4 does not.</LI>
+
+<LI>
+A simple-expression containing only a <I>service</I> (i.e., without a <I>category</I>
+or <I>op constant</I>) asserts the existence of a label from the rating
+service mentioned. It evaluates to <B><I>true</I></B> if a valid label
+is available from the rating service mentioned by <I>service</I>, and <B><I>false</I></B>
+if no valid label is available.</LI>
+
+<LI>
+A simple-expression containing a <I>service</I> and a <I>category</I>,
+but no operator (no <I>op constant</I>) asserts the existence of a label
+containing the given category, from the rating service mentioned. It evaluates
+to <B><I>true</I></B> if a valid label is available from the rating service
+mentioned by <I>service</I>, and that label contains at least one value
+for the given <I>category</I>. The expression evaluates to false otherwise.</LI>
+</UL>
+Early drafts of PICSRules-1.0 included a <TT>!=</TT> operator, which is
+intuitively useful. It was removed, because, in the presence of either
+zero or multiple values, the intuitive semantics for <TT>!= </TT>are inconsistent
+with the semantics for other operators. For example, suppose that a label
+includes <TT>(s (2 3))</TT>, indicating values on the s dimension of both
+2 and 3. This label would satisfy the policy-expression <TT>(Service.s
+&lt; 3</TT>), because there exists a value less than 3. The intuitive semantics
+for <TT>!=, </TT>however, is to require that <I>all</I> the values be unequal
+to three. We found that smart people could easily get confused when mixing
+the existential quantification (<I>there exists</I> a value less than 3)
+with universal quantification (<I>all values</I> are unequal to 3). Moreover,
+<TT>"x != 3"</TT> is normally a synonym for <TT>"((x &lt; 3) or (x > 3))".
+</TT>But in the presence of multiple values, this would not hold. We believed
+that it was worse to have an operator with non-intuitive semantics that
+to not have the operator at all, so it was removed from PICSRules-1.1.
+
+<P>The careful reader will also note the lack of the Boolean <TT>not</TT>
+operator, as well as the lack of universally quantified operators such
+as <TT>max,</TT> <TT>min, </TT>and <TT>forall</TT>. These omissions are
+deliberate, and for similar reasons to the omission of <TT>!=</TT>. Given
+that the available labels may provide either no values or multiple values
+for particular categories, rules become very difficult for people to understand
+when such operators are allowed in an unrestricted way. We have restricted
+the use of negation and universal quantification to appear only at the
+top-level, using the attributes <B>AcceptIf, AcceptUnless, RejectIf, </B>and<B>
+RejectUnless</B>, as described below. Our restricted language still has
+full expressiveness, however, by taking advantage of the fact that "forall
+x, g(x) holds" is mathematically equivalent to "there does not exist x
+such that g(x) does not hold". For example, suppose one wants to accept
+any URL so long as <I>all </I>the labels agree on an s-value equal to three.
+The policy clause would be:
+<BR><TT>Policy (AcceptUnless "(Service.s &lt; 3) or (Service.s > 3)" ).</TT>
+<BR>&nbsp;
+<H2>
+<A NAME="ControlFlow"></A>Control Flow</H2>
+
+<DL>
+<DT>
+The rule syntax and semantics given above define what can be placed in
+a rule, and the meaning of those constructs. In order to process these
+rules, a user-agent SHOULD adopt an internal data-flow as described here;
+this will ease the implementation of expected extensions to PICSRules,
+when they become formalized.</DT>
+
+<DT>
+The standard user-agent which processes PICSRules rules SHOULD have four
+significant components: the <B>rule parser</B>, the <B>label source</B>,
+<B>label validators</B>, and a <B>rule evaluator</B>. Their roles are:</DT>
+
+<DT>
+<B>Rule parser</B></DT>
+
+<DD>
+Parses PICSRules rules, possibly loaded from saved configuration information
+or over a network. In user-agents which may store multiple rules, such
+as proxy servers, this component is also responsible for deciding which
+rule to use for each specific request; subsequent modules assume that only
+one rule is being applied.</DD>
+
+<DT>
+<B>Label source</B></DT>
+
+<DD>
+This component is responsible for finding labels. It takes as input information
+from the rule being evaluated; it MAY use this information to contact label
+bureaus for labels. It MAY also find labels embedded in HTML documents
+or transmitted in datastreams (HTTP, NNTP) which support label transmission.
+The output of this component is the set of labels which apply to the document
+in question. Note that as there are multiple potential label sources, the
+label source component may produce more than one label from a given service
+for a given document. However, the label source component <I>is</I> responsible
+for choosing the "most applicable" label when that is appropriate (i.e.,
+picking specific labels over generic ones, and picking the most specific
+generic label if multiple generic labels are available). The label source
+will need to specify to the other components not only the label itself,
+but also how the label was obtained (embedded in content, from a label
+bureau, etc).</DD>
+
+<DT>
+<B>Label validators</B></DT>
+
+<DD>
+Label validators are responsible for determining which labels are acceptable.
+No validators are defined in the PICSRules language, but we expect extensions
+to be defined. For example, a label validator may be defined which rejects
+labels that lack an authorized digital signature. Another possible validator
+would examine whether a label's author has been vouched for by a trusted
+third party.</DD>
+
+<DT>
+<B>Rule evaluator</B></DT>
+
+<DD>
+The rule evaluator takes as input the labels that pass any validators,
+and the Policy clauses that the rule parser found in the rule. It evaluates
+the permission and prohibition expressions and produces a pass/fail decision.</DD>
+</DL>
+
+<H2>
+<A NAME="ExtensionMechanism"></A>Extension mechanism</H2>
+
+<DL>
+<DT>
+Any well-designed network protocol provides a mechanism for extension.
+Here we present the extension mechanism provided with PICSRules.</DT>
+</DL>
+
+<H3>
+Background</H3>
+PICSRules is structured as a nested set of attribute-value pairs. Unrecognized
+attribute keywords are ignored by user-agents, and the associated values
+can be discarded by a PICSRules parser, as all values will be in a known
+syntax. The basic mechanism for extending PICSRules is to define new clauses
+and/or attribute-value pairs, their context, and their meaning. All new
+attribute-value pairs will be associated with a named extension. Names
+of extensions are URLs, and hence globally distinct. When used in a PICSRule,
+extension attribute names are preceded by a shortname for the extension
+that defines the attribute, so as to avoid potential attribute naming conflicts.
+<H3>
+Details</H3>
+To define a new extension:
+<OL>
+<LI>
+Determine if the extension is optional or required. Optional extensions
+<B>may</B> be ignored by user-agents which don't recognize the extension.
+In order for an extension to be "optional", the semantics of a rule which
+uses this extension <B>must not</B> be modified if the extension is ignored.</LI>
+
+<LI>
+Name the extension. Extensions <B>must</B> have a unique URL assigned to
+them. The URL <B>should</B> point to a human-readable document which explains
+the extension in detail. The URL <B>must</B> be in a domain controlled
+by the extension's creator, in order to insure uniqueness of extension
+names.</LI>
+
+<LI>
+If an extension needs new clause names, define, using the new-clause-name
+attribute, the extension-clause-name that will be used for each new clause
+defined by this extension. Each extension SHOULD define no more than one
+new clause.</LI>
+
+<LI>
+Determine the new attribute-value pairs that this extension will define,
+and which clauses those attribute-value pairs may appear in.</LI>
+
+<LI>
+Define the semantics of each new attribute-value pair defined by this extension.
+In particular, if this extension overrides existing parts of PICSRules,
+then this behavior must be spelled out exactly. If an extension overrides
+the existing semantics of PICSRules, it should be a required extension
+(using <I>reqextension </I>rather than <I>optextension</I>).</LI>
+</OL>
+
+<HR width="50%">
+
+<P>Here's a simple example of a PICSRules rule that uses an optional extension:
+<PRE>&nbsp;1 (PicsRule-1.1
+
+&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp; (
+
+&nbsp;3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ServiceInfo (
+
+&nbsp;4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "http://www.coolness.org/ratings/V1.html"
+
+&nbsp;5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; shortname "Cool"&nbsp;
+
+&nbsp;6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; bureauURL "http://labelbureau.coolness.org/Ratings"
+
+&nbsp;7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )
+
+&nbsp;8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Policy (AcceptIf "((Cool.Coolness &lt; 3) or (Cool.Graphics &lt; 3))" )
+
+&nbsp;9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Policy (RejectIf "otherwise")
+
+10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; optextension (
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "http://www.si.umich.edu/~presnick/pics/extensions/PRsample.htm"&nbsp;
+
+11&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; shortname "extension1")
+
+12&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; extension1.SampleAttribute (
+
+13&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; UseExpired "YES"&nbsp;
+
+14&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GroupFile "/etc/ics.grp"
+
+15&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )
+
+16&nbsp;&nbsp;&nbsp;&nbsp; )
+
+17 )</PRE>
+This example makes use of an optional extension named "http://www.si.umich.edu/~presnick/pics/extensions/PRsample.htm".
+That extension defines the keyword <TT>SampleAttribute </TT>. User-agents
+which don't understand this extension can simply ignore the <TT>extension1.SampleAttribute</TT>
+clause and its attribute-value pairs (lines 12-14).
+
+<P>Note that there is only one "level" to <I>declaring</I> extensions,
+but attribute-value pairs defined by extensions may appear anywhere within
+a PICSRules rule. That is, all extensions should declare themselves with
+an <B>optextension</B> or <B>reqextension</B> clause within a <B>rule-clause</B>,
+but the attributes defined by an extension may appear nested several layers
+down within a rule.
+<H2>
+<A NAME="References"></A>References</H2>
+
+<DL>
+<DT>
+[PicsLabels]</DT>
+
+<DD>
+Jim Miller, editor. "PICS Label Distribution Label Syntax and Communication
+Protocols". <A HREF="http://www.w3.org/PICS/labels.html">http://www.w3.org/PICS/labels.html</A>.</DD>
+
+<DT>
+[PicsServices]</DT>
+
+<DD>
+Jim Miller, editor. "Rating Services and Rating Systems (and Their Machine
+Readable Descriptions)". <A HREF="http://www.w3.org/PICS/services.html">http://www.w3.org/PICS/services.html</A>.</DD>
+
+<DT>
+[RFC1034]</DT>
+
+<DD>
+Mockapetris, P., "Domain Names - Concepts and Facilities", STD 13, RFC
+1034, USC/Information Sciences Institute, November 1987.&nbsp; <A HREF="http://ds.internic.net/rfc/rfc1034.txt">http://ds.internic.net/rfc/rfc1034.txt</A></DD>
+
+<DT>
+[RFC1123]</DT>
+
+<DD>
+R. Braden, editor. "Requirements for Internet Hosts -- Application and
+Support". <A HREF="http://ds.internic.net/rfc/rfc1123.txt">http://ds.internic.net/rfc/rfc1123.txt</A>.</DD>
+
+<DT>
+[RFC1738]</DT>
+
+<DD>
+Tim Berners-Lee et al, "Uniform Resource Locators". <A HREF="http://ds.internic.net/rfc/rfc1738.txt">http://ds.internic.net/rfc/rfc1738.txt</A>.</DD>
+
+<DT>
+[RFC2070]</DT>
+
+<DD>
+F. Yergeau, G. Nicol, G. Adams, and M. Duerst. "Internationalization of
+the Hypertext Markup Language". <A HREF="http://ds.internic.net/rfc/rfc2070.txt">http://ds.internic.net/rfc/rfc2070.txt</A>.</DD>
+
+<DT>
+[RFC822]</DT>
+
+<DD>
+David H. Crocker, editor. "Standard for the Format of ARPA Internet Text
+Messages". <A HREF="http://ds.internic.net/rfc/rfc822.txt">http://ds.internic.net/rfc/rfc822.txt</A>.</DD>
+
+<DT>
+[UNICODE]</DT>
+
+<DD>
+The Unicode Consortium, "The Unicode Standard -- Worldwide Character Encoding
+-- Version 1.0", Addison- Wesley, Volume 1, 1991, Volume 2, 1992, and Technical
+Report #4, 1993.</DD>
+
+<DT>
+[UTF-8]</DT>
+
+<DD>
+ISO/IEC 10646-1:1993 AMENDMENT 2 (1996). UCS Transformation Format 8 (UTF-8).</DD>
+</DL>
+
+<H2>
+Acknowledgements</H2>
+We thank the following for their assistance in writing this document; without
+their help, none of this would have been possible. Special thanks go to
+David Shapiro, whose <A HREF="http://www.w3.org/PICS/refcode/Parser/">parsing
+code</A> made it possible to test changes in the syntax and examples as
+we made them.
+<PRE>Scott Berkun, Microsoft
+
+Jonathan Brezin, IBM
+
+Yang-hua Chu, MIT
+
+Lorrie Cranor, AT&amp;T
+
+Jon Doyle, MIT
+
+Ghirardelli Chocolate Co.
+
+Brian LaMacchia, AT&amp;T
+
+Breen Liblong, NetShepherd
+
+Jim Miller, W3C
+
+Mary Ellen Rosen, IBM
+
+Rick Schenk, IBM
+
+Bob Schloss, IBM
+
+David Shapiro, MIT
+
+Ray Soular, SafeSurf</PRE>
+</DIV>
+</DIV>
+
+<A href="http://www.w3.org/Consortium/Legal/ipr-notice.html#Copyright">
+Copyright</A> &nbsp;&copy;&nbsp; 1997 <A href="http://www.w3.org">W3C</A>
+(<A href="http://www.lcs.mit.edu">MIT</A>,
+<A href="http://www.inria.fr/">INRIA</A>,
+<A href="http://www.keio.ac.jp/">Keio</A> ), All Rights Reserved. W3C
+<A href="http://www.w3.org/Consortium/Legal/ipr-notice.html#Legal Disclaimer">liability,</A>
+<A href="http://www.w3.org/Consortium/Legal/ipr-notice.html#W3C Trademarks">trademark</A>,
+<A href="http://www.w3.org/Consortium/Legal/copyright-documents.html">document
+use </A>and
+<A href="http://www.w3.org/Consortium/Legal/copyright-software.html">software
+licensing </A>rules apply.
+</BODY>
+</HTML>

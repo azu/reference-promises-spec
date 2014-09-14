@@ -1,0 +1,339 @@
+<!-- http://www.w3.org/TR/sparql11-results-json/ -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="EN" xml:lang="EN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>SPARQL 1.1 Query Results JSON Format</title><style type="text/css">
+@import url("local.css");
+
+code           { font-family: monospace; }
+
+div.constraint,
+div.issue,
+div.note,
+div.notice     { margin-left: 2em; }
+
+ol.enumar      { list-style-type: decimal; }
+ol.enumla      { list-style-type: lower-alpha; }
+ol.enumlr      { list-style-type: lower-roman; }
+ol.enumua      { list-style-type: upper-alpha; }
+ol.enumur      { list-style-type: upper-roman; }
+
+
+div.exampleInner pre { margin-left: 1em;
+                       margin-top: 0em; margin-bottom: 0em}
+div.exampleOuter {border: 4px double gray;
+                  margin: 0em; padding: 0em}
+div.exampleInner { background-color: #d5dee3;
+                   border-top-width: 4px;
+                   border-top-style: double;
+                   border-top-color: #d3d3d3;
+                   border-bottom-width: 4px;
+                   border-bottom-style: double;
+                   border-bottom-color: #d3d3d3;
+                   padding: 4px; margin: 0em }
+div.exampleWrapper { margin: 4px }
+div.exampleHeader { font-weight: bold;
+                    margin: 4px}
+
+em.rfc2119 { text-transform: lowercase;
+             font-variant: small-caps;
+             font-style: normal; }
+</style><link rel="stylesheet" type="text/css" href="http://www.w3.org/StyleSheets/TR/W3C-REC.css" /></head><body><div class="head"><p><a href="http://www.w3.org/"><img src="http://www.w3.org/Icons/w3c_home" alt="W3C" height="48" width="72" /></a></p>
+<h1><a name="title" id="title"></a>SPARQL 1.1 Query Results JSON Format</h1>
+<h2><a name="w3c-doctype" id="w3c-doctype"></a>W3C Recommendation 21 March 2013</h2><dl><dt>This version:</dt><dd>
+      <a href="http://www.w3.org/TR/2013/REC-sparql11-results-json-20130321/">http://www.w3.org/TR/2013/REC-sparql11-results-json-20130321/</a>
+    </dd><dt>Latest version:</dt><dd>
+      <a href="http://www.w3.org/TR/sparql11-results-json/">http://www.w3.org/TR/sparql11-results-json/</a>
+    </dd><dt>Previous version:</dt><dd><a href="http://www.w3.org/TR/2012/PR-sparql11-results-json-20121108/">http://www.w3.org/TR/2012/PR-sparql11-results-json-20121108/</a></dd><dt>Editor:</dt><dd>Andy Seaborne, The Apache Software Foundation</dd><dt>Previous Editors:</dt><dd>Kendall Grant Clark, UMD Mindswap</dd><dd>Lee Feigenbaum, IBM</dd><dd>Elias Torres, IBM</dd></dl><p>Please refer to the <a href="http://www.w3.org/2013/sparql-errata#sparql11-results-json"><strong>errata</strong></a> for this document, which may
+      include some normative corrections.</p><p>See also <a href="http://www.w3.org/2003/03/Translations/byTechnology?technology=sparql11-results-json"><strong>translations</strong></a>.</p><p class="copyright"><a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2013 <a href="http://www.w3.org/"><acronym title="World Wide Web Consortium">W3C</acronym></a><sup>®</sup> (<a href="http://www.csail.mit.edu/"><acronym title="Massachusetts Institute of Technology">MIT</acronym></a>, <a href="http://www.ercim.eu/"><acronym title="European Research Consortium for Informatics and Mathematics">ERCIM</acronym></a>, <a href="http://www.keio.ac.jp/">Keio</a>, <a href="http://ev.buaa.edu.cn/">Beihang</a>), All Rights Reserved. W3C <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply.</p></div><hr /><div>
+<h2><a name="abstract" id="abstract"></a>Abstract</h2><p>
+        <a href="http://www.w3.org/TR/sparql11-query/">SPARQL</a> is a set of standards for the
+        query and update of RDF data, along with ways to access such data over the web.  
+        This document describes the representation of SELECT and ASK query results using 
+        <a href="http://www.ietf.org/rfc/rfc4627.txt">JSON</a>.
+      </p></div><div>
+<h2><a name="status" id="status"></a>Status of This Document</h2><h4 id="may-be">May Be Superseded</h4><p><em>This section describes the status of this document at the time of its publication. Other documents may supersede this document. A list of current W3C publications and the latest revision of this technical report can be found in the <a href="http://www.w3.org/TR/">W3C technical reports index</a> at http://www.w3.org/TR/.</em></p><h4 id="related">Set of Documents</h4><p>This document is one of eleven SPARQL 1.1 Recommendations produced by the <a href="http://www.w3.org/2001/sw/DataAccess/">SPARQL Working Group</a>: </p><ol><li><a href="http://www.w3.org/TR/2013/REC-sparql11-overview-20130321">SPARQL 1.1 Overview</a></li><li><a href="http://www.w3.org/TR/2013/REC-sparql11-query-20130321">SPARQL 1.1 Query Language</a></li><li><a href="http://www.w3.org/TR/2013/REC-sparql11-update-20130321">SPARQL 1.1 Update</a></li><li><a href="http://www.w3.org/TR/2013/REC-sparql11-service-description-20130321">SPARQL1.1 Service Description</a></li><li><a href="http://www.w3.org/TR/2013/REC-sparql11-federated-query-20130321">SPARQL 1.1 Federated Query</a></li><li><a href="http://www.w3.org/TR/2013/REC-sparql11-results-json-20130321">SPARQL 1.1 Query Results JSON Format</a>  (this document)</li><li><a href="http://www.w3.org/TR/2013/REC-sparql11-results-csv-tsv-20130321">SPARQL 1.1 Query Results CSV and TSV Formats</a></li><li><a href="http://www.w3.org/TR/2013/REC-rdf-sparql-XMLres-20130321">SPARQL Query Results XML Format (Second Edition)</a></li><li><a href="http://www.w3.org/TR/2013/REC-sparql11-entailment-20130321">SPARQL 1.1 Entailment Regimes</a></li><li><a href="http://www.w3.org/TR/2013/REC-sparql11-protocol-20130321">SPARQL 1.1 Protocol</a></li><li><a href="http://www.w3.org/TR/2013/REC-sparql11-http-rdf-update-20130321">SPARQL 1.1 Graph Store HTTP Protocol</a></li></ol><h4 class="no-toc no-num" id="status-changes">No Substantive Changes</h4><p>There have been no substantive changes to this document since the <a href="http://www.w3.org/TR/2012/PR-sparql11-results-json-20121108/">previous version</a>.   Minor editorial changes, if any, are detailed in the <a href="#changes-since-pr">change log</a> and visible in the <a href="diff">color-coded diff</a>.</p><h4 class="no-toc no-num" id="please">Please Send Comments</h4><p>Please send any comments to <a class="mailto" href="mailto:public-rdf-dawg-comments@w3.org">public-rdf-dawg-comments@w3.org</a>
+    (<a class="http" href="http://lists.w3.org/Archives/Public/public-rdf-dawg-comments/">public
+    archive</a>).  Although work on this document by the <a href="http://www.w3.org/2009/sparql/">SPARQL Working Group</a> is complete, comments may be addressed in the <a href="http://www.w3.org/2013/sparql-errata">errata</a> or in future revisions.  Open discussion is welcome at <a class="mailto" href="mailto:public-sparql-dev@w3.org">public-sparql-dev@w3.org</a> (<a class="http" href="http://lists.w3.org/Archives/Public/public-sparql-dev/">public archive</a>).</p><h4 class="no-toc no-num" id="endorsement">Endorsed By W3C</h4><p><em>This document has been reviewed by W3C Members, by software developers, and by other W3C groups and interested parties, and is endorsed by the Director as a W3C Recommendation. It is a stable document and may be used as reference material or cited from another document. W3C's role in making the Recommendation is to draw attention to the specification and to promote its widespread deployment. This enhances the functionality and interoperability of the Web.</em></p><h4 id="patents">Patents</h4><p><em>This document was produced by a group operating under the <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 W3C Patent Policy</a>. W3C maintains a <a href="http://www.w3.org/2004/01/pp-impl/35463/status" rel="disclosure">public list of any patent disclosures</a> made in connection with the deliverables of the group; that page also includes instructions for disclosing a patent. An individual who has actual knowledge of a patent which the individual believes contains <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential Claim(s)</a> must disclose the information in accordance with <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure"> section 6 of the W3C Patent Policy</a>.</em></p></div><div class="toc">
+<h2><a name="contents" id="contents"></a>Table of Contents</h2><p class="toc">1 <b><a href="#introduction">Introduction</a></b><br />
+2 <b><a href="#json-result-object">JSON Results Object</a></b><br />
+3 <b><a href="#select-results-form">Variable Binding Results</a></b><br />
+    3.1 <a href="#select-head">"head"</a><br />
+        3.1.1 <a href="#select-vars">"vars"</a><br />
+        3.1.2 <a href="#select-link">"link"</a><br />
+    3.2 <a href="#select-results">"results"</a><br />
+        3.2.1 <a href="#select-bindings">"bindings"</a><br />
+        3.2.2 <a href="#select-encode-terms">Encoding RDF terms</a><br />
+4 <b><a href="#ask-result-form">Boolean Results</a></b><br />
+    4.1 <a href="#ask-head">"head"</a><br />
+        4.1.1 <a href="#ask-link">"link"</a><br />
+    4.2 <a href="#ask-boolean">"boolean"</a><br />
+5 <b><a href="#example">Example</a></b><br />
+6 <b><a href="#content-type">Internet Media Type, File Extension and Macintosh File Type</a></b><br />
+</p>
+<h3><a name="appendices" id="appendices"></a>Appendix</h3><p class="toc">A <b><a href="#sec-bibliography">References</a></b><br />
+    A.1 <a href="#sec-normative-refs">Normative References</a><br />
+    A.2 <a href="#sec-non-normative-refs">Other References</a><br />
+</p></div><hr /><div class="body"><div class="div1">
+<h2><a name="introduction" id="introduction"></a>1 Introduction</h2><p>This document describes how to serialize SPARQL results (SELECT and ASK query forms) 
+      in a <a href="http://www.ietf.org/rfc/rfc4627.txt">JSON</a> format.
+      The format is designed to be a complete representation of the information 
+      in the query results.  The results of a SELECT query are serilialized as
+      an array, where each array element is one "row" of the query results; 
+      the results of an ASK query give the boolean value of the query result.
+      </p><p>An Internet Media Type is provied for <code>application/sparql-results+json</code>.</p><p>
+        There is also a <a href="http://www.w3.org/TR/rdf-sparql-XMLres/">SPARQL Query Results XML Format</a>
+        [<a href="#SRX">SRX</a>] which follows a similar design pattern but uses XML as the serialization.
+      </p><p>
+        Unless otherwise noted in the section heading, all sections 
+        and appendices in this document are normative.
+      </p></div><div class="div1">
+<h2><a name="json-result-object" id="json-result-object"></a>2 JSON Results Object</h2><p>The results of a SPARQL Query are serialized in JSON as a single top-level JSON object. This object has a <code>"head"</code> member and either a <code>"results"</code> member or a <code>"boolean"</code> member, depending on the query form.
+    </p><p>This example shows the results of a <code>SELECT</code> query. The query solutions are represented in an array which is the value of the <code>"bindings"</code> key, in turn part of an object that is the value of the <code>"results"</code> key:</p><pre class="json">{
+  "head": { "vars": [ "book" , "title" ]
+  } ,
+  "results": { 
+    "bindings": [
+      {
+        "book": { "type": "uri" , "value": "http://example.org/book/book6" } ,
+        "title": { "type": "literal" , "value": "Harry Potter and the Half-Blood Prince" }
+      } ,
+      {
+        "book": { "type": "uri" , "value": "http://example.org/book/book7" } ,
+        "title": { "type": "literal" , "value": "Harry Potter and the Deathly Hallows" }
+      } ,
+      {
+        "book": { "type": "uri" , "value": "http://example.org/book/book5" } ,
+        "title": { "type": "literal" , "value": "Harry Potter and the Order of the Phoenix" }
+      } ,
+      {
+        "book": { "type": "uri" , "value": "http://example.org/book/book4" } ,
+        "title": { "type": "literal" , "value": "Harry Potter and the Goblet of Fire" }
+      } ,
+      {
+        "book": { "type": "uri" , "value": "http://example.org/book/book2" } ,
+        "title": { "type": "literal" , "value": "Harry Potter and the Chamber of Secrets" }
+      } ,
+      {
+        "book": { "type": "uri" , "value": "http://example.org/book/book3" } ,
+        "title": { "type": "literal" , "value": "Harry Potter and the Prisoner Of Azkaban" }
+      } ,
+      {
+        "book": { "type": "uri" , "value": "http://example.org/book/book1" } ,
+        "title": { "type": "literal" , "value": "Harry Potter and the Philosopher's Stone" }
+      }
+    ]
+  }
+}</pre><p>This example shows the result from an <code>ASK</code> query:</p><pre class="json">{ 
+  "head" : { } ,
+  "boolean" : true
+}</pre><p>Other keys, with different names, may be present in the JSON Results Object 
+    but are not defined by this specification.</p></div><div class="div1">
+<h2><a name="select-results-form" id="select-results-form"></a>3 Variable Binding Results</h2><p>The results of a SPARQL <code>SELECT</code> query are serialized as 
+      an array of bindings of variables. The value of the <code>"head"</code> key is an array of all variables projected in the query's <code>SELECT</code> clause.</p><div class="div2">
+<h3><a name="select-head" id="select-head"></a>3.1 "head"</h3><p>The <code>"head"</code> member gives the variables mentioned in the results and
+        may contain a <code>"link"</code> member.</p><pre class="json">{
+"head" { 
+   "vars" : [ ... ] ,
+   "link" : [ ... ] }</pre><div class="div3">
+<h4><a name="select-vars" id="select-vars"></a>3.1.1 "vars"</h4><p>
+            The <code>"vars"</code> member is an array giving the names of the variables used in the results.
+            These are the projected variables from the query.
+            A variable is not necessarily given a value in every query solution of the results.
+          </p><pre class="json">"vars" : [ "book" , "title" ] </pre><p>The order of variable names should correspond to the variables in the SELECT clause of the query, 
+          unless the query is of the form <code>SELECT *</code> in which case order is not significant.</p></div><div class="div3">
+<h4><a name="select-link" id="select-link"></a>3.1.2 "link"</h4><p>The optional <code>"link"</code> member gives an array
+            of URIs, as strings, to refer for further information.
+            The format and content of these link references is not
+            defined by this document.</p><pre class="json">"link" : [ "http://example/dataset/metadata.ttl" ] </pre></div></div><div class="div2">
+<h3><a name="select-results" id="select-results"></a>3.2 "results"</h3><p>The value of the <code>"results"</code> member is an object with a single key, <code>"bindings"</code>.</p><div class="div3">
+<h4><a name="select-bindings" id="select-bindings"></a>3.2.1 "bindings"</h4><p>The value of the <code>"bindings"</code> member is an array with zero
+          or more elements, one element per query solution. 
+          Each query solution is a JSON object. Each key
+          of this object is a variable name from the query solution. The value for
+          a given variable name is a JSON object that  
+          <a href="#select-encode-terms">encodes the variable's bound value, an RDF term.</a>
+          There are zero elements in the array if the query returned an
+          empty solution sequence.
+          Variables names do not include the initial "?" or "$" character.
+          Each variable name that appears as a key within the <code>"bindings"</code> array will have appeared in the <a href="#select-vars"><code>"vars"</code></a>
+          array in the results header.</p><p>A variable does not appear in an array element if it is
+          not bound in that particular query solution.
+          </p><p>The order of elements in the bindings array reflects the order, if any, 
+          of the query solution sequence.</p><pre class="json">"bindings" : [
+               {
+                 "a" : { ... } ,
+                 "b" : { ... } 
+               } ,
+               {
+                 "a" : { ... } ,
+                 "b" : { ... } 
+               }
+             ]</pre><p>If the query returns no solutions, an empty array is used.
+        </p><pre class="json">"bindings" : []</pre></div><div class="div3">
+<h4><a name="select-encode-terms" id="select-encode-terms"></a>3.2.2 Encoding RDF terms</h4><p>An RDF term (IRI, literal or blank node) is encoded as a JSON object.
+          All aspects of the RDF term are represented.  The JSON object has
+          a <code>"type"</code> member and other members depending on the
+          specific kind of RDF term.</p><table style="border-collapse: collapse; border-color: #000000" border="1" cellpadding="5"><tr><th>RDF Term</th><th>JSON form</th></tr><tr><td>IRI <em><b>I</b></em></td><td><code>{"type": "uri", "value": "<em><b>I</b></em>"}</code></td></tr><tr><td>Literal <em><b>S</b></em></td><td><code>{"type": "literal","value": "<em><b>S</b></em>"}</code></td></tr><tr><td>Literal <em><b>S</b></em>  with language tag <em><b>L</b></em></td><td><code>{ "type": "literal", "value": "<em><b>S</b></em>", "xml:lang": "<em><b>L</b></em>"}</code></td></tr><tr><td>Literal <em><b>S</b></em> with datatype IRI <em><b>D</b></em></td><td><code>{ "type": "literal", "value": "<em><b>S</b></em>", "datatype": "<em><b>D</b></em>"}</code></td></tr><tr><td>Blank node, label <em><b>B</b></em></td><td><code>{"type": "bnode", "value": "<em><b>B</b></em>"}</code></td></tr></table><p>The blank node label is scoped to the results object.  
+          That is, two blank nodes with the same label in a single SPARQL Results 
+          JSON object are the same blank node. This is not an indication of any 
+          internal system identifier the SPARQL processor may use.
+          Use of the same label in another SPARQL Results 
+          JSON object does not imply it is the same blank node.</p></div></div></div><div class="div1">
+<h2><a name="ask-result-form" id="ask-result-form"></a>4 Boolean Results</h2><p>The results of a SPARQL <code>ASK</code> query are serialized as 
+      a boolean value, giving the result of the query evaluation.</p><div class="div2">
+<h3><a name="ask-head" id="ask-head"></a>4.1 "head"</h3><div class="div3">
+<h4><a name="ask-link" id="ask-link"></a>4.1.1 "link"</h4><p>The <code>"link"</code> member has the same format as the <a href="#select-link">SELECT <code>"link"</code></a> member.</p></div></div><div class="div2">
+<h3><a name="ask-boolean" id="ask-boolean"></a>4.2 "boolean"</h3><p>The result of an <code>ASK</code> query form are encoded by the <code>"boolean"</code> member,
+          which takes either the JSON value <code>true</code> or the JSON value <code>false</code>.</p><pre class="json">"boolean" : true </pre></div></div><div class="div1">
+<h2><a name="example" id="example"></a>5 Example</h2><p>This section is not normative.</p><p>The following JSON is a serialization of the XML document <a class="reference" href="http://www.w3.org/TR/rdf-sparql-XMLres/output.srx">output.srx</a>:</p><pre class="json">{
+   "head": {
+       "link": [
+           "http://www.w3.org/TR/rdf-sparql-XMLres/example.rq"
+           ],
+       "vars": [
+           "x",
+           "hpage",
+           "name",
+           "mbox",
+           "age",
+           "blurb",
+           "friend"
+           ]
+       },
+   "results": {
+       "bindings": [
+               {
+                   "x" : { "type": "bnode", "value": "r1" },
+
+                   "hpage" : { "type": "uri", "value": "http://work.example.org/alice/" },
+
+                   "name" : {  "type": "literal", "value": "Alice" } ,
+                   
+		   "mbox" : {  "type": "literal", "value": "" } ,
+
+                   "blurb" : {
+                     "datatype": "http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral",
+                     "type": "literal",
+                     "value": "&lt;p xmlns=\"http://www.w3.org/1999/xhtml\"&gt;My name is &lt;b&gt;alice&lt;/b&gt;&lt;/p&gt;"
+                   },
+
+                   "friend" : { "type": "bnode", "value": "r2" }
+               },
+               {
+                   "x" : { "type": "bnode", "value": "r2" },
+                   
+                   "hpage" : { "type": "uri", "value": "http://work.example.org/bob/" },
+                   
+                   "name" : { "type": "literal", "value": "Bob", "xml:lang": "en" },
+
+                   "mbox" : { "type": "uri", "value": "mailto:bob@work.example.org" },
+
+                   "friend" : { "type": "bnode", "value": "r1" }
+               }
+           ]
+       }
+}</pre></div><div class="div1">
+<h2><a name="content-type" id="content-type"></a>6 Internet Media Type, File Extension and Macintosh File Type</h2><p>The Internet Media Type / MIME Type for the SPARQL Query Results JSON Format
+      is "application/sparql-results+json".</p><p>It is recommended that SPARQL Query Results JSON Format files have the extension ".srj" (all
+      lowercase) on all platforms.</p><p>It is recommended that SPARQL Query Results JSON Format files stored on Macintosh HFS file
+      systems be given a file type of "TEXT".</p><p>This information that follows is intended to be submitted to the IESG
+      for review, approval, and registration with IANA.</p><dl>
+        <dt>Type name:</dt>
+        <dd>application</dd>
+
+        <dt>Subtype name:</dt>
+        <dd>sparql-results+json</dd>
+
+        <dt>Required parameters:</dt>
+        <dd>None</dd>
+
+        <dt>Optional parameters:</dt>
+        <dd>None</dd>
+
+        <dt>Encoding considerations:</dt>
+        <dd>The encoding considerations of the SPARQL Query Results JSON 
+        Format is identical to those of the "application/json" as specified in 
+        [<a href="#JSON-RFC">JSON-RFC</a>].</dd>
+
+        <dt>Security considerations:</dt>
+
+        <dd>SPARQL query results uses URIs. See Section 7 of [<a href="#RFC3986">RFC3986</a>].<br />
+        SPARQL query results uses IRIs. See Section 8 of [<a href="#RFC3987">RFC3987</a>].<br />
+
+        The security considerations of the SPARQL Query Results JSON 
+        Format is identical to those of the "application/json" as specified in 
+        [<a href="#JSON-RFC">JSON-RFC</a>].</dd>
+
+        <dt>Interoperability considerations:</dt>
+        <dd>There are no known interoperability issues.</dd>
+
+        <dt>Published specification:</dt>
+        <dd>http://www.w3.org/TR/sparql11-results-json/</dd>
+
+        <dt>Applications which use this media type:</dt>
+        <dd>No known applications currently use this media type.</dd>
+
+        <dt>Additional information:</dt>
+
+        <dt>Magic number(s):</dt>
+        <dd>n/a</dd>
+
+        <dt>File extension(s): </dt>
+        <dd>".srj"</dd>
+
+        <dt>Macintosh file type code(s):</dt>
+        <dd>"TEXT"</dd>
+
+        <dt>Person &amp; email address to contact for further information:</dt>
+
+        <dd>Andy Seaborne &lt;public-rdf-dawg-comments@w3.org&gt;</dd>
+
+        <dt>Intended usage:</dt>
+        <dd>COMMON</dd>
+
+        <dt>Restrictions on usage:</dt>
+        <dd>None</dd>
+
+        <dt>Author/Change controller:</dt>
+        <dd>The SPARQL specification is a work product of the World Wide Web
+        Consortium's SPARQL Working Group.  The W3C has change
+        control over these specifications.</dd>
+      </dl></div></div><div class="back"><div class="div1">
+<h2><a name="sec-bibliography" id="sec-bibliography"></a>A References</h2><div class="div2">
+<h3><a name="sec-normative-refs" id="sec-normative-refs"></a>A.1 Normative References</h3><dl>
+          <dt>
+            <a name="JSON-RFC" id="JSON-RFC">[JSON-RFC]</a>
+          </dt>
+          <dd>
+            <a href="http://www.ietf.org/rfc/rfc4627.txt">RFC 4627</a>,<br />
+            The application/json Media Type for JavaScript Object Notation (JSON),<br />
+            D. Crockford,<br />
+            <a href="http://www.ietf.org/rfc/rfc4627.txt">http://www.ietf.org/rfc/rfc4627.txt</a>
+          </dd>
+          <dt>
+            <a name="RFC3986" id="RFC3986">[RFC3986]</a>
+          </dt>
+          <dd>
+            <a href="http://www.ietf.org/rfc/rfc3986.txt">RFC 3986</a>,<br />
+            Uniform Resource Identifier (URI): Generic Syntax,<br />
+            T. Berners-Lee, R. Fielding, L. Masinter, <br />
+            <a href="http://www.ietf.org/rfc/rfc3986.txt">http://www.ietf.org/rfc/rfc3986.txt</a>
+          </dd>
+
+          <dt>
+            <a name="RFC3987" id="RFC3987">[RFC3987]</a>
+          </dt>
+          <dd>
+            <a href="http://www.ietf.org/rfc/rfc3987.txt">RFC 3987</a>,<br />
+            Internationalized Resource Identifiers (IRIs),<br />
+            M. Dürst, M. Suignard, <br />
+            <a href="http://www.ietf.org/rfc/rfc3987.txt">http://www.ietf.org/rfc/rfc3987.txt</a>
+          </dd>
+        </dl></div><div class="div2">
+<h3><a name="sec-non-normative-refs" id="sec-non-normative-refs"></a>A.2 Other References</h3><dl>
+          <dt>
+            <a name="SRX" id="SRX">[SRX]</a>
+          </dt>
+          <dd><cite><a href="http://www.w3.org/TR/2013/REC-rdf-sparql-XMLres-20130321">SPARQL Query Results XML Format (Second Edition)</a></cite>, D. Beckett, J. Broekstra, Editors, W3C Recommendation, 21 March 2013, http://www.w3.org/TR/2013/REC-rdf-sparql-XMLres-20130321. <a href="http://www.w3.org/TR/rdf-sparql-XMLres/" title="Latest version of SPARQL Query Results XML Format (Second Edition)">Latest version</a> available at http://www.w3.org/TR/rdf-sparql-XMLres.</dd>
+
+        </dl></div></div><div><h2 id="changelog">Change Log</h2><h3 id="changes-since-pr">Changes since Proposed Recommendation</h3><ul><li>None</li></ul><h3 id="changes-since-lc">Changes since Last Call</h3><ul><li>Fix typo in example.</li><li>Update references</li></ul></div></div></body></html>

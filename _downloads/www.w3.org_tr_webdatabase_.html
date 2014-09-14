@@ -1,0 +1,1371 @@
+<!-- http://www.w3.org/TR/webdatabase/ -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"><html lang="en-US-x-Hixie"><title>Web SQL Database</title><style type="text/css">
+   pre { margin-left: 2em; white-space: pre-wrap; }
+   h2 { margin: 3em 0 1em 0; }
+   h3 { margin: 2.5em 0 1em 0; }
+   h4 { margin: 2.5em 0 0.75em 0; }
+   h5, h6 { margin: 2.5em 0 1em; }
+   h1 + h2, h1 + h2 + h2 { margin: 0.75em 0 0.75em; }
+   h2 + h3, h3 + h4, h4 + h5, h5 + h6 { margin-top: 0.5em; }
+   p { margin: 1em 0; }
+   hr:not(.top) { display: block; background: none; border: none; padding: 0; margin: 2em 0; height: auto; }
+   dl, dd { margin-top: 0; margin-bottom: 0; }
+   dt { margin-top: 0.75em; margin-bottom: 0.25em; clear: left; }
+   dt + dt { margin-top: 0; }
+   dd dt { margin-top: 0.25em; margin-bottom: 0; }
+   dd p { margin-top: 0; }
+   dd dl + p { margin-top: 1em; }
+   dd table + p { margin-top: 1em; }
+   p + * > li, dd li { margin: 1em 0; }
+   dt, dfn { font-weight: bold; font-style: normal; }
+   dt dfn { font-style: italic; }
+   pre, code { font-size: inherit; font-family: monospace; font-variant: normal; }
+   pre strong { color: black; font: inherit; font-weight: bold; background: yellow; }
+   pre em { font-weight: bolder; font-style: normal; }
+   @media screen { code { color: orangered; } code :link, code :visited { color: inherit; } }
+   var sub { vertical-align: bottom; font-size: smaller; position: relative; top: 0.1em; }
+   table { border-collapse: collapse; border-style: hidden hidden none hidden; }
+   table thead, table tbody { border-bottom: solid; }
+   table tbody th:first-child { border-left: solid; }
+   table tbody th { text-align: left; }
+   table td, table th { border-left: solid; border-right: solid; border-bottom: solid thin; vertical-align: top; padding: 0.2em; }
+   blockquote { margin: 0 0 0 2em; border: 0; padding: 0; font-style: italic; }
+
+   .bad, .bad *:not(.XXX) { color: gray; border-color: gray; background: transparent; }
+   .matrix, .matrix td { border: none; text-align: right; }
+   .matrix { margin-left: 2em; }
+   .dice-example { border-collapse: collapse; border-style: hidden solid solid hidden; border-width: thin; margin-left: 3em; }
+   .dice-example caption { width: 30em; font-size: smaller; font-style: italic; padding: 0.75em 0; text-align: left; }
+   .dice-example td, .dice-example th { border: solid thin; width: 1.35em; height: 1.05em; text-align: center; padding: 0; }
+
+   .toc dfn, h1 dfn, h2 dfn, h3 dfn, h4 dfn, h5 dfn, h6 dfn { font: inherit; }
+   img.extra { float: right; }
+   pre.idl { border: solid thin; background: #EEEEEE; color: black; padding: 0.5em 1em; }
+   pre.idl :link, pre.idl :visited { color: inherit; background: transparent; }
+   pre.css { border: solid thin; background: #FFFFEE; color: black; padding: 0.5em 1em; }
+   pre.css:first-line { color: #AAAA50; }
+   dl.domintro { color: green; margin: 2em 0 2em 2em; padding: 0.5em 1em; border: none; background: #DDFFDD; }
+   hr + dl.domintro, div.impl + dl.domintro { margin-top: 2.5em; margin-bottom: 1.5em; }
+   dl.domintro dt, dl.domintro dt * { color: black; text-decoration: none; }
+   dl.domintro dd { margin: 0.5em 0 1em 2em; padding: 0; }
+   dl.domintro dd p { margin: 0.5em 0; }
+   dl.switch { padding-left: 2em; }
+   dl.switch > dt { text-indent: -1.5em; }
+   dl.switch > dt:before { content: '\21AA'; padding: 0 0.5em 0 0; display: inline-block; width: 1em; text-align: right; line-height: 0.5em; }
+   dl.triple { padding: 0 0 0 1em; }
+   dl.triple dt, dl.triple dd { margin: 0; display: inline }
+   dl.triple dt:after { content: ':'; }
+   dl.triple dd:after { content: '\A'; white-space: pre; }
+   .diff-old { text-decoration: line-through; color: silver; background: transparent; }
+   .diff-chg, .diff-new { text-decoration: underline; color: green; background: transparent; }
+   a .diff-new { border-bottom: 1px blue solid; }
+
+   h2 { page-break-before: always; }
+   h1, h2, h3, h4, h5, h6 { page-break-after: avoid; }
+   h1 + h2, hr + h2.no-toc { page-break-before: auto; }
+
+   p  > span:not([title=""]):not([class="XXX"]):not([class="impl"]):not([class="note"]),
+   li > span:not([title=""]):not([class="XXX"]):not([class="impl"]):not([class="note"]), { border-bottom: solid #9999CC; }
+
+   div.head { margin: 0 0 1em; padding: 1em 0 0 0; }
+   div.head p { margin: 0; }
+   div.head h1 { margin: 0; }
+   div.head .logo { float: right; margin: 0 1em; }
+   div.head .logo img { border: none } /* remove border from top image */
+   div.head dl { margin: 1em 0; }
+   div.head p.copyright, div.head p.alt { font-size: x-small; font-style: oblique; margin: 0; }
+
+   body > .toc > li { margin-top: 1em; margin-bottom: 1em; }
+   body > .toc.brief > li { margin-top: 0.35em; margin-bottom: 0.35em; }
+   body > .toc > li > * { margin-bottom: 0.5em; }
+   body > .toc > li > * > li > * { margin-bottom: 0.25em; }
+   .toc, .toc li { list-style: none; }
+
+   .brief { margin-top: 1em; margin-bottom: 1em; line-height: 1.1; }
+   .brief li { margin: 0; padding: 0; }
+   .brief li p { margin: 0; padding: 0; }
+
+   .category-list { margin-top: -0.75em; margin-bottom: 1em; line-height: 1.5; }
+   .category-list::before { content: '\21D2\A0'; font-size: 1.2em; font-weight: 900; }
+   .category-list li { display: inline; }
+   .category-list li:not(:last-child)::after { content: ', '; }
+   .category-list li > span, .category-list li > a { text-transform: lowercase; }
+   .category-list li * { text-transform: none; } /* don't affect <code> nested in <a> */
+
+   .XXX { color: #E50000; background: white; border: solid red; padding: 0.5em; margin: 1em 0; }
+   .XXX > :first-child { margin-top: 0; }
+   p .XXX { line-height: 3em; }
+   .annotation { border: solid thin black; background: #0C479D; color: white; position: relative; margin: 8px 0 20px 0; }
+   .annotation:before { position: absolute; left: 0; top: 0; width: 100%; height: 100%; margin: 6px -6px -6px 6px; background: #333333; z-index: -1; content: ''; }
+   .annotation :link, .annotation :visited { color: inherit; }
+   .annotation :link:hover, .annotation :visited:hover { background: transparent; }
+   .annotation span { border: none ! important; }
+   .note { color: green; background: transparent; font-family: sans-serif; }
+   .warning { color: red; background: transparent; }
+   .note, .warning { font-weight: bolder; font-style: italic; }
+   p.note, div.note { padding: 0.5em 2em; }
+   span.note { padding: 0 2em; }
+   .note p:first-child, .warning p:first-child { margin-top: 0; }
+   .note p:last-child, .warning p:last-child { margin-bottom: 0; }
+   .warning:before { font-style: normal; }
+   p.note:before { content: 'Note: '; }
+   p.warning:before { content: '\26A0 Warning! '; }
+
+   .bookkeeping:before { display: block; content: 'Bookkeeping details'; font-weight: bolder; font-style: italic; }
+   .bookkeeping { font-size: 0.8em; margin: 2em 0; }
+   .bookkeeping p { margin: 0.5em 2em; display: list-item; list-style: square; }
+   .bookkeeping dt { margin: 0.5em 2em 0; }
+   .bookkeeping dd { margin: 0 3em 0.5em; }
+
+   h4 { position: relative; z-index: 3; }
+   h4 + .element, h4 + div + .element { margin-top: -2.5em; padding-top: 2em; }
+   .element {
+     background: #EEEEFF;
+     color: black;
+     margin: 0 0 1em 0.15em;
+     padding: 0 1em 0.25em 0.75em;
+     border-left: solid #9999FF 0.25em;
+     position: relative;
+     z-index: 1;
+   }
+   .element:before {
+     position: absolute;
+     z-index: 2;
+     top: 0;
+     left: -1.15em;
+     height: 2em;
+     width: 0.9em;
+     background: #EEEEFF;
+     content: ' ';
+     border-style: none none solid solid;
+     border-color: #9999FF;
+     border-width: 0.25em;
+   }
+
+   .example { display: block; color: #222222; background: #FCFCFC; border-left: double; margin-left: 2em; padding-left: 1em; }
+   td > .example:only-child { margin: 0 0 0 0.1em; }
+
+   ul.domTree, ul.domTree ul { padding: 0 0 0 1em; margin: 0; }
+   ul.domTree li { padding: 0; margin: 0; list-style: none; position: relative; }
+   ul.domTree li li { list-style: none; }
+   ul.domTree li:first-child::before { position: absolute; top: 0; height: 0.6em; left: -0.75em; width: 0.5em; border-style: none none solid solid; content: ''; border-width: 0.1em; }
+   ul.domTree li:not(:last-child)::after { position: absolute; top: 0; bottom: -0.6em; left: -0.75em; width: 0.5em; border-style: none none solid solid; content: ''; border-width: 0.1em; }
+   ul.domTree span { font-style: italic; font-family: serif; }
+   ul.domTree .t1 code { color: purple; font-weight: bold; }
+   ul.domTree .t2 { font-style: normal; font-family: monospace; }
+   ul.domTree .t2 .name { color: black; font-weight: bold; }
+   ul.domTree .t2 .value { color: blue; font-weight: normal; }
+   ul.domTree .t3 code, .domTree .t4 code, .domTree .t5 code { color: gray; }
+   ul.domTree .t7 code, .domTree .t8 code { color: green; }
+   ul.domTree .t10 code { color: teal; }
+
+   body.dfnEnabled dfn { cursor: pointer; }
+   .dfnPanel {
+     display: inline;
+     position: absolute;
+     z-index: 10;
+     height: auto;
+     width: auto;
+     padding: 0.5em 0.75em;
+     font: small sans-serif, Droid Sans Fallback;
+     background: #DDDDDD;
+     color: black;
+     border: outset 0.2em;
+   }
+   .dfnPanel * { margin: 0; padding: 0; font: inherit; text-indent: 0; }
+   .dfnPanel :link, .dfnPanel :visited { color: black; }
+   .dfnPanel p { font-weight: bolder; }
+   .dfnPanel * + p { margin-top: 0.25em; }
+   .dfnPanel li { list-style-position: inside; }
+
+   #configUI { position: absolute; z-index: 20; top: 10em; right: 1em; width: 11em; font-size: small; }
+   #configUI p { margin: 0.5em 0; padding: 0.3em; background: #EEEEEE; color: black; border: inset thin; }
+   #configUI p label { display: block; }
+   #configUI #updateUI, #configUI .loginUI { text-align: center; }
+   #configUI input[type=button] { display: block; margin: auto; }
+
+   fieldset { margin: 1em; padding: 0.5em 1em; }
+   fieldset > legend + * { margin-top: 0; }
+   fieldset > :last-child { margin-bottom: 0; }
+   fieldset p { margin: 0.5em 0; }
+
+</style><link href="http://www.w3.org/StyleSheets/TR/W3C-WG-NOTE" rel="stylesheet" type="text/css"><div class="head">
+<p><a href="http://www.w3.org/"><img alt="W3C" height="48" src="http://www.w3.org/Icons/w3c_home" width="72"></a></p>
+<h1>Web SQL Database</h1>
+<h2 class="no-num no-toc" id="note-18-november-2010">W3C Working Group Note 18 November 2010</h2>
+<!--
+<p style="background: black; color: white; font: 900 2em serif; padding: 0.5em 1em; border: dotted yellow 0.5em; text-align: center">Beware. This specification is no longer in active maintenance.</p>
+-->
+<dl>
+<dt>This Version:</dt>
+<dd><a href="http://www.w3.org/TR/2010/NOTE-webdatabase-20101118/">http://www.w3.org/TR/2010/NOTE-webdatabase-20101118/</a></dd>
+<dt>Latest Published Version:</dt>
+<dd><a href="http://www.w3.org/TR/webdatabase/">http://www.w3.org/TR/webdatabase/</a></dd>
+<dt>Latest Editor's Draft:</dt>
+<dd><a class="latest-link" href="http://dev.w3.org/html5/webdatabase/">http://dev.w3.org/html5/webdatabase/</a></dd>
+<!-- ZZZ: add the new version after it has shipped-->
+<dt>Previous Versions:</dt>
+<dd><a href="http://www.w3.org/TR/2009/WD-webdatabase-20091222/">http://www.w3.org/TR/2009/WD-webdatabase-20091222/</a></dd>
+<dd><a href="http://www.w3.org/TR/2009/WD-webdatabase-20091029/">http://www.w3.org/TR/2009/WD-webdatabase-20091029/</a></dd>
+<dd><a href="http://www.w3.org/TR/2009/WD-webstorage-20090423/">http://www.w3.org/TR/2009/WD-webstorage-20090423/</a></dd> <!-- yes, storage, not db -->
+<!-- :ZZZ -->
+<dt>Editors:</dt>
+<dd><a href="mailto:ian@hixie.ch">Ian Hickson</a>, Google, Inc.</dd>
+</dl>
+<p class="copyright"><a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a>
+&copy; 2010 <a href="http://www.w3.org/"><abbr title="World Wide
+Web Consortium">W3C</abbr></a><sup>&reg;</sup> (<a href="http://www.csail.mit.edu/"><abbr title="Massachusetts
+Institute of Technology">MIT</abbr></a>, <a href="http://www.ercim.org/"><abbr title="European Research
+Consortium for Informatics and Mathematics">ERCIM</abbr></a>, <a href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C
+<a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>,
+<a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a>
+and <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document
+use</a> rules apply.</p>
+
+</div><hr class="top"><h2 class="no-num no-toc" id="abstract">Abstract</h2><p>This specification defines an API for storing data in databases
+that can be queried using a variant of SQL.
+
+<h2 class="no-num no-toc" id="status-of-this-document">Status of This Document</h2>
+<!-- intro boilerplate (required) -->
+
+<p style="background: black; color: white; font: 900 2em serif; padding: 0.5em 1em; border: dotted yellow 0.5em; text-align: center">Beware. This specification is no longer in active maintenance and the Web
+Applications Working Group does not intend to maintain it further.</p>
+
+<p><em>This section describes the status of this document at the
+time of its publication. Other documents may supersede this
+document. A list of current W3C publications and the most recently
+formally published revision of this technical report can be found in
+the <a href="http://www.w3.org/TR/">W3C technical reports index</a>
+at http://www.w3.org/TR/.</em></p>
+
+<p>
+This document is the 18 November 2010 Working Group Note of Web SQL Database.
+
+Publication as a Working Group Note does not imply endorsement by the W3C Membership. This is a draft document and may be updated, replaced or obsoleted by other documents at any time. It is inappropriate to cite this document as other than work in progress.
+
+The W3C <a href="http://www.w3.org/2008/webapps/">Web Applications
+Working Group</a> is the W3C working group responsible for this document.
+</p>
+
+<p class="XXX">This document was on the W3C Recommendation track 
+but specification work has stopped. 
+The specification reached an impasse: all
+interested implementors have used the same SQL backend (Sqlite), but
+we need multiple independent implementations to proceed along a
+standardisation path.</p>
+
+<p>The Web Applications Working Group continues work on two other 
+storage-related specifications:
+<a href="http://www.w3.org/TR/webstorage/">Web Storage</a> and 
+<a href="http://www.w3.org/TR/IndexedDB/">Indexed Database API</a>.
+</p>
+
+<!-- stability (required) -->
+<p>Implementors should be aware that this specification is not
+stable. <strong>Implementors who are not taking part in the
+discussions are likely to find the specification changing out from
+under them in incompatible ways.</strong> Vendors interested in
+implementing this specification 
+
+<!--before it eventually reaches the
+Candidate Recommendation stage
+-->
+should join the aforementioned
+mailing lists and take part in the discussions.</p>
+
+<!-- where to send feedback (required) -->
+<p>If you wish to make comments regarding this document, please send
+them to <a href="mailto:public-webapps@w3.org">public-webapps@w3.org</a>
+(<a href="mailto:public-webapps-request@w3.org?subject=subscribe">subscribe</a>,
+<a href="http://lists.w3.org/Archives/Public/public-webapps/">archives</a>)
+
+<!-- UNDER NO CIRCUMSTANCES IS THE FOLLOWING SENTENCE TO BE REMOVED OR EDITED WITHOUT TALKING TO IAN FIRST -->  
+or <a href="mailto:whatwg@whatwg.org">whatwg@whatwg.org</a> (<a href="http://lists.whatwg.org/listinfo.cgi/whatwg-whatwg.org">subscribe</a>,
+<a href="http://lists.whatwg.org/pipermail/whatwg-whatwg.org/">archives</a>),
+<!-- UNDER NO CIRCUMSTANCES IS THE PRECEDING SENTENCE TO BE REMOVED OR EDITED WITHOUT TALKING TO IAN FIRST -->
+
+or submit them using <a href="http://www.w3.org/Bugs/Public/enter_bug.cgi?assigned_to=ian%40hixie.ch&amp;blocked=&amp;bug_file_loc=http%3A%2F%2F&amp;bug_severity=normal&amp;bug_status=NEW&amp;comment=&amp;component=Web%20Database%20%28editor%3A%20Ian%20Hickson%29&amp;contenttypeentry=&amp;contenttypemethod=autodetect&amp;contenttypeselection=text%2Fplain&amp;data=&amp;dependson=&amp;description=&amp;form_name=enter_bug&amp;keywords=&amp;maketemplate=Remember%20values%20as%20bookmarkable%20template&amp;op_sys=All&amp;priority=P5&amp;product=WebAppsWG&amp;qa_contact=member-webapi-cvs%40w3.org&amp;rep_platform=All&amp;short_desc=&amp;target_milestone=---&amp;version=unspecified">our
+public bug database</a>.
+
+All feedback is welcome.</p>
+
+<!-- version history or list of changes (required) --><p>The latest stable version of the editor's draft of this
+specification is always available on <a href="http://dev.w3.org/html5/webdatabase/Overview.html">the W3C CVS
+server</a>. Change tracking for this document is available at the
+following location:<ul><li>CVS log: <a href="http://dev.w3.org/cvsweb/html5/webdatabase/Overview.html">http://dev.w3.org/cvsweb/html5/webdatabase/Overview.html</a></li>
+</ul><!-- UNDER NO CIRCUMSTANCES IS THE FOLLOWING PARAGRAPH TO BE REMOVED OR EDITED WITHOUT TALKING TO IAN FIRST --><!-- relationship to other work (required) --><p>This specification is automatically generated from the
+corresponding section in the HTML5 specification's source document,
+as hosted in the <a href="http://svn.whatwg.org/webapps/">WHATWG
+Subversion repository</a>. Detailed change history for all of HTML5,
+including the parts that form this specification, can be found at
+the following locations:</p><!-- UNDER NO CIRCUMSTANCES IS THE PRECEDING PARAGRAPH TO BE REMOVED OR EDITED WITHOUT TALKING TO IAN FIRST --><!-- UNDER NO CIRCUMSTANCES IS THE FOLLOWING LIST TO BE REMOVED OR EDITED WITHOUT TALKING TO IAN FIRST --><ul><li>Twitter messages (non-editorial changes only): <a href="http://twitter.com/WHATWG">http://twitter.com/WHATWG</a></li>
+<li>Interactive Web interface: <a href="http://html5.org/tools/web-apps-tracker">http://html5.org/tools/web-apps-tracker</a></li>
+   <li>Commit-Watchers mailing list: <a href="http://lists.whatwg.org/listinfo.cgi/commit-watchers-whatwg.org">http://lists.whatwg.org/listinfo.cgi/commit-watchers-whatwg.org</a></li>
+   <li>Subversion interface: <a href="http://svn.whatwg.org/webapps/">http://svn.whatwg.org/webapps/</a></li>
+  </ul><!-- UNDER NO CIRCUMSTANCES IS THE PRECEDING LIST TO BE REMOVED OR EDITED WITHOUT TALKING TO IAN FIRST --><!-- status of document, group responsible (required) -->
+<!-- required patent boilerplate --><p>This document was produced by a group operating under the <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5
+  February 2004 W3C Patent Policy</a>. W3C maintains a <a href="http://www.w3.org/2004/01/pp-impl/42538/status" rel="disclosure">public list of
+  any patent disclosures</a> made in connection with the deliverables
+  of the group; that page also includes instructions for disclosing a
+  patent. An individual who has actual knowledge of a patent which the
+  individual believes contains <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential
+  Claim(s)</a> must disclose the information in accordance with <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section
+  6 of the W3C Patent Policy</a>.<h2 class="no-num no-toc" id="contents">Table of Contents</h2>
+<!--begin-toc-->
+<ol class="toc">
+ <li><a href="#introduction"><span class="secno">1 </span>Introduction</a></li>
+ <li><a href="#conformance-requirements"><span class="secno">2 </span>Conformance requirements</a>
+  <ol>
+   <li><a href="#dependencies"><span class="secno">2.1 </span>Dependencies</a></ol></li>
+ <li><a href="#terminology"><span class="secno">3 </span>Terminology</a></li>
+ <li><a href="#sql"><span class="secno">4 </span>The API</a>
+  <ol>
+   <li><a href="#databases"><span class="secno">4.1 </span>Databases</a></li>
+   <li><a href="#parsing-and-processing-sql-statements"><span class="secno">4.2 </span>Parsing and processing SQL statements</a></li>
+   <li><a href="#asynchronous-database-api"><span class="secno">4.3 </span>Asynchronous database API</a>
+    <ol>
+     <li><a href="#executing-sql-statements"><span class="secno">4.3.1 </span>Executing SQL statements</a></li>
+     <li><a href="#processing-model"><span class="secno">4.3.2 </span>Processing model</a></ol></li>
+   <li><a href="#synchronous-database-api"><span class="secno">4.4 </span>Synchronous database API</a>
+    <ol>
+     <li><a href="#executing-sql-statements-0"><span class="secno">4.4.1 </span>Executing SQL statements</a></ol></li>
+   <li><a href="#database-query-results"><span class="secno">4.5 </span>Database query results</a></li>
+   <li><a href="#errors-and-exceptions"><span class="secno">4.6 </span>Errors and exceptions</a></ol></li>
+ <li><a href="#web-sql"><span class="secno">5 </span>Web SQL</a></li>
+ <li><a href="#disk-space"><span class="secno">6 </span>Disk space</a></li>
+ <li><a href="#privacy"><span class="secno">7 </span>Privacy</a>
+  <ol>
+   <li><a href="#user-tracking"><span class="secno">7.1 </span>User tracking</a></li>
+   <li><a href="#sensitivity-of-data"><span class="secno">7.2 </span>Sensitivity of data</a></ol></li>
+ <li><a href="#security-storage"><span class="secno">8 </span>Security</a>
+  <ol>
+   <li><a href="#dns-spoofing-attacks"><span class="secno">8.1 </span>DNS spoofing attacks</a></li>
+   <li><a href="#cross-directory-attacks"><span class="secno">8.2 </span>Cross-directory attacks</a></li>
+   <li><a href="#implementation-risks"><span class="secno">8.3 </span>Implementation risks</a></li>
+   <li><a href="#sql-and-user-agents"><span class="secno">8.4 </span>SQL and user agents</a></li>
+   <li><a href="#sql-injection"><span class="secno">8.5 </span>SQL injection</a></ol></li>
+ <li><a class="no-num" href="#references">References</a></ol>
+<!--end-toc--><hr><!-- Feature requests for future versions (v2):
+        * deleting databases
+        * determining how much storage room is left
+        * handling the database getting corrupted
+  --><h2 id="introduction"><span class="secno">1 </span>Introduction</h2><p><i>This section is non-normative.</i><p>This specification introduces a set of APIs to manipulate
+  client-side databases using SQL.<p>The API is asynchronous, so authors are likely to find anonymous
+  functions (lambdas) very useful in using this API.<p>Here is an example of a script using this API. First, a function
+  <code title="">prepareDatabase()</code> is defined. This function
+  returns a handle to the database, first creating the database if
+  necessary. The example then calls the function to do the actual
+  work, in this case <code title="">showDocCount()</code>.<pre>function prepareDatabase(ready, error) {
+  return openDatabase('documents', '1.0', 'Offline document storage', 5*1024*1024, function (db) {
+    db.changeVersion('', '1.0', function (t) {
+      t.executeSql('CREATE TABLE docids (id, name)');
+    }, error);
+  });
+}
+
+function showDocCount(db, span) {
+  db.readTransaction(function (t) {
+    t.executeSql('SELECT COUNT(*) AS c FROM docids', [], function (t, r) {
+      span.textContent = r.rows[0].c;
+    }, function (t, e) {
+      // couldn't read database
+      span.textContent = '(unknown: ' + e.message + ')';
+    });
+  });
+}
+
+prepareDatabase(function(db) {
+  // got database
+  var span = document.getElementById('doc-count');
+  showDocCount(db, span);
+}, function (e) {
+  // error getting database
+  alert(e.message);
+});</pre><hr><p>The <code title="dom-sqltransaction-executeSql"><a href="#dom-sqltransaction-executesql">executeSql()</a></code> method has
+  an argument intended to allow variables to be substituted into
+  statements without risking SQL injection vulnerabilities:<pre>db.readTransaction(function (t) {
+  t.executeSql('SELECT title, author FROM docs WHERE id=?', [id], function (t, data) {
+    report(data.rows[0].title, data.rows[0].author);
+  });
+});</pre><hr><p>Sometimes, there might be an arbitrary number of variables to
+  substitute in. Even in these case, the right solution is to
+  construct the query using only "?" characters, and then to pass the
+  variables in as the second argument:<pre>function findDocs(db, resultCallback) {
+  var q = "";
+  for each (var i in labels)
+    q += (q == "" ? "" : ", ") + "?";
+  db.readTransaction(function (t) {
+    t.executeSql('SELECT id FROM docs WHERE label IN (' + q + ')', labels, function (t, data) {
+      resultCallback(data);
+    });
+  });
+}</pre><h2 id="conformance-requirements"><span class="secno">2 </span>Conformance requirements</h2><p>All diagrams, examples, and notes in this specification are
+  non-normative, as are all sections explicitly marked non-normative.
+  Everything else in this specification is normative.<p>The key words "MUST", "MUST NOT", "REQUIRED", <!--"SHALL", "SHALL
+  NOT",--> "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+  "OPTIONAL" in the normative parts of this document are to be
+  interpreted as described in RFC2119. For readability, these words do
+  not appear in all uppercase letters in this specification. <a href="#refsRFC2119">[RFC2119]</a><p>Requirements phrased in the imperative as part of algorithms
+  (such as "strip any leading space characters" or "return false and
+  abort these steps") are to be interpreted with the meaning of the
+  key word ("must", "should", "may", etc) used in introducing the
+  algorithm.<p>Some conformance requirements are phrased as requirements on
+  attributes, methods or objects. Such requirements are to be
+  interpreted as requirements on user agents.<p>Conformance requirements phrased as algorithms or specific steps
+  may be implemented in any manner, so long as the end result is
+  equivalent. (In particular, the algorithms defined in this
+  specification are intended to be easy to follow, and not intended to
+  be performant.)<p>The only conformance class defined by this specification is user
+  agents.<p>User agents may impose implementation-specific limits on
+  otherwise unconstrained inputs, e.g. to prevent denial of service
+  attacks, to guard against running out of memory, or to work around
+  platform-specific limitations.<p>When support for a feature is disabled (e.g. as an emergency
+  measure to mitigate a security problem, or to aid in development, or
+  for performance reasons), user agents must act as if they had no
+  support for the feature whatsoever, and as if the feature was not
+  mentioned in this specification. For example, if a particular
+  feature is accessed via an attribute in a Web IDL interface, the
+  attribute itself would be omitted from the objects that implement
+  that interface &mdash; leaving the attribute on the object but
+  making it return null or throw an exception is insufficient.<h3 id="dependencies"><span class="secno">2.1 </span>Dependencies</h3><p>This specification relies on several other underlying
+  specifications.<dl><dt>HTML</dt>
+
+   <dd>
+
+    <p>Many fundamental concepts from HTML are used by this
+    specification. <a href="#refsHTML">[HTML]</a></p>
+
+   </dd>
+
+   <dt>WebIDL</dt>
+
+   <dd>
+
+    <p>The IDL blocks in this specification use the semantics of the
+    WebIDL specification. <a href="#refsWEBIDL">[WEBIDL]</a></p>
+
+   </dd>
+
+  </dl><h2 id="terminology"><span class="secno">3 </span>Terminology</h2><p>The construction "a <code title="">Foo</code> object", where
+  <code title="">Foo</code> is actually an interface, is sometimes
+  used instead of the more accurate "an object implementing the
+  interface <code title="">Foo</code>".<p>The term DOM is used to refer to the API set made available to
+  scripts in Web applications, and does not necessarily imply the
+  existence of an actual <code>Document</code> object or of any other
+  <code>Node</code> objects as defined in the DOM Core
+  specifications. <a href="#refsDOMCORE">[DOMCORE]</a><p>An IDL attribute is said to be <em>getting</em> when its value is
+  being retrieved (e.g. by author script), and is said to be
+  <em>setting</em> when a new value is assigned to it.<p>The term "JavaScript" is used to refer to ECMA262, rather than
+  the official term ECMAScript, since the term JavaScript is more
+  widely known. <a href="#refsECMA262">[ECMA262]</a><h2 id="sql"><span class="secno">4 </span>The API</h2><h3 id="databases"><span class="secno">4.1 </span>Databases</h3><p>Each <i>origin</i> has an associated set of databases. Each
+  database has a name and a current version. There is no way to
+  enumerate or delete the databases available for an origin from this
+  API.<p class="note">Each database has one version at a time; a database
+  can't exist in multiple versions at once. Versions are intended to
+  allow authors to manage schema changes incrementally and
+  non-destructively, and without running the risk of old code (e.g. in
+  another browser window) trying to write to a database with incorrect
+  assumptions.<pre class="idl">[Supplemental, NoInterfaceObject]
+interface <span>WindowDatabase</span> {
+  <a href="#database">Database</a> <a href="#dom-opendatabase" title="dom-opendatabase">openDatabase</a>(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize, in optional <a href="#databasecallback">DatabaseCallback</a> creationCallback);
+};
+<span>Window</span> implements <span>WindowDatabase</span>;
+
+[Supplemental, NoInterfaceObject]
+interface <span>WorkerUtilsDatabase</span> {
+  <a href="#database">Database</a> <a href="#dom-opendatabase" title="dom-opendatabase">openDatabase</a>(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize, in optional <a href="#databasecallback">DatabaseCallback</a> creationCallback);
+  <a href="#databasesync">DatabaseSync</a> <a href="#dom-opendatabase-sync" title="dom-opendatabase-sync">openDatabaseSync</a>(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize, in optional <a href="#databasecallback">DatabaseCallback</a> creationCallback);
+};
+<span>WorkerUtils</span> implements <span>WorkerUtilsDatabase</span>;
+
+[Callback=FunctionOnly, NoInterfaceObject]
+interface <dfn id="databasecallback">DatabaseCallback</dfn> {
+  void <span title="dom-databasecallback-handleEvent">handleEvent</span>(in <a href="#database">Database</a> database);
+};</pre><p>The <dfn id="dom-opendatabase" title="dom-opendatabase"><code>openDatabase()</code></dfn> method on
+  the <code>Window</code> and <code>WorkerUtils</code> interfaces and
+  the <dfn id="dom-opendatabase-sync" title="dom-opendatabase-sync"><code>openDatabaseSync()</code></dfn>
+  method on the <code>WorkerUtils</code> interface take the following
+  arguments: a database name, a database version, a display name, an
+  estimated size &mdash; in bytes &mdash; of the data that will be
+  stored in the database, and optionally a callback to be invoked if
+  the database has not yet been created. The callback, if provided, is
+  intended to be used to call <code title="dom-database-changeVersion"><a href="#dom-database-changeversion">changeVersion()</a></code>; the
+  callback is invoked with the database having the empty string as its
+  version regardless of the given database version. If the callback is
+  not provided, the database is created with the given database
+  version as its version.<p>When invoked, these methods must run the following steps, with all
+  but the last two steps being run atomically:<ol><li>
+
+    <p>The user agent may raise a <code>SECURITY_ERR</code> exception
+    instead of returning a <code><a href="#database">Database</a></code> object if the request
+    violates a policy decision (e.g. if the user agent is configured
+    to not allow the page to open databases).</p>
+
+   </li>
+
+   <li>
+
+    <p>For the method on the <code>Window</code> object: let <var title="">origin</var> be the <span>origin</span> of the
+    <span>active document</span> of the <span>browsing context</span>
+    of the <code>Window</code> object on which the method was
+    invoked.</p>
+
+    <p>For the methods on the <code>WorkerUtils</code> object: let
+    <var title="">origin</var> be the <span>origin</span> of the
+    scripts in the worker.</p>
+
+   </li>
+
+   <li><p>If <var title="">origin</var> is not a scheme/host/port
+   tuple, then throw a <code>SECURITY_ERR</code> exception and abort
+   these steps.</li>
+
+   <li><p>If the database version provided is not the empty string,
+   and there is already a database with the given name from the origin
+   <var title="">origin</var>, but the database has a different
+   version than the version provided, then throw an
+   <code>INVALID_STATE_ERR</code> exception and abort these
+   steps.</li>
+
+   <li>
+
+    <p>If no database with the given name from the origin <var title="">origin</var> exists, then create the database and let
+    <var title="">created</var> be true. If a callback was passed to
+    the method, then set the new database's version to the empty
+    string. Otherwise, set the new database's version to the given
+    database version.</p>
+
+    <p>Otherwise, if a database with the given name already exists,
+    let <var title="">created</var> be false.</p>
+
+   </li>
+
+   <li>
+
+    <p>For the <code title="dom-opendatabase"><a href="#dom-opendatabase">openDatabase()</a></code>
+    methods: let <var title="">result</var> be a newly constructed
+    <code><a href="#database">Database</a></code> object representing the database with the
+    given database name from the origin <var title="">origin</var>.</p>
+
+    <p>For the <code title="dom-opendatabase-sync"><a href="#dom-opendatabase-sync">openDatabaseSync()</a></code> method:
+    let <var title="">result</var> be a newly constructed
+    <code><a href="#databasesync">DatabaseSync</a></code> object representing the database with
+    the given database name from the origin <var title="">origin</var>.</p>
+
+   </li>
+
+   <li>
+
+    <p>If <var title="">created</var> is false or if no callback was
+    passed to the method, skip this step. Otherwise:</p>
+
+    <p>For the <code title="dom-opendatabase"><a href="#dom-opendatabase">openDatabase()</a></code>
+    methods: <span>queue a task</span> to to invoke the callback with
+    <var title="">result</var> as its only argument.</p>
+
+    <p>For the <code title="dom-opendatabase-sync"><a href="#dom-opendatabase-sync">openDatabaseSync()</a></code> method:
+    invoke the callback with <var title="">result</var> as its only
+    argument. If the callback throws an exception, rethrow that
+    exception and abort these steps.</p>
+
+   </li>
+
+   <li>
+
+    <p>Return <var title="">result</var>.</p>
+
+   </li>
+
+  </ol><p>All strings including the empty string are valid database
+  names. Database names must be compared in a
+  <span>case-sensitive</span> manner.<p class="note">Implementations can support this even in
+  environments that only support a subset of all strings as database
+  names by mapping database names (e.g. using a hashing algorithm) to
+  the supported set of names.<p>The version that the database was opened with is the <dfn id="concept-database-expected-version" title="concept-database-expected-version">expected version</dfn> of
+  this <code><a href="#database">Database</a></code> or <code><a href="#databasesync">DatabaseSync</a></code> object. It
+  can be the empty string, in which case there is no expected version
+  &mdash; any version is fine.<p>User agents are expected to use the display name and the
+  estimated database size to optimize the user experience. For
+  example, a user agent could use the estimated size to suggest an
+  initial quota to the user. This allows a site that is aware that it
+  will try to use hundreds of megabytes to declare this upfront,
+  instead of the user agent prompting the user for permission to
+  increase the quota every five megabytes.<h3 id="parsing-and-processing-sql-statements"><span class="secno">4.2 </span>Parsing and processing SQL statements</h3><p>When the user agent is to <dfn id="preprocess-the-sql-statement" title="preprocess the SQL
+  statement">preprocess a SQL statement</dfn> <var title="">sqlStatement</var> with an array of arguments <var title="">arguments</var>, it must run the following steps:<ol><li><p>Parse <var title="">sqlStatement</var> as a SQL statement,
+   with the exception that U+003F QUESTION MARK characters (?) can be
+   used in place of SQL literals in the statement. <a href="#refsSQL">[SQL]</a></li>
+
+   <li>
+
+    <p>Bind each <code title="">?</code> placeholder with the value of
+    the argument in the <var title="">arguments</var> array with the
+    same position. (So the first <code title="">?</code> placeholder
+    gets bound to the first value in the <var title="">arguments</var>
+    array, and generally the <var title="">n</var>th <code title="">?</code> placeholder gets bound to the <var title="">n</var>th value in the <var title="">arguments</var>
+    array.)</p>
+
+    <p class="note">Binding the <code title="">?</code> placeholders
+    is done at the literal level, not as string concatenations, so
+    this provides a way to dynamically insert parameters into a
+    statement without risk of a SQL injection attack.</p>
+
+    <p>The result is <var title="">the statement</var>.</p>
+
+   </li>
+
+   <li><p>If the <code><a href="#database">Database</a></code> object that the
+   <code><a href="#sqltransaction">SQLTransaction</a></code> or <code><a href="#sqltransactionsync">SQLTransactionSync</a></code>
+   object was created from has an <a href="#concept-database-expected-version" title="concept-database-expected-version">expected version</a>
+   that is neither the empty string nor the actual version of the
+   database, then mark <var title="">the statement</var> as
+   bogus. (<a href="#dom-sqlerror-code-2" title="dom-sqlerror-code-2">Error code
+   2</a>.)</li>
+
+   <li>
+
+    <p>Otherwise, if the syntax of <var title="">sqlStatement</var> is
+    not valid (except for the use of <code title="">?</code>
+    characters in the place of literals), or the statement uses
+    features that are not supported (e.g. due to security reasons), or
+    the number of items in the <var title="">arguments</var> array is
+    not equal to the number of <code title="">?</code> placeholders in
+    the statement, or the statement cannot be parsed for some other
+    reason, then mark <var title="">the statement</var> as
+    bogus. (<a href="#dom-sqlerror-code-5" title="dom-sqlerror-code-5">Error code
+    5</a>.)</p>
+
+    <p>User agents must consider statements that use the <code title="">BEGIN</code>, <code title="">COMMIT</code>, and <code title="">ROLLBACK</code> SQL features as being unsupported (and thus
+    will mark them as bogus), so as to not let these statements
+    interfere with the explicit transactions managed by the database API
+    itself.</p>
+
+   </li>
+
+   <li id="modifications-fail-if-read-only">
+
+    <p>Otherwise, if the <i>mode</i> that was used to create the
+    <code><a href="#sqltransaction">SQLTransaction</a></code> or <code><a href="#sqltransactionsync">SQLTransactionSync</a></code>
+    object is read-only but the statement's main verb can modify the
+    database, mark the statement as bogus. (<a href="#dom-sqlerror-code-5" title="dom-sqlerror-code-5">Error code 5</a>.)</p>
+
+    <p class="note">Only the statement's main verb (e.g. <code title="">UPDATE</code>, <code title="">SELECT</code>, <code title="">DROP</code>) is considered here. Thus, a statement like
+    "<code title="">UPDATE test SET id=0 WHERE 0=1</code>" would be
+    treated as potentially modifying the database for the purposes
+    of this step, even though it could never in fact have any
+    side-effects.</p>
+
+   </li>
+
+   <li><p>Return <var title="">the statement</var>.</li>
+
+  </ol><p>The user agent must act as if the database was hosted in an
+  otherwise completely empty environment with no resources. For
+  example, attempts to read from or write to the file system will
+  fail.<p class="note">A future version of this specification will probably
+  define the exact SQL subset required in more detail.<h3 id="asynchronous-database-api"><span class="secno">4.3 </span>Asynchronous database API</h3><pre class="idl">interface <dfn id="database">Database</dfn> {
+  void <a href="#dom-database-transaction" title="dom-database-transaction">transaction</a>(in <a href="#sqltransactioncallback">SQLTransactionCallback</a> callback, in optional <a href="#sqltransactionerrorcallback">SQLTransactionErrorCallback</a> errorCallback, in optional <a href="#sqlvoidcallback">SQLVoidCallback</a> successCallback);
+  void <a href="#dom-database-readtransaction" title="dom-database-readTransaction">readTransaction</a>(in <a href="#sqltransactioncallback">SQLTransactionCallback</a> callback, in optional <a href="#sqltransactionerrorcallback">SQLTransactionErrorCallback</a> errorCallback, in optional <a href="#sqlvoidcallback">SQLVoidCallback</a> successCallback);
+
+  readonly attribute DOMString <a href="#dom-database-version" title="dom-database-version">version</a>;
+  void <a href="#dom-database-changeversion" title="dom-database-changeVersion">changeVersion</a>(in DOMString oldVersion, in DOMString newVersion, in optional <a href="#sqltransactioncallback">SQLTransactionCallback</a> callback, in optional <a href="#sqltransactionerrorcallback">SQLTransactionErrorCallback</a> errorCallback, in optional <a href="#sqlvoidcallback">SQLVoidCallback</a> successCallback);
+};
+
+[Callback=FunctionOnly, NoInterfaceObject]
+interface <dfn id="sqlvoidcallback">SQLVoidCallback</dfn> {
+  void <span title="dom-sqlvoidcallback-handleEvent">handleEvent</span>();
+};
+
+[Callback=FunctionOnly, NoInterfaceObject]
+interface <dfn id="sqltransactioncallback">SQLTransactionCallback</dfn> {
+  void <span title="dom-sqltransactioncallback-handleEvent">handleEvent</span>(in <a href="#sqltransaction">SQLTransaction</a> transaction);
+};
+
+[Callback=FunctionOnly, NoInterfaceObject]
+interface <dfn id="sqltransactionerrorcallback">SQLTransactionErrorCallback</dfn> {
+  void <span title="dom-sqltransactionerrorcallback-handleEvent">handleEvent</span>(in <a href="#sqlerror">SQLError</a> error);
+};</pre><p>The <dfn id="dom-database-transaction" title="dom-database-transaction"><code>transaction()</code></dfn>
+  and <dfn id="dom-database-readtransaction" title="dom-database-readTransaction"><code>readTransaction()</code></dfn>
+  methods takes one to three arguments. When called, these methods must
+  immediately return and then asynchronously run the <a href="#transaction-steps">transaction
+  steps</a> with the <i>transaction callback</i> being the first
+  argument, the <i>error callback</i> being the second argument, if
+  any, the <i>success callback</i> being the third argument, if any,
+  and with no <i>preflight operation</i> or <i>postflight
+  operation</i>.<p>For the <code title="dom-database-transaction"><a href="#dom-database-transaction">transaction()</a></code> method, the
+  <i>mode</i> must be read/write. For the <code title="dom-database-readTransaction"><a href="#dom-database-readtransaction">readTransaction()</a></code>
+  method, the <i>mode</i> must be read-only.<p>On getting, the <dfn id="dom-database-version" title="dom-database-version"><code>version</code></dfn> attribute
+  must return the current version of the database (as opposed to the
+  <a href="#concept-database-expected-version" title="concept-database-expected-version">expected
+  version</a> of the <code><a href="#database">Database</a></code> object).<p>The <dfn id="dom-database-changeversion" title="dom-database-changeVersion"><code>changeVersion()</code></dfn>
+  method allows scripts to atomically verify the version number and
+  change it at the same time as doing a schema update. When the method
+  is invoked, it must immediately return, and then asynchronously run
+  the <a href="#transaction-steps">transaction steps</a> with the <i>transaction
+  callback</i> being the third argument, the <i>error callback</i>
+  being the fourth argument, the <i>success callback</i> being the
+  fifth argument, the <i>preflight operation</i> being the
+  following:<ol><li><p>Check that the value of the first argument to the <code title="dom-database-changeVersion"><a href="#dom-database-changeversion">changeVersion()</a></code> method
+   exactly matches the database's actual version. If it does not, then
+   the <i>preflight operation</i> fails.</li>
+
+  </ol><p>...the <i>postflight operation</i> being the following:<ol><li>Change the database's actual version to the value of the second
+   argument to the <code title="dom-database-changeVersion"><a href="#dom-database-changeversion">changeVersion()</a></code>
+   method.</li>
+
+   <li>Change the <code><a href="#database">Database</a></code> object's expected version to
+   the value of the second argument to the <code title="dom-database-changeVersion"><a href="#dom-database-changeversion">changeVersion()</a></code>
+   method.</li>
+
+  </ol><p>...and the <i>mode</i> being read/write.<p>If any of the optional arguments are omitted, then they must be
+  treated as if they were null.<h4 id="executing-sql-statements"><span class="secno">4.3.1 </span>Executing SQL statements</h4><p>The <code title="dom-database-transaction"><a href="#dom-database-transaction">transaction()</a></code>,
+  <code title="dom-database-readTransaction"><a href="#dom-database-readtransaction">readTransaction()</a></code>,
+  and <code title="dom-database-changeVersion"><a href="#dom-database-changeversion">changeVersion()</a></code>
+  methods invoke callbacks with <code><a href="#sqltransaction">SQLTransaction</a></code>
+  objects.<pre class="idl">typedef sequence&lt;any&gt; <dfn id="objectarray">ObjectArray</dfn>;
+
+interface <dfn id="sqltransaction">SQLTransaction</dfn> {
+  void <a href="#dom-sqltransaction-executesql" title="dom-sqltransaction-executeSql">executeSql</a>(in DOMString sqlStatement, in optional <a href="#objectarray">ObjectArray</a> arguments, in optional <a href="#sqlstatementcallback">SQLStatementCallback</a> callback, in optional <a href="#sqlstatementerrorcallback">SQLStatementErrorCallback</a> errorCallback);
+};
+
+[Callback=FunctionOnly, NoInterfaceObject]
+interface <dfn id="sqlstatementcallback">SQLStatementCallback</dfn> {
+  void <span title="dom-sqlstatementcallback-handleEvent">handleEvent</span>(in <a href="#sqltransaction">SQLTransaction</a> transaction, in <a href="#sqlresultset">SQLResultSet</a> resultSet);
+};
+
+[Callback=FunctionOnly, NoInterfaceObject]
+interface <dfn id="sqlstatementerrorcallback">SQLStatementErrorCallback</dfn> {
+  boolean <span title="dom-sqlstatementerrorcallback-handleEvent">handleEvent</span>(in <a href="#sqltransaction">SQLTransaction</a> transaction, in <a href="#sqlerror">SQLError</a> error);
+};</pre><p>When the <dfn id="dom-sqltransaction-executesql" title="dom-sqltransaction-executeSql"><code>executeSql(<var title="">sqlStatement</var>, <var title="">arguments</var>, <var title="">callback</var>, <var title="">errorCallback</var>)</code></dfn> method is invoked, the
+  user agent must run the following algorithm. (This algorithm is
+  relatively simple in that it doesn't actually execute any SQL
+  &mdash; the bulk of the work is actually done as part of the
+  <a href="#transaction-steps">transaction steps</a>.)<ol><li><p>If the method was not invoked during the execution of a
+   <code><a href="#sqltransactioncallback">SQLTransactionCallback</a></code>,
+   <code><a href="#sqlstatementcallback">SQLStatementCallback</a></code>, or
+   <code><a href="#sqlstatementerrorcallback">SQLStatementErrorCallback</a></code> then raise an
+   <code>INVALID_STATE_ERR</code> exception. (Calls from inside a
+   <code><a href="#sqltransactionerrorcallback">SQLTransactionErrorCallback</a></code> thus raise an
+   exception. The <code><a href="#sqltransactionerrorcallback">SQLTransactionErrorCallback</a></code> handler is
+   only called once a transaction has failed, and no SQL statements
+   can be added to a failed transaction.)</li>
+
+   <li>
+
+    <p><a href="#preprocess-the-sql-statement">Preprocess the SQL statement</a> given as the first
+    argument to the method (<var title="">sqlStatement</var>), using
+    the second argument to the method as the <var title="">arguments</var> array, to obtain <var title="">the
+    statement</var>.</p>
+
+    <p>If the second argument is omitted or null, then treat the <var title="">arguments</var> array as empty.</p>
+
+   </li>
+
+   <li><p>Queue up <var title="">the statement</var> in the
+   transaction, along with the third argument (if any) as the
+   statement's result set callback and the fourth argument (if any) as
+   the error callback.</li>
+
+  </ol><h4 id="processing-model"><span class="secno">4.3.2 </span>Processing model</h4><p>The <dfn id="transaction-steps">transaction steps</dfn> are as follows. These steps must
+  be run asynchronously. These steps are invoked with a <i>transaction
+  callback</i>, optionally an <i>error callback</i>, optionally a
+  <i>success callback</i>, optionally a <i>preflight operation</i>,
+  optionally a <i>postflight operation</i>, and with a <i>mode</i>
+  that is either read/write or read-only.<ol><li><p>Open a new SQL transaction to the database, and create a
+   <code><a href="#sqltransaction">SQLTransaction</a></code> object that represents that
+   transaction. If the <i>mode</i> is read/write, the transaction must
+   have an exclusive write lock over the entire database. If the
+   <i>mode</i> is read-only, the transaction must have a shared read
+   lock over the entire database. The user agent should wait for an
+   appropriate lock to be available.</li>
+
+   <li><p>If an error occurred in the opening of the transaction
+   (e.g. if the user agent failed to obtain an appropriate lock after
+   an appropriate delay), jump to the last step.</li>
+
+   <li><p>If a <i>preflight operation</i> was defined for this
+   instance of the transaction steps, run that. If it fails, then jump
+   to the last step. (This is basically a hook for the <code title="dom-database-changeVersion"><a href="#dom-database-changeversion">changeVersion()</a></code>
+   method.)</li>
+
+   <li><p>If the <i>transaction callback</i> is not null, <span>queue
+   a task</span> to invoke the <i>transaction callback</i> with the
+   aforementioned <code><a href="#sqltransaction">SQLTransaction</a></code> object as its only
+   argument, and wait for that task to be run.</li>
+
+   <li><p>If the callback raised an exception, jump to the last
+   step.</li>
+
+   <li><p>While there are any statements queued up in the transaction,
+   perform the following steps for each queued up statement in the
+   transaction, oldest first. Each statement has a statement,
+   optionally a result set callback, and optionally an error
+   callback.</p>
+
+    <ol><li><p>If the statement is marked as bogus, jump to the "in case
+     of error" steps below.</li>
+
+     <li><p>Execute the statement in the context of the transaction.
+     <a href="#refsSQL">[SQL]</a></p>
+
+     <li><p>If the statement failed, jump to the "in case of error"
+     steps below.</li>
+
+     <li><p>Create a <code><a href="#sqlresultset">SQLResultSet</a></code> object that represents
+     the result of the statement.</li>
+
+     <li><p>If the statement has a result set callback that is not
+     null, <span>queue a task</span> to invoke it with the
+     <code><a href="#sqltransaction">SQLTransaction</a></code> object as its first argument and the
+     new <code><a href="#sqlresultset">SQLResultSet</a></code> object as its second argument, and
+     wait for that task to be run.</li>
+
+     <li><p>If the callback was invoked and raised an exception, jump
+     to the last step in the overall steps.</li>
+
+     <li><p>Move on to the next statement, if any, or onto the next
+     overall step otherwise.</li>
+
+    </ol><p>In case of error (or more specifically, if the above substeps
+    say to jump to the "in case of error" steps), run the following
+    substeps:</p>
+
+    <ol><li><p>If the statement had an associated error callback that is
+     not null, then <span>queue a task</span> to invoke that error
+     callback with the <code><a href="#sqltransaction">SQLTransaction</a></code> object and a newly
+     constructed <code><a href="#sqlerror">SQLError</a></code> object that represents the
+     error that caused these substeps to be run as the two arguments,
+     respectively, and wait for the task to be run.</li>
+
+     <li><p>If the error callback returns false, then move on to the
+     next statement, if any, or onto the next overall step
+     otherwise.</li>
+
+     <li><p>Otherwise, the error callback did not return false, or
+     there was no error callback. Jump to the last step in the overall
+     steps.</li>
+
+    </ol></li>
+
+   <li>
+
+    <p>If a <i>postflight operation</i> was defined for this instance
+    of the transaction steps, then: as one atomic operation, commit
+    the transaction and, if that succeeds, run the <i>postflight
+    operation</i>. If the commit fails, then instead jump to the last
+    step. (This is basically a hook for the <code title="dom-database-changeVersion"><a href="#dom-database-changeversion">changeVersion()</a></code>
+    method.)</p>
+
+    <p>Otherwise: commit the transaction. If an error occurred in the
+    committing of the transaction, jump to the last step.</p>
+
+   </li>
+
+   <li><p><span>Queue a task</span> to invoke the <i>success
+   callback</i>, if it is not null.</li>
+
+   <li><p>End these steps. The next step is only used when something
+   goes wrong.</li>
+
+   <li><p><span>Queue a task</span> to invoke the transaction's
+   <i>error callback</i>, if it is not null, with a newly constructed
+   <code><a href="#sqlerror">SQLError</a></code> object that represents the last error to have
+   occurred in this transaction. Rollback the transaction. Any
+   still-pending statements in the transaction are discarded.</li>
+
+  </ol><p>The <span>task source</span> for these <span title="concept-task">tasks</span> is the <dfn id="database-access-task-source">database access task
+  source</dfn>.<h3 id="synchronous-database-api"><span class="secno">4.4 </span>Synchronous database API</h3><pre class="idl">interface <dfn id="databasesync">DatabaseSync</dfn> {
+  void <a href="#dom-database-sync-transaction" title="dom-database-sync-transaction">transaction</a>(in <a href="#sqltransactionsynccallback">SQLTransactionSyncCallback</a> callback);
+  void <a href="#dom-database-sync-readtransaction" title="dom-database-sync-readTransaction">readTransaction</a>(in <a href="#sqltransactionsynccallback">SQLTransactionSyncCallback</a> callback);
+
+  readonly attribute DOMString <a href="#dom-database-sync-version" title="dom-database-sync-version">version</a>;
+  void <a href="#dom-database-sync-changeversion" title="dom-database-sync-changeVersion">changeVersion</a>(in DOMString oldVersion, in DOMString newVersion, in optional <a href="#sqltransactionsynccallback">SQLTransactionSyncCallback</a> callback);
+};
+
+[Callback=FunctionOnly, NoInterfaceObject]
+interface <dfn id="sqltransactionsynccallback">SQLTransactionSyncCallback</dfn> {
+  void <span title="dom-sqltransactionsynccallback-handleEvent">handleEvent</span>(in <a href="#sqltransactionsync">SQLTransactionSync</a> transaction);
+};</pre><p>The <dfn id="dom-database-sync-transaction" title="dom-database-sync-transaction"><code>transaction()</code></dfn>
+  and <dfn id="dom-database-sync-readtransaction" title="dom-database-sync-readTransaction"><code>readTransaction()</code></dfn>
+  methods must run the following steps:<ol><li><p>If the method was the <code title="dom-database-sync-transaction"><a href="#dom-database-sync-transaction">transaction()</a></code> method,
+   <a href="#create-a-sqltransactionsync-object">create a <code>SQLTransactionSync</code> object</a> for a
+   read/write transaction. Otherwise, <a href="#create-a-sqltransactionsync-object">create a
+   <code>SQLTransactionSync</code> object</a> for a read-only
+   transaction. In either case, if this throws an exception, then
+   rethrow it and abort these steps. Otherwise, let <var title="">transaction</var> be the newly created
+   <code><a href="#sqltransactionsync">SQLTransactionSync</a></code> object.</li>
+
+   <li><p>If the first argument is null, rollback the transaction,
+   throw a <code><a href="#sqlexception">SQLException</a></code> exception, and abort these
+   steps. (<a href="#dom-sqlerror-code-0" title="dom-sqlerror-code-0">Error code
+   0</a>.)</li>
+
+   <li><p>Invoke the callback given by the first argument, passing it
+   the <var title="">transaction</var> object as its only
+   argument.</li>
+
+   <li><p>Mark the <code><a href="#sqltransactionsync">SQLTransactionSync</a></code> object as <i title="">stale</i>.</p>
+
+   <li><p>If the callback was terminated by an exception, then
+   rollback the transaction, rethrow that exception, and abort these
+   steps.</li>
+
+   <li><p>Commit the transaction.</li>
+
+   <li><p>If an error occurred in the committing of the transaction,
+   rollback the transaction, throw a <code><a href="#sqlexception">SQLException</a></code>
+   exception, and abort these steps.</li>
+
+  </ol><p>On getting, the <dfn id="dom-database-sync-version" title="dom-database-sync-version"><code>version</code></dfn>
+  attribute must return the current version of the database (as
+  opposed to the <a href="#concept-database-expected-version" title="concept-database-expected-version">expected version</a> of
+  the <code><a href="#databasesync">DatabaseSync</a></code> object).<p>The <dfn id="dom-database-sync-changeversion" title="dom-database-sync-changeVersion"><code>changeVersion()</code></dfn>
+  method allows scripts to atomically verify the version number and
+  change it at the same time as doing a schema update. When the method
+  is invoked, it must run the following steps:<ol><li><p><a href="#create-a-sqltransactionsync-object">Create a <code>SQLTransactionSync</code> object</a>
+   for a read/write transaction. If this throws an exception, then
+   rethrow it and abort these steps. Otherwise, let <var title="">transaction</var> be the newly created
+   <code><a href="#sqltransactionsync">SQLTransactionSync</a></code> object.</li>
+
+   <li><p>Check that the value of the first argument to the <code title="dom-database-sync-changeVersion"><a href="#dom-database-sync-changeversion">changeVersion()</a></code>
+   method exactly matches the database's actual version. If it does
+   not, then throw a <code><a href="#sqlexception">SQLException</a></code> exception and abort
+   these steps. (<a href="#dom-sqlerror-code-2" title="dom-sqlerror-code-2">Error code
+   2</a>.)</li>
+
+   <li><p>If the third argument is not null, invoke the callback given
+   by the third argument, passing it the <var title="">transaction</var> object as its only argument.</li>
+
+   <li><p>Mark the <code><a href="#sqltransactionsync">SQLTransactionSync</a></code> object as <i title="">stale</i>.</p>
+
+   <li><p>If the callback was terminated by an exception, then
+   rollback the transaction, rethrow the exception, and abort these
+   steps.</li>
+
+   <li><p>Commit the transaction.</li>
+
+   <li><p>If an error occurred in the committing of the transaction,
+   rollback the transaction, throw a <code><a href="#sqlexception">SQLException</a></code>
+   exception, and abort these steps.</li>
+
+   <li>Change the database's actual version to the value of the second
+   argument to the <code title="dom-database-sync-changeVersion"><a href="#dom-database-sync-changeversion">changeVersion()</a></code>
+   method.</li>
+
+   <li>Change the <code><a href="#database">Database</a></code> object's expected version to
+   the value of the second argument to the <code title="dom-database-sync-changeVersion"><a href="#dom-database-sync-changeversion">changeVersion()</a></code>
+   method.</li>
+
+  </ol><hr><p>When the user agent is to <dfn id="create-a-sqltransactionsync-object">create a
+  <code>SQLTransactionSync</code> object</dfn> for a transaction that
+  is either read/write or read-only, it must run the following
+  steps:<ol><li><p>Open a new SQL transaction to the database, and create a
+   <code><a href="#sqltransactionsync">SQLTransactionSync</a></code> object that represents that
+   transaction. If the <i>mode</i> is read/write, the transaction must
+   have an exclusive write lock over the entire database. If the
+   <i>mode</i> is read-only, the transaction must have a shared read
+   lock over the entire database. The user agent should wait for an
+   appropriate lock to be available.</li>
+
+   <li><p>If an error occurred in the opening of the transaction
+   (e.g. if the user agent failed to obtain an appropriate lock after
+   an appropriate delay), throw a <code><a href="#sqlexception">SQLException</a></code> exception
+   and abort these steps.</li>
+
+   <li><p>Return the newly created <code><a href="#sqltransactionsync">SQLTransactionSync</a></code>
+   object.</li>
+
+  </ol><h4 id="executing-sql-statements-0"><span class="secno">4.4.1 </span>Executing SQL statements</h4><p>The <code title="dom-database-sync-transaction"><a href="#dom-database-sync-transaction">transaction()</a></code>, <code title="dom-database-sync-readTransaction"><a href="#dom-database-sync-readtransaction">readTransaction()</a></code>,
+  and <code title="dom-database-sync-changeVersion"><a href="#dom-database-sync-changeversion">changeVersion()</a></code>
+  methods invoke callbacks that are passed
+  <code><a href="#sqltransactionsync">SQLTransactionSync</a></code> objects.<pre class="idl">// typedef sequence&lt;any&gt; <a href="#objectarray">ObjectArray</a>;
+
+interface <dfn id="sqltransactionsync">SQLTransactionSync</dfn> {
+  <a href="#sqlresultset">SQLResultSet</a> <a href="#dom-sqltransaction-sync-executesql" title="dom-sqltransaction-sync-executeSql">executeSql</a>(in DOMString sqlStatement, in optional <a href="#objectarray">ObjectArray</a> arguments);
+};</pre><p>A <code><a href="#sqltransactionsync">SQLTransactionSync</a></code> object is initially <i title="">fresh</i>, but it will be marked as <i title="">stale</i>
+  once it has been committed or rolled back.<p>When the <dfn id="dom-sqltransaction-sync-executesql" title="dom-sqltransaction-sync-executeSql"><code>executeSql(<var title="">sqlStatement</var>, <var title="">arguments</var>)</code></dfn> method is invoked, the user
+  agent must run the following algorithm:<ol><li><p>If the <code><a href="#sqltransactionsync">SQLTransactionSync</a></code> object is <i title="">stale</i>, then throw an <code>INVALID_STATE_ERR</code>
+   exception.</li>
+
+   <li>
+
+    <p><a href="#preprocess-the-sql-statement">Preprocess the SQL statement</a> given as the first
+    argument to the method (<var title="">sqlStatement</var>), using
+    the second argument to the method as the <var title="">arguments</var> array, to obtain <var title="">the
+    statement</var>.</p>
+
+    <p>If the second argument is omitted or null, then treat the <var title="">arguments</var> array as empty.</p>
+
+   </li>
+
+   <li><p>If the statement is marked as bogus, throw a
+   <code><a href="#sqlexception">SQLException</a></code> exception.</li>
+
+   <li><p>Execute the statement in the context of the transaction.
+   <a href="#refsSQL">[SQL]</a></p>
+
+   <li><p>If the statement failed, throw a <code><a href="#sqlexception">SQLException</a></code>
+   exception.</li>
+
+   <li><p>Create a <code><a href="#sqlresultset">SQLResultSet</a></code> object that represents
+   the result of the statement.</li>
+
+   <li><p>Return the newly created <code><a href="#sqlresultset">SQLResultSet</a></code>
+   object.</li>
+
+  </ol><h3 id="database-query-results"><span class="secno">4.5 </span>Database query results</h3><p>The <code title="dom-sqltransaction-executeSql"><a href="#dom-sqltransaction-executesql">executeSql()</a></code>
+  method invokes its callback with a <code><a href="#sqlresultset">SQLResultSet</a></code> object
+  as an argument.<pre class="idl">interface <dfn id="sqlresultset">SQLResultSet</dfn> {
+  readonly attribute long <a href="#dom-sqlresultset-insertid" title="dom-SQLResultSet-insertId">insertId</a>;
+  readonly attribute long <a href="#dom-sqlresultset-rowsaffected" title="dom-SQLResultSet-rowsAffected">rowsAffected</a>;
+  readonly attribute <a href="#sqlresultsetrowlist">SQLResultSetRowList</a> <a href="#dom-sqlresultset-rows" title="dom-SQLResultSet-rows">rows</a>;
+};</pre><p>The <dfn id="dom-sqlresultset-insertid" title="dom-SQLResultSet-insertId"><code>insertId</code></dfn>
+  attribute must return the row ID of the row that the
+  <code><a href="#sqlresultset">SQLResultSet</a></code> object's SQL statement inserted into the
+  database, if the statement inserted a row. If the statement inserted
+  multiple rows, the ID of the last row must be the one returned. If
+  the statement did not insert a row, then the attribute must instead
+  raise an <code>INVALID_ACCESS_ERR</code> exception.<p>The <dfn id="dom-sqlresultset-rowsaffected" title="dom-SQLResultSet-rowsAffected"><code>rowsAffected</code></dfn>
+  attribute must return the number of rows that were changed by the
+  SQL statement. If the statement did not affected any rows, then the
+  attribute must return zero. For "SELECT" statements, this returns
+  zero (querying the database doesn't affect any rows).<p>The <dfn id="dom-sqlresultset-rows" title="dom-SQLResultSet-rows"><code>rows</code></dfn>
+  attribute must return a <code><a href="#sqlresultsetrowlist">SQLResultSetRowList</a></code>
+  representing the rows returned, in the order returned by the
+  database. The same object must be returned each time. If no rows
+  were returned, then the object will be empty (its <code title="dom-SQLResultSetRowList-length"><a href="#dom-sqlresultsetrowlist-length">length</a></code> will be
+  zero).<pre class="idl">interface <dfn id="sqlresultsetrowlist">SQLResultSetRowList</dfn> {
+  readonly attribute unsigned long <a href="#dom-sqlresultsetrowlist-length" title="dom-SQLResultSetRowList-length">length</a>;
+  getter <span>any</span> <a href="#dom-sqlresultsetrowlist-item" title="dom-SQLResultSetRowList-item">item</a>(in unsigned long index);
+};</pre><p class="note">For the asynchronous API, implementors are
+  encouraged to prefetch all the data for
+  <code><a href="#sqlresultsetrowlist">SQLResultSetRowList</a></code> objects when the object is
+  constructed (before the result set callback is invoked), rather than
+  on-demand, for better responsiveness. For the synchronous API, an
+  on-demand lazy evaluation implementation strategy is encouraged
+  instead, for better performance.<p><code><a href="#sqlresultsetrowlist">SQLResultSetRowList</a></code> objects have a <dfn id="dom-sqlresultsetrowlist-length" title="dom-SQLResultSetRowList-length"><code>length</code></dfn>
+  attribute that must return the number of rows it represents (the
+  number of rows returned by the database). This is the <var title="dom-SQLResultSetRowList-length"><a href="#dom-sqlresultsetrowlist-length">length</a></var>.<p class="note">Fetching the <code title="dom-SQLResultSetRowList-length"><a href="#dom-sqlresultsetrowlist-length">length</a></code> might be
+  expensive, and authors are thus encouraged to avoid using it (or
+  enumerating over the object, which implicitly uses it) where
+  possible.<p>The object's <span>supported property indices</span> are the
+  numbers in the range zero to <span title=""><var title="dom-SQLResultSetRowList-length"><a href="#dom-sqlresultsetrowlist-length">length</a></var>-1</span>, unless
+  the <var title="dom-SQLResultSetRowList-length"><a href="#dom-sqlresultsetrowlist-length">length</a></var> is
+  zero, in which case there are no <span>supported property
+  indices</span>.<p>The <dfn id="dom-sqlresultsetrowlist-item" title="dom-SQLResultSetRowList-item"><code>item(<var title="">index</var>)</code></dfn> attribute must return the row
+  with the given index <var title="">index</var>. If there is no such
+  row, then the method must return null.<p>Each row must be represented by a native ordered dictionary data
+  type. In the JavaScript binding, this must be <code>Object</code>.
+  Each row object must have one property (or dictionary entry) per
+  column, with those properties enumerating in the order that these
+  columns were returned by the database. Each property must have the
+  name of the column and the value of the cell, as they were returned
+  by the database.<h3 id="errors-and-exceptions"><span class="secno">4.6 </span>Errors and exceptions</h3><p>Errors in the asynchronous database API are reported using
+  callbacks that have a <code><a href="#sqlerror">SQLError</a></code> object as one of their
+  arguments.<pre class="idl">interface <dfn id="sqlerror">SQLError</dfn> {
+  const unsigned short <a href="#dom-sqlexception-code-unknown" title="dom-SQLException-code-UNKNOWN">UNKNOWN_ERR</a> = 0;
+  const unsigned short <a href="#dom-sqlexception-code-database" title="dom-SQLException-code-DATABASE">DATABASE_ERR</a> = 1;
+  const unsigned short <a href="#dom-sqlexception-code-version" title="dom-SQLException-code-VERSION">VERSION_ERR</a> = 2;
+  const unsigned short <a href="#dom-sqlexception-code-too_large" title="dom-SQLException-code-TOO_LARGE">TOO_LARGE_ERR</a> = 3;
+  const unsigned short <a href="#dom-sqlexception-code-quota" title="dom-SQLException-code-QUOTA">QUOTA_ERR</a> = 4;
+  const unsigned short <a href="#dom-sqlexception-code-syntax" title="dom-SQLException-code-SYNTAX">SYNTAX_ERR</a> = 5;
+  const unsigned short <a href="#dom-sqlexception-code-constraint" title="dom-SQLException-code-CONSTRAINT">CONSTRAINT_ERR</a> = 6;
+  const unsigned short <a href="#dom-sqlexception-code-timeout" title="dom-SQLException-code-TIMEOUT">TIMEOUT_ERR</a> = 7;
+  readonly attribute unsigned short <a href="#dom-sqlerror-code" title="dom-SQLError-code">code</a>;
+  readonly attribute DOMString <a href="#dom-sqlerror-message" title="dom-SQLError-message">message</a>;
+};</pre><p>The <dfn id="dom-sqlerror-code" title="dom-SQLError-code"><code>code</code></dfn> IDL
+  attribute must return the most appropriate code from the table
+  below.<p>The <dfn id="dom-sqlerror-message" title="dom-SQLError-message"><code>message</code></dfn>
+  IDL attribute must return an error message describing the error
+  encountered. The message should be localized to the user's
+  language.<hr><p>Errors in the synchronous database API are reported using
+  <code><a href="#sqlexception">SQLException</a></code> exceptions:<pre class="idl">exception <dfn id="sqlexception">SQLException</dfn> {
+  const unsigned short <a href="#dom-sqlexception-code-unknown" title="dom-SQLException-code-UNKNOWN">UNKNOWN_ERR</a> = 0;
+  const unsigned short <a href="#dom-sqlexception-code-database" title="dom-SQLException-code-DATABASE">DATABASE_ERR</a> = 1;
+  const unsigned short <a href="#dom-sqlexception-code-version" title="dom-SQLException-code-VERSION">VERSION_ERR</a> = 2;
+  const unsigned short <a href="#dom-sqlexception-code-too_large" title="dom-SQLException-code-TOO_LARGE">TOO_LARGE_ERR</a> = 3;
+  const unsigned short <a href="#dom-sqlexception-code-quota" title="dom-SQLException-code-QUOTA">QUOTA_ERR</a> = 4;
+  const unsigned short <a href="#dom-sqlexception-code-syntax" title="dom-SQLException-code-SYNTAX">SYNTAX_ERR</a> = 5;
+  const unsigned short <a href="#dom-sqlexception-code-constraint" title="dom-SQLException-code-CONSTRAINT">CONSTRAINT_ERR</a> = 6;
+  const unsigned short <a href="#dom-sqlexception-code-timeout" title="dom-SQLException-code-TIMEOUT">TIMEOUT_ERR</a> = 7;
+  unsigned short <a href="#dom-sqlexception-code" title="dom-SQLException-code">code</a>;
+  DOMString <a href="#dom-sqlexception-message" title="dom-SQLException-message">message</a>;
+};</pre><p>The <dfn id="dom-sqlexception-code" title="dom-SQLException-code"><code>code</code></dfn>
+  IDL attribute must return the most appropriate code from the table
+  below.<p>The <dfn id="dom-sqlexception-message" title="dom-SQLException-message"><code>message</code></dfn> IDL
+  attribute must return an error message describing the error
+  encountered. The message should be localized to the user's
+  language.<hr><p>The error codes are as follows:<table><thead><tr><th>Constant
+     <th>Code
+     <th>Situation
+   <tbody><tr><td><dfn id="dom-sqlexception-code-unknown" title="dom-SQLException-code-UNKNOWN"><code>UNKNOWN_ERR</code></dfn>
+     <td><dfn id="dom-sqlerror-code-0" title="dom-sqlerror-code-0">0</dfn>
+     <td>The transaction failed for reasons unrelated to the database
+     itself and not covered by any other error code.
+
+    <tr><td><dfn id="dom-sqlexception-code-database" title="dom-SQLException-code-DATABASE"><code>DATABASE_ERR</code></dfn>
+     <td><dfn id="dom-sqlerror-code-1" title="dom-sqlerror-code-1">1</dfn>
+     <td>The statement failed for database reasons not covered by any
+     other error code.
+
+    <tr><td><dfn id="dom-sqlexception-code-version" title="dom-SQLException-code-VERSION"><code>VERSION_ERR</code></dfn>
+     <td><dfn id="dom-sqlerror-code-2" title="dom-sqlerror-code-2">2</dfn>
+     <td>The operation failed because the actual database version was
+     not what it should be. For example, a statement found that the
+     actual database version no longer matched the <a href="#concept-database-expected-version" title="concept-database-expected-version">expected version</a>
+     of the <code><a href="#database">Database</a></code> or <code><a href="#databasesync">DatabaseSync</a></code> object,
+     or the <code title="dom-database-changeversion"><a href="#dom-database-changeversion">Database.changeVersion()</a></code>
+     or <code title="dom-database-sync-changeversion"><a href="#dom-database-sync-changeversion">DatabaseSync.changeVersion()</a></code>
+     methods were passed a version that doesn't match the actual
+     database version.
+
+    <tr><td><dfn id="dom-sqlexception-code-too_large" title="dom-SQLException-code-TOO_LARGE"><code>TOO_LARGE_ERR</code></dfn>
+     <td><dfn id="dom-sqlerror-code-3" title="dom-sqlerror-code-3">3</dfn>
+     <td>The statement failed because the data returned from the
+     database was too large. The SQL "LIMIT" modifier might be useful
+     to reduce the size of the result set.
+
+    <tr><td><dfn id="dom-sqlexception-code-quota" title="dom-SQLException-code-QUOTA"><code>QUOTA_ERR</code></dfn>
+     <td><dfn id="dom-sqlerror-code-4" title="dom-sqlerror-code-4">4</dfn>
+     <td>The statement failed because there was not enough remaining
+     storage space, or the storage quota was reached and the user
+     declined to give more space to the database.
+
+    <tr><td><dfn id="dom-sqlexception-code-syntax" title="dom-SQLException-code-SYNTAX"><code>SYNTAX_ERR</code></dfn>
+     <td><dfn id="dom-sqlerror-code-5" title="dom-sqlerror-code-5">5</dfn>
+     <td>The statement failed because of a syntax error, or the number
+     of arguments did not match the number of <code title="">?</code>
+     placeholders in the statement, or the statement tried to use a
+     statement that is not allowed, such as <code title="">BEGIN</code>, <code title="">COMMIT</code>, or <code title="">ROLLBACK</code>, or the statement tried to use a verb
+     that could modify the database but the transaction was read-only.
+
+    <tr><td><dfn id="dom-sqlexception-code-constraint" title="dom-SQLException-code-CONSTRAINT"><code>CONSTRAINT_ERR</code></dfn>
+     <td><dfn id="dom-sqlerror-code-6" title="dom-sqlerror-code-6">6</dfn>
+     <td>An <code title="">INSERT</code>, <code title="">UPDATE</code>, or <code title="">REPLACE</code>
+     statement failed due to a constraint failure. For example,
+     because a row was being inserted and the value given for the
+     primary key column duplicated the value of an existing row.
+
+    <tr><td><dfn id="dom-sqlexception-code-timeout" title="dom-SQLException-code-TIMEOUT"><code>TIMEOUT_ERR</code></dfn>
+     <td><dfn id="dom-sqlerror-code-7" title="dom-sqlerror-code-7">7</dfn>
+     <td>A lock for the transaction could not be obtained in a
+     reasonable time.
+
+  </table><h2 id="web-sql"><span class="secno">5 </span>Web SQL</h2><p>User agents must implement the SQL dialect supported by Sqlite 3.6.19.<p>When converting bound arguments to SQL data types, the JavaScript
+  ToPrimitive abstract operation must be applied to obtain the raw
+  value to be processed. <a href="#refsECMA262">[ECMA262]</a>.<h2 id="disk-space"><span class="secno">6 </span>Disk space</h2><p>User agents should limit the total amount of space allowed for
+  databases.
+  
+  <p>User agents should guard against sites storing data under the
+  origins other affiliated sites, e.g. storing up to the limit in
+  a1.example.com, a2.example.com, a3.example.com, etc, circumventing
+  the main example.com storage limit.<p>User agents may prompt the user when quotas are reached, allowing
+  the user to grant a site more space. This enables sites to store
+  many user-created documents on the user's computer, for
+  instance.<p>User agents should allow users to see how much space each domain
+  is using.<p>A mostly arbitrary limit of five megabytes per
+  <span>origin</span> is recommended. Implementation feedback is
+  welcome and will be used to update this suggestion in the
+  future.<h2 id="privacy"><span class="secno">7 </span>Privacy</h2><h3 id="user-tracking"><span class="secno">7.1 </span>User tracking</h3><p>A third-party advertiser (or any entity capable of getting
+  content distributed to multiple sites) could use a unique identifier
+  stored in its
+  client-side databases
+  
+  
+  to track a user across multiple sessions, building a profile of the
+  user's interests to allow for highly targeted advertising. In
+  conjunction with a site that is aware of the user's real identity
+  (for example an e-commerce site that requires authenticated
+  credentials), this could allow oppressive groups to target
+  individuals with greater accuracy than in a world with purely
+  anonymous Web usage.<p>There are a number of techniques that can be used to mitigate the
+  risk of user tracking:<dl><dt>Blocking third-party storage</dt>
+   <dd>
+
+    <p>User agents may restrict access to
+    the database objects
+    
+    
+    to scripts originating at the domain of the top-level document of
+    the <span>browsing context</span>, for instance denying access to
+    the API for pages from other domains running in
+    <code>iframe</code>s.</p>
+
+   </dd>
+
+   <dt>Expiring stored data</dt>
+   <dd>
+
+    <p>User agents may, if so configured by the user, automatically
+    delete stored data after a period of time.</p>
+
+
+    <p>This can restrict the ability of a site to track a user, as the
+    site would then only be able to track the user across multiple
+    sessions when he authenticates with the site itself (e.g. by
+    making a purchase or logging in to a service).</p>
+
+    <p>However, this also reduces the usefulness of the API as a
+    long-term storage mechanism. It can also put the user's data at
+    risk, if the user does not fully understand the implications of
+    data expiration.</p>
+
+
+   </dd>
+
+   <dt>Treating persistent storage as cookies</dt>
+   <dd>
+
+    <p>If users attempt to protect their privacy by clearing cookies
+    without also clearing data stored in the
+    relevant databases,
+    
+    sites can defeat those attempts by using the two features as
+    redundant backup for each other. User agents should present the
+    interfaces for clearing these in a way that helps users to
+    understand this possibility and enables them to delete data in all
+    persistent storage features simultaneously. <a href="#refsCOOKIES">[COOKIES]</a></p>
+
+   </dd>
+
+   <dt>Site-specific white-listing of access to
+   databases
+   
+   
+   </dt>
+   <dd>
+
+    <p>User agents may require the user to authorize access to
+    databases before a site can use the feature.</p>
+    
+    
+
+   </dd>
+
+   <dt>Origin-tracking of stored data</dt>
+   <dd>
+
+    <p>User agents may record the <span title="origin">origins</span>
+    of sites that contained content from third-party origins that
+    caused data to be stored.</p>
+
+    <p>If this information is then used to present the view of data
+    currently in persistent storage, it would allow the user to make
+    informed decisions about which parts of the persistent storage to
+    prune. Combined with a blacklist ("delete this data and prevent
+    this domain from ever storing data again"), the user can restrict
+    the use of persistent storage to sites that he trusts.</p>
+
+   </dd>
+
+   <dt>Shared blacklists</dt>
+   <dd>
+
+    <p>User agents may allow users to share their persistent storage
+    domain blacklists.</p>
+
+    <p>This would allow communities to act together to protect their
+    privacy.</p>
+
+   </dd>
+
+  </dl><p>While these suggestions prevent trivial use of this API for user
+  tracking, they do not block it altogether. Within a single domain, a
+  site can continue to track the user during a session, and can then
+  pass all this information to the third party along with any
+  identifying information (names, credit card numbers, addresses)
+  obtained by the site. If a third party cooperates with multiple
+  sites to obtain such information, a profile can still be
+  created.<p>However, user tracking is to some extent possible even with no
+  cooperation from the user agent whatsoever, for instance by using
+  session identifiers in URLs, a technique already commonly used for
+  innocuous purposes but easily repurposed for user tracking (even
+  retroactively). This information can then be shared with other
+  sites, using using visitors' IP addresses and other user-specific
+  data (e.g. user-agent headers and configuration settings) to combine
+  separate sessions into coherent user profiles.<h3 id="sensitivity-of-data"><span class="secno">7.2 </span>Sensitivity of data</h3><p>User agents should treat persistently stored data as potentially
+  sensitive; it's quite possible for e-mails, calendar appointments,
+  health records, or other confidential documents to be stored in this
+  mechanism.<p>To this end, user agents should ensure that when deleting data,
+  it is promptly deleted from the underlying storage.<h2 id="security-storage"><span class="secno">8 </span>Security</h2><h3 id="dns-spoofing-attacks"><span class="secno">8.1 </span>DNS spoofing attacks</h3><p>Because of the potential for DNS spoofing attacks, one cannot
+  guarantee that a host claiming to be in a certain domain really is
+  from that domain. To mitigate this, pages can use TLS. Pages using
+  TLS can be sure that only pages using TLS that have certificates
+  identifying them as being from the same domain can access their
+  databases.
+  
+  <h3 id="cross-directory-attacks"><span class="secno">8.2 </span>Cross-directory attacks</h3><p>Different authors sharing one host name, for example users
+  hosting content on <code>geocities.com</code>, all share one
+  set of databases.
+  
+  There is no feature to restrict the access by pathname. Authors on
+  shared hosts are therefore recommended to avoid using these
+  features, as it would be trivial for other authors to read the data
+  and overwrite it.<p class="note">Even if a path-restriction feature was made
+  available, the usual DOM scripting security model would make it
+  trivial to bypass this protection and access the data from any
+  path.<h3 id="implementation-risks"><span class="secno">8.3 </span>Implementation risks</h3><p>The two primary risks when implementing these persistent storage
+  features are letting hostile sites read information from other
+  domains, and letting hostile sites write information that is then
+  read from other domains.<p>Letting third-party sites read data that is not supposed to be
+  read from their domain causes <em>information leakage</em>, For
+  example, a user's shopping wishlist on one domain could be used by
+  another domain for targeted advertising; or a user's
+  work-in-progress confidential documents stored by a word-processing
+  site could be examined by the site of a competing company.<p>Letting third-party sites write data to the persistent storage of
+  other domains can result in <em>information spoofing</em>, which is
+  equally dangerous. For example, a hostile site could add items to a
+  user's wishlist; or a hostile site could set a user's session
+  identifier to a known ID that the hostile site can then use to track
+  the user's actions on the victim site.<p>Thus, strictly following the <span>origin</span> model described
+  in this specification is important for user security.<h3 id="sql-and-user-agents"><span class="secno">8.4 </span>SQL and user agents</h3><p>User agent implementors are strongly encouraged to audit all
+  their supported SQL statements for security implications. For
+  example, <code title="">LOAD DATA INFILE</code> is likely to pose
+  security risks and there is little reason to support it.<p>In general, it is recommended that user agents not support
+  features that control how databases are stored on disk. For example,
+  there is little reason to allow Web authors to control the character
+  encoding used in the disk representation of the data, as all data in
+  JavaScript is implicitly UTF-16.<h3 id="sql-injection"><span class="secno">8.5 </span>SQL injection</h3><p>Authors are strongly recommended to make use of the <code title="">?</code> placeholder feature of the <code title="dom-sqltransaction-executeSql"><a href="#dom-sqltransaction-executesql">executeSql()</a></code> method,
+  and to never construct SQL statements on the fly.<h2 class="no-num" id="references">References</h2><!--REFS--><p>All references are normative unless marked "Non-normative".</p><!-- Dates are only included for standards older than the Web, because the newer ones keep changing. --><dl><dt id="refsCOOKIES">[COOKIES]</dt>
+   <!--
+   <dd><cite><a href="http://tools.ietf.org/html/rfc2109">HTTP State
+   Management Mechanism</a></cite>, D. Kristol, L. Montulli. IETF.</dd>
+   <dd><cite><a href="http://tools.ietf.org/html/rfc2965">HTTP State Management
+   Mechanism</a></cite>, D. Kristol, L. Montulli. IETF.</dd>
+   -->
+   <dd><cite><a href="http://tools.ietf.org/html/draft-ietf-httpstate-cookie">HTTP State
+   Management Mechanism</a></cite>, A. Barth. IETF.</dd>
+
+   <dt id="refsDOMCORE">[DOMCORE]</dt>
+   <dd><cite><a href="http://www.w3.org/TR/DOM-Level-3-Core/">Document
+   Object Model (DOM) Level 3 Core Specification</a></cite>, A. Le
+   Hors, P. Le Hegaret, L. Wood, G. Nicol, J. Robie, M. Champion,
+   S. Byrnes. W3C.</dd>
+   <!--
+   <dd><cite><a href="http://simon.html5.org/specs/web-dom-core">Web
+   DOM Core</a></cite>, S. Pieters. W3C.</dd>
+   -->
+
+   <dt id="refsECMA262">[ECMA262]</dt>
+   <dd><cite><a href="http://www.ecma-international.org/publications/standards/Ecma-262.htm">ECMAScript
+   Language Specification</a></cite>. ECMA.</dd>
+
+   <dt id="refsHTML">[HTML]</dt>
+   <dd><cite><a href="http://www.whatwg.org/specs/web-apps/current-work/">HTML</a></cite>,
+   I. Hickson. WHATWG.</dd>
+
+   <dt id="refsRFC2119">[RFC2119]</dt>
+   <dd><cite><a href="http://tools.ietf.org/html/rfc2119">Key words for use in
+   RFCs to Indicate Requirement Levels</a></cite>, S. Bradner. IETF.</dd>
+
+   <dt id="refsSQL">[SQL]</dt>
+   <dd>The precise dialect has not yet been specified.</dd>
+
+   <dt id="refsWEBIDL">[WEBIDL]</dt>
+   <!--
+   <dd><cite><a href="http://www.w3.org/TR/WebIDL/">Web
+   IDL</a></cite>, C. McCormack. W3C.</dd>
+   -->
+   <dd><cite><a href="http://dev.w3.org/2006/webapi/WebIDL/">Web
+   IDL</a></cite>, C. McCormack. W3C.</dd>
+
+  </dl>

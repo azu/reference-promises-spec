@@ -1,0 +1,1586 @@
+<!-- http://www.w3.org/TR/UISecurity/ -->
+<!DOCTYPE html>
+<html lang="en" dir="ltr" typeof="bibo:Document w3p:LastCall" about="" property="dcterms:language" content="en">
+<head>
+  <!--link href="http://www.w3.org/StyleSheets/TR/W3C-ED" rel="stylesheet" type="text/css" charset="utf-8"-->
+  <title>User Interface Security Directives for Content Security Policy</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <!--
+  === NOTA BENE ===
+  For the three scripts below, if your spec resides on dev.w3 you can check them
+  out in the same tree and use relative links so that they'll work offline,
+  -->
+  <!--script src='https://www.w3.org/Tools/respec/respec-w3c-common' class='remove' async></script-->
+  
+  
+<style>/*****************************************************************
+ * ReSpec 3 CSS
+ * Robin Berjon - http://berjon.com/
+ *****************************************************************/
+
+/* --- INLINES --- */
+em.rfc2119 { 
+    text-transform:     lowercase;
+    font-variant:       small-caps;
+    font-style:         normal;
+    color:              #900;
+}
+
+h1 acronym, h2 acronym, h3 acronym, h4 acronym, h5 acronym, h6 acronym, a acronym,
+h1 abbr, h2 abbr, h3 abbr, h4 abbr, h5 abbr, h6 abbr, a abbr {
+    border: none;
+}
+
+dfn {
+    font-weight:    bold;
+}
+
+a.internalDFN {
+    color:  inherit;
+    border-bottom:  1px solid #99c;
+    text-decoration:    none;
+}
+
+a.externalDFN {
+    color:  inherit;
+    border-bottom:  1px dotted #ccc;
+    text-decoration:    none;
+}
+
+a.bibref {
+    text-decoration:    none;
+}
+
+cite .bibref {
+    font-style: normal;
+}
+
+code {
+    color:  #ff4500;
+}
+
+/* --- TOC --- */
+.toc a, .tof a {
+    text-decoration:    none;
+}
+
+a .secno, a .figno {
+    color:  #000;
+}
+
+ul.tof, ol.tof {
+    list-style: none outside none;
+}
+
+.caption {
+    margin-top: 0.5em;
+    font-style:   italic;
+}
+
+/* --- TABLE --- */
+table.simple {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    border-bottom:  3px solid #005a9c;
+}
+
+.simple th {
+    background: #005a9c;
+    color:  #fff;
+    padding:    3px 5px;
+    text-align: left;
+}
+
+.simple th[scope="row"] {
+    background: inherit;
+    color:  inherit;
+    border-top: 1px solid #ddd;
+}
+
+.simple td {
+    padding:    3px 10px;
+    border-top: 1px solid #ddd;
+}
+
+.simple tr:nth-child(even) {
+    background: #f0f6ff;
+}
+
+/* --- DL --- */
+.section dd > p:first-child {
+    margin-top: 0;
+}
+
+.section dd > p:last-child {
+    margin-bottom: 0;
+}
+
+.section dd {
+    margin-bottom:  1em;
+}
+
+.section dl.attrs dd, .section dl.eldef dd {
+    margin-bottom:  0;
+}
+
+@media print {
+    .removeOnSave {
+        display: none;
+    }
+}
+</style><style>/* --- EXAMPLES --- */
+div.example-title {
+    min-width: 7.5em;
+    color: #b9ab2d;
+}
+div.example-title span {
+    text-transform: uppercase;   
+}
+aside.example, div.example, div.illegal-example {
+    padding: 0.5em;
+    margin: 1em 0;
+    position: relative;
+    clear: both;
+}
+div.illegal-example { color: red }
+div.illegal-example p { color: black }
+aside.example, div.example {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+    border-color: #e0cb52;
+    background: #fcfaee;    
+}
+
+aside.example div.example {
+    border-left-width: .1em;
+    border-color: #999;
+    background: #fff;
+}
+aside.example div.example div.example-title {
+    color: #999;
+}
+</style><style>/* --- ISSUES/NOTES --- */
+div.issue-title, div.note-title {
+    padding-right:  1em;
+    min-width: 7.5em;
+    color: #b9ab2d;
+}
+div.issue-title { color: #e05252; }
+div.note-title { color: #2b2; }
+div.issue-title span, div.note-title span {
+    text-transform: uppercase;
+}
+div.note, div.issue {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+.note > p:first-child, .issue > p:first-child { margin-top: 0 }
+.issue, .note {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+}
+div.issue, div.note {
+    padding: 1em 1.2em 0.5em;
+    margin: 1em 0;
+    position: relative;
+    clear: both;
+}
+span.note, span.issue { padding: .1em .5em .15em; }
+
+.issue {
+    border-color: #e05252;
+    background: #fbe9e9;
+}
+.note {
+    border-color: #52e052;
+    background: #e9fbe9;
+}
+
+
+</style><style>/* --- WEB IDL --- */
+pre.idl {
+    border-top: 1px solid #90b8de;
+    border-bottom: 1px solid #90b8de;
+    padding:    1em;
+    line-height:    120%;
+}
+
+pre.idl::before {
+    content:    "WebIDL";
+    display:    block;
+    width:      150px;
+    background: #90b8de;
+    color:  #fff;
+    font-family:    initial;
+    padding:    3px;
+    font-weight:    bold;
+    margin: -1em 0 1em -1em;
+}
+
+.idlType {
+    color:  #ff4500;
+    font-weight:    bold;
+    text-decoration:    none;
+}
+
+/*.idlModule*/
+/*.idlModuleID*/
+/*.idlInterface*/
+.idlInterfaceID, .idlDictionaryID, .idlCallbackID, .idlEnumID {
+    font-weight:    bold;
+    color:  #005a9c;
+}
+a.idlEnumItem {
+    color:  #000;
+    border-bottom:  1px dotted #ccc;
+    text-decoration: none;
+}
+
+.idlSuperclass {
+    font-style: italic;
+    color:  #005a9c;
+}
+
+/*.idlAttribute*/
+.idlAttrType, .idlFieldType, .idlMemberType {
+    color:  #005a9c;
+}
+.idlAttrName, .idlFieldName, .idlMemberName {
+    color:  #ff4500;
+}
+.idlAttrName a, .idlFieldName a, .idlMemberName a {
+    color:  #ff4500;
+    border-bottom:  1px dotted #ff4500;
+    text-decoration: none;
+}
+
+/*.idlMethod*/
+.idlMethType, .idlCallbackType {
+    color:  #005a9c;
+}
+.idlMethName {
+    color:  #ff4500;
+}
+.idlMethName a {
+    color:  #ff4500;
+    border-bottom:  1px dotted #ff4500;
+    text-decoration: none;
+}
+
+/*.idlCtor*/
+.idlCtorName {
+    color:  #ff4500;
+}
+.idlCtorName a {
+    color:  #ff4500;
+    border-bottom:  1px dotted #ff4500;
+    text-decoration: none;
+}
+
+/*.idlParam*/
+.idlParamType {
+    color:  #005a9c;
+}
+.idlParamName, .idlDefaultValue {
+    font-style: italic;
+}
+
+.extAttr {
+    color:  #666;
+}
+
+/*.idlSectionComment*/
+.idlSectionComment {
+    color: gray;
+}
+
+/*.idlConst*/
+.idlConstType {
+    color:  #005a9c;
+}
+.idlConstName {
+    color:  #ff4500;
+}
+.idlConstName a {
+    color:  #ff4500;
+    border-bottom:  1px dotted #ff4500;
+    text-decoration: none;
+}
+
+/*.idlException*/
+.idlExceptionID {
+    font-weight:    bold;
+    color:  #c00;
+}
+
+.idlTypedefID, .idlTypedefType {
+    color:  #005a9c;
+}
+
+.idlRaises, .idlRaises a.idlType, .idlRaises a.idlType code, .excName a, .excName a code {
+    color:  #c00;
+    font-weight:    normal;
+}
+
+.excName a {
+    font-family:    monospace;
+}
+
+.idlRaises a.idlType, .excName a.idlType {
+    border-bottom:  1px dotted #c00;
+}
+
+.excGetSetTrue, .excGetSetFalse, .prmNullTrue, .prmNullFalse, .prmOptTrue, .prmOptFalse {
+    width:  45px;
+    text-align: center;
+}
+.excGetSetTrue, .prmNullTrue, .prmOptTrue { color:  #0c0; }
+.excGetSetFalse, .prmNullFalse, .prmOptFalse { color:  #c00; }
+
+.idlImplements a {
+    font-weight:    bold;
+}
+
+dl.attributes, dl.methods, dl.constants, dl.constructors, dl.fields, dl.dictionary-members {
+    margin-left:    2em;
+}
+
+.attributes dt, .methods dt, .constants dt, .constructors dt, .fields dt, .dictionary-members dt {
+    font-weight:    normal;
+}
+
+.attributes dt code, .methods dt code, .constants dt code, .constructors dt code, .fields dt code, .dictionary-members dt code {
+    font-weight:    bold;
+    color:  #000;
+    font-family:    monospace;
+}
+
+.attributes dt code, .fields dt code, .dictionary-members dt code {
+    background:  #ffffd2;
+}
+
+.attributes dt .idlAttrType code, .fields dt .idlFieldType code, .dictionary-members dt .idlMemberType code {
+    color:  #005a9c;
+    background:  transparent;
+    font-family:    inherit;
+    font-weight:    normal;
+    font-style: italic;
+}
+
+.methods dt code {
+    background:  #d9e6f8;
+}
+
+.constants dt code {
+    background:  #ddffd2;
+}
+
+.constructors dt code {
+    background:  #cfc;
+}
+
+.attributes dd, .methods dd, .constants dd, .constructors dd, .fields dd, .dictionary-members dd {
+    margin-bottom:  1em;
+}
+
+table.parameters, table.exceptions {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    margin: 0.5em 0;
+    width:  100%;
+}
+table.parameters { border-bottom:  1px solid #90b8de; }
+table.exceptions { border-bottom:  1px solid #deb890; }
+
+.parameters th, .exceptions th {
+    color:  #fff;
+    padding:    3px 5px;
+    text-align: left;
+    font-family:    initial;
+    font-weight:    normal;
+    text-shadow:    #666 1px 1px 0;
+}
+.parameters th { background: #90b8de; }
+.exceptions th { background: #deb890; }
+
+.parameters td, .exceptions td {
+    padding:    3px 10px;
+    border-top: 1px solid #ddd;
+    vertical-align: top;
+}
+
+.parameters tr:first-child td, .exceptions tr:first-child td {
+    border-top: none;
+}
+
+.parameters td.prmName, .exceptions td.excName, .exceptions td.excCodeName {
+    width:  100px;
+}
+
+.parameters td.prmType {
+    width:  120px;
+}
+
+table.exceptions table {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    width:  100%;
+}
+</style><link rel="stylesheet" href="https://www.w3.org/StyleSheets/TR/W3C-WD"><!--[if lt IE 9]><script src='https://www.w3.org/2008/site/js/html5shiv.js'></script><![endif]--></head>
+
+<body class="h-entry" role="document" id="respecDocument"><div class="head" role="contentinfo" id="respecHeader">
+  <p>
+    
+      <a href="http://www.w3.org/"><img width="72" height="48" src="https://www.w3.org/Icons/w3c_home" alt="W3C"></a>
+    
+  </p>
+  <h1 class="title p-name" id="title" property="dcterms:title">User Interface Security Directives for Content Security Policy</h1>
+  
+  <h2 property="dcterms:issued" datatype="xsd:dateTime" content="2014-03-18T07:00:00.000Z" id="w3c-last-call-working-draft-18-march-2014"><abbr title="World Wide Web Consortium">W3C</abbr> Last Call Working Draft <time class="dt-published" datetime="2014-03-18">18 March 2014</time></h2>
+  <dl>
+    
+      <dt>This version:</dt>
+      <dd><a class="u-url" href="http://www.w3.org/TR/2014/WD-UISecurity-20140318/">http://www.w3.org/TR/2014/WD-UISecurity-20140318/</a></dd>
+      <dt>Latest published version:</dt>
+      <dd><a href="http://www.w3.org/TR/UISecurity/">http://www.w3.org/TR/UISecurity/</a></dd>
+    
+    
+      <dt>Latest editor's draft:</dt>
+      <dd><a href="http://dvcs.w3.org/hg/user-interface-safety/raw-file/tip/user-interface-safety.html">http://dvcs.w3.org/hg/user-interface-safety/raw-file/tip/user-interface-safety.html</a></dd>
+    
+    
+    
+    
+    
+    
+      <dt>Previous version:</dt>
+      <dd><a rel="dcterms:replaces" href="http://www.w3.org/TR/2013/WD-UISecurity-20130523/">http://www.w3.org/TR/2013/WD-UISecurity-20130523/</a></dd>
+    
+    
+    <dt>Editors:</dt>
+    <dd class="p-author h-card vcard" rel="bibo:editor" inlist=""><span typeof="foaf:Person"><a class="u-url url p-name fn" rel="foaf:homepage" property="foaf:name" content="Giorgio Maone" href="http://maone.net/">Giorgio Maone</a>, Invited Expert</span>
+</dd>
+<dd class="p-author h-card vcard" rel="bibo:editor" inlist=""><span typeof="foaf:Person"><a class="u-url url p-name fn" rel="foaf:homepage" property="foaf:name" content="David Lin-Shung Huang" href="mailto:linshung.huang@sv.cmu.edu">David Lin-Shung Huang</a>, <a rel="foaf:workplaceHomepage" class="p-org org h-org h-card" href="http://www.cmu.edu/">Carnegie Mellon University</a></span>
+</dd>
+<dd class="p-author h-card vcard" rel="bibo:editor" inlist=""><span typeof="foaf:Person"><a class="u-url url p-name fn" rel="foaf:homepage" property="foaf:name" content="Tobias Gondrom" href="mailto:tobias.gondrom@gondrom.org">Tobias Gondrom</a>, Invited Expert</span>
+</dd>
+<dd class="p-author h-card vcard" rel="bibo:editor" inlist=""><span typeof="foaf:Person"><a class="u-url url p-name fn" rel="foaf:homepage" property="foaf:name" content="Brad Hill" href="mailto:bhill@paypal-inc.com">Brad Hill</a>, <a rel="foaf:workplaceHomepage" class="p-org org h-org h-card" href="https://www.paypal.com/">PayPal Inc.</a></span>
+</dd>
+
+    
+    
+  </dl>
+  
+  
+  
+  
+    
+      <p class="copyright">
+        <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> ©
+        2012-2014
+        
+        <a href="http://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>®</sup>
+        (<a href="http://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>,
+        <a href="http://www.ercim.eu/"><abbr title="European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>,
+        <a href="http://www.keio.ac.jp/">Keio</a>, <a href="http://ev.buaa.edu.cn/">Beihang</a>), 
+        
+        All Rights Reserved.
+        
+        <abbr title="World Wide Web Consortium">W3C</abbr> <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>,
+        <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and
+        
+          <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a>
+        
+        rules apply.
+      </p>
+    
+  
+  <hr>
+</div>
+
+<section id="abstract" class="introductory" property="dcterms:abstract" datatype="" typeof="bibo:Chapter" resource="#ref" rel="bibo:Chapter"><h2 aria-level="1" role="heading" id="h2_abstract">Abstract</h2>
+
+<p>This document defines directives for the Content Security Policy mechanism to
+declare a set of input protections for a web resource's user interface, defines 
+a non-normative set of heuristics for Web user agents to implement these input 
+protections, and a reporting mechanism for when they are triggered. </p>
+
+</section><section id="sotd" class="introductory" typeof="bibo:Chapter" resource="#ref" rel="bibo:Chapter"><h2 aria-level="1" role="heading" id="h2_sotd">Status of This Document</h2>
+  
+    
+      
+        <p>
+          <em>This section describes the status of this document at the time of its publication.
+          Other documents may supersede this document. A list of current <abbr title="World Wide Web Consortium">W3C</abbr> publications and the
+          latest revision of this technical report can be found in the <a href="http://www.w3.org/TR/"><abbr title="World Wide Web Consortium">W3C</abbr> technical reports index</a> at
+          http://www.w3.org/TR/.</em>
+        </p>
+        
+<p>This is a Working Draft of the User Interface Security Directives for Content
+Security Policy. [<cite><a class="bibref" href="#bib-CSP">CSP</a></cite>]</p>
+
+<p>Portions of the technology described in this document were originally 
+developed as part of <code>X-Frame-Options</code> [<cite><a class="bibref" href="#bib-RFC7034">RFC7034</a></cite>], the ClearClick 
+module of the Mozilla Firefox add-on NoScript, [<cite><a class="bibref" href="#bib-CLEARCLICK">CLEARCLICK</a></cite>] and in the InContext
+system implemented experimentally in Internet Explorer [<cite><a class="bibref" href="#bib-INCONTEXT">INCONTEXT</a></cite>]. </p>
+
+<p>In addition to the documents in the <abbr title="World Wide Web Consortium">W3C</abbr> Web Application Security working group,
+the work on this document is also informed by the work of the 
+<a href="http://tools.ietf.org/wg/websec/">IETF websec working group</a>, 
+particularly that working group's requirements document: 
+<a href="http://tools.ietf.org/id/draft-hodges-websec-framework-reqs">draft-hodges-websec-framework-reqs</a>.
+</p>
+
+ 
+
+
+
+        <p>
+          This document was published by the <a href="http://www.w3.org/2011/webappsec/">Web Application Security Working Group</a> as a Last Call Working Draft.
+          
+            This document is intended to become a <abbr title="World Wide Web Consortium">W3C</abbr> Recommendation.
+          
+          
+            If you wish to make comments regarding this document, please send them to 
+            <a href="mailto:public-webappsec@w3.org">public-webappsec@w3.org</a> 
+            (<a href="mailto:public-webappsec-request@w3.org?subject=subscribe">subscribe</a>,
+            <a href="http://lists.w3.org/Archives/Public/public-webappsec/">archives</a>).
+          
+          The Last Call period ends 18 June 2014.
+          
+          
+            All comments are welcome.
+          
+        </p>
+        
+        
+          <p>
+            Publication as a Last Call Working Draft does not imply endorsement by the <abbr title="World Wide Web Consortium">W3C</abbr>
+            Membership. This is a draft document and may be updated, replaced or obsoleted by other
+            documents at any time. It is inappropriate to cite this document as other than work in
+            progress.
+          </p>
+        
+        
+        
+          <p>
+            This is a Last Call Working Draft and thus the Working Group has determined that this
+            document has satisfied the relevant technical requirements and is sufficiently stable to
+            advance through the Technical Recommendation process.
+          </p>
+        
+        <p>
+          
+            This document was produced by a group operating under the 
+            <a id="sotd_patent" about="" rel="w3p:patentRules" href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 <abbr title="World Wide Web Consortium">W3C</abbr> Patent
+            Policy</a>.
+          
+          
+          
+            
+              <abbr title="World Wide Web Consortium">W3C</abbr> maintains a <a href="http://www.w3.org/2004/01/pp-impl/49309/status" rel="disclosure">public list of any patent
+              disclosures</a> 
+            
+            made in connection with the deliverables of the group; that page also includes
+            instructions for disclosing a patent. An individual who has actual knowledge of a patent
+            which the individual believes contains
+            <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential
+            Claim(s)</a> must disclose the information in accordance with
+            <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section
+            6 of the <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>.
+          
+          
+        </p>
+        
+      
+    
+  
+</section><section id="toc"><h2 class="introductory" aria-level="1" role="heading" id="h2_toc">Table of Contents</h2><ul class="toc" role="directory" id="respecContents"><li class="tocline"><a href="#introduction" class="tocxref"><span class="secno">1. </span>Introduction</a></li><li class="tocline"><a href="#conformance" class="tocxref"><span class="secno">2. </span>Conformance</a><ul class="toc"><li class="tocline"><a href="#terminology" class="tocxref"><span class="secno">2.1 </span>Terminology</a></li></ul></li><li class="tocline"><a href="#directives" class="tocxref"><span class="secno">3. </span>Directives</a></li><li class="tocline"><a href="#input-protection" class="tocxref"><span class="secno">4. </span><code>input-protection</code></a></li><li class="tocline"><a href="#input-protection-clip" class="tocxref"><span class="secno">5. </span><code>input-protection-clip</code></a></li><li class="tocline"><a href="#input-protection-selectors" class="tocxref"><span class="secno">6. </span><code>input-protection-selectors</code></a></li><li class="tocline"><a href="#report-uri" class="tocxref"><span class="secno">7. </span><code>report-uri</code></a><ul class="toc"><li class="tocline"><a href="#producing-blocked-target-xpath" class="tocxref"><span class="secno">7.1 </span>Producing <code>blocked-target-xpath</code></a></li></ul></li><li class="tocline"><a href="#dom-interface" class="tocxref"><span class="secno">8. </span>DOM interface</a><ul class="toc"></ul></li><li class="tocline"><a href="#script-interfaces" class="tocxref"><span class="secno">9. </span>Script Interfaces</a><ul class="toc"><li class="tocline"><a href="#securitypolicyviolationevent-events" class="tocxref"><span class="secno">9.1 </span><code>SecurityPolicyViolationEvent</code> Events</a><ul class="toc"><li class="tocline"><a href="#attributes" class="tocxref"><span class="secno">9.1.1 </span>Attributes</a></li><li class="tocline"><a href="#dictionary-securitypolicyviolationeventinit-members" class="tocxref"><span class="secno">9.1.2 </span>Dictionary <span class="formerLink"><code>SecurityPolicyViolationEventInit</code></span> Members</a></li></ul></li><li class="tocline"><a href="#securitypolicy" class="tocxref"><span class="secno">9.2 </span>SecurityPolicy</a><ul class="toc"><li class="tocline"><a href="#attributes-1" class="tocxref"><span class="secno">9.2.1 </span>Attributes</a></li></ul></li></ul></li><li class="tocline"><a href="#heuristic" class="tocxref"><span class="secno">10. </span>Input Protection Heuristic</a><ul class="toc"><li class="tocline"><a href="#preparation" class="tocxref"><span class="secno">10.1 </span>Preparation</a></li><li class="tocline"><a href="#ui-event-handling" class="tocxref"><span class="secno">10.2 </span>UI Event handling</a></li></ul></li><li class="tocline"><a href="#alt_heuristic" class="tocxref"><span class="secno">11. </span>Alternate Heuristic</a><ul class="toc"><li class="tocline"><a href="#preparation-1" class="tocxref"><span class="secno">11.1 </span>Preparation</a></li><li class="tocline"><a href="#ui-event-handling-1" class="tocxref"><span class="secno">11.2 </span>UI Event handling</a></li></ul></li><li class="tocline"><a href="#examples" class="tocxref"><span class="secno">12. </span>Examples</a><ul class="toc"><li class="tocline"><a href="#sample-policy-definitions" class="tocxref"><span class="secno">12.1 </span>Sample Policy Definitions</a></li><li class="tocline"><a href="#sample-violation-report" class="tocxref"><span class="secno">12.2 </span>Sample Violation Report</a></li><li class="tocline"><a href="#example-boundary-calculations-for-the-obstruction-check" class="tocxref"><span class="secno">12.3 </span>Example Boundary Calculations for the Obstruction Check</a></li></ul></li><li class="tocline"><a href="#security-considerations" class="tocxref"><span class="secno">13. </span>Security Considerations</a></li><li class="tocline"><a href="#implementation-considerations" class="tocxref"><span class="secno">14. </span>Implementation Considerations</a><ul class="toc"><li class="tocline"><a href="#accessibility" class="tocxref"><span class="secno">14.1 </span>Accessibility Technologies</a></li></ul></li><li class="tocline"><a href="#implementation-considerations-for-resource-authors" class="tocxref"><span class="secno">15. </span>Implementation Considerations for Resource Authors</a></li><li class="tocline"><a href="#iana-considerations" class="tocxref"><span class="secno">16. </span>IANA Considerations</a></li><li class="tocline"><a href="#references" class="tocxref"><span class="secno">A. </span>References</a><ul class="toc"><li class="tocline"><a href="#normative-references" class="tocxref"><span class="secno">A.1 </span>Normative references</a></li><li class="tocline"><a href="#informative-references" class="tocxref"><span class="secno">A.2 </span>Informative references</a></li></ul></li></ul></section>
+
+
+<section class="informative" id="introduction">
+<!--OddPage--><h2 aria-level="1" role="heading" id="h2_introduction"><span class="secno">1. </span>Introduction</h2><p><em>This section is non-normative.</em></p>
+
+<p>This document defines User Interface Security directives for Content Security
+Policy, a mechanism web applications can use to mitigate some of the risks of 
+User Interface (UI) Redressing [<cite><a class="bibref" href="#bib-UIREDRESS">UIREDRESS</a></cite>] (AKA "Clickjacking") vulnerabilities
+that can lead to fraudulent actions not intended by the user. </p>
+
+<p>Content Security Policy (CSP) is a declarative policy that lets the authors 
+(or server administrators) of a web application restrict the behavior of a 
+document, e.g.  the origins where it can load its resources from or the ways it 
+can execute scripts.  This document defines directives to restrict the 
+presentation or the interactivity of a resource when its interaction with the
+user may be happening in an ambiguous or deceitful context due to the spatial 
+and/or temporal contiguity with other content displayed by the user agent. </p>
+
+<p>A user agent may implement the core directives of CSP independently from the 
+directives in this specification, but this specification requires the policy 
+conveyance and reporting mechanisms described in CSP.  The interpretation of 
+terms imported into this document from CSP may vary depending on the version 
+implemented by the user agent.  For example, a <code>source-expression</code> 
+in Content Security Policy 1.0 is at the granularity of an <code>origin</code>
+[<cite><a class="bibref" href="#bib-ORIGIN">ORIGIN</a></cite>] but may be more granular in future versions of the core Content 
+Security Policy.  </p>
+
+<p>Application authors <em class="rfc2119" title="SHOULD">SHOULD</em> transmit the directives in this specification 
+as part of a single, complete Content Security Policy, as indicated by that 
+specification. </p>
+
+<p>In some UI Redressing attacks (also known as Clickjacking), a malicious web 
+application presents a user interface of another web application in a manipulated 
+context to the user, e.g. by partially obscuring the genuine user interface with
+opaque layers on top, hence tricking the user to click on a button out of context. </p>
+
+<p>Existing anti-clickjacking measures including frame-busting [<cite><a class="bibref" href="#bib-FRAMEBUSTING">FRAMEBUSTING</a></cite>] 
+codes and <code>X-Frame-Options</code> cannot be used to protect resources where
+the set of origins that should be allowed and disallowed is unknown, where 
+attacks might come from origins intended to be allowed by a use scenario,  or 
+defend against timing-based attacks involving multiple windows instead of multiple
+frames.  Frame-busting scripts also rely on browser behavior that has not been 
+engineered to provide a security guarantee.  As a consequence, such scripts may 
+be unreliable if loaded inside a sandbox or otherwise disabled.</p>
+
+<p>The User Interface Security directives encompass the policies defined in 
+<code>X-Frame-Options</code> and also provide a new mechanism to allow web 
+applications to enable heuristic input protections for its user interfaces on 
+user agents. </p>
+
+<p>To mitigate UI redressing, for example, a web application can request that a user interface element should be fully visible for a minimum period of time before a user input can be delivered. </p>
+
+<p>The User Interface Security directive can often be applied to existing applications with few or no changes, but the heuristic hints supplied by the policy may require considerable experimental fine-tuning to achieve an acceptable error rate. </p>
+
+<p>This specification supercedes <code>X-Frame-Options</code>. Resources may supply an <code>X-Frame-Options</code> header in addition to a Content-Security-Policy header to indicate policy to user agents that do not implement the directives in this specification. A user agent that understands the directives in this document <em class="rfc2119" title="SHOULD">SHOULD</em> ignore the <code>X-Frame-Options</code> header, when present, if User Interface Security directives are also present in a Content-Security-Policy header. This is to allow resources to only be embedded if the mechanisms described in this specification are enforced, and more restrictive <code>X-Frame-Options</code> policies applied otherwise.</p>
+
+</section><section id="conformance" typeof="bibo:Chapter" resource="#ref" rel="bibo:Chapter"><!--OddPage--><h2 aria-level="1" role="heading" id="h2_conformance"><span class="secno">2. </span>Conformance</h2>
+<p>
+  As well as sections marked as non-normative, all authoring guidelines, diagrams, examples,
+  and notes in this specification are non-normative. Everything else in this specification is
+  normative.
+</p>
+<p>
+  The key words <em class="rfc2119" title="MUST">MUST</em>, <em class="rfc2119" title="MUST NOT">MUST NOT</em>, <em class="rfc2119" title="REQUIRED">REQUIRED</em>, <em class="rfc2119" title="SHOULD">SHOULD</em>, <em class="rfc2119" title="SHOULD NOT">SHOULD NOT</em>, <em class="rfc2119" title="RECOMMENDED">RECOMMENDED</em>, <em class="rfc2119" title="MAY">MAY</em>,
+  and <em class="rfc2119" title="OPTIONAL">OPTIONAL</em> in this specification are to be interpreted as described in [<cite><a class="bibref" href="#bib-RFC2119">RFC2119</a></cite>].
+</p>
+
+<p>Requirements phrased in the imperative as part of algorithms (such as "strip any leading space characters" or "return false and abort these steps") are to be interpreted with the meaning of the key word ("<em class="rfc2119" title="MUST">MUST</em>", "<em class="rfc2119" title="SHOULD">SHOULD</em>", "<em class="rfc2119" title="MAY">MAY</em>", etc) used in introducing the algorithm. </p>
+
+<p>A conformant user agent is one that implements all the requirements listed in this specification that are applicable to user-agents. Treatment of
+the <code>input-protection</code>, <code>input-protection-clip</code> and <code>input-protection-selectors</code> directives are at the discretion of the 
+user agent.</p>
+
+<p>A conformant server is one that implements all the requirements listed in this specification that are applicable to servers. </p>
+
+<section id="terminology">
+
+<h3 aria-level="2" role="heading" id="h3_terminology"><span class="secno">2.1 </span>Terminology</h3>
+
+<p>This section defines several terms used throughout the document. </p>
+
+<p>The term <dfn id="dfn-security-policy">security policy</dfn>, or simply <dfn id="dfn-policy">policy</dfn>, for the
+purposes of this specification refers to either: </p>
+<ol>
+  <li>a set of security preferences for restricting the behavior of content
+    within a given resource, or</li>
+  <li>a fragment of text that codifies these preferences.</li>
+</ol>
+
+<p>The security policies defined by this document are applied by a user agent on a <em>per-resource representation basis</em>. Specifically, when a user agent receives a policy along with the representation of a given resource, that policy applies to <em>that resource representation only</em>. This document often refers to that resource representation as the <dfn id="dfn-protected-resource">protected resource</dfn>. </p>
+
+<p>A server transmits its security policy for a particular resource as a collection of <dfn id="dfn-directives">directives</dfn>, such as <code>default-src 'self'</code>, each of which controls a specific set of privileges for a document rendered by the user agent. More details are provided in the <a href="#directives">directives</a> section. </p>
+
+<p>A directive consists of a <dfn id="dfn-directive-name">directive name</dfn>, which indicates the privileges controlled by the directive, and a <dfn id="dfn-directive-value">directive value</dfn>, which specifies the restrictions the policy imposes on those privileges. </p> 
+
+<p> An <dfn id="dfn-ancestor">ancestor</dfn> is any resource between the protected resource and the top of the window frame tree; for example, if A embeds B which embeds C, both A and B are ancestors of C. If A embeds both B and C, B is not an ancestor of C, but A still is.</p>
+
+<p>The term <dfn id="dfn-origin">origin</dfn> is defined in the Origin specification. [<em><a href="http://tools.ietf.org/html/draft-ietf-websec-origin">ORIGIN</a></em>] </p>
+
+<p>The term <dfn id="dfn-uri">URI</dfn> is defined in the URI specification. [<cite><a class="bibref" href="#bib-URI">URI</a></cite>] </p>
+
+<p>The <code>&lt;iframe&gt;</code>, <code>&lt;object&gt;</code>,
+<code>&lt;embed&gt;</code>, and <code>&lt;frame&gt;</code>
+elements are defined in the HTML5 standard.
+[<cite><a class="bibref" href="#bib-HTML5">HTML5</a></cite>]. </p>
+
+<p>The <code>&lt;applet&gt;</code> element is defined in the HTML 4.01
+standard. [<cite><a class="bibref" href="#bib-HTML401">HTML401</a></cite>]. </p>
+
+<p>The Augmented Backus-Naur Form (ABNF) notation used in this document is
+specified in RFC 5234. [<cite><a class="bibref" href="#bib-ABNF">ABNF</a></cite>] </p>
+
+<p>The following core rules are included by reference, as defined in [<em><a href="http://tools.ietf.org/html/rfc5234#appendix-B.1">ABNF Appendix
+B.1</a></em>]: <code>ALPHA</code> (letters), <code>DIGIT</code> (decimal 0-9),
+<code>WSP</code> (white space) and <code>VCHAR</code> (printing characters).
+</p>
+
+<p>The OWS rule is used where zero or more linear whitespace octets might
+appear. OWS <em class="rfc2119" title="SHOULD">SHOULD</em> either not be produced or be produced as a single SP.
+Multiple OWS octets that occur within field-content <em class="rfc2119" title="SHOULD">SHOULD</em> either be replaced
+with a single SP or transformed to all SP octets (each octet other than SP
+replaced with SP) before interpreting the field value or forwarding the message
+downstream. </p>
+<pre>OWS            = *( SP / HTAB / obs-fold )
+               ; "optional" whitespace
+obs-fold       = CRLF ( SP / HTAB )
+               ; obsolete line folding</pre>
+
+
+<p>A <dfn id="selector-string">selector string</dfn> is a list of one or more
+  <a href="http://dev.w3.org/csswg/selectors4/#complex">complex
+  selectors</a>(see [<cite><a class="bibref" href="#bib-SELECTORS4">SELECTORS4</a></cite>], section 3.1) that
+  <em class="ct">may</em> be surrounded by whitespace and matches the
+  <code>dom_selectors_group</code> production.
+</p>
+<pre>dom_selectors_group
+  : S* [ selectors_group ] S*
+  ;
+</pre>
+               
+
+<p>A <dfn id="embedding-source-list">embedding source list</dfn> follows the ABNF and parsing rules defined for <a href="http://www.w3.org/TR/CSP/#source-list">source-list</a> (see [<cite><a class="bibref" href="#bib-CSP">CSP</a></cite>] section 3.22) with the following new productions:
+
+</p><pre>embedding-keyword-source = "'self'" / "'deny'"
+embedding-source-expression = host-source / embedding-keyword-source
+embedding-source-list = *WSP [ embedding-source-expression *( 1*WSP embedding-source-expression ) *WSP ]
+</pre>
+
+</section>
+
+</section>
+
+<section typeof="bibo:Chapter" resource="#ref" rel="bibo:Chapter" id="directives">
+<!--OddPage--><h2 id="sec-directives" aria-level="1" role="heading"><span class="secno">3. </span>Directives</h2>
+
+<p>This section describes the content security policy directives introduced in
+this specification. </p>
+
+
+</section>
+
+<section id="input-protection" typeof="bibo:Chapter" resource="#ref" rel="bibo:Chapter">
+<!--OddPage--><h2 aria-level="1" role="heading" id="h2_input-protection"><span class="secno">4. </span><code>input-protection</code></h2>
+
+<p>The <code>input-protection</code> directive, if present or implied, instructs the user
+agent to apply the heuristic UI redressing protections described in the <a href="#heuristic">Input Protection Heuristic</a> section to user input events, such as <code>click</code>,
+<code>keypress</code>, <code>touch</code>, and <code>drag</code>, before they
+are delivered to the resource. </p>
+<p>The screenshot comparison heuristic, in particular, uses the body-bounding rectangle 
+of the document triggering the event as its default reference area,
+or the rectangle defined by the <code>input-protection-clip</code>
+and by the <code>input-protection-selectors</code> directives if any of those is explicitly set.
+</p>
+
+<p>If the <code>input-protection-clip</code> directive is set as part of a <code>Content-Security-Policy</code>, triggering of
+the heuristic should cancel delivery of the UI event to the target and
+cause a violation report to be sent.  If set as part of a 
+<code>Content-Security-Policy-Report-Only</code>, triggering of the heuristic 
+should result in the event being delivered with the <code>unsafe</code> 
+attribute on the <code>UIEvent</code> set to <code>true</code>
+and cause a violation report to be sent.</p>
+
+<p>The optional directive value allows resource authors to provide <a href="#input-protection-options">options</a> for heuristic tuning
+in the form of space-separated <code>option-name=option-value</code> pairs. </p>
+
+<pre>directive-name    = "input-protection"
+directive-value   = ["display-time=" num-val] ["tolerance=" num-val]</pre>
+
+<p>If the policy does not contain a value for this directive
+or any of the hint name=value pairs are absent, the user agent <em class="rfc2119" title="SHOULD">SHOULD</em> apply default
+values for hints as described in the following. </p>
+<dl id="input-protection-options">
+<dt><code>display-time</code></dt>
+<dd>is a numeric value from 0 to 10000 that specifies how long, in
+milliseconds, the screen area containing the protected user interface
+must have been displayed continuously unchanged when the event is processed.
+If not specified, it defaults to 800. If a value out of the range stated above is specified, it defaults to the nearest
+value between the lower and the higher bounds.
+</dd> 
+
+<dt><code>tolerance</code></dt>
+<dd>is a numeric value from 0 to 99 that defines the difference
+threshold at which the screenshot comparison procedure of the input protection
+heuristic triggers a violation. A value of 0 indicates that no difference
+between the two images is permitted. A value of 99 provides little to no
+practical protection. If not specified, it defaults to 0.
+</dd>
+</dl>
+</section>
+
+<section id="input-protection-clip" typeof="bibo:Chapter" resource="#ref" rel="bibo:Chapter">
+<!--OddPage--><h2 aria-level="1" role="heading" id="h2_input-protection-clip"><span class="secno">5. </span><code>input-protection-clip</code></h2>
+
+<p>The <code>input-protection-clip</code> directive defines a rectangular screen area 
+whose intersection with the bounding rectangle of the whole document's body should be used as the reference area in
+the screenshot comparison check explained in the <a href="#heuristic">Input Protection Heuristic</a> section.</p>
+<p>If the <code>input-protection-clip</code> directive is not explicitly set in a policy
+which includes the <code>input-protection</code> directive
+and no <code>input-protection-selectors</code> directive is set either,
+the bounding rectangle of the whole document's body should be used for screenshot comparisons.</p>
+<p>If explicitly set as part of a policy where no <code>input-protection</code>
+directive is explicitly set, the <code>input-protection-clip</code> directive
+implies the <code>input-protection</code> directive as if it was set in the same policy with its default value.</p>
+
+<pre>directive-name  = "input-protection-clip"
+directive-value = ["before=" num-val] ["above=" num-val] ["after=" num-val] ["below=" num-val]</pre>
+
+<p>The optional directive value can include up to four non-negative numeric labeled offsets,
+expressed in CSS pixels and relative to the screen coordinates of the UI event being processed
+(<code>event.screenX</code> and <code>event.screenY</code> for mouse, touch or pointer events) or, if not applicable (e.g. for keyboard events),
+to the geometrical center of the event target in screen coordinates.
+These offsets define a rectangle with
+</p><pre>x = eX - left, y = eY - top, width = left + right, height = top + bottom
+</pre>
+where <code>eX</code> and <code>eY</code> are the event's explicit (when possible) or inferred (the target's center) screen ordinates.
+The <code>left</code>, <code>top</code>, <code>right</code> and <code>bottom</code>
+values are mapped to the offsets labeled as
+<code>before</code>, <code>above</code>, <code>after</code> and <code>below</code>
+respectively, unless the bi-directional text properties of the event target suggest otherwise: for instance,
+if the target's direction is RTL, <code>before</code> translates to <code>right</code> and <code>after</code>
+ translates to <code>left</code>.
+
+<p>The default value for this directive is <code>before=250 above=250 after=50 below=50</code>.  If a partial value is provided (i.e. any offset has been omitted) the default values should be implied for the missing offsets.  </p>
+
+<p>The intersection of the computed rectangle with the bounding rectangle of the document's body should be used as the reference area for the screenshot comparison check explained in the <a href="#heuristic">Input Protection Heuristic</a> section, unless the UI event's target or one of its DOM ancestors match a <code>input-protection-selector</code> directive set in the same policy.</p> 
+
+<p>If the <code>input-protection-clip</code> directive is not set or provides an invalid value, the whole bounding rectangle of the document's body must be used as the reference area for the screenshot comparison, unless an <code>input-protection-selectors</code> directive is set in the same policy.</p> 
+
+</section>
+
+
+<section id="input-protection-selectors">
+<!--OddPage--><h2 aria-level="1" role="heading" id="h2_input-protection-selectors"><span class="secno">6. </span><code>input-protection-selectors</code></h2>
+
+<p>The <code>input-protection-selectors</code> directive overrides the
+implicit or explicit <code>input-protection-clip</code> value when
+the processed UI event target or one of its DOM ancestors match the <code>dom_selectors_group</code>
+<a href="#selector-string">selector string</a> provided as the mandatory directive's value:
+in this case, the reference area used for screenshot comparison is the
+bounding box of the event target itself, if it matches the selectors, or the bounding box of its nearest
+matching DOM ancestor, if any, augmented by the margins given by the leading optional labeled offsets, if any.
+UI events whose target and ancestors don't match any of the specified selectors should be ignored (not blocked)
+unless an <code>input-protection-clip</code> directive is explicitly included in the policy:
+if this is the case, the UI event must be checked and the screenshot reference area
+should be computed using the <code>input-protection-clip</code> directive.
+</p>
+
+<p>If set as part of a policy where no <code>input-protection</code>
+directive is explicitly set, the <code>input-protection-selectors</code> directive
+implies the <code>input-protection</code> directive as if it was set in the same policy with its default value.</p>
+<p></p>
+
+<pre>directive-name  = "input-protection-selectors"
+directive-value = ["before=" num-value] ["after=" num-value] ["above=" num-value] ["below=" num-value] dom_selectors_group</pre>
+
+<p>Any of the four non-negative numeric labeled offsets, which represent margins expressed in CSS pixels,
+may be omitted, taking 0 (zero) as their default values.</p>
+<p>
+The reference screenshot area is computed as the rectangle having
+</p><pre>x = match.x - left, y = match.y - top, width = left + match.width + right, height = top + match.height + bottom
+</pre>
+where <code>match</code> is the bounding rectangle around the UI event target, if it matches <code>dom_selectors_group</code>,
+or around its nearest matching ancestor. The
+<code>left</code>, <code>top</code>, <code>right</code> and <code>bottom</code> values 
+are mapped to the offsets labeled as
+<code>before</code>, <code>above</code>, <code>after</code> and <code>below</code>
+respectively, unless the bi-directional text properties of the event target suggest otherwise: for instance,
+if the target's direction is RTL, <code>before</code> translates to <code>right</code> and <code>after</code>
+ translates to <code>left</code> (similarly to the <a href="#input-protection-clip"><code>input-protection-clip</code></a> directive).
+</section>
+
+<section id="report-uri">
+<!--OddPage--><h2 aria-level="1" role="heading" id="h2_report-uri"><span class="secno">7. </span><code>report-uri</code></h2>
+
+<p>The <code>report-uri</code> directive specifies a URI to which the
+user agent sends reports about policy violation. 
+
+</p><p>The syntax for the name and value of this directive and the
+algorithm to prepare a report are described 
+by Content Security Policy. [<cite><a class="bibref" href="#bib-CSP">CSP</a></cite>]</p>  
+
+<p>The core Content Security Policy specification provides directives to
+restrict from where external content may be loaded.  As such, violation
+reports include a <dfn id="dfn-blocked-uri">blocked-uri</dfn> key/value pair that specifies the
+attempted resource load that was blocked by the policy.</p>
+
+<p>As this is not applicable to the directives in this document, the
+following additional steps <em class="rfc2119" title="MUST">MUST</em> be added to the algorithm defined in
+Content Security Policy to <em>prepare a violation report</em>:</p>
+
+<p>In step 1, when preparing the JSON object <em>violation-object</em>,
+add the following keys and values to the <dfn id="dfn-csp-report">csp-report</dfn>: [<cite><a class="bibref" href="#bib-CSP">CSP</a></cite>]</p>
+
+<p>If the violation is of the <code>input-protection</code> directive, add the following keys and values.  If a value is not set or applicable for the violation (e.g. pointer-height, if the violating event type is not a Pointer Event) the key <em class="rfc2119" title="SHOULD">SHOULD</em> be omitted.
+</p>
+
+<dl>
+	<dt>blocked-event-type</dt>
+	<dd>The <code>type</code> attribute of the <code>UIEvent</code> that was blocked by policy.</dd>
+
+	<dt>touch-event</dt>
+	<dd>A <dfn id="dfn-boolean">boolean</dfn> indicating whether the event blocked by policy was a <dfn id="dfn-touch-event">Touch Event</dfn> [<cite><a class="bibref" href="#bib-TOUCH-EVENTS">TOUCH-EVENTS</a></cite>].</dd>
+
+	<dt>pointer-type</dt>
+	<dd>The <code>pointerType</code> value of a <dfn id="dfn-pointer-event">Pointer Event</dfn> [<cite><a class="bibref" href="#bib-POINTER-EVENTS">POINTER-EVENTS</a></cite>].</dd>
+
+	<dt>pointer-height</dt>
+	<dd>The <code>height</code> value of a <code>Pointer Event</code>.</dd>
+
+	<dt>pointer-width</dt>
+	<dd>The <code>width</code> value of a <code>Pointer Event</code>.</dd>
+
+	<dt>device-height</dt>
+	<dd>The <code>device-height</code> property as defined in [<cite><a class="bibref" href="#bib-CSS3-MEDIAQUERIES">CSS3-MEDIAQUERIES</a></cite>].</dd>
+
+	<dt>device-width</dt>
+	<dd>The <code>device-width</code> property as defined in [<cite><a class="bibref" href="#bib-CSS3-MEDIAQUERIES">CSS3-MEDIAQUERIES</a></cite>].</dd>
+
+	<dt>blocked-event-client-x</dt>
+	<dd>The <code>clientX</code> attribute of the <code>UIEvent</code> [<cite><a class="bibref" href="#bib-DOM-LEVEL-2-EVENTS">DOM-LEVEL-2-EVENTS</a></cite>] that was blocked by policy, if set.</dd>
+
+	<dt>blocked-event-client-y</dt>
+	<dd>The <code>clientY</code> attribute of the <code>UIEvent</code> [<cite><a class="bibref" href="#bib-DOM-LEVEL-2-EVENTS">DOM-LEVEL-2-EVENTS</a></cite>] that was blocked by policy, if set.</dd>
+
+</dl>
+
+<p>If the target of an <code>UIEvent</code> which triggers an <code>input-protection</code> violation has an explictly-set <code>id</code> attribute:
+
+
+</p><dl>
+	<dt>blocked-target-id</dt>
+	<dd>The <code>id</code> attribute of the DOM Element that a violating
+	<code>UIEvent</code> targeted.</dd>
+</dl>
+
+<p>Otherwise, if the target element does not have an explicit <code>id</code> attribute:
+
+</p><dl>
+	<dt>blocked-target-xpath</dt>
+	<dd>An XPath [<cite><a class="bibref" href="#bib-XPATH">XPATH</a></cite>] expression that returns the target <code>Element</code> of the <code>UIEvent</code> that was blocked by policy.</dd>
+
+</dl>
+
+<section class="informative" id="producing-blocked-target-xpath">
+<h3 aria-level="2" role="heading" id="h3_producing-blocked-target-xpath"><span class="secno">7.1 </span>Producing <code>blocked-target-xpath</code></h3><p><em>This section is non-normative.</em></p>
+User agent implementers may provide any unambiguous XPath in the report. The following example code using the ECMAScript language bindings for DOM Level 2 Core [<cite><a class="bibref" href="#bib-DOM-LEVEL-2-CORE">DOM-LEVEL-2-CORE</a></cite>] produces an unambiguous XPath to the target DOM element <em>"e"</em>:
+
+<div class="example"><div class="example-title"><span>Example 1</span>: Sample implementation of XPath generation for reporting</div><pre class="example">function getXPathFor(e) {
+ 
+    var xpath = '';
+    
+    while(e.nodeType == e.ELEMENT_NODE) {
+      
+      var child = e;
+      var siblingIndex = 0;
+      while( (child = child.previousSibling) != null ) {
+        if(child.tagName == e.tagName) {
+          siblingIndex++;  
+        }
+      }
+        
+      xpath = e.tagName + 
+              '[' + siblingIndex + ']' + 
+              (xpath == '' ? '' : '/') +
+              xpath;
+        
+      e = e.parentNode;
+   }
+   xpath = '/' + xpath; 
+   return(xpath);
+}</pre></div>
+Documents may be dynamically constructed and change structure in response to user
+interaction or other events, so an unambiguous XPath expression in the context of the current
+state of the DOM may not be unambiguous to the content author.  To avoid this confusion,
+resource authors <em class="rfc2119" title="SHOULD">SHOULD</em> include an <code>id</code> attribute for all elements of interest
+and user agent implementers <em class="rfc2119" title="MAY">MAY</em> include any additional information in the XPath they feel
+may help disambiguate the blocked target, including class names and id attributes of
+ancestors.
+</section>
+
+
+</section>
+
+
+
+<section typeof="bibo:Chapter" resource="#ref" rel="bibo:Chapter" id="dom-interface">
+<!--OddPage--><h2 id="sec-api" aria-level="1" role="heading"><span class="secno">8. </span>DOM interface</h2>
+
+<p>This specification introduces a new attribute for the <code>UIEvent</code>
+interface introduced in DOM Level 2. [<cite><a class="bibref" href="#bib-DOM-LEVEL-2-EVENTS">DOM-LEVEL-2-EVENTS</a></cite>]</p>
+<section>
+
+<pre class="idl"><span class="idlInterface" id="idl-def-UIEvent">partial interface <span class="idlInterfaceID">UIEvent</span> {
+<span class="idlAttribute">    [<span class="extAttr">Unforgeable</span>]
+    readonly    attribute <span class="idlAttrType">bool</span> <span class="idlAttrName"><a href="#widl-UIEvent-unsafe">unsafe</a></span>;</span>
+};</span></pre><section><h4 id="attributes-2" aria-level="3" role="heading">Attributes</h4><dl class="attributes"><dt id="widl-UIEvent-unsafe"><code>unsafe</code> of type <span class="idlAttrType">bool</span>, readonly   </dt><dd>This is a non-configurable boolean property of input event objects.
+      Set to "true" if a violation of an input-protection directive 
+      violation occurred for the event.</dd></dl></section>
+
+<p>The <code>unsafe</code> attribute allows web applications to monitor and
+immediately respond to suspect violations in the <code>report-only</code>
+mode. Applications may also use this interface for capability detection. For
+example, a web application may monitor user inputs on a payment button element
+like this: </p>
+<div class="example"><div class="example-title"><span>Example 2</span>: Example code responing to unsafe attribute</div><pre class="example">document.getElementById('payment-button').addEventListener("click", function(eventObj) {
+  if ("unsafe" in eventObj) {
+    if (eventObj.unsafe == true) {
+      return reportUnsafeOrShowDialog();
+    }
+  }
+  makePayment();
+};</pre></div>
+</section></section>
+
+
+<section id="script-interfaces">
+<!--OddPage--><h2 aria-level="1" role="heading" id="h2_script-interfaces"><span class="secno">9. </span>Script Interfaces</h2>
+
+<p>If associated with a Content Security Policy 1.1 [<cite><a class="bibref" href="#bib-CSP11">CSP11</a></cite>] or later implementation, the User Interface Security Directives include
+the following script interfaces which extend the experimental functinality defined therein: <a href="http://w3c.github.io/webappsec/specs/content-security-policy/csp-specification.dev.html">http://w3c.github.io/webappsec/specs/content-security-policy/csp-specification.dev.html</a></p>
+
+<section id="securitypolicyviolationevent-events">
+          <h3 aria-level="2" role="heading" id="h3_securitypolicyviolationevent-events"><span class="secno">9.1 </span><code>SecurityPolicyViolationEvent</code> Events</h3>
+
+          <pre class="idl"><span class="idlInterface" id="idl-def-SecurityPolicyViolationEvent">[<span class="extAttr">Constructor(DOMString type, optional SecurityPolicyViolationEventInit eventInitDict)</span>]
+partial interface <span class="idlInterfaceID">SecurityPolicyViolationEvent</span> : <span class="idlSuperclass">Event</span> {
+<span class="idlAttribute">    readonly    attribute <span class="idlAttrType">DOMString</span> <span class="idlAttrName"><a href="#widl-SecurityPolicyViolationEvent-blockedEventType">blockedEventType</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class="idlAttrType">bool</span>      <span class="idlAttrName"><a href="#widl-SecurityPolicyViolationEvent-touchEvent">touchEvent</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class="idlAttrType">DOMString</span> <span class="idlAttrName"><a href="#widl-SecurityPolicyViolationEvent-pointerType">pointerType</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class="idlAttrType">long</span>      <span class="idlAttrName"><a href="#widl-SecurityPolicyViolationEvent-pointerHeight">pointerHeight</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class="idlAttrType">long</span>      <span class="idlAttrName"><a href="#widl-SecurityPolicyViolationEvent-pointerWidth">pointerWidth</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class="idlAttrType">long</span>      <span class="idlAttrName"><a href="#widl-SecurityPolicyViolationEvent-deviceHeight">deviceHeight</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class="idlAttrType">long</span>      <span class="idlAttrName"><a href="#widl-SecurityPolicyViolationEvent-deviceWidth">deviceWidth</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class="idlAttrType">long</span>      <span class="idlAttrName"><a href="#widl-SecurityPolicyViolationEvent-blockedEventClientX">blockedEventClientX</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class="idlAttrType">long</span>      <span class="idlAttrName"><a href="#widl-SecurityPolicyViolationEvent-blockedEventClientY">blockedEventClientY</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class="idlAttrType">DOMString</span> <span class="idlAttrName"><a href="#widl-SecurityPolicyViolationEvent-blockedTargetID">blockedTargetID</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class="idlAttrType">DOMString</span> <span class="idlAttrName"><a href="#widl-SecurityPolicyViolationEvent-blockedTargetXPath">blockedTargetXPath</a></span>;</span>
+};</span></pre><section id="attributes"><h4 aria-level="3" role="heading" id="h4_attributes"><span class="secno">9.1.1 </span>Attributes</h4><dl class="attributes"><dt id="widl-SecurityPolicyViolationEvent-blockedEventClientX"><code>blockedEventClientX</code> of type <span class="idlAttrType">long</span>, readonly   </dt><dd>Refer to the <a href="#report-uri"><code>blocked-event-client-x</code></a> property of violation reports for a description of this property.</dd><dt id="widl-SecurityPolicyViolationEvent-blockedEventClientY"><code>blockedEventClientY</code> of type <span class="idlAttrType">long</span>, readonly   </dt><dd>Refer to the <a href="#report-uri"><code>blocked-event-client-y</code></a> property of violation reports for a description of this property.</dd><dt id="widl-SecurityPolicyViolationEvent-blockedEventType"><code>blockedEventType</code> of type <span class="idlAttrType">DOMString</span>, readonly   </dt><dd>Refer to the <a href="#report-uri"><code>blocked-event-type</code></a> property of violation reports for a description of this property.</dd><dt id="widl-SecurityPolicyViolationEvent-blockedTargetID"><code>blockedTargetID</code> of type <span class="idlAttrType">DOMString</span>, readonly   </dt><dd>Refer to the <a href="#report-uri"><code>blocked-target-id</code></a> property of violation reports for a description of this property.</dd><dt id="widl-SecurityPolicyViolationEvent-blockedTargetXPath"><code>blockedTargetXPath</code> of type <span class="idlAttrType">DOMString</span>, readonly   </dt><dd>Refer to the <a href="#report-uri"><code>blocked-target-xpath</code></a> property of violation reports for a description of this property.</dd><dt id="widl-SecurityPolicyViolationEvent-deviceHeight"><code>deviceHeight</code> of type <span class="idlAttrType">long</span>, readonly   </dt><dd>Refer to the <a href="#report-uri"><code>device-height</code></a> property of violation reports for a description of this property.</dd><dt id="widl-SecurityPolicyViolationEvent-deviceWidth"><code>deviceWidth</code> of type <span class="idlAttrType">long</span>, readonly   </dt><dd>Refer to the <a href="#report-uri"><code>device-width</code></a> property of violation reports for a description of this property.</dd><dt id="widl-SecurityPolicyViolationEvent-pointerHeight"><code>pointerHeight</code> of type <span class="idlAttrType">long</span>, readonly   </dt><dd>Refer to the <a href="#report-uri"><code>pointer-height</code></a> property of violation reports for a description of this property.</dd><dt id="widl-SecurityPolicyViolationEvent-pointerType"><code>pointerType</code> of type <span class="idlAttrType">DOMString</span>, readonly   </dt><dd>Refer to the <a href="#report-uri"><code>pointer-type</code></a> property of violation reports for a description of this property.</dd><dt id="widl-SecurityPolicyViolationEvent-pointerWidth"><code>pointerWidth</code> of type <span class="idlAttrType">long</span>, readonly   </dt><dd>Refer to the <a href="#report-uri"><code>pointer-width</code></a> property of violation reports for a description of this property.</dd><dt id="widl-SecurityPolicyViolationEvent-touchEvent"><code>touchEvent</code> of type <span class="idlAttrType">bool</span>, readonly   </dt><dd>Refer to the <a href="#report-uri"><code>touch-event</code></a> property of violation reports for a description of htis property.</dd></dl></section>
+
+          <pre class="idl"><span class="idlDictionary" id="idl-def-SecurityPolicyViolationEventInit">partial dictionary <span class="idlDictionaryID">SecurityPolicyViolationEventInit</span> {
+<span class="idlMember">    <span class="idlMemberType">DOMString</span> <span class="idlMemberName"><a href="#widl-SecurityPolicyViolationEventInit-blockedEventType">blockedEventType</a></span>;</span>
+<span class="idlMember">    <span class="idlMemberType">bool</span>      <span class="idlMemberName"><a href="#widl-SecurityPolicyViolationEventInit-touchEvent">touchEvent</a></span>;</span>
+<span class="idlMember">    <span class="idlMemberType">DOMString</span> <span class="idlMemberName"><a href="#widl-SecurityPolicyViolationEventInit-pointerType">pointerType</a></span>;</span>
+<span class="idlMember">    <span class="idlMemberType">long</span>      <span class="idlMemberName"><a href="#widl-SecurityPolicyViolationEventInit-pointerHeight">pointerHeight</a></span>;</span>
+<span class="idlMember">    <span class="idlMemberType">long</span>      <span class="idlMemberName"><a href="#widl-SecurityPolicyViolationEventInit-pointerWidth">pointerWidth</a></span>;</span>
+<span class="idlMember">    <span class="idlMemberType">long</span>      <span class="idlMemberName"><a href="#widl-SecurityPolicyViolationEventInit-deviceHeight">deviceHeight</a></span>;</span>
+<span class="idlMember">    <span class="idlMemberType">long</span>      <span class="idlMemberName"><a href="#widl-SecurityPolicyViolationEventInit-deviceWidth">deviceWidth</a></span>;</span>
+<span class="idlMember">    <span class="idlMemberType">long</span>      <span class="idlMemberName"><a href="#widl-SecurityPolicyViolationEventInit-blockedEventClientX">blockedEventClientX</a></span>;</span>
+<span class="idlMember">    <span class="idlMemberType">long</span>      <span class="idlMemberName"><a href="#widl-SecurityPolicyViolationEventInit-blockedEventClientY">blockedEventClientY</a></span>;</span>
+<span class="idlMember">    <span class="idlMemberType">DOMString</span> <span class="idlMemberName"><a href="#widl-SecurityPolicyViolationEventInit-blockedTargetID">blockedTargetID</a></span>;</span>
+<span class="idlMember">    <span class="idlMemberType">DOMString</span> <span class="idlMemberName"><a href="#widl-SecurityPolicyViolationEventInit-blockedTargetXPath">blockedTargetXPath</a></span>;</span>
+};</span></pre><section id="dictionary-securitypolicyviolationeventinit-members"><h4 aria-level="3" role="heading" id="h4_dictionary-securitypolicyviolationeventinit-members"><span class="secno">9.1.2 </span>Dictionary <a class="idlType" href="#idl-def-SecurityPolicyViolationEventInit"><code>SecurityPolicyViolationEventInit</code></a> Members</h4><dl class="dictionary-members"><dt id="widl-SecurityPolicyViolationEventInit-blockedEventClientX"><code>blockedEventClientX</code> of type <span class="idlMemberType">long</span></dt><dd>Refer to the <a href="#report-uri"><code>blocked-event-client-x</code></a> property of violation reports for a description of this property.</dd><dt id="widl-SecurityPolicyViolationEventInit-blockedEventClientY"><code>blockedEventClientY</code> of type <span class="idlMemberType">long</span></dt><dd>Refer to the <a href="#report-uri"><code>blocked-event-client-y</code></a> property of violation reports for a description of this property.</dd><dt id="widl-SecurityPolicyViolationEventInit-blockedEventType"><code>blockedEventType</code> of type <span class="idlMemberType">DOMString</span></dt><dd>Refer to the <a href="#report-uri"><code>document-uri</code></a> property of violation reports for a description of this property.</dd><dt id="widl-SecurityPolicyViolationEventInit-blockedTargetID"><code>blockedTargetID</code> of type <span class="idlMemberType">DOMString</span></dt><dd>Refer to the <a href="#report-uri"><code>blocked-target-id</code></a> property of violation reports for a description of this property.</dd><dt id="widl-SecurityPolicyViolationEventInit-blockedTargetXPath"><code>blockedTargetXPath</code> of type <span class="idlMemberType">DOMString</span></dt><dd>Refer to the <a href="#report-uri"><code>blocked-target-xpath</code></a> property of violation reports for a description of this property.</dd><dt id="widl-SecurityPolicyViolationEventInit-deviceHeight"><code>deviceHeight</code> of type <span class="idlMemberType">long</span></dt><dd>Refer to the <a href="#report-uri"><code>device-height</code></a> property of violation reports for a description of this property.</dd><dt id="widl-SecurityPolicyViolationEventInit-deviceWidth"><code>deviceWidth</code> of type <span class="idlMemberType">long</span></dt><dd>Refer to the <a href="#report-uri"><code>device-width</code></a> property of violation reports for a description of this property.</dd><dt id="widl-SecurityPolicyViolationEventInit-pointerHeight"><code>pointerHeight</code> of type <span class="idlMemberType">long</span></dt><dd>Refer to the <a href="#report-uri"><code>pointer-height</code></a> property of violation reports for a description of this property.</dd><dt id="widl-SecurityPolicyViolationEventInit-pointerType"><code>pointerType</code> of type <span class="idlMemberType">DOMString</span></dt><dd>Refer to the <a href="#report-uri"><code>pointer-type</code></a> property of violation reports for a description of this property.</dd><dt id="widl-SecurityPolicyViolationEventInit-pointerWidth"><code>pointerWidth</code> of type <span class="idlMemberType">long</span></dt><dd>Refer to the <a href="#report-uri"><code>pointer-width</code></a> property of violation reports for a description of this property.</dd><dt id="widl-SecurityPolicyViolationEventInit-touchEvent"><code>touchEvent</code> of type <span class="idlMemberType">bool</span></dt><dd>Refer to the <a href="#report-uri"><code>touch-event</code></a> property of violation reports for a description of htis property.</dd></dl></section>
+	  </section>
+       <section id="securitypolicy">
+          <h3 aria-level="2" role="heading" id="h3_securitypolicy"><span class="secno">9.2 </span>SecurityPolicy</h3>
+
+          <p>Let the <dfn id="dfn-active-csp-policies">active CSP policies</dfn> be the set of CSP policies
+          the user agent is currently enforcing for the associated
+          document.</p>
+
+          <pre class="idl"><span class="idlInterface" id="idl-def-Security">partial interface <span class="idlInterfaceID">Security</span> {
+<span class="idlAttribute">    readonly    attribute <span class="idlAttrType">bool</span> <span class="idlAttrName"><a href="#widl-Security-inputProtection">inputProtection</a></span>;</span>
+};</span></pre><section id="attributes-1"><h4 aria-level="3" role="heading" id="h4_attributes-1"><span class="secno">9.2.1 </span>Attributes</h4><dl class="attributes"><dt id="widl-Security-inputProtection"><code>inputProtection</code> of type <span class="idlAttrType">bool</span>, readonly   </dt><dd>A boolean representing the logical <code>or</code> of whether
+            the <code>input-protection</code> directive is present or implied in
+            each of the <a href="http://w3c.github.io/webappsec/specs/content-security-policy/csp-specification.dev.html">active CSP
+            policies</a>. [<cite><a class="bibref" href="#bib-CSP11">CSP11</a></cite>]</dd></dl></section>
+        </section>
+
+</section>
+
+
+
+<section id="heuristic" class="informative" typeof="bibo:Chapter" resource="#ref" rel="bibo:Chapter">
+<!--OddPage--><h2 aria-level="1" role="heading" id="h2_heuristic"><span class="secno">10. </span>Input Protection Heuristic</h2><p><em>This section is non-normative.</em></p>
+<section>
+<p>The algorithm described here can be
+implemented mostly in terms of HTML5 constructs, but requires the ability to
+monitor and intercept actions in the rendering of a resource and delivery of
+events to that resource. User agents may apply equivalent protections using
+means more optimized for their implementation details, may ignore
+recommendations where the browsing environment eliminates certain classes of
+attack, (e.g. the cursor sanity check in a touch-only environment) or may implement
+some features in terms of the underlying operating system or platform rather
+than directly in the user agent.</p>
+</section>
+<section id="preparation">
+<h3 aria-level="2" role="heading" id="h3_preparation"><span class="secno">10.1 </span>Preparation</h3>    
+<ol>
+  <li><strong>Listener registration</strong> - On the topmost window, register a "global" capturing
+    event listener for mouse button, tapping, keyboard, drag &amp; drop and
+    focus events, which must be guaranteed to run before any other event
+    handler of the same kind and therefore be able to prevent any event from
+    being handled by the content, if needed. </li>
+  <li><strong>Display changes tracking</strong> - whenever a repaint occurs in the topmost window or in one of its descendants,
+      create a record containing a weak reference to the Origin causing the repaint, the screen coordinates of the
+      regions being repainted and a timestamp detailing when the repaint occurred, and add this record
+      to a screen-global list named "Display Changes List".
+      Records older than the maximum value for <code>input-protection</code> <code>display-time</code> can be discarded on update.
+  </li>
+</ol>
+</section>
+<section id="ui-event-handling">
+<h3 aria-level="2" role="heading" id="h3_ui-event-handling"><span class="secno">10.2 </span>UI Event handling</h3>
+<ol>
+  <!-- 1 --> <li><strong>Timing attacks countermeasure</strong> -
+  check whether the "Display Change List" contains any record younger than the
+  <code>input-protection</code> <code>display-time</code> value, whose repainted regions
+  intersect with the protected UI elements <em>and</em> whose repaint-causing
+  Origin is <em>different</em> than the protected one. If this is true, hinting at
+  a recent change in the way the protected UI is displayed, with causes external to the UI
+  itself (e.g. an overlapping element in an ancestor document or a
+  floating window being suddenly moved away), assume a timing attack is happening
+  and jump to step 4.
+  </li>
+  <!-- 2 --> <li><strong>Cursor sanity check</strong> - By querying computed-style with
+    the ":hover" pseudo-class on the element (if the target is plugin content)
+    or on the host frame element and its ancestors (if the target is a nested
+    document), check whether the cursor has been hidden or changed to an
+    possibly attacker-provided bitmap: if it has, jump to step 4. This provides
+    protection against "Phantom cursor" attacks, also known as
+  "Cursorjacking".</li>
+  <!-- 3 --> <li><strong>Obstruction check</strong> Take two screenshots of the area defined by the
+    <a href="#input-protection-clip"><code>input-protection-clip</code></a> and
+    <a href="#input-protection-selectors"><code>input-protection-selectors</code></a>
+    directives and containing the DOM element which is about to receive the event.
+
+    <ol>
+    <li> The <dfn id="dfn-control-image">control image</dfn> is taken from its owner document's "point of view" (unobstructed by definition) in an off-screen HTML5 canvas element [<cite><a class="bibref" href="#bib-HTML5">HTML5</a></cite>].  The <dfn id="dfn-user-image">user image</dfn> is taken from either the topmost window's point of view in an off-screen HTML5 canvas element [<cite><a class="bibref" href="#bib-HTML5">HTML5</a></cite>] or using the fully compositied operating system perspective, obtained using OS-native APIs.</li> 
+    
+    <li>When this heuristic is applied to plugin content, the <strong>control image</strong> must contain the element itself only.</li>
+   
+    <li>If the number of the pixels which are different 
+    between the screenshots don't exceed a
+    percentage threshold defined by the
+    <code>tolerance</code> property of the <code>input-protection</code> directive,
+    return. </li>
+
+    <li>Differences are computed at a pixel-by-pixel level. Any difference in the value
+    of a pixel and it does not match.  For example, a protected area in blue
+    overlayed entirely by cross-origin content in red at 1% opacity is considered to
+    be 100% different, not 1% different. 
+    If portions of the <strong><em>control image</em></strong> are clipped by 
+    the view port or otherwise occluded, all such pixels must be
+    considered not to match.</li>
+
+    <li>Otherwise, if the differences exceed the tolerance, assume that the DOM element which the user is
+    interacting with has been obstructed or obscured by a UI Redressing
+    attempt and proceed with step 4.</li>
+   </ol>
+
+   </li>
+
+   <li><strong>Violation management</strong> -
+   If in report-only mode, set the <code>unsafe</code> property of the event been handled to <code>true</code> and let the event processing continue. Otherwise, prevent the event from reaching its target.  Create and send a violation report if a valid report-uri has been specified.
+  </li>
+</ol>
+
+
+    <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_1"><span>Note</span>: Implementation Note</div><p class="">
+    In the first implementation of this
+    hueristic, NoScript's ClearClick, the screenshots are taken by using the 
+    CanvasRenderingContext2D.drawWindow() method, which is a
+    Mozilla-proprietary extension of the HTML 5 Canvas API available to
+    privileged code only, allowing the content of DOM windows to be drawn on a
+    canvas surface exactly as rendered on the screen. The rest of this phase
+    relies on cross-browser canvas features, instead, such as pixel grabbing
+    and data URL serialization.
+    </p></div>
+
+</section>
+</section>
+<section id="alt_heuristic" class="informative" typeof="bibo:Chapter" resource="#ref" rel="bibo:Chapter">
+<!--OddPage--><h2 aria-level="1" role="heading" id="h2_alt_heuristic"><span class="secno">11. </span>Alternate Heuristic</h2><p><em>This section is non-normative.</em></p>
+<p>Some user agents use a strategy for hit testing and delivering 
+UI events involving multiple composited layers managed on a GPU.  
+This alternative heuristic describes one possible implementation 
+strategy for the input-protection directive in this architecture that
+may be a better fit than the standard heuristic.</p>
+
+<p>GPU-optimized user agents typically separate the browser UI process from the
+process that handles building and displaying the visual representation of the 
+resource.  (In this context the term "process" refers to any encapsulated 
+subunit of user-agent functionality that communicates to other subunits
+through message passing, without implying any particular implementation details
+such as locality to a thread, OS-level "processes" or the like.)  It is typical
+for the browser UI process to receive user events such as mouse clicks and then
+marshal these to the render process, where the event is hit tested through the 
+page's DOM, checking for event handlers along the way.  As an optimization, the 
+render process may communicate hit test rectangles back to the UI process in 
+advance so that the UI process can immediately respond to, e.g. a Touch event 
+by scrolling, if the event target falls within coordinates for which there are 
+no other registered handlers in the DOM.   A similar strategy can be used to 
+create an implementation of the input protection heuristic that is 
+consistent with this multi-process, compositing architecture.
+</p>
+
+<p>If a resource is being loaded in a <code>frame</code>, <code>iframe</code>,
+<code>object</code>, <code>embed</code> or <code>applet</code> context
+specifies an <code>input-protection</code> directive, apply the following steps:</p>
+<section id="preparation-1">
+<h3 aria-level="2" role="heading" id="h3_preparation-1"><span class="secno">11.1 </span>Preparation</h3>
+<ol>
+<li><strong>Protected hit test rectangle tracking:</strong> Hook the creation of event 
+handlers for protected events and elements and add the DOM nodes with any such 
+handler to a collection. After a layout occurs, or when an event handler is 
+added or removed, iterate across all DOM nodes to generate a vector of rectangles and
+their associated Origins where events must be checked for safety.  
+If the <code>input-protection</code> applies to 
+the DOMWindow or Document node, avoid this expensive process of walking the 
+renderers and simply use the view's bounds, as they're guaranteed to be inclusive.  
+</li>
+
+<li><strong>(Optionally) Put the protected areas into a backing store / composited
+layer:</strong> To avoid the expense of having to re-layout and re-paint
+protected regions during the <strong>obstruction check</strong>, it may make sense
+to designate and place these regions into their own backing store or composited
+layer which can serve as a cached <strong><em>control image</em></strong>.
+</li>
+
+<li><strong>Display changes tracking:</strong> whenever a region in a protected
+hit test rectangle is invalidated, create a record containing a weak reference to the
+Origin causing the repaint, the screen coordinates of the regions being
+repainted and a timestamp detailing when the repaint occurred, and add this
+record to a screen-global list named "Display Changes List".  Records older than
+the maximum value of <code>input-protection display-time</code> can be discarded
+on update.</li>
+</ol>
+</section>
+<section id="ui-event-handling-1">
+<h3 aria-level="2" role="heading" id="h3_ui-event-handling-1"><span class="secno">11.2 </span>UI Event handling</h3>
+<ol>
+<li><strong>Hit testing in the compositor:</strong> When an event is received, check
+whether it is on any layer and then walk the layer hierarchy checking the
+protected hit test rectangles on every layer.  If there is a hit, continue this heuristic.
+Otherwise, exit this heuristic and event processing proceeds as normal.
+</li>
+
+<li><strong>Timing attacks countermeasure</strong> check whether the "Display
+Change List" contains any record younger than the <code>input-protection display-time</code>
+value, whose repainted regions intersect with the protected regions <em>and</em>
+whose repaint-causing Origin is <em>different</em> than the protected one.
+If this is true, hinting at a recent change in the way the protected UI is 
+displayed, with causes external to the UI itself (e.g. an overlapping element
+in an ancestor document or a floating window being suddenly moved away), assume
+a timing attack is happening and jump to <strong>Violation management</strong>.
+</li>
+
+<li><strong>Cursor sanity check:</strong> By querying computed-style with the 
+":hover" pseudo-class on the element (if the target is plugin content) or on the
+host frame element and its ancestors (if the target is a nested document), check
+whether the cursor has been hidden or changed to a possibly attacker-provided
+bitmap.  If it has, proceed to <strong>Violation management</strong>.  This provides
+protection against "Phantom cursor" attacks, also known as "Cursorjacking".
+</li>
+
+<li><strong>Obstruction check:</strong> Compare two sets of pixels: the
+<strong><em>control image</em></strong> is the protected region as if it was
+rendered alone, unobstructed by pixels originating from any other document
+context.  If the protected regions were placed into their own backing store /
+composited layer, this should be readily available, although the pixels may
+need to be read back from the GPU to perform a comparision.  The <strong><em>user image
+</em></strong> represents the same area as the <strong><em>control image</em>
+</strong> in the outermost document's coordinate system and contains the final
+set of common pixels for the fully rendered page.  The <strong><em>control
+image</em></strong> can be acquired through operating system APIs or from the
+compositor for the outermost document context.
+These images are compared, and if the number of pixels that differ are below the
+<code>tolerance</code> threshold associated with the <code>input-protection</code>
+directive, proceed to deliver the event normally, otherwise proceed to
+<strong>Violation management</strong>.  
+
+    <p>Differences are computed at a pixel-by-pixel level. Any difference in the value
+    of a pixel and it does not match.  For example, a protected area in blue
+    overlayed entirely by cross-origin content in red at 1% opacity is considered to
+    be 100% different, not 1% different.  If portions of the <strong><em>control
+    image</em></strong> are clipped by the view port or otherwise occluded, all such pixels must be
+    considered not to match.</p>
+
+    <p>As a short-cut, a user agent <em class="rfc2119" title="MAY">MAY</em> choose to treat any pixels in a protected layer with an
+    opacity of less than 100% as failing to match by definition.  In cases where a fully-composited
+    user view is not available or extremely expensive to calculate, this optimization allows
+    the obstruction check to be performed with only a knowledge of the layers that fall on top of
+    the protected layer.</p> 
+</li>
+
+ <li><strong>Violation management</strong> -
+ If in report-only mode, set the <code>unsafe</code> property of the event been
+ handled to <code>true</code> and let the event processing continue. Otherwise,
+ prevent the event from reaching its target.  Create and send a violation report
+ if a valid report-uri has been specified.
+</li>
+</ol>
+    <div class="note"><div class="note-title" aria-level="3" role="heading" id="h_note_2"><span>Note</span>: Implementation note</div><p class="">
+        Optimized and potentially cross-platform
+	implementations of screen and cursor capturing and monitoring 
+	regions for invalidation may be available as part of e.g. screen-
+	sharing functionality through getUserMedia() [<cite><a class="bibref" href="#bib-MEDIACAPTURE">MEDIACAPTURE</a></cite>] or other
+	remote desktop-type functionality available in certian user agents,
+	e.g. the ScreenCapturer interface in Chromium.
+    </p></div>
+</section>
+</section>
+
+
+
+<section id="examples">
+<!--OddPage--><h2 aria-level="1" role="heading" id="h2_examples"><span class="secno">12. </span>Examples</h2>
+
+<section class="informative" id="sample-policy-definitions">
+<h3 aria-level="2" role="heading" id="h3_sample-policy-definitions"><span class="secno">12.1 </span>Sample Policy Definitions</h3><p><em>This section is non-normative.</em></p>
+
+<p>This section provides some sample use cases and accompanying security
+policies.</p>
+
+<p>
+A resource wishes to block delivery of UI events to the document unless its whole body
+has been entirely visible (no tolerance) during the past 1 second (default display-time value):</p>
+<div class="example"><div class="example-title"><span>Example 3</span>: Policy Header</div><pre class="example">Content-Security-Policy: input-protection</pre></div>
+
+<p>A resource wishes to block delivery of UI events to the element with id "send-box", all the elements with class
+".tweet" and all the forms in the page unless those elements have been visible for the past 800 milliseconds at least,
+(their intrinsic sizes is used as a reference for screenshot comparison): </p>
+<div class="example"><div class="example-title"><span>Example 4</span>: Policy Header</div><pre class="example">Content-Security-Policy: input-protection display-time 800;
+        input-protection-selectors #send-button, .tweet, form</pre></div>
+
+<p>A resource wishes to block delivery of UI events
+to any obstructed HTML button and suggests a 15% tolerance
+threshold for determining obstruction of the element with a 200 pixels wide margin above and before (on the top and on the left,
+if orientation is LTR) the triggering element:</p>
+<div class="example"><div class="example-title"><span>Example 5</span>: Policy Header</div><pre class="example">Content-Security-Policy: input-protection tolerance=15;
+                input-protection-selectors above=200 before=200 after=0 below=0 button, input[type=submit], input[type=button]</pre></div>
+
+<p>A resource wishes to receive reports when the
+UI Security heuristic is triggered for any element in the <code>&lt;body&gt;</code>,
+with the default 300 by 300 pixels clipped reference area and 0 tolerance:</p>
+<div class="example"><div class="example-title"><span>Example 6</span>: Policy Header</div><pre class="example">Content-Security-Policy-Report-Only: input-protection; input-protection-clip;
+                                     report-uri https://example.com/csp-report?unique_id=XKSJ9KAAHJDK9928KKSJEQ</pre></div>
+
+<p>A resource wants to react to potential clickjacking
+directly, without sending a report, so it sets a report-only header but does not 
+specify a report-uri. When a <code>UIEvent</code> is sent, the <code>unsafe</code>
+attribute will still be set when the heuristic is triggered:</p>
+<div class="example"><div class="example-title"><span>Example 7</span>: Policy Header</div><pre class="example">Content-Security-Policy-Report-Only: input-protection</pre></div>
+
+<p>A resource wants to allow itself to be embedded by <strong>ancestors</strong> that are same-origin or from the origin <code>https://checkout.example.com</code>, but also to have the <code>unsafe</code> attribute set on events that violate the <code>input protection</code> heuristic.</p>
+<div class="example"><div class="example-title"><span>Example 8</span>: Policy Header</div><pre class="example">Content-Security-Policy: frame-options 'self' https://checkout.example.com
+Content-Security-Policy-Report-Only: input-protection </pre></div>
+
+</section>
+
+
+
+<section class="informative" id="sample-violation-report">
+<h3 aria-level="2" role="heading" id="h3_sample-violation-report"><span class="secno">12.2 </span>Sample Violation Report</h3><p><em>This section is non-normative.</em></p>
+
+<p>This section contains an example violation report the user agent might sent
+to a server when the protected resource violations a sample policy.</p>
+
+<p>In the following example, a document from
+<code>http://example.org/page.html</code> was rendered with the following CSP
+policy:</p>
+<pre>input-protection; report-uri https://example.org/csp-report.cgi?unique_id=12345</pre>
+
+<p>A <code>click</code> violated the policy.</p>
+<div class="example"><div class="example-title"><span>Example 9</span>: Sample violation report JSON body</div><pre class="example">{
+  "csp-report": {
+    "document-uri": "http://example.org/page.html",
+    "referrer": "http://evil.example.com/haxor.html",
+    "blocked-event-type": "click",
+    "blocked-event-client-x": "325",
+    "blocked-event-client-y": "122",
+    "touch-event": "false",
+    "device-width": "800",
+    "device-height": "300",
+    "blocked-target-xpath": "/html[0]/body[0]/div[6]/form[2]/input[0]",
+    "violated-directive": "input-protection",
+    "original-policy": "input-protection; report-uri https://example.org/csp-report.cgi?unique_id=12345"
+  }
+}</pre></div>
+</section>
+
+
+<section id="example-boundary-calculations-for-the-obstruction-check">
+<h3 aria-level="2" role="heading" id="h3_example-boundary-calculations-for-the-obstruction-check"><span class="secno">12.3 </span>Example Boundary Calculations for the Obstruction Check</h3>
+<p>A resource at OriginX embeds a resource at OriginY. The OriginY resource has the following policy:</p>
+<p><code>Content-Security-Policy: input-protection tolerance=50; input-protection-selectors div;</code></p>
+<p>and results in the following layout:</p>
+
+<img src="1.svg" width="800" height="650" alt="Example frame layout."/>
+
+<p>The element with the id "div1" has an <code>onClick</code> handler defined, and a click event is triggered
+at 120,120 in the OriginX document's coordinate system.  The red dot indicates the position of the event.
+The event is delivered to "div1", which matches the <code>input-protection-selectors</code>, and no parent of
+"div1" matches.  As no <code>input-protection-clip</code> value is defined, the entire area of "div1" becomes the boundaries for
+the <strong><em>obstruction check</em></strong>, indicated by the cyan fill.   As more than 50% of this
+area is occluded behind the iframe viewport, and so does not match by definition, this will trigger a violation.</p>
+
+<img src="2.svg" width="800" height="650" alt="Example frame layout showing selector policy with an event."/>
+
+<p>If the OriginY protected resource set the following policy, instead:</p>
+<p><code>Content-Security-Policy: input-protection tolerance=50; input-protection-selectors div; input-protection-clip before=60 after=60 above=60 below=60;</code></p>
+<p>The region for the <strong><em>obstruction check</em></strong>, still indicated in solid cyan, is now only 
+the intersection of the boundaries of the protected element handling the event, indicated by diagonal cyan lines, and the clipping 
+window around the event, indicated by the green dotted line. If the OriginX resource has not painted anything over the iframe viewport, this check will not trigger
+a violation because the entire cyan area will be identical in the <strong><em>user image</em></strong> and <strong><em>control image</em></strong>.</p> 
+
+<img src="3.svg" width="800" height="650" alt="Example frame layout showing selector policy with an event."/>
+
+<p>If the OriginY protected resource omitted selectors, as in this policy:</p>
+<p><code>Content-Security-Policy: input-protection tolerance=50; input-protection-clip before=60 after=60 above=60 below=60;</code></p>
+<p>The region for the <strong><em>obstruction check</em></strong>, still indicated in solid cyan, is now 
+the intersection of the boundaries of the entire document, indicated by diagonal cyan lines, and the clipping 
+window around the event, indicated by the green dotted line. This demonstrates that portions of the protected resource may be
+included in the obstruction check region, even if they do not have event listeners.  Thus, the hit test rectangles which trigger the
+heuristic do not necessarily compose the entire region that must be checked.</p>
+<p>As in the previous example, if the OriginX resource has not painted anything over the iframe viewport, this check will not trigger
+a violation because the entire cyan area will be identical in the <strong><em>user image</em></strong> and <strong><em>control image</em></strong>.</p> 
+
+<img src="4.svg" width="800" height="650" alt="Example frame layout showing selector policy with an event."/>
+
+</section>
+
+</section>
+<section id="security-considerations" class="informative" typeof="bibo:Chapter" resource="#ref" rel="bibo:Chapter">
+<!--OddPage--><h2 aria-level="1" role="heading" id="h2_security-considerations"><span class="secno">13. </span>Security Considerations</h2><p><em>This section is non-normative.</em></p>
+
+
+<p>UI Redressing and Clickjacking attacks rely on violating the contextual and temporal integrity of embedded content.  Because these attacks target the subjective perception of the user and not well-defined security boundaries, the heuristic protections afforded by the <code>input-protection</code> directive can never be 100% effective for every interface. It provides no protection against certain classes of attacks, such as displaying content around an embedded resource that appears to extend a trusted dialog but provides misleading information.</p><p>
+
+
+</p></section><section class="informative" id="implementation-considerations">
+<!--OddPage--><h2 aria-level="1" role="heading" id="h2_implementation-considerations"><span class="secno">14. </span>Implementation Considerations</h2><p><em>This section is non-normative.</em></p>
+
+<p>The policy and intent of the user always takes precedence over the policy
+of resources.  In particular, transformations, customizations or enhancements
+of visual content made by the user agent or user-installed plugins <em class="rfc2119" title="SHOULD NOT">SHOULD NOT</em> cause the
+<code>input-protection</code> heuristic to be triggered.</p>
+
+
+<p>Many UI Redressing and Clickjacking attacks rely on exploiting specific features of user agents, such as repositioning of the browsing window, hiding or creating fake cursors, and script-driven scrolling and content repositioning.  Not all attacks apply to all user agents in all contexts.  User agents are free to optimize or not implement suggested heuristics when they do not apply, for example:
+</p><ul>
+	<li>Cursor integrity in a touch-only environment</li>
+	<li>Drag and drop protections for user agents where 
+	<code>drag</code> is not a supported event type</li>
+	<li><code>ui-width</code> and <code>ui-height</code> values that exceed the
+	capabilities of the browsing environment</li>
+</ul>
+
+<p>Some resource owners may specify a restrictive policy forbidding embedding in
+user agents that only understand <code>X-Frame-Options</code> but be more 
+permissive with user agents that implement UI Security directives.  User agents
+that are aware of but choose not to implement any of the heuristics in this
+document <em class="rfc2119" title="MAY">MAY</em> still ignore <code>X-Frame-Options</code> when
+presented in combination with UI Security directives in a Content Security Policy.
+For example, a browsing environment that deliberately chooses not to implement 
+UI Security features because they interfere with assistive technologies <em class="rfc2119" title="SHOULD NOT">SHOULD NOT</em> deny
+users access to resources on this account.  User agents taking this stance <em class="rfc2119" title="SHOULD">SHOULD</em>
+implement the <code>unsafe</code> attribute of the <code>UIEvent</code> interface
+as this may be interrogated by client applications doing feature detection.</p>
+
+<p>In environments that support multiple, overlapping browser windows, attacks
+may be mounted by positioning a target window under another, instructing the
+user to double click, and closing the obstructing window with the first click.
+[<cite><a class="bibref" href="#bib-CLICKJACKING-Unresolved">CLICKJACKING-Unresolved</a></cite>]  In such environments user agent
+implementers may wish to use a native operating system screenshot facility to
+calculate the user's view for the <strong>obstruction check</strong> phase of
+the heuristic. In such cases user agents should take special caution to  
+potential infereference from <a href="#accessibility">accessibility technologies</a></p>
+
+<p>While this document describes a mechanism for resource authors to opt-in to 
+User Interface Security protections, user agents <em class="rfc2119" title="MAY">MAY</em> choose to opt-in resources
+to <code>input-protection</code> by default, or provide users with an option
+to manually enable such protections.</p>
+
+<p>If a user agent or user chooses to apply input protection in the absence of
+an explicit directive, violations <em class="rfc2119" title="SHOULD NOT">SHOULD NOT</em> cause a violation report to be
+generated, even if the resource supplied a Content Security Policy with a 
+<code>report-uri.</code></p>
+
+<!--<p>In support of enabling default protection, user agents MAY, with appropriate
+user consent and privacy protections, gather large-scale data on when the
+heuristic would have been triggered, if it had been enabled, for various values
+of the configurable hint parameters.  Such data would allow the user agent to
+determine what default settings can provide broad protection with an acceptable
+rate of false positives, and perhaps to build a compatibility opt-out list of
+sites or resources to further reduce the false positive rate.</p>-->
+
+<section id="accessibility" class="informative" typeof="bibo:Chapter" resource="#ref" rel="bibo:Chapter">
+<h3 aria-level="2" role="heading" id="h3_accessibility"><span class="secno">14.1 </span>Accessibility Technologies</h3><p><em>This section is non-normative.</em></p>
+<p>Certain classes of accessibility technologies such as
+screen readers will provide strong defenses against many classes
+of UI Redressing attacks by presenting the content to the user
+in a manner not subject to interference. Such user agents
+<em class="rfc2119" title="SHOULD">SHOULD</em> set the <code>unsafe</code> attribute of the <code>UIEvent</code>
+interface as this may be interrogated by client applications doing
+feature detection, and <em class="rfc2119" title="SHOULD">SHOULD</em> ignore <code>X-Frame-Options</code>
+headers when presented in combination with UI Security directives in a
+Content Security Policy.</p>
+
+<p>Use of accessibility technologies <em class="rfc2119" title="MUST NOT">MUST NOT</em> by itself cause
+the <code>input-protection</code> heuristic to be triggered.
+Accessibility technologies that modify the appearance of a resource,
+such as screen magnifiers or color and contrast modifications to the 
+display have the potential to interfere with the <strong>obstruction
+check</strong>if not applied in a consistent manner to both the 
+<strong>user image</strong> and <strong>control image</strong>. 
+To prevent this inteference, user agents <em class="rfc2119" title="SHOULD">SHOULD</em> apply accessibility
+transformations to the <strong>control image</strong> if possible. 
+If a user agent is able to detect that accessibility technologies are in use
+that cannot be applied uniformly as part of the <strong>obstruction
+check</strong>, the check <em class="rfc2119" title="MUST">MUST</em> be disabled.  In some cases,
+interference from accessiblity tools may be avoided by acquiring
+the <strong>user image</strong> in terms of the user agent's local
+rendering surface, rather than using an operating-system level 
+screenshot.</p>
+
+<p>User agents <em class="rfc2119" title="SHOULD">SHOULD</em> provide a means for the user to manually disable
+enforcement of the <strong>Input Protection Heuristic</strong> if it 
+interferes with their chosen accessibility technologies.</p>
+
+</section>
+
+</section><section class="informative" id="implementation-considerations-for-resource-authors">
+<!--OddPage--><h2 aria-level="1" role="heading" id="h2_implementation-considerations-for-resource-authors"><span class="secno">15. </span>Implementation Considerations for Resource Authors</h2><p><em>This section is non-normative.</em></p>
+
+<p>When possible, resource authors <em class="rfc2119" title="SHOULD">SHOULD</em> make use of violation reports and the <code>unsafe</code> attribute to apply additional security measures in the application or during back-end processing.  Real-time measures in the application might include requiring completion of a CAPTCHA [<cite><a class="bibref" href="#bib-CAPTCHA-Wikipedia">CAPTCHA-Wikipedia</a></cite>] or responding to an out-of-band confirmation when the UI Security heuristic is triggered.  Example back-end measures might include increasing a fraud risk score for individual actions that trigger or targets accounts/resources that frequently trigger UI Security heuristics.  To be able to do this effectively, it is likely necessary to encode into the <code>report-uri</code> a unique identifier that can be correlated to the authenticated user and the action they are taking.</p>
+
+</section><section id="iana-considerations">
+<!--OddPage--><h2 aria-level="1" role="heading" id="h2_iana-considerations"><span class="secno">16. </span>IANA Considerations</h2>
+
+<p>This document does not define new message headers and uses the existing grammar
+of the Content-Security-Policy and Content-Security-Policy-Report-Only headers, so
+no updates to the permanent message header field registry (see [<a href="http://tools.ietf.org/html/rfc3864">RFC3864</a>]) are required.
+</p>
+
+</section>
+
+<section class="appendix">
+</section>
+
+
+
+<section id="references" class="appendix" typeof="bibo:Chapter" resource="#ref" rel="bibo:Chapter"><!--OddPage--><h2 aria-level="1" role="heading" id="h2_references"><span class="secno">A. </span>References</h2><section id="normative-references" typeof="bibo:Chapter" resource="#ref" rel="bibo:Chapter"><h3 aria-level="2" role="heading" id="h3_normative-references"><span class="secno">A.1 </span>Normative references</h3><dl class="bibliography" about=""><dt id="bib-ABNF">[ABNF]</dt><dd rel="dcterms:requires">D. Crocker; P. Overell. <a href="http://www.ietf.org/rfc/rfc5234.txt"><cite>Augmented BNF for Syntax Specifications: ABNF</cite></a>. January 2008. STD. URL: <a href="http://www.ietf.org/rfc/rfc5234.txt">http://www.ietf.org/rfc/rfc5234.txt</a>
+</dd><dt id="bib-CSP">[CSP]</dt><dd rel="dcterms:requires">B. Sterne and A. Barth <a href="http://www.w3.org/TR/CSP/"><cite>Content Security Policy 1.0</cite></a>. W3C Candidate Recommendation. (Work in progress.) URL: <a href="http://www.w3.org/TR/2012/CR-CSP-20121115/">http://www.w3.org/TR/2012/CR-CSP-20121115/</a>
+</dd><dt id="bib-CSS3-MEDIAQUERIES">[CSS3-MEDIAQUERIES]</dt><dd rel="dcterms:requires">Håkon Wium Lie; Tantek Çelik; Daniel Glazman; Anne van Kesteren. <a href="http://www.w3.org/TR/css3-mediaqueries"><cite>Media Queries</cite></a>. 19 June 2012. W3C Recommendation. URL: <a href="http://www.w3.org/TR/css3-mediaqueries">http://www.w3.org/TR/css3-mediaqueries</a>
+</dd><dt id="bib-DOM-LEVEL-2-CORE">[DOM-LEVEL-2-CORE]</dt><dd rel="dcterms:requires">Arnaud Le Hors; Philippe Le Hégaret; Lauren Wood; Gavin Nicol; Jonathan Robie; Mike Champion; Steven B Byrne et al. <a href="http://www.w3.org/TR/DOM-Level-2-Core/"><cite>Document Object Model (DOM) Level 2 Core Specification</cite></a>. 13 November 2000. W3C Recommendation. URL: <a href="http://www.w3.org/TR/DOM-Level-2-Core/">http://www.w3.org/TR/DOM-Level-2-Core/</a>
+</dd><dt id="bib-DOM-LEVEL-2-EVENTS">[DOM-LEVEL-2-EVENTS]</dt><dd rel="dcterms:requires">Tom Pixley. <a href="http://www.w3.org/TR/DOM-Level-2-Events/"><cite>Document Object Model (DOM) Level 2 Events Specification</cite></a>. 13 November 2000. W3C Recommendation. URL: <a href="http://www.w3.org/TR/DOM-Level-2-Events/">http://www.w3.org/TR/DOM-Level-2-Events/</a>
+</dd><dt id="bib-HTML401">[HTML401]</dt><dd rel="dcterms:requires">Dave Raggett; Arnaud Le Hors; Ian Jacobs. <a href="http://www.w3.org/TR/html401"><cite>HTML 4.01 Specification</cite></a>. 24 December 1999. W3C Recommendation. URL: <a href="http://www.w3.org/TR/html401">http://www.w3.org/TR/html401</a>
+</dd><dt id="bib-HTML5">[HTML5]</dt><dd rel="dcterms:requires">Robin Berjon; Steve Faulkner; Travis Leithead; Erika Doyle Navara; Edward O'Connor; Silvia Pfeiffer. <a href="http://www.w3.org/TR/html5/"><cite>HTML5</cite></a>. 4 February 2014. W3C Candidate Recommendation. URL: <a href="http://www.w3.org/TR/html5/">http://www.w3.org/TR/html5/</a>
+</dd><dt id="bib-ORIGIN">[ORIGIN]</dt><dd rel="dcterms:requires">A. Barth. <a href="http://www.ietf.org/rfc/rfc6454.txt"><cite>The Web Origin Concept</cite></a>. December 2011. RFC. URL: <a href="http://www.ietf.org/rfc/rfc6454.txt">http://www.ietf.org/rfc/rfc6454.txt</a>
+</dd><dt id="bib-RFC2119">[RFC2119]</dt><dd rel="dcterms:requires">S. Bradner. <a href="http://www.ietf.org/rfc/rfc2119.txt"><cite>Key words for use in RFCs to Indicate Requirement Levels.</cite></a> March 1997. Internet RFC 2119.  URL: <a href="http://www.ietf.org/rfc/rfc2119.txt">http://www.ietf.org/rfc/rfc2119.txt</a> 
+</dd><dt id="bib-RFC7034">[RFC7034]</dt><dd rel="dcterms:requires">D. Ross and T. Gondrom, IETF <a href="http://tools.ietf.org/html/rfc7034"><cite>HTTP Header X-Frame-Options</cite></a>. Internet RFC 7034 URL: <a href="http://tools.ietf.org/html/rfc7034">http://tools.ietf.org/html/rfc7034</a>
+</dd><dt id="bib-TOUCH-EVENTS">[TOUCH-EVENTS]</dt><dd rel="dcterms:requires">Doug Schepers; Sangwhan Moon; Matt Brubeck; Arthur Barstow. <a href="http://www.w3.org/TR/touch-events/"><cite>Touch Events</cite></a>. 10 October 2013. W3C Recommendation. URL: <a href="http://www.w3.org/TR/touch-events/">http://www.w3.org/TR/touch-events/</a>
+</dd><dt id="bib-URI">[URI]</dt><dd rel="dcterms:requires">T. Berners-Lee; R. Fielding; L. Masinter. <a href="http://www.ietf.org/rfc/rfc3986.txt"><cite>Uniform Resource Identifiers (URI): generic syntax</cite></a>. January 2005. RFC 3986. URL: <a href="http://www.ietf.org/rfc/rfc3986.txt">http://www.ietf.org/rfc/rfc3986.txt</a>
+</dd><dt id="bib-XPATH">[XPATH]</dt><dd rel="dcterms:requires">James Clark; Steven DeRose. <a href="http://www.w3.org/TR/xpath"><cite>XML Path Language (XPath) Version 1.0</cite></a>. 16 November 1999. W3C Recommendation. URL: <a href="http://www.w3.org/TR/xpath">http://www.w3.org/TR/xpath</a>
+</dd></dl></section><section id="informative-references" typeof="bibo:Chapter" resource="#ref" rel="bibo:Chapter"><h3 aria-level="2" role="heading" id="h3_informative-references"><span class="secno">A.2 </span>Informative references</h3><dl class="bibliography" about=""><dt id="bib-CAPTCHA-Wikipedia">[CAPTCHA-Wikipedia]</dt><dd rel="dcterms:references">Wikipedia <a href="http://en.wikipedia.org/wiki/CAPTCHA"><cite>CAPTCHA</cite></a> from Wikipedia. URL: <a href="http://en.wikipedia.org/wiki/CAPTCHA">http://en.wikipedia.org/wiki/CAPTCHA</a>
+</dd><dt id="bib-CLEARCLICK">[CLEARCLICK]</dt><dd rel="dcterms:references">G. Maone <a href="http://noscript.net/downloads/ClearClick_WAS2012_rv2.pdf"><cite>ClearClick: Effective Client-Side Protection Against UI Redressing Attacks</cite></a>. (Work in progress.) URL: <a href="http://noscript.net/downloads/ClearClick_WAS2012_rv2.pdf">http://noscript.net/downloads/ClearClick_WAS2012_rv2.pdf</a>
+</dd><dt id="bib-CLICKJACKING-Unresolved">[CLICKJACKING-Unresolved]</dt><dd rel="dcterms:references">Lin-Shung Huang and Collin Jackson. <a href="https://docs.google.com/document/pub?id=1hVcxPeCidZrM5acFH9ZoTYzg1D0VjkG3BDW_oUdn5qc"><cite>Clickjacking Attacks Unresolved.</cite></a> Carnegie Mellon University, 06 July 2011. URL: <a href="https://docs.google.com/document/pub?id=1hVcxPeCidZrM5acFH9ZoTYzg1D0VjkG3BDW_oUdn5qc">https://docs.google.com/document/pub?id=1hVcxPeCidZrM5acFH9ZoTYzg1D0VjkG3BDW_oUdn5qc</a>
+</dd><dt id="bib-CSP11">[CSP11]</dt><dd rel="dcterms:references">A. Barth, D. Veditz and M. West <a href="http://w3c.github.io/webappsec/specs/content-security-policy/csp-specification.dev.html"><cite>Content Security Policy 1.1</cite></a>. W3C Editors' Draft. (Work in progress.) URL: <a href="http://w3c.github.io/webappsec/specs/content-security-policy/csp-specification.dev.html">http://w3c.github.io/webappsec/specs/content-security-policy/csp-specification.dev.html</a>
+</dd><dt id="bib-FRAMEBUSTING">[FRAMEBUSTING]</dt><dd rel="dcterms:references">Boneh, et al. <a href="http://seclab.stanford.edu/websec/framebusting/"><cite>Busting frame busting: a study of clickjacking vulnerabilities at popular sites</cite></a>. URL: <a href="http://seclab.stanford.edu/websec/framebusting/">http://seclab.stanford.edu/websec/framebusting/</a>
+</dd><dt id="bib-INCONTEXT">[INCONTEXT]</dt><dd rel="dcterms:references">Lin-Shung Huang, et al. <a href="https://www.usenix.org/system/files/conference/usenixsecurity12/sec12-final39.pdf"><cite>Clickjacking:Attacks and Defenses</cite></a> published in the 21st USENIX Security Symposium Proceedings.  URL: <a href="https://www.usenix.org/system/files/conference/usenixsecurity12/sec12-final39.pdf">https://www.usenix.org/system/files/conference/usenixsecurity12/sec12-final39.pdf</a>
+</dd><dt id="bib-MEDIACAPTURE">[MEDIACAPTURE]</dt><dd rel="dcterms:references">D. Burnett, A. Bergkvist, C. Jennings and A. Narayanan <a href="http://www.w3.org/TR/mediacapture-streams/"><cite>Media Capture and Streams</cite></a>. W3C Working Draft (Work in progress.) URL: <a href="http://www.w3.org/TR/mediacapture-streams/">http://www.w3.org/TR/mediacapture-streams/</a>
+</dd><dt id="bib-POINTER-EVENTS">[POINTER-EVENTS]</dt><dd rel="dcterms:references">Jacob Rossi and Matt Brubeck. <a href="http://www.w3.org/TR/pointerevents/"><cite>Pointer Events.</cite></a> 19 February 2013 W3C Working Draft. (Work in progress.) URL: <a href="http://www.w3.org/TR/pointerevents/">http://www.w3.org/TR/pointerevents/</a>
+</dd><dt id="bib-SELECTORS4">[SELECTORS4]</dt><dd rel="dcterms:references">Elika J. Etemad. <a href="http://www.w3.org/TR/2011/WD-selectors4-20110929/"><cite>Selectors Level 4.</cite></a> 29 September 2011. W3C Working Draft. (Work in progress.) URL: <a href="http://www.w3.org/TR/2011/WD-selectors4-20110929/">http://www.w3.org/TR/2011/WD-selectors4-20110929/</a>
+</dd><dt id="bib-UIREDRESS">[UIREDRESS]</dt><dd rel="dcterms:references">M. Zalewski <a href="http://code.google.com/p/browsersec/wiki/Part2#Arbitrary_page_mashups_(UI_redressing)"><cite>Browser Security Handbook, part 2</cite></a>. URL: <a href="http://code.google.com/p/browsersec/wiki/Part2#Arbitrary_page_mashups_(UI_redressing)">http://code.google.com/p/browsersec/wiki/Part2#Arbitrary_page_mashups_(UI_redressing)</a>
+</dd></dl></section></section></body></html>

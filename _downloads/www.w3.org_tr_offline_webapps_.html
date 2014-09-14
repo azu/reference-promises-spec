@@ -1,0 +1,300 @@
+<!-- http://www.w3.org/TR/offline-webapps/ -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+
+<html lang=en-US>
+ <head>
+  <title>Offline Web Applications</title>
+
+  <style type="text/css">
+   code { color:orangered }
+  </style>
+  <link href="http://www.w3.org/StyleSheets/TR/W3C-WG-NOTE" rel=stylesheet>
+
+ <body>
+  <div class=head>
+   <p><a href="http://www.w3.org/"><img alt=W3C height=48
+    src="http://www.w3.org/Icons/w3c_home" width=72></a></p>
+
+   <h1 id=offline-webapps>Offline Web Applications</h1>
+
+   <h2 class="no-num no-toc" id=w3c-doctype>W3C Working Group Note 30 May 2008</h2>
+
+   <dl>
+    <dt>This Version:
+
+    <dd><a
+     href="http://www.w3.org/TR/2008/NOTE-offline-webapps-20080530/">http://www.w3.org/TR/2008/NOTE-offline-webapps-20080530/</a>
+
+    <dt>Latest Version:
+
+    <dd><a
+     href="http://www.w3.org/TR/offline-webapps/">http://www.w3.org/TR/offline-webapps/</a>
+
+    <dt>Editors:
+
+    <dd><a href="http://annevankesteren.nl/">Anne van Kesteren</a> (<a
+     href="http://www.opera.com/">Opera Software ASA</a>) &lt;<a
+     href="mailto:annevk@opera.com">annevk@opera.com</a>>
+
+    <dd><a href="mailto:ian@hixie.ch">Ian Hickson</a>, Google, Inc.
+   </dl>
+
+   <p class=copyright><a
+    href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a>
+    &copy; 2008 <a href="http://www.w3.org/"><abbr title="World Wide Web
+    Consortium">W3C</abbr></a><sup>&reg;</sup> (<a
+    href="http://www.csail.mit.edu/"><abbr title="Massachusetts Institute of
+    Technology">MIT</abbr></a>, <a href="http://www.ercim.org/"><abbr
+    title="European Research Consortium for Informatics and
+    Mathematics">ERCIM</abbr></a>, <a
+    href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C <a
+    href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>,
+    <a
+    href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a>
+    and <a
+    href="http://www.w3.org/Consortium/Legal/copyright-documents">document
+    use</a> rules apply.</p>
+  </div>
+
+  <hr>
+
+  <h2 class="no-num no-toc" id=abstract>Abstract</h2>
+
+  <p>HTML&nbsp;5 contains several features that address the challenge of
+   building Web applications that work while offline. This document
+   highlights these features (SQL, offline application caching APIs as well
+   as <code>online</code>/<code>offline</code> events, status, and the
+   <code>localStorage</code> API) from HTML&nbsp;5 and provides brief
+   tutorials on how these features might be used to create Web applications
+   that work offline. [<cite><a href="#ref-html5">HTML5</a></cite>]
+
+  <h2 class="no-num no-toc" id=sotd>Status of This Document</h2>
+
+  <p><em>This section describes the status of this document at the time of
+   its publication. Other documents may supersede this document. A list of
+   current W3C publications and the latest revision of this technical report
+   can be found in the <a href="http://www.w3.org/TR/">W3C technical reports
+   index</a> at http://www.w3.org/TR/.</em>
+
+  <p>Offline Web Applications is a Working Group Note produced by the <a
+   href="http://www.w3.org/html/wg/">HTML Working Group</a>, part of the <a
+   href="http://www.w3.org/MarkUp/Activity">HTML Activity</a>. Comments are
+   welcome on the <a
+   href="mailto:public-html-comments@w3.org">public-html-comments@w3.org</a>
+   mailing list which is <a
+   href="http://lists.w3.org/Archives/Public/public-html-comments/">publicly
+   archived</a>.
+
+  <p>Publication as a Working Group Note does not imply endorsement by the
+   W3C Membership. This is a draft document and may be updated, replaced or
+   obsoleted by other documents at any time. It is inappropriate to cite this
+   document as other than work in progress.
+
+  <p>This document was produced by a group operating under the <a
+   href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February
+   2004 W3C Patent Policy</a>. The group does not expect this document to
+   become a W3C Recommendation. W3C maintains a <a
+   href="http://www.w3.org/2004/01/pp-impl/40318/status"
+   rel=disclosure>public list of any patent disclosures</a> made in
+   connection with the deliverables of the group; that page also includes
+   instructions for disclosing a patent. An individual who has actual
+   knowledge of a patent which the individual believes contains <a
+   href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential
+   Claim(s)</a> must disclose the information in accordance with <a
+   href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section
+   6 of the W3C Patent Policy</a>.
+
+  <h2 class="no-num no-toc" id=toc>Table of Contents</h2>
+  <!--begin-toc-->
+
+  <ul class=toc>
+   <li><a href="#introduction"><span class=secno>1. </span>Introduction</a>
+
+   <li><a href="#sql"><span class=secno>2. </span>SQL</a>
+
+   <li><a href="#offline"><span class=secno>3. </span>Offline Application
+    Caching APIs</a>
+
+   <li><a href="#related"><span class=secno>4. </span>Related APIs</a>
+
+   <li class=no-num><a href="#references">References</a>
+
+   <li class=no-num><a href="#acknowledgments">Acknowledgments</a>
+  </ul>
+  <!--end-toc-->
+
+  <h2 id=introduction><span class=secno>1. </span>Introduction</h2>
+
+  <p>Users of typical online Web applications are only able to use the
+   applications while they have a connection to the Internet. When they go
+   offline, they can no longer check their e-mail, browse their calendar
+   appointments, or prepare presentations with their online tools. Meanwhile,
+   native applications provide those features: e-mail clients cache folders
+   locally, calendars store their events locally, presentation packages store
+   their data files locally.
+
+  <p>In addition, while offline, users are dependent on their HTTP cache to
+   obtain the application at all, since they cannot contact the server to get
+   the latest copy.
+
+  <p>The HTML&nbsp;5 specification provides two solutions to this: a <a
+   href="http://www.w3.org/html/wg/html5/#sql">SQL-based database API</a> for
+   storing data locally, and an <a
+   href="http://www.w3.org/html/wg/html5/#offline">offline application HTTP
+   cache</a> for ensuring applications are available even when the user is
+   not connected to their network.
+
+  <h2 id=sql><span class=secno>2. </span>SQL</h2>
+
+  <p>The client-side SQL database in HTML&nbsp;5 enables structured data
+   storage. This can be used to store e-mails locally for an e-mail
+   application or for a cart in an online shopping site. The API to interact
+   with this database is asynchronous which ensures that the user interface
+   doesn't lock up. Because database interaction can occur in multiple
+   browser windows at the same time the API supports transactions.
+
+  <p>To create a database object you use the <code>openDatabase()</code>
+   method on the <code>Window</code> object. It takes four arguments: a
+   database name, a database version, a display name, and an estimated size,
+   in bytes, of the data to be stored in the database. For instance:
+
+  <pre>var db = openDatabase("notes", "", "The Example Notes App!", 1048576);</pre>
+
+  <p>Now on this database we can use the <code>transaction()</code> method.
+   The transaction method takes one to three arguments: a transaction
+   callback, an error callback, and a success callback. The transaction
+   callback gets passed a SQL transaction object on which you can use the
+   <code>executeSQL()</code> method. This method takes from one to four
+   arguments: a SQL statement, arguments, a SQL statement callback, and a SQL
+   statement error callback. The SQL statement callback gets passed the
+   transaction object and a SQL statement result object which gives access to
+   the rows, last inserted ID, et cetera.
+
+  <p>To complete the infrastructure for the notes application we'd add the
+   following code:
+
+  <pre>
+function renderNote(row) {
+  // renders the note somewhere
+}
+function reportError(source, message) {
+  // report error
+}
+
+function renderNotes() {
+  db.transaction(function(tx) {
+    tx.executeSql('CREATE TABLE IF NOT EXISTS Notes(title TEXT, body TEXT)', 
+      []);
+    tx.executeSql(‘SELECT * FROM Notes’, [], function(tx, rs) {
+      for(var i = 0; i &lt; rs.rows.length; i++) {
+        renderNote(rs.rows[i]);
+      }
+    });
+  });
+}
+
+function insertNote(title, text) {
+  db.transaction(function(tx) {
+    tx.executeSql('INSERT INTO Notes VALUES(?, ?)', [ title, text ],
+      function(tx, rs) {
+        // &hellip;
+      },
+      function(tx, error) {
+        reportError('sql', error.message);
+      });
+  });
+}</pre>
+
+  <h2 id=offline><span class=secno>3. </span>Offline Application Caching APIs</h2>
+
+  <p>The mechanism for ensuring Web applications are available even when the
+   user is not connected to their network is the <code
+   title=attr-html-manifest>manifest</code> attribute on the
+   <code>html</code> element.
+
+  <p>The attribute takes a URI to a manifest, which specifies which files are
+   to be cached. The manifest has a <code>text/cache-manifest</code> MIME
+   type. A typical file looks like this:
+
+  <pre>CACHE MANIFEST
+index.html
+help.html
+style/default.css
+images/logo.png
+images/backgound.png
+
+NETWORK:
+server.cgi</pre>
+
+  <p>This file specifies several files to cache, and then specifies that
+   <code title="">server.cgi</code> should never be cached, so that any
+   attempt to access that file will bypass the cache.
+
+  <p>The manifest can then be linked to by declaring it in the (HTML)
+   application, like this:
+
+  <pre>&lt;!DOCTYPE HTML>
+&lt;html manifest="cache-manifest">
+...</pre>
+
+  <p>The <code title="">server.cgi</code> file would be white-listed (put in
+   the <code title="">NETWORK:</code> section) so that it can be contacted to
+   get updates from the server, as in:
+
+  <pre>&lt;event-source src="server.cgi"></pre>
+
+  <p>(The <code>event-source</code> element is a new feature in HTML&nbsp;5
+   that allows servers to continuously stream updates to a Web page.)
+
+  <p>The application cache mechanism also supports a way to opportunistically
+   cache (from the server) a group of files matching a common prefix, with
+   the ability to have a fallback page for rendering those pages when
+   offline. It also provides a way for scripts to add and remove entries from
+   the cache dynamically, and a way for applications to atomically update
+   their cache to new files, optionally presenting custom UI during the
+   update.
+
+  <h2 id=related><span class=secno>4. </span>Related APIs</h2>
+
+  <p>In addition to those APIs HTML&nbsp;5 also defines an
+   <code>onLine</code> attribute on the <code>Navigator</code> object so you
+   can determine whether you are currently online:
+
+  <pre>var online = navigator.onLine;</pre>
+
+  <p>Changes to this attribute are indicated through the <code>online</code>
+   and <code>offline</code> events that are both dispatched on the
+   <code>Window</code> object.
+
+  <p>For simple synchronous storage access HTML&nbsp;5 introduces the
+   <code>localStorage</code> attribute on the <code>Window</code> object:
+
+  <pre>localStorage["status"] = "Idling.";</pre>
+
+  <h2 class=no-num id=references>References</h2>
+
+  <dl>
+   <dt>[<dfn id=ref-html5>HTML5</dfn>] (work in progress)
+
+   <dd><cite><a
+    href="http://www.whatwg.org/specs/web-apps/current-work/">HTML&nbsp;5</a></cite>,
+    I. Hickson, editor. WHATWG, 2008.
+
+   <dd><cite><a
+    href="http://www.whatwg.org/specs/web-forms/current-work/">Web Forms
+    2.0</a></cite>, I. Hickson, editor. WHATWG, October 2006.
+
+   <dd><cite><a
+    href="http://www.w3.org/html/wg/html5/">HTML&nbsp;5</a></cite>, I.
+    Hickson, D. Hyatt, editors. W3C, 2008.
+
+   <dd><cite><a href="http://dev.w3.org/html5/web-forms-2/">Web Forms
+    2.0</a></cite>, I. Hickson, editor. W3C, October 2006.
+  </dl>
+
+  <h2 class=no-num id=acknowledgments>Acknowledgments</h2>
+
+  <p>The editors would like to thank Chris Wilson, Dion Almaer, James Graham,
+   Julian Reschke, Henri Sivonen, Patrick D. F. Ion, and Philip Taylor for
+   their contributions to this document. Also thanks to Dan Connolly for
+   talking us into writing it during the first HTML WG meeting (in Boston).

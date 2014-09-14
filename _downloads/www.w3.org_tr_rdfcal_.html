@@ -1,0 +1,1279 @@
+<!-- http://www.w3.org/TR/rdfcal/ -->
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>RDF Calendar - an application of the Resource Description Framework
+  to iCalendar Data</title>
+  <style type="text/css">
+blockquote { border-left: double; padding-left: 1em; text-align: justify }
+  pre { border: 1.00pt solid #000000; padding: 0.02in; width:85%; }
+blockquote pre { border: none; width: 100% }
+
+p {text-indent: 15pt}
+.footnotes { font-size: smaller; background-color:#fef; width: 70% }
+address {text-align: right; text-indent: 15pt}</style>
+  <link rel="stylesheet" type="text/css" href="http://www.w3.org/StyleSheets/TR/W3C-IG-NOTE" />
+  <meta name="RCSId" content="$Id: Overview.html,v 1.14 2005/09/29 15:00:37 matthieu Exp $" />
+</head>
+
+<body xml:lang="en" lang="en">
+<div class="head">
+<div class="nav"><a href="http://www.w3.org/">
+     <img height="48" width="72" alt="W3C"
+      src="http://www.w3.org/Icons/w3c_home" /></a></div>
+
+<h1>RDF Calendar - an application of the Resource Description Framework to
+iCalendar Data</h1>
+<h2>W3C Interest Group Note 29 September 2005</h2>
+<dl>
+  <dt>This version</dt>
+    <dd><a href="http://www.w3.org/TR/2005/NOTE-rdfcal-20050929/">http://www.w3.org/TR/2005/NOTE-rdfcal-20050929/</a></dd>
+  <dt>Latest version</dt>
+    <dd><a href="http://www.w3.org/TR/rdfcal/">http://www.w3.org/TR/rdfcal/</a></dd>
+  <dt>Authors</dt>
+    <dd><a href="/People/Connolly/">Dan Connolly</a>, W3C</dd>
+    <dd><a href="http://ilrt.org/people/cmlm/">Libby Miller</a>,
+    ASemantics</dd>
+</dl>
+
+<p class="copyright"><a
+href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">
+Copyright</a> &#xa9;2005 <a href="http://www.w3.org/"><acronym
+title="World Wide Web Consortium">W3C</acronym></a><sup>&#xae;</sup>
+(<a href="http://www.csail.mit.edu/"><acronym title="Massachusetts
+Institute of Technology">MIT</acronym></a>, <a
+href="http://www.ercim.org/"><acronym title="European Research
+Consortium for Informatics and Mathematics">ERCIM</acronym></a>, <a
+href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C <a
+href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>,
+<a
+href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a>
+and <a
+href="http://www.w3.org/Consortium/Legal/copyright-documents">document
+use</a> rules apply.</p>
+</div>
+<hr />
+
+<h2> Abstract</h2>
+<p>This report discusses an effort to apply the Resource Description
+Framework (RDF) to iCalendar data in order to integrate calendar data
+with other Semantic Web data such as social networking data,
+syndicated content, and multimedia meta-data. We demonstrate the
+effectiveness of a test-driven approach to vocabulary development and
+we discuss a number of social as well as technical issues.</p>
+
+<h2> Status of this document</h2>
+<div id="sotd">
+<p><em> This section describes the status of this document at the time
+of its publication. Other documents may supersede this document. A
+list of current W3C publications and the latest revision of this
+technical report can be found in the <a
+href="http://www.w3.org/TR/">W3C technical reports index</a> at
+http://www.w3.org/TR/.</em></p>
+
+<p>This draft discusses the state of the art in the RDF calendar task
+force of the <a href="http://www.w3.org/2001/sw/interest/">Semantic
+Web Interest Group</a> in the <a
+href="http://www.w3.org/2001/sw/">Semantic Web Activity</a>.  This
+work began at the <a
+href="http://www.w3.org/2001/sw/Europe/events/200210-cal/">Semantic
+Web calendaring workshop</a> in October 2002. While a number of issues
+remain open, the design is backed by a few dozen test cases and it is
+increasingly useful and stable. Please send comments to <a
+href="mailto:www-rdf-calendar@w3.org">www-rdf-calendar@w3.org</a>, a
+mailing list with <a
+href="http://lists.w3.org/Archives/Public/www-rdf-calendar/">public
+archive</a>.</p>
+
+<p><em>Publication as an Interest Group Note does not imply
+endorsement by the W3C Membership. This is a draft document and may be
+updated, replaced or obsoleted by other documents at any time. It is
+inappropriate to cite this document as other than work in
+progress.</em></p>
+
+</div>
+
+<div class="toc">
+<h2 id="contents"> Contents</h2>
+
+<ul>
+  <li><a href="#intro">1.    Introduction</a></li>
+  <li><a href="#Collaborat">2.    Collaboration challenges and
+  rewards</a></li>
+  <li><a href="#exsim">3.    A simple example</a></li>
+  <li><a href="#ns-gnd">4.    Namespaces: grounding terms in URI
+  space</a></li>
+  <li><a href="#comp">5.    Calendar objects, components and files</a></li>
+  <li><a href="#L10136">6.    Capitalization and naming conventions</a></li>
+  <li><a href="#collab">7.    Choosing a namespace policy</a></li>
+  <li><a href="#Generating">8.    Generating a schema from examples</a></li>
+  <li><a href="#Gleaning">9.    Gleaning a schema from the specification
+    text</a></li>
+  <li><a href="#Extension">10.    Extension Tokens and Product
+  Identifiers</a></li>
+  <li><a href="#L21805">11.    Shop hours, recurring events and
+  timezones</a></li>
+  <li><a href="#Locations">12.    Events, places, names, and
+  coordinates</a></li>
+  <li><a href="#testdr">13.    Using RDF graph comparison for round-trip
+    testing</a></li>
+  <li><a href="#L1877">14.    Related Work</a>
+    <ul>
+      <li><a href="#L1892">14.1.    xCalendar</a></li>
+      <li><a href="#L1901">14.2.    RSS event module</a></li>
+    </ul>
+  </li>
+  <li><a href="#conc1">15.    Conclusions and future work</a>
+    <ul>
+      <li><a href="#L1879">15.1.    hCalendar and microformats</a></li>
+    </ul>
+  </li>
+  <li><a href="#Acknowledg">16.    Acknowledgements</a></li>
+  <li><a href="#L1962">17.    References</a></li>
+</ul>
+</div>
+
+<div>
+<h2 id="intro">1.    Introduction</h2>
+
+<p>The Web did two things for sharing information with documents: first, HTML
+and TCP/IP provided a neutral answer to the questions about which word
+processor's format to use, which operating system, and which networking
+technology; second, the Web integrated individual documents into a whole
+information system so that if the information was already in the Web
+somewhere, you could just link to it. HTML is feature-poor when compared to
+other document formats, but the integration benefits of linking outweigh the
+costs.</p>
+
+<p>Fifteen years later, this works pretty well for documents. If you have a
+document and someone asks you to provide it to each of a dozen different
+people that each use different kinds of computers, you can just put it on the
+Web in HTML and be reasonably sure they can all read it. But the integration
+problem is still there for data. When a soccer coach distributes a schedule
+for the season, each of the players has to re-key the information for their
+calendar system if they want their computer to help them manage conflicts.
+When an airline sends itineraries, each passenger manually processes them.</p>
+
+<p>The problem is addressed at least in part by an Internet standard<sup><a
+href="#std-note">st</a></sup> for calendar data, iCalendar[<a
+href="http://www.w3.org/2002/12/cal/rfc2445">RFC2554</a>]. But it's not clear that iCalendar provides
+sufficient integration benefits to outweigh the cost of migrating to open
+systems from more mature closed calendaring systems. At a <a
+href="http://www.w3.org/2001/sw/Europe/events/200210-cal/">Semantic Web
+calendaring workshop</a> in October 2002, we explored the additional benefits
+of applying the Resource Description Framework (<a
+href="http://esw.w3.org/topic/RDF">RDF</a>) to iCalendar data, allowing us to
+linked it with social networking data (<a
+href="http://www.foaf-project.org/">FOAF</a>), syndicated content (<a
+href="http://purl.org/rss/1.0/spec">RSS</a>), multimedia metadata (<a
+href="http://dublincore.org/">dublin core</a>, <a
+href="http://musicbrainz.org/MM/">musicbrainz</a>) etc.</p>
+
+<p>The iCalendar specification is fairly large, with 142 sections and a
+number of complex interactions. The widely available software seems to cover
+much of the useful functionality, but not every aspect of the specification;
+for example, we have not seen tool support for <a
+href="http://www.w3.org/2002/12/cal/rfc2445#sec4.8.5.2">exception rules</a>. Meanwhile, at the workshop, we
+did have a number of actual iCalendar data files, representing real-world
+events, that had been converted to RDF either manually or with scripts. The
+resulting RDF/XML analogs served useful purposes to at least some of the
+participants and seemed to be correct, by inspection, to all present. This
+provided critical mass to begin maintaining a test suite</p>
+
+<div class="footnotes">
+<dl>
+  <dt id="std-note">st</dt>
+    <dd>an <a href="http://www.ietf.org/">IETF</a> Proposed Standard, to be
+      exact. The IETF Calendaring and Scheduling Standards Simplification (<a
+      href="http://www.ietf.org/html.charters/calsify-charter.html">calsify</a>)
+      working group is chartered to "Advance the Calendaring and Scheduling
+      standards to Draft Standard," among other things.</dd>
+</dl>
+</div>
+</div>
+
+<div>
+<h2 id="Collaborat">2.    Collaboration challenges and rewards</h2>
+
+<p>A particularly rewarding aspect of this collaboration is exploring
+language and culture boundaries. Even though there is a six hour time gap
+between Chicago and London, office hours overlap regularly, and while the
+difference in dialect and etiquette is often entertaining, it is rarely an
+obstacle to understanding. Our colleagues from Japan are much more able to
+converse in English than we are in Japanese. Even so, without the benefit of
+non-verbal clues, remote conversations are particularly challenging. Email
+offers the chance to read and compse at your own pace, but the the timezone
+gaps between America, Europe, and Asia effective impose a 24 hour round-trip
+time that is a real barrier to conversation. Internet Relay Chat (IRC) allows
+near-real-time feedback and clarification as well as the clarity of written
+text and a chance to reflect at least a few minutes to digest one message and
+compose another, but only if all parties can devote their attention at the
+same time.</p>
+
+<p>We use an archived mailing list, <code>www-rdf-calendar@w3.org</code>, as
+the <q>forum of record,</q> with any significant work that happens by chance
+in IRC reported there after the fact. We also conduct a form of meeting over
+IRC, called with advanced notice of a week or so, where some conscious effort
+is given to agenda management, due process for decision making, follow-up on
+actions, and the like. We have given the name <a
+href="http://esw.w3.org/topic/ScheduledTopicChat">ScheduledTopicChat</a> to
+this collaboration pattern. <a
+href="http://esw.w3.org/topic/RdfCalendarMeetings">RdfCalendarMeetings</a>
+serves as an index of meeting records.</p>
+</div>
+
+<div>
+<h2 id="exsim">3.    A simple example</h2>
+
+<p>At a glance, converting iCalendar data to RDF is quite straightforward; in
+iCalendar terms, an event is a <a
+href="http://www.w3.org/2002/12/cal/rfc2445#sec4.6">component</a> with
+various <a
+href="http://www.w3.org/2002/12/cal/rfc2445#sec4.5">properties</a>:</p>
+<pre>BEGIN:VEVENT
+<span xml:lang="en" lang="en">UID:20020630T230445Z-3895-69-1-7@jammer</span>
+<span xml:lang="en" lang="en">DTSTART;VALUE=DATE:20020703</span>
+<span xml:lang="en" lang="en">DTEND;VALUE=DATE:20020706</span>
+<span xml:lang="en" lang="en">SUMMARY:Scooby Conference</span>
+<span xml:lang="en" lang="en">LOCATION:San Francisco</span>
+<span xml:lang="en" lang="en">END:VEVENT</span></pre>
+
+<p>and RDF/XML has analagous class and property constructs:</p>
+<pre>      &lt;Vevent&gt;
+        &lt;uid&gt;20020630T230445Z-3895-69-1-7@jammer&lt;/uid&gt;
+        &lt;dtstart&gt;2002-07-03&lt;/dtstart&gt;
+        &lt;dtend&gt;2002-07-06&lt;/date&gt;
+        &lt;summary&gt;Scooby Conference&lt;/summary&gt;
+        &lt;location&gt;San Francisco&lt;/location&gt;
+      &lt;/Vevent&gt;</pre>
+</div>
+
+<div>
+<h2 id="ns-gnd">4.    Namespaces: grounding terms in URI space</h2>
+
+<p>The terms <code>Vevent</code>, <code>uid</code>, etc. in the RDF/XML
+example above are actually abbreviations. The <code>Vevent</code> element is
+dominated by an element with namespace declarations:</p>
+<pre>&lt;rdf:RDF
+  xmlns="http://www.w3.org/2002/12/cal#"&gt;
+...
+      &lt;Vevent&gt;
+        &lt;uid&gt;20020630T230445Z-3895-69-1-7@jammer&lt;/uid&gt;
+        &lt;dtstart&gt;2002-07-03&lt;/dtstart&gt;
+        &lt;dtend&gt;2002-07-06&lt;/date&gt;
+        &lt;summary&gt;Scooby Conference&lt;/summary&gt;
+        &lt;location&gt;San Francisco&lt;/location&gt;
+      &lt;/Vevent&gt;</pre>
+
+<p>The result is that the element name <code>Vevent</code> is short for a
+full URI <code>http://www.w3.org/2002/12/cal#Vevent</code>.</p>
+</div>
+
+<div>
+<h2 id="comp">5.    Calendar objects, components and files</h2>
+
+<p>iCalendar data typically consists of a <a
+href="http://www.w3.org/2002/12/cal/rfc2445#sec4.6"><code>CALENDAR</code>
+component</a> with <code><a
+href="http://www.w3.org/2002/12/cal/rfc2445#Vevent">VEVENT</a></code>
+components and such inside it. An initial design identified the calendar
+object with the RDF/XML document ala</p>
+<pre>  &lt;Vcalendar rdf:about=""&gt;
+   ...
+  &lt;/Vcalendar&gt;</pre>
+
+<p>i.e. "this document is a Vcalendar with ... ." But we ran into <a
+href="http://lists.w3.org/Archives/Public/www-rdf-calendar/2003Jan/0009.html">a
+case of iCalendar data with more than one calendar in a file</a>. There was
+some discrepancy among implementations as to whether this was good data;
+mozilla did not seem to accept it, but this was reported as a bug<a
+href="http://bugzilla.mozilla.org/show_bug.cgi?id=179985"><sup>#179985</sup></a>
+and indeed, section <a
+href="http://www.w3.org/2002/12/cal/rfc2445#sec4.4">4.4 iCalendar Object</a>
+says</p>
+
+<blockquote>
+  <p>The Calendaring and Scheduling Core Object is a collection of
+  calendaring and scheduling information. Typically, this information will
+  consist of a single iCalendar object. However, multiple iCalendar objects
+  can be sequentially grouped together.</p>
+</blockquote>
+
+<p>So we decided<sup><a
+href="http://lists.w3.org/Archives/Public/www-rdf-calendar/2003Feb/0008.html">2003-02-12</a></sup>
+to drop <code>rdf:about=""</code> from our icalendar&lt;-&gt;RDF mapping.</p>
+
+<p>iCalendar syntax has no name for the relationship between an outer
+component and an inner component; it just uses the position in the syntax to
+express the relationship. Syntactic position in RDF only tells the "part of
+speech," i.e. subject, predicate, or object of a relationship, so we needed a
+name for this relationship. We decided<a
+href="http://rdfig.xmlhack.com/2003/02/12/2003-02-12.html#a1045063138.593306"><sup>2003-02-12</sup></a>
+to use ical:component to relate calendars to events.</p>
+
+<p>We have explored using the iCalendar uid property to make URIs for event
+components<sup><a
+href="http://lists.w3.org/Archives/Public/www-rdf-calendar/2003Aug/0001.html">2003-08-19</a></sup>.
+It's not clear whether events in separate files bearing the same uid should
+be considered identical or merely different views of the same event. For
+example, if they are identical, they have the same alarms. One approach that
+seems to work well is to use the uid as a fragment identifier rather than as
+a full URI.</p>
+</div>
+
+<h2 id="L10136">6.    Capitalization and naming conventions</h2>
+
+<p>While these examples suggest that the mapping is straightforward, they
+also demonstrate one of the early issues: capitalization. In iCalendar,
+component and property names are case insensitive and conventionally written
+in all caps. But due to internationalization and simplicity considerations,
+XML names and URIs are case sensitive, and RDF class and property names
+inherit constraints from XML and URIs. In addition, the established
+convention is that RDF class names are capitalized and RDF property names
+begin with a lower case letter, and both use camelCase to join words.</p>
+
+<p>The first attempts to convert iCalendar data to RDF were perl scripts of a
+hundred lines or so that just manipulated the punctuation. But this approach
+breaks down when the punctuation of a property depends on the name of the
+property<sup><a href="#prop-type-note">p</a></sup>. Soon it became clear that
+there were details beyond capitalization that varied from property type to
+property type; the conversion process needed information from a schema.</p>
+
+<div class="footnotes">
+<dl>
+  <dt id="prop-type-note">p</dt>
+    <dd>or more precisely: on the value type of the property. Each property
+      type has a default value type; for example, <a
+      href="http://www.w3.org/2002/12/cal/rfc2445#dtstart">DTSTART</a>
+      defaults to <a
+      href="http://www.w3.org/2002/12/cal/rfc2445#Value_DATE-TIME">DATE-TIME</a>.
+      But a property parameter can be used to set the value type of an
+      individual property; for example:
+      <code>DTSTART;VALUE=DATE:19960401</code> .</dd>
+</dl>
+</div>
+
+<div>
+<h2 id="collab">7.    Choosing a namespace policy</h2>
+
+<p>Capitalization is one of many issues that had a number of efforts to
+relate iCalendar and RDF (<a href="/2000/01/foo.html"><cite>A quick look at
+iCalendar</cite></a> by Tim Berners-Lee in 2001, <a
+href="http://ilrt.org/discovery/2001/06/schemas/ical-full/hybrid.rdf">hybrid.rdf</a>
+by Miller and Arick in 2001, <a
+href="/2000/10/swap/pim/ical2rdf.pl">ical2rdf.pl</a> by Connolly in 2002) had
+explored independently. At the <a
+href="/2001/sw/Europe/events/200210-cal/">workshop</a> 2002, we agreed to
+work together on a shared RDF Schema, that is: a shared document in the Web
+that provides definitions, of a sort, for a number of related terms. After
+consideration of preserving the investment in each of the existing iCalendar
+schemas, it seemed the data that referenced them might have been composed
+with an expectation that those schemas would not change. We chose a new
+namespace name, <tt>http://www.w3.org/2002/12/cal#</tt>.</p>
+
+<p>The issues around managing changes to an RDF schema are similar to
+managing changes in other documents: should you update the content in place,
+or should you keep the old version there and put the new version at a
+different place in the Web? We chose a process that is reasonably simple and
+has proven to be quite robust and scalable: <strong>the schema is subject to
+change, with notice and appeal</strong>; that is: all changes to the schema
+are announced to the <code>www-rdf-calendar</code> mailing list; if anyone
+objects within a week, the change is rolled back for further discussion.</p>
+</div>
+
+<div>
+<h2 id="Generating"><a name="head-69f481dd239f19dd2a6c1315754fde19bfa92e84"
+id="head-69f481dd239f19dd2a6c1315754fde19bfa92e84">8.    Generating a schema
+from examples</a></h2>
+
+<p>The regular structure of the iCalendar specification, with components and
+properties, suggests declaring corresponding RDF classes and properties in an
+RDF schema should be straightforward. But an attempt to do it manually ( <a
+href="http://ilrt.org/discovery/2001/06/schemas/ical-full/hybrid.rdf">hybrid.rdf</a>
+by Miller and Arick in 2001) proved unwieldy.</p>
+
+<p>We explored using rules to generate a schema from our example data. Rules
+such as "if something is related to semething else by ?P, then ?P is a
+Property" and "if something is a ?C, then ?C is a Class" can be expressed in
+<a href="http://www.w3.org/DesignIssues/Notation3">Notation3</a> rule
+syntax:</p>
+<pre>{ [] ?P []. } =&gt; { ?P a r:Property }.
+{ [] a ?C } =&gt; { ?C a s:Class }.</pre>
+
+<p>This approach worked to enumerate the classes and properties we were using
+in our test data, but it did not provide important schema information such as
+value types.</p>
+
+<div>
+<h2 id="Gleaning">9.    Gleaning a schema from the specification text</h2>
+
+<p>The iCalendar specification has a very regular structure for value types
+and such:</p>
+<pre>4.8.2.4 Date/Time Start
+
+   Property Name: DTSTART
+
+   Purpose: This property specifies when the calendar component begins.
+
+   Value Type: The default value type is DATE-TIME. The time value MUST
+   be one of the forms defined for the DATE-TIME value type. The value
+   type can be set to a DATE value type.</pre>
+
+<p>We converted this structured plain text to XHTML with semantic markup for
+two reasons:</p>
+<ol>
+  <li>to make it easier for people to navigate the structure of the
+  document</li>
+  <li>to facilitate generation of an RDF schema using XSLT</li>
+</ol>
+
+<p>A python program, <a
+href="http://www.w3.org/2002/12/cal/slurpIcalSpec.py">slurpIcalSpec.py</a>,
+produces XHTML including typed links from properties to value types:</p>
+
+<blockquote>
+  <dl>
+    <dt id="dtstart">Property Name</dt>
+      <dd class="PropertyName"><pre>    DTSTART</pre>
+      </dd>
+    <dt>Purpose</dt>
+      <dd class="Purpose"><pre>    This property specifies when the calendar component begins.</pre>
+      </dd>
+    <dt>Value Type</dt>
+  </dl>
+
+  <p>The default value type is<a rel="default-value-type"
+  href="http://www.w3.org/2002/12/cal/rfc2445#Value_DATE-TIME">DATE-TIME</a></p>
+  <pre>   . The time value MUST
+   be one of the forms defined for the <a rel="allowed-type" href="http://www.w3.org/2002/12/cal/rfc2445#Value_DATE">DATE</a>-TIME value type. The value
+   type can be set to a <a rel="allowed-type" href="http://www.w3.org/2002/12/cal/rfc2445#Value_DATE">DATE</a> value type.</pre>
+</blockquote>
+
+<p>The markup uses semantic class names and link relationships:</p>
+<pre>&lt;h2 id="sec4.8.2.4"&gt;4.8.2.4 Date/Time Start&lt;/h2&gt;
+&lt;dl&gt;
+&lt;dt id="dtstart"&gt;Property Name&lt;/dt&gt;
+&lt;dd class="PropertyName"&gt;&lt;pre&gt;    DTSTART
+
+&lt;/pre&gt;
+&lt;/dd&gt;
+&lt;dt&gt;Purpose&lt;/dt&gt;
+&lt;dd class="Purpose"&gt;&lt;pre&gt;    This property specifies when the calendar component begins.
+
+&lt;/pre&gt;
+&lt;/dd&gt;
+&lt;dt&gt;Value Type&lt;/dt&gt;
+
+&lt;dd class="ValueType"&gt;The default value type is &lt;a
+ rel="default-value-type"
+ href="#Value_DATE-TIME"&gt;DATE-TIME&lt;/a&gt; &lt;pre&gt;   . The time value MUST
+   be one of the forms defined for the &lt;a
+ rel="allowed-type"
+ href="#Value_DATE"&gt;DATE&lt;/a&gt;-TIME value type. The value
+   type can be set to a &lt;a
+ rel="allowed-type"
+ href="#Value_DATE"&gt;DATE&lt;/a&gt; value type.
+
+&lt;/pre&gt;
+&lt;/dd&gt;</pre>
+
+<p>An XSLT transformation, <a
+href="http://www.w3.org/2002/12/cal/webize2445.xsl">webize2445.xsl</a>, turns
+this into RDF/OWL:</p>
+<pre>  &lt;rdf:Description rdf:ID="dtstart"&gt;
+    &lt;rdfs:label&gt;DTSTART&lt;/rdfs:label&gt;
+    &lt;rdfs:comment&gt;This property specifies when the calendar component begins.&lt;/rdfs:comment&gt;
+    &lt;rdfs:comment&gt;
+    default value type: DATE-TIME&lt;/rdfs:comment&gt;
+    &lt;spec:valueType&gt;DATE-TIME&lt;/spec:valueType&gt;
+    &lt;rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/&gt;
+    &lt;rdfs:range&gt;
+      &lt;owl:Class&gt;
+        &lt;owl:unionOf rdf:parseType="Collection"&gt;
+          &lt;owl:Class rdf:about="#Value_DATE-TIME"/&gt;
+          &lt;owl:Class rdf:about="#Value_DATE"/&gt;
+          &lt;owl:Class rdf:about="#Value_DATE"/&gt;
+        &lt;/owl:unionOf&gt;
+      &lt;/owl:Class&gt;
+    &lt;/rdfs:range&gt;</pre>
+
+<p>This approach does not produce schema information for the
+<code>component</code> property discussed <a href="#comp">above</a>, nor for
+properties such as <code>interval</code> and <code>byday</code> used in
+recurrence rules. Those should be added in due course.</p>
+
+<p>The schema also currently lacks information about which properties are
+functional or inverse-functional, which are needed for certain diff/sync
+techniques<sup><a
+href="http://lists.w3.org/Archives/Public/www-rdf-calendar/2004Mar/0016.html">2004-03-23</a></sup>.
+Unfortunately, adding that information conflicts with certain OWL DL
+restrictions, and makes it harder to use OWL DL checking tools with this
+schema. This remains an open issue.</p>
+
+<p>Another python program, <a
+href="http://www.w3.org/2002/12/cal/compDecls.py">compDecls.py</a>, reads the
+schema and prints it as a python data structure for use in our iCalendar to
+RDF conversion utility<sup><a href="#comp-decl">td</a></sup>, <a
+href="http://www.w3.org/2002/12/cal/fromIcal.py">fromIcal.py</a>:</p>
+<pre>                   ('Vevent',
+                    {"ATTACH": ('attach', 'URI', 0, None),
+                     "CATEGORIES": ('categories', "TEXT", 0, None),
+                     "SUMMARY": ('summary', "TEXT", 0, None),
+                     "DTEND": ('dtend', 'DATE-TIME', 0, None),
+                     "DTSTART": ('dtstart', 'DATE-TIME', 0, None),</pre>
+
+<div class="footnotes">
+<dl>
+  <dt id="comp-decl">td</dt>
+    <dd>Actually, we don't trust this conversion completely quite yet. The
+      schema is actually integrated into fromIcal.py in a test-driven manner:
+      not until a property is found in an actual test case is the relevant
+      declaration copied from the output of compDecls.py into the source code
+      of fromIcal.py, after careful inspection.</dd>
+</dl>
+</div>
+</div>
+</div>
+
+<div>
+<h2 id="Extension">10.    <a
+name="head-7e86ceb92cba794b5aa2ce8f4735086f8075455e"
+id="head-7e86ceb92cba794b5aa2ce8f4735086f8075455e"></a>Extension Tokens and
+Product Identifiers</h2>
+
+<p>The iCalendar syntax allows extension tokens in a number of places.
+Ideally, we would like to ground these extension tokens in URI space as well,
+but none of the approaches we have tried is completely satisfactory.</p>
+
+<p>One approach was to specify a namespace for x- tokens on the command line,
+at conversion time. The drawbacks of this approach are</p>
+<ol>
+  <li>It is limited to one extension namespace. We have not explored in
+    detail any iCalendar data with extension tokens from more than one
+    source, but it is possible, at least in theory.</li>
+  <li>The user must somehow know the URI for the extensions in the file. RDF
+    schemas for these extensions are not widely deployed, so users would be
+    left with the problem of publishing them in many cases.</li>
+</ol>
+
+<p>iCalendar data is labelled with a product ID that serves a similar role to
+an XML namespace name, though it is not expressed as a URI. We decided<sup><a
+href="http://rdfig.xmlhack.com/2003/02/26/2003-02-26.html#a1046279142.860278">2003-02-26</a></sup>
+to institute an ical product registry. When we found some extensions used by
+some product, we would publish a schema for those extensions using a URI
+starting with '<a
+href="http://www.w3.org/2002/12/cal/prod/">http://www.w3.org/2002/12/cal/prod/</a>'
+followed by a function of the product id.</p>
+
+<p>The drawback of this approach is that it does not seem to be worth the
+trouble. In practice, we seem to be more content to just disregard the
+extended properties. Handling extensions remains an outstanding issue in our
+test suite<a
+href="http://ilrt.org/discovery/chatlogs/rdfig/2003-08-20.html#T15-43-10"><sup>2003-08-20</sup></a>.</p>
+
+<p>Now that we have explored the schema and extension tokens, let's look at
+the calendar data itself.</p>
+</div>
+
+<div>
+<h2 id="L21805">11.    Shop hours, recurring events and timezones</h2>
+
+<p>Consider the case of a shop with regular hours. Contemporary directory
+services provide telephone numbers and street addresses, complete with
+automated driving directions. But you still have to pick up the phone and
+call them to find out when they're open. Typical shop hours can be expressed
+using recurring events in iCalendar. The <a
+href="http://www.w3.org/2002/12/cal/test/bus-hrs.rdf">bus-hrs.rdf</a> test
+expresses "Open 11:30a-11:30p Wed-Sun; Open Tue 4-11p" in RDF<sup><a
+href="#ttl">ttl</a></sup>:</p>
+<pre>@prefix : &lt;http://www.w3.org/2002/12/cal/icaltzd#&gt; .
+@prefix NY: &lt;http://www.w3.org/2002/12/cal/tzd/America/New_York#&gt; .
+   &lt;#20030314T052745Z-25601-69-1-8@dirk&gt; a :Vevent;
+         :class "PUBLIC";
+         :dtend "2003-03-12T23:00:00"^^NY:tz;
+         :dtstart "2003-03-12T11:30:00"^^NY:tz;
+         :rrule  [
+             :byday "SU,WE,TH,FR,SA";
+             :freq "WEEKLY";
+             :interval "1" ];
+          :summary "Open 11:30a-11:30p Wed-Sun".
+    &lt;#20030314T052656Z-25601-69-1-0@dirk&gt; a :Vevent;
+         :class "PUBLIC";
+         :dtend "2003-03-11T23:00:00"^^NY:tz;
+         :dtstart "2003-03-11T16:00:00"^^NY:tz;
+         :rrule  [
+             :byday "TU";
+             :freq "WEEKLY";
+             :interval "1" ];
+         :summary "Open Tue 4-11p".</pre>
+
+<p>There is a question of whether timezone rules should be given by reference
+or by copy. Some data from early releases of Apple's iCal application lacked
+explicit VTIMEZONE components, but the specification is clear that they are
+required and this was acknowledged as a bug in Apple's iCal<sup><a
+href="http://lists.w3.org/Archives/Public/www-rdf-calendar/2003Mar/0011.html">2003-03-12</a></sup>
+and has since been fixed. So the bus-hrs.rdf file includes timezone rules:</p>
+<pre>    NY:tz     a :Vtimezone;
+         :daylight  [
+             :dtstart "1970-04-05T02:00:00"^^:dateTime;
+             :rrule  [
+                 :byday "1SU";
+                 :bymonth "4";
+                 :freq "YEARLY";
+                 :interval "1" ];
+             :tzname "EDT";
+             :tzoffsetfrom "-0500";
+             :tzoffsetto "-0400" ];
+         :standard  [
+             :dtstart "1970-10-25T02:00:00"^^:dateTime;
+             :rrule  [
+                 :byday "-1SU";
+                 :bymonth "10";
+                 :freq "YEARLY";
+                 :interval "1" ];
+             :tzname "EST";
+             :tzoffsetfrom "-0400";
+             :tzoffsetto "-0500" ];
+         :tzid "/softwarestudio.org/Olson_20011030_5/America/New_York";
+         x-lic:location "America/New_York" .</pre>
+
+<p>While those rules are an accurate model of the timezone in New York at
+least as far back as 1970, the Energy Policy Act of 2005 is intended to
+change them in 2006. While the Olson database is likely to reflect these
+changes in due course, the copies in all the iCalendar data out there will
+fail to accurately represent the timezone rules for New York.</p>
+
+<p>One approach, exemplified by the <a
+href="http://www.microformats.org/wiki/datetime-design-pattern">datetime
+design pattern</a> in the microformats community, is to not use iCalendar
+timezones, but only UTC dates<sup><a href="#delt">delt</a></sup>.</p>
+
+<p>Another approach is to put the timezone rules in the Web, establish change
+control policies with some minimum notice, and pass timezones around by
+reference. As a step in this direction, we have published each entry in a
+version of the Olsen database in our RDF Calendar workspace. For example,
+<code>NY:tz</code>, i.e.
+<code>http://www.w3.org/2002/12/cal/tzd/America/New_York#tz</code>. We are
+considering some way to connect this data to the relevant political
+decision-making processes. Ultimately, it would be best if the respective
+policitcal organizations published the data by themselves.</p>
+
+<p>There are a few other issues to note from the example above, some of which
+are resolved:</p>
+<ul>
+  <li>We punctuate dates with hyphens, following XML Schema datatypes, rather
+    than using iCalendar syntax exactly.</li>
+  <li>The interval is given explicitly, even though it is the default value,
+    "1". Defaults are a form of <a
+    href="http://esw.w3.org/topic/ClosedWorldAssumptions">closed world
+    assumption</a>; it's simpler to avoid them in Semantic Web data<sup><a
+    href="http://ilrt.org/discovery/chatlogs/rdfig/2003-02-12.html">2003-02-12</a></sup>.</li>
+</ul>
+
+<p>and some of which are not:</p>
+<ul>
+  <li>Note that <code>NY:tz</code> timezone is used as a datatype. Earlier,
+    we used separate properties for time and timezone, which is initially
+    appealing but problematic for reasons that are detailed in the <a
+    href="http://esw.w3.org/topic/InterpretationProperties">InterpretationProperties</a>
+    pattern.
+    <ul>
+      <li>Objections were raised when this change was made to the original
+        <code>...2002/12/cal/ical#</code> schema. This design is using a
+        somewhat experimental<a
+        href="http://lists.w3.org/Archives/Public/www-rdf-calendar/2005Mar/0015.html"><sup>2005-03-30</sup></a>
+        namespace name, <code>...2002/12/cal/icaltzd#</code>.</li>
+    </ul>
+  </li>
+</ul>
+
+<p>We hope to find a consensus with a number of parties on issues around
+timezones and recurring events:</p>
+<ul>
+  <li>The daml-time work looks promising; we have some outstanding
+    questions<sup><a
+    href="http://lists.w3.org/Archives/Public/www-rdf-calendar/2005Feb/0009">2005-02-18</a></sup>
+    for them.</li>
+  <li>The IETF <a
+    href="http://www.ietf.org/html.charters/calsify-charter.html">calsify</a>
+    WG is reconsidering recurrence rules, with input such as the <a
+    href="http://lists.w3.org/Archives/Public/www-rdf-calendar/2005Jul/0003.html">Calconnect
+    Recurrence Questionnaire</a>.</li>
+</ul>
+</div>
+<dl class="footnotes">
+  <dt id="ttl">ttl</dt>
+    <dd>here we display the data using the <a
+      href="http://www.dajobe.org/2004/01/turtle/">turtle</a>
+      syntax for RDF. The <a
+      href="http://www.w3.org/2000/10/swap/Primer.html">N3 primer</a> is a
+      gentle introduction to the turtle subset of N3.</dd>
+  <dt><span id="delt">delt</span></dt>
+    <dd>with some syntactic support for offsets like -0400</dd>
+</dl>
+
+<h2 id="Locations">12.    Events, places, names, and coordinates</h2>
+
+<p>The iCalendar specification includes two features related to places. The
+<a href="http://www.w3.org/2002/12/cal/rfc2445#sec4.8.1.7">location</a>
+property "... defines the intended venue for the activity defined by a
+calendar component." That is, it gives a name of the place where the event
+occurs. For example:</p>
+<pre>    &lt;#20020630T230445Z-3895-69-1-7@jammer&gt;     a :Vevent;
+         :summary "X3 Conference";
+         :location "San Francisco";
+         :description "can't wait!\n";
+         :dtstart "2002-07-03"^^XML:date;
+         :dtend "2002-07-06"^^XML:date;
+         :uid "20020630T230445Z-3895-69-1-7@jammer" .</pre>
+
+<p>The <a href="http://www.w3.org/2002/12/cal/rfc2445#geo">geo</a> property
+takes a list of 2 floats: latitude and longitude. For example:</p>
+<pre>    geo:CDC474D4-1393-11D7-9A2C-000393914268     a :Vevent;
+         :summary "meeting 23";
+         :geo  (
+        40.442673
+        -79.945815  );
+         :dtstart "2003-01-08T13:00:00"^^New:tz;
+         :dtend "2003-01-08T14:00:00"^^New:tz .</pre>
+
+<p>The relationship of these properties to the <a
+href="http://www.w3.org/2003/01/geo/">Basic Geo (WGS84 lat/long)
+Vocabulary</a> also in development in the Semantic Web Interest Group has
+been discussed, but not conclusively. Note that <code>location</code> relates
+an event to the <em>name</em> of a place, not the place itself; likewise,
+<code>geo</code> relates an event to a pair of coordinates, not a place. If
+we take <code>:place</code> to be a property that relates an event to a place
+where it occurs<sup><a href="#cyc">cyc</a></sup>, It seems reasonable to
+relate them using rules such as:</p>
+<pre>{ ?E cal:geo (?LAT ?LONG) }
+  &lt;=&gt; { ?E :place [ geo:lat ?LAT; geo:long ?LONG ] }.
+{ ?E cal:location ?TXT }
+  &lt;=&gt; { ?E :place [ rdfs:label ?TXT ] }.</pre>
+<dl class="footnotes">
+  <dt id="cyc">cyc</dt>
+    <dd>compare <a
+      href="http://www.cyc.com/cycdoc/vocab/actor-vocab.html#eventOccursAt">#$eventOccursAt</a>
+      in the <a href="http://www.cyc.com/cycdoc/vocab/vocab-toc.html">cyc
+      vocabulary</a></dd>
+</dl>
+
+<div>
+<h2 id="testdr">13.    Using RDF graph comparison for round-trip testing</h2>
+
+<p>The vehicle for our exploration of schema and data issues is a test suite.
+At this point, we have a schema supported by a useful, if not complete,
+collection of <a href="http://www.w3.org/2002/12/cal/#dev">tests and
+conversion tools</a>:</p>
+<ul>
+  <li>Each test consists of a <code>$testcase.ics</code> file that is judged
+    to be a correct iCalendar file (i.e. it conforms to RFC 2445 and one or
+    more popular iCalendar tool consumes it correctly and/or allows the user
+    to produce it) and a corresponding <code>$testcase.rdf</code> file that
+    is judged to agree. For example, <code>cal01.ics</code> and
+    <code>cal01.rdf</code> are one test case.</li>
+  <li>An iCalendar to RDF conversion tool can be tested as follows:
+    <ol>
+      <li>Use the tool under test to convert <code>$testcase.ics</code> to a
+        temporary <code>$testcase-actual.rdf</code> file.</li>
+      <li>Compare the actual results with <code>$testcase.rdf</code>, the
+        expected results, using an RDF graph comparison tool.</li>
+    </ol>
+  </li>
+  <li>A tool to convert to iCalendar from RDF can be tested with respect to a
+    correct tool that goes the other way:
+    <ol>
+      <li>Use the tool under test to convert <code>$testcase.rdf</code> to
+        <code>$testcase-temp.ics</code>.</li>
+      <li>Use the known-good tool to convert <code>$testcase-temp.ics</code>
+        to <code>$testcase-actual.rdf</code>.</li>
+      <li>Compare <code>$test-case-actual.rdf</code> to the expected results,
+        <code>$testcase.rdf</code>, using an RDF graph comparison tool.</li>
+    </ol>
+  </li>
+  <li>The schema can be checked against the test data to see that...
+    <ul>
+      <li>each class and property in the schema is used in one or more test
+        cases,</li>
+      <li>each class or property used in a test case is declared in the
+        schema, and</li>
+      <li>each <code>$testcase.rdf</code> is logically consistent with the
+        schema.</li>
+    </ul>
+  </li>
+</ul>
+
+<p>The following table shows, for each component and property, the test case
+files that use that property on that type of component:</p>
+
+<table border="1">
+  <caption>Index: Test Coverage</caption>
+  <tbody>
+    <tr>
+      <th>Component</th>
+      <th>Property</th>
+      <th>Value Type</th>
+      <th>$testcase.rdf</th>
+    </tr>
+    <tr>
+      <td>VALARM</td>
+      <td>ACTION</td>
+      <td>TEXT</td>
+      <td><tt>20030115mtg.rdf</tt>, <tt>20030122mtg.rdf</tt>,
+        <tt>TestTermin.rdf</tt>, <tt>cal01.rdf</tt>, <tt>cal02.rdf</tt>,</td>
+    </tr>
+    <tr>
+      <td>VALARM</td>
+      <td>DESCRIPTION</td>
+      <td>TEXT</td>
+      <td><tt>TestTermin.rdf</tt>, <tt>cal01.rdf</tt>,
+      <tt>cal02.rdf</tt>,</td>
+    </tr>
+    <tr>
+      <td>VALARM</td>
+      <td>TRIGGER</td>
+      <td>DURATION</td>
+      <td><tt>20030115mtg.rdf</tt>, <tt>20030122mtg.rdf</tt>,
+        <tt>TestTermin.rdf</tt>, <tt>cal01.rdf</tt>, <tt>cal02.rdf</tt>,</td>
+    </tr>
+    <tr>
+      <td>VEVENT</td>
+      <td>ATTENDEE</td>
+      <td>CAL-ADDRESS</td>
+      <td><tt>20030115mtg.rdf</tt>, <tt>20030122mtg.rdf</tt>,
+        <tt>cal01.rdf</tt>, <tt>cal02.rdf</tt>,</td>
+    </tr>
+    <tr>
+      <td>VEVENT</td>
+      <td>CATEGORIES</td>
+      <td>TEXT</td>
+      <td><tt>cal01.rdf</tt>, <tt>cal02.rdf</tt>, <tt>tag-bug.rdf</tt>,</td>
+    </tr>
+    <tr>
+      <td>VEVENT</td>
+      <td>CLASS</td>
+      <td>TEXT</td>
+      <td><tt>MozexportAsCalendar.rdf</tt>, <tt>TestTermin.rdf</tt>,
+        <tt>bus-hrs.rdf</tt>, <tt>cal01.rdf</tt>, <tt>cal02.rdf</tt>,</td>
+    </tr>
+    <tr>
+      <td>VEVENT</td>
+      <td>COMMENT</td>
+      <td>TEXT</td>
+      <td><tt>gkexample.rdf</tt>,</td>
+    </tr>
+    <tr>
+      <td>VEVENT</td>
+      <td>DESCRIPTION</td>
+      <td>TEXT</td>
+      <td><tt>20030205mtg.rdf</tt>, <tt>TestTermin.rdf</tt>,
+        <tt>cal01.rdf</tt>, <tt>cal02.rdf</tt>, <tt>tag-bug.rdf</tt>,</td>
+    </tr>
+    <tr>
+      <td>VEVENT</td>
+      <td>DTEND</td>
+      <td>DATE-TIME</td>
+      <td><tt>20030122mtg.rdf</tt>, <tt>20030205mtg.rdf</tt>,
+        <tt>20030212mtg.rdf</tt>, <tt>20030226mtg.rdf</tt>,
+        <tt>20030312mtg.rdf</tt>, <tt>20030326mtg.rdf</tt>,
+        <tt>20030409mtg.rdf</tt>, <tt>20030410querymtg.rdf</tt>,
+        <tt>20030416geomtg.rdf</tt>, <tt>20030423mtg.rdf</tt>,
+        <tt>Chiefs.rdf</tt>, <tt>MozexportAsCalendar.rdf</tt>,
+        <tt>TestTermin.rdf</tt>, <tt>bus-hrs.rdf</tt>, <tt>cal01.rdf</tt>,
+        <tt>cal02.rdf</tt>, <tt>gkexample.rdf</tt>, <tt>mtg.rdf</tt>,
+        <tt>openingHours.rdf</tt>, <tt>querymeetings.rdf</tt>,
+        <tt>tag-bug.rdf</tt>,</td>
+    </tr>
+    <tr>
+      <td>VEVENT</td>
+      <td>DTSTAMP</td>
+      <td>DATE-TIME</td>
+      <td><tt>20030115mtg.rdf</tt>, <tt>20030122mtg.rdf</tt>,
+        <tt>20030205mtg.rdf</tt>, <tt>20030212mtg.rdf</tt>,
+        <tt>20030226mtg.rdf</tt>, <tt>20030312mtg.rdf</tt>,
+        <tt>20030326mtg.rdf</tt>, <tt>20030409mtg.rdf</tt>,
+        <tt>20030410querymtg.rdf</tt>, <tt>20030416geomtg.rdf</tt>,
+        <tt>20030423mtg.rdf</tt>, <tt>Chiefs.rdf</tt>,
+        <tt>MozexportAsCalendar.rdf</tt>, <tt>TestTermin.rdf</tt>,
+        <tt>bus-hrs.rdf</tt>, <tt>cal01.rdf</tt>, <tt>cal02.rdf</tt>,
+        <tt>mtg.rdf</tt>, <tt>querymeetings.rdf</tt>,</td>
+    </tr>
+    <tr>
+      <td>VEVENT</td>
+      <td>DTSTART</td>
+      <td>DATE-TIME</td>
+      <td><tt>20030115mtg.rdf</tt>, <tt>20030122mtg.rdf</tt>,
+        <tt>20030205mtg.rdf</tt>, <tt>20030212mtg.rdf</tt>,
+        <tt>20030226mtg.rdf</tt>, <tt>20030312mtg.rdf</tt>,
+        <tt>20030326mtg.rdf</tt>, <tt>20030409mtg.rdf</tt>,
+        <tt>20030410querymtg.rdf</tt>, <tt>20030416geomtg.rdf</tt>,
+        <tt>20030423mtg.rdf</tt>, <tt>Chiefs.rdf</tt>,
+        <tt>MozexportAsCalendar.rdf</tt>, <tt>TestTermin.rdf</tt>,
+        <tt>bus-hrs.rdf</tt>, <tt>cal01.rdf</tt>, <tt>cal02.rdf</tt>,
+        <tt>gkexample.rdf</tt>, <tt>mtg.rdf</tt>, <tt>openingHours.rdf</tt>,
+        <tt>querymeetings.rdf</tt>, <tt>tag-bug.rdf</tt>,</td>
+    </tr>
+    <tr>
+      <td>VEVENT</td>
+      <td>DURATION</td>
+      <td>DURATION</td>
+      <td><tt>20030115mtg.rdf</tt>,</td>
+    </tr>
+    <tr>
+      <td>VEVENT</td>
+      <td>EXDATE</td>
+      <td>DATE-TIME</td>
+      <td><tt>tag-bug.rdf</tt>,</td>
+    </tr>
+    <tr>
+      <td>VEVENT</td>
+      <td>LAST-MODIFIED</td>
+      <td>DATE-TIME</td>
+      <td><tt>bus-hrs.rdf</tt>,</td>
+    </tr>
+    <tr>
+      <td>VEVENT</td>
+      <td>LOCATION</td>
+      <td>TEXT</td>
+      <td><tt>TestTermin.rdf</tt>, <tt>cal01.rdf</tt>,
+      <tt>cal02.rdf</tt>,</td>
+    </tr>
+    <tr>
+      <td>VEVENT</td>
+      <td>ORGANIZER</td>
+      <td>CAL-ADDRESS</td>
+      <td><tt>20030115mtg.rdf</tt>, <tt>20030122mtg.rdf</tt>,
+        <tt>TestTermin.rdf</tt>, <tt>cal01.rdf</tt>, <tt>cal02.rdf</tt>,</td>
+    </tr>
+    <tr>
+      <td>VEVENT</td>
+      <td>PRIORITY</td>
+      <td>INTEGER</td>
+      <td><tt>TestTermin.rdf</tt>,</td>
+    </tr>
+    <tr>
+      <td>VEVENT</td>
+      <td>RRULE</td>
+      <td>RECUR</td>
+      <td><tt>bus-hrs.rdf</tt>, <tt>cal01.rdf</tt>, <tt>cal02.rdf</tt>,
+        <tt>gkexample.rdf</tt>, <tt>openingHours.rdf</tt>,
+        <tt>tag-bug.rdf</tt>,</td>
+    </tr>
+    <tr>
+      <td>VEVENT</td>
+      <td>SEQUENCE</td>
+      <td>integer</td>
+      <td><tt>20030115mtg.rdf</tt>, <tt>20030122mtg.rdf</tt>,
+        <tt>20030205mtg.rdf</tt>, <tt>20030212mtg.rdf</tt>,
+        <tt>20030226mtg.rdf</tt>, <tt>20030312mtg.rdf</tt>,
+        <tt>20030326mtg.rdf</tt>, <tt>20030409mtg.rdf</tt>,
+        <tt>20030410querymtg.rdf</tt>, <tt>20030416geomtg.rdf</tt>,
+        <tt>20030423mtg.rdf</tt>, <tt>TestTermin.rdf</tt>,
+        <tt>bus-hrs.rdf</tt>, <tt>cal01.rdf</tt>, <tt>cal02.rdf</tt>,
+        <tt>mtg.rdf</tt>, <tt>querymeetings.rdf</tt>,</td>
+    </tr>
+    <tr>
+      <td>VEVENT</td>
+      <td>SUMMARY</td>
+      <td>TEXT</td>
+      <td><tt>20030115mtg.rdf</tt>, <tt>20030122mtg.rdf</tt>,
+        <tt>20030205mtg.rdf</tt>, <tt>20030212mtg.rdf</tt>,
+        <tt>20030226mtg.rdf</tt>, <tt>20030312mtg.rdf</tt>,
+        <tt>20030326mtg.rdf</tt>, <tt>20030409mtg.rdf</tt>,
+        <tt>20030410querymtg.rdf</tt>, <tt>20030416geomtg.rdf</tt>,
+        <tt>20030423mtg.rdf</tt>, <tt>Chiefs.rdf</tt>,
+        <tt>MozexportAsCalendar.rdf</tt>, <tt>TestTermin.rdf</tt>,
+        <tt>bus-hrs.rdf</tt>, <tt>cal01.rdf</tt>, <tt>cal02.rdf</tt>,
+        <tt>mtg.rdf</tt>, <tt>querymeetings.rdf</tt>,
+      <tt>tag-bug.rdf</tt>,</td>
+    </tr>
+    <tr>
+      <td>VEVENT</td>
+      <td>TRANSP</td>
+      <td>TEXT</td>
+      <td><tt>TestTermin.rdf</tt>, <tt>bus-hrs.rdf</tt>, <tt>cal01.rdf</tt>,
+        <tt>cal02.rdf</tt>,</td>
+    </tr>
+    <tr>
+      <td>VEVENT</td>
+      <td>UID</td>
+      <td>TEXT</td>
+      <td><tt>20030115mtg.rdf</tt>, <tt>20030122mtg.rdf</tt>,
+        <tt>20030205mtg.rdf</tt>, <tt>20030212mtg.rdf</tt>,
+        <tt>20030226mtg.rdf</tt>, <tt>20030312mtg.rdf</tt>,
+        <tt>20030326mtg.rdf</tt>, <tt>20030409mtg.rdf</tt>,
+        <tt>20030410querymtg.rdf</tt>, <tt>20030416geomtg.rdf</tt>,
+        <tt>20030423mtg.rdf</tt>, <tt>Chiefs.rdf</tt>,
+        <tt>MozexportAsCalendar.rdf</tt>, <tt>TestTermin.rdf</tt>,
+        <tt>bus-hrs.rdf</tt>, <tt>cal01.rdf</tt>, <tt>cal02.rdf</tt>,
+        <tt>mtg.rdf</tt>, <tt>querymeetings.rdf</tt>,
+      <tt>tag-bug.rdf</tt>,</td>
+    </tr>
+    <tr>
+      <td>VTIMEZONE</td>
+      <td>LAST-MODIFIED</td>
+      <td>DATE-TIME</td>
+      <td><tt>Todos1.rdf</tt>,</td>
+    </tr>
+    <tr>
+      <td>VTIMEZONE</td>
+      <td>TZID</td>
+      <td>TEXT</td>
+      <td><tt>20030115mtg.rdf</tt>, <tt>20030122mtg.rdf</tt>,
+        <tt>20030205mtg.rdf</tt>, <tt>20030212mtg.rdf</tt>,
+        <tt>20030226mtg.rdf</tt>, <tt>20030312mtg.rdf</tt>,
+        <tt>20030326mtg.rdf</tt>, <tt>20030409mtg.rdf</tt>,
+        <tt>20030410querymtg.rdf</tt>, <tt>20030416geomtg.rdf</tt>,
+        <tt>20030423mtg.rdf</tt>, <tt>Chiefs.rdf</tt>, <tt>Todos1.rdf</tt>,
+        <tt>bus-hrs.rdf</tt>, <tt>cal01.rdf</tt>, <tt>cal02.rdf</tt>,
+        <tt>mtg.rdf</tt>, <tt>querymeetings.rdf</tt>,</td>
+    </tr>
+    <tr>
+      <td>VTODO</td>
+      <td>COMPLETED</td>
+      <td>DATE-TIME</td>
+      <td><tt>Todos1.rdf</tt>,</td>
+    </tr>
+    <tr>
+      <td>VTODO</td>
+      <td>DTSTAMP</td>
+      <td>DATE-TIME</td>
+      <td><tt>Todos1.rdf</tt>,</td>
+    </tr>
+    <tr>
+      <td>VTODO</td>
+      <td>DTSTART</td>
+      <td>DATE-TIME</td>
+      <td><tt>Todos1.rdf</tt>,</td>
+    </tr>
+    <tr>
+      <td>VTODO</td>
+      <td>DUE</td>
+      <td>DATE-TIME</td>
+      <td><tt>Todos1.rdf</tt>,</td>
+    </tr>
+    <tr>
+      <td>VTODO</td>
+      <td>PRIORITY</td>
+      <td>INTEGER</td>
+      <td><tt>Todos1.rdf</tt>,</td>
+    </tr>
+    <tr>
+      <td>VTODO</td>
+      <td>SEQUENCE</td>
+      <td>integer</td>
+      <td><tt>Todos1.rdf</tt>,</td>
+    </tr>
+    <tr>
+      <td>VTODO</td>
+      <td>STATUS</td>
+      <td>TEXT</td>
+      <td><tt>Todos1.rdf</tt>,</td>
+    </tr>
+    <tr>
+      <td>VTODO</td>
+      <td>SUMMARY</td>
+      <td>TEXT</td>
+      <td><tt>Todos1.rdf</tt>,</td>
+    </tr>
+    <tr>
+      <td>VTODO</td>
+      <td>UID</td>
+      <td>TEXT</td>
+      <td><tt>Todos1.rdf</tt>,</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div id="mixing">
+
+<div id="other">
+<h2 id="L1877">14.    Related Work</h2>
+
+<p>There are a number of related calendar data format projects.</p>
+
+<h3 id="L1892">14.1.    xCalendar</h3>
+
+<p><a
+href="http://ietfreport.isoc.org/idref/draft-hare-xcalendar/">XCalendar</a>
+is a simple syntactic conversion of iCalendar to XML. For events with simple
+attribute-value properties it produces results very similar to RDF case; the
+differences are syntactic (capitalization) or have to do with the model RDF
+imposes.</p>
+
+<p>An XSLT transformation from xCalendar to iCalendar is provided.</p>
+
+<p>We have considered a syntactic profile of RDF calendar that would meet the
+same requirements, but we have not managed to develop a tool to produce this
+profile given an arbitrary RDF calendar graph as input.</p>
+
+<h3 id="L1901">14.2.    RSS event module</h3>
+
+<p><a href="http://web.resource.org/rss/1.0/modules/event/">RSS Events</a> is
+a proposed module for RSS 1.0. It uses a simple vocabulary inspired by
+iCalendar:</p>
+<pre>  &lt;item rdf:about="http://conferences.oreilly.com/p2p/"&gt;
+    &lt;title&gt;The O'Reilly Peer-to-Peer and Web Services Conference&lt;/title&gt;
+    &lt;link&gt;http://conferences.oreilly.com/p2p/&lt;/link&gt;
+    &lt;ev:type&gt;conference&lt;/ev:type&gt;
+    &lt;ev:organizer&gt;O'Reilly&lt;/ev:organizer&gt;
+    &lt;ev:location&gt;Washington, DC&lt;/ev:location&gt;
+    &lt;ev:startdate&gt;2001-09-18&lt;/ev:startdate&gt;
+    &lt;ev:enddate&gt;2001-09-21&lt;/ev:enddate&gt;
+  &lt;/item&gt;</pre>
+
+<p>It uses the homepage of an event as the url for the description of the
+event.</p>
+</div>
+
+<h2 id="conc1">15.    Conclusions and future work</h2>
+
+<p>While the RDF Calendar vocabulary is still a work-in-progress, it provides
+anyone with RDF or XML tools a useful alternative to dealing with the
+character-level syntax of iCalendar. Our test-driven approach to Semantic Web
+vocabulary development has allowed us to manage changes as we explored and
+resolved a variety of issues. The "subject to change with notice and appeal"
+change policy for our schema seems to work well.</p>
+
+<p>We have exploited the graph model of RDF in our round-trip testing work,
+but explorations into comparisons, especially for the purpose of
+synchronizing changes, are at an early stage. See <a
+href="http://www.w3.org/DesignIssues/Diff.html"><cite>Delta: an ontology for
+the distribution of differences between RDF graphs</cite></a> for one
+approach.</p>
+
+<p>We are still in relatively early stages of mixing calendar data with other
+Semantic Web data. As an illustrative example, consider using the <a
+href="http://xmlns.com/foaf/0.1/">FOAF</a> vocabulary to describe an attendee
+of an event:</p>
+<pre>[]    a       :Vevent ;
+      :attendee
+              [ a       foaf:Person ;
+                :calAddress &lt;mailto:me@example.com&gt; ;
+                foaf:mbox &lt;mailto:me@example.com&gt; ;
+                foaf:name "My name"
+              ] ;
+      :dtend  "2002-06-30T10:30:00"^^NY:tz ;
+      :dtstart "2002-06-30T09:00:00"^^NY:tz ;
+      :summary "Tree Conference" .</pre>
+
+<p>The iCalendar specification has some prohibitions against publishing email
+addresses. This is one of many privacy considerations with calendar data.</p>
+
+<p>Queries and rules to relate photos to events via metadata such as
+date-taken is another promising area of work.</p>
+
+<div>
+<h3 id="L1879">15.1.    hCalendar and microformats</h3>
+
+<p><a href="http://microformats.org/wiki/hcalendar">hCalendar</a> is an
+emerging microformat, i.e. a set of semantic XHTML markup conventions. It is
+based on iCalendar. The approach to human-readability is interesting; for
+example:</p>
+<pre>&lt;abbr class="dtstart" title="2005-10-05"&gt;October 5&lt;/abbr&gt;</pre>
+
+<p>We are working on a <a
+href="http://www.w3.org/2002/12/cal/glean-hcal.xsl">glean-hcal.xsl</a>, a
+transformation from hCalendar to RDF Calendar. Using hCalendar with <a
+href="http://www.w3.org/2003/g/data-view">GRDDL</a> is particularly
+promising, though it goes beyond the scope of this report.</p>
+
+<p>Note that open source implementaitons of the following transformations are
+available, either from the RDF Calendar workspace or projects nearby:</p>
+
+<table border="1">
+  <caption>Conversions</caption>
+  <tbody>
+    <tr>
+      <td></td>
+      <th>from iCalendar</th>
+      <th>hCalendar</th>
+      <th>RDF Calendar</th>
+    </tr>
+    <tr>
+      <th>to iCalendar</th>
+      <td></td>
+      <td>X2V</td>
+      <td>toIcal.py</td>
+    </tr>
+    <tr>
+      <th>hCalendar</th>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <th>RDF Calendar</th>
+      <td>fromIcal.py</td>
+      <td><a
+        href="http://www.w3.org/2002/12/cal/glean-hcal.xsl">glean-hcal.xsl</a></td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+<h2 id="Acknowledg">16.    Acknowledgements</h2>
+
+<p>We are greatful to Masahide Kanzaki for his <a
+href="http://www.kanzaki.com/docs/sw/rdf-calendar.html">RDF calendar
+service</a>, to Olivier Gutknecht and Paul Cowles for their commercial
+product development perspective, and the collaborators in
+www-rdf-calendar, including Julian Reschke, Doug Royer, Tim
+Berners-Lee, Dave Thewlis, Karl Dubost, Charles McCathieNevile,
+Michael Arick, Norman Walsh, Tim Hare, and Dan Brickley.</p>
+
+<h2 id="L1962">17.    References</h2>
+<ul>
+  <li><a href="http://www.w3.org/2002/12/cal/">RDF Calendar workspace</a></li>
+  <li>Internet Calendaring and Scheduling Core Object Specification
+    (iCalendar) [<a href="http://www.w3.org/2002/12/cal/rfc2445">RFC2554</a>], Dawson and Stenerson,
+    November 1998</li>
+  <li>IETF Calendaring and Scheduling Standards Simplification (<a
+    href="http://www.ietf.org/html.charters/calsify-charter.html">calsify</a>)
+    working group</li>
+  <li>Resource Description Framework (<a
+    href="http://esw.w3.org/topic/RDF">RDF</a>). W3C Recommendations Feb
+  2004</li>
+  <li><a
+    href="http://www.w3.org/2001/sw/Europe/reports/dev_workshop_report_2/Overview.html">SWAD-Europe
+    Deliverable 3.7: Developer Workshop Report 2 - Semantic Web
+    calendaring</a>, Miller, Dec 2002</li>
+  <li>esw wiki topics: <a
+    href="http://esw.w3.org/topic/ScheduledTopicChat">ScheduledTopicChat</a>,
+    <a
+    href="http://esw.w3.org/topic/RdfCalendarMeetings">RdfCalendarMeetings</a></li>
+  <li><a
+    href="http://lists.w3.org/Archives/Public/www-rdf-calendar/">www-rdf-calendar</a>
+    mailing list</li>
+  <li><a href="/2000/01/foo.html"><cite>A quick look at iCalendar</cite></a>
+    by Tim Berners-Lee in 2001</li>
+  <li><a href="http://www.w3.org/DesignIssues/Notation3">Notation3</a>, <a
+    href="http://www.w3.org/2000/10/swap/Primer.html">N3 primer</a> work in
+    progress by Tim Berners-Lee</li>
+  <li><a
+    href="http://www.dajobe.org/2004/01/turtle/"><cite>turtle
+    - Terse RDF Triple Language</cite></a> by Dave Becket, work in progress
+    2005/08/17</li>
+  <li><a href="http://www.w3.org/2003/01/geo/">Basic Geo (WGS84 lat/long)
+    Vocabulary</a> work in progress by Dan Brickley et. al.</li>
+  <li><a
+    href="http://ietfreport.isoc.org/idref/draft-hare-xcalendar/"><cite>Guideline
+    for use of XML with iCalendar elements</cite></a>Internet Draft May-2005
+    by T. Hare</li>
+  <li><a href="http://web.resource.org/rss/1.0/modules/event/">RSS
+    Events</a>, work in progress 2002-07-30 by Søren Roug</li>
+  <li><a href="http://microformats.org/wiki/hcalendar">hCalendar</a> work in
+    progress 2004-2005 by Tantek Çelik and Brian Suda</li>
+  <li><a href="http://www.w3.org/DesignIssues/Diff.html"><cite>Delta: an
+    ontology for the distribution of differences between RDF graphs</cite>
+    </a>Berners-Lee and Connolly, work in progress 2001-2004</li>
+  <li><a href="http://xmlns.com/foaf/0.1/">FOAF</a>, friend of a friend by
+    Brickley et. al.</li>
+</ul>
+</body>
+</html>

@@ -1,0 +1,1462 @@
+<!-- http://www.w3.org/TR/xmlsec-reqs2/ -->
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>XML Security 2.0 Requirements and Design Considerations</title>
+        
+    <style>/*****************************************************************
+ * ReSpec 3 CSS
+ * Robin Berjon - http://berjon.com/
+ *****************************************************************/
+
+/* --- INLINES --- */
+em.rfc2119 { 
+    text-transform:     lowercase;
+    font-variant:       small-caps;
+    font-style:         normal;
+    color:              #900;
+}
+
+h1 acronym, h2 acronym, h3 acronym, h4 acronym, h5 acronym, h6 acronym, a acronym,
+h1 abbr, h2 abbr, h3 abbr, h4 abbr, h5 abbr, h6 abbr, a abbr {
+    border: none;
+}
+
+dfn {
+    font-weight:    bold;
+}
+
+a.internalDFN {
+    color:  inherit;
+    border-bottom:  1px solid #99c;
+    text-decoration:    none;
+}
+
+a.externalDFN {
+    color:  inherit;
+    border-bottom:  1px dotted #ccc;
+    text-decoration:    none;
+}
+
+a.bibref {
+    text-decoration:    none;
+}
+
+cite .bibref {
+    font-style: normal;
+}
+
+code {
+    color:  #ff4500;
+}
+
+
+/* --- --- */
+ol.algorithm { counter-reset:numsection; list-style-type: none; }
+ol.algorithm li { margin: 0.5em 0; }
+ol.algorithm li:before { font-weight: bold; counter-increment: numsection; content: counters(numsection, ".") ") "; }
+
+/* --- TOC --- */
+.toc a, .tof a {
+    text-decoration:    none;
+}
+
+a .secno, a .figno {
+    color:  #000;
+}
+
+ul.tof, ol.tof {
+    list-style: none outside none;
+}
+
+.caption {
+    margin-top: 0.5em;
+    font-style:   italic;
+}
+
+/* --- TABLE --- */
+table.simple {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    border-bottom:  3px solid #005a9c;
+}
+
+.simple th {
+    background: #005a9c;
+    color:  #fff;
+    padding:    3px 5px;
+    text-align: left;
+}
+
+.simple th[scope="row"] {
+    background: inherit;
+    color:  inherit;
+    border-top: 1px solid #ddd;
+}
+
+.simple td {
+    padding:    3px 10px;
+    border-top: 1px solid #ddd;
+}
+
+.simple tr:nth-child(even) {
+    background: #f0f6ff;
+}
+
+/* --- DL --- */
+.section dd > p:first-child {
+    margin-top: 0;
+}
+
+.section dd > p:last-child {
+    margin-bottom: 0;
+}
+
+.section dd {
+    margin-bottom:  1em;
+}
+
+.section dl.attrs dd, .section dl.eldef dd {
+    margin-bottom:  0;
+}
+</style><link rel="stylesheet" href="http://www.w3.org/StyleSheets/TR/W3C-WG-NOTE"><!--[if lt IE 9]><script src='http://www.w3.org/2008/site/js/html5shiv.js'></script><![endif]--></head>
+  <body><div class="head">
+  <p>
+    
+      <a href="http://www.w3.org/"><img width="72" height="48" src="http://www.w3.org/Icons/w3c_home" alt="W3C"></a>
+    
+  </p>
+  <h1 class="title" id="title">XML Security 2.0 Requirements and Design Considerations</h1>
+  
+  <h2 id="w3c-working-group-note-11-april-2013"><abbr title="World Wide Web Consortium">W3C</abbr> Working Group Note 11 April 2013</h2>
+  <dl>
+    
+      <dt>This version:</dt>
+      <dd><a href="http://www.w3.org/TR/2013/NOTE-xmlsec-reqs2-20130411/">http://www.w3.org/TR/2013/NOTE-xmlsec-reqs2-20130411/</a></dd>
+      <dt>Latest published version:</dt>
+      <dd><a href="http://www.w3.org/TR/xmlsec-reqs2/">http://www.w3.org/TR/xmlsec-reqs2/</a></dd>
+    
+    
+      <dt>Latest editor's draft:</dt>
+      <dd><a href="http://www.w3.org/2008/xmlsec/Drafts/xmlsec-reqs2/">http://www.w3.org/2008/xmlsec/Drafts/xmlsec-reqs2/</a></dd>
+    
+    
+    
+    
+    
+      <dt>Previous version:</dt>
+      <dd><a href="http://www.w3.org/TR/2011/WD-xmlsec-reqs2-20110421/">http://www.w3.org/TR/2011/WD-xmlsec-reqs2-20110421/</a></dd>
+    
+    
+    <dt>Editors:</dt>
+    <dd><span>Frederick Hirsch</span>, Nokia</dd>
+<dd><span>Pratik Datta</span>, Oracle</dd>
+
+    
+  </dl>
+  
+  
+  
+  
+    
+      <p class="copyright">
+        <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 
+        2013
+        
+        <a href="http://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>®</sup> 
+        (<a href="http://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>,
+        <a href="http://www.ercim.eu/"><abbr title="European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>,
+        <a href="http://www.keio.ac.jp/">Keio</a>, <a href="http://ev.buaa.edu.cn/">Beihang</a>), All Rights Reserved.
+        <abbr title="World Wide Web Consortium">W3C</abbr> <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>,
+        <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and
+        <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply.
+      </p>
+    
+  
+  <hr>
+</div>
+    <section id="abstract" class="introductory"><h2>Abstract</h2><p>
+      This document outlines use cases, requirements and
+      design choices for XML Security 2.0, specifically
+      Canonical XML 2.0 and XML Signature 2.0. It includes a proposed simplification of the XML
+      Signature Transform mechanism, intended to enhance security,
+      performance, streamability and to ease adoption.
+      
+    </p></section><section id="sotd" class="introductory"><h2>Status of This Document</h2>
+  
+    
+      
+        <p>
+          <em>This section describes the status of this document at the time of its publication. Other
+          documents may supersede this document. A list of current <abbr title="World Wide Web Consortium">W3C</abbr> publications and the latest revision
+          of this technical report can be found in the <a href="http://www.w3.org/TR/"><abbr title="World Wide Web Consortium">W3C</abbr> technical reports
+          index</a> at http://www.w3.org/TR/.</em>
+        </p>
+        
+      <p>The XML Security Group has agreed to publish this
+        specification as an informative Working Group Note. It was
+        previously published as a Working Group Draft.
+        In addition, this publication updates the references that
+        have changed since the previous publication
+        (<a href="Overview_diff.html">diff</a>).
+      </p><p>         			
+        This Note includes material that was published
+        previously for early feedback in the document titled
+        "XML Signature Transform Simplification: Requirements and
+        Design", see 
+        <a href="http://www.w3.org/TR/2009/WD-xmldsig-simplify-20090730/">http://www.w3.org/TR/2009/WD-xmldsig-simplify-20090730/</a>.</p>
+    
+        <p>
+          This document was published by the <a href="http://www.w3.org/2008/xmlsec/">XML Security Working Group</a> as a Working Group Note.
+          
+          
+          If you wish to make comments regarding this document, please send them to 
+          <a href="mailto:public-xmlsec@w3.org">public-xmlsec@w3.org</a> 
+          (<a href="mailto:public-xmlsec-request@w3.org?subject=subscribe">subscribe</a>,
+          <a href="http://lists.w3.org/Archives/Public/public-xmlsec/">archives</a>).
+          
+          
+          
+          
+        All comments are welcome.
+        
+        
+          </p><p>
+            Publication as a Working Group Note does not imply endorsement by the <abbr title="World Wide Web Consortium">W3C</abbr> Membership.
+            This is a draft document and may be updated, replaced or obsoleted by other documents at 
+            any time. It is inappropriate to cite this document as other than work in progress.
+          </p>
+        
+        
+        <p>
+          
+            This document was produced by a group operating under the 
+            <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>.
+          
+          
+          
+            
+              <abbr title="World Wide Web Consortium">W3C</abbr> maintains a <a href="http://www.w3.org/2004/01/pp-impl/42458/status" rel="disclosure">public list of any patent disclosures</a> 
+            
+            made in connection with the deliverables of the group; that page also includes instructions for 
+            disclosing a patent. An individual who has actual knowledge of a patent which the individual believes contains
+            <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential Claim(s)</a> must disclose the
+            information in accordance with <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section
+            6 of the <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>.
+          
+          
+        </p>
+        
+      
+    
+  
+</section><section id="toc"><h2 class="introductory">Table of Contents</h2><ul class="toc"><li class="tocline"><a href="#Introduction" class="tocxref"><span class="secno">1. </span>Introduction</a></li><li class="tocline"><a href="#principles" class="tocxref"><span class="secno">2. </span>Principles</a></li><li class="tocline"><a href="#scenarios" class="tocxref"><span class="secno">3. </span>Requirements and Design Options</a><ul class="toc"><li class="tocline"><a href="#web-services-security" class="tocxref"><span class="secno">3.1 </span>Web Services Security</a><ul class="toc"><li class="tocline"><a href="#assumptions" class="tocxref"><span class="secno">3.1.1 </span>Assumptions</a></li><li class="tocline"><a href="#requirements" class="tocxref"><span class="secno">3.1.2 </span>Requirements</a></li></ul></li><li class="tocline"><a href="#enable-integrity-of-binary-portions" class="tocxref"><span class="secno">3.2 </span>Enable Integrity Protection of Portions of Binary Content</a><ul class="toc"><li class="tocline"><a href="#binary-portions-use-case" class="tocxref"><span class="secno">3.2.1 </span>Binary Portions Use Case</a></li><li class="tocline"><a href="#binary-portions-rqmts" class="tocxref"><span class="secno">3.2.2 </span>Binary Portions Requirements</a></li></ul></li><li class="tocline"><a href="#c14n-reqs" class="tocxref"><span class="secno">3.3 </span>Canonicalization</a><ul class="toc"><li class="tocline"><a href="#historical-requirements" class="tocxref"><span class="secno">3.3.1 </span>Historical requirements</a></li><li class="tocline"><a href="#modified-requirements" class="tocxref"><span class="secno">3.3.2 </span>Modified Requirements</a><ul class="toc"><li class="tocline"><a href="#only-use-canonicalization-for-pre-hashing" class="tocxref"><span class="secno">3.3.2.1 </span>Only use Canonicalization for pre-hashing</a></li><li class="tocline"><a href="#canonical-output-need-not-be-valid-xml" class="tocxref"><span class="secno">3.3.2.2 </span>Canonical output need not be valid XML</a></li><li class="tocline"><a href="#define-a-well-defined-and-limited-serialization-for-ds-signedinfo" class="tocxref"><span class="secno">3.3.2.3 </span>Define a well-defined (and limited) serialization for
+            <code>ds:SignedInfo</code></a></li><li class="tocline"><a href="#limit-the-acceptable-inputs-for-canonicalization" class="tocxref"><span class="secno">3.3.2.4 </span>Limit the acceptable inputs for Canonicalization</a></li><li class="tocline"><a href="#prefix-rewrite" class="tocxref"><span class="secno">3.3.2.5 </span>Enable optional prefix rewriting</a></li></ul></li></ul></li><li class="tocline"><a href="#transformations" class="tocxref"><span class="secno">3.4 </span>Transformation Simplification</a><ul class="toc"><li class="tocline"><a href="#transform-discussion" class="tocxref"><span class="secno">3.4.1 </span>Discussion</a></li><li class="tocline"><a href="#transform-requirements" class="tocxref"><span class="secno">3.4.2 </span>Requirements</a><ul class="toc"><li class="tocline"><a href="#determine-what-is-signed" class="tocxref"><span class="secno">3.4.2.1 </span>Enable applications to determine what is signed</a><ul class="toc"><li class="tocline"><a href="#current_mechanisms_determine_signed" class="tocxref"><span class="secno">3.4.2.1.1 </span>Current mechanisms to determine what is signed</a></li><li class="tocline"><a href="#problems_with_xpath" class="tocxref"><span class="secno">3.4.2.1.2 </span>Problems with Id based references and XPath Transforms</a></li><li class="tocline"><a href="#declarative_requirement" class="tocxref"><span class="secno">3.4.2.1.3 </span>Required "declarative selection"</a></li></ul></li><li class="tocline"><a href="#avoid-security-risks" class="tocxref"><span class="secno">3.4.2.2 </span>Avoid Security risks</a></li></ul></li></ul></li><li class="tocline"><a href="#performance-and-streamability" class="tocxref"><span class="secno">3.5 </span>Enable higher performance and streamability</a><ul class="toc"><li class="tocline"><a href="#dom_overhead" class="tocxref"><span class="secno">3.5.1 </span>Overheads of DOM</a></li><li class="tocline"><a href="#one_pass" class="tocxref"><span class="secno">3.5.2 </span>One Pass</a></li><li class="tocline"><a href="#nodeset" class="tocxref"><span class="secno">3.5.3 </span>Nodeset</a></li><li class="tocline"><a href="#xpath-profile" class="tocxref"><span class="secno">3.5.4 </span>Streaming XPath Profile for XML Signature 2.0</a></li></ul></li></ul></li><li class="tocline"><a href="#thanks" class="tocxref"><span class="secno">4. </span>Acknowledgments</a></li><li class="tocline"><a href="#references" class="tocxref"><span class="secno">A. </span>References</a><ul class="toc"><li class="tocline"><a href="#informative-references" class="tocxref"><span class="secno">A.1 </span>Informative references</a></li></ul></li></ul></section>
+    
+    <section id="Introduction">
+      <!--OddPage--><h2><span class="secno">1. </span>Introduction</h2>
+      <p>
+        This is requirements and design 
+        options for XML Security 2.0, including Canonical XML 2.0 and XML
+        Signature 2.0.
+      </p>
+      <p>
+        The Reference processing model and associated transforms
+        currently defined 
+        by XML Signature 
+        [<cite><a class="bibref" href="#bib-XMLDSIG-CORE">XMLDSIG-CORE</a></cite>]
+        are very general and open-ended. This 
+        complicates implementation and allows for misuse, leading to
+        performance and 
+        security difficulties. Support for arbitrary canonicalization
+        algorithms, 
+        and the complexity of the existing algorithms in order to meet various
+        generic requirements is also a source of problems.
+      </p>
+      <p>
+        Current experience with the use of XML Signature suggests that
+        a simplified 
+        reference, transform, and canonicalization processing model
+        would address 
+        the most common use cases while improving performance and reducing
+        complexity and security risks 
+        [<cite><a class="bibref" href="#bib-XMLSEC-NEXTSTEPS-2007">XMLSEC-NEXTSTEPS-2007</a></cite>], [<cite><a class="bibref" href="#bib-XMLDSIG-COMPLEXITY">XMLDSIG-COMPLEXITY</a></cite>]. 
+        This document
+        outlines a proposed change to the XML Signature processing
+        model to achieve 
+        these goals. It also outlines use cases and the new
+        requirements associated 
+        with the suggested changes.
+      </p>
+      <p>
+        Rather than adding an additional constrained
+        processing model the goal is to provide for an actual
+        replacement of the existing generically 
+        extensible model that exists now. The general approach is to define a
+        new transformation model while allowing use of the previous model
+        where warranted. This allows a more constrained model going forward,
+        while enabling continued cases to continue to be supported.
+      </p>
+    </section>
+    <section id="principles">
+      <!--OddPage--><h2><span class="secno">2. </span>Principles</h2>
+      <p>
+        The following design principles will be used to guide further
+        development of XML Security, including XML Signature, XML Encryption
+        and Canonical XML. These principles are intended to encourage
+        consistent design decisions, to provide insight
+        into design rationale and to anchor discussions on requirements and
+        design. This list includes items from the original requirements for
+        XML Signature 
+        [<cite><a class="bibref" href="#bib-XMLDSIG-REQUIREMENTS">XMLDSIG-REQUIREMENTS</a></cite>]
+        as well as general principles from EXI
+        [<cite><a class="bibref" href="#bib-EXI">EXI</a></cite>]. Listed in alphabetical order:
+      </p>
+      <dl>
+        <dt>
+          Backward compatible:
+        </dt>
+        <dd>
+          <p>Backward compatibility should not be
+          broken unnecessarily. Versioning should be clearly
+          considered. Consideration must be given, for example, for
+          interoperability with the First and Second Editions of XML
+          Signature 
+          [<cite><a class="bibref" href="#bib-XMLDSIG-CORE">XMLDSIG-CORE</a></cite>].
+          </p>
+        </dd>
+        <dt>
+          Consistent with the Web Architecture:
+        </dt>
+        <dd>
+          <p>XML Security must be consistent with the Web
+          Architecture 
+          [<cite><a class="bibref" href="#bib-WEBARCH">WEBARCH</a></cite>].
+          </p> 
+        </dd>
+        <dt>
+          Efficient:
+        </dt>
+        <dd>
+          <p>XML Security should enable efficient implementations, in
+          order to remove barriers to adoption and use. 
+          </p>
+        </dd>
+        <dt>
+          Meet common requirements, enable extensibility:
+        </dt>
+        <dd>
+          <p>One of primary objectives of XML Signature is to support a
+          wide variety of use cases requiring digital signatures,
+          including situations requiring multiple signatures,
+          counter-signatures, and signatures including multiple items
+          to be included in a signature. 
+          Extensibility should be possible, but by default
+          options should be constrained when the flexibility is not
+          needed. 
+          </p>
+        </dd>
+        <dt>
+          Minimal: 
+        </dt>
+        <dd>
+          <p>To reach the broadest set of applications, reduce the
+          security threat footprint and improve efficiency, simple,
+          elegant approaches are preferred to large, analytical or
+          complex ones. 
+          </p>
+        </dd>
+        <dt>
+          Pragmatic:
+        </dt>
+        <dd>
+          <p>Recognize pragmatic issues, including recognizing that
+          software might be implemented in layers, with a security
+          layer independent of an application layer.
+          </p>
+        </dd>
+        <dt>
+          Reuse Existing Open Standards
+        </dt>
+        <dd>
+          <p>Existing open standards should be reused where possible,
+          as long as other principles can be met. 
+          </p>
+        </dd>
+        <dt>
+          Secure:
+        </dt>
+        <dd>
+          <p> XML Security should  adhere to security best practices,
+          and minimize the opportunities for threats based on XML
+          Security mechanisms. 
+          </p>
+        </dd>
+        <dt>
+          XML Interoperable:
+        </dt>
+        <dd>
+          <p> XML Security must integrate well with existing XML
+          technologies,  be compatible with the XML Information Set
+          [<cite><a class="bibref" href="#bib-XML-INFOSET">XML-INFOSET</a></cite>],  in order to maintain
+          interoperability with 
+          existing and prospective XML specifications.  
+          </p>
+        </dd>
+        <dt>
+          XML Signatures are First Class Objects:
+        </dt>
+        <dd>
+          <p>XML Signatures should themselves be self-describing first
+          class XML objects 
+          [<cite><a class="bibref" href="#bib-XMLDSIG-REQUIREMENTS">XMLDSIG-REQUIREMENTS</a></cite>]. This means that XML
+          Signatures can be referenced via URI and used in   
+          other operations. For example, an XML Signature may be signed or  
+          encrypted, or referred to in a statement  (such as an
+          RDF statement).  
+          </p>
+        </dd>
+      </dl>
+    </section>
+    <section id="scenarios">
+      <!--OddPage--><h2><span class="secno">3. </span>Requirements and Design Options</h2>
+      <section id="web-services-security">
+        <h3><span class="secno">3.1 </span>Web Services Security</h3>
+        <section id="assumptions">
+          <h4><span class="secno">3.1.1 </span>Assumptions</h4>
+          <ol>
+            <li>
+              <p>Message content will be provided and processed by
+              multiple software components acting autonomously. The
+              XML will make use 
+              of multiple namespaces, potentially with duplicate
+              element names. 
+              </p>
+            </li>
+            <li>
+              <p>Messages may pass through multiple intermediary nodes
+              which may add, subtract or alter content in either the
+              SOAP header or 
+              body.
+              </p>
+            </li>
+          </ol>
+        </section>
+        <section id="requirements">
+          <h4><span class="secno">3.1.2 </span>Requirements</h4>
+          <ol>
+            <li>
+              <p>Generally the ability to provide ephemeral
+              authentication, integrity protection and confidentiality
+              of message content including 
+              attachments, using a variety of technologies. In some
+              cases, messages with signatures may be stored for
+              purposes of dispute resolution.
+              </p>
+            </li>
+            <li>
+              <p>Any or all of messages may be signed and/or encrypted
+              zero or more times in any order. Signatures and
+              encryptions may overlap. 
+              A receiver must be able to properly verify signatures
+              and decrypt data in the proper order (assuming access
+              to the necessary 
+              secrets or trust points) based on nothing but the message.    
+              </p>
+            </li>
+            <li>
+              <p>It must be possible to determine whether the correct
+              portions of the message have been signed and encrypted
+              with the correct 
+              keys according to policy.    
+              </p>
+            </li>
+            <li>
+              <p>To the extent possible allowed by the ordering of
+              data and cryptographic operations it should be possible
+              for a sender or 
+              a receiver to perform processing in a single pass over
+              the message.     
+              </p>
+            </li>
+          </ol>
+        </section>
+      </section>
+      <section id="enable-integrity-of-binary-portions">
+        <h3><span class="secno">3.2 </span>Enable Integrity Protection of Portions of Binary Content</h3>
+        <section id="binary-portions-use-case">
+          <h4><span class="secno">3.2.1 </span>Binary Portions Use Case</h4>
+          <p>
+            A digital image file contains the raw image data and optional
+            metadata. This metadata contains information like the date
+            the photo 
+            was taken, exposure information, search info, general description,
+            etc.  Now a photographer wants to use an XML signature to
+            digital sign 
+            their photo to ensure it isn't modified by someone, but
+            still wants 
+            allows other users to add new meta-data to their photo.
+            This can only 
+            be done if the photographer only signs the raw image data
+            and excludes 
+            the metadata. 
+          </p>
+        </section>
+        <section id="binary-portions-rqmts">
+          <h4><span class="secno">3.2.2 </span>Binary Portions Requirements</h4>
+          <p>
+            The XML Signature 1.0 specification allows authors of XML
+            Signatures to sign a subset of an XML document, but
+            doesn't define any grammar that  
+            allows a subset of a non XML resource to be signed.  The
+            requirement 
+            for the next version of the XML Signature specification is
+            to define  
+            a mechanism that allows a subset of a non XML resource to
+            be signed.   
+          </p>
+        </section>
+      </section>
+      <section id="c14n-reqs">
+        <h3><span class="secno">3.3 </span>Canonicalization</h3>
+        <p>
+          Besides the explicit design principles and requirements in 
+          [<cite><a class="bibref" href="#bib-XML-CANONICAL-REQ">XML-CANONICAL-REQ</a></cite>],
+          the Canonical XML and Exclusive Canonicalization
+          specifications  are guided by a number of 
+          design decisions that we present and discuss in this section.
+        </p>
+        <section id="historical-requirements">
+          <h4><span class="secno">3.3.1 </span>Historical requirements</h4>
+          <p>The basic idea of a canonical XML is to have a
+          representation of an XML document (the 
+          output being a concrete string of bytes) that captures
+          some kind of "essence" of the 
+          document, while disregarding certain properties that are
+          considered artifacts of the input 
+          document (thought of, again, as an octet stream), and
+          deemed to be safely ignorable. 
+          </p>
+          <p>
+            The historic Canonical XML Requirements 
+            [<cite><a class="bibref" href="#bib-XML-CANONICAL-REQ">XML-CANONICAL-REQ</a></cite>] include:
+          </p>
+          <ul>
+            <li>
+              <p>The specification for Canonical XML shall describe
+              how to derive the canonical 
+              form of any XML document. Every XML document shall
+              have a unique canonical form. 
+              </p>
+            </li>
+            <li>
+              <p>The canonical form of an XML document shall be a well
+              formed XML document with 
+              the following invariant property:
+              </p>
+              <ul>
+                <li>
+                  <p>Any XML document, say X, processed by a
+                  canonicalizer, will produce an XML Document X'.
+                  </p>
+                </li>
+                <li>
+                  <p>X' passed through the same canonicalizer must
+                  produce X'. </p> 
+                </li>
+                <li>
+                  <p>X' passed through any other conforming
+                  canonicalizer should produce X', or else 
+                  one of them in not conformant. 
+                  </p>
+                </li>
+              </ul>
+            </li>
+          </ul>
+          <p>In other words, Canonicalization is historically thought
+          of as a well-defined, idempotent 
+          mapping from the set of XML documents into itself.
+          </p>
+          <p>In its main use case, XML Signature, Canonical XML 
+          [<cite><a class="bibref" href="#bib-XML-C14N">XML-C14N</a></cite>] (and its cousin, Exclusive Canonicalization
+          [<cite><a class="bibref" href="#bib-XML-EXC-C14N">XML-EXC-C14N</a></cite>]) is actually used to fulfill a
+          number of distinct functions:
+          </p>
+          <ul>
+            <li>
+              <p>Canonical XML is used as the canonical mapping from a
+              node-set to an octet stream 
+              whenever such a mapping is required to connect
+              distinct transforms to each other. 
+              </p>
+            </li>
+            <li>
+              <p>Canonical XML is used to serialize the
+              <code>ds:SignedInfo</code> element before 
+              it is hashed as part of the signing process; note that
+              this element does not necessarily 
+              exist as a serialization.
+              </p>
+            </li>
+            <li>
+              <p>Canonical XML is used to discard artifacts of a
+              specific representation before 
+              that representation is hashed in the course of either
+              signature generation or validation.
+              </p>
+            </li>
+          </ul>
+        </section>
+        <section id="modified-requirements">
+          <h4><span class="secno">3.3.2 </span>Modified Requirements</h4>
+          <p>
+            This section summarizes a number of design options that arise
+            when some of the 
+            requirements listed above are relaxed.
+          </p>
+          <section id="only-use-canonicalization-for-pre-hashing">
+            <h5><span class="secno">3.3.2.1 </span>Only use Canonicalization for pre-hashing</h5>
+            <p>
+              It is not required to have canonicalization as general purpose
+              transform to be used anywhere  
+              in a transform chain. Its only use would be to produce an
+              octet stream that will be hashed. 
+            </p> 
+            <p>Currently
+            canonicalization is used whenever there is an impedance
+            mismatch with one transform emitting binary, and  
+            next transform requiring nodeset. This is not required
+            of a 2.0 version. 
+            </p>
+            <p>XML Canonicalization is used in some other specs
+            e.g. DSS to do some cleanup of the XML. This is 
+            not required of a 2.0 version.
+            </p>
+          </section>
+          <section id="canonical-output-need-not-be-valid-xml">
+            <h5><span class="secno">3.3.2.2 </span>Canonical output need not be valid XML</h5>
+            <p>
+              Assuming that a canonicalization step is necessary to be
+              performed as the last step of 
+              reference processing before hashing of the resulting
+              octet-stream, the requirement that 
+              XML canonicalization <em>produce</em> valid XML could be
+              relaxed. Some interesting things 
+              can be done with this relaxation - namespace prefixes
+              can be expanded out, tag names in closing 
+              tags can be omitted, and EXI serialization format can be used.
+              A possible design is described in [<cite><a class="bibref" href="#bib-XMLDSIG-THOMPSON">XMLDSIG-THOMPSON</a></cite>].
+            </p>
+          </section>
+          <section id="define-a-well-defined-and-limited-serialization-for-ds-signedinfo">
+            <h5><span class="secno">3.3.2.3 </span>Define a well-defined (and limited) serialization for
+            <code>ds:SignedInfo</code></h5> 
+            <p>
+              For every application of XML Signature, a
+              <code>ds:SignedInfo</code> element needs to be 
+              hashed and signed.  This step <em>always</em> involves
+              canonicalization of a 
+              document subset.  While some parts of
+              <code>ds:SignedInfo</code> include an open content 
+              model (<code>ds:Object</code>, in particular), there is
+              a large class of signatures for 
+              which the content model of <code>ds:SignedInfo</code> is
+              well-understood.  A 
+              special-purpose canonicalization algorithm might be
+              cost-effective if it can reduce the 
+              computational cost for canonicalizing
+              <code>ds:SignedInfo</code> in a suitably large 
+              portion of use cases.
+            </p>
+          </section>
+          <section id="limit-the-acceptable-inputs-for-canonicalization">
+            <h5><span class="secno">3.3.2.4 </span>Limit the acceptable inputs for Canonicalization</h5>
+            <p>
+              This design option could manifest itself in several ways.
+            </p>
+            <p>
+              <em>Constrain the classes of node-sets that are
+              acceptable</em>.
+            </p>
+            <p>  There is no need to  
+            be able to canonicalize a fully generic nodeset. Nodeset
+            is an XPath concept and a 
+            generic nodeset can have many strange things - like
+            attribute nodes without the containing 
+            element, removal of namespace nodes without removal of
+            the corresponding namespace declarations  
+            - these kinds of things only increase the complexity of
+            the Canonicalization algorithm 
+            without adding any value.
+            </p>
+            <p>
+              Instead of a generic nodeset, canonicalization needs to
+              work on a different data model : 
+              </p><ul>
+                <li>
+                  <p>Start with a subtree or a set of subtrees. These
+                  subtrees must be rooted at element nodes.
+                  For example, these subtrees can't be a single text
+                  node or a single attribute node. 
+                  </p>
+                </li>
+                <li>
+                  <p>Optionally from this set, exclude some subtrees
+                  (of element nodes) or exclude some attribute nodes.
+                  Only  regular attributes can be excluded, not attributes
+                  that are namespace declarations or in the xml namespace.
+                  </p>
+                </li>
+                <li>
+                  <p>Optionally to this set, reinclude some subtrees (of
+                  element nodes). (Note: this is not supported in
+                  Canonical XML 2.0, in order to support goals
+                  related to simplicity.)
+                  </p>
+                </li>
+              </ul> 
+              <p>
+                This data model avoids namespace nodes completely. It only
+                deals with namespace declarations. It also  
+                prohibits attribute nodes without parent element
+                nodes. Another simplification with this model is if an 
+                element node is present, all its namespace declarations
+                and all its child text nodes have to be present.  
+              </p>  
+              <p>
+                <em>Constrain the classes of XML documents that are
+                acceptable</em>. 
+              </p>
+              <p>
+                Canonical XML currently expends much complexity on
+                merging relative URI references 
+                appearing in <code>xml:base</code> parameters.  A
+                revised version of Canonical XML could 
+                be defined to fail on documents in which the
+                <code>xml:base</code> URI reference cannot be 
+                successfully absolutized.
+              </p>
+            </section>
+            <section id="prefix-rewrite">
+              <h5><span class="secno">3.3.2.5 </span>Enable optional prefix rewriting</h5>
+              <p>
+                Handling of namespaces is a known major source of
+                complexity in Canonical XML (and, to a 
+                lesser extent, in Exclusive Canonicalization).  At least
+                part of this complexity is due 
+                to a design decision to preserve namespace prefixes,
+                which in turn is necessary to 
+                protect the meaning of QNames.
+              </p>
+              <p>	  
+                Canonical XML should support the option of namespace
+                prefix re-writing, optionally including rewriting prefixes that
+                are embedded in   
+                the content as QNames. This can include, for example,
+                QNames inside an   
+                <code>xsi:type</code> attribute. QNames embedded in
+                <code>xsi:type</code> are easy to detect,   
+                but some other instances of QNames in content may be
+                hard to detect,   
+                so prefix rewriting may break the meaning of QNames. The
+                advantage of    
+                using prefix rewriting is to avoid attaching significance to the  
+                prefix name since two different prefix names are considered to  
+                semantically equivalent if the prefixes map to the same
+                namespace URI.   
+                In this case they should canonicalize to the same value, as will  
+                happen with prefix rewriting. Prefixes may be rewritten
+                using unique   
+                string values, URIs or other mechanisms, depending on the  
+                specification design.
+              </p>
+            </section>
+          </section>
+        </section>
+        <section id="transformations">
+          <h3><span class="secno">3.4 </span>Transformation Simplification</h3>
+          <section id="transform-discussion">
+            <h4><span class="secno">3.4.1 </span>Discussion</h4>
+            <p>
+              One use of an XML Signature is for integrity protection,
+              to determine 
+              if content has been changed. Content is identified by one or more
+              <code>ds:Reference</code> elements, causing that content
+              to be located and 
+              hashed. In the current XML Signature Second Edition processing model
+              each <code>ds:Reference</code> 
+              may include a transform chain to apply one or more
+              transforms before hashing the content for inclusion in a signature.
+            </p>
+            <p>Obviously a signature operation may occur in a workflow after
+            various transformations have been performed on content, as
+            long as the 
+            content can be identified by a <code>ds:Reference</code>
+            at the appropriate 
+            point in that workflow. In this sense, XML Signature could
+            be viewed as a step in a processing model, for example in XProc 
+            [<cite><a class="bibref" href="#bib-XPROC">XPROC</a></cite>]. What is referred to here is not  
+            such application processing steps, but only the limited
+            case of transforms defined  
+            and processed as part of the XML Signature processing.
+            </p>
+            <p>There are cases however where transformations must occur
+            as part of  
+            signature processing itself.  The reasons for these are
+            more limited, 
+            however, so we propose in this document to simplify such
+            processing. Reasons include the following:
+            </p>
+            <ol>
+              <li>
+                <p>Signing only pertains to a portion of the content,
+                but the entire 
+                content has meaning outside of signing. Thus the
+                signing operation 
+                should be able to sign a selected portion of content
+                (and this may be 
+                also specified by signing all apart from a portion to
+                be excluded). 
+                </p>
+              </li>
+              <li>
+                <p>A signature XML element may be included with the
+                content, yet upon 
+                verification the signature element itself is excluded
+                from the content 
+                that is verified.
+                </p>
+              </li>
+              <li>
+                <p>Some content within a signature element might be included in
+                signing and verification (e.g. signature properties)
+                even though the 
+                signature is not itself.
+                </p>
+              </li>
+              <li>
+                <p>Sometimes it may be necessary to sign, not the raw data, but 
+                the data that a user actually sees. This is called
+                "sign what you see" requirement  
+                in <a href="http://www.w3.org/TR/2008/REC-xmldsig-core-20080610/#sec-Seen">Section
+                8.1.2 of the XML Signature specification</a>. This
+                might 
+                require, for example, using
+                XSLT to transform the raw data into an HTML form, and
+                signing this HTML data. 
+                </p>
+              </li>
+            </ol>
+            <p>Well-defined signature processing is necessary to handle
+            needs specific to 
+            signing, but should not be expected to handle arbitrary processing
+            that could he handled as well as part of a workflow outside of
+            signing.
+            </p>
+            <p>
+              As an example of the need to sign or verify a portion of
+              the content, 
+              suppose you have a document with the familiar "office   
+              use only" section. When a user signs the document, the document  
+              subset should be the entire document less the "office use only"  
+              section.  This way, any change made to the document in any place  
+              except the "office use only" section would invalidate the  
+              signature.  The purpose of a digital signature is to
+              become invalid   
+              when any change is made, except those anticipated by the signer.   
+              Thus, subtraction filtering is the best fit for a document subset  
+              signature.
+            </p>
+            <p>
+              By comparison, if a document subset signature merely selects the  
+              portion of the document to be signed, then additions can
+              be made not   
+              only to the "office use only" section but also to any
+              other location   
+              in the document that is outside of the selected portions
+              of the   
+              document.  It is entirely too easy to exploit the document
+              semantics   
+              and inject unintended side effects. That is why exclusion
+              is necessary.  
+              All is signed apart from the excluded portion, thus
+              eliminating possibility 
+              of unwanted undetected additions.
+            </p>
+          </section>
+          <section id="transform-requirements">
+            <h4><span class="secno">3.4.2 </span>Requirements</h4>
+            <p>
+              There are specific requirements associated with Signature transform
+              processing:
+            </p>
+            <ol>
+              <li>
+                <p>Enable applications to determine what is signed.</p>
+                <p>
+                  Support "see what you sign" by allowing applications
+                  to determine 
+                  what was included for signing and possibly confirm
+                  that with users. 
+                  The current unrestricted transform model makes it very
+                  difficult to  
+                  inspect the signature to determine what was really
+                  signed, without 
+                  actually executing all the transforms.
+                </p>
+              </li>
+              <li>
+                <p>Enable higher performance and streamability</p>
+                <p>
+                  Signing XML data should be almost as fast as
+                  serializing the XML to bytes 
+                  (using an identity transformer) and then signing the bytes. 
+                  Currently transforms are defined in terms of 
+                  a "nodeset" and a nodeset implies using a DOM parser,
+                  which is very slow. It should be 
+                  possible to sign documents using a streaming XML
+                  parser, in which  
+                  the whole document is never loaded in memory at once.
+                </p>
+              </li>
+              <li>
+                <p>Avoid performance penalties and security risks
+                associated  with arbitrary transformations by
+                restricting the possible transformation
+                technologies. 
+                </p>
+                <p>
+                  Such generality may still be
+                  applied in a workflow outside of signature processing with this
+                  restriction.
+                </p>	 
+              </li>
+              <li>
+                <p>Define a more robust canonicalization</p>
+                <p>There are many problems with the current canonicalization
+                algorithms. For example people are really taken aback
+                when they are told that canonicalization 
+                does not remove whitespace in between
+                tags. Whitespaces in base64 encoded content causes
+                problems as well.
+                Prefix names being significant is yet another source of issues.
+                Schema aware canonicalization is another possibility,
+                but this may have issues related to requiring a
+                schema. 
+                </p>
+              </li>
+            </ol>
+            <section id="determine-what-is-signed">
+              <h5><span class="secno">3.4.2.1 </span>Enable applications to determine what is signed</h5>
+              <p>
+                The current Transform chain model is very procedural; it
+                can have XPath,  
+                C14N, EnvelopedSign, Base64, XSLT etc transforms any
+                number of times 
+                in any order. 
+                While this gives a lot of flexibility to the signer, it
+                makes it extremely hard 
+                for the verifier to determine what was actually signed. 
+              </p>
+              <section id="current_mechanisms_determine_signed">
+                <h6><span class="secno">3.4.2.1.1 </span>Current mechanisms to determine what is signed</h6>
+                <p> Applications usually follow one of these mechanisms
+                to determine what is signed 
+                </p><ul>
+                  <li>
+                    <p><em>Trust the signer completely</em></p>
+                    <p>Some applications do not inspect the transform
+                    chain at all. They expect that  
+                    signer has sent a meaningful and safe transform
+                    chain, and since the transform chain is also 
+                    signed it assures that the chain has not changed
+                    in transit. 
+                    </p>
+                    <p>This does not work for scenarios where the
+                    verifier has little 
+                    trust in the signer. As an example, 
+                    suppose there is a application  that expects
+                    requests to signed 
+                    with the user's password, and there 
+                    are tens of thousands of users. This application
+                    will of course 
+                    not trust all of its users,  
+                    and given the possibility of DoS attacks, and
+                    that some transforms 
+                    can change which is really signed, 
+                    it will not want to run a chain of transforms
+                    that it doesn't understand.    
+                    </p>
+                  </li>
+                  <li>
+                    <p><em>Check predigested data</em></p>
+                    <p>Some XML signature libraries have a provision
+                    to return the predigested  
+                    data back to the application, i.e. the octet
+                    stream that results 
+                    from running all the transforms, including  
+                    an implicit canonicalization at the end.
+                    </p>
+                    <p>The predigested data however cannot be easily
+                    compared with the expected data. Suppose the
+                    application expects 
+                    XML elements A, B and C to be signed, it cannot
+                    just convert A, B, C to octet streams and search
+                    for them inside the  
+                    predigested data octet stream. The predigested
+                    data is canonicalized, and so the search might
+                    fail.  Also this  
+                    mechanism is subject to wrapping attacks, as
+                    there is no information as to which part of the
+                    original document 
+                    produced this predigested data.
+                    </p>
+                  </li>    
+                  <li>
+                    <p><em>Check nodeset just before
+                    canonicalization</em></p>
+                    <p>If the transform chain only has
+                    nodeset-&gt;nodeset 
+                    transforms (i.e. XPath or EnvelopedSig) in the
+                    beginning, followed by one final
+                    nodeset-&gt;binary transform (i.e. a C14n
+                    transform), 
+                    then 
+                    an implementation can return the nodeset just
+                    before the canonicalization.  Unlike the
+                    predigested data, this is 
+                    much easier to compare - DOM specifically has a
+                    method to compare nodes for equality, so this
+                    method could be used  
+                    to compare expected nodeset with nodeset just
+                    before canonicalization. 
+                    </p>
+                    <p>Unfortunately this mechanism does not work if
+                    there is any transform that causes an internal
+                    conversion 
+                    from nodeset-&gt;binary-&gt;nodeset, because in
+                    such case the nodes 
+                    cannot be compared any more. An XSLT transform 
+                    does this kind of conversion as does the
+                    DecryptTransform. 
+                    </p>
+                  </li>
+                  <li>
+                    <p><em>Put restrictions on transforms</em></p>
+                    <p> Many higher level protocols put restrictions
+                    on the transforms. 
+                    For example, ebXML specifies that there should
+                    be exactly two transforms, namely XPath and then
+                    the EnvelopedSig 
+                    transform.  SAML specifies there should be only
+                    one transform, the 
+                    EnvelopedSig transform. This is not a generic 
+                    solution, but it works well for these specific cases.
+                    </p>
+                  </li>
+                </ul>
+              </section>
+              <section id="problems_with_xpath">
+                <h6><span class="secno">3.4.2.1.2 </span>Problems with Id based references and XPath Transforms</h6>
+                <p>The XPath transform is a very useful transform to
+                specify what is 
+                to be signed.  
+                Id based mechanisms are simpler, but they have many problems:
+                </p><ol>
+                  <li>
+                    <p>An Id identifies a complete subtree, if some
+                    parts of the subtree have to be excluded 
+                    an XPath has to be used.
+                    </p>
+                  </li>
+                  <li>
+                    <p>An Id attribute has to be of type ID. If there is no
+                    schema/DTD information it is not possible to 
+                    determine the type. Some implementations get
+                    around this by having 
+                    certain reserved names, e.g. <code>xml:id</code> or 
+                    <code>wsu:id</code>. These attributes are
+                    allowed everywhere and 
+                    assumed to be of type ID even if there is no
+                    schema available.  
+                    </p>
+                  </li>
+                  <li>
+                    <p>Ids usually require schema changes, i.e. the
+                    schema has to identify which elements can have  
+                    ID attributes.
+                    </p>
+                  </li> 
+                  <li>
+                    <p>Ids can also lead to wrapping attacks.</p>
+                  </li>
+                </ol>
+                These problems are solved with XPath, but XPath has 
+                problems of its own:
+                <ol>
+                  <li>
+                    <p>A regular XPath Filter specifies XPaths "inside
+                    out". Anything more difficult than the simplest 
+                    XPath requires using the "count" and other
+                    special functions. The 
+                    XPath is often so complex it almost impossible 
+                    to determine what is being signed by looking at
+                    the XPath expression. 
+                    </p>
+                  </li>
+                  <li>
+                    <p>An XPath 2.0 filter solves this problem and
+                    lets people write regular XPath, but it hasn't
+                    gained 
+                    wide acceptance because it is optional. Also it
+                    offers too much unneeded flexibility allowing
+                    any number of union,  
+                    intersect and subtract operations in any
+                    order. This flexibility again makes it harder
+                    for the verifier. 
+                    </p>
+                  </li>
+                  <li>
+                    <p>Unlike the ID which can only be once per reference, an
+                    XPath transform can be anywhere in the transform 
+                    chain. For example, a transform chain can have XPath-&gt;C14N-&gt;XPath. A
+                    verifier getting this kind of transform chain 
+                    would be clueless about the intent of the transform. 
+                    </p>
+                  </li>
+                </ol>
+              </section>
+              <section id="declarative_requirement"> 
+                <h6><span class="secno">3.4.2.1.3 </span>Required "declarative selection"</h6>
+                <p>What would be preferable if instead of
+                transforms the signature were more declarative and clearly
+                separated selection from canonicalization. For example it could
+                list out all the URIs, ids, or included XPaths, excluded XPaths of the
+                the elements that are signed. Then it could apply canonicalization.
+                This would make it easier for the verifier to first inspect the 
+                signature to determine what is signed and compare against a
+                policy. To give one example, there might be a WS-SecurityPolicy with an
+                expected list  
+                of XPaths. Only if this matches, will the verifier do the
+                canonicalization to compute the digests. 
+                </p>
+              </section>
+            </section>
+            <section id="avoid-security-risks">
+              <h5><span class="secno">3.4.2.2 </span>Avoid Security risks</h5>
+              <p>The XML Signature Best Practices document
+              [<cite><a class="bibref" href="#bib-XMLDSIG-BESTPRACTICES">XMLDSIG-BESTPRACTICES</a></cite>] points out many potential
+              security risks in XML Signatures.  
+              </p><ol>
+                <li>
+                  <p><em>Order of operations</em></p>
+                  <p>Reference validation before signature validation is extremely 
+                  susceptible to denial of service attacks in some scenarios.
+                  </p>
+                </li>
+                <li>
+                  <p><em>Insecurities in XSLT transforms</em></p>
+                  <p>XSLT is a
+                  complete programming language. An untrusted  
+                  XSLT can use deeply nested loops to launch DoS attacks, or 
+                  use "user defined extensions" like "os.exec" to
+                  execute system commands. 
+                  </p>
+                </li>
+                <li>
+                  <p><em>Full expansion of Nodesets</em></p>
+                  <p>As mentioned
+                  above a full expansion of an XPath nodesets 
+                  results in a huge amount of memory usage, and this
+                  can be exploited 
+                  for DoS attacks.   
+                  </p>
+                </li>
+                <li>
+                  <p><em>Complex XPaths</em></p>
+                  <p>XPath Filter 1.0 requires
+                  very complex looking XPaths, these  
+                  are very hard to understand, and an application
+                  can be potentially 
+                  fooled into believing something  
+                  is signed, whereas is is actually not.  Also
+                  complex XPaths can use too 
+                  many resources.    
+                  </p>
+                </li>
+                <li>
+                  <p><em>Wrapping attacks</em></p>
+                  <p>ID based references and
+                  lack of a mechanism to determine what  
+                  was really signed can enable 
+                  wrapping attacks [<cite><a class="bibref" href="#bib-MCINTOSH-WRAP">MCINTOSH-WRAP</a></cite>].
+                  </p>
+                </li>
+                <li>
+                  <p><em>Problems with
+                  <code>RetrievalMethod</code></em></p>
+                  <p>RetrievalMethod can lead to
+                  infinite loops. 
+                  Also transforms in retrieval method can lead to
+                  many attacks, and 
+                  these cannot be solved by changing the order  
+                  of operations. 
+                  </p>
+                </li>
+              </ol>
+              <p>
+                These security risks need to be addressed in the new
+                specification. 
+              </p>
+            </section>
+          </section>
+        </section>
+        <section id="performance-and-streamability">
+          <h3><span class="secno">3.5 </span>Enable higher performance and streamability</h3>
+          <p>
+            XML Signature should not require
+            DOM. There are existing streaming XML Signature implementations but
+            they make various assumptions. It would be better to formalize
+            these assumptions and requirements at the standardization
+            level, rather than 
+            leave it up to each implementation. 
+          </p>
+          <section id="dom_overhead">
+            <h4><span class="secno">3.5.1 </span>Overheads of DOM</h4>
+            <p>
+              DOM parsers have a large overhead.
+              Suppose there is a 1MB XML document. If this loaded into
+              memory as a 
+              byte array 
+              it remains as a 1MB byte array. But if it is parsed into a DOM it
+              explodes to 5-10x in 
+              size. This is because in DOM, each XML node has to become an
+              object. Objects have overheads 
+              of memory book keeping, virtual function tables etc. Also each XML
+              node needs parent, next sibling, previous sibling pointers, and it
+              also needs prefix, namespaceURI 
+              etc, which could be objects 
+              themselves. All these eat up memory and it is a popular misconception
+              that memory is very cheap.  
+              Even if this memory were temporary allocation only it would still  
+              be expensive - in garbage collected languages allocating
+              and freeing too much of memory triggers the 
+              garbage collector too often which drastically slows down the
+              system. Also this 10x DOM explosion can result 
+              in physical memory getting exhausted and requiring more pages to be
+              swapped from disk. That is why  
+              web services often use streaming XML parsers on the server side. DOM
+              parsers will croak and groan 
+              if asked to process multiple large XML documents simultaneously,
+              whereas streaming XML parsers 
+              will happily chug along because of their low memory consumption.
+            </p> 
+          </section>
+          <section id="one_pass">
+            <h4><span class="secno">3.5.2 </span>One Pass</h4>
+            <p>It is important to distinguish between one-pass and
+            streamability. Streamability means not requiring 
+            to have the whole document in a parsed form available for
+            random access, i.e. not requiring a DOM.  
+            While one pass is desirable, two pass doesn't take away
+            all the merits of streaming. 
+            Suppose the signature value is before the data to be
+            signed. This means that the signature value cannot be  
+            updated in the first pass, but only in the second pass -
+            this is not really bad from the performance point of
+            view. 
+            Let us the say the document is being streamed out into 1MB
+            byte array, then in the first pass write some dummy bytes 
+            for this signature value and remember the location, and in
+            the 2nd pass just update this location with the actual 
+            signature bytes, so the 2nd pass is very quick.
+            </p>
+            <p> Also streamability does not require the ordering between
+            the subelements of signature element. 
+            It can be assumed that
+            the entire
+            Signature element (assuming it is detached or enveloped signature)
+            will be loaded up into a java/c++ object, so the order of
+            the elements 
+            inside the Signature element does not affect streamability. 
+            </p>
+            <p>
+              Verification in particular cannot be 1 pass - let us say you have a
+              signed 1GB incoming message, which you need to verify first and then
+              upload to a database. So you have to make two passes on
+              this data - a  
+              first pass to verify and second pass to upload to the
+              database. One cannot 
+              combine these two into 1 pass because verification result is
+              determined only after reading the last byte. 
+            </p>
+          </section>
+          <section id="nodeset">
+            <h4><span class="secno">3.5.3 </span>Nodeset</h4>
+            <p>
+              The main impediment to streamability is the transform
+              chain, because 
+              many of the transforms are defined on nodesets and nodeset
+              requires a 
+              DOM. An XPath transform is the biggest culprit as there
+              are many XPath 
+              expressions which cannot be streamed. It is necessary to define a
+              streamable subset of XPath (which has been done for XPath
+              1.0, see [<cite><a class="bibref" href="#bib-XMLDSIG-XPATH">XMLDSIG-XPATH</a></cite>]).
+            </p>
+            <p>
+              Nodesets have another big problem. This nodeset concept
+              was borrowed from  
+              XPath 1.0, and an XPath nodeset introduces a new kind of XML node -
+              the namespace 
+              node. Namespace nodes are different from namespace
+              declarations in an 
+              important way - they are not 
+              inherited. This means they need to be repeated for every node for
+              which 
+              they are applicable. To give an example, if there is a document 
+              with 100 namespace declarations at the top element and with 99 child
+              elements of the top element, a regular DOM 
+              will only have 200 (1 top element node + 99 child element
+              nodes + 100 
+              attribute nodes), whereas a nodeset will  have 
+              10,100 nodes (1 top element + 99 child element + 100*100 namespace
+              nodes).  
+            </p>
+            <p>A naive implementation which uses the nodeset as defined
+            will therefore be very slow, and be also be  
+            subject to various denial of service attacks. A smart
+            implementation can try to not expand the nodeset 
+            fully and use inheritance, but they it won't be fully
+            compliant with the XML Signature spec. This is 
+            because an XPath filter can address each of namespace
+            nodes individually and filter them out, even  
+            though it is meaningless in XML. The Y4 test vector in the
+            <a href="http://www.w3.org/Signature/2002/02/01-exc-c14n-interop.html">Exclusive 
+            Canonicalization Implementation and Interoperability
+            Report</a> has an example of this. Because  
+            of these performance problems some implementations do not
+            support this Y4 test vector or only support it 
+            conditionally.
+            </p>
+          </section>
+          <section id="xpath-profile">
+            <h4><span class="secno">3.5.4 </span>Streaming XPath Profile for XML Signature 2.0</h4>
+            <p>
+              XML Signature requires a profile of XPath to enable
+              streaming.
+              </p><p>
+              Signature verification can be done in two passes. The first pass is a
+              very cursory pass to collect the signature
+              element and signing keys from the document. Signatures are
+              often present in the beginning of the document, so this
+              usually a very short pass. At the end of the first pass,
+              the <code>IncludedXPath</code> and <code>ExcludedPath</code> are taken
+              from each  
+              reference and used to construct "state machines" from these
+              XPaths.  
+              </p><p>After the first pass, the second pass is performed.
+              In this pass the document is parsed
+              using a streaming XML parser to generate XML
+              events. These events are fed into a state machine. If the
+              event is accepted by an <code>IncludedXpath</code>, but
+              not accepted by 
+              an <code>ExcludedXPath</code> then it is included, in that
+              case the event is passed on to a  streaming canonicalizer,
+              and then to a 
+              streaming digestor. 
+              At the end of the second pass the result is digests for each
+              reference.
+            </p>
+            <p>The operation and requirements of this XPath profile is different
+            from the requirements of other XPath profiles, such as that for XSLT
+            template processing [<cite><a class="bibref" href="#bib-XSLT21">XSLT21</a></cite>]. For this reason, XML Security
+            requires its own XPath 
+            profile, although it might be suitable for other uses as well.
+            </p><p>
+            The reason the XSLT XPath profile is not suitable is that the
+            assumptions and requirements are different.
+            In XSLT processing the XPaths are not known in advance. The XSLT
+            processor has to be ready to process any XPath that it comes
+            across, so it maintains a context. This context consists of all the
+            ancestors of the current element and some histograms so that it can
+            process the <code>position()</code> function.  The XPath needs to
+            evaluated with 
+            only this context and nothing else. This is a fundamental difference
+            from XML Signature model. In XML Signature, the XPaths are known in
+            advance, and being continuously evaluated for every node.  But in
+            XSLT, they are evaluated only once.  
+            </p><p>
+            The XPath subset is defined as the kind of subset can be
+            evaluated with the XPath context. In the XSLT profile, for example,
+            all sideways axis are 
+            disallowed by the subset i.e. following, preceding,
+            following-sibling, or preceding-sibling. But the Signature subset
+            allows following, and following-sibling.   
+            </p><p>
+            Another big difference is the way this subset is defined. XML
+            Signature defines the subset by syntax. Although this kind of
+            definition is simpler to define and understand, it results in XPaths
+            that are allowed in one syntax, but not allowed in another
+            syntax. e.g. <code>/a/b</code> is allowed, but <code>(/a)/b</code> is
+            not allowed in XML 
+            Signature.  XSLT defines the subset by a "data flow graph". This has
+            restrictions like once you start going up, you can't go down. (See the
+            seven such rules
+            in <a href="http://www.w3.org/TR/xslt-21/#streamability">http://www.w3.org/TR/xslt-21/#streamability</a>.)
+            While XML Signature is very strict in allowing only attributes in
+            predicate, XSLT is much more lax, e.g. <code>/a[b]</code> is not
+            allowed in XML 
+            Signature, but is allowed in XSLT, because the rule 4 says that it is
+            ok to go downwards as long you don't revisit a node more than once. 
+            </p><p>
+            Another difference arising from this evaluation model is that XSLT
+            allows relative XPaths -  in fact that is a very important part of
+            XSLT. There is always a current context node, when evaluating the XSLT
+            XPath.  So it allows parent and ancestor axis. 
+            </p><p>
+            In summary, the two subsets have completely different purpose and 
+            there is no benefit in making them similar, that will only cripple
+            both the use cases. 
+            </p><p>
+            There are subsets whose use cases are similar to XML
+            Signature where XPath expressions are known in advance and XPath
+            expressions are used for
+            selection. An example is the WS-Transfer use case.
+          </p>
+        </section>
+      </section>
+    </section>
+    <section id="thanks">
+      <!--OddPage--><h2><span class="secno">4. </span>Acknowledgments</h2>
+      <p>
+        Thanks to John Boyer for his suggestions on this topic.
+      </p>
+      <p> Contributions received from the members of the XML Security Working
+      Group: Scott Cantor, Juan Carlos Cruellas, Pratik Datta, Gerald Edgar,
+      Ken Graf, Phillip Hallam-Baker, Brad Hill, Frederick Hirsch, Brian LaMacchia, Konrad Lanz, Hal Lockhart, Cynthia Martin, Rob
+      Miller, Sean Mullan, Shivaram Mysore, Magnus Nyström, Bruce Rich, Thomas
+      Roessler, Ed Simon, Chris Solc, John Wray,
+      Kelvin Yiu. 
+      </p>
+    </section>
+  
+
+<section id="references" class="appendix"><!--OddPage--><h2><span class="secno">A. </span>References</h2><p>Dated references below are to the latest known or appropriate edition of the referenced work.  The referenced works may be subject to revision, and conformant implementations may follow, and are encouraged to investigate the appropriateness of following, some or all more recent editions or replacements of the works cited. It is in each case implementation-defined which  editions are supported.</p><section id="informative-references"><h3><span class="secno">A.1 </span>Informative references</h3><dl class="bibliography"><dt id="bib-EXI">[EXI]</dt><dd>Takuki Kamiya; John Schneider. <a href="http://www.w3.org/TR/2009/CR-exi-20091208/"><cite>Efficient XML Interchange (EXI) Format 1.0</cite></a>. 8 December 2009. W3C Candidate Recommendation. URL: <a href="http://www.w3.org/TR/2009/CR-exi-20091208/">http://www.w3.org/TR/2009/CR-exi-20091208/</a>
+</dd><dt id="bib-MCINTOSH-WRAP">[MCINTOSH-WRAP]</dt><dd> Michael McIntosh; Paula Austel. <cite>XML signature element wrapping attacks and countermeasures.</cite> In Workshop on Secure Web Services, 2005
+</dd><dt id="bib-WEBARCH">[WEBARCH]</dt><dd>Norman Walsh; Ian Jacobs. <a href="http://www.w3.org/TR/2004/REC-webarch-20041215/"><cite>Architecture of the World Wide Web, Volume One</cite></a>. 15 December 2004. W3C Recommendation. URL: <a href="http://www.w3.org/TR/2004/REC-webarch-20041215/">http://www.w3.org/TR/2004/REC-webarch-20041215/</a>
+</dd><dt id="bib-XML-C14N">[XML-C14N]</dt><dd>John Boyer. <a href="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"><cite>Canonical XML Version 1.0</cite></a>. 15 March 2001. W3C Recommendation. URL: <a href="http://www.w3.org/TR/2001/REC-xml-c14n-20010315">http://www.w3.org/TR/2001/REC-xml-c14n-20010315</a>
+</dd><dt id="bib-XML-CANONICAL-REQ">[XML-CANONICAL-REQ]</dt><dd>James Tauber; Joel Nava. <a href="http://www.w3.org/TR/1999/NOTE-xml-canonical-req-19990605"><cite>XML Canonicalization Requirements</cite></a>. 5 June 1999. W3C Note. URL: <a href="http://www.w3.org/TR/1999/NOTE-xml-canonical-req-19990605">http://www.w3.org/TR/1999/NOTE-xml-canonical-req-19990605</a>
+</dd><dt id="bib-XML-EXC-C14N">[XML-EXC-C14N]</dt><dd>Donald E. Eastlake 3rd; Joseph Reagle; John Boyer. <a href="http://www.w3.org/TR/2002/REC-xml-exc-c14n-20020718/"><cite>Exclusive XML Canonicalization Version 1.0</cite></a>. 18 July 2002. W3C Recommendation. URL: <a href="http://www.w3.org/TR/2002/REC-xml-exc-c14n-20020718/">http://www.w3.org/TR/2002/REC-xml-exc-c14n-20020718/</a>
+</dd><dt id="bib-XML-INFOSET">[XML-INFOSET]</dt><dd>John Cowan; Richard Tobin. <a href="http://www.w3.org/TR/2004/REC-xml-infoset-20040204/"><cite>XML Information Set (Second Edition)</cite></a>. 4 February 2004. W3C Recommendation. URL: <a href="http://www.w3.org/TR/2004/REC-xml-infoset-20040204/">http://www.w3.org/TR/2004/REC-xml-infoset-20040204/</a>
+</dd><dt id="bib-XMLDSIG-BESTPRACTICES">[XMLDSIG-BESTPRACTICES]</dt><dd>Pratik Datta; Frederick Hirsch. <a href="http://www.w3.org/TR/2013/NOTE-xmldsig-bestpractices-20130411/"><cite>XML Signature Best Practices</cite></a>. 11 April 2013. W3C Working Group Note. URL: <a href="http://www.w3.org/TR/2013/NOTE-xmldsig-bestpractices-20130411/">http://www.w3.org/TR/2013/NOTE-xmldsig-bestpractices-20130411/</a>
+</dd><dt id="bib-XMLDSIG-COMPLEXITY">[XMLDSIG-COMPLEXITY]</dt><dd>Brad Hill. <a href="http://www.w3.org/2007/xmlsec/ws/papers/04-hill-isecpartners/"><cite>Complexity as the Enemy of Security: Position Paper for W3C Workshop on Next Steps for XML Signature and XML Encryption</cite></a>. 25-26 September. W3C Working Draft. URL: <a href="http://www.w3.org/2007/xmlsec/ws/papers/04-hill-isecpartners/">http://www.w3.org/2007/xmlsec/ws/papers/04-hill-isecpartners/</a>
+</dd><dt id="bib-XMLDSIG-CORE">[XMLDSIG-CORE]</dt><dd>Joseph Reagle et al. <a href="http://www.w3.org/TR/2008/REC-xmldsig-core-20080610/"><cite>XML Signature Syntax and Processing (Second Edition)</cite></a>. 10 June 2008. W3C Recommendation. URL: <a href="http://www.w3.org/TR/2008/REC-xmldsig-core-20080610/">http://www.w3.org/TR/2008/REC-xmldsig-core-20080610/</a>
+</dd><dt id="bib-XMLDSIG-REQUIREMENTS">[XMLDSIG-REQUIREMENTS]</dt><dd>Joseph Reagle Jr. <a href="http://www.w3.org/TR/1999/WD-xmldsig-requirements-19991014"><cite>XML-Signature Requirements</cite></a>. 14 October 1999. W3C Working Draft. URL: <a href="http://www.w3.org/TR/1999/WD-xmldsig-requirements-19991014">http://www.w3.org/TR/1999/WD-xmldsig-requirements-19991014</a>
+</dd><dt id="bib-XMLDSIG-THOMPSON">[XMLDSIG-THOMPSON]</dt><dd>Henry Thompson. <a href="http://www.w3.org/2007/xmlsec/ws/papers/20-thompson/"><cite>Radical proposal for Vnext of XML Signature: Position Paper for W3C Workshop on Next Steps for XML Signature and XML Encryption</cite></a>. 26 September 2007. W3C Workshop. URL: <a href="http://www.w3.org/2007/xmlsec/ws/papers/20-thompson/">http://www.w3.org/2007/xmlsec/ws/papers/20-thompson/</a>
+</dd><dt id="bib-XMLDSIG-XPATH">[XMLDSIG-XPATH]</dt><dd>Pratik Datta; Frederick Hirsch; Meiko Jensen. <a href="http://www.w3.org/TR/2013/NOTE-xmldsig-xpath-20130411/"><cite>XML Signature Streaming Profile of XPath 1.0</cite></a>. 11 April 2013. W3C Working Group Note. URL: <a href="http://www.w3.org/TR/2013/NOTE-xmldsig-xpath-20130411/">http://www.w3.org/TR/2013/NOTE-xmldsig-xpath-20130411/</a>
+</dd><dt id="bib-XMLSEC-NEXTSTEPS-2007">[XMLSEC-NEXTSTEPS-2007]</dt><dd>Frederick Hirsch; Thomas Roessler. <a href="http://www.w3.org/2007/xmlsec/ws/report.html"><cite>Workshop Report W3C Workshop on Next Steps for XML Signature and XML Encryption</cite></a>. 25-26 September 2007. W3C Workshop Report. URL: <a href="http://www.w3.org/2007/xmlsec/ws/report.html">http://www.w3.org/2007/xmlsec/ws/report.html</a>
+</dd><dt id="bib-XPROC">[XPROC]</dt><dd>Alex Milowski; Henry S. Thompson; Norman Walsh. <a href="http://www.w3.org/TR/2008/CR-xproc-20081126/"><cite>XProc: An XML Pipeline Language</cite></a>. 26 November 2008. W3C Candidate Recommendation. URL: <a href="http://www.w3.org/TR/2008/CR-xproc-20081126/">http://www.w3.org/TR/2008/CR-xproc-20081126/</a>
+</dd><dt id="bib-XSLT21">[XSLT21]</dt><dd>Michael Kay. <a href="http://www.w3.org/TR/2010/WD-xslt-21-20100511/"><cite>XSL Transformations (XSLT) Version 2.1</cite></a>. 11 May 2011. W3C Working Draft. URL: <a href="http://www.w3.org/TR/2010/WD-xslt-21-20100511/">http://www.w3.org/TR/2010/WD-xslt-21-20100511/</a>
+</dd></dl></section></section></body></html>

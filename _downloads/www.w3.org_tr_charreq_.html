@@ -1,0 +1,743 @@
+<!-- http://www.w3.org/TR/charreq/ -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Requirements for String Identity Matching and String Indexing</title>
+<link rel="stylesheet" type="text/css" href="http://www.w3.org/StyleSheets/TR/W3C-WG-NOTE" />
+</head>
+<body>
+<div style="text-align:center;"><p>[ <a href="#contents">contents</a> ]</p></div>
+<div class="head">
+<a href="http://www.w3.org/"><img height="48" width="72" alt="W3C" src="http://www.w3.org/Icons/w3c_home"/></a>
+<h1><a name="title" id="title">Requirements for String Identity Matching and
+String Indexing</a></h1>
+<h2><a name="w3c-doctype" id="w3c-doctype">W3C Working Group Note 15 September 2009</a></h2><dl><dt>This version:</dt>
+	<dd> 
+		<a href="http://www.w3.org/TR/2009/NOTE-charreq-20090915/">http://www.w3.org/TR/2009/NOTE-charreq-20090915/</a></dd>
+	<dt>Latest version:</dt>
+	<dd> 
+		<a href="http://www.w3.org/TR/charreq/">http://www.w3.org/TR/charreq/</a>
+		</dd>
+	<dt>Previous version:</dt>
+		<dd><a href="http://www.w3.org/TR/1998/WD-charreq-19980710">http://www.w3.org/TR/1998/WD-charreq-19980710</a></dd>
+		<dt>Editor:</dt>
+		<dd>Martin Dürst, while at W3C</dd></dl>
+<p class="copyright"><a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 1998-2009 <a href="http://www.w3.org/"><acronym title="World Wide Web Consortium">W3C</acronym></a><sup>®</sup> (<a href="http://www.csail.mit.edu/"><acronym title="Massachusetts Institute of Technology">MIT</acronym></a>, <a href="http://www.ercim.org/"><acronym title="European Research Consortium for Informatics and Mathematics">ERCIM</acronym></a>, <a href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply.</p></div><hr />
+<div>
+<h2><a name="abstract" id="abstract">Abstract</a></h2>
+<p>This document describes  requirements for some important aspects of the character model for W3C specifications. The two aspects discussed are <em>string identity matching </em>and <em>string indexing</em>. Both aspects are considered to be vital for the seamless interaction of many components of
+the current and future web architecture.</p>
+</div>
+<div>
+<h2><a name="status" id="status">Status of this Document</a></h2>
+<p><em>This section describes the status of this document at the time of its publication. Other documents may
+		  supersede this document. A list of current W3C publications and the latest revision of this technical report can be
+	  found in the  <a href="http://www.w3.org/TR/">W3C technical reports index</a> at http://www.w3.org/TR/.</em></p>
+        <p>This document is being published as a Working Group note in order to capture and preserve historical information. It contains requirements elaborated in 1998 for aspects of the character model for W3C specifications. It was developed and extensively reviewed by the Internationalization Working Group, and is being published by its successor, the <a href="http://www.w3.org/International/core/">Internationalization Core Working Group</a>, part of the 
+		  	<a href="http://www.w3.org/International/Activity">W3C Internationalization Activity</a>. The wording of the 1998 version remains unchanged (except for correction of a small number of typographic errors), but the links to references have been updated prior to this publication.</p>
+<p>Comments on this document can be sent to <a href="mailto:www-international@w3.org">www-international@w3.org</a> (<a href="http://lists.w3.org/Archives/Public/www-international/">publicly archived</a>), but it should be borne in mind that the note is being published to preserve historical information, and the viewpoints expressed in the document should be considered in that light. </p>
+
+<p>Publication as a Working Group Note does not imply endorsement by the W3C Membership. This is a draft document and may be updated, replaced or obsoleted by other documents at any time. It is inappropriate to cite this document as other than work in progress.</p>
+<p>This document was produced by a group operating under the <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 W3C Patent Policy</a>. The group does not expect this document to become a W3C Recommendation. W3C maintains a <a href="http://www.w3.org/2004/01/pp-impl/32113/status">public list of any patent disclosures</a> made in connection with the deliverables of the group;  that page also includes instructions for disclosing a patent. An individual who has actual knowledge of a patent which the individual believes contains <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential Claim(s)</a> must disclose the information in accordance with <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section 6 of the W3C Patent Policy</a>.</p>
+		  </div>
+		  <div class="toc">
+<h2><a name="contents" id="contents"></a>Table of Contents</h2>
+<ol>
+  <li><a href="#sec1">Introduction</a>
+    <ol>
+      <li><a href="#sec1.1">Background</a></li>
+      <li><a href="#sec1.2">Potential users of the resulting
+      specification</a></li>
+      <li><a href="#sec1.3">Structure of this Document</a></li>
+      <li><a href="#sec1.4">Scope</a></li>
+    </ol>
+  </li>
+  <li><a href="#sec2">String identity matching</a>
+    <ol>
+      <li><a href="#sec2.1">Problem</a></li>
+      <li><a href="#sec2.2">The string identity matching specification shall be
+        defined exactly</a></li>
+      <li><a href="#sec2.3">The string identity matching specification shall not
+        expose invisible encoding differences to the user</a></li>
+      <li><a href="#sec2.4">The string identity matching specification shall not
+        treat as equivalent characters that can usually be distinguished by
+        the user</a></li>
+      <li><a href="#sec2.5">The string identity matching specification shall be
+        forward-compatible</a></li>
+      <li><a href="#sec2.6">The string identity matching specification shall be
+        broadly applicable</a></li>
+      <li><a href="#sec2.7">The string identity matching specification shall be
+        workable with opaque identifiers and data</a></li>
+      <li><a href="#sec2.8">The string identity matching specification shall
+        allow to <q>be conservative in what you send</q></a></li>
+      <li><a href="#sec2.9">The string identify specification shall be prepared
+        quickly</a></li>
+      <li><a href="#sec2.10">Solutions for string identity matching</a></li>
+    </ol>
+  </li>
+  <li><a href="#sec3">Early uniform normalization</a>
+    <ol>
+      <li><a href="#sec3.1">Problem</a></li>
+      <li><a href="#sec3.2">The location of early uniform normalization shall be
+        specified</a></li>
+      <li><a href="#sec3.3">Early uniform normalization shall be based on
+        widespread practice</a></li>
+      <li><a href="#sec3.4">Early uniform normalization shall be specified in
+        collaboration with the expert communities on character
+      encoding</a></li>
+      <li><a href="#sec3.5">Early uniform normalization shall be feasible to
+        implement</a></li>
+      <li><a href="#sec3.6">Reference software for early uniform normalization
+        shall be provided</a></li>
+      <li><a href="#sec3.7">Test cases for early uniform normalization shall be
+        provided</a></li>
+    </ol>
+  </li>
+  <li><a href="#sec4">String indexing</a>
+    <ol>
+      <li><a href="#sec4.1">Problem Description</a></li>
+      <li><a href="#sec4.2">String indexing shall behave consistently across
+        implementations</a></li>
+      <li><a href="#sec4.3">String indexing shall take into account user
+        expectations</a></li>
+      <li><a href="#sec4.4">String indexing shall be able to address "characters"
+        at various levels</a></li>
+      <li><a href="#sec4.5">String indexing shall be forward-compatible</a></li>
+      <li><a href="#sec4.6">String indexing shall be feasible to
+      implement</a></li>
+      <li><a href="#sec4.7">The String indexing specification shall be prepared
+        quickly</a></li>
+    </ol>
+  </li>
+</ol>
+
+</div>
+<hr />
+<div class="body">
+<div class="div1">
+<h2><a name="sec1" id="sec1">1. Introduction</a></h2>
+<div class="div2">
+	<h3><a name="sec1.1" id="sec1.1">1.1 Background</a></h3>
+	<p>Since [<a href="#rfc2070">RFC 2070</a>], [<a href="#iso10646">ISO
+10646</a>]/[<a href="#unicode">Unicode</a>] (hereafter denoted as UCS,
+Universal Character Set) has served as a common reference for character
+encoding in W3C specifications (see [<a href="#html40">HTML 4.0</a>], [<a
+href="#xml10">XML 1.0</a>], and [<a href="#css2">CSS2</a>]). This choice was
+motivated by the fact that the UCS:</p>
+	<ul>
+		<li>is the only universal character repertoire available</li>
+		<li>covers the widest possible repertoire</li>
+		<li>provides a way of referencing characters independent of the encoding of
+			a resource</li>
+		<li>is being updated/completed carefully</li>
+		<li>is widely accepted and implemented by industry.</li>
+	</ul>
+	<p>As long as data transfer on the WWW was primarily unidirectional (from
+		server to browser), and the main purpose was rendering, the direct use of the
+		UCS as a common reference posed no problems.</p>
+	<p>However, from early on, the WWW included bidirectional data transfer
+		(forms,...). Recently, purposes other than rendering are becoming more and
+		more important. The WWW has traditionally been seen as a collection of
+		applications exchanging data based on protocols. It can however also be seen
+		as a single, very large application [<a href="#Nicol">Nicol</a>]. The second
+		view is becoming more and more important due to the following
+		developments:</p>
+	<ul>
+		<li>The increase in data transfers among servers, proxies, and clients</li>
+		<li>The increase in places where non-ASCII characters are allowed</li>
+		<li>The increase in data transfers between different protocol/format
+			elements (such as element/attribute names, URI components, and textual
+			content)</li>
+		<li>Definition of specifications for APIs (as opposed to protocol
+			specifications only)</li>
+	</ul>
+	<p>In this context, some properties of the UCS become relevant and have to be
+		addressed. It should be noted that such properties also exist in legacy
+		encodings, and in many cases have been inherited  by the UCS in one way or
+		another from such legacy encodings. In particular, these properties are:</p>
+	<ul>
+		<li>Choice of binary encoding forms (UTF-8, UTF-16, UCS-4)</li>
+		<li>Variable length encodings (e.g. due to the use of combining characters,
+			surrogates,...)</li>
+		<li>Duplicate encodings (e.g. precomposed vs. decomposed)</li>
+		<li>Control codes for various purposes (e.g. bidirectionality control,
+			symmetric swapping,...)</li>
+	</ul>
+	<p>This means that in order to ensure consistent behavior on the WWW, some
+		additional specifications, based on the UCS, are necessary.</p>
+	<p>This document is written as part of the work of the I18N WG to provide
+		internationalization guidelines for the authors of W3C specifications. Because
+		of the importance of consistent behavior for the WWW, it should be expected
+		that the resulting guideline components will become mandatory for W3C
+		specifications.</p>
+</div><div class="div2">
+<h3><a name="sec1.2" id="sec1.2">1.2 Potential users of the resulting specification</a></h3>
+<p>The specifications that will be developed based on this document have a very
+wide range of potential users, which are listed below in three categories. For
+some of the users listed here, a short description of what they do and how the
+requirements described in this document are thought to apply to them is given
+in the <a href="#Appendix">Appendix</a>. A need for specifications in the
+areas addressed by this document has directly been expressed, in particular
+at the  Query
+Language Meeting in April 1998 in Brisbane (see the W3C member-only link to the <a href="http://www.w3.org/MarkUp/CoordGroup/9804/querylanguages.html">meeting report</a>), by the following W3C Working
+Groups or specifications:</p>
+<ul>
+	<li><a href="http://www.w3.org/DOM/">DOM</a> (Document Object Model)</li>
+	<li>The <a href="http://www.w3.org/XML/">XML</a> activity, for <a
+    href="http://www.w3.org/TR/WD-xptr">XPointer</a></li>
+	<li><a href="http://www.w3.org/Style/XSL/">XSL</a> (eXtensible Style
+		Language)</li>
+	<li><a href="http://www.w3.org/Metadata/">RDF</a> (Resource Description
+		Framework) Model and Syntax</li>
+</ul>
+<p>Within the W3C, it may in addition be useful for:</p>
+<ul>
+	<li><a href="http://www.w3.org/TR/REC-xml/#sec-terminology">XML
+		element/attribute names</a></li>
+	<li>Work on <a href="http://www.w3.org/DSig/">digital signatures</a></li>
+	<li>Internationalization of URIs</li>
+</ul>
+<p>Outside of the W3C, it may in addition be useful for things such as:</p>
+<ul>
+	<li>Identifiers in Java</li>
+	<li>String handling in ECMAScript</li>
+	<li>Filenames in FTP</li>
+	<li>Folder names in IMAP</li>
+	<li>Usenet newsgroup names</li>
+	<li>Identifiers in ACAP</li>
+</ul>
+<div class="div3">
+</div>
+			 </div><div class="div2">
+<h3><a name="sec1.3" id="sec1.3">1.3 Structure of this Document</a></h3>
+<p>The following sections 2-4 each discuss the requirements for a particular
+	aspect of the WWW character model. Each section in its first subsection
+	briefly describes the problem addressed. The following subsections then
+	discuss the various requirements. <a href="#sec2">Section 2</a> is devoted to the
+	requirements for string identity matching. <a href="#sec3">Section 3</a> expands
+	on string identity matching and discusses subrequirements for early uniform
+	normalization, one way to address string identity matching. <a
+href="#sec4">Section 4</a> discusses the requirements for string indexing. An <a
+href="#Appendix">appendix</a> gives additional information about some of the
+	users of the specification resulting from this document. A <a
+href="#Glossary">glossary</a> gives additional explanations for some of the
+	terms used in this document.</p>
+			 </div><div class="div2">
+<h3><a name="sec1.4" id="sec1.4">1.4 Scope</a></h3>
+<p>This document addresses only those parts of the character model that need
+	exact specification and are extremely time-critical. To see exactly which
+	parts are addressed, please see the first subsection of each of the following
+	sections. A more general model, e.g. in the sense of the reference processing
+	model in [<a href="#rfc2070">RFC 2070</a>], and general guidelines, e.g.
+	similar to those in [<a href="#rfc2130">RFC 2130</a>] and [<a
+href="#rfc2277">RFC 2277</a>] for the work of the IETF, are not discussed
+	here. Nevertheless, something like the reference processing model in [<a
+href="#rfc2070">RFC 2070</a>], which requires applications to behave as if
+	they used the UCS, is assumed as a base.</p>
+<p>For each problem, this document lists various requirements. Ideally, all
+	requirements would be met equally well, and the degree to which they are being
+	met could be measured equally well. However, some of the requirements take the
+	form of more general design objectives, for which it is difficult to measure
+	the degree to which they have been met. Also, some requirements conflict with
+	each other. Where such conflicts are known, the conflict and a preference
+	(i.e. which requirement has greater weight) is indicated.</p>
+	</div></div><div class="div1">
+<h2><a name="sec2" id="sec2">2 String Identity Matching</a></h2>
+<h3><a name="sec2.1" id="sec2.1">2.1 Problem</a></h3>
+<p>String <em>identity</em> matching is a subset of the more general problem
+	of string matching. String matching in general can be done with various
+	degrees of specificity, from very approximate matching such as e.g. regular
+	expressions or phonetic matching for English, to more specific matches such as
+	case-insensitive or accent-insensitive matching. This document deals only with
+	string <em>identity</em> matching. Two strings match as identical if they
+	contain no user-identifiable distinctions. For more details on the meaning of
+	user-identifiable distinctions, see the following explanations as well as <a
+href="#sec2.3">subsection 2.3</a> and <a href="#sec2.4">subsection 2.4</a>. Any kind
+	of less specific matching is not discussed in this document.</p>
+<p>At various places in the WWW infrastructure, strings, and in particular
+	identifiers, are compared for identity. If different places use different
+	definitions of string identity matching, this results in undesired
+	unpredictability. Such comparisons are unproblematic if the expectations of
+	the users and the results of a simple binary comparison coincide, or can be
+	made to coincide. For ASCII, such a coincidence is established and assumed,
+	including some degree of user education, e.g. about the differences between
+	the digit 0 and the uppercase letter O. For the full repertoire of the UCS,
+	however, the aforementioned coincidence between user expectations and binary
+	comparisons is not a priori guaranteed.</p>
+<p>In order to ensure consistent behavior on the WWW, a character model for
+	W3C specifications must make sure that the gap between user expectations and
+	internal operation is bridged. A character model for W3C specifications must
+	therefore specify how the problem of <em>string identity matching</em> is
+	handled. The requirements for such a specification are listed in the following
+	subsections. Please note that with the exception of <a href="#sec2.7">subsection
+		2.7 </a>and <a href="#sec2.8">subsection 2.8</a>, the following subsections
+	assume the character processing model of [<a href="#rfc2070">RFC 2070</a>],
+	i.e. they assume that applications behave as if they used the UCS internally.
+	The section ends with <a href="#sec2.10">subsection 2.10</a>, which lays out some
+	alternatives and motivates <a href="#sec3">section 3</a>.</p>
+
+<h3><a name="sec2.2" id="sec2.2">2.2 The string identity matching specification shall be
+	defined exactly</a></h3>
+<p>In order to fulfill its purpose, a specification of string identity
+	matching must not contain any ambiguities.</p>
+<p>While in some cases, the addition of version numbers might help to make the
+	specification unambiguous, carrying version numbers as parameters is in many
+	cases highly undesirable and should therefore be avoided.</p>
+<h3><a name="sec2.3" id="sec2.3">2.3 The string identity matching specification shall not
+	expose invisible encoding differences to the user</a></h3>
+<p>Typical examples where a gap between user expectations and internal
+	operation can occur in the UCS are the duplicate encodings defined as <em>canonical equivalences</em> in [<a href="#unicode">Unicode</a>]. As an
+	example, the UCS allows us to encode &quot;ü&quot; both as a single codepoint (U+00FC,
+	LATIN SMALL LETTER U WITH DIAERESIS), or as the codepoint for &quot;u&quot; (U+0075,
+	LATIN SMALL LETTER U) followed by the codepoint U+0308 (COMBINING DIAERESIS).
+	Such equivalences are artifacts of the encoding method(s) chosen for the
+	UCS.</p>
+<p>It is expected that the canonical equivalences specified in the Unicode
+	standard will be an excellent starting point for defining the range of things
+	to be identified as duplicate encodings. This will make sure that the
+	experience of the Unicode Technical Committee with respect to character
+	equivalences is fully leveraged. Whether any changes are necessary will have
+	to be examined more closely. If such changes consist only of additions of
+	equivalences, implementations of W3C specifications would collectively conform
+	to conformance clause C9 given in [<a href="#unicode">Unicode</a>, p. 3-2]: <q>A process shall not assume that the interpretations of two
+		canonical-equivalent character sequences are distinct.</q> Additions may
+	include some presentation forms.</p>
+<p>Another category where encoding differences are invisible to the user are
+	the various control codes. W3C standards mostly deal with structured text (as
+	opposed to plain text). It should therefore in most cases be possible to rely
+	on explicit markup rather than on in-stream control codes.</p>
+<h3><a name="sec2.4" id="sec2.4">2.4 The string identity matching specification shall not
+	treat as equivalent characters that can usually be distinguished by the
+	user</a></h3>
+<p>String identity matching shall not treat as equivalent cases that can
+	clearly be distinguished by a user because the difference may be significant
+	in many cases. Examples are:</p>
+<ul>
+	<li>Lower-case letters and upper-case letters (e.g. &quot;ü&quot; and &quot;Ü&quot;)</li>
+	<li>Characters with and without diacritics such as accents or vowel marks
+		(e.g. &quot;ü&quot; and &quot;u&quot;)</li>
+	<li>Half-width and full-width presentation variants (Even though one of the
+		variants is clearly only encoded for compatibility, users can distinguish
+		them if necessary. Depending on the individual specification and the
+		protocol/format element concerned, the use of such variants may be
+		discouraged or forbidden.)</li>
+</ul>
+<p>These differences can be <em>handled</em> by the (mainly native) users of
+	the characters in question, and can at least be <em>identified </em>by users
+	not familiar with the characters in question. Such similarities are explicitly
+	not considered for string <em>identity</em> matching, because they do not need
+	a coordinated solution for the entirety of the WWW.</p>
+<p>Various forms of equivalence testing are needed for operations such as
+	searching and sorting. But such operations will not be based on string <em>identity</em> matching. Also, it is felt that such operations do not need
+	to behave uniformly across the web; that on the contrary, it is beneficial to
+	have competition (e.g. for search engines and their user interfaces), that
+	this has already been taken care of elsewhere (e.g. the work of ISO and
+	Unicode on default and tailorable sorting), and that the requirements of
+	language-dependence and user-configurability are stronger than the needs for
+	consistent behavior.</p>
+<h3><a name="sec2.5" id="sec2.5">2.5 The string identity matching specification shall be
+	forward-compatible</a></h3>
+<p>It is impossible to predict what characters might be added to the UCS in
+	the future. String identity matching should be specified so as to try to
+	minimize the impact of future additions to the UCS on the specification and
+	its implementations.</p>
+<p>One category of additions that warrants particular attention, both because
+	it has occurred relatively frequently in the past and because it affects
+	string identity matching directly, is the addition of new precomposed forms
+	for which decomposed equivalents are already available.</p>
+<h3><a name="sec2.6" id="sec2.6">2.6 The string identity matching specification shall be
+	broadly applicable</a></h3>
+<p>Because of the increased integration of the WWW, selecting different ways
+	to solve the string identity matching problem for different components of the
+	WWW would produce a fragmentation of users' and implementers' expectations,
+	and the need for constant attention to minute differences that are rarely
+	visible. Applicability to a broad range of W3C specifications and the widest
+	number of components of the WWW means that a solution has to be feasible for
+	all kinds of different systems, and different subsystems of larger
+	applications, with different resources available. This in particular includes
+	very small systems, and systems that do not have continuous network
+	access.</p>
+<h3><a name="sec2.7" id="sec2.7">2.7 The string identity matching specification shall be
+	workable with opaque identifiers and data</a></h3>
+<p>Many components of the WWW have to work with data without access to the
+	actual characters. This includes all kinds of schemes that make use of
+	encryption techniques as well as schemes where the character encoding is in
+	general left undefined, such as URIs [<a href="#uri">URI</a>]. For things such
+	as URIs, it should be possible to test two strings for identity even if their
+	character encoding is unknown, given of course that in both cases the same
+	character encoding has been chosen. Also, it should be possible to test two
+	strings for identity if the actual data cannot be accessed directly because it
+	is encrypted. Even in cases where the character encoding is known, and the
+	data is accessible, treating data as opaque is often desirable, because an
+	identity check might occur in an architectural component that has (or the
+	implementers of which have) completely different concerns than
+	internationalization. Examples of such components are firewalls and
+	passwords.</p>
+<h3><a name="sec2.8" id="sec2.8">2.8 The string identity matching specification shall allow
+	you to <q>be conservative in what you send</q></a></h3>
+<p>An often cited maxim of Internet engineering is <q>be liberal in what you
+	accept; be conservative in what you send</q>. The use of the appropriate kind
+	of equivalence at the receiving end easily allows you to <q>be liberal in what
+		you accept</q>. However, without any kind of indication of the <em>preferred</em> way of encoding or the preferred character variant, there
+	is no way to <q>be conservative in what you send</q>. This means that
+	potential benefits cannot be realized.</p>
+<h3><a name="sec2.9" id="sec2.9">2.9 The string identify specification shall be prepared
+	quickly</a></h3>
+<p>Several upcoming W3C specifications depend on a clear and uniform
+	specification for string identity matching. Therefore, no time should be lost
+	in preparing the string identity matching specification.</p>
+<h3><a name="sec2.10" id="sec2.10">2.10 Solutions for string identity matching</a></h3>
+<p>For a specification for string identity matching, the following issues have
+	to be addressed:</p>
+<ol>
+	<li>Which representations to treat as equivalent (and which not)</li>
+	<li>Which components in the WWW architecture to make responsible for
+		equivalences:
+		<ol>
+			<li>Each individual component that performs a string identity check has
+				to take equivalences into account (late normalization)</li>
+			<li>Duplicates and ambiguities are removed as close to their source as
+				possible (early normalization)</li>
+		</ol>
+	</li>
+	<li>Which way to normalize (in the case that early normalization (2.2) is
+		needed, even if only in some cases)</li>
+</ol>
+<p>The arguments for why early normalization may be needed, even if only in
+	some cases, can be listed as follows:</p>
+<ul>
+	<li>It is a prerequisite for <q>be conservative in what you send</q></li>
+	<li>It is the only solution to deal with opaque data (see <a
+    href="#sec2.7">subsection 2.7</a>)</li>
+	<li>Not all parts of the WWW may reasonably be expected to do
+		normalization</li>
+	<li>There is less need for software updates to address forward-compatibility
+		issues</li>
+	<li>It may lead to more efficient implementations for string indexing (see <a href="#sec4.6">subsection 4.6</a>)</li>
+	<li>With increased component integration, it becomes more and more difficult
+		to hide certain kinds of implementation details</li>
+</ul>
+<p>It therefore seems appropriate to address the requirements of early
+	normalization in particular. This is done in the next section.</p>
+	</div><div class="div1">
+<h2><a name="sec3" id="sec3">3 Early uniform normalization</a></h2>
+<h3><a name="sec3.1" id="sec3.1">3.1 Problem</a></h3>
+<p>As discussed in <a href="#sec2.10">subsection 2.10</a>, there is a high
+	probability that early normalization may become necessary, even if only for
+	some selected cases. Early normalization means that data is normalized as
+	close to its origin, or as close to its conversion to the UCS, as possible.
+	This eliminates duplicate representations and other ambiguities. The actual
+	string identity check can therefore be done without taking such ambiguities
+	into account. In order for this to work, however, early normalization has to
+	be uniform, i.e. all components of the WWW that normalize have to do so in one
+	specific way.</p>
+<h3><a name="sec3.2" id="sec3.2">3.2 The location of early uniform normalization shall be
+	specified</a></h3>
+<p>In order for W3C specifications to attribute the responsibility for early
+	uniform normalization to specific components, guidelines on where early
+	uniform normalization should occur must be provided. Ideally, uniform
+	normalization would occur at the time of data creation, e.g. by a keyboard
+	driver. However, W3C specifications do not deal directly with things such as
+	keyboard drivers. This means that more appropriate locations for requiring
+	early uniform normalization have to be defined. As an example, it could be
+	required that text transmitted via certain protocols, or text exposed in
+	certain APIs, is normalized.</p>
+<p>It should be noted that text is transmitted on the WWW in many encodings
+	not based on the UCS. In these cases, uniform normalization ideally occurs
+	when data is transcoded (or assumed to be transcoded according to the
+	reference processing model of [<a href="#rfc2070">RFC 2070</a>]) from legacy
+	encodings (such as [<a href="#iso8859">ISO 8859</a>] or [<a
+href="#iso6937">ISO 6937</a>]) to the UCS.</p>
+<p>Ideally, early uniform normalization will spread out from the WWW to other
+	parts of the information infrastructure. For example, early uniform
+	normalization may only be specified for text actually sent out by a server,
+	but the task of normalization may be transferred from the server to the
+	document provider, and from there further to the editor tool and even to the
+	keyboard driver. Such a transfer is indeed highly desirable in many cases,
+	because to avoid generating unnormalized data is in many cases easier than to
+	normalize such data later.</p>
+<h3><a name="sec3.3" id="sec3.3">3.3 Early uniform normalization shall be based on widespread
+	practice</a></h3>
+<p>A wide range of text on the WWW will have to be normalized. This is easier
+	to do if uniform normalization occurs towards the more popular representation
+	than if a not so widely used representation is used as the normal form. It may
+	also provide a bit more time, in that we are just defining what might happen
+	naturally anyway instead of having to fight uphill from day one. Existing
+	standards (such as the canonical ordering behavior for combining characters
+	[<a href="#unicode">Unicode</a>, page 3-9]) should also be considered.</p>
+<h3><a name="sec3.4" id="sec3.4">3.4 Early uniform normalization shall be specified in
+	collaboration with the expert communities on character encoding</a></h3>
+<p>The views of experts on character coding, especially of members of the
+	Unicode Technical Committee and of ISO/IEC JTC1/SC2/WG2 should be sought, with
+	the goal of achieving a broad consensus. This requirement cannot, however,
+	take precedence over all other requirements, especially <a
+href="#sec2.9">Requirement 2.9</a>, &quot;The string identity matching specification
+	shall be prepared quickly&quot;.</p>
+<h3><a name="sec3.5" id="sec3.5">3.5 Early uniform normalization shall be feasible to
+	implement</a></h3>
+<p>Where choices are available, early uniform normalization should be
+	specified in a way which permits easy and compact implementations. It should
+	however be remembered that the main benefit in terms of implementation
+	simplification is achieved due to the concept of early uniform normalization
+	itself, by relieving a large part of the WWW infrastructure of the need to
+	consider equivalences when making comparisons, and by locating normalization
+	at those places in the WWW architecture where most information on actually
+	occurring codepoint combinations and most internationalization implementation
+	expertise and concern are available.</p>
+<h3><a name="sec3.6" id="sec3.6">3.6 Reference software for early uniform normalization shall
+	be provided</a></h3>
+<p>To help in developing, understanding, implementing, and testing early
+	uniform normalization, reference software shall be developed and provided to
+	the public under <a
+href="http://www.w3.org/Consortium/Legal/copyright-software.html">W3C
+		copyright</a>. This software will cover all cases, whereas at a given point in
+	the infrastructure (e.g. a transcoder or a keyboard driver), only some cases
+	may have to be taken into account.</p>
+<h3><a name="sec3.7" id="sec3.7">3.7 Test cases for early uniform normalization shall be
+	provided</a></h3>
+<p>To help in developing, understanding, implementing, and testing early
+	uniform normalization, test cases shall be developed and provided to the
+	public under <a
+href="http://www.w3.org/Consortium/Legal/copyright-software.html">W3C
+		copyright</a>.</p>
+<p>&nbsp;</p></div>
+
+<div class="div1">
+<h2><a name="sec4" id="sec4">4 String indexing</a></h2>
+<h3><a name="sec4.1" id="sec4.1">4.1 Problem Description</a></h3>
+<p>On many occasions, in order to access a substring or a character, it is
+	necessary to index characters in a string/sequence/array of characters. Where
+	character indices are exchanged between components of the WWW, there is a need
+	for a uniform definition of string indexing in order to ensure consistent
+	behavior. In the simplest cases, this boils down to questions such as <q>At
+		which position in a given string is a given character?</q>, <q>Which character
+			is at a given position in a given string?</q>, and even simpler, <q>What's the
+				length of a given string?</q>.</p>
+<p>Note: In many cases, it is highly preferable to use non-numeric ways of
+	identifying substrings. The specification of string indexing for the WWW
+	should not be seen as a general recommendation for the use of string indexing
+	for substring identification. As an example, in the case of translation of a
+	document from one language to another, identification of substrings based on
+	document structure can be expected to be much more stable than identification
+	based on string indexing.</p>
+<p>Note: Because of the wide variability of scripts and characters, different
+	operations may be required to work at different levels of aggregation or
+	subdivision. String indexing as discussed in this section is only intended to
+	provide a base for such operations; it cannot address all levels
+	concurrently.</p>
+<p>The issue of indexing origin, i.e. whether the first character in a string
+	is indexed as character number 0 or as character number 1, will not be
+	addressed here.</p>
+<h3><a name="sec4.2" id="sec4.2">4.2 String indexing shall behave consistently across
+	implementations</a></h3>
+<p>This is the basic functional requirement for indexing. It means that the
+	specification has to be without options.</p>
+<p>The basic consistency test is the following:</p>
+<ol>
+	<li>On system A, take any string of characters.</li>
+	<li>In that string, identify a substring by using appropriate indices.</li>
+	<li>Transmit the string (potentially undergoing transformations such as
+		transcoding and normalization) to system B.</li>
+	<li>Use the same indices as in step 2 to identify a substring in the
+		received string.</li>
+	<li>If the substring identified is the same as that identified in step 2,
+		then the test is successful.</li>
+</ol>
+<p>The requirement is fulfilled if the test is successful for all strings of
+	characters and all combinations of systems.</p>
+<h3><a name="sec4.3" id="sec4.3">4.3 String indexing shall take into account user
+	expectations</a></h3>
+<p>Tools and programs are supposed to hide most of the indexing values from
+	the end users. However, the fact that direct editing/manipulation was possible
+	was one of the  (unexpected) reasons for the success of the WWW. Also, in the
+	complex infrastructure of the WWW, it is impossible to define a clear and
+	strict boundary between what is manipulated by programs and what is seen and
+	manipulated by the users. Therefore, it is highly desirable that something
+	seen as one single character by the user is indeed counted as one character.
+	However, there may be cases where for the same characters, there are
+	differences in the perceptions of users using various languages, or even of
+	users using one and the same language. In this case, an ideal solution is not
+	possible. Preference should be given to a solution which, although not
+	corresponding to user expectations, can be understood by as many users as
+	possible (e.g. <q>treat each character in the Klingon alphabet as occupying
+		two index positions</q> ).</p>
+<p>This requirement may be in conflict with <a href="#sec4.6">requirement 4.6</a> (because user expectations and actual encoding might be different). Because
+	neither requirement is absolute, no indication of relative priorities has been
+	given here.</p>
+<h3><a name="sec4.4" id="sec4.4">4.4 String indexing shall be able to address &quot;characters&quot; at
+	various levels</a></h3>
+<p>Because of the variability of what a &quot;character&quot; can mean in different
+	scripts and to different people (for the same script), string indexing should
+	permit the designation of characters at various levels of resolution
+	appropriate for the task at hand. This can in principle be achieved by
+	indexing on the finest granularity possible, or by indexing of subelements.
+	Although subelement indexing might not be defined in the first version of the
+	character model, and might not be implemented everywhere, the necessary
+	precautions for syntax extensibility and fallbacks should be taken care of and
+	defined up-front wherever applicable.</p>
+<h3><a name="sec4.5" id="sec4.5">4.5 String indexing shall be forward-compatible</a></h3>
+<p>It is impossible to predict what characters might be added to the UCS in
+	the future. String indexing should be specified so as to try to minimize the
+	impact of future additions to the UCS on the specification and its
+	implementations.</p>
+<p>One category of additions that warrants particular attention, both because
+	it has occurred relatively frequently in the past and because it may affect
+	string indexing directly, is the addition of new precomposed forms for which
+	decomposed equivalents are already available.</p>
+<h3><a name="sec4.6" id="sec4.6">4.6 String indexing shall be feasible to implement</a></h3>
+<p>Indexing into a string of characters is a very frequent operation. Ease of
+	implementation is therefore crucial. If string indexing is based on early
+	uniform normalization, then this may help to make implementation easier.</p>
+<h3><a name="sec4.7" id="sec4.7">4.7 The String indexing specification shall be prepared
+	quickly</a></h3>
+<p>Several upcoming W3C specifications depend on a clear character model and
+	in particular on clear definitions for string indexing. It is therefore
+	crucial that no time is lost.</p>
+</div>
+			 
+			 <div class="div1">
+<h2><a name="Appendix" id="Appendix">Appendix: Details about users of the resulting
+specification</a></h2>
+<p>This appendix gives some additional details about users of the
+	specification that will result from the requirements in this document. This is
+	intended to give some very short background to readers not familiar with some
+	of the work of the W3C, as well as to make sure that the requirements of these
+	groups are well understood.</p>
+<p>Note: <strong>The specifications discussed below are still in progress. The
+	summaries are based on the current state, as publicly known. Changes may occur
+	at any time.</strong></p>
+<dl>
+	<dt>DOM (Document Object Model, see <a
+  href="http://www.w3.org/DOM/">http://www.w3.org/DOM/</a>)</dt>
+	<dd>A series of API definitions to access and manipulate documents, both
+		document structure and textual content. Currently, APIs for basic
+		functionality for HTML and XML, with bindings to programming languages
+		such as Java, ECMAScript, and C. All string parameters in the APIs are
+		defined as Unicode strings. To assure consistent behavior of programs
+		written in different languages and running on different implementations,
+		uniform normalization and string indexing specifications are
+		necessary.</dd>
+	<dt>XLL (eXtensible Linking Language)</dt>
+	<dd>Linking support for XML. XLL defines the #anchor syntax component of
+		URIs for XML. A syntax for identifying elements in a document tree (e.g.
+		based on element names that can contain arbitrary characters in XML), as
+		well as for identifying portions of text, is defined. For consistent
+		identification of portions of text, either or both of string identity
+		matching and string indexing are necessary.</dd>
+	<dt>RDF (Resource Description Framework)</dt>
+	<dd>A data model and streaming format for metadata, with search engines
+		and inference engines as potential users. Much metadata is textual, and
+		a basic operation is to decide whether two elements of metadata are the
+		same or not. For consistent behavior, string identity matching is
+		necessary.</dd>
+	<dt>URIs</dt>
+	<dd>Web addresses, with various components; pivot point for much of the
+		WWW. How to encode arbitrary bytes into a restricted set of characters
+		(using %HH escapes) is well defined, but which character encoding to use
+		to encode arbitrary characters into bytes is not defined. In most cases,
+		e.g. in proxies, comparisons are strictly binary. Without some
+		specification for uniform normalization, some characters cannot reliably
+		be used.</dd>
+</dl>
+			 </div>
+			 <div class="div1">
+			<h2><a name="Glossary" id="Glossary">Glossary</a></h2>
+			<p>This glossary does not provide exact definitions of terms but gives some
+				background on how certain words are used in this document.</p>
+			<dl>
+				<dt>Character</dt>
+				<dd>Used in a loose sense to denote small units of text, where the exact
+					definition of these units is still open.</dd>
+				<dt>Early Normalization</dt>
+				<dd>Duplicates and ambiguities are removed as close to their source as
+					possible. This is done by normalizing them to a single representation.
+					Because the normalization is not done by the component that carries out
+					the identity check, normalization has to be done uniformly for all the
+					components of the WWW.</dd>
+				<dt>Late Normalization</dt>
+				<dd>Each individual component that performs a string identity check has to
+					take equivalences into account. This is usually done by normalizing each
+					string to a preferred representation that eliminates duplicates and
+					ambiguities. Because, with late normalization, normalization is done
+					locally and on the fly, there is no need to specify a web-wide uniform
+					normalization.</dd>
+				<dt>String Identity Matching</dt>
+				<dd>Exact matching of strings, except for encoding duplicates
+					indistinguishable to the user. See <a href="#sec2">section 2</a>.</dd>
+				<dt>String Indexing</dt>
+				<dd>Indexing into a string to address a character or a sequence of
+					characters. See <a href="#sec4">section 4</a>.</dd>
+				<dt>UCS</dt>
+				<dd>Universal Character Set, the character repertoire defined in parallel
+					by [<a href="#iso10646">ISO 10646</a>] and [<a
+      href="#unicode">Unicode</a>].</dd>
+				<dt>WWW</dt>
+				<dd>World-wide Web, the collection of technologies built up starting with
+					HTML, HTTP, and URIs, the corresponding software (servers,
+					browsers,...), and/or the corresponding content.</dd>
+			</dl>
+			 </div>
+			 
+			 
+			 <div class="div1">
+<h2><a name="References" id="References">References</a></h2>
+<dl>
+	<dt><a name="css2" id="css2">[CSS2]</a></dt>
+	<dd>Bert Bos, Tantek Çelik, Ian Hickson, Håkon Wium Lie,  Eds., <cite><a
+      href="http://www.w3.org/TR/CSS2/">Cascading Style Sheets Level 2 Revision 1 (CSS 2.1) Specification</a></cite> (CSS2.1 Specification), W3C Candidate Recommendation 8 September 2009, <a
+      href="http://www.w3.org/TR/CSS2/">http://www.w3.org/TR/CSS2/</a>. </dd>
+	<dt><a name="iso6937" id="iso6937">[ISO 6937]</a></dt>
+	<dd><a href="http://www.iso.org/iso/iso_catalogue/catalogue_ics/catalogue_detail_ics.htm?csnumber=31393">ISO/IEC 6937:2001</a>, <cite>Information technology -- Coded graphic character set for text
+		communication -- Latin alphabet</cite>. </dd>
+	<dt><a name="iso8859" id="iso8859">[ISO 8859]</a></dt>
+	<dd>ISO/IEC 8859, <cite>Information technology -- 8-bit single-byte coded
+		graphic character sets</cite> (<a
+      href="http://www.iso.org/iso/search.htm?qt=8859&amp;searchSubmit=Search&amp;sort=rel&amp;type=simple&amp;published=on">various
+			parts</a> and publication dates). </dd>
+	<dt><a name="iso10646" id="iso10646">[ISO 10646]</a></dt>
+	<dd><a href="http://www.iso.org/iso/iso_catalogue/catalogue_ics/catalogue_detail_ics.htm?csnumber=39921">ISO/IEC 10646-1:2003</a>, <cite>Information technology -- Universal Multiple-Octet Coded Character
+		Set (UCS) -- Part 1: Architecture and Basic Multilingual Plane</cite>,
+		and its amendments. </dd>
+	<dt><a name="html40" id="html40">[HTML 4.0]</a></dt>
+	<dd>Dave Raggett, Arnaud Le Hors, Ian Jacobs, Eds., <cite><a
+      href="http://www.w3.org/TR/REC-html40/">HTML 4.0
+		Specification</a></cite>, W3C Recommendation 18-Dec-1997 (revised on
+		24-Apr-1998), <a
+      href="http://www.w3.org/TR/REC-html40/">http://www.w3.org/TR/REC-html40/</a>.</dd>
+	<dt><a name="Nicol" id="Nicol">[Nicol]</a></dt>
+	<dd>Gavin Nicol, <cite>The Multilingual World Wide Web</cite>, <a
+      href="http://www.mind-to-mind.com/i18n/multilingual-www.html#ID-2A08F773">Chapter
+		2: The WWW As A Multilingual Application</a>, <a
+      href="http://www.mind-to-mind.com/i18n/multilingual-www.html#ID-2A08F773">http://www.mind-to-mind.com/i18n/multilingual-www.html#ID-2A08F773</a>.</dd>
+	<dt><a name="rfc2070" id="rfc2070">[RFC 2070]</a></dt>
+	<dd>F. Yergeau, G. Nicol, G. Adams, M. Dürst, <cite><a
+      href="http://www.rfc-editor.org/rfc/rfc2070.txt">Internationalization of
+		the Hypertext Markup Language</a></cite>, RFC 2070, January 1997, <a
+      href="http://www.rfc-editor.org/rfc/rfc2070.txt">http://www.rfc-editor.org/rfc/rfc2070.txt</a>.</dd>
+	<dt><a name="rfc2130" id="rfc2130">[RFC 2130]</a></dt>
+	<dd>C. Weider, C. Preston, K. Simonsen, H. Alvestrand, R. Atkinson, M.
+		Crispin, P. Svanberg, <cite><a
+      href="http://www.rfc-editor.org/rfc/rfc2130.txt">The Report of the IAB
+			Character Set Workshop</a></cite> held 29 February - 1 March, 1996, RFC
+		2130, April 1997, <a
+      href="http://www.rfc-editor.org/rfc/rfc2130.txt">http://www.rfc-editor.org/rfc/rfc2130.txt</a>.</dd>
+	<dt><a name="rfc2277" id="rfc2277">[RFC 2277]</a></dt>
+	<dd>H. Alvestrand, <cite><a
+      href="http://www.rfc-editor.org/rfc/rfc2277.txt">IETF Policy on Character
+		Sets and Languages</a></cite>, RFC 2277 / BCP 18, January 1998, <a
+      href="http://www.rfc-editor.org/rfc/rfc2277.txt">http://www.rfc-editor.org/rfc/rfc2277.txt</a>.</dd>
+	<dt><a name="unicode" id="unicode">[Unicode]</a></dt>
+	<dd>The Unicode Consortium, <a href="http://www.unicode.org/versions/Unicode5.1.0/">The Unicode Standard, Version 5.1</a>, ISBN 0-321-18578-1, as updated from time to time by the publication of new versions. (See <a href="http://www.unicode.org/unicode/standard/versions/">http://www.unicode.org/unicode/standard/versions/</a> for the latest version and additional information on versions of the standard and of the Unicode Character Database).</dd>
+	<dt><a name="uri" id="uri">[URI]</a></dt>
+	<dd>T. Berners-Lee, R. Fielding, L. Masinter, <cite><a
+      href="http://www.rfc-editor.org/rfc/rfc3986.txt">Uniform Resource Identifier (URI): Generic Syntax</a></cite>, RFC 3986, January 2005, <a
+      href="http://www.rfc-editor.org/rfc/rfc3986.txt">http://www.rfc-editor.org/rfc/rfc3986.txt</a>.</dd>
+	<dt><a name="xml10" id="xml10">[XML 1.0]</a></dt>
+	<dd>Tim Bray, Jean Paoli, C. M. Sperberg-McQueen, Eve Maler, François Yergeau, Eds., <cite><a
+      href="http://www.w3.org/TR/xml/">Extensible Markup Language (XML)
+		1.0</a></cite>, W3C Recommendation, 26 November 2008, <a
+      href="http://www.w3.org/TR/xml/">http://www.w3.org/TR/xml/</a>.</dd>
+</dl>
+</div></div>
+</body></html>

@@ -1,0 +1,950 @@
+<!-- http://www.w3.org/TR/modality-interface/ -->
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta name="generator" content=
+"HTML Tidy for Linux/x86 (vers 1st November 2003), see www.w3.org" />
+<title>Modality Component to Host Environment DOM Requirements and
+Capabilities Assessment</title>
+
+<style type="text/css">
+/*<![CDATA[*/
+.menu { text-align: center }
+.ex { color: green }
+.toc A { text-decoration: none}
+table { margin-left: 5%}
+li { margin-top: 0.5em}
+div.issues { border-width: thin;
+  border-style: solid;
+  border-color: maroon;
+  background-color: #ffcc99;
+  width: 95%; padding: 0.5em; }
+.issues h4 { margin-top: 0px; font-size: larger}
+.new { color: blue }
+.remove { text-decoration: line-through }
+.diff { color: red }
+.hide { display: none }
+
+.figure { text-align: center }
+.caption { text-align: center }
+code { font-size: 110%; font-weight: bold }
+table.compendium { margin-left: 0; font-size: 85% }
+/*]]>
+*/
+</style>
+<link rel="stylesheet" type="text/css"
+ href="http://www.w3.org/StyleSheets/TR/W3C-WG-NOTE" />
+</head>
+<body xml:lang="en" lang="en">
+<div class="head">
+
+<p><a href="http://www.w3.org/"><img height="48" width="72" alt=
+"W3C" src="http://www.w3.org/Icons/w3c_home" /></a></p>
+
+<h1>Modality Component to Host Environment DOM Requirements and
+Capabilities Assessment</h1>
+
+<h2>W3C Working Group Note 10 May 2004</h2>
+<dl>
+<dt>This version:</dt>
+
+<dd><a href="http://www.w3.org/TR/2004/NOTE-modality-interface-20040510/"
+>http://www.w3.org/TR/2004/NOTE-modality-interface-20040510/</a></dd>
+
+<dt>Latest version:</dt>
+<dd><a href="http://www.w3.org/TR/modality-interface/"
+>http://www.w3.org/TR/modality-interface/</a></dd>
+
+<!--
+<dt>Previous version:</dt>
+-->
+<dt>Editor:</dt>
+
+<dd>Brad Porter, Tellme Networks (editor)<br /></dd>
+<dt>Contributors:</dt>
+<dd>Jonny Axelsson, Opera</dd>
+<dd>Stephen Potter, Microsoft</dd>
+<dd>TV Raman, IBM</dd>
+<dd>Dave Raggett, W3C/Canon</dd>
+</dl>
+
+<p class="copyright"><a
+href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a>
+&#169; 2004 <a href="http://www.w3.org/"><acronym
+title="World Wide Web Consortium">W3C</acronym></a><sup>&#174;</sup> (<a
+href="http://www.csail.mit.edu/"><acronym
+title="Massachusetts Institute of Technology">MIT</acronym></a>, <a
+href="http://www.ercim.org/"><acronym
+title="European Research Consortium for Informatics and Mathematics">ERCIM</acronym></a>,
+
+<a href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C <a
+href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>,
+<a
+href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a>,
+<a href="http://www.w3.org/Consortium/Legal/copyright-documents">document
+use</a> and <a
+href="http://www.w3.org/Consortium/Legal/copyright-software">software
+licensing</a> rules apply.</p>
+</div>
+
+<hr title="Separator from Header" />
+<div class="abstract">
+
+<h2 id="abstract">Abstract</h2>
+
+<p>This document describes the DOM capabilities needed to support a
+heterogeneous multimodal environment and the current state of DOM
+interfaces supporting those capabilities. These DOM interfaces are
+used between modality components and their host environment in the
+<a href="http://www.w3.org/TR/mmi-framework/">W3C Multimodal
+Interaction Framework</a> as proposed by the <a href=
+"http://www.w3.org/2002/mmi/">W3C Multimodal Interaction
+Activity</a>.</p>
+
+<p>The Multimodal Interaction Framework separates multimodal
+systems into a set of functional units, including Input and Output
+components, an Interaction Mananger, Session Components, System and
+Environment, and Application Functions. In order for those
+functional components to interact with each other to form an
+application interpreter, the browser implementation must allow for
+communication and coordination between those components. This DOM
+interface identifies the DOM APIs used to communicate and
+coordinate at the browser implemention level. Multimodal browsers
+can be stand-alone or distributed systems.</p>
+</div>
+
+<div class="status">
+<h2 id="status">Status of this document</h2>
+
+<p><em>This section describes the status of this document at the
+time of its publication. Other documents may supersede this
+document. A list of current W3C publications and the latest
+revision of this technical report can be found in the <a href=
+"http://www.w3.org/TR/">W3C technical reports index</a> at
+http://www.w3.org/TR/.</em></p>
+
+<p>Publication as a Working Group Note does not imply endorsement
+by the W3C Membership. This is a draft document and may be updated,
+replaced or obsoleted by other documents at any time. It is
+inappropriate to cite this document as other than work in
+progress.</p>
+
+<p>This document describes the DOM capabilities required between
+modality components and their host environment, as a basis for a
+common component model to support multimodal applications.</p>
+
+<p>This document is a capabilities assessment of DOM1, DOM2, and
+DOM3. DOM1 edition 2 reached Recommendation status in 2000 with
+limited support for XML. DOM2 supersedes DOM1 and reached
+Recommendation status in January 2003 as a series of modules
+designed to support XML. DOM3 builds upon DOM2. At the time of
+publication, DOM3 Core, DOM3 Load and Save, and DOM3 Validation
+have all reached W3C Recommendation status. DOM3 XPath, Views and
+Formatting, and Events have been published as Notes. Vendor support
+for DOM levels in mobile and desktop devices varies significantly.</p>
+
+<p>This requirements and capabilities assessment is <i>not</i> a
+specification of the actual interfaces that would be used in a
+multimodal context. An actual specification of interfaces must
+address the following unanswered questions in order to provide an
+open standard upon which portable multimodal documents could be
+built: which level of DOM should be the basis for that interface,
+what common events and properties must be supported by the modality
+component and host environment.</p>
+
+<p>This document has been produced as part of the <a href=
+"http://www.w3.org/2002/mmi/">W3C Multimodal Interaction
+Activity</a>, <a href=
+"http://www.w3.org/2002/mmi/Activity.html"></a>following the
+procedures set out for the <a href=
+"http://www.w3.org/Consortium/Process/">W3C Process</a>. The
+authors of this document are members of the <a href=
+"http://www.w3.org/2002/mmi/Group/">Multimodal Interaction Working
+Group</a> <i>(<a href=
+"http://cgi.w3.org/MemberAccess/AccessRequest">W3C Members
+only</a>)</i>.</p>
+
+<p>Patent disclosures relevant to this specification may be found
+on the Working Group's <a href=
+"http://www.w3.org/2002/01/mmi-ipr.html">patent disclosure page</a>
+in conformance with W3C policy.</p>
+
+<p>This document is for public review, and comments and discussion
+are welcomed on the (<a href=
+"http://lists.w3.org/Archives/Public/www-multimodal/">archived</a>)
+public mailing list &lt;<a href=
+"mailto:www-multimodal@w3.org">www-multimodal@w3.org</a>&gt;.</p>
+</div>
+
+<hr />
+
+<h2 id="s1">1 Overview</h2>
+
+<p>This document defines the capabilities and requirements of a
+common DOM-based API between modality components and their host
+environment. The document further describes the current level of
+support for these capabilities in DOM 1, DOM 2, and DOM 3. This
+document is not a formal API definition. A formal API definition
+would need to address a single level of DOM and further specify
+common interfaces and events.</p>
+
+<p>Modality components perform interface tasks pertinent to their
+particular interface modality (e.g voice, pen, visual display).
+Modality components can perform interface tasks ranging from the
+simple input/output such as pen strokes collection, audio playback
+to complex transaction like dialogs and card stacks.</p>
+
+<p>The host environment allows multiple modality components to
+share data such as a semantic result and the confidence value
+associated with that result. The host environment also coordinates
+the activities of modality components in a multimodal application;
+for instance, activation, deactivation, display/prompting.</p>
+
+<p>A multimodal application is comprised of many modality
+components interacting with the user, all coordinated by the host
+environment.</p>
+
+<p>A common DOM-based API between modality components and their
+host environment allows for the creation of new modality components
+that will work with existing host environments. This common API
+would also allow for the creation of new host environments for
+various architectures and devices.</p>
+
+<p>This DOM-based API requirements and capabilities analysis has
+been performed with the multimodal browser developer in mind. The
+objective is to enable portable multimodal content. These APIs may
+be (and in most cases will be) entirely hidden from the application
+developer. These APIs provide the foundation which allow for
+higher-level language constructs specific to the modality component
+or host environment.</p>
+
+<h2 id="s2">2 General DOM Implementation Features</h2>
+
+<p>These are the general features required of a Host Environment
+browser implementation to support the integration of a Modality
+Component. Features relating to DOM support are assumed to be
+implemented by the DOM Implementation component of the browser.</p>
+
+<p>The intent is that this DOM framework should work in a
+multi-document scenario. Further specification of that would be
+required of an interface definition standard</p>
+
+<h3 id="s2.1">2.1 Component Parsed/Loaded Notification</h3>
+
+<p>Enables the browser to know when a component (or a proxy to a
+remote component) is present on the page. In response, the host
+enables component to register itself and latch to host
+environment.</p>
+
+<h3 id="s2.2">2.2 Component Unloaded Notification</h3>
+
+<p>Enables the browser to know when a component (or a proxy to a
+remote component) is removed from the page. In response, the host
+enables component to unregister itself.</p>
+
+<h3 id="s2.3">2.3 General DOM Errors</h3>
+
+<p>Enables the browser to be aware of DOM errors raised by the
+component.</p>
+
+<table cellpadding="4">
+<tr>
+<td><b>DOM Level 1</b></td>
+<td><code>DOMException</code> exception</td>
+</tr>
+<tr>
+<td><b>DOM Level 2</b></td>
+<td><code><a href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-17189187">DOMException</a></code>
+exception</td>
+</tr>
+<tr>
+<td><b>DOM Level 3</b></td>
+<td><code><a href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-17189187">DOMException</a></code>
+exception</td>
+</tr>
+</table>
+
+<h3 id="s2.4">2.4 URL of the Current Page</h3>
+
+<p>For components which specify remote resources via URLs, this
+enables the browser to resolve references which are relative to the
+current page.</p>
+
+<table cellpadding="4">
+<tr>
+<td><b>DOM Level 1</b></td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><b>DOM Level 2</b></td>
+<td><code><a href=
+"http://www.w3.org/TR/DOM-Level-2-HTML/html.html#ID-46183437">HTMLDocument.URL</a></code>
+(DOM2 HTML)</td>
+</tr>
+<tr>
+<td><b>DOM Level 3</b></td>
+<td><code><a href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#Document3-documentURI">
+Document.DocumentURI</a></code></td>
+</tr>
+</table>
+
+<h3 id="s2.5">2.5 Access to Current Page as Document Object</h3>
+
+<p>Enables access to the interfaces described in the Document
+section below.</p>
+
+<table cellpadding="4" id="Table2">
+<tr>
+<td><b>DOM Level 1</b></td>
+<td><code>Document</code> interface</td>
+</tr>
+<tr>
+<td><b>DOM Level 2</b></td>
+<td><code><a href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#i-Document">Document</a></code>
+interface</td>
+</tr>
+<tr>
+<td><b>DOM Level 3</b></td>
+<td><code><a href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#i-Document">Document</a></code>
+interface</td>
+</tr>
+</table>
+
+<h2 id="s3">3 Document Interfaces</h2>
+
+<p>These are the interfaces which are necessary for component
+integration into a document supporting the Document interface.</p>
+
+<h3 id="s3.1">3.1 Component Declaration and Instantiation</h3>
+
+<p>This subsection describes the interfaces necessary for the
+declaration and instantiation of modality components.</p>
+
+<h4 id="s3.1.1">3.1.1 Namespace Management</h4>
+
+<p>Document interfaces for: identification (find namespace
+declaration, prefix) and determine parent element tree (for scoped
+namespaces). Enables the host environment to identify a component
+by its namespace.</p>
+
+<table cellpadding="4" id="Table3">
+<tr>
+<td height="29"><b>DOM Level 1</b></td>
+<td height="29">(navigation and identification primitives, no
+native namespace support)</td>
+</tr>
+<tr>
+<td><b>DOM Level 2</b></td>
+<td>DOM 1 + <a href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-NodeNSname">Node.namespaceURI</a></td>
+</tr>
+<tr>
+<td><b>DOM Level 3</b></td>
+<td>DOM 2 + further native namespace interfaces)</td>
+</tr>
+</table>
+
+<h4 id="s3.1.2">3.1.2 Location of Component in Document</h4>
+
+<p>Parent traversal interfaces. Enables the host environment to
+know in which elements of the document the component is placed, and
+to implement any location-dependent semantics accordingly. This
+includes scoped properties which may be inherited (e.g.
+xml:lang).</p>
+
+<table cellpadding="4" id="Table4">
+<tr>
+<td><b>DOM Level 1</b></td>
+<td><code>Node.parentNode</code>, etc.</td>
+</tr>
+<tr>
+<td><b>DOM Level 2</b></td>
+<td><code><a href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-1060184317">Node.parentNode</a></code>,
+etc.</td>
+</tr>
+<tr>
+<td><b>DOM Level 3</b></td>
+<td><code><a href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-1060184317">Node.parentNode</a></code>,
+etc.</td>
+</tr>
+</table>
+
+<h4 id="s3.1.3">3.1.3 Component Self-Identification</h4>
+
+<p>Attribute of type <code>ID</code> on component node. Enables the
+mapping of a given component on the page to the browser's
+instantiation of that component.</p>
+
+<h3 id="s3.2">3.2 Access to Component</h3>
+
+<p>This subsection describes the interfaces that a modality
+component may choose to enable to allow the host environment to
+directly manipulate the component.</p>
+
+<h4 id="s3.2.1">3.2.1 Read Interfaces</h4>
+
+<p>The component exposes its public interfaces within the framework
+of the DOM of the current page. Access to the properties, methods
+and events of the modality component is then available to the flow
+control mechanisms of the host environment (script, SMIL, etc.). In
+general, these interfaces will be modality-specific, and defined
+for each component according to its function, however, certain
+common interfaces may be implemented which are standard across
+different modality components (e.g. Start and Stop methods, result
+events).</p>
+
+<h4 id="s3.2.2">3.2.2 Property Write Interfaces</h4>
+
+<p>Value setting and rewrite interfaces. Enables the host
+environment to manipulate properties without modifying document
+tree structure.</p>
+
+<table cellpadding="4" id="Table7">
+<tr>
+<td><b>DOM Level 1</b></td>
+<td><code>Document.createAttribute()</code>,
+<code>Element.SetAttribute()</code>,
+<code>Node.nodeValue</code></td>
+</tr>
+<tr>
+<td><b>DOM Level 2</b></td>
+<td><code><a href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-1084891198">Document.createAttribute()</a></code>,<code>
+<a href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-DocCrAttrNS">Document.createAttributeNS()</a>,</code>
+<a href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-F68F082">Element.SetAttribute()</a>,
+<code><a href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-ElSetAttrNS">Element.SetAttributeNS()</a></code>,
+<a href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-F68D080">Node.nodeValue</a></td>
+</tr>
+<tr>
+<td><b>DOM Level 3</b></td>
+<td><code><a href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-1084891198">Document.createAttribute()</a></code>,<code>
+<a href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-DocCrAttrNS">Document.createAttributeNS()</a></code>,<code>
+<a href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-F68F082">Element.SetAttribute()</a></code>,<code>
+<a href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-ElSetAttrNS">Element.SetAttributeNS()</a>
+<a href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-F68D080">Node.nodeValue</a></code></td>
+</tr>
+</table>
+
+<h4 id="s3.2.3">3.2.3 XML Structure Modification Write Interfaces</h4>
+
+<p>Enables the host environment to manipulate the internal content
+and/or structure of the component. Examples of this may include
+manipulating an EMMA result before binding it into the host
+environment data model, and updating an inline grammar before
+beginning recognition.</p>
+
+<table cellpadding="4" id="Table7b">
+<tr>
+<td><b>DOM Level 1</b></td>
+<td><code>Document.createElement(), Node.replaceChild()</code></td>
+</tr>
+<tr>
+<td><b>DOM Level 2</b></td>
+<td><code><a href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-2141741547">Document.createElement()</a></code>,<code>
+<a href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-DocCrElNS">Document.createElementNS()</a></code>,
+<code><a href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-785887307">Node.replaceChild()</a></code></td>
+</tr>
+<tr>
+<td><b>DOM Level 3</b></td>
+<td><code><a href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-2141741547">Document.createElement()</a></code>,<code>
+<a href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-DocCrElNS">Document.createElementNS()</a></code>,<code>
+<a href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-785887307">Node.replaceChild()</a></code></td>
+</tr>
+</table>
+
+<h3 id="s3.3">3.3 Data Binding into Host Environment</h3>
+
+<p>This subsection describes the interfaces necessary for data
+binding from the Modality Component into the Host Environment. In
+the following requirements, the data to be bound called the
+'result', and the location to which the data is to be bound is
+called the 'target'.</p>
+
+<h4 id="s.3.3.1">3.3.1 Navigation to Target Node</h4>
+
+<p>This enables the selection of the binding target. Since
+specification of target node may differ among components (for
+example, some may use IDs, others XPath, etc.), different means of
+selecting the target node may be required for different
+components.</p>
+
+<table cellpadding="4" id="Table5">
+<tr>
+<td><b>DOM Level 1</b></td>
+<td><code>Document.getElementById()</code> (DOM 1 HTML)</td>
+</tr>
+<tr>
+<td><b>DOM Level 2</b></td>
+<td><code><a href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-getElBId">Document.getElementById()</a></code>,
+XPath query</td>
+</tr>
+<tr>
+<td><b>DOM Level 3</b></td>
+<td><code><a href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-getElBId">Document.getElementById()</a></code>,
+<code><a href=
+"http://www.w3.org/TR/DOM-Level-3-XPath/">XPath</a></code></td>
+</tr>
+</table>
+
+<h4 id="s3.3.2">3.3.2 Write Access to Target Node</h4>
+
+<p>Value setting/rewriting interfaces (no restructuring). Enables the
+writing of the result data into the target node.</p>
+
+<table cellpadding="4" id="Table6">
+<tr>
+<td><b>DOM Level 1</b></td>
+<td><code>Document.createAttribute()</code>,
+<code>Element.SetAttribute()</code>,
+<code>Node.nodeValue</code></td>
+</tr>
+<tr>
+<td><b>DOM Level 2</b></td>
+<td><code><a href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-1084891198">Document.createAttribute()</a></code>,<code>
+<a href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-DocCrAttrNS">Document.createAttributeNS()</a>,</code>
+<a href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-F68F082">Element.SetAttribute()</a>,
+<code><a href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-ElSetAttrNS">Element.SetAttributeNS()</a></code>,
+<a href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-F68D080">Node.nodeValue</a></td>
+</tr>
+<tr>
+<td><b>DOM Level 3</b></td>
+<td><code><a href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-1084891198">Document.createAttribute()</a></code>,<code>
+<a href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-DocCrAttrNS">Document.createAttributeNS()</a></code>,<code>
+<a href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-F68F082">Element.SetAttribute()</a></code>,<code>
+<a href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-ElSetAttrNS">Element.SetAttributeNS()</a>
+<a href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-F68D080">Node.nodeValue</a></code></td>
+</tr>
+</table>
+
+<h4 id="s3.3.3">3.3.3 Reading Values from Host Environment Data</h4>
+
+<p>This subsection describes the interfaces necessary for
+components to access data from the Host Environment, where the
+component may use host environment data in behavior, for example,
+where input or output presentation components must act on the basis
+of host environment data values. In this case the 'target' is the
+node in the host environment from which data is to be read.</p>
+
+<table cellpadding="4" id="Table8">
+<tr>
+<td><b>DOM Level 1</b></td>
+<td><code>Node.nodeValue</code></td>
+</tr>
+<tr>
+<td><b>DOM Level 2</b></td>
+<td><code><a href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-F68D080">Node.nodeValue</a></code></td>
+</tr>
+<tr>
+<td><b>DOM Level 3</b></td>
+<td><code><a href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-F68D080">Node.nodeValue</a></code></td>
+</tr>
+</table>
+
+<h2 id="s4">4 Method Calling on Host Environment Flow Control</h2>
+
+<p>This subsection describes the interfaces necessary for
+components to call methods on objects in the Host Environment, for
+the purposes of flow control.</p>
+
+<h3 id="s4.1">4.1 Navigation to Target Node</h3>
+
+<table cellpadding="4" id="Table9">
+<tr>
+<td><b>DOM Level 1</b></td>
+<td><code>Document.getElementById()</code> (DOM 1 HTML)</td>
+</tr>
+<tr>
+<td><b>DOM Level 2</b></td>
+<td><code><a href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-getElBId">Document.getElementById()</a></code></td>
+</tr>
+<tr>
+<td><b>DOM Level 3</b></td>
+<td><code><a href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-getElBId">Document.getElementById()</a>,
+<a href="http://www.w3.org/TR/DOM-Level-3-XPath/">DOM Level 3 XPath
+specification</a></code></td>
+</tr>
+</table>
+
+<h2 id="s5">5 Events</h2>
+
+<p>These are the interfaces necessary for events to be passed from
+the modality component to the host environment.</p>
+
+<h3 id="s5.1">5.1 Event Propagation</h3>
+
+<p>Enables modality component to take advantage of bubbling, event
+start/stop mechanisms</p>
+
+<table cellpadding="4" id="Table11">
+<tr>
+<td><b>DOM Level 1</b></td>
+<td>(not specified)</td>
+</tr>
+<tr>
+<td><b>DOM Level 2</b></td>
+<td>ability to attach event handlers at various phases, ability to
+define default event handlers, standardized bubbling mechanism</td>
+</tr>
+<tr>
+<td><b>DOM Level 3</b></td>
+<td>ability to attach event handlers at various phases, ability to
+define default event handlers, standardized bubbling mechanism,
+adds <a href=
+"http://www.w3.org/TR/2003/NOTE-DOM-Level-3-Events-20031107/events.html#Events-Event-stopPropagation">
+stopPropagation()</a> and <a href=
+"http://www.w3.org/TR/2003/NOTE-DOM-Level-3-Events-20031107/events.html#Events-Event-stopImmediatePropagation">
+stopImmediatePropagation()</a></td>
+</tr>
+</table>
+
+<h3 id="s5.2">5.2 Event Creation</h3>
+
+<p>Enables modality component to generate events.</p>
+
+<table cellpadding="4" id="Table10">
+<tr>
+<td><b>DOM Level 1</b></td>
+<td>(not specified)</td>
+</tr>
+<tr>
+<td><b>DOM Level 2</b></td>
+<td><code><a href=
+"http://www.w3.org/TR/DOM-Level-2-Events/events.html#Events-DocumentEvent">
+DocumentEvent</a></code> interface</td>
+</tr>
+<tr>
+<td><b>DOM Level 3</b></td>
+<td><code><a href=
+"http://www.w3.org/TR/2003/NOTE-DOM-Level-3-Events-20031107/events.html#Events-DocumentEvent">
+DocumentEvent</a></code> interface</td>
+</tr>
+</table>
+
+<h3 id="s5.3">5.3 Event Handler Registration</h3>
+
+<p>Enables modality component to register handlers</p>
+
+<table cellpadding="4" id="Table12">
+<tr>
+<td><b>DOM Level 1</b></td>
+<td>(not specified)</td>
+</tr>
+<tr>
+<td><b>DOM Level 2</b></td>
+<td><code><a href=
+"http://www.w3.org/TR/DOM-Level-2-Events/events.html#Events-EventListener">
+Node.Event<ins>Listener</ins></a></code> interface</td>
+</tr>
+<tr>
+<td><b>DOM Level 3</b></td>
+<td><code><a href=
+"http://www.w3.org/TR/2003/NOTE-DOM-Level-3-Events-20031107/events.html#Events-EventListener">
+Node.EventListener</a></code>, namespace and event category support
+through <a href=
+"http://www.w3.org/TR/2003/NOTE-DOM-Level-3-Events-20031107/events.html#Events-EventTargetGroup-addEventListenerNS">
+addEventListenerNS()</a></td>
+</tr>
+</table>
+
+<h2 id="s6">6 Markup-level Abstractions</h2>
+
+<p>The DOM interfaces described in this document specify the
+low-level component interaction layer. Application authors will
+develop multimodal applications in markup or scripting languages
+which are built upon these DOM primitives. These markup or
+scripting languages provide at least three advantages to the
+application author: simplified programming constructs, for instance
+time-sequenced interactions could be specified through markup that
+is then translated by the browser into these DOM manipulations;
+improved sandboxing, for example preventing one component from
+modifying another; constraint preservation such as enforcing the
+data type of a particular field. The examples below possible
+application-layer constructs built upon DOM interfaces the that
+could be used to develop multimodal applications.</p>
+
+<h3 id="s6.1">6.1 XML Events</h3>
+
+<p>XML Events 1.0 defines an XML module for authoring event
+bindings conformant to the DOM2 event propagation. It is a W3C
+Recommendation that is designed for use with XHTML and other
+XML-based markup languages and provides the XML author with the
+same level of access to attaching events and event handlers as
+provided by the interfaces enumerated in section 5.</p>
+
+<h3 id="s6.2">6.2 XForms</h3>
+
+<p>The XForms 1.0 REC defines an XForms model that holds an XML
+instance where values collected from the user are stored and
+retrieved. For environments that include the XForms module,
+modality components can get and set values from/to this instance.
+Setting such values will automatically synchronize these values
+across different modalities. Values in the XForms instance can be
+manipulated using standard XML DOM calls after a reference to the
+XForms instance data has been first retrieved via function
+getInstanceDocument() ---defined in 7.3.1 of the XForms 1.0
+specification.</p>
+
+<h3 id="s6.3">6.3 SMIL 2.0</h3>
+
+<p>Synchronized Multimedia Integration Language (SMIL 2.0) is an
+XML-based language that allows authors to write interactive
+multimedia presentations. Through its timing and synchronization
+support, SMIL 2.0 enables the description of the temporal behavior
+of a multimedia or multimodal application. The DOM events and
+methods of a given component can be mapped to timing behaviors
+defined in SMIL's timing and synchronization module (beginning,
+duration, ending, etc.), and the application author may thereby
+control the activation of multimodal input and output components
+through SMIL markup.</p>
+
+<h3 id="s6.4">6.4 Scripting modules</h3>
+
+<p>Many host environments support scripting for application
+authors, for example XHTML 1.1 Scripting Module, SVG 1.1 Scripting
+Module. Scripting modules typically allow access to many public
+interfaces of the host document and its component nodes, enabling
+direct programmatic control of the properties, methods and events
+of multimodal components through languages such as ECMAScript.
+Scripting hosts may provide direct language bindings of the
+interfaces specified in this document, and/or abstractions and
+programming conveniences on top of these interfaces.</p>
+
+<h2 id="sAppA">Appendix A</h2>
+
+<p>The following table is an XSLT transformation of the sections
+and DOM interfaces described above. This is purely for convenience
+of reference.</p>
+
+<table border="1" class="compendium">
+<tr>
+<th>Function</th>
+<th>DOM Level 1</th>
+<th>DOM Level 2</th>
+<th>DOM Level 3</th>
+</tr>
+<tr>
+<th>2.3 General DOM Errors</th>
+<td><code>DOMException</code> exception</td>
+<td><code><a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-17189187">DOMException</a></code>
+exception</td>
+<td><code><a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-17189187">DOMException</a></code>
+exception</td>
+</tr>
+<tr>
+<th>2.4 URL of the Current Page</th>
+<td>N/A</td>
+<td><code><a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-2-HTML/html.html#ID-46183437">HTMLDocument.URL</a></code>
+(DOM2 HTML)</td>
+<td><code><a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#Document3-documentURI">
+Document.DocumentURI</a></code></td>
+</tr>
+<tr>
+<th>2.5 Access to Current Page as Document Object</th>
+<td><code>Document</code> interface</td>
+<td><code><a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#i-Document">Document</a></code>
+interface</td>
+<td><code><a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#i-Document">Document</a></code>
+interface</td>
+</tr>
+<tr>
+<th>3.1 Component Declaration and Instantiation</th>
+<td>(navigation and identification primitives, no native namespace
+support)</td>
+<td>DOM 1 + <a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-NodeNSname">Node.namespaceURI</a></td>
+<td>DOM 2 + further native namespace interfaces)</td>
+</tr>
+<tr>
+<th>3.1 Component Declaration and Instantiation</th>
+<td><code>Node.parentNode</code>, etc.</td>
+<td><code><a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-1060184317">Node.parentNode</a></code>,
+etc.</td>
+<td><code><a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-1060184317">Node.parentNode</a></code>,
+etc.</td>
+</tr>
+<tr>
+<th>3.2 Access to Component</th>
+<td><code>Document.createAttribute()</code>,
+<code>Element.SetAttribute()</code>,
+<code>Node.nodeValue</code></td>
+<td><code><a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-1084891198">Document.createAttribute()</a></code>,<code>
+<a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-DocCrAttrNS">Document.createAttributeNS()</a>,</code>
+<a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-F68F082">Element.SetAttribute()</a>,
+<code><a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-ElSetAttrNS">Element.SetAttributeNS()</a></code>,
+<a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-F68D080">Node.nodeValue</a></td>
+<td><code><a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-1084891198">Document.createAttribute()</a></code>,<code>
+<a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-DocCrAttrNS">Document.createAttributeNS()</a></code>,<code>
+<a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-F68F082">Element.SetAttribute()</a></code>,<code>
+<a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-ElSetAttrNS">Element.SetAttributeNS()</a>
+<a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-F68D080">Node.nodeValue</a></code></td>
+</tr>
+<tr>
+<th>3.2 Access to Component</th>
+<td><code>Document.createElement(), Node.replaceChild()</code></td>
+<td><code><a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-2141741547">Document.createElement()</a></code>,<code>
+<a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-DocCrElNS">Document.createElementNS()</a></code>,
+<code><a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-785887307">Node.replaceChild()</a></code></td>
+<td><code><a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-2141741547">Document.createElement()</a></code>,<code>
+<a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-DocCrElNS">Document.createElementNS()</a></code>,<code>
+<a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-785887307">Node.replaceChild()</a></code></td>
+</tr>
+<tr>
+<th>3.3 Data Binding into Host Environment</th>
+<td><code>Document.getElementById()</code> (DOM 1 HTML)</td>
+<td><code><a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-getElBId">Document.getElementById()</a></code>,
+XPath query</td>
+<td><code><a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-getElBId">Document.getElementById()</a></code>,
+<code><a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-3-XPath/">XPath</a></code></td>
+</tr>
+<tr>
+<th>3.3 Data Binding into Host Environment</th>
+<td><code>Document.createAttribute()</code>,
+<code>Element.SetAttribute()</code>,
+<code>Node.nodeValue</code></td>
+<td><code><a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-1084891198">Document.createAttribute()</a></code>,<code>
+<a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-DocCrAttrNS">Document.createAttributeNS()</a>,</code>
+<a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-F68F082">Element.SetAttribute()</a>,
+<code><a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-ElSetAttrNS">Element.SetAttributeNS()</a></code>,
+<a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-F68D080">Node.nodeValue</a></td>
+<td><code><a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-1084891198">Document.createAttribute()</a></code>,<code>
+<a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-DocCrAttrNS">Document.createAttributeNS()</a></code>,<code>
+<a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-F68F082">Element.SetAttribute()</a></code>,<code>
+<a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-ElSetAttrNS">Element.SetAttributeNS()</a>
+<a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-F68D080">Node.nodeValue</a></code></td>
+</tr>
+<tr>
+<th>3.3 Data Binding into Host Environment</th>
+<td><code>Node.nodeValue</code></td>
+<td><code><a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-F68D080">Node.nodeValue</a></code></td>
+<td><code><a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-F68D080">Node.nodeValue</a></code></td>
+</tr>
+<tr>
+<th>4.1 Navigation to Target Node</th>
+<td><code>Document.getElementById()</code> (DOM 1 HTML)</td>
+<td><code><a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-getElBId">Document.getElementById()</a></code></td>
+<td><code><a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-getElBId">Document.getElementById()</a>,
+<a shape="rect" href="http://www.w3.org/TR/DOM-Level-3-XPath/">DOM
+Level 3 XPath specification</a></code></td>
+</tr>
+<tr>
+<th>5.1 Event Propagation</th>
+<td>(not specified)</td>
+<td>ability to attach event handlers at various phases, ability to
+define default event handlers, standardized bubbling mechanism</td>
+<td>ability to attach event handlers at various phases, ability to
+define default event handlers, standardized bubbling mechanism,
+adds <a shape="rect" href=
+"http://www.w3.org/TR/2003/NOTE-DOM-Level-3-Events-20031107/events.html#Events-Event-stopPropagation">
+stopPropagation()</a> and <a shape="rect" href=
+"http://www.w3.org/TR/2003/NOTE-DOM-Level-3-Events-20031107/events.html#Events-Event-stopImmediatePropagation">
+stopImmediatePropagation()</a></td>
+</tr>
+<tr>
+<th>5.2 Event Creation</th>
+<td>(not specified)</td>
+<td><code><a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-2-Events/events.html#Events-DocumentEvent">
+DocumentEvent</a></code> interface</td>
+<td><code><a shape="rect" href=
+"http://www.w3.org/TR/2003/NOTE-DOM-Level-3-Events-20031107/events.html#Events-DocumentEvent">
+DocumentEvent</a></code> interface</td>
+</tr>
+<tr>
+<th>5.3 Event Handler Registration</th>
+<td>(not specified)</td>
+<td><code><a shape="rect" href=
+"http://www.w3.org/TR/DOM-Level-2-Events/events.html#Events-EventListener">
+Node.Event<ins>Listener</ins></a></code> interface</td>
+<td><code><a shape="rect" href=
+"http://www.w3.org/TR/2003/NOTE-DOM-Level-3-Events-20031107/events.html#Events-EventListener">
+Node.EventListener</a></code>, namespace and event category support
+through <a shape="rect" href=
+"http://www.w3.org/TR/2003/NOTE-DOM-Level-3-Events-20031107/events.html#Events-EventTargetGroup-addEventListenerNS">
+addEventListenerNS()</a></td>
+</tr>
+</table>
+</body>
+</html>

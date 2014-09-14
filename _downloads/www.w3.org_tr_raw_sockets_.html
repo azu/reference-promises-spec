@@ -1,0 +1,3771 @@
+<!-- http://www.w3.org/TR/raw-sockets/ -->
+<!DOCTYPE html>
+<!-- saved from url=(0043)http://www.w3.org/2012/sysapps/raw-sockets/ -->
+
+<html lang="en" dir="ltr">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 (experimental) for Linux https://github.com/w3c/tidy-html5/tree/8025154">
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8">
+
+  <title>Raw Socket API</title>
+  <style>
+/*****************************************************************
+  * ReSpec 3 CSS
+  * Robin Berjon - http://berjon.com/
+  *****************************************************************/
+
+  /* --- INLINES --- */
+  em.rfc2119 { 
+    text-transform:     lowercase;
+    font-variant:       small-caps;
+    font-style:         normal;
+    color:              #900;
+  }
+
+  h1 acronym, h2 acronym, h3 acronym, h4 acronym, h5 acronym, h6 acronym, a acronym,
+  h1 abbr, h2 abbr, h3 abbr, h4 abbr, h5 abbr, h6 abbr, a abbr {
+    border: none;
+  }
+
+  dfn {
+    font-weight:    bold;
+  }
+
+  a.internalDFN {
+    color:  inherit;
+    border-bottom:  1px solid #99c;
+    text-decoration:    none;
+  }
+
+  a.externalDFN {
+    color:  inherit;
+    border-bottom:  1px dotted #ccc;
+    text-decoration:    none;
+  }
+
+  a.bibref {
+    text-decoration:    none;
+  }
+
+  cite .bibref {
+    font-style: normal;
+  }
+
+  code {
+    color:  #ff4500;
+  }
+
+  /* --- TOC --- */
+  .toc a, .tof a {
+    text-decoration:    none;
+  }
+
+  a .secno, a .figno {
+    color:  #000;
+  }
+
+  ul.tof, ol.tof {
+    list-style: none outside none;
+  }
+
+  .caption {
+    margin-top: 0.5em;
+    font-style:   italic;
+  }
+
+  /* --- TABLE --- */
+  table.simple {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    border-bottom:  3px solid #005a9c;
+  }
+
+  .simple th {
+    background: #005a9c;
+    color:  #fff;
+    padding:    3px 5px;
+    text-align: left;
+  }
+
+  .simple th[scope="row"] {
+    background: inherit;
+    color:  inherit;
+    border-top: 1px solid #ddd;
+  }
+
+  .simple td {
+    padding:    3px 10px;
+    border-top: 1px solid #ddd;
+  }
+
+  .simple tr:nth-child(even) {
+    background: #f0f6ff;
+  }
+
+  /* --- DL --- */
+  .section dd > p:first-child {
+    margin-top: 0;
+  }
+
+  .section dd > p:last-child {
+    margin-bottom: 0;
+  }
+
+  .section dd {
+    margin-bottom:  1em;
+  }
+
+  .section dl.attrs dd, .section dl.eldef dd {
+    margin-bottom:  0;
+  }
+  </style>
+  <style>
+/* --- EXAMPLES --- */
+  div.example-title {
+    min-width: 7.5em;
+    color: #b9ab2d;
+  }
+  div.example-title span {
+    text-transform: uppercase;   
+  }
+  aside.example, div.example, div.illegal-example {
+    padding: 0.5em;
+    margin: 1em 0;
+    position: relative;
+    clear: both;
+  }
+  div.illegal-example { color: red }
+  div.illegal-example p { color: black }
+  aside.example, div.example {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+    border-color: #e0cb52;
+    background: #fcfaee;    
+  }
+
+  aside.example div.example {
+    border-left-width: .1em;
+    border-color: #999;
+    background: #fff;
+  }
+  aside.example div.example div.example-title {
+    color: #999;
+  }
+  </style>
+  <style>
+/* --- ISSUES/NOTES --- */
+  div.issue-title, div.note-title {
+    padding-right:  1em;
+    min-width: 7.5em;
+    color: #b9ab2d;
+  }
+  div.issue-title { color: #e05252; }
+  div.note-title { color: #2b2; }
+  div.issue-title span, div.note-title span {
+    text-transform: uppercase;
+  }
+  div.note, div.issue {
+    margin-top: 1em;
+    margin-bottom: 1em;
+  }
+  .note > p:first-child, .issue > p:first-child { margin-top: 0 }
+  .issue, .note {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+  }
+  div.issue, div.note {
+    padding: 1em 1.2em 0.5em;
+    margin: 1em 0;
+    position: relative;
+    clear: both;
+  }
+  span.note, span.issue { padding: .1em .5em .15em; }
+
+  .issue {
+    border-color: #e05252;
+    background: #fbe9e9;
+  }
+  .note {
+    border-color: #52e052;
+    background: #e9fbe9;
+  }
+
+
+  </style>
+  <style>
+/* HIGHLIGHTS */
+  code.prettyprint {
+    color:  inherit;
+  }
+
+  /* this from google-code-prettify */
+  .pln{color:#000}@media screen{.str{color:#080}.kwd{color:#008}.com{color:#800}.typ{color:#606}.lit{color:#066}.pun,.opn,.clo{color:#660}.tag{color:#008}.atn{color:#606}.atv{color:#080}.dec,.var{color:#606}.fun{color:red}}@media print,projection{.str{color:#060}.kwd{color:#006;font-weight:bold}.com{color:#600;font-style:italic}.typ{color:#404;font-weight:bold}.lit{color:#044}.pun,.opn,.clo{color:#440}.tag{color:#006;font-weight:bold}.atn{color:#404}.atv{color:#060}}ol.linenums{margin-top:0;margin-bottom:0}li.L0,li.L1,li.L2,li.L3,li.L5,li.L6,li.L7,li.L8{list-style-type:none}li.L1,li.L3,li.L5,li.L7,li.L9{background:#eee}
+  </style>
+  <style>
+/* --- WEB IDL --- */
+  pre.idl {
+    border-top: 1px solid #90b8de;
+    border-bottom: 1px solid #90b8de;
+    padding:    1em;
+    line-height:    120%;
+  }
+
+  pre.idl::before {
+    content:    "WebIDL";
+    display:    block;
+    width:      150px;
+    background: #90b8de;
+    color:  #fff;
+    font-family:    initial;
+    padding:    3px;
+    font-weight:    bold;
+    margin: -1em 0 1em -1em;
+  }
+
+  .idlType {
+    color:  #ff4500;
+    font-weight:    bold;
+    text-decoration:    none;
+  }
+
+  /*.idlModule*/
+  /*.idlModuleID*/
+  /*.idlInterface*/
+  .idlInterfaceID, .idlDictionaryID, .idlCallbackID, .idlEnumID {
+    font-weight:    bold;
+    color:  #005a9c;
+  }
+  a.idlEnumItem {
+    color:  #000;
+    border-bottom:  1px dotted #ccc;
+    text-decoration: none;
+  }
+
+  .idlSuperclass {
+    font-style: italic;
+    color:  #005a9c;
+  }
+
+  /*.idlAttribute*/
+  .idlAttrType, .idlFieldType, .idlMemberType {
+    color:  #005a9c;
+  }
+  .idlAttrName, .idlFieldName, .idlMemberName {
+    color:  #ff4500;
+  }
+  .idlAttrName a, .idlFieldName a, .idlMemberName a {
+    color:  #ff4500;
+    border-bottom:  1px dotted #ff4500;
+    text-decoration: none;
+  }
+
+  /*.idlMethod*/
+  .idlMethType, .idlCallbackType {
+    color:  #005a9c;
+  }
+  .idlMethName {
+    color:  #ff4500;
+  }
+  .idlMethName a {
+    color:  #ff4500;
+    border-bottom:  1px dotted #ff4500;
+    text-decoration: none;
+  }
+
+  /*.idlCtor*/
+  .idlCtorName {
+    color:  #ff4500;
+  }
+  .idlCtorName a {
+    color:  #ff4500;
+    border-bottom:  1px dotted #ff4500;
+    text-decoration: none;
+  }
+
+  /*.idlParam*/
+  .idlParamType {
+    color:  #005a9c;
+  }
+  .idlParamName, .idlDefaultValue {
+    font-style: italic;
+  }
+
+  .extAttr {
+    color:  #666;
+  }
+
+  /*.idlSectionComment*/
+  .idlSectionComment {
+    color: gray;
+  }
+
+  /*.idlConst*/
+  .idlConstType {
+    color:  #005a9c;
+  }
+  .idlConstName {
+    color:  #ff4500;
+  }
+  .idlConstName a {
+    color:  #ff4500;
+    border-bottom:  1px dotted #ff4500;
+    text-decoration: none;
+  }
+
+  /*.idlException*/
+  .idlExceptionID {
+    font-weight:    bold;
+    color:  #c00;
+  }
+
+  .idlTypedefID, .idlTypedefType {
+    color:  #005a9c;
+  }
+
+  .idlRaises, .idlRaises a.idlType, .idlRaises a.idlType code, .excName a, .excName a code {
+    color:  #c00;
+    font-weight:    normal;
+  }
+
+  .excName a {
+    font-family:    monospace;
+  }
+
+  .idlRaises a.idlType, .excName a.idlType {
+    border-bottom:  1px dotted #c00;
+  }
+
+  .excGetSetTrue, .excGetSetFalse, .prmNullTrue, .prmNullFalse, .prmOptTrue, .prmOptFalse {
+    width:  45px;
+    text-align: center;
+  }
+  .excGetSetTrue, .prmNullTrue, .prmOptTrue { color:  #0c0; }
+  .excGetSetFalse, .prmNullFalse, .prmOptFalse { color:  #c00; }
+
+  .idlImplements a {
+    font-weight:    bold;
+  }
+
+  dl.attributes, dl.methods, dl.constants, dl.constructors, dl.fields, dl.dictionary-members {
+    margin-left:    2em;
+  }
+
+  .attributes dt, .methods dt, .constants dt, .constructors dt, .fields dt, .dictionary-members dt {
+    font-weight:    normal;
+  }
+
+  .attributes dt code, .methods dt code, .constants dt code, .constructors dt code, .fields dt code, .dictionary-members dt code {
+    font-weight:    bold;
+    color:  #000;
+    font-family:    monospace;
+  }
+
+  .attributes dt code, .fields dt code, .dictionary-members dt code {
+    background:  #ffffd2;
+  }
+
+  .attributes dt .idlAttrType code, .fields dt .idlFieldType code, .dictionary-members dt .idlMemberType code {
+    color:  #005a9c;
+    background:  transparent;
+    font-family:    inherit;
+    font-weight:    normal;
+    font-style: italic;
+  }
+
+  .methods dt code {
+    background:  #d9e6f8;
+  }
+
+  .constants dt code {
+    background:  #ddffd2;
+  }
+
+  .constructors dt code {
+    background:  #cfc;
+  }
+
+  .attributes dd, .methods dd, .constants dd, .constructors dd, .fields dd, .dictionary-members dd {
+    margin-bottom:  1em;
+  }
+
+  table.parameters, table.exceptions {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    margin: 0.5em 0;
+    width:  100%;
+  }
+  table.parameters { border-bottom:  1px solid #90b8de; }
+  table.exceptions { border-bottom:  1px solid #deb890; }
+
+  .parameters th, .exceptions th {
+    color:  #fff;
+    padding:    3px 5px;
+    text-align: left;
+    font-family:    initial;
+    font-weight:    normal;
+    text-shadow:    #666 1px 1px 0;
+  }
+  .parameters th { background: #90b8de; }
+  .exceptions th { background: #deb890; }
+
+  .parameters td, .exceptions td {
+    padding:    3px 10px;
+    border-top: 1px solid #ddd;
+    vertical-align: top;
+  }
+
+  .parameters tr:first-child td, .exceptions tr:first-child td {
+    border-top: none;
+  }
+
+  .parameters td.prmName, .exceptions td.excName, .exceptions td.excCodeName {
+    width:  100px;
+  }
+
+  .parameters td.prmType {
+    width:  120px;
+  }
+
+  table.exceptions table {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    width:  100%;
+  }
+  </style>
+  <link rel="stylesheet" href=
+  "http://www.w3.org/StyleSheets/TR/W3C-WD">
+</head>
+
+<body class="h-entry">
+  <div class="head">
+    <p><a href="http://www.w3.org/"><img alt="W3C" width="72"
+    height="48" src="http://www.w3.org/Icons/w3c_home"></a></p>
+
+    <h1 class="title" id="title">Raw Socket API</h1>
+
+    <h2 id="date"><abbr title=
+    "World Wide Web Consortium">W3C</abbr> First Public Working Draft 14 May
+    2013</h2>
+
+    <dl>
+      <dt>This version:</dt>
+
+      <dd>
+        <a class="u-url" href=
+        "http://www.w3.org/TR/2013/WD-raw-sockets-20130514/">http://www.w3.org/TR/2013/WD-raw-sockets-20130514/</a>
+      </dd>
+
+      <dt>Latest published version:</dt>
+
+      <dd>
+        <a href=
+        "http://www.w3.org/TR/raw-sockets/">http://www.w3.org/TR/raw-sockets/</a>
+      </dd>
+
+      <dt>Latest editor's draft:</dt>
+
+      <dd>
+        <a href=
+        "http://www.w3.org/2012/sysapps/raw-sockets/">http://www.w3.org/2012/sysapps/raw-sockets/</a>
+      </dd>
+
+      <dt>Editor:</dt>
+
+      <dd>
+        <span>Claes Nilsson</span>, <a href=
+        "http://www.sonymobile.com/">Sony Mobile</a>
+      </dd>
+    </dl>
+
+    <p class="copyright"><a href=
+    "http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a>
+    © 2013 <a href="http://www.w3.org/"><abbr title=
+    "World Wide Web Consortium">W3C</abbr></a><sup>®</sup>
+    (<a href="http://www.csail.mit.edu/"><abbr title=
+    "Massachusetts Institute of Technology">MIT</abbr></a>,
+    <a href="http://www.ercim.eu/"><abbr title=
+    "European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>,
+    <a href="http://www.keio.ac.jp/">Keio</a>, <a href=
+    "http://ev.buaa.edu.cn/">Beihang</a>), All Rights Reserved.
+    <abbr title="World Wide Web Consortium">W3C</abbr> <a href=
+    "http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">
+    liability</a>, <a href=
+    "http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a>
+    and <a href=
+    "http://www.w3.org/Consortium/Legal/copyright-documents">document
+    use</a> rules apply.</p>
+    <hr>
+  </div>
+  <!--============================ Abstract ==================================-->
+
+  <section id="abstract" class="introductory">
+    <h2>Abstract</h2>
+
+    <p>This API provides interfaces to raw UDP sockets, TCP client
+    sockets and TCP server sockets.</p>
+  </section>
+
+  <section id="sotd" class="introductory">
+    <h2>Status of This Document</h2>
+
+    <p><em>This section describes the status of this document at
+    the time of its publication. Other documents may supersede this
+    document. A list of current <abbr title=
+    "World Wide Web Consortium">W3C</abbr> publications and the
+    latest revision of this technical report can be found in the
+    <a href="http://www.w3.org/TR/"><abbr title=
+    "World Wide Web Consortium">W3C</abbr> technical reports
+    index</a> at http://www.w3.org/TR/.</em></p>
+
+    <p>This document defines a System Level API for network
+    communication over UDP and TCP sockets.</p>
+
+    <p>This document was published by the <a href=
+    "http://www.w3.org/2012/sysapps/">System Applications Working
+    Group</a> as a First Public Working Draft. This document is
+    intended to become a <abbr title=
+    "World Wide Web Consortium">W3C</abbr> Recommendation. If you
+    wish to make comments regarding this document, please send them
+    to <a href=
+    "mailto:public-sysapps@w3.org">public-sysapps@w3.org</a>
+    (<a href=
+    "mailto:public-sysapps-request@w3.org?subject=subscribe">subscribe</a>,
+    <a href=
+    "http://lists.w3.org/Archives/Public/public-sysapps/">archives</a>).
+    All feedback is welcome.</p>
+
+    <p>Publication as a First Public Working Draft does not imply endorsement by
+    the <abbr title="World Wide Web Consortium">W3C</abbr>
+    Membership. This is a draft document and may be updated,
+    replaced or obsoleted by other documents at any time. It is
+    inappropriate to cite this document as other than work in
+    progress.</p>
+
+    <p>This document was produced by a group operating under the
+    <a href=
+    "http://www.w3.org/Consortium/Patent-Policy-20040205/">5
+    February 2004 <abbr title=
+    "World Wide Web Consortium">W3C</abbr> Patent Policy</a>.
+    <abbr title="World Wide Web Consortium">W3C</abbr> maintains a
+    <a href="http://www.w3.org/2004/01/pp-impl/58119/status" rel=
+    "disclosure">public list of any patent disclosures</a> made in
+    connection with the deliverables of the group; that page also
+    includes instructions for disclosing a patent. An individual
+    who has actual knowledge of a patent which the individual
+    believes contains <a href=
+    "http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">
+    Essential Claim(s)</a> must disclose the information in
+    accordance with <a href=
+    "http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">
+    section 6 of the <abbr title=
+    "World Wide Web Consortium">W3C</abbr> Patent Policy</a>.</p>
+  </section>
+
+  <section id="toc">
+    <h2 class="introductory">Table of Contents</h2>
+
+    <ul class="toc">
+      <li class="tocline">
+        <a href="#introduction" class="tocxref"><span class=
+        "secno">1.</span> Introduction</a>
+      </li>
+
+      <li class="tocline">
+        <a href="#conformance" class="tocxref"><span class=
+        "secno">2.</span> Conformance</a>
+      </li>
+
+      <li class="tocline">
+        <a href="#terminology" class="tocxref"><span class=
+        "secno">3.</span> Terminology</a>
+      </li>
+
+      <li class="tocline">
+        <a href="#security-and-privacy-considerations" class=
+        "tocxref"><span class="secno">4.</span> Security and
+        privacy considerations</a>
+      </li>
+
+      <li class="tocline">
+        <a href="#interface-udpsocket" class="tocxref"><span class=
+        "secno">5.</span> Interface <span class=
+        "formerLink"><code>UDPSocket</code></span></a>
+
+        <ul class="toc">
+          <li class="tocline">
+            <a href="#attributes" class="tocxref"><span class=
+            "secno">5.1</span> Attributes</a>
+          </li>
+
+          <li class="tocline">
+            <a href="#methods" class="tocxref"><span class=
+            "secno">5.2</span> Methods</a>
+          </li>
+
+          <li class="tocline">
+            <a href="#event-handlers" class="tocxref"><span class=
+            "secno">5.3</span> Event handlers</a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="tocline">
+        <a href="#interface-tcpsocket" class="tocxref"><span class=
+        "secno">6.</span> Interface <span class=
+        "formerLink"><code>TCPSocket</code></span></a>
+
+        <ul class="toc">
+          <li class="tocline">
+            <a href="#attributes-1" class="tocxref"><span class=
+            "secno">6.1</span> Attributes</a>
+          </li>
+
+          <li class="tocline">
+            <a href="#methods-1" class="tocxref"><span class=
+            "secno">6.2</span> Methods</a>
+          </li>
+
+          <li class="tocline">
+            <a href="#event-handlers-1" class=
+            "tocxref"><span class="secno">6.3</span> Event
+            handlers</a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="tocline">
+        <a href="#interface-tcpserversocket" class=
+        "tocxref"><span class="secno">7.</span> Interface
+        <span class=
+        "formerLink"><code>TCPServerSocket</code></span></a>
+
+        <ul class="toc">
+          <li class="tocline">
+            <a href="#attributes-2" class="tocxref"><span class=
+            "secno">7.1</span> Attributes</a>
+          </li>
+
+          <li class="tocline">
+            <a href="#methods-2" class="tocxref"><span class=
+            "secno">7.2</span> Methods</a>
+          </li>
+
+          <li class="tocline">
+            <a href="#event-handlers-2" class=
+            "tocxref"><span class="secno">7.3</span> Event
+            handlers</a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="tocline">
+        <a href="#interface-udpmessageevent" class=
+        "tocxref"><span class="secno">8.</span> Interface
+        <span class=
+        "formerLink"><code>UDPMessageEvent</code></span></a>
+
+        <ul class="toc">
+          <li class="tocline">
+            <a href="#attributes-3" class="tocxref"><span class=
+            "secno">8.1</span> Attributes</a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="tocline">
+        <a href="#interface-connectevent" class=
+        "tocxref"><span class="secno">9.</span> Interface
+        <span class=
+        "formerLink"><code>ConnectEvent</code></span></a>
+
+        <ul class="toc">
+          <li class="tocline">
+            <a href="#attributes-4" class="tocxref"><span class=
+            "secno">9.1</span> Attributes</a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="tocline">
+        <a href="#interface-errorevent" class=
+        "tocxref"><span class="secno">10.</span> Interface
+        <span class="formerLink"><code>ErrorEvent</code></span></a>
+
+        <ul class="toc">
+          <li class="tocline">
+            <a href="#attributes-5" class="tocxref"><span class=
+            "secno">10.1</span> Attributes</a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="tocline">
+        <a href="#dictionary-udpoptions" class=
+        "tocxref"><span class="secno">11.</span> Dictionary
+        <span class="formerLink"><code>UDPOptions</code></span></a>
+
+        <ul class="toc">
+          <li class="tocline">
+            <a href="#dictionary-udpoptions-members" class=
+            "tocxref"><span class="secno">11.1</span> Dictionary
+            <span class="formerLink"><code>UDPOptions</code></span>
+            Members</a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="tocline">
+        <a href="#dictionary-tcpoptions" class=
+        "tocxref"><span class="secno">12.</span> Dictionary
+        <span class="formerLink"><code>TCPOptions</code></span></a>
+
+        <ul class="toc">
+          <li class="tocline">
+            <a href="#dictionary-tcpoptions-members" class=
+            "tocxref"><span class="secno">12.1</span> Dictionary
+            <span class="formerLink"><code>TCPOptions</code></span>
+            Members</a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="tocline">
+        <a href="#dictionary-tcpserveroptions" class=
+        "tocxref"><span class="secno">13.</span> Dictionary
+        <span class=
+        "formerLink"><code>TCPServerOptions</code></span></a>
+
+        <ul class="toc">
+          <li class="tocline">
+            <a href="#dictionary-tcpserveroptions-members" class=
+            "tocxref"><span class="secno">13.1</span> Dictionary
+            <span class=
+            "formerLink"><code>TCPServerOptions</code></span>
+            Members</a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="tocline">
+        <a href="#enums" class="tocxref"><span class=
+        "secno">14.</span> Enums</a>
+
+        <ul class="toc">
+          <li class="tocline">
+            <a href="#readystate" class="tocxref"><span class=
+            "secno">14.1</span> ReadyState</a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="tocline">
+        <a href="#acknowledgements" class="tocxref"><span class=
+        "secno">A.</span> Acknowledgements</a>
+      </li>
+
+      <li class="tocline">
+        <a href="#references" class="tocxref"><span class=
+        "secno">B.</span> References</a>
+
+        <ul class="toc">
+          <li class="tocline">
+            <a href="#normative-references" class=
+            "tocxref"><span class="secno">B.1</span> Normative
+            references</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </section>
+  <!--=========================== Introduction ===============================-->
+
+  <section class="informative" id="introduction">
+    <!--OddPage-->
+
+    <h2><span class="secno">1.</span> Introduction</h2>
+
+    <p><em>This section is non-normative.</em></p>
+
+    <p>Use this API to send and receive data over the network using
+    TCP or UDP.</p>
+  </section>
+  <!--========================== Conformance =================================-->
+
+  <section id="conformance">
+    <!--OddPage-->
+
+    <h2><span class="secno">2.</span> Conformance</h2>
+
+    <p>As well as sections marked as non-normative, all authoring
+    guidelines, diagrams, examples, and notes in this specification
+    are non-normative. Everything else in this specification is
+    normative.</p>
+
+    <p>The key words <em class="rfc2119" title="MUST">MUST</em>,
+    <em class="rfc2119" title="MUST NOT">MUST NOT</em>, <em class=
+    "rfc2119" title="REQUIRED">REQUIRED</em>, <em class="rfc2119"
+    title="SHOULD">SHOULD</em>, <em class="rfc2119" title=
+    "SHOULD NOT">SHOULD NOT</em>, <em class="rfc2119" title=
+    "RECOMMENDED">RECOMMENDED</em>, <em class="rfc2119" title=
+    "MAY">MAY</em>, and <em class="rfc2119" title=
+    "OPTIONAL">OPTIONAL</em> in this specification are to be
+    interpreted as described in [<cite><a class="bibref" href=
+    "#bib-RFC2119">RFC2119</a></cite>].</p>
+
+    <p>This specification defines conformance criteria that apply
+    to a single product: the <dfn id="dfn-user-agent">user
+    agent</dfn> that implements the interfaces that it
+    contains.</p>
+
+    <p>Implementations that use ECMAScript to implement the APIs
+    defined in this specification <em class="rfc2119" title=
+    "MUST">MUST</em> implement them in a manner consistent with the
+    ECMAScript Bindings defined in the Web IDL specification
+    [<cite><a class="bibref" href="#bib-WEBIDL">WEBIDL</a></cite>],
+    as this specification uses that specification and
+    terminology.</p>
+  </section>
+  <!--=========================== Terminology ================================-->
+
+  <section id="terminology">
+    <!--OddPage-->
+
+    <h2><span class="secno">3.</span> Terminology</h2>
+
+    <p>The <code><a href=
+    "http://dev.w3.org/html5/spec/webappapis.html#eventhandler">EventHandler</a></code>
+    interface represents a callback used for event handlers as
+    defined in [<cite><a class="bibref" href=
+    "#bib-HTML5">HTML5</a></cite>].</p>
+
+    <p>The concepts <dfn id="dfn-queue-a-task"><a href=
+    "http://dev.w3.org/html5/spec/webappapis.html#queue-a-task">queue
+    a task</a></dfn> and <dfn id="dfn-fire-a-simple-event"><a href=
+    "http://dev.w3.org/html5/spec/webappapis.html#fire-a-simple-event">
+    fire a simple event</a></dfn> are defined in [<cite><a class=
+    "bibref" href="#bib-HTML5">HTML5</a></cite>].</p>
+
+    <p>The terms <dfn id="dfn-event-handler"><a href=
+    "http://dev.w3.org/html5/spec/webappapis.html#event-handlers">event
+    handler</a></dfn> and <dfn id=
+    "dfn-event-handler-event-types"><a href=
+    "http://dev.w3.org/html5/spec/webappapis.html#event-handler-event-type">
+    event handler event types</a></dfn> are defined in
+    [<cite><a class="bibref" href=
+    "#bib-HTML5">HTML5</a></cite>].</p>
+  </section>
+  <!--====================== Security and privacy ============================-->
+
+  <section id="security-and-privacy-considerations">
+    <!--OddPage-->
+
+    <h2><span class="secno">4.</span> Security and privacy
+    considerations</h2>
+
+    <p>This API must be only exposed to trusted content.</p>
+  </section>
+  <!--====================== Interface UDPSocket ============================-->
+
+  <section id="interface-udpsocket">
+    <!--OddPage-->
+
+    <h2><span class="secno">5.</span> Interface <a href=
+    "#idl-def-UDPSocket" class=
+    "idlType"><code>UDPSocket</code></a></h2>
+
+    <p>The <a href="#idl-def-UDPSocket" class=
+    "idlType"><code>UDPSocket</code></a> interface defines
+    attributes and methods for UDP communication</p>
+
+    <div class="example">
+      <div class="example-title">
+        <span>Example 1</span>
+      </div>
+      <pre class="example highlight prettyprint">
+<span class="com">// </span><span class="pln">
+</span><span class=
+"com">// This example shows a simple implementation of UPnP-SSDP M-SEARCH discovery </span><span class="pln">
+</span><span class=
+"com">// using a multicast UDPSocket </span><span class="pln">
+</span><span class="com">//</span><span class="pln">
+
+</span><span class="com">// Create a UDP socket</span><span class=
+"pln">
+</span><span class="kwd">var</span><span class=
+"pln"> mySocket </span><span class="pun">=</span><span class=
+"pln"> </span><span class="kwd">new</span><span class=
+"pln"> </span><span class="typ">UDPSocket</span><span class=
+"pln"> </span><span class="pun">();</span><span class="pln"> 
+
+</span><span class=
+"com">// Build an SSDP M-SEARCH multicast message</span><span class="pln">
+</span><span class="kwd">var</span><span class=
+"pln"> </span><span class="typ">MSearch</span><span class=
+"pln"> </span><span class="pun">=</span><span class=
+"pln"> </span><span class=
+"str">"M-SEARCH * HTTP/1.1\r\n"</span><span class=
+"pln"> </span><span class="pun">+</span><span class="pln">
+</span><span class="str">"ST: "</span><span class=
+"pln"> </span><span class="pun">+</span><span class=
+"pln"> </span><span class="typ">ServiceType</span><span class=
+"pln"> </span><span class="pun">+</span><span class=
+"pln"> </span><span class="str">"\r\n"</span><span class=
+"pln"> </span><span class="pun">+</span><span class="pln">
+</span><span class=
+"str">"MAN: \"ssdp:discover\"\r\n"</span><span class=
+"pln"> </span><span class="pun">+</span><span class="pln">
+</span><span class=
+"str">"HOST: 239.255.255.250:1900\r\n"</span><span class=
+"pln"> </span><span class="pun">+</span><span class="pln">
+</span><span class="str">"MX: 10\r\n\r\n"</span><span class=
+"pun">;</span><span class="pln">
+
+</span><span class="kwd">var</span><span class=
+"pln"> </span><span class=
+"typ">SSDPMulticastAddress</span><span class=
+"pln"> </span><span class="pun">=</span><span class=
+"pln"> </span><span class=
+"str">"239.255.255.250"</span><span class="pun">;</span><span class="pln">
+</span><span class="kwd">var</span><span class=
+"pln"> </span><span class=
+"typ">SSDPMulticastPort</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> </span><span class="lit">1900</span><span class="pun">;</span><span class="pln">
+
+</span><span class="com">// Join multicast group</span><span class=
+"pln">
+mySocket</span><span class="pun">.</span><span class=
+"pln">joinMulticastGroup </span><span class=
+"pun">(</span><span class=
+"typ">SSDPMulticastAddress</span><span class=
+"pun">);</span><span class="pln">
+
+</span><span class="kwd">try</span><span class=
+"pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class=
+"com">// Send SSDP M-SEARCH multicast message</span><span class=
+"pln">
+  </span><span class="kwd">var</span><span class=
+"pln"> moreBufferingOK </span><span class=
+"pun">=</span><span class="pln"> mySocket</span><span class=
+"pun">.</span><span class="pln">send</span><span class=
+"pun">(</span><span class="typ">MSearch</span><span class=
+"pun">,</span><span class="pln"> </span><span class=
+"typ">SSDPMulticastAddress</span><span class=
+"pun">,</span><span class="pln"> 
+                                      </span><span class=
+"typ">SSDPMulticastPort</span><span class=
+"pun">);</span><span class="pln">
+  console</span><span class="pun">.</span><span class=
+"pln">log</span><span class="pun">(</span><span class=
+"str">'M-SEARCH Sent!'</span><span class=
+"pun">);</span><span class="pln"> 
+</span><span class="pun">}</span><span class="pln">        
+</span><span class="kwd">catch</span><span class=
+"pun">(</span><span class="pln">err</span><span class=
+"pun">)</span><span class="pln"> </span><span class=
+"pun">{</span><span class="pln">  
+  </span><span class=
+"com">// Sending failed      </span><span class="pln">
+  console</span><span class="pun">.</span><span class=
+"pln">error</span><span class="pun">(</span><span class=
+"str">'Sending M-SEARCH failed: '</span><span class=
+"pln"> </span><span class="pun">+</span><span class=
+"pln"> err</span><span class="pun">.</span><span class=
+"pln">name</span><span class="pun">);</span><span class="pln">
+</span><span class="pun">}</span><span class="pln">       
+
+</span><span class=
+"com">// Receive M-SEARCH responses          </span><span class=
+"pln">
+mysocket</span><span class="pun">.</span><span class=
+"pln">onmessage </span><span class="pun">=</span><span class=
+"pln"> </span><span class="kwd">function</span><span class=
+"pln"> </span><span class="pun">(</span><span class=
+"pln">udpMessageEvent</span><span class="pun">)</span><span class=
+"pln"> </span><span class="pun">{</span><span class="pln"> 
+  </span><span class=
+"com">// Convert received data from ArrayBuffer to string</span><span class="pln">
+  </span><span class="kwd">var</span><span class=
+"pln"> data </span><span class="pun">=</span><span class=
+"pln"> arrayBufferToString </span><span class=
+"pun">(</span><span class="pln">udpMessageEvent</span><span class=
+"pun">.</span><span class="pln">data</span><span class=
+"pun">);</span><span class="pln">    
+  console</span><span class="pun">.</span><span class=
+"pln">log</span><span class="pun">(</span><span class=
+"str">"Remote address: "</span><span class=
+"pln"> </span><span class="pun">+</span><span class=
+"pln"> udpMessageEvent</span><span class="pun">.</span><span class=
+"pln">remoteAddress </span><span class="pun">+</span><span class=
+"pln"> 
+              </span><span class=
+"str">" Remote port: "</span><span class="pln"> </span><span class=
+"pun">+</span><span class="pln"> udpMessageEvent</span><span class=
+"pun">.</span><span class="pln">remotePort </span><span class=
+"pun">+</span><span class="pln">  
+              </span><span class=
+"str">" Received data"</span><span class="pln"> </span><span class=
+"pun">+</span><span class="pln"> data</span><span class=
+"pun">);</span><span class="pln">
+</span><span class="pun">};</span><span class="pln">       </span>
+</pre>
+    </div>
+
+    <div class="example">
+      <div class="example-title">
+        <span>Example 2</span>
+      </div>
+      <pre class="example highlight prettyprint">
+<span class="com">// </span><span class="pln">
+</span><span class=
+"com">// This example shows a a simple implementation of reception of UPnP-SSDP </span><span class="pln">
+</span><span class=
+"com">// NOTIFY multicast messages </span><span class="pln">
+</span><span class="com">//</span><span class="pln">
+
+</span><span class="kwd">var</span><span class=
+"pln"> </span><span class=
+"typ">SSDPMulticastAddress</span><span class=
+"pln"> </span><span class="pun">=</span><span class=
+"pln"> </span><span class=
+"str">"239.255.255.250"</span><span class="pun">;</span><span class="pln">
+</span><span class="kwd">var</span><span class=
+"pln"> </span><span class=
+"typ">SSDPMulticastPort</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> </span><span class="lit">1900</span><span class="pun">;</span><span class="pln">           
+
+</span><span class=
+"com">// Create a UDP socket and bind it to the IP-address of the default </span><span class="pln">
+</span><span class=
+"com">// local interface and to the SSDP local port</span><span class="pln">
+</span><span class="kwd">var</span><span class=
+"pln"> mySocket </span><span class="pun">=</span><span class=
+"pln"> </span><span class="kwd">new</span><span class=
+"pln"> </span><span class="typ">UDPSocket</span><span class=
+"pln"> </span><span class="pun">({</span><span class=
+"str">"localPort"</span><span class="pun">:</span><span class=
+"typ">SSDPMulticastPort</span><span class=
+"pun">});</span><span class="pln">   
+
+</span><span class="com">// Join multicast group</span><span class=
+"pln">
+mySocket</span><span class="pun">.</span><span class=
+"pln">joinMulticastGroup </span><span class=
+"pun">(</span><span class=
+"typ">SSDPMulticastAddress</span><span class=
+"pun">);</span><span class="pln">         
+
+</span><span class=
+"com">// Receive SSDP NOTFIY         </span><span class="pln">
+mysocket</span><span class="pun">.</span><span class=
+"pln">onmessage </span><span class="pun">=</span><span class=
+"pln"> </span><span class="kwd">function</span><span class=
+"pln"> </span><span class="pun">(</span><span class=
+"typ">UDPMessageEvent</span><span class="pun">)</span><span class=
+"pln"> </span><span class="pun">{</span><span class="pln"> 
+  </span><span class=
+"com">// Convert received data from ArrayBuffer to string</span><span class="pln">
+  </span><span class="kwd">var</span><span class=
+"pln"> data </span><span class="pun">=</span><span class=
+"pln"> arrayBufferToString </span><span class=
+"pun">(</span><span class="typ">UDPMessageEvent</span><span class=
+"pun">.</span><span class="pln">data</span><span class=
+"pun">);</span><span class="pln">    
+  console</span><span class="pun">.</span><span class=
+"pln">log</span><span class="pun">(</span><span class=
+"str">"Remote address: "</span><span class=
+"pln"> </span><span class="pun">+</span><span class=
+"pln"> </span><span class="typ">UDPMessageEvent</span><span class=
+"pun">.</span><span class="pln">remoteAddress </span><span class=
+"pun">+</span><span class="pln"> 
+              </span><span class=
+"str">" Remote port: "</span><span class="pln"> </span><span class=
+"pun">+</span><span class="pln"> </span><span class=
+"typ">UDPMessageEvent</span><span class="pun">.</span><span class=
+"pln">remotePort </span><span class="pun">+</span><span class=
+"pln">  
+              </span><span class=
+"str">" Received data"</span><span class="pln"> </span><span class=
+"pun">+</span><span class="pln"> data</span><span class=
+"pun">);</span><span class="pln">
+</span><span class="pun">};</span><span class="pln">  </span>
+</pre>
+    </div>
+    <pre class="idl">
+<span class="idlInterface" id="idl-def-UDPSocket">[<span class=
+"extAttr">Constructor (optional UDPOptions options)</span>]
+interface <span class=
+"idlInterfaceID">UDPSocket</span> : <span class=
+"idlSuperclass"><a>EventTarget</a></span> {
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>DOMString</a></span>       <span class=
+"idlAttrName"><a href=
+"#widl-UDPSocket-localAddress">localAddress</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>unsigned short</a></span>  <span class=
+"idlAttrName"><a href=
+"#widl-UDPSocket-localPort">localPort</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>DOMString</a>?</span>      <span class=
+"idlAttrName"><a href=
+"#widl-UDPSocket-remoteAddress">remoteAddress</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>unsigned short</a>?</span> <span class=
+"idlAttrName"><a href=
+"#widl-UDPSocket-remotePort">remotePort</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>boolean</a></span>         <span class=
+"idlAttrName"><a href=
+"#widl-UDPSocket-addressReuse">addressReuse</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>boolean</a></span>         <span class=
+"idlAttrName"><a href=
+"#widl-UDPSocket-loopback">loopback</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>unsigned long</a></span>   <span class=
+"idlAttrName"><a href=
+"#widl-UDPSocket-bufferedAmount">bufferedAmount</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a href="#idl-def-ReadyState" class=
+"idlType"><code>ReadyState</code></a></span>      <span class=
+"idlAttrName"><a href=
+"#widl-UDPSocket-readyState">readyState;</a></span>;</span>
+<span class="idlAttribute">                attribute <span class=
+"idlAttrType"><a>EventHandler</a></span>    <span class=
+"idlAttrName"><a href=
+"#widl-UDPSocket-ondrain">ondrain</a></span>;</span>
+<span class="idlAttribute">                attribute <span class=
+"idlAttrType"><a>EventHandler</a></span>    <span class=
+"idlAttrName"><a href=
+"#widl-UDPSocket-onerror">onerror</a></span>;</span>
+<span class="idlAttribute">                attribute <span class=
+"idlAttrType"><a>EventHandler</a></span>    <span class=
+"idlAttrName"><a href=
+"#widl-UDPSocket-onmessage">onmessage</a></span>;</span>
+<span class="idlMethod">    <span class=
+"idlMethType"><a>void</a></span>    <span class=
+"idlMethName"><a href=
+"#widl-UDPSocket-close-void">close</a></span> ();</span>
+<span class="idlMethod">    <span class=
+"idlMethType"><a>void</a></span>    <span class=
+"idlMethName"><a href=
+"#widl-UDPSocket-suspend-void">suspend</a></span> ();</span>
+<span class="idlMethod">    <span class=
+"idlMethType"><a>void</a></span>    <span class=
+"idlMethName"><a href=
+"#widl-UDPSocket-resume-void">resume</a></span> ();</span>
+<span class="idlMethod">    <span class=
+"idlMethType"><a>void</a></span>    <span class=
+"idlMethName"><a href=
+"#widl-UDPSocket-joinMulticastGroup-void-DOMString-multicastGroupAddress">joinMulticastGroup</a></span> (<span class="idlParam"><span class="idlParamType"><a>DOMString</a></span> <span class="idlParamName">multicastGroupAddress</span></span>);</span>
+<span class="idlMethod">    <span class=
+"idlMethType"><a>void</a></span>    <span class=
+"idlMethName"><a href=
+"#widl-UDPSocket-leaveMulticastGroup-void-DOMString-multicastGroupAddress">leaveMulticastGroup</a></span> (<span class="idlParam"><span class="idlParamType"><a>DOMString</a></span> <span class="idlParamName">multicastGroupAddress</span></span>);</span>
+<span class="idlMethod">    <span class=
+"idlMethType"><a>boolean</a></span> <span class=
+"idlMethName"><a href=
+"#widl-UDPSocket-send-boolean-DOMString-Blob-ArrayBuffer-ArrayBufferView-data-DOMString-remoteAddress-unsigned-short-remotePort">send</a></span> (<span class="idlParam"><span class="idlParamType">(<a>DOMString</a> or <a>Blob</a> or <a>ArrayBuffer</a> or <a>ArrayBufferView</a>)</span> <span class="idlParamName">data</span></span>, <span class="idlParam">optional <span class="idlParamType"><a>DOMString</a>?</span> <span class="idlParamName">remoteAddress</span></span>, <span class="idlParam">optional <span class="idlParamType"><a>unsigned short</a>?</span> <span class="idlParamName">remotePort</span></span>);</span>
+};</span>
+</pre>
+
+    <section id="attributes">
+      <h3><span class="secno">5.1</span> Attributes</h3>
+
+      <dl class="attributes">
+        <dt id="widl-UDPSocket-addressReuse">
+        <code>addressReuse</code> of type <span class=
+        "idlAttrType"><a>boolean</a></span>, readonly</dt>
+
+        <dd><code>true</code> allows the socket to be bound to an
+        address that is already in use. Can be set by the
+        <code>options</code> argument in the constructor. Default
+        is <code>true</code>.</dd>
+
+        <dt id="widl-UDPSocket-bufferedAmount">
+        <code>bufferedAmount</code> of type <span class=
+        "idlAttrType"><a>unsigned long</a></span>, readonly</dt>
+
+        <dd>This attribute contains the number of bytes which have
+        previously been buffered by calls to the send methods of
+        this socket.</dd>
+
+        <dt id="widl-UDPSocket-localAddress">
+        <code>localAddress</code> of type <span class=
+        "idlAttrType"><a>DOMString</a></span>, readonly</dt>
+
+        <dd>The IPv4/6 address of the interface, e.g. wifi or 3G,
+        that the UDPSocket object is bound to. Can be set by the
+        <code>options</code> argument in the constructor. If not
+        set the user agent binds the socket to the IPv4/6 address
+        of the default local interface.</dd>
+
+        <dt id="widl-UDPSocket-localPort"><code>localPort</code> of
+        type <span class="idlAttrType"><a>unsigned
+        short</a></span>, readonly</dt>
+
+        <dd>The local port that the UDPSocket object is bound to.
+        Can be set by the <code>options</code> argument in the
+        constructor. If not set the user agent binds the socket to
+        a random local port number.</dd>
+
+        <dt id="widl-UDPSocket-loopback"><code>loopback</code> of
+        type <span class="idlAttrType"><a>boolean</a></span>,
+        readonly</dt>
+
+        <dd><code>true</code> means that data you send is looped
+        back to your host. Can be set by the <code>options</code>
+        argument in the constructor. Default is
+        <code>false</code>.</dd>
+
+        <dt id="widl-UDPSocket-ondrain"><code>ondrain</code> of
+        type <span class=
+        "idlAttrType"><a>EventHandler</a></span>,</dt>
+
+        <dd>The ondrain event handler will be called upon detection
+        that previously-buffered data has been written to the
+        network and it is possible to buffer more data received
+        from the application,</dd>
+
+        <dt id="widl-UDPSocket-onerror"><code>onerror</code> of
+        type <span class=
+        "idlAttrType"><a>EventHandler</a></span>,</dt>
+
+        <dd>The onerror event handler will be called when there is
+        an error. The data attribute of the event passed to the
+        onerror handler will have a description of the kind of
+        error.</dd>
+
+        <dt id="widl-UDPSocket-onmessage"><code>onmessage</code> of
+        type <span class=
+        "idlAttrType"><a>EventHandler</a></span>,</dt>
+
+        <dd>Event handler for received UDP data. The onmessage
+        handler will be called repeatedly and asynchronously after
+        the UDPSocket object has been created, every time a UDP
+        datagram has been received and was read. At any time, the
+        client may choose to pause reading and receiving onmessage
+        callbacks, by calling the socket's suspend() method.
+        Further invocations of onmessage will be paused until
+        resume() is called.</dd>
+
+        <dt id="widl-UDPSocket-readyState"><code>readyState;</code>
+        of type <span class="idlAttrType"><a href=
+        "#idl-def-ReadyState" class=
+        "idlType"><code>ReadyState</code></a></span>, readonly</dt>
+
+        <dd>The state of the UDP Socket object. A UDP Socket object
+        can be in "open" or "closed" states.</dd>
+
+        <dt id="widl-UDPSocket-remoteAddress">
+        <code>remoteAddress</code> of type <span class=
+        "idlAttrType"><a>DOMString</a></span>, readonly ,
+        nullable</dt>
+
+        <dd>The default remote IPv4/6 address that is used for
+        subsequent send() calls. Null if not stated by the options
+        argument of the constructor.</dd>
+
+        <dt id="widl-UDPSocket-remotePort"><code>remotePort</code>
+        of type <span class="idlAttrType"><a>unsigned
+        short</a></span>, readonly , nullable</dt>
+
+        <dd>The default remote port that is used for subsequent
+        send() calls. Null if not stated by the options argument of
+        the constructor</dd>
+      </dl>
+    </section>
+
+    <section id="methods">
+      <h3><span class="secno">5.2</span> Methods</h3>
+
+      <dl class="methods">
+        <dt id="widl-UDPSocket-close-void"><code>close</code></dt>
+
+        <dd>
+          <p>Closes the UDP socket. A closed UDP socket can not be
+          used any more.</p>
+
+          <div>
+            <em>No parameters.</em>
+          </div>
+
+          <div>
+            <em>Return type:</em> <code><a>void</a></code>
+          </div>
+        </dd>
+
+        <dt id=
+        "widl-UDPSocket-joinMulticastGroup-void-DOMString-multicastGroupAddress">
+        <code>joinMulticastGroup</code></dt>
+
+        <dd>
+          <p>Joins a multicast group identified by the given
+          address.</p>
+
+          <p>Note that even if the socket is only sending to a
+          multicast address, it is a good practice to explicitely
+          join the multicast group (otherwise some routers may not
+          relay packets).</p>
+
+          <table class="parameters">
+            <tr>
+              <th>Parameter</th>
+
+              <th>Type</th>
+
+              <th>Nullable</th>
+
+              <th>Optional</th>
+
+              <th>Description</th>
+            </tr>
+
+            <tr>
+              <td class="prmName">multicastGroupAddress</td>
+
+              <td class="prmType">
+              <code><a>DOMString</a></code></td>
+
+              <td class="prmNullFalse">✘</td>
+
+              <td class="prmOptFalse">✘</td>
+
+              <td class="prmDesc">The multicast group address.</td>
+            </tr>
+          </table>
+
+          <div>
+            <em>Return type:</em> <code><a>void</a></code>
+          </div>
+        </dd>
+
+        <dt id=
+        "widl-UDPSocket-leaveMulticastGroup-void-DOMString-multicastGroupAddress">
+        <code>leaveMulticastGroup</code></dt>
+
+        <dd>
+          <p>Leaves a multicast group membership identified by the
+          given address.</p>
+
+          <table class="parameters">
+            <tr>
+              <th>Parameter</th>
+
+              <th>Type</th>
+
+              <th>Nullable</th>
+
+              <th>Optional</th>
+
+              <th>Description</th>
+            </tr>
+
+            <tr>
+              <td class="prmName">multicastGroupAddress</td>
+
+              <td class="prmType">
+              <code><a>DOMString</a></code></td>
+
+              <td class="prmNullFalse">✘</td>
+
+              <td class="prmOptFalse">✘</td>
+
+              <td class="prmDesc">The multicast group address.</td>
+            </tr>
+          </table>
+
+          <div>
+            <em>Return type:</em> <code><a>void</a></code>
+          </div>
+        </dd>
+
+        <dt id="widl-UDPSocket-resume-void">
+        <code>resume</code></dt>
+
+        <dd>
+          <p>Resume reading incoming UDP data and invoking
+          <code>onmessage</code> as usual.</p>
+
+          <div>
+            <em>No parameters.</em>
+          </div>
+
+          <div>
+            <em>Return type:</em> <code><a>void</a></code>
+          </div>
+        </dd>
+
+        <dt id=
+        "widl-UDPSocket-send-boolean-DOMString-Blob-ArrayBuffer-ArrayBufferView-data-DOMString-remoteAddress-unsigned-short-remotePort">
+        <code>send</code></dt>
+
+        <dd>
+          <p>Sends data on the given UDP socket to the given
+          address and port.</p>
+
+          <p>If remoteAddress and remotePort arguments are not
+          given or null the destination is the default address and
+          port given by the UDPSocket constructor's options
+          argument's <code>remoteAddress</code> and
+          <code>remotePort</code> fields.</p>
+
+          <table class="parameters">
+            <tr>
+              <th>Parameter</th>
+
+              <th>Type</th>
+
+              <th>Nullable</th>
+
+              <th>Optional</th>
+
+              <th>Description</th>
+            </tr>
+
+            <tr>
+              <td class="prmName">data</td>
+
+              <td class="prmType"><code>(<a>DOMString</a> or
+              <a>Blob</a> or <a>ArrayBuffer</a> or
+              <a>ArrayBufferView</a>)</code></td>
+
+              <td class="prmNullFalse">✘</td>
+
+              <td class="prmOptFalse">✘</td>
+
+              <td class="prmDesc">
+                The data to write in one of the alternative
+                representations as stated below:
+
+                <ul>
+                  <li>Represented as a sequence of Unicode
+                  characters. [<cite><a class="bibref" href=
+                  "#bib-UNICODE">UNICODE</a></cite>].</li>
+
+                  <li>As raw data represented by the Blob object.
+                  [<cite><a class="bibref" href=
+                  "#bib-FILE-API">FILE-API</a></cite>]</li>
+
+                  <li>Represented as an ArrayBuffer object.
+                  [<cite><a class="bibref" href=
+                  "#bib-TYPED-ARRAYS">TYPED-ARRAYS</a></cite>]</li>
+
+                  <li>Represented by the section of the buffer
+                  described by the ArrayBuffer object that the
+                  ArrayBufferView object references.
+                  [<cite><a class="bibref" href=
+                  "#bib-TYPED-ARRAYS">TYPED-ARRAYS</a></cite>].</li>
+                </ul>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="prmName">remoteAddress</td>
+
+              <td class="prmType">
+              <code><a>DOMString</a></code></td>
+
+              <td class="prmNullTrue">✔</td>
+
+              <td class="prmOptTrue">✔</td>
+
+              <td class="prmDesc">The address of the remote
+              machine.</td>
+            </tr>
+
+            <tr>
+              <td class="prmName">remotePort</td>
+
+              <td class="prmType"><code><a>unsigned
+              short</a></code></td>
+
+              <td class="prmNullTrue">✔</td>
+
+              <td class="prmOptTrue">✔</td>
+
+              <td class="prmDesc">The port of the remote
+              machine.</td>
+            </tr>
+          </table>
+
+          <div>
+            <em>Return type:</em> <code><a>boolean</a></code>
+          </div>
+        </dd>
+
+        <dt id="widl-UDPSocket-suspend-void">
+        <code>suspend</code></dt>
+
+        <dd>
+          <p>Pause reading incoming UDP data and invocations of the
+          <code>onmessage</code> handler until resume is
+          called.</p>
+
+          <div>
+            <em>No parameters.</em>
+          </div>
+
+          <div>
+            <em>Return type:</em> <code><a>void</a></code>
+          </div>
+        </dd>
+      </dl>
+    </section>
+
+    <p>When the <a href="#idl-def-UDPSocket" class=
+    "idlType"><code>UDPSocket</code></a> constructor is invoked,
+    the User Agent <em class="rfc2119" title="MUST">MUST</em> run
+    the following steps:</p>
+
+    <ol>
+      <li>If the <code>options.localAddress</code> argument is
+      absent then bind the socket to the IPv4/6 address of the
+      default local interface. Otherwise, if the requested local
+      address is free or if it is in use and the
+      <code>options.addressReuse</code> attribute is
+      <code>true</code> or absent then bind the socket to the
+      IPv4/6 address of the requested local interface. Else, throw
+      an <code>InvalidAccessError</code> exception and abort these
+      steps.</li>
+
+      <li>If the <code>options.localPort</code> argument is absent
+      bind then the socket to any available local port. Otherwise,
+      if the requested local port is free or if it is in use and
+      the <code>options.addressReuse</code> attribute is
+      <code>true</code> or absent then bind the socket to the
+      requested local port. Else, throw an
+      <code>InvalidAccessError</code> exception and abort these
+      steps.</li>
+
+      <li>If the <code>options.remoteAddress</code> field is
+      present then set the default remote address attribute of the
+      socket to the requested address.</li>
+
+      <li>If the <code>options.remotePort</code> field is present
+      then set the default remote port attribute to the requested
+      port.</li>
+
+      <li>Create a new <code>UDPSocket</code> object and if the
+      constructor's <code>options</code> argument is present set
+      the corresponding attributes to the values of the fields that
+      are present in the <code>options</code> argument, else set
+      the corresponding attributes to the default values.</li>
+
+      <li>Set the <code>readyState</code> attribute to "open".</li>
+
+      <li>Set the <code>bufferedAmount</code> attribute to 0.</li>
+
+      <li>Return the newly created <code>UDPSocket</code> object to
+      the application.</li>
+    </ol>
+
+    <p>The <dfn id="dfn-send"><code>send</code></dfn> method when
+    invoked <em class="rfc2119" title="MUST">MUST</em> run the
+    following steps:</p>
+
+    <ol>
+      <li>If <code>readyState</code> is "closed" throw DOMException
+      <code>InvalidStateError</code> and abort these steps.</li>
+
+      <li>If the type of the data is not compatible any expected
+      type, <code>DOMString</code>, <code>Blob</code>,
+      <code>ArraYBuffer</code> or <code>ArrayBufferView</code>,
+      then throw DOMException <code>InvalidAccessError</code> and
+      abort these steps.</li>
+
+      <li>If no default remote address and port was specified in
+      the UDPSocket's constructor
+      <code>options.remoteAddress</code> and
+      <code>options.remotePort</code> arguments and the <dfn id=
+      "dfn-send-1"><code>send</code></dfn> method arguments
+      <code>remoteAddress</code> and <code>remotePort</code> are
+      not present or null then throw DOMException
+      <code>InvalidAccessError</code> and abort these steps.</li>
+
+      <li>If the data cannot be sent, e.g. because it would need to
+      be buffered but the buffer is full or because the data is too
+      long to pass atomically through the underlying protocol, the
+      user agent <em class="rfc2119" title="MUST">MUST</em>:
+
+        <ol>
+          <li>Create a new instance of <a href=
+          "#idl-def-ErrorEvent" class=
+          "idlType"><code>ErrorEvent</code></a>.
+          </li>
+
+          <li>Set the <code>error.name</code> attribute of the
+          <a href="#idl-def-ErrorEvent" class=
+          "idlType"><code>ErrorEvent</code></a> object to
+          "NetworkError".
+          </li>
+
+          <li>
+            <a href="#dfn-queue-a-task" class="internalDFN">queue a
+            task</a> to <a>fire an event</a> named <code><a href=
+            "#dfn-error-2" class="internalDFN">error</a></code>
+            with the newly created <code>ErrorEvent</code> instance
+            at the <a href="#idl-def-UDPSocket" class=
+            "idlType"><code>UDPSocket</code></a> object.
+          </li>
+
+          <li>Close the UDP socket and set the
+          <code>readyState</code> attribute to "closed".</li>
+
+          <li>Abort these steps.</li>
+        </ol>
+      </li>
+
+      <li>Make a request to the system to send UDP data with data
+      passed in the <code>data</code> parameter. If the <dfn id=
+      "dfn-send-2"><code>send</code></dfn> method arguments
+      <code>remoteAddress</code> and <code>remotePort</code> are
+      present use these as destination, else use the default
+      address and port of the recipient as stated by the UDPSocket
+      object constructor's <code>options.remoteAddress</code> and
+      <code>options.remotePort</code> fields.</li>
+
+      <li>When the request has been completed set the return value
+      of the method to <code>true</code> or <code>false</code> as a
+      hint to the caller that they may either continue sending more
+      data immediately, or should want to wait until the transport
+      layer has transmitted buffered data that already have been
+      written to the socket before buffering more. When less than
+      an implementation specific value has been buffered and it's
+      safe to immediately write more set the return value to
+      <code>true</code>. When more than an implementation specific
+      value has been buffered set the return value to
+      <code>false</code>. This means that the caller should wait
+      before buffering more data by more calls to <dfn id=
+      "dfn-send-3"><code>send</code></dfn> until the
+      <code>ondrain</code> event handler has been called.</li>
+
+      <li>Any invocation of this method that does not throw an
+      exception must increase the <code>bufferedAmount</code>
+      attribute.
+
+        <ul>
+          <li>If the send data argument is <code>DOMString</code>
+          the <code>bufferedAmount</code> attribute is increased by
+          the number of bytes needed to express the argument as
+          UTF-8. [<cite><a class="bibref" href=
+          "#bib-UNICODE">UNICODE</a></cite>] [<cite><a class=
+          "bibref" href="#bib-UTF-8">UTF-8</a></cite>]</li>
+
+          <li>If the send data argument is <code>Blob</code> the
+          <code>bufferedAmount</code> attribute is increased by the
+          size of the <code>Blob</code> object's raw data, in
+          bytes. [<cite><a class="bibref" href=
+          "#bib-FILE-API">FILE-API</a></cite>]</li>
+
+          <li>If the send data argument is <code>ArrayBuffer</code>
+          the <code>bufferedAmount</code> attribute is increased by
+          the length of the <code>ArrayBuffer</code> in bytes.
+          [<cite><a class="bibref" href=
+          "#bib-TYPED-ARRAYS">TYPED-ARRAYS</a></cite>]</li>
+
+          <li>If the send data argument is
+          <code>ArrayBufferView</code> the
+          <code>bufferedAmount</code> attribute is increased by the
+          length of the <code>ArrayBufferView</code> in bytes.
+          [<cite><a class="bibref" href=
+          "#bib-TYPED-ARRAYS">TYPED-ARRAYS</a></cite>]</li>
+        </ul>
+      </li>
+    </ol>
+
+    <p>The <dfn id="dfn-close"><code>close</code></dfn> method when
+    invoked <em class="rfc2119" title="MUST">MUST</em> run the
+    following steps:</p>
+
+    <ol>
+      <li>Close the socket, meaning that it can not be used to send
+      and receive data any more, and set the
+      <code>readyState</code> attribute to "closed".</li>
+    </ol>
+
+    <p>Upon a new UDP datagram being received, the <a href=
+    "#dfn-user-agent" class="internalDFN">user agent</a> <em class=
+    "rfc2119" title="MUST">MUST</em> run the following steps:</p>
+
+    <ol>
+      <li>If it is not possible to convert the received UDP data to
+      <code>ArrayBuffer</code>, [<cite><a class="bibref" href=
+      "#bib-TYPED-ARRAYS">TYPED-ARRAYS</a></cite>], then:
+
+        <ol>
+          <li>Create a new instance of <a href=
+          "#idl-def-ErrorEvent" class=
+          "idlType"><code>ErrorEvent</code></a>.
+          </li>
+
+          <li>Set the <code>error.name</code> attribute of the
+          <a href="#idl-def-ErrorEvent" class=
+          "idlType"><code>ErrorEvent</code></a> object to
+          "NetworkError".
+          </li>
+
+          <li>
+            <a href="#dfn-queue-a-task" class="internalDFN">queue a
+            task</a> to <a>fire an event</a> named <code><a href=
+            "#dfn-error-2" class="internalDFN">error</a></code>
+            with the newly created <code>ErrorEvent</code> instance
+            at the <a href="#idl-def-UDPSocket" class=
+            "idlType"><code>UDPSocket</code></a> object.
+          </li>
+
+          <li>Abort these steps.</li>
+        </ol>
+      </li>
+
+      <li>Create a new instance of <a href=
+      "#idl-def-UDPMessageEvent" class=
+      "idlType"><code>UDPMessageEvent</code></a>.
+      </li>
+
+      <li>Initialize the <a href="#idl-def-UDPMessageEvent"
+        class="idlType"><code>UDPMessageEvent</code></a> object's
+        data attribute to a new read-only <code>ArrayBuffer</code>
+        object whose contents are the received UDP data
+        [<cite><a class="bibref" href=
+        "#bib-TYPED-ARRAYS">TYPED-ARRAYS</a></cite>].
+      </li>
+
+      <li>Set the <code>remoteAddress</code> attribute of the
+      <a href="#idl-def-UDPMessageEvent" class=
+      "idlType"><code>UDPMessageEvent</code></a> object to the
+      source address of the received UDP datagram.
+      </li>
+
+      <li>Set the <code>remotePort</code> attribute of the
+        <a href="#idl-def-UDPMessageEvent" class=
+        "idlType"><code>UDPMessageEvent</code></a> object to the
+        source port of the received UDP datagram.
+      </li>
+
+      <li>
+        <a href="#dfn-queue-a-task" class="internalDFN">queue a
+        task</a> to <a>fire an event</a> named <code><a href=
+        "#dfn-message-1" class="internalDFN">message</a></code>
+        with the newly created <a href="#idl-def-UDPMessageEvent"
+        class="idlType"><code>UDPMessageEvent</code></a> instance
+        at the <a href="#idl-def-UDPSocket" class=
+        "idlType"><code>UDPSocket</code></a> object.
+      </li>
+    </ol>
+
+    <p>In the process of sending UDP data, upon a detection that
+    previously-buffered data has been written to the network and it
+    is possible to buffer more data received from the application,
+    the <a href="#dfn-user-agent" class="internalDFN">user
+    agent</a> <em class="rfc2119" title="MUST">MUST</em>:</p>
+
+    <ol>
+      <li>
+        <a href="#dfn-queue-a-task" class="internalDFN">queue a
+        task</a> to <a>fire an event</a> named <code><a href=
+        "#dfn-drain-1" class="internalDFN">drain</a></code> at the
+        <a href="#idl-def-UDPSocket" class=
+        "idlType"><code>UDPSocket</code></a> object.
+      </li>
+    </ol>
+
+    <section id="event-handlers">
+      <h3><span class="secno">5.3</span> Event handlers</h3>
+
+      <p>The following are the <a>event handlers</a> (and their
+      corresponding <a href="#dfn-event-handler-event-types" class=
+      "internalDFN">event handler event types</a>) that <em class=
+      "rfc2119" title="MUST">MUST</em> be supported as attributes
+      by the <a href="#idl-def-UDPSocket" class=
+      "idlType"><code>UDPSocket</code></a> object.</p>
+
+      <table class="simple">
+        <thead>
+          <tr>
+            <th>event handler</th>
+
+            <th>event name</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td><strong><code>onmessage</code></strong></td>
+
+            <td><code><dfn id=
+            "dfn-message">message</dfn></code></td>
+          </tr>
+
+          <tr>
+            <td><strong><code>ondrain</code></strong></td>
+
+            <td><code><dfn id="dfn-drain">drain</dfn></code></td>
+          </tr>
+
+          <tr>
+            <td><strong><code>onerror</code></strong></td>
+
+            <td><code><dfn id="dfn-error">error</dfn></code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>The <code>message</code> <a>event</a> <em class="rfc2119"
+      title="SHALL">SHALL</em> implement the <a href=
+      "#idl-def-UDPMessageEvent" class=
+      "idlType"><code>UDPMessageEvent</code></a> interface.</p>
+
+      <p>The <code>error</code> <a>event</a> <em class="rfc2119"
+      title="SHALL">SHALL</em> implement the <a href=
+      "#idl-def-ErrorEvent" class=
+      "idlType"><code>ErrorEvent</code></a> interface.</p>
+    </section>
+  </section>
+  <!--====================== Interface TCPSocket ============================-->
+
+  <section id="interface-tcpsocket">
+    <!--OddPage-->
+
+    <h2><span class="secno">6.</span> Interface <a href=
+    "#idl-def-TCPSocket" class=
+    "idlType"><code>TCPSocket</code></a></h2>
+
+    <p>The <a href="#idl-def-TCPSocket" class=
+    "idlType"><code>TCPSocket</code></a> interface defines
+    attributes and methods for TCP communication</p>
+
+    <div class="example">
+      <div class="example-title">
+        <span>Example 3</span>
+      </div>
+      <pre class="example highlight prettyprint">
+<span class="com">// </span><span class="pln">
+ </span><span class=
+"com">// This example shows a simple TCP echo client. </span><span class="pln">
+ </span><span class=
+"com">// The client will send "Hello World" to the server on port 6789 and log </span><span class="pln">
+ </span><span class=
+"com">// what has been received from the server.</span><span class=
+"pln">
+ </span><span class="com">//        </span><span class="pln">
+ </span><span class="kwd">try</span><span class=
+"pln"> </span><span class="pun">{</span><span class="pln">
+ 
+   </span><span class=
+"com">//  Create a new TCP client socket and connect to remote host</span><span class="pln">
+   </span><span class="kwd">var</span><span class=
+"pln"> mySocket </span><span class="pun">=</span><span class=
+"pln"> </span><span class="kwd">new</span><span class=
+"pln"> </span><span class="typ">TCPSocket</span><span class=
+"pln"> </span><span class="pun">(</span><span class=
+"str">"127.0.0.1"</span><span class="pun">,</span><span class=
+"pln"> </span><span class="lit">6789</span><span class=
+"pun">);</span><span class="pln">  
+   mySocket</span><span class="pun">.</span><span class=
+"pln">onopen </span><span class="pun">=</span><span class=
+"pln"> </span><span class="kwd">function</span><span class=
+"pun">()</span><span class="pln"> </span><span class=
+"pun">{</span><span class="pln">                    
+     </span><span class="kwd">try</span><span class=
+"pln"> </span><span class="pun">{</span><span class="pln">
+       </span><span class=
+"com">// Send data to server</span><span class="pln">
+       </span><span class="kwd">var</span><span class=
+"pln"> moreBufferingOK </span><span class=
+"pun">=</span><span class="pln"> mySocket</span><span class=
+"pun">.</span><span class="pln">send</span><span class=
+"pun">(</span><span class="str">"Hello World"</span><span class=
+"pun">);</span><span class="pln">
+       console</span><span class="pun">.</span><span class=
+"pln">log</span><span class="pun">(</span><span class=
+"str">'Data sent to server!'</span><span class=
+"pun">);</span><span class="pln"> 
+       
+       </span><span class=
+"com">// Receive response from server</span><span class="pln">
+       mySocket</span><span class="pun">.</span><span class=
+"pln">onmessage </span><span class="pun">=</span><span class=
+"pln"> </span><span class="kwd">function</span><span class=
+"pln"> </span><span class="pun">(</span><span class=
+"pln">messageEvent</span><span class="pun">)</span><span class=
+"pln"> </span><span class="pun">{</span><span class="pln">
+         </span><span class=
+"com">// Convert received data from ArrayBuffer to string</span><span class="pln">
+         </span><span class="kwd">var</span><span class=
+"pln"> data </span><span class="pun">=</span><span class=
+"pln"> arrayBufferToString </span><span class=
+"pun">(</span><span class="pln">messageEvent</span><span class=
+"pun">.</span><span class="pln">data</span><span class=
+"pun">);</span><span class="pln">  
+         console</span><span class="pun">.</span><span class=
+"pln">log</span><span class="pun">(</span><span class=
+"str">'Data received from server: '</span><span class=
+"pln"> </span><span class="pun">+</span><span class=
+"pln"> data</span><span class="pun">);</span><span class="pln">
+         
+         </span><span class=
+"com">// Close the connection</span><span class="pln">
+         mySocket</span><span class="pun">.</span><span class=
+"pln">close</span><span class="pun">();</span><span class=
+"pln">                               
+       </span><span class="pun">}</span><span class="pln">
+       
+     </span><span class="pun">}</span><span class="pln">        
+     </span><span class="kwd">catch</span><span class=
+"pun">(</span><span class="pln">err</span><span class=
+"pun">)</span><span class="pln"> </span><span class=
+"pun">{</span><span class="pln">  
+       </span><span class=
+"com">// Sending failed      </span><span class="pln">
+       console</span><span class="pun">.</span><span class=
+"pln">error</span><span class="pun">(</span><span class=
+"str">'Sending failed: '</span><span class=
+"pln"> </span><span class="pun">+</span><span class=
+"pln"> err</span><span class="pun">.</span><span class=
+"pln">name</span><span class="pun">);</span><span class="pln">
+     </span><span class="pun">}</span><span class=
+"pln">                     
+   </span><span class="pun">}</span><span class="pln">  
+   
+   </span><span class=
+"com">// Connection has been closed </span><span class="pln">
+   mySocket</span><span class="pun">.</span><span class=
+"pln">onclose </span><span class="pun">=</span><span class=
+"pln"> </span><span class="kwd">function</span><span class=
+"pln"> </span><span class="pun">{</span><span class="pln">
+     console</span><span class="pun">.</span><span class=
+"pln">log</span><span class="pun">(</span><span class=
+"str">'Connection has been closed'</span><span class=
+"pun">);</span><span class="pln">
+   </span><span class="pun">}</span><span class="pln">  
+   
+   </span><span class="com">// Handle errors</span><span class=
+"pln">
+   mySocket</span><span class="pun">.</span><span class=
+"pln">onerror </span><span class="pun">=</span><span class=
+"pln"> </span><span class="kwd">function</span><span class=
+"pun">(</span><span class="pln">err</span><span class=
+"pun">)</span><span class="pln"> </span><span class=
+"pun">{</span><span class="pln">
+     console</span><span class="pun">.</span><span class=
+"pln">error</span><span class="pun">(</span><span class=
+"str">'Error: '</span><span class="pln"> </span><span class=
+"pun">+</span><span class="pln"> err</span><span class=
+"pun">.</span><span class="pln">name</span><span class=
+"pun">);</span><span class="pln">
+   </span><span class="pun">}</span><span class="pln">             
+   
+ </span><span class="pun">}</span><span class="pln">        
+   </span><span class="kwd">catch</span><span class=
+"pun">(</span><span class="pln">err</span><span class=
+"pun">)</span><span class="pln"> </span><span class=
+"pun">{</span><span class="pln">  
+   
+   </span><span class=
+"com">// Handle runtime exception    </span><span class="pln">
+   console</span><span class="pun">.</span><span class=
+"pln">error</span><span class="pun">(</span><span class=
+"str">'Could not create a TCP socket: '</span><span class=
+"pln"> </span><span class="pun">+</span><span class=
+"pln"> err</span><span class="pun">.</span><span class=
+"pln">name</span><span class="pun">);</span><span class="pln">
+ </span><span class="pun">}</span><span class="pln">     </span>
+</pre>
+    </div>
+    <pre class="idl">
+<span class="idlInterface" id="idl-def-TCPSocket">[<span class=
+"extAttr">Constructor (DOMString remoteAddress, unsigned short remotePort, 
+                 optional TCPOptions options)</span>]
+interface <span class=
+"idlInterfaceID">TCPSocket</span> : <span class=
+"idlSuperclass"><a>EventTarget</a></span> {
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>DOMString</a></span>      <span class=
+"idlAttrName"><a href=
+"#widl-TCPSocket-remoteAddress">remoteAddress</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>DOMString</a></span>      <span class=
+"idlAttrName"><a href=
+"#widl-TCPSocket-remotePort">remotePort</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>DOMString</a></span>      <span class=
+"idlAttrName"><a href=
+"#widl-TCPSocket-localAddress">localAddress</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>unsigned short</a></span> <span class=
+"idlAttrName"><a href=
+"#widl-TCPSocket-localPort">localPort</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>unsigned long</a></span>  <span class=
+"idlAttrName"><a href=
+"#widl-TCPSocket-bufferedAmount">bufferedAmount</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a href="#idl-def-ReadyState" class=
+"idlType"><code>ReadyState</code></a></span>     <span class=
+"idlAttrName"><a href=
+"#widl-TCPSocket-readyState">readyState;</a></span>;</span>
+<span class="idlAttribute">                attribute <span class=
+"idlAttrType"><a>EventHandler</a></span>   <span class=
+"idlAttrName"><a href=
+"#widl-TCPSocket-ondrain">ondrain</a></span>;</span>
+<span class="idlAttribute">                attribute <span class=
+"idlAttrType"><a>EventHandler</a></span>   <span class=
+"idlAttrName"><a href=
+"#widl-TCPSocket-onopen">onopen</a></span>;</span>
+<span class="idlAttribute">                attribute <span class=
+"idlAttrType"><a>EventHandler</a></span>   <span class=
+"idlAttrName"><a href=
+"#widl-TCPSocket-onclose">onclose</a></span>;</span>
+<span class="idlAttribute">                attribute <span class=
+"idlAttrType"><a>EventHandler</a></span>   <span class=
+"idlAttrName"><a href=
+"#widl-TCPSocket-onhalfclose">onhalfclose</a></span>;</span>
+<span class="idlAttribute">                attribute <span class=
+"idlAttrType"><a>EventHandler</a></span>   <span class=
+"idlAttrName"><a href=
+"#widl-TCPSocket-onerror">onerror</a></span>;</span>
+<span class="idlAttribute">                attribute <span class=
+"idlAttrType"><a>EventHandler</a></span>   <span class=
+"idlAttrName"><a href=
+"#widl-TCPSocket-onmessage">onmessage</a></span>;</span>
+<span class="idlMethod">    <span class=
+"idlMethType"><a>void</a></span>    <span class=
+"idlMethName"><a href=
+"#widl-TCPSocket-close-void">close</a></span> ();</span>
+<span class="idlMethod">    <span class=
+"idlMethType"><a>void</a></span>    <span class=
+"idlMethName"><a href=
+"#widl-TCPSocket-halfclose-void">halfclose</a></span> ();</span>
+<span class="idlMethod">    <span class=
+"idlMethType"><a>void</a></span>    <span class=
+"idlMethName"><a href=
+"#widl-TCPSocket-suspend-void">suspend</a></span> ();</span>
+<span class="idlMethod">    <span class=
+"idlMethType"><a>void</a></span>    <span class=
+"idlMethName"><a href=
+"#widl-TCPSocket-resume-void">resume</a></span> ();</span>
+<span class="idlMethod">    <span class=
+"idlMethType"><a>boolean</a></span> <span class=
+"idlMethName"><a href=
+"#widl-TCPSocket-send-boolean-DOMString-Blob-ArrayBuffer-ArrayBufferView-data">send</a></span> (<span class="idlParam"><span class="idlParamType">(<a>DOMString</a> or <a>Blob</a> or <a>ArrayBuffer</a> or <a>ArrayBufferView</a>)</span> <span class="idlParamName">data</span></span>);</span>
+};</span>
+</pre>
+
+    <section id="attributes-1">
+      <h3><span class="secno">6.1</span> Attributes</h3>
+
+      <dl class="attributes">
+        <dt id="widl-TCPSocket-bufferedAmount">
+        <code>bufferedAmount</code> of type <span class=
+        "idlAttrType"><a>unsigned long</a></span>, readonly</dt>
+
+        <dd>This attribute contains the number of bytes which have
+        previously been buffered by calls to the send methods of
+        this socket.</dd>
+
+        <dt id="widl-TCPSocket-localAddress">
+        <code>localAddress</code> of type <span class=
+        "idlAttrType"><a>DOMString</a></span>, readonly</dt>
+
+        <dd>The IPv4/6 address of the interface, e.g. wifi or 3G,
+        that the TCPSocket object is bound to. Can be set by the
+        <code>options</code> argument in the constructor. If not
+        set the user agent binds the socket to the IPv4/6 address
+        of the default local interface.</dd>
+
+        <dt id="widl-TCPSocket-localPort"><code>localPort</code> of
+        type <span class="idlAttrType"><a>unsigned
+        short</a></span>, readonly</dt>
+
+        <dd>The local port that the TCPSocket object is bound to.
+        Can be set by the <code>options</code> argument in the
+        constructor. If not set the user agent binds the socket to
+        a random local port number.</dd>
+
+        <dt id="widl-TCPSocket-onclose"><code>onclose</code> of
+        type <span class=
+        "idlAttrType"><a>EventHandler</a></span>,</dt>
+
+        <dd>The onclose event handler is called when the connection
+        to the server has been closed, either cleanly by the
+        server, or cleanly by the client calling close(), or if the
+        connection was lost. If the connection was lost, onerror
+        will be called prior to onclose.</dd>
+
+        <dt id="widl-TCPSocket-ondrain"><code>ondrain</code> of
+        type <span class=
+        "idlAttrType"><a>EventHandler</a></span>,</dt>
+
+        <dd>The ondrain event handler will be called upon detection
+        that previously-buffered data has been written to the
+        network and it is possible to buffer more data received
+        from the application,</dd>
+
+        <dt id="widl-TCPSocket-onerror"><code>onerror</code> of
+        type <span class=
+        "idlAttrType"><a>EventHandler</a></span>,</dt>
+
+        <dd>The onerror handler will be called when there is an
+        error. The data attribute of the event passed to the
+        onerror handler will have a description of the kind of
+        error. If onerror is called before onopen, the error was
+        connection refused, and onclose will not be called. If
+        onerror is called after onopen, the connection was lost,
+        and onclose will be called after onerror.</dd>
+
+        <dt id="widl-TCPSocket-onhalfclose">
+        <code>onhalfclose</code> of type <span class=
+        "idlAttrType"><a>EventHandler</a></span>,</dt>
+
+        <dd>The onhalfclose event handler is called when the remote
+        peer has half closed the connection. This means that the
+        remote peer can receive TCP messages but not send.</dd>
+
+        <dt id="widl-TCPSocket-onmessage"><code>onmessage</code> of
+        type <span class=
+        "idlAttrType"><a>EventHandler</a></span>,</dt>
+
+        <dd>Event handler for received TCP data. The onmessage
+        handler will be called repeatedly and asynchronously after
+        the TCPSocket object has been created, every time TCP data
+        has been received and was read. At any time, the client may
+        choose to pause reading and receiving onmessage callbacks,
+        by calling the socket's suspend() method. Further
+        invocations of onmessage will be paused until resume() is
+        called.</dd>
+
+        <dt id="widl-TCPSocket-onopen"><code>onopen</code> of type
+        <span class="idlAttrType"><a>EventHandler</a></span>,</dt>
+
+        <dd>The onopen event handler is called when the connection
+        to the server has been established. If the connection is
+        refused, onerror will be called, instead.</dd>
+
+        <dt id="widl-TCPSocket-readyState"><code>readyState;</code>
+        of type <span class="idlAttrType"><a href=
+        "#idl-def-ReadyState" class=
+        "idlType"><code>ReadyState</code></a></span>, readonly</dt>
+
+        <dd>The state of the TCP Socket object.</dd>
+
+        <dt id="widl-TCPSocket-remoteAddress">
+        <code>remoteAddress</code> of type <span class=
+        "idlAttrType"><a>DOMString</a></span>, readonly</dt>
+
+        <dd>The IPv4/6 address of the peer as stated by the
+        remoteAddress argument in the constructor.</dd>
+
+        <dt id="widl-TCPSocket-remotePort"><code>remotePort</code>
+        of type <span class="idlAttrType"><a>DOMString</a></span>,
+        readonly</dt>
+
+        <dd>The port of the peer as stated by the remotePort
+        argument in the constructor.</dd>
+      </dl>
+    </section>
+
+    <section id="methods-1">
+      <h3><span class="secno">6.2</span> Methods</h3>
+
+      <dl class="methods">
+        <dt id="widl-TCPSocket-close-void"><code>close</code></dt>
+
+        <dd>
+          <p>Closes the TCP socket.</p>
+
+          <div>
+            <em>No parameters.</em>
+          </div>
+
+          <div>
+            <em>Return type:</em> <code><a>void</a></code>
+          </div>
+        </dd>
+
+        <dt id="widl-TCPSocket-halfclose-void">
+        <code>halfclose</code></dt>
+
+        <dd>
+          <p>"Halfcloses" the TCP socket. This means that FIN is
+          sent and that the socket no longer can be used to send
+          data. However, receiving is still possible.</p>
+
+          <div>
+            <em>No parameters.</em>
+          </div>
+
+          <div>
+            <em>Return type:</em> <code><a>void</a></code>
+          </div>
+        </dd>
+
+        <dt id="widl-TCPSocket-resume-void">
+        <code>resume</code></dt>
+
+        <dd>
+          <p>Resume reading incoming TCP data and invoking
+          <code>onmessage</code> as usual.</p>
+
+          <div>
+            <em>No parameters.</em>
+          </div>
+
+          <div>
+            <em>Return type:</em> <code><a>void</a></code>
+          </div>
+        </dd>
+
+        <dt id=
+        "widl-TCPSocket-send-boolean-DOMString-Blob-ArrayBuffer-ArrayBufferView-data">
+        <code>send</code></dt>
+
+        <dd>
+          <p>Sends data on the given connected TCP socket.</p>
+
+          <table class="parameters">
+            <tr>
+              <th>Parameter</th>
+
+              <th>Type</th>
+
+              <th>Nullable</th>
+
+              <th>Optional</th>
+
+              <th>Description</th>
+            </tr>
+
+            <tr>
+              <td class="prmName">data</td>
+
+              <td class="prmType"><code>(<a>DOMString</a> or
+              <a>Blob</a> or <a>ArrayBuffer</a> or
+              <a>ArrayBufferView</a>)</code></td>
+
+              <td class="prmNullFalse">✘</td>
+
+              <td class="prmOptFalse">✘</td>
+
+              <td class="prmDesc">
+                The data to write in one of the alternative
+                representations as stated below:<br>
+
+                <ul>
+                  <li>Represented as a sequence of Unicode
+                  characters. [<cite><a class="bibref" href=
+                  "#bib-UNICODE">UNICODE</a></cite>].</li>
+
+                  <li>As raw data represented by the Blob object.
+                  [<cite><a class="bibref" href=
+                  "#bib-FILE-API">FILE-API</a></cite>]</li>
+
+                  <li>Represented as an ArrayBuffer object.
+                  [<cite><a class="bibref" href=
+                  "#bib-TYPED-ARRAYS">TYPED-ARRAYS</a></cite>]</li>
+
+                  <li>Represented by the section of the buffer
+                  described by the ArrayBuffer object that the
+                  ArrayBufferView object references.
+                  [<cite><a class="bibref" href=
+                  "#bib-TYPED-ARRAYS">TYPED-ARRAYS</a></cite>].</li>
+                </ul>
+              </td>
+            </tr>
+          </table>
+
+          <div>
+            <em>Return type:</em> <code><a>boolean</a></code>
+          </div>
+        </dd>
+
+        <dt id="widl-TCPSocket-suspend-void">
+        <code>suspend</code></dt>
+
+        <dd>
+          <p>Pause reading incoming TCP data and invocations of the
+          <code>onmessage</code> handler until resume is
+          called.</p>
+
+          <div>
+            <em>No parameters.</em>
+          </div>
+
+          <div>
+            <em>Return type:</em> <code><a>void</a></code>
+          </div>
+        </dd>
+      </dl>
+    </section>
+
+    <p>When the <a href="#idl-def-TCPSocket" class=
+    "idlType"><code>TCPSocket</code></a> constructor is invoked,
+    the User Agent <em class="rfc2119" title="MUST">MUST</em> run
+    the following steps:</p>
+
+    <ol>
+      <li>If the <code>remoteAddress</code> argument is not a valid
+      IPv4/6 address or the <code>remotePort</code> argument is not
+      a valid port number then throw an
+      <code>InvalidAccessError</code> exception and abort these
+      steps, else set the <code>remoteAddress</code> and
+      <code>remotePort</code> attributes to the requested
+      values.</li>
+
+      <li>If the <code>options.localAddress</code> argument is
+      absent bind the socket to the IPv4/6 address of the default
+      local interface. Otherwise, if the requested local address is
+      free then bind the socket to the IPv4/6 address of the
+      requested local interface. Else, throw an
+      <code>InvalidAccessError</code> exception and abort these
+      steps.</li>
+
+      <li>If the <code>options.localPort</code> argument is absent
+      bind then the socket to any available local port. Otherwise,
+      if the requested local port is free bind the socket to the
+      requested local port. Else, throw an
+      <code>InvalidAccessError</code> exception and abort these
+      steps.</li>
+
+      <li>Set the <code>localAddress</code> and
+      <code>localPort</code> attributes to the selected values
+      according to above.</li>
+
+      <li>Set the <code>readyState</code> attribute to
+      "connecting".</li>
+
+      <li>Set the <code>bufferedAmount</code> attribute to 0.</li>
+
+      <li>Attempt to connect to the requested address and port in
+      the background (without blocking scripts).</li>
+
+      <li>Return the newly created <a href="#idl-def-TCPSocket"
+      class="idlType"><code>TCPSocket</code></a> object to the
+      application.
+      </li>
+    </ol>
+
+    <p>The <dfn id="dfn-send-4"><code>send</code></dfn> method when
+    invoked <em class="rfc2119" title="MUST">MUST</em> run the
+    following steps:</p>
+
+    <ol>
+      <li>If <code>readyState</code> is not "open" throw
+      DOMException <code>InvalidStateError</code> and abort these
+      steps.</li>
+
+      <li>If the type of the data is not compatible any expected
+      type, <code>DOMString</code>, <code>Blob</code>,
+      <code>ArraYBuffer</code> or <code>ArrayBufferView</code>,
+      then throw DOMException <code>InvalidAccessError</code> and
+      abort these steps.</li>
+
+      <li>If the data cannot be sent, e.g. because it would need to
+      be buffered but the buffer is full or because the data is too
+      long to pass atomically through the underlying protocol, the
+      user agent <em class="rfc2119" title="MUST">MUST</em>:
+
+        <ol>
+          <li>Change the <code>readyState</code> attribute's value
+          to "closed".</li>
+
+          <li>Create a new instance of <a href=
+          "#idl-def-ErrorEvent" class=
+          "idlType"><code>ErrorEvent</code></a>.
+          </li>
+
+          <li>Set the <code>error.name</code> attribute of the
+          <a href="#idl-def-ErrorEvent" class=
+          "idlType"><code>ErrorEvent</code></a> object to
+          "NetworkError".
+          </li>
+
+          <li>
+            <a href="#dfn-queue-a-task" class="internalDFN">queue a
+            task</a> to <a>fire an event</a> named <code><a href=
+            "#dfn-error-2" class="internalDFN">error</a></code>
+            with the newly created <code>ErrorEvent</code> instance
+            at the <a href="#idl-def-TCPSocket" class=
+            "idlType"><code>TCPSocket</code></a> object.
+          </li>
+
+          <li>
+            <a href="#dfn-queue-a-task" class="internalDFN">queue a
+            task</a> to <a>fire an event</a> named <code><a href=
+            "#dfn-close-3" class="internalDFN">close</a></code> at
+            the <a href="#idl-def-TCPSocket" class=
+            "idlType"><code>TCPSocket</code></a> object.
+          </li>
+
+          <li>Abort these steps.</li>
+        </ol>
+      </li>
+
+      <li>Make a request to the system to send TCP data with data
+      passed in the <code>data</code> parameter to the address and
+      port of the recipient as stated by the TCPSocket object
+      constructor's <code>remoteAddress</code> and
+      <code>remotePort</code> fields.</li>
+
+      <li>When the requests has been completed set the return value
+      of the method to <code>true</code> or <code>false</code> as a
+      hint to the caller that they may either continue sending more
+      data immediately, or should want to wait until the transport
+      layer has transmitted buffered data that already have been
+      written to the socket before buffering more. When less than
+      an implementation specific value has been buffered and it's
+      safe to immediately write more set the return value to
+      <code>true</code>. When more than an implementation specific
+      value has been buffered set the return value to
+      <code>false</code>. This means that the caller should wait
+      before buffering more data by more calls to <dfn id=
+      "dfn-send-5"><code>send</code></dfn> until the
+      <code>ondrain</code> event handler has been called.</li>
+
+      <li>Any invocation of this method that does not throw an
+      exception must increase the <code>bufferedAmount</code>
+      attribute.
+
+        <ul>
+          <li>If the send data argument is <code>DOMString</code>
+          the <code>bufferedAmount</code> attribute is increased by
+          the number of bytes needed to express the argument as
+          UTF-8. [<cite><a class="bibref" href=
+          "#bib-UNICODE">UNICODE</a></cite>] [<cite><a class=
+          "bibref" href="#bib-UTF-8">UTF-8</a></cite>]</li>
+
+          <li>If the send data argument is <code>Blob</code> the
+          <code>bufferedAmount</code> attribute is increased by the
+          size of the <code>Blob</code> object's raw data, in
+          bytes. [<cite><a class="bibref" href=
+          "#bib-FILE-API">FILE-API</a></cite>]</li>
+
+          <li>If the send data argument is <code>ArrayBuffer</code>
+          the <code>bufferedAmount</code> attribute is increased by
+          the length of the <code>ArrayBuffer</code> in bytes.
+          [<cite><a class="bibref" href=
+          "#bib-TYPED-ARRAYS">TYPED-ARRAYS</a></cite>]</li>
+
+          <li>If the send data argument is
+          <code>ArrayBufferView</code> the
+          <code>bufferedAmount</code> attribute is increased by the
+          length of the <code>ArrayBufferView</code> in bytes.
+          [<cite><a class="bibref" href=
+          "#bib-TYPED-ARRAYS">TYPED-ARRAYS</a></cite>]</li>
+        </ul>
+      </li>
+    </ol>
+
+    <p>The <dfn id="dfn-close-1"><code>close</code></dfn> method
+    when invoked <em class="rfc2119" title="MUST">MUST</em> run the
+    following steps:</p>
+
+    <ol>
+      <li>If <code>readyState</code> is "closing" or "closed" then
+      do nothing.</li>
+
+      <li>If <code>readyState</code> is "connecting" then fail the
+      connection attempt and set the <code>readyState</code>
+      attribute to "closing".</li>
+
+      <li>If <code>readyState</code> is "open" close the connection
+      and set the <code>readyState</code> attribute to
+      "closing".</li>
+    </ol>
+
+    <p>The <dfn id="dfn-halfclose"><code>halfclose</code></dfn>
+    method when invoked <em class="rfc2119" title="MUST">MUST</em>
+    run the following steps:</p>
+
+    <ol>
+      <li>If <code>readyState</code> is "closing" or "closed" then
+      do nothing.</li>
+
+      <li>If <code>readyState</code> is "connecting" then complete
+      the connection attempt. If succesful send FIN and set the
+      <code>readyState</code> attribute to "halfclosed".</li>
+
+      <li>If <code>readyState</code> is "open" then send FIN and
+      set the <code>readyState</code> attribute to
+      "halfclosed".</li>
+    </ol>
+
+    <p>When a new TCP connection has been successfully established
+    the <a href="#dfn-user-agent" class="internalDFN">user
+    agent</a> <em class="rfc2119" title="MUST">MUST</em> run the
+    following steps:</p>
+
+    <ol>
+      <li>Change the <code>readyState</code> attribute's value to
+      "open".</li>
+
+      <li>
+        <a href="#dfn-queue-a-task" class="internalDFN">queue a
+        task</a> to <a>fire an event</a> named <code><a href=
+        "#dfn-open" class="internalDFN">open</a></code> at the
+        <a href="#idl-def-TCPSocket" class=
+        "idlType"><code>TCPSocket</code></a> object.
+      </li>
+    </ol>
+
+    <p>When the attempt to establish a new TCP connection
+    (<code>readyState</code> is "connecting") has failed the
+    <a href="#dfn-user-agent" class="internalDFN">user agent</a>
+    <em class="rfc2119" title="MUST">MUST</em> run the following
+    steps:</p>
+
+    <ol>
+      <li>Change the <code>readyState</code> attribute's value to
+      "closed".</li>
+
+      <li>Create a new instance of <a href="#idl-def-ErrorEvent"
+      class="idlType"><code>ErrorEvent</code></a>.
+      </li>
+
+      <li>Set the <code>error.name</code> attribute of the
+        <a href="#idl-def-ErrorEvent" class=
+        "idlType"><code>ErrorEvent</code></a> object to
+        "NetworkError".
+      </li>
+
+      <li>
+        <a href="#dfn-queue-a-task" class="internalDFN">queue a
+        task</a> to <a>fire an event</a> named <code><a href=
+        "#dfn-error-2" class="internalDFN">error</a></code> with
+        the newly created <a href="#idl-def-ErrorEvent" class=
+        "idlType"><code>ErrorEvent</code></a> instance at the
+        <a href="#idl-def-TCPSocket" class=
+        "idlType"><code>TCPSocket</code></a> object.
+      </li>
+    </ol>
+
+    <p>When an established TCP connection (<code>readyState</code>
+    is "open") is lost the <a href="#dfn-user-agent" class=
+    "internalDFN">user agent</a> <em class="rfc2119" title=
+    "MUST">MUST</em> run the following steps:</p>
+
+    <ol>
+      <li>Change the <code>readyState</code> attribute's value to
+      "closed".</li>
+
+      <li>Create a new instance of <a href="#idl-def-ErrorEvent"
+      class="idlType"><code>ErrorEvent</code></a>.
+      </li>
+
+      <li>Set the <code>error.name</code> attribute of the
+        <a href="#idl-def-ErrorEvent" class=
+        "idlType"><code>ErrorEvent</code></a> object to
+        "NetworkError".
+      </li>
+
+      <li>
+        <a href="#dfn-queue-a-task" class="internalDFN">queue a
+        task</a> to <a>fire an event</a> named <code><a href=
+        "#dfn-error-2" class="internalDFN">error</a></code> with
+        the newly created <code>ErrorEvent</code> instance at the
+        <a href="#idl-def-TCPSocket" class=
+        "idlType"><code>TCPSocket</code></a> object.
+      </li>
+
+      <li>
+        <a href="#dfn-queue-a-task" class="internalDFN">queue a
+        task</a> to <a>fire an event</a> named <code><a href=
+        "#dfn-close-3" class="internalDFN">close</a></code> at the
+        <a href="#idl-def-TCPSocket" class=
+        "idlType"><code>TCPSocket</code></a> object.
+      </li>
+    </ol>
+
+    <p>Upon a new TCP message being received, the <a href=
+    "#dfn-user-agent" class="internalDFN">user agent</a> <em class=
+    "rfc2119" title="MUST">MUST</em> run the following steps:</p>
+
+    <ol>
+      <li>If it is not possible to convert the received TCP data to
+      <code>ArrayBuffer</code>, [<cite><a class="bibref" href=
+      "#bib-TYPED-ARRAYS">TYPED-ARRAYS</a></cite>], then:
+
+        <ol>
+          <li>Create a new instance of <a href=
+          "#idl-def-ErrorEvent" class=
+          "idlType"><code>ErrorEvent</code></a>.
+          </li>
+
+          <li>Set the <code>error.name</code> attribute of the
+          <a href="#idl-def-ErrorEvent" class=
+          "idlType"><code>ErrorEvent</code></a> object to
+          "NetworkError".
+          </li>
+
+          <li>
+            <a href="#dfn-queue-a-task" class="internalDFN">queue a
+            task</a> to <a>fire an event</a> named <code><a href=
+            "#dfn-error-2" class="internalDFN">error</a></code>
+            with the newly created <code>ErrorEvent</code> instance
+            at the <a href="#idl-def-UDPSocket" class=
+            "idlType"><code>UDPSocket</code></a> object.
+          </li>
+
+          <li>Abort these steps.</li>
+        </ol>
+      </li>
+
+      <li>Create a new instance of <code>MessageEvent</code>,
+      [<cite><a class="bibref" href=
+      "#bib-POSTMSG">POSTMSG</a></cite>].</li>
+
+      <li>Initialize the <code>MessageEvent</code> object's data
+      attribute to a new read-only <code>ArrayBuffer</code> object
+      whose contents are the received TCP data [<cite><a class=
+      "bibref" href=
+      "#bib-TYPED-ARRAYS">TYPED-ARRAYS</a></cite>].</li>
+
+      <li>
+        <a href="#dfn-queue-a-task" class="internalDFN">queue a
+        task</a> to <a>fire an event</a> named <code><a href=
+        "#dfn-message-1" class="internalDFN">message</a></code>
+        with the newly created <code>MessageEvent</code> instance
+        at the <a href="#idl-def-TCPSocket" class=
+        "idlType"><code>TCPSocket</code></a> object.
+      </li>
+    </ol>
+
+    <p>Note: It is up to the implementation the define how often
+    the <code><a href="#dfn-message-1" class=
+    "internalDFN">message</a></code> event will be issued and how
+    much data that will be delivered to the application with each
+    <a>MessageEvent</a> instance.</p>
+
+    <p>In the process of sending TCP data, upon a detection that
+    previously-buffered data has been written to the network and it
+    is possible to buffer more data received from the application,
+    the <a href="#dfn-user-agent" class="internalDFN">user
+    agent</a> <em class="rfc2119" title="MUST">MUST</em>:</p>
+
+    <ol>
+      <li>
+        <a href="#dfn-queue-a-task" class="internalDFN">queue a
+        task</a> to <a>fire an event</a> named <code><a href=
+        "#dfn-drain-1" class="internalDFN">drain</a></code> at the
+        <a href="#idl-def-TCPSocket" class=
+        "idlType"><code>TCPSocket</code></a> object.
+      </li>
+    </ol>
+
+    <p>When a TCP connection has been closed cleanly, either by the
+    server, or by the client calling <code>close()</code> the
+    <a href="#dfn-user-agent" class="internalDFN">user agent</a>
+    <em class="rfc2119" title="MUST">MUST</em> run the following
+    steps:</p>
+
+    <ol>
+      <li>Set the <code>readyState</code> attribute's value to
+      "closed".</li>
+
+      <li>
+        <a href="#dfn-queue-a-task" class="internalDFN">queue a
+        task</a> to <a>fire an event</a> named <code><a href=
+        "#dfn-close-3" class="internalDFN">close</a></code> at the
+        <a href="#idl-def-TCPSocket" class=
+        "idlType"><code>TCPSocket</code></a> object.
+      </li>
+    </ol>
+
+    <section id="event-handlers-1">
+      <h3><span class="secno">6.3</span> Event handlers</h3>
+
+      <p>The following are the <a>event handlers</a> (and their
+      corresponding <a href="#dfn-event-handler-event-types" class=
+      "internalDFN">event handler event types</a>) that <em class=
+      "rfc2119" title="MUST">MUST</em> be supported as attributes
+      by the <a href="#idl-def-TCPSocket" class=
+      "idlType"><code>TCPSocket</code></a> object.</p>
+
+      <table class="simple">
+        <thead>
+          <tr>
+            <th>event handler</th>
+
+            <th>event name</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td><strong><code>onmessage</code></strong></td>
+
+            <td><code><dfn id=
+            "dfn-message-1">message</dfn></code></td>
+          </tr>
+
+          <tr>
+            <td><strong><code>ondrain</code></strong></td>
+
+            <td><code><dfn id="dfn-drain-1">drain</dfn></code></td>
+          </tr>
+
+          <tr>
+            <td><strong><code>onopen</code></strong></td>
+
+            <td><code><dfn id="dfn-open">open</dfn></code></td>
+          </tr>
+
+          <tr>
+            <td><strong><code>onclose</code></strong></td>
+
+            <td><code><dfn id="dfn-close-2">close</dfn></code></td>
+          </tr>
+
+          <tr>
+            <td><strong><code>onhalfclose</code></strong></td>
+
+            <td><code><dfn id=
+            "dfn-halfclose-1">halfclose</dfn></code></td>
+          </tr>
+
+          <tr>
+            <td><strong><code>onerror</code></strong></td>
+
+            <td><code><dfn id="dfn-error-1">error</dfn></code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>The <code>message</code> <a>event</a> <em class="rfc2119"
+      title="SHALL">SHALL</em> implement the
+      <code>MessageEvent</code> interface, [<cite><a class="bibref"
+      href="#bib-POSTMSG">POSTMSG</a></cite>]. The event's data
+      attribute is intialized to a new read-only
+      <code>ArrayBuffer</code> object whose contents are the
+      recieved UDP data. [<cite><a class="bibref" href=
+      "#bib-TYPED-ARRAYS">TYPED-ARRAYS</a></cite>]</p>
+
+      <p>The <code>error</code> <a>event</a> <em class="rfc2119"
+      title="SHALL">SHALL</em> implement the <a href=
+      "#idl-def-ErrorEvent" class=
+      "idlType"><code>ErrorEvent</code></a> interface.</p>
+    </section>
+  </section>
+  <!--====================== Interface TCPServerSocket ============================-->
+
+  <section id="interface-tcpserversocket">
+    <!--OddPage-->
+
+    <h2><span class="secno">7.</span> Interface <a href=
+    "#idl-def-TCPServerSocket" class=
+    "idlType"><code>TCPServerSocket</code></a></h2>
+
+    <p>The <a href="#idl-def-TCPServerSocket" class=
+    "idlType"><code>TCPServerSocket</code></a> interface supports
+    TCP server sockets that listens to connection attempts from TCP
+    clients</p>
+
+    <div class="example">
+      <div class="example-title">
+        <span>Example 4</span>
+      </div>
+      <pre class="example highlight prettyprint">
+<span class="com">// </span><span class="pln">
+</span><span class=
+"com">// This example shows a simple TCP echo server. </span><span class="pln">
+</span><span class=
+"com">// The server will listen on port 6789 and respond back with what ever </span><span class="pln">
+</span><span class=
+"com">// has been sent to the server.</span><span class="pln">
+</span><span class="com">//        </span><span class="pln">
+</span><span class="kwd">try</span><span class=
+"pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class=
+"com">//  Create a new server socket that listens on port 6789</span><span class="pln">
+  </span><span class="kwd">var</span><span class=
+"pln"> myServerSocket </span><span class="pun">=</span><span class=
+"pln"> </span><span class="kwd">new</span><span class=
+"pln"> </span><span class="typ">TCPServerSocket</span><span class=
+"pln"> </span><span class="pun">({</span><span class=
+"str">"localPort"</span><span class="pun">:</span><span class=
+"lit">6789</span><span class="pun">});</span><span class="pln">
+  
+  myServerSocket</span><span class="pun">.</span><span class=
+"pln">onconnect </span><span class="pun">=</span><span class=
+"pln"> </span><span class="kwd">function</span><span class=
+"pln"> </span><span class="pun">(</span><span class=
+"pln">connectEvent</span><span class="pun">)</span><span class=
+"pln"> </span><span class="pun">{</span><span class="pln"> 
+    </span><span class="kwd">var</span><span class=
+"pln"> connectedSocket </span><span class=
+"pun">=</span><span class="pln"> connectEvent</span><span class=
+"pun">.</span><span class="pln">connectedSocket</span><span class=
+"pun">;</span><span class="pln">
+    </span><span class="com">// Read the data</span><span class=
+"pln">
+    connectedSocket</span><span class="pun">.</span><span class=
+"pln">onmessage </span><span class="pun">=</span><span class=
+"pln"> </span><span class="kwd">function</span><span class=
+"pln"> </span><span class="pun">(</span><span class=
+"pln">messageEvent</span><span class="pun">)</span><span class=
+"pln"> </span><span class="pun">{</span><span class="pln">
+       </span><span class="kwd">var</span><span class=
+"pln"> data </span><span class="pun">=</span><span class=
+"pln"> messageEvent</span><span class="pun">.</span><span class=
+"pln">data</span><span class="pun">;</span><span class=
+"pln">               
+       </span><span class="kwd">try</span><span class=
+"pln"> </span><span class="pun">{</span><span class="pln">
+         </span><span class=
+"com">// Send data back to client</span><span class="pln">
+         </span><span class="kwd">var</span><span class=
+"pln"> moreBufferingOK </span><span class=
+"pun">=</span><span class="pln"> connectedSocket</span><span class=
+"pun">.</span><span class="pln">send</span><span class=
+"pun">(</span><span class="pln">data</span><span class=
+"pun">);</span><span class="pln">
+         console</span><span class="pun">.</span><span class=
+"pln">log</span><span class="pun">(</span><span class=
+"str">'Response sent to client!'</span><span class=
+"pun">);</span><span class="pln"> 
+       </span><span class="pun">}</span><span class="pln">        
+         </span><span class="kwd">catch</span><span class=
+"pun">(</span><span class="pln">err</span><span class=
+"pun">)</span><span class="pln"> </span><span class=
+"pun">{</span><span class="pln">  
+         </span><span class=
+"com">// Sending failed      </span><span class="pln">
+         console</span><span class="pun">.</span><span class=
+"pln">error</span><span class="pun">(</span><span class=
+"str">'Sending failed: '</span><span class=
+"pln"> </span><span class="pun">+</span><span class=
+"pln"> err</span><span class="pun">.</span><span class=
+"pln">name</span><span class="pun">);</span><span class="pln">
+       </span><span class="pun">}</span><span class=
+"pln">                                                            
+    </span><span class="pun">}</span><span class="pln">  
+    
+    </span><span class=
+"com">// Connection has been closed </span><span class="pln">
+    connectedSocket</span><span class="pun">.</span><span class=
+"pln">onclose </span><span class="pun">=</span><span class=
+"pln"> </span><span class="kwd">function</span><span class=
+"pln"> </span><span class="pun">{</span><span class="pln">
+      console</span><span class="pun">.</span><span class=
+"pln">log</span><span class="pun">(</span><span class=
+"str">'Connection has been closed'</span><span class=
+"pun">);</span><span class="pln">
+    </span><span class="pun">}</span><span class="pln">        
+  
+  </span><span class="pun">}</span><span class="pln">
+</span><span class="pun">}</span><span class="pln">        
+</span><span class="kwd">catch</span><span class=
+"pun">(</span><span class="pln">err</span><span class=
+"pun">)</span><span class="pln"> </span><span class=
+"pun">{</span><span class="pln">  
+  </span><span class=
+"com">// Handle runtime exception    </span><span class="pln">
+  console</span><span class="pun">.</span><span class=
+"pln">error</span><span class="pun">(</span><span class=
+"str">'Could not create a TCP server socket: '</span><span class=
+"pln"> </span><span class="pun">+</span><span class=
+"pln"> err</span><span class="pun">.</span><span class=
+"pln">name</span><span class="pun">);</span><span class="pln">
+</span><span class="pun">}</span><span class="pln">      </span>
+</pre>
+    </div>
+    <pre class="idl">
+<span class="idlInterface" id=
+"idl-def-TCPServerSocket">[<span class=
+"extAttr">Constructor (optional TCPServerOptions options)</span>]
+interface <span class=
+"idlInterfaceID">TCPServerSocket</span> : <span class=
+"idlSuperclass"><a>EventTarget</a></span> {
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>DOMString</a></span>      <span class=
+"idlAttrName"><a href=
+"#widl-TCPServerSocket-localAddress">localAddress</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>unsigned short</a></span> <span class=
+"idlAttrName"><a href=
+"#widl-TCPServerSocket-localPort">localPort</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a href="#idl-def-ReadyState" class=
+"idlType"><code>ReadyState</code></a></span>     <span class=
+"idlAttrName"><a href=
+"#widl-TCPServerSocket-readyState">readyState;</a></span>;</span>
+<span class="idlAttribute">                attribute <span class=
+"idlAttrType"><a>EventHandler</a></span>   <span class=
+"idlAttrName"><a href=
+"#widl-TCPServerSocket-onconnect">onconnect</a></span>;</span>
+<span class="idlAttribute">                attribute <span class=
+"idlAttrType"><a>EventHandler</a></span>   <span class=
+"idlAttrName"><a href=
+"#widl-TCPServerSocket-onerror">onerror</a></span>;</span>
+<span class="idlMethod">    <span class=
+"idlMethType"><a>void</a></span> <span class="idlMethName"><a href=
+"#widl-TCPServerSocket-close-void">close</a></span> ();</span>
+<span class="idlMethod">    <span class=
+"idlMethType"><a>void</a></span> <span class="idlMethName"><a href=
+"#widl-TCPServerSocket-suspend-void">suspend</a></span> ();</span>
+<span class="idlMethod">    <span class=
+"idlMethType"><a>void</a></span> <span class="idlMethName"><a href=
+"#widl-TCPServerSocket-resume-void">resume</a></span> ();</span>
+};</span>
+</pre>
+
+    <section id="attributes-2">
+      <h3><span class="secno">7.1</span> Attributes</h3>
+
+      <dl class="attributes">
+        <dt id="widl-TCPServerSocket-localAddress">
+        <code>localAddress</code> of type <span class=
+        "idlAttrType"><a>DOMString</a></span>, readonly</dt>
+
+        <dd>The IPv4/6 address of the interface, e.g. wifi or 3G,
+        that the TCPServer Socket object is bound to. Can be set by
+        the <code>options</code> argument in the constructor. If
+        not set the user agent binds the socket to the IPv4/6
+        address of the default local interface.</dd>
+
+        <dt id="widl-TCPServerSocket-localPort">
+        <code>localPort</code> of type <span class=
+        "idlAttrType"><a>unsigned short</a></span>, readonly</dt>
+
+        <dd>The local port that the TCPServerSocket object is bound
+        to. Can be set by the <code>options</code> argument in the
+        constructor. If not set the user agent binds the socket to
+        a random local port number.</dd>
+
+        <dt id="widl-TCPServerSocket-onconnect">
+        <code>onconnect</code> of type <span class=
+        "idlAttrType"><a>EventHandler</a></span>,</dt>
+
+        <dd>Event handler for an accepted incoming connections on
+        the specified port and address.</dd>
+
+        <dt id="widl-TCPServerSocket-onerror"><code>onerror</code>
+        of type <span class=
+        "idlAttrType"><a>EventHandler</a></span>,</dt>
+
+        <dd>Event handler for errors on incoming connections. The
+        data attribute of the event passed to the onerror handler
+        will have a description of the kind of error.</dd>
+
+        <dt id="widl-TCPServerSocket-readyState">
+        <code>readyState;</code> of type <span class=
+        "idlAttrType"><a href="#idl-def-ReadyState" class=
+        "idlType"><code>ReadyState</code></a></span>, readonly</dt>
+
+        <dd>The state of the TCP server object. A TCP server socket
+        object can be in "open" or "closed" states.</dd>
+      </dl>
+    </section>
+
+    <section id="methods-2">
+      <h3><span class="secno">7.2</span> Methods</h3>
+
+      <dl class="methods">
+        <dt id="widl-TCPServerSocket-close-void">
+        <code>close</code></dt>
+
+        <dd>
+          <p>Closes the TCP server socket, i.e. listening for
+          incoming connections is stopped. Existing TCP connections
+          are kept open.</p>
+
+          <div>
+            <em>No parameters.</em>
+          </div>
+
+          <div>
+            <em>Return type:</em> <code><a>void</a></code>
+          </div>
+        </dd>
+
+        <dt id="widl-TCPServerSocket-resume-void">
+        <code>resume</code></dt>
+
+        <dd>
+          <p>Resume listening for incoming connections and
+          invocations of the <code>onconnecion</code> handler as
+          usual.</p>
+
+          <div>
+            <em>No parameters.</em>
+          </div>
+
+          <div>
+            <em>Return type:</em> <code><a>void</a></code>
+          </div>
+        </dd>
+
+        <dt id="widl-TCPServerSocket-suspend-void">
+        <code>suspend</code></dt>
+
+        <dd>
+          <p>Pause listening for incoming connections and
+          invocations of the <code>onconnecion</code> handler until
+          resume() is called.</p>
+
+          <div>
+            <em>No parameters.</em>
+          </div>
+
+          <div>
+            <em>Return type:</em> <code><a>void</a></code>
+          </div>
+        </dd>
+      </dl>
+    </section>
+
+    <p>When the <a href="#idl-def-TCPServerSocket" class=
+    "idlType"><code>TCPServerSocket</code></a> constructor is
+    invoked, the User Agent <em class="rfc2119" title=
+    "MUST">MUST</em> run the following steps:</p>
+
+    <ol>
+      <li>If any input argument is invalid throw an
+      <code>InvalidAccessError</code> exception and abort these
+      steps.</li>
+
+      <li>If the <code>options.localAddress</code> argument is
+      absent then listen to the IPv4/6 address of the default local
+      interface. Otherwise, if the requested local address is free
+      then listen to the IPv4/6 address of the requested local
+      interface. Else, throw an <code>InvalidAccessError</code>
+      exception and abort these steps.</li>
+
+      <li>If the <code>options.localPort</code> argument is absent
+      then bind the socket to any available local port. Otherwise,
+      if the requested local port is free then bind the socket to
+      the requested local port. Else, throw an
+      <code>InvalidAccessError</code> exception and abort these
+      steps.</li>
+
+      <li>Create a new <a href="#idl-def-TCPServerSocket" class=
+      "idlType"><code>TCPServerSocket</code></a> object and set the
+      <code>localAddress</code> and <code>localPort</code>
+      attributes to selected values accoring to above.
+      </li>
+
+      <li>Set the <code>readyState</code> attribute to "open".</li>
+
+      <li>Start listening for for connections on the specified port
+      and address.</li>
+
+      <li>Return the newly created <a href=
+      "#idl-def-TCPServerSocket" class=
+      "idlType"><code>TCPServerSocket</code></a> object to the
+      application.
+      </li>
+    </ol>
+
+    <p>The <dfn id="dfn-close-3"><code>close</code></dfn> method
+    when invoked <em class="rfc2119" title="MUST">MUST</em> run the
+    following steps:</p>
+
+    <ol>
+      <li>If a TCP connection setup is in progress the connection
+      setup is finalized according to the descriptions below.</li>
+
+      <li>Stop listening to further connection attempts from
+      clients.</li>
+
+      <li>Set the <code>readyState</code> attribute to
+      "closed".</li>
+    </ol>
+
+    <p>Upon a new successful connection to the TCP server socket
+    the <a href="#dfn-user-agent" class="internalDFN">user
+    agent</a> <em class="rfc2119" title="MUST">MUST</em> run the
+    following steps:</p>
+
+    <ol>
+      <li>Create a new instance of <a href="#idl-def-ConnectEvent"
+        class="idlType"><code>ConnectEvent</code></a>.
+      </li>
+
+      <li>Let <var>socket</var> be a new instance of <a href=
+      "#idl-def-TCPSocket" class=
+      "idlType"><code>TCPSocket</code></a>.
+      </li>
+
+      <li>set the <code>remoteAddress</code> attribute of
+      <var>socket</var> to the IPv4/6 address of the peer.</li>
+
+      <li>set the <code>remotePort</code> attribute of
+      <var>socket</var> to the source port of the of the peer.</li>
+
+      <li>set the <code>localAddress</code> attribute of
+      <var>socket</var> to the used local IPv4/6 address.</li>
+
+      <li>set the <code>localPort</code> attribute of
+      <var>socket</var> to the used local source port.</li>
+
+      <li>set the <code>readyState</code> attribute of
+      <var>socket</var> to "open".</li>
+
+      <li>set the <code>bufferedAmount</code> attribute of
+      <var>socket</var> to 0.</li>
+
+      <li>set the <code>connectedSocket</code> attribute of the
+      <a href="#idl-def-ConnectEvent" class=
+      "idlType"><code>ConnectEvent</code></a> object to
+      <var>socket</var>.
+      </li>
+
+      <li>
+        <a href="#dfn-queue-a-task" class="internalDFN">queue a
+        task</a> to <a>fire an event</a> named <code><a href=
+        "#dfn-connect" class="internalDFN">connect</a></code> with
+        the newly created <a href="#idl-def-ConnectEvent" class=
+        "idlType"><code>ConnectEvent</code></a> instance at the
+        <a href="#idl-def-TCPServerSocket" class=
+        "idlType"><code>TCPServerSocket</code></a> object.
+      </li>
+    </ol>
+
+    <p>Upon a new connection attempt to the TCP server socket that
+    can not be served, e.g. due to max number of open connections,
+    the <a href="#dfn-user-agent" class="internalDFN">user
+    agent</a> <em class="rfc2119" title="MUST">MUST</em> run the
+    following steps:</p>
+
+    <ol>
+      <li>Create a new instance of <a href="#idl-def-ErrorEvent"
+      class="idlType"><code>ErrorEvent</code></a>.
+      </li>
+
+      <li>Set the <code>error.name</code> attribute of the
+        <a href="#idl-def-ErrorEvent" class=
+        "idlType"><code>ErrorEvent</code></a> object to
+        "NetworkError".
+      </li>
+
+      <li>
+        <a href="#dfn-queue-a-task" class="internalDFN">queue a
+        task</a> to <a>fire an event</a> named <code><a href=
+        "#dfn-error-2" class="internalDFN">error</a></code> with
+        the newly created <a href="#idl-def-ErrorEvent" class=
+        "idlType"><code>ErrorEvent</code></a> instance at the
+        <a href="#idl-def-TCPServerSocket" class=
+        "idlType"><code>TCPServerSocket</code></a> object.
+      </li>
+    </ol>
+
+    <section id="event-handlers-2">
+      <h3><span class="secno">7.3</span> Event handlers</h3>
+
+      <p>The following are the <a>event handlers</a> (and their
+      corresponding <a href="#dfn-event-handler-event-types" class=
+      "internalDFN">event handler event types</a>) that <em class=
+      "rfc2119" title="MUST">MUST</em> be supported as attributes
+      by the <a href="#idl-def-TCPServerSocket" class=
+      "idlType"><code>TCPServerSocket</code></a> object.</p>
+
+      <table class="simple">
+        <thead>
+          <tr>
+            <th>event handler</th>
+
+            <th>event name</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td><strong><code>onconnect</code></strong></td>
+
+            <td><code><dfn id=
+            "dfn-connect">connect</dfn></code></td>
+          </tr>
+
+          <tr>
+            <td><strong><code>onerror</code></strong></td>
+
+            <td><code><dfn id="dfn-error-2">error</dfn></code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>The <code>connect</code> <a>event</a> <em class="rfc2119"
+      title="SHALL">SHALL</em> implement the <a href=
+      "#idl-def-ConnectEvent" class=
+      "idlType"><code>ConnectEvent</code></a> interface.</p>
+
+      <p>The <code>error</code> <a>event</a> <em class="rfc2119"
+      title="SHALL">SHALL</em> implement the <a href=
+      "#idl-def-ErrorEvent" class=
+      "idlType"><code>ErrorEvent</code></a> interface.</p>
+    </section>
+  </section>
+  <!--====================== Interface UDPMessageEvent ============================-->
+
+  <section id="interface-udpmessageevent">
+    <!--OddPage-->
+
+    <h2><span class="secno">8.</span> Interface <a href=
+    "#idl-def-UDPMessageEvent" class=
+    "idlType"><code>UDPMessageEvent</code></a></h2>
+
+    <p>The <a href="#idl-def-UDPMessageEvent" class=
+    "idlType"><code>UDPMessageEvent</code></a> interface represents
+    events related to received UDP data. This interface extends the
+    <code>MessageEvent</code> interface, [<cite><a class="bibref"
+    href="#bib-POSTMSG">POSTMSG</a></cite>]</p>
+
+    <p>The event's data attribute is intialized to a new read-only
+    ArrayBuffer object whose contents are the recieved UDP data,
+    [<cite><a class="bibref" href=
+    "#bib-TYPED-ARRAYS">TYPED-ARRAYS</a></cite>]</p>
+    <pre class="idl">
+<span class="idlInterface" id=
+"idl-def-UDPMessageEvent">[<span class=
+"extAttr">NoInterfaceObject</span>]
+interface <span class=
+"idlInterfaceID">UDPMessageEvent</span> : <span class=
+"idlSuperclass"><a>MessageEvent</a></span> {
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>DOMString</a></span>      <span class=
+"idlAttrName"><a href=
+"#widl-UDPMessageEvent-remoteAddress">remoteAddress</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>unsigned short</a></span> <span class=
+"idlAttrName"><a href=
+"#widl-UDPMessageEvent-remotePort">remotePort</a></span>;</span>
+};</span>
+</pre>
+
+    <section id="attributes-3">
+      <h3><span class="secno">8.1</span> Attributes</h3>
+
+      <dl class="attributes">
+        <dt id="widl-UDPMessageEvent-remoteAddress">
+        <code>remoteAddress</code> of type <span class=
+        "idlAttrType"><a>DOMString</a></span>, readonly</dt>
+
+        <dd>The address of the remote machine.</dd>
+
+        <dt id="widl-UDPMessageEvent-remotePort">
+        <code>remotePort</code> of type <span class=
+        "idlAttrType"><a>unsigned short</a></span>, readonly</dt>
+
+        <dd>The port of the remote machine.</dd>
+      </dl>
+    </section>
+  </section>
+  <!--====================== Interface ConnectEvent ============================-->
+
+  <section id="interface-connectevent">
+    <!--OddPage-->
+
+    <h2><span class="secno">9.</span> Interface <a href=
+    "#idl-def-ConnectEvent" class=
+    "idlType"><code>ConnectEvent</code></a></h2>
+
+    <p>The <a href="#idl-def-ConnectEvent" class=
+    "idlType"><code>ConnectEvent</code></a> interface represents
+    events related to accepted connections to a TCP server
+    socket.</p>
+    <pre class="idl">
+<span class="idlInterface" id="idl-def-ConnectEvent">[<span class=
+"extAttr">NoInterfaceObject</span>]
+interface <span class=
+"idlInterfaceID">ConnectEvent</span> : <span class=
+"idlSuperclass"><a>Event</a></span> {
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a href="#idl-def-TCPSocket" class=
+"idlType"><code>TCPSocket</code></a></span> <span class=
+"idlAttrName"><a href=
+"#widl-ConnectEvent-connectedSocket">connectedSocket</a></span>;</span>
+};</span>
+</pre>
+
+    <section id="attributes-4">
+      <h3><span class="secno">9.1</span> Attributes</h3>
+
+      <dl class="attributes">
+        <dt id="widl-ConnectEvent-connectedSocket">
+        <code>connectedSocket</code> of type <span class=
+        "idlAttrType"><a href="#idl-def-TCPSocket" class=
+        "idlType"><code>TCPSocket</code></a></span>, readonly</dt>
+
+        <dd>The new TCP socket object for the accepted socket. This
+        new socket object is to be used for further communication
+        with the client.</dd>
+      </dl>
+    </section>
+  </section>
+  <!--====================== Interface ErrorEvent ============================-->
+
+  <section id="interface-errorevent">
+    <!--OddPage-->
+
+    <h2><span class="secno">10.</span> Interface <a href=
+    "#idl-def-ErrorEvent" class=
+    "idlType"><code>ErrorEvent</code></a></h2>
+
+    <p>The <a href="#idl-def-ErrorEvent" class=
+    "idlType"><code>ErrorEvent</code></a> interface represents
+    events related to TCP connection errors.</p>
+    <pre class="idl">
+<span class="idlInterface" id="idl-def-ErrorEvent">[<span class=
+"extAttr">NoInterfaceObject</span>]
+interface <span class=
+"idlInterfaceID">ErrorEvent</span> : <span class=
+"idlSuperclass"><a>Event</a></span> {
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>DOMError</a></span> <span class=
+"idlAttrName"><a href=
+"#widl-ErrorEvent-error">error</a></span>;</span>
+};</span>
+</pre>
+
+    <section id="attributes-5">
+      <h3><span class="secno">10.1</span> Attributes</h3>
+
+      <dl class="attributes">
+        <dt id="widl-ErrorEvent-error"><code>error</code> of type
+        <span class="idlAttrType"><a>DOMError</a></span>,
+        readonly</dt>
+
+        <dd>The detected error.</dd>
+      </dl>
+    </section>
+  </section>
+  <!--====================== Dictionary UDPOptions ============================-->
+
+  <section id="dictionary-udpoptions">
+    <!--OddPage-->
+
+    <h2><span class="secno">11.</span> Dictionary <a href=
+    "#idl-def-UDPOptions" class=
+    "idlType"><code>UDPOptions</code></a></h2>
+
+    <p>States the options for the UDPSocket. An instance of this
+    dictionary can optionally be used in the constructor of the
+    <a href="#idl-def-UDPSocket" class=
+    "idlType"><code>UDPSocket</code></a> object, where all fields
+    are optional.</p>
+    <pre class="idl">
+<span class="idlDictionary" id=
+"idl-def-UDPOptions">dictionary <span class=
+"idlDictionaryID">UDPOptions</span> {
+<span class="idlMember">    <span class=
+"idlMemberType"><a>DOMString</a></span>      <span class=
+"idlMemberName"><a href=
+"#widl-UDPOptions-localAddress">localAddress</a></span>;</span>
+<span class="idlMember">    <span class=
+"idlMemberType"><a>unsigned short</a></span> <span class=
+"idlMemberName"><a href=
+"#widl-UDPOptions-localPort">localPort</a></span>;</span>
+<span class="idlMember">    <span class=
+"idlMemberType"><a>DOMString</a></span>      <span class=
+"idlMemberName"><a href=
+"#widl-UDPOptions-remoteAddress">remoteAddress</a></span>;</span>
+<span class="idlMember">    <span class=
+"idlMemberType"><a>unsigned short</a></span> <span class=
+"idlMemberName"><a href=
+"#widl-UDPOptions-remotePort">remotePort</a></span>;</span>
+<span class="idlMember">    <span class=
+"idlMemberType"><a>boolean</a></span>        <span class=
+"idlMemberName"><a href=
+"#widl-UDPOptions-addressReuse">addressReuse</a></span>;</span>
+<span class="idlMember">    <span class=
+"idlMemberType"><a>boolean</a></span>        <span class=
+"idlMemberName"><a href=
+"#widl-UDPOptions-loopback">loopback</a></span>;</span>
+};</span>
+</pre>
+
+    <section id="dictionary-udpoptions-members">
+      <h3><span class="secno">11.1</span> Dictionary <a class=
+      "idlType" href=
+      "#idl-def-UDPOptions"><code>UDPOptions</code></a>
+      Members</h3>
+
+      <dl class="dictionary-members">
+        <dt id="widl-UDPOptions-addressReuse">
+        <code>addressReuse</code> of type <span class=
+        "idlMemberType"><a>boolean</a></span></dt>
+
+        <dd><code>true</code> allows the socket to be bound to an
+        address that is already in use. Default is
+        <code>true</code>.</dd>
+
+        <dt id="widl-UDPOptions-localAddress">
+        <code>localAddress</code> of type <span class=
+        "idlMemberType"><a>DOMString</a></span></dt>
+
+        <dd>The IPv4/6 address of the interface, e.g. wifi or 3G,
+        that the UDPSocket object is bound to. If the field is
+        omitted the user agent binds the socket to the IPv4/6
+        address of the default local interface.</dd>
+
+        <dt id="widl-UDPOptions-localPort"><code>localPort</code>
+        of type <span class="idlMemberType"><a>unsigned
+        short</a></span></dt>
+
+        <dd>The local port that the UDPSocket object is bound to.
+        If the the field is omitted the user agent binds the socket
+        to a random local port number.</dd>
+
+        <dt id="widl-UDPOptions-loopback"><code>loopback</code> of
+        type <span class="idlMemberType"><a>boolean</a></span></dt>
+
+        <dd><code>true</code> means that data you send is looped
+        back to your host. Default is <code>false</code>.</dd>
+
+        <dt id="widl-UDPOptions-remoteAddress">
+        <code>remoteAddress</code> of type <span class=
+        "idlMemberType"><a>DOMString</a></span></dt>
+
+        <dd>When present the default remote IPv4/6 address that is
+        used for subsequent send() calls.</dd>
+
+        <dt id="widl-UDPOptions-remotePort"><code>remotePort</code>
+        of type <span class="idlMemberType"><a>unsigned
+        short</a></span></dt>
+
+        <dd>When present the default remote port that is used for
+        subsequent send() calls.</dd>
+      </dl>
+    </section>
+
+    <div class="issue">
+      <div class="issue-title" role="heading" aria-level="3">
+        <span>Issue 1</span>
+      </div>
+
+      <p class="">Do we need secure transport for UDP sockets??</p>
+    </div>
+  </section>
+  <!--====================== Dictionary TCPOptions ============================-->
+
+  <section id="dictionary-tcpoptions">
+    <!--OddPage-->
+
+    <h2><span class="secno">12.</span> Dictionary <a href=
+    "#idl-def-TCPOptions" class=
+    "idlType"><code>TCPOptions</code></a></h2>
+
+    <p>States the options for the TCPSocket. An instance of this
+    dictionary can optionally be used in the constructor of the
+    <a href="#idl-def-TCPSocket" class=
+    "idlType"><code>TCPSocket</code></a> object, where all fields
+    are optional.</p>
+    <pre class="idl">
+<span class="idlDictionary" id=
+"idl-def-TCPOptions">dictionary <span class=
+"idlDictionaryID">TCPOptions</span> {
+<span class="idlMember">    <span class=
+"idlMemberType"><a>DOMString</a></span>      <span class=
+"idlMemberName"><a href=
+"#widl-TCPOptions-localAddress">localAddress</a></span>;</span>
+<span class="idlMember">    <span class=
+"idlMemberType"><a>unsigned short</a></span> <span class=
+"idlMemberName"><a href=
+"#widl-TCPOptions-localPort">localPort</a></span>;</span>
+<span class="idlMember">    <span class=
+"idlMemberType"><a>boolean</a></span>        <span class=
+"idlMemberName"><a href=
+"#widl-TCPOptions-useSecureTransport">useSecureTransport</a></span>;</span>
+};</span>
+</pre>
+
+    <section id="dictionary-tcpoptions-members">
+      <h3><span class="secno">12.1</span> Dictionary <a class=
+      "idlType" href=
+      "#idl-def-TCPOptions"><code>TCPOptions</code></a>
+      Members</h3>
+
+      <dl class="dictionary-members">
+        <dt id="widl-TCPOptions-localAddress">
+        <code>localAddress</code> of type <span class=
+        "idlMemberType"><a>DOMString</a></span></dt>
+
+        <dd>The IPv4/6 address of the interface, e.g. wifi or 3G,
+        that the UDPSocket object is bound to. If the field is
+        omitted the user agent binds the socket to the IPv4/6
+        address of the default local interface.</dd>
+
+        <dt id="widl-TCPOptions-localPort"><code>localPort</code>
+        of type <span class="idlMemberType"><a>unsigned
+        short</a></span></dt>
+
+        <dd>The local port that the UDPSocket object is bound to.
+        If the the field is omitted the user agent binds the socket
+        to a random local port number.</dd>
+
+        <dt id="widl-TCPOptions-useSecureTransport">
+        <code>useSecureTransport</code> of type <span class=
+        "idlMemberType"><a>boolean</a></span></dt>
+
+        <dd><code>true</code> if socket uses SSL or TLS. Default is
+        <code>false</code>.</dd>
+      </dl>
+    </section>
+
+    <div class="issue">
+      <div class="issue-title" role="heading" aria-level="3">
+        <span>Issue 2</span>
+      </div>
+
+      <p class="">Not sure if applications need to be able to bind
+      the TCP Socket to local address/port?</p>
+    </div>
+
+    <div class="issue">
+      <div class="issue-title" role="heading" aria-level="3">
+        <span>Issue 3</span>
+      </div>
+
+      <p class="">Use of secure transport needs more
+      investigation</p>
+    </div>
+  </section>
+  <!--====================== Dictionary TCPServerOptions ============================-->
+
+  <section id="dictionary-tcpserveroptions">
+    <!--OddPage-->
+
+    <h2><span class="secno">13.</span> Dictionary <a href=
+    "#idl-def-TCPServerOptions" class=
+    "idlType"><code>TCPServerOptions</code></a></h2>
+
+    <p>States the options for the TCPServerSocket. An instance of
+    this dictionary can optionally be used in the constructor of
+    the TCPServerSocket object, where all fields are optional.</p>
+    <pre class="idl">
+<span class="idlDictionary" id=
+"idl-def-TCPServerOptions">dictionary <span class=
+"idlDictionaryID">TCPServerOptions</span> {
+<span class="idlMember">    <span class=
+"idlMemberType"><a>DOMString</a></span>      <span class=
+"idlMemberName"><a href=
+"#widl-TCPServerOptions-localAddress">localAddress</a></span>;</span>
+<span class="idlMember">    <span class=
+"idlMemberType"><a>unsigned short</a></span> <span class=
+"idlMemberName"><a href=
+"#widl-TCPServerOptions-localPort">localPort</a></span>;</span>
+<span class="idlMember">    <span class=
+"idlMemberType"><a>boolean</a></span>        <span class=
+"idlMemberName"><a href=
+"#widl-TCPServerOptions-useSecureTransport">useSecureTransport</a></span>;</span>
+};</span>
+</pre>
+
+    <section id="dictionary-tcpserveroptions-members">
+      <h3><span class="secno">13.1</span> Dictionary <a class=
+      "idlType" href=
+      "#idl-def-TCPServerOptions"><code>TCPServerOptions</code></a>
+      Members</h3>
+
+      <dl class="dictionary-members">
+        <dt id="widl-TCPServerOptions-localAddress">
+        <code>localAddress</code> of type <span class=
+        "idlMemberType"><a>DOMString</a></span></dt>
+
+        <dd>The IPv4/6 address of the interface, e.g. wifi or 3G,
+        that the TCPServerSocket object is bound to. If the field
+        is omitted the user agent binds the server socket to the
+        IPv4/6 address of the default local interface.</dd>
+
+        <dt id="widl-TCPServerOptions-localPort">
+        <code>localPort</code> of type <span class=
+        "idlMemberType"><a>unsigned short</a></span></dt>
+
+        <dd>The local port that the TCPServerSocket object is bound
+        to. If the the field is omitted the user agent binds the
+        socket to an random local port number.</dd>
+
+        <dt id="widl-TCPServerOptions-useSecureTransport">
+        <code>useSecureTransport</code> of type <span class=
+        "idlMemberType"><a>boolean</a></span></dt>
+
+        <dd><code>true</code> if socket uses SSL or TLS. Default is
+        <code>false</code>.</dd>
+      </dl>
+    </section>
+
+    <div class="issue">
+      <div class="issue-title" role="heading" aria-level="3">
+        <span>Issue 4</span>
+      </div>
+
+      <p class="">Use of secure transport needs more
+      investigation</p>
+    </div>
+  </section>
+  <!--====================== Enums ============================-->
+
+  <section id="enums">
+    <!--OddPage-->
+
+    <h2><span class="secno">14.</span> Enums</h2>
+
+    <section id="readystate">
+      <h3><span class="secno">14.1</span> ReadyState</h3>
+      <pre class="idl" id="enum-basic">
+<span class="idlEnum" id="idl-def-ReadyState">enum <span class=
+"idlEnumID">ReadyState</span> {
+    "<a href="#idl-def-ReadyState.connecting" class=
+"idlEnumItem">connecting</a>",
+    "<a href="#idl-def-ReadyState.open" class=
+"idlEnumItem">open</a>",
+    "<a href="#idl-def-ReadyState.closing" class=
+"idlEnumItem">closing</a>",
+    "<a href="#idl-def-ReadyState.closed" class=
+"idlEnumItem">closed</a>",
+    "<a href="#idl-def-ReadyState.halfclosed" class=
+"idlEnumItem">halfclosed</a>"
+};</span>
+</pre>
+
+      <table class="simple">
+        <tr>
+          <th colspan="2">Enumeration description</th>
+        </tr>
+
+        <tr>
+          <td><code id=
+          "idl-def-ReadyState.connecting">connecting</code></td>
+
+          <td>The TCP connection has not yet been established.</td>
+        </tr>
+
+        <tr>
+          <td><code id="idl-def-ReadyState.open">open</code></td>
+
+          <td>The TCP connection is established and communication
+          is possible.</td>
+        </tr>
+
+        <tr>
+          <td><code id=
+          "idl-def-ReadyState.closing">closing</code></td>
+
+          <td>The TCP connection is going through the closing
+          handshake, or the close() method has been invoked.</td>
+        </tr>
+
+        <tr>
+          <td><code id=
+          "idl-def-ReadyState.closed">closed</code></td>
+
+          <td>The TCP connection has been closed or could not be
+          opened.</td>
+        </tr>
+
+        <tr>
+          <td><code id=
+          "idl-def-ReadyState.halfclosed">halfclosed</code></td>
+
+          <td>The TCP connection has been "halfclosed", which means
+          that it is not possible to send data but it is still
+          possible to received.</td>
+        </tr>
+      </table>
+    </section>
+  </section>
+  <!--====================== Appendix ============================-->
+
+  <section class="appendix" id="acknowledgements">
+    <!--OddPage-->
+
+    <h2><span class="secno">A.</span> Acknowledgements</h2>
+
+    <p>Many thanks to Robin Berjon for making our lives so much
+    easier with his cool tool.</p>
+  </section>
+
+  <section id="references" class="appendix">
+    <!--OddPage-->
+
+    <h2><span class="secno">B.</span> References</h2>
+
+    <section id="normative-references">
+      <h3><span class="secno">B.1</span> Normative references</h3>
+
+      <dl class="bibliography">
+        <dt id="bib-FILE-API">[FILE-API]</dt>
+
+        <dd>
+          Arun Ranganathan; Jonas Sicking. <a href=
+          "http://www.w3.org/TR/2012/WD-FileAPI-20121025"><cite>File
+          API</cite></a>. 25 October 2012. W3C Working Draft. URL:
+          <a href=
+          "http://www.w3.org/TR/2012/WD-FileAPI-20121025">http://www.w3.org/TR/2012/WD-FileAPI-20121025</a>
+        </dd>
+
+        <dt id="bib-HTML5">[HTML5]</dt>
+
+        <dd>
+          Robin Berjon et al. <a href=
+          "http://www.w3.org/TR/html5/"><cite>HTML5</cite></a>. 17
+          December 2012. W3C Candidate Recommendation. URL:
+          <a href="http://www.w3.org/TR/html5/">http://www.w3.org/TR/html5/</a>
+        </dd>
+
+        <dt id="bib-POSTMSG">[POSTMSG]</dt>
+
+        <dd>
+          Ian Hickson. <a href=
+          "http://www.w3.org/TR/2012/CR-webmessaging-20120501"><cite>
+          HTML5 Web Messaging</cite></a>. 01 May 2012. W3C
+          Candidate Recommendation. URL: <a href=
+          "http://www.w3.org/TR/2012/CR-webmessaging-20120501">http://www.w3.org/TR/2012/CR-webmessaging-20120501</a>
+        </dd>
+
+        <dt id="bib-RFC2119">[RFC2119]</dt>
+
+        <dd>
+          S. Bradner. <a href=
+          "http://www.ietf.org/rfc/rfc2119.txt"><cite>Key words for
+          use in RFCs to Indicate Requirement Levels.</cite></a>
+          March 1997. Internet RFC 2119. URL: <a href=
+          "http://www.ietf.org/rfc/rfc2119.txt">http://www.ietf.org/rfc/rfc2119.txt</a>
+        </dd>
+
+        <dt id="bib-TYPED-ARRAYS">[TYPED-ARRAYS]</dt>
+
+        <dd>
+          David Herman, Kenneth Russell. <a href=
+          "https://www.khronos.org/registry/typedarray/specs/latest/">
+          <cite>Typed Arrays</cite></a> Khronos Working Draft.
+          (Work in progress.) URL: <a href=
+          "https://www.khronos.org/registry/typedarray/specs/latest/">
+          https://www.khronos.org/registry/typedarray/specs/latest/</a>
+        </dd>
+
+        <dt id="bib-UNICODE">[UNICODE]</dt>
+
+        <dd>
+          <a href=
+          "http://www.unicode.org/versions/latest/"><cite>The
+          Unicode Standard</cite></a>. URL: <a href=
+          "http://www.unicode.org/versions/latest/">http://www.unicode.org/versions/latest/</a>
+        </dd>
+
+        <dt id="bib-UTF-8">[UTF-8]</dt>
+
+        <dd>
+          F. Yergeau. <a href=
+          "http://www.ietf.org/rfc/rfc3629.txt"><cite>UTF-8, a
+          transformation format of ISO 10646</cite></a>. IETF RFC
+          3629. November 2003. URL: <a href=
+          "http://www.ietf.org/rfc/rfc3629.txt">http://www.ietf.org/rfc/rfc3629.txt</a>
+        </dd>
+
+        <dt id="bib-WEBIDL">[WEBIDL]</dt>
+
+        <dd>
+          Cameron McCormack. <a href=
+          "http://www.w3.org/TR/2012/CR-WebIDL-20120419/"><cite>Web
+          IDL</cite></a>. 19 April 2012. W3C Candidate
+          Recommendation. URL: <a href=
+          "http://www.w3.org/TR/2012/CR-WebIDL-20120419/">http://www.w3.org/TR/2012/CR-WebIDL-20120419/</a>
+        </dd>
+      </dl>
+    </section>
+  </section>
+</body>
+</html>

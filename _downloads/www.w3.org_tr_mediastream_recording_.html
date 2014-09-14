@@ -1,0 +1,965 @@
+<!-- http://www.w3.org/TR/mediastream-recording/ -->
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <title>MediaStream Recording</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    
+    <style type="text/css">
+      /* ReSpec.js CSS optimizations (Richard Tibbett) - cut-n-paste :) */
+      div.example {
+          border-top: 1px solid #ff4500;
+          border-bottom: 1px solid #ff4500;
+          background: #fff;
+          padding:    1em;
+          font-size: 0.9em;
+          margin-top: 1em;
+      }
+      div.example::before {
+          content:    "Example";
+          display:    block;
+          width:      150px;
+          background: #ff4500;
+          color:  #fff;
+          font-family:    initial;
+          padding:    3px;
+          padding-left: 5px;
+          font-weight:    bold;
+          margin: -1em 0 1em -1em;
+      }
+
+      /* Clean up pre.idl */
+      pre.idl::before {
+          font-size:0.9em;
+      }
+
+      /* Add better spacing to sections */
+      section, .section {
+          margin-bottom: 2em;
+      }
+
+      /* Reduce note & issue render size */
+      .note, .issue {
+          font-size:0.8em;
+      }
+
+      /* Add addition spacing to <ol> and <ul> for rule definition */
+      ol.rule li, ul.rule li {
+          padding:0.2em;
+      }
+    </style>
+  <style>/*****************************************************************
+ * ReSpec 3 CSS
+ * Robin Berjon - http://berjon.com/
+ *****************************************************************/
+
+/* --- INLINES --- */
+em.rfc2119 { 
+    text-transform:     lowercase;
+    font-variant:       small-caps;
+    font-style:         normal;
+    color:              #900;
+}
+
+h1 acronym, h2 acronym, h3 acronym, h4 acronym, h5 acronym, h6 acronym, a acronym,
+h1 abbr, h2 abbr, h3 abbr, h4 abbr, h5 abbr, h6 abbr, a abbr {
+    border: none;
+}
+
+dfn {
+    font-weight:    bold;
+}
+
+a.internalDFN {
+    color:  inherit;
+    border-bottom:  1px solid #99c;
+    text-decoration:    none;
+}
+
+a.externalDFN {
+    color:  inherit;
+    border-bottom:  1px dotted #ccc;
+    text-decoration:    none;
+}
+
+a.bibref {
+    text-decoration:    none;
+}
+
+cite .bibref {
+    font-style: normal;
+}
+
+code {
+    color:  #ff4500;
+}
+
+
+/* --- --- */
+ol.algorithm { counter-reset:numsection; list-style-type: none; }
+ol.algorithm li { margin: 0.5em 0; }
+ol.algorithm li:before { font-weight: bold; counter-increment: numsection; content: counters(numsection, ".") ") "; }
+
+/* --- TOC --- */
+.toc a, .tof a {
+    text-decoration:    none;
+}
+
+a .secno, a .figno {
+    color:  #000;
+}
+
+ul.tof, ol.tof {
+    list-style: none outside none;
+}
+
+.caption {
+    margin-top: 0.5em;
+    font-style:   italic;
+}
+
+/* --- TABLE --- */
+table.simple {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    border-bottom:  3px solid #005a9c;
+}
+
+.simple th {
+    background: #005a9c;
+    color:  #fff;
+    padding:    3px 5px;
+    text-align: left;
+}
+
+.simple th[scope="row"] {
+    background: inherit;
+    color:  inherit;
+    border-top: 1px solid #ddd;
+}
+
+.simple td {
+    padding:    3px 10px;
+    border-top: 1px solid #ddd;
+}
+
+.simple tr:nth-child(even) {
+    background: #f0f6ff;
+}
+
+/* --- DL --- */
+.section dd > p:first-child {
+    margin-top: 0;
+}
+
+.section dd > p:last-child {
+    margin-bottom: 0;
+}
+
+.section dd {
+    margin-bottom:  1em;
+}
+
+.section dl.attrs dd, .section dl.eldef dd {
+    margin-bottom:  0;
+}
+</style><style>/* --- WEB IDL --- */
+pre.idl {
+    border-top: 1px solid #90b8de;
+    border-bottom: 1px solid #90b8de;
+    padding:    1em;
+    line-height:    120%;
+}
+
+pre.idl::before {
+    content:    "WebIDL";
+    display:    block;
+    width:      150px;
+    background: #90b8de;
+    color:  #fff;
+    font-family:    initial;
+    padding:    3px;
+    font-weight:    bold;
+    margin: -1em 0 1em -1em;
+}
+
+.idlType {
+    color:  #ff4500;
+    font-weight:    bold;
+    text-decoration:    none;
+}
+
+/*.idlModule*/
+/*.idlModuleID*/
+/*.idlInterface*/
+.idlInterfaceID, .idlDictionaryID, .idlCallbackID, .idlEnumID {
+    font-weight:    bold;
+    color:  #005a9c;
+}
+
+.idlSuperclass {
+    font-style: italic;
+    color:  #005a9c;
+}
+
+/*.idlAttribute*/
+.idlAttrType, .idlFieldType, .idlMemberType {
+    color:  #005a9c;
+}
+.idlAttrName, .idlFieldName, .idlMemberName {
+    color:  #ff4500;
+}
+.idlAttrName a, .idlFieldName a, .idlMemberName a {
+    color:  #ff4500;
+    border-bottom:  1px dotted #ff4500;
+    text-decoration: none;
+}
+
+/*.idlMethod*/
+.idlMethType, .idlCallbackType {
+    color:  #005a9c;
+}
+.idlMethName {
+    color:  #ff4500;
+}
+.idlMethName a {
+    color:  #ff4500;
+    border-bottom:  1px dotted #ff4500;
+    text-decoration: none;
+}
+
+/*.idlParam*/
+.idlParamType {
+    color:  #005a9c;
+}
+.idlParamName, .idlDefaultValue {
+    font-style: italic;
+}
+
+.extAttr {
+    color:  #666;
+}
+
+/*.idlConst*/
+.idlConstType {
+    color:  #005a9c;
+}
+.idlConstName {
+    color:  #ff4500;
+}
+.idlConstName a {
+    color:  #ff4500;
+    border-bottom:  1px dotted #ff4500;
+    text-decoration: none;
+}
+
+/*.idlException*/
+.idlExceptionID {
+    font-weight:    bold;
+    color:  #c00;
+}
+
+.idlTypedefID, .idlTypedefType {
+    color:  #005a9c;
+}
+
+.idlRaises, .idlRaises a.idlType, .idlRaises a.idlType code, .excName a, .excName a code {
+    color:  #c00;
+    font-weight:    normal;
+}
+
+.excName a {
+    font-family:    monospace;
+}
+
+.idlRaises a.idlType, .excName a.idlType {
+    border-bottom:  1px dotted #c00;
+}
+
+.excGetSetTrue, .excGetSetFalse, .prmNullTrue, .prmNullFalse, .prmOptTrue, .prmOptFalse {
+    width:  45px;
+    text-align: center;
+}
+.excGetSetTrue, .prmNullTrue, .prmOptTrue { color:  #0c0; }
+.excGetSetFalse, .prmNullFalse, .prmOptFalse { color:  #c00; }
+
+.idlImplements a {
+    font-weight:    bold;
+}
+
+dl.attributes, dl.methods, dl.constants, dl.fields, dl.dictionary-members {
+    margin-left:    2em;
+}
+
+.attributes dt, .methods dt, .constants dt, .fields dt, .dictionary-members dt {
+    font-weight:    normal;
+}
+
+.attributes dt code, .methods dt code, .constants dt code, .fields dt code, .dictionary-members dt code {
+    font-weight:    bold;
+    color:  #000;
+    font-family:    monospace;
+}
+
+.attributes dt code, .fields dt code, .dictionary-members dt code {
+    background:  #ffffd2;
+}
+
+.attributes dt .idlAttrType code, .fields dt .idlFieldType code, .dictionary-members dt .idlMemberType code {
+    color:  #005a9c;
+    background:  transparent;
+    font-family:    inherit;
+    font-weight:    normal;
+    font-style: italic;
+}
+
+.methods dt code {
+    background:  #d9e6f8;
+}
+
+.constants dt code {
+    background:  #ddffd2;
+}
+
+.attributes dd, .methods dd, .constants dd, .fields dd, .dictionary-members dd {
+    margin-bottom:  1em;
+}
+
+table.parameters, table.exceptions {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    margin: 0.5em 0;
+    width:  100%;
+}
+table.parameters { border-bottom:  1px solid #90b8de; }
+table.exceptions { border-bottom:  1px solid #deb890; }
+
+.parameters th, .exceptions th {
+    color:  #fff;
+    padding:    3px 5px;
+    text-align: left;
+    font-family:    initial;
+    font-weight:    normal;
+    text-shadow:    #666 1px 1px 0;
+}
+.parameters th { background: #90b8de; }
+.exceptions th { background: #deb890; }
+
+.parameters td, .exceptions td {
+    padding:    3px 10px;
+    border-top: 1px solid #ddd;
+    vertical-align: top;
+}
+
+.parameters tr:first-child td, .exceptions tr:first-child td {
+    border-top: none;
+}
+
+.parameters td.prmName, .exceptions td.excName, .exceptions td.excCodeName {
+    width:  100px;
+}
+
+.parameters td.prmType {
+    width:  120px;
+}
+
+table.exceptions table {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    width:  100%;
+}
+</style><link href="http://www.w3.org/StyleSheets/TR/W3C-WD" rel="stylesheet"><!--[if lt IE 9]><script src='http://www.w3.org/2008/site/js/html5shiv.js'></script><![endif]--></head>
+
+  
+  <body><div class="head">
+  <p>
+    
+      <a href="http://www.w3.org/"><img src="http://www.w3.org/Icons/w3c_home" alt="W3C" height="48" width="72"></a>
+    
+  </p>
+  <h1 class="title" id="title">MediaStream Recording</h1>
+  
+  <h2 id="w3c-working-draft-05-february-2013"><abbr title="World Wide Web Consortium">W3C</abbr> Working Draft 05 February 2013</h2>
+  <dl>
+    
+      <dt>This version:</dt>
+      <dd><a href="http://www.w3.org/TR/2013/WD-mediastream-recording-20130205/">http://www.w3.org/TR/2013/WD-mediastream-recording-20130205/</a></dd>
+      <dt>Latest published version:</dt>
+      <dd><a href="http://www.w3.org/TR/mediastream-recording/">http://www.w3.org/TR/mediastream-recording/</a></dd>
+    
+    
+      <dt>Latest editor's draft:</dt>
+      <dd><a href="https://dvcs.w3.org/hg/dap/raw-file/default/media-stream-capture/MediaRecorder.html">https://dvcs.w3.org/hg/dap/raw-file/default/media-stream-capture/MediaRecorder.html</a></dd>
+    
+    
+    
+    
+    
+    
+    <dt>Editors:</dt>
+    <dd><span>Jim Barnett</span>, <a href="http://www.genesyslab.com">Genesys</a></dd>
+<dd><a href="mailto:travis.leithead@microsoft.com?subject=MediaStream%20Recording">Travis Leithead</a>, <a href="http://www.microsoft.com">Microsoft Corp.</a></dd>
+
+    
+  </dl>
+  
+  
+  
+  
+    
+      <p class="copyright">Initial Author of this Specification was Ian Hickson, Google Inc., with the following copyright statement:<br> © Copyright 2004-2011 Apple Computer, Inc., Mozilla Foundation, and Opera Software ASA. You are granted a license to use, reproduce and create derivative works of this document.</p> <p class="copyright">All subsequent changes since 26 July 2011 done by the <abbr title="World Wide Web Consortium">W3C</abbr> WebRTC Working Group and the Device APIs Working Group are under the following <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a>:<br>© 2011-2013 <a href="http://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>®</sup> (<a href="http://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>, <a href="http://www.ercim.eu/"><abbr title="European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>, <a href="http://www.keio.ac.jp/">Keio</a>, <a href="http://ev.buaa.edu.cn/">Beihang</a>), All Rights Reserved. <a href="http://www.w3.org/Consortium/Legal/copyright-documents">Document use</a>  rules apply.</p> <p class="copyright">For the entire publication on the <abbr title="World Wide Web Consortium">W3C</abbr> site the <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a> and <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> rules apply.</p>
+    
+  
+  <hr>
+</div>
+  	<section class="introductory" id="abstract"><h2>Abstract</h2>
+  		<p>This document defines a recording API for use with MediaStreams as defined in Media Capture and Streams
+  			[<cite><a href="#bib-GETUSERMEDIA" class="bibref">GETUSERMEDIA</a></cite>].</p></section><section id="sotd" class="introductory"><h2>Status of This Document</h2>
+  
+    
+      
+        <p>
+          <em>This section describes the status of this document at the time of its publication. Other
+          documents may supersede this document. A list of current <abbr title="World Wide Web Consortium">W3C</abbr> publications and the latest revision
+          of this technical report can be found in the <a href="http://www.w3.org/TR/"><abbr title="World Wide Web Consortium">W3C</abbr> technical reports
+          index</a> at http://www.w3.org/TR/.</em>
+        </p>
+        
+  
+    
+    <p>The API this document describes derives from a proposal originally developed by Ian Hickson, then included in an <a href="http://www.w3.org/TR/2011/WD-webrtc-20111027/#mediastreamrecorder">early version of the WebRTC API</a>. The API has significantly evolved based on the ongoing work on <cite>Media Capture and Streams</cite> [<cite><a href="#bib-GETUSERMEDIA" class="bibref">GETUSERMEDIA</a></cite>], and to take into account the requirements highlighted in <cite><a href="http://www.w3.org/TR/capture-scenarios/">MediaStream Capture Scenarios</a></cite>. This is its first publication as a Working Draft on its own.</p>
+    <p>This document is not complete. It is subject to major changes and, while
+    early experimentations are encouraged, it is therefore not intended for
+    implementation.
+    The Media Capture Task Force, a joint task force of the Device APIs and WebRTC Working Groups, expects this specification to evolve
+    significantly based on:</p>
+
+    <ul>
+      <li>Privacy issues that arise when capturing media.</li>
+
+      <li>Technical discussions within the task force.</li>
+
+      <li>Experience gained through early experimentations.</li>
+
+      <li>Feedback received from other groups and individuals.</li>
+    </ul>
+  
+
+      
+    
+  
+
+        <p>
+          This document was published by the <a href="http://www.w3.org/2011/04/webrtc/">Web Real-Time Communication Working Group</a> and <a href="http://www.w3.org/2009/dap/">Device APIs Working Group</a> as a First Public Working Draft.
+          
+          
+          If you wish to make comments regarding this document, please send them to 
+          <a href="mailto:public-media-capture@w3.org">public-media-capture@w3.org</a> 
+          (<a href="mailto:public-media-capture-request@w3.org?subject=subscribe">subscribe</a>,
+          <a href="http://lists.w3.org/Archives/Public/public-media-capture/">archives</a>).
+          
+          
+          
+          
+        All comments are welcome.
+        
+        
+          </p><p>
+            Publication as a Working Draft does not imply endorsement by the <abbr title="World Wide Web Consortium">W3C</abbr> Membership.
+            This is a draft document and may be updated, replaced or obsoleted by other documents at 
+            any time. It is inappropriate to cite this document as other than work in progress.
+          </p>
+        
+        
+        <p>
+          
+            This document was produced by groups operating under the 
+            <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>.
+          
+            
+              <abbr title="World Wide Web Consortium">W3C</abbr> maintains a public list of any patent disclosures (<a href="http://www.w3.org/2004/01/pp-impl/47318/status" rel="disclosure">Web Real-Time Communication Working Group</a>, <a href="http://www.w3.org/2004/01/pp-impl/43696/status" rel="disclosure">Device APIs Working Group</a>)
+            
+            made in connection with the deliverables of the groups; that page also includes instructions for 
+            disclosing a patent. An individual who has actual knowledge of a patent which the individual believes contains
+            <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential Claim(s)</a> must disclose the
+            information in accordance with <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section
+            6 of the <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>.
+          
+          
+        </p>
+        
+      
+    
+  
+</section><section id="toc"><h2 class="introductory">Table of Contents</h2><ul class="toc"><li class="tocline"><a class="tocxref" href="#overview"><span class="secno">1. </span>Overview</a></li><li class="tocline"><a class="tocxref" href="#MediaRecorderAPI"><span class="secno">2. </span>Media Recorder API</a><ul class="toc"><li class="tocline"><a class="tocxref" href="#attributes"><span class="secno">2.1 </span>Attributes</a></li><li class="tocline"><a class="tocxref" href="#methods"><span class="secno">2.2 </span>Methods</a></li><li class="tocline"><a class="tocxref" href="#RecordingStateEnum"><span class="secno">2.3 </span>RecordingStateEnum</a></li></ul></li><li class="tocline"><a class="tocxref" href="#blob-event"><span class="secno">3. </span>Blob Event</a><ul class="toc"><li class="tocline"><a class="tocxref" href="#attributes-1"><span class="secno">3.1 </span>Attributes</a></li><li class="tocline"><a class="tocxref" href="#dictionary-blobeventinit-members"><span class="secno">3.2 </span>Dictionary <span class="formerLink"><code>BlobEventInit</code></span> Members</a></li></ul></li><li class="tocline"><a class="tocxref" href="#availablesettings"><span class="secno">4. </span>Settings Dictionaries</a><ul class="toc"><li class="tocline"><a class="tocxref" href="#dictionary-availablesettings-members"><span class="secno">4.1 </span>Dictionary <span class="formerLink"><code>AvailableSettings</code></span> Members</a></li><li class="tocline"><a class="tocxref" href="#dictionary-recordingsettings-members"><span class="secno">4.2 </span>Dictionary <span class="formerLink"><code>RecordingSettings</code></span> Members</a></li></ul></li><li class="tocline"><a class="tocxref" href="#error-handling"><span class="secno">5. </span>Error Handling</a><ul class="toc"><li class="tocline"><a class="tocxref" href="#general-principles"><span class="secno">5.1 </span>General Principles</a></li><li class="tocline"><a class="tocxref" href="#recordingerror"><span class="secno">5.2 </span>RecordingError</a><ul class="toc"><li class="tocline"><a class="tocxref" href="#attributes-2"><span class="secno">5.2.1 </span>Attributes</a></li><li class="tocline"><a class="tocxref" href="#dictionary-recordingerrorinit-members"><span class="secno">5.2.2 </span>Dictionary <span class="formerLink"><code>RecordingErrorInit</code></span> Members</a></li><li class="tocline"><a class="tocxref" href="#recordingerrornameenum"><span class="secno">5.2.3 </span>RecordingErrorNameEnum</a></li></ul></li><li class="tocline"><a class="tocxref" href="#recordingexceptionenum"><span class="secno">5.3 </span>RecordingExceptionEnum</a></li></ul></li><li class="tocline"><a class="tocxref" href="#event-summary"><span class="secno">6. </span>Event summary</a></li><li class="tocline"><a class="tocxref" href="#openissues"><span class="secno">A. </span><span class="secno">A. </span>Open Issues</a></li><li class="tocline"><a class="tocxref" href="#references"><span class="secno">B. </span>References</a><ul class="toc"><li class="tocline"><a class="tocxref" href="#normative-references"><span class="secno">B.1 </span>Normative references</a></li></ul></li></ul></section>
+   
+  
+  
+
+<section id="overview"><!--OddPage--><h2><span class="secno">1. </span>Overview</h2>
+  <p>This API attempts to make basic recording very simple, while still allowing for more complex use cases.  In the simplest case,
+  	the application instantiates the MediaRecorder object, calls record() and then calls stopRecord() or waits for the MediaStream to be ended.  The contents of the recording
+  	will be made available in the platform's default encoding via the dataavailable event.  Functions are available to query
+  	the platform's available set of encodings, and to select the desired ones if the author wishes.  The application can also choose 
+  	how much data it wants to receive at one time.  By default a Blob containing the entire recording is returned when
+  	the recording finishes.  However the application can choose to receive smaller buffers of data at regular intervals.  </p>
+ </section>
+ 
+
+
+
+ <section id="MediaRecorderAPI"><!--OddPage--><h2><span class="secno">2. </span>Media Recorder API</h2>
+
+<pre class="idl"><span class="idlInterface" id="idl-def-MediaRecorder">[<span class="extAttr">Constructor (MediaStream stream)</span>]
+interface <span class="idlInterfaceID">MediaRecorder</span> : <span class="idlSuperclass"><a>EventTarget</a></span> {
+<span class="idlAttribute">    readonly attribute <span class="idlAttrType"><a>MediaStream</a></span>        <span class="idlAttrName"><a href="#widl-MediaRecorder-stream">stream</a></span>;</span>
+<span class="idlAttribute">    readonly attribute <span class="idlAttrType"><a class="idlType" href="#idl-def-RecordingStateEnum"><code>RecordingStateEnum</code></a></span> <span class="idlAttrName"><a href="#widl-MediaRecorder-state">state</a></span>;</span>
+<span class="idlAttribute">    readonly attribute <span class="idlAttrType"><a>unsigned long</a></span>      <span class="idlAttrName"><a href="#widl-MediaRecorder-imageWidth">imageWidth</a></span>;</span>
+<span class="idlAttribute">    readonly attribute <span class="idlAttrType"><a>unsigned long</a></span>      <span class="idlAttrName"><a href="#widl-MediaRecorder-imageHeight">imageHeight</a></span>;</span>
+<span class="idlAttribute">    readonly attribute <span class="idlAttrType"><a>DOMString</a></span>          <span class="idlAttrName"><a href="#widl-MediaRecorder-mimeType">mimeType</a></span>;</span>
+<span class="idlAttribute">             attribute <span class="idlAttrType"><a>EventHandler</a></span>       <span class="idlAttrName"><a href="#widl-MediaRecorder-onrecording">onrecording</a></span>;</span>
+<span class="idlAttribute">             attribute <span class="idlAttrType"><a>EventHandler</a></span>       <span class="idlAttrName"><a href="#widl-MediaRecorder-onstop">onstop</a></span>;</span>
+<span class="idlAttribute">             attribute <span class="idlAttrType"><a>EventHandler</a></span>       <span class="idlAttrName"><a href="#widl-MediaRecorder-ondataavailable">ondataavailable</a></span>;</span>
+<span class="idlAttribute">             attribute <span class="idlAttrType"><a>EventHandler</a></span>       <span class="idlAttrName"><a href="#widl-MediaRecorder-onpause">onpause</a></span>;</span>
+<span class="idlAttribute">             attribute <span class="idlAttrType"><a>EventHandler</a></span>       <span class="idlAttrName"><a href="#widl-MediaRecorder-onresume">onresume</a></span>;</span>
+<span class="idlAttribute">             attribute <span class="idlAttrType"><a>EventHandler</a></span>       <span class="idlAttrName"><a href="#widl-MediaRecorder-onmutetrack">onmutetrack</a></span>;</span>
+<span class="idlAttribute">             attribute <span class="idlAttrType"><a>EventHandler</a></span>       <span class="idlAttrName"><a href="#widl-MediaRecorder-onunmutetrack">onunmutetrack</a></span>;</span>
+<span class="idlAttribute">             attribute <span class="idlAttrType"><a>EventHandler</a></span>       <span class="idlAttrName"><a href="#widl-MediaRecorder-onphoto">onphoto</a></span>;</span>
+<span class="idlAttribute">             attribute <span class="idlAttrType"><a>EventHandler</a></span>       <span class="idlAttrName"><a href="#widl-MediaRecorder-onerror">onerror</a></span>;</span>
+<span class="idlAttribute">             attribute <span class="idlAttrType"><a>EventHandler</a></span>       <span class="idlAttrName"><a href="#widl-MediaRecorder-onwarning">onwarning</a></span>;</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span>              <span class="idlMethName"><a href="#widl-MediaRecorder-record-void-long-timeslice">record</a></span> (<span class="idlParam">optional <span class="idlParamType"><a>long</a>?</span> <span class="idlParamName">timeslice</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span>              <span class="idlMethName"><a href="#widl-MediaRecorder-stop-void">stop</a></span> ();</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span>              <span class="idlMethName"><a href="#widl-MediaRecorder-pause-void">pause</a></span> ();</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span>              <span class="idlMethName"><a href="#widl-MediaRecorder-resume-void">resume</a></span> ();</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span>              <span class="idlMethName"><a href="#widl-MediaRecorder-muteTrack-void-DOMString-trackID">muteTrack</a></span> (<span class="idlParam"><span class="idlParamType"><a>DOMString</a></span> <span class="idlParamName">trackID</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span>              <span class="idlMethName"><a href="#widl-MediaRecorder-unmuteTrack-void-DOMString-trackID">unmuteTrack</a></span> (<span class="idlParam"><span class="idlParamType"><a>DOMString</a></span> <span class="idlParamName">trackID</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span>              <span class="idlMethName"><a href="#widl-MediaRecorder-takePhoto-void-DOMString-trackID">takePhoto</a></span> (<span class="idlParam"><span class="idlParamType"><a>DOMString</a></span> <span class="idlParamName">trackID</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span>              <span class="idlMethName"><a href="#widl-MediaRecorder-requestData-void">requestData</a></span> ();</span>
+<span class="idlMethod">    <span class="idlMethType"><a class="idlType" href="#idl-def-AvailableSettings"><code>AvailableSettings</code></a></span> <span class="idlMethName"><a href="#widl-MediaRecorder-getOptions-AvailableSettings">getOptions</a></span> ();</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span>              <span class="idlMethName"><a href="#widl-MediaRecorder-setOptions-void-RecordingSettings-optionValues">setOptions</a></span> (<span class="idlParam"><span class="idlParamType"><a class="idlType" href="#idl-def-RecordingSettings"><code>RecordingSettings</code></a></span> <span class="idlParamName">optionValues</span></span>);</span>
+};</span></pre><section id="attributes"><h3><span class="secno">2.1 </span>Attributes</h3><dl class="attributes"><dt id="widl-MediaRecorder-imageHeight"><code>imageHeight</code> of type <span class="idlAttrType"><a>unsigned long</a></span>, readonly</dt><dd>The height of the video or photo image to capture.  
+		The initial value will be a platform-supplied default.</dd><dt id="widl-MediaRecorder-imageWidth"><code>imageWidth</code> of type <span class="idlAttrType"><a>unsigned long</a></span>, readonly</dt><dd>The width of the video or photo image to capture.  
+		The initial value will be a platform-supplied default.</dd><dt id="widl-MediaRecorder-mimeType"><code>mimeType</code> of type <span class="idlAttrType"><a>DOMString</a></span>, readonly</dt><dd>The MIME type for recording.  It specifies the 
+		container format as well as the audio and video capture formats.  The initial value will
+		be a platform-supplied default.</dd><dt id="widl-MediaRecorder-ondataavailable"><code>ondataavailable</code> of type <span class="idlAttrType"><a>EventHandler</a></span></dt><dd>Called to handle the dataavailable event.  Note that the Blob (see [<cite><a href="#bib-FILE-API" class="bibref">FILE-API</a></cite>]) of recorded data is contained in this event and can
+          	be accessed via the 'data' attribute.</dd><dt id="widl-MediaRecorder-onerror"><code>onerror</code> of type <span class="idlAttrType"><a>EventHandler</a></span></dt><dd>Called to handle the recordingerror event. </dd><dt id="widl-MediaRecorder-onmutetrack"><code>onmutetrack</code> of type <span class="idlAttrType"><a>EventHandler</a></span></dt><dd>Called to handle the mutetrack event. </dd><dt id="widl-MediaRecorder-onpause"><code>onpause</code> of type <span class="idlAttrType"><a>EventHandler</a></span></dt><dd>Called to handle the pause event. </dd><dt id="widl-MediaRecorder-onphoto"><code>onphoto</code> of type <span class="idlAttrType"><a>EventHandler</a></span></dt><dd>Called to handle the photo event. The photo event returns a photo (as a Blob) in a compressed format (for example: PNG/JPEG) rather than a raw ImageData object due to the expected large, uncompressed size of the resulting photos.</dd><dt id="widl-MediaRecorder-onrecording"><code>onrecording</code> of type <span class="idlAttrType"><a>EventHandler</a></span></dt><dd>Called to handle the recording event.</dd><dt id="widl-MediaRecorder-onresume"><code>onresume</code> of type <span class="idlAttrType"><a>EventHandler</a></span></dt><dd>Called to handle the resume event. </dd><dt id="widl-MediaRecorder-onstop"><code>onstop</code> of type <span class="idlAttrType"><a>EventHandler</a></span></dt><dd>Called to handle the stop event.</dd><dt id="widl-MediaRecorder-onunmutetrack"><code>onunmutetrack</code> of type <span class="idlAttrType"><a>EventHandler</a></span></dt><dd>Called to handle the unmutetrack event. </dd><dt id="widl-MediaRecorder-onwarning"><code>onwarning</code> of type <span class="idlAttrType"><a>EventHandler</a></span></dt><dd>Called to handle the recordingwarning event. </dd><dt id="widl-MediaRecorder-state"><code>state</code> of type <span class="idlAttrType"><a class="idlType" href="#idl-def-RecordingStateEnum"><code>RecordingStateEnum</code></a></span>, readonly</dt><dd>The current state of the MediaRecorder object. </dd><dt id="widl-MediaRecorder-stream"><code>stream</code> of type <span class="idlAttrType"><a>MediaStream</a></span>, readonly</dt><dd>The MediaStream passed in to the constructor.</dd></dl></section><section id="methods"><h3><span class="secno">2.2 </span>Methods</h3><dl class="methods"><dt id="widl-MediaRecorder-getOptions-AvailableSettings"><code>getOptions</code></dt><dd>When a <code>MediaRecorder</code> object’s <code>getOptions()</code> method is invoked,
+          the user agent <em title="must" class="rfc2119">must </em>return an 
+          	AvailableSettings structure
+          containing the set of recording options that it supports.  These are the legal
+          values that can be set via <code>setOptions</code>.
+	<div><em>No parameters.</em></div><div><em>Return type: </em><code><a class="idlType" href="#idl-def-AvailableSettings"><code>AvailableSettings</code></a></code></div></dd><dt id="widl-MediaRecorder-muteTrack-void-DOMString-trackID"><code>muteTrack</code></dt><dd>When a 
+		<code>MediaRecorder</code> object’s <code>muteTrack()</code> method is invoked,
+	then if <code>state</code> is not "recording"
+          the user agent <em title="must" class="rfc2119">must</em> raise an INVALID_STATE exception
+          and return immediately.  Otherwise if the <code>trackID</code> provided is not the 
+          <code>id</code> of a Track object in <code>stream</code>'s <code>audioTrackList</code>
+          or <code>videoTrackList</code> it <em title="must" class="rfc2119">must</em> raise an INVALID_TRACK_ID exception
+          and return immediately.  Otherwise it <em title="must" class="rfc2119">must</em>
+          queue a task, using the DOM manipulation task source, that runs the following steps:
+		<ol>
+		<li>If the specified Track is a video track, begin inserting black frames into the Blob
+			in place of any data coming from the underlying source.  Otherwise (the Track is an audio track)
+			insert silence into the Blob in place of any data coming from the underlying source.</li>
+			<li>Raise a <code>mutetrackrecording</code> event.</li>
+	</ol>
+	
+	<table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">trackID</td><td class="prmType"><code><a>DOMString</a></code></td><td class="prmNullFalse">✘</td><td class="prmOptFalse">✘</td><td class="prmDesc">
+              The id of the audio or video track to mute.
+            </td></tr></table><div><em>Return type: </em><code><a>void</a></code></div></dd><dt id="widl-MediaRecorder-pause-void"><code>pause</code></dt><dd>When a <code>MediaRecorder</code> object’s <code>pause()</code>method is invoked,
+	then if <code>state</code> is  "inactive"
+          the user agent <em title="must" class="rfc2119">must</em> raise an INVALID_STATE exception
+          and return immediately.  Otherwise it <em title="must" class="rfc2119">must</em>
+          queue a task, using the DOM manipulation task source, that runs the following steps:
+		<ol>
+		<li>Set <code>state</code> to "paused".</li>
+		<li>Stop gathering data into its current Blob (but keep the Blob available so that 
+			recording can be resumed in the future).</li>
+			<li>Raise a <code>pause</code> event </li>
+	</ol>
+	<div><em>No parameters.</em></div><div><em>Return type: </em><code><a>void</a></code></div></dd><dt id="widl-MediaRecorder-record-void-long-timeslice"><code>record</code></dt><dd>When a <code>MediaRecorder</code> object’s <code>record()</code> method is invoked,
+			then, if the <code>state</code> is not "inactive", the UA <em title="must" class="rfc2119">must</em>
+				raise an <code>INVALID_STATE</code> exception and return immediately.  
+			Otherwise, it <em title="must" class="rfc2119">must</em> queue a task, using the DOM manipulation task source, 
+			that runs the following steps:
+		<ol>
+				<li>Set <code>state</code> to 'recording' and wait until media
+					
+					becomes available from <code>stream</code>.</li>
+			<li>Once data becomes available raise a <code>recording</code> event and start gathering the 
+				
+				data into a Blob (see [<cite><a href="#bib-FILE-API" class="bibref">FILE-API</a></cite>]). </li>
+		<li>If the <code>timeSlice</code> argument has been provided, then once <code>timeSlice</code>
+			milliseconds of data have been collected, raise a <code>dataavailable</code> event containing
+			the Blob of collected data, and start gathering a new Blob of data.  Otherwise (if <code>timeSlice</code>
+			has not been provided), continue gathering data into the original Blob.</li>
+			<li>When the <code>stream</code> is ended set <code>recording</code>
+				to 'false' and stop gathering data.</li>
+					<li>Then  raise a <code>dataavailable</code> event containing the Blob of data.</li>
+					<li>Finally, raise a <code>stoprecording</code> event.</li> 
+			</ol>
+			
+			<p>Note that <code>stop()</code>,
+				<code>requestData()</code>, <code>pause</code>,
+				and <code>muteTrack</code> also affect the recording behavior.</p>
+				
+
+			<p>The UA <em title="must" class="rfc2119">must</em> record the MediaStream
+			in such a way that the original Tracks can be retrieved at playback time.  If any Track within the
+			MediaStream is muted at any time (i.e., if its <code>readyState</code> is set to <code>muted</code>), the UA
+			<em title="must" class="rfc2119">must</em> insert black frames or silence until the Track is unmuted. If the UA is 
+			unable to start recording or at any point is unable to continue recording, it <em title="must" class="rfc2119">must</em> raise 
+			a <code>recordingerror</code> event, followed by a <code>dataavailable</code> event containing
+			the Blob it has gathered, followed by the <code>stoprecording</code> event.    
+		</p>
+		
+          <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">timeslice</td><td class="prmType"><code><a>long</a></code></td><td class="prmNullTrue">✔</td><td class="prmOptTrue">✔</td><td class="prmDesc">
+              The number of milliseconds of data to return in a single Blob.
+            </td></tr></table><div><em>Return type: </em><code><a>void</a></code></div></dd><dt id="widl-MediaRecorder-requestData-void"><code>requestData</code></dt><dd>
+   	When a <code>MediaRecorder</code>object’s <code>requestData()</code> method is invoked,
+	then if <code>state</code> is not "recording"
+          the user agent <em title="must" class="rfc2119">must</em> raise an INVALID_STATE exception
+          and return immediately.  Otherwise it <em title="must" class="rfc2119">must</em>
+          queue a task, using the DOM manipulation task source, that runs the following steps:
+		<ol>
+		<li>Raise a <code>dataavailable</code> event containing the current Blob of saved data.</li>
+		<li>Create a new Blob and gather subsequent data into it.</li>
+	</ol>	
+   		<div><em>No parameters.</em></div><div><em>Return type: </em><code><a>void</a></code></div></dd><dt id="widl-MediaRecorder-resume-void"><code>resume</code></dt><dd>When a <code>MediaRecorder</code> object’s <code>resume()</code> method is invoked,
+	then if <code>state</code> is  "inactive"
+          the user agent <em title="must" class="rfc2119">must</em> raise an INVALID_STATE exception
+          and return immediately.  Otherwise it <em title="must" class="rfc2119">must</em>
+          queue a task, using the DOM manipulation task source, that runs the following steps:
+		<ol>
+		<li>Set <code>state</code> to "recording".</li>
+		<li>Resume (or continue) gathering data into its current Blob.</li>
+		<li>Raise a <code>resume</code> event.</li>
+	</ol><div><em>No parameters.</em></div><div><em>Return type: </em><code><a>void</a></code></div></dd><dt id="widl-MediaRecorder-setOptions-void-RecordingSettings-optionValues"><code>setOptions</code></dt><dd>
+	When a 
+			<code>MediaRecorder</code> object’s <code>setOptions()</code> method is invoked,
+				then if <code>state</code> is not
+					"inactive", the user agent <em title="must" class="rfc2119">must</em> raise an INVALID_STATE
+					exception and return immediately.  Otherwise it <em title="must" class="rfc2119">must</em>
+					run the following steps before returning:
+		<ol>
+				<li>Let <em>currentOptions</em> be the current set of options that are specified
+					to be used for recording by the MediaRecorder.  (If setOptions() has not yet been called, these will
+					be the UA's defaults.)</li>
+			<li>For each option that is specified in the <code>optionVlaues</code> argument,
+				if the UA does not support it, raise a UNSUPPORTED_OPTION exception, set <em>currentOptions</em>
+				back to its value in step 2, and terminate these steps.  Otherwise
+				replace the corresponding member of <em>currentOptions</em> with the specified value.</li>
+			</ol>
+			
+			
+	<table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">optionValues</td><td class="prmType"><code><a class="idlType" href="#idl-def-RecordingSettings"><code>RecordingSettings</code></a></code></td><td class="prmNullFalse">✘</td><td class="prmOptFalse">✘</td><td class="prmDesc"></td></tr></table><div><em>Return type: </em><code><a>void</a></code></div></dd><dt id="widl-MediaRecorder-stop-void"><code>stop</code></dt><dd>When a <code>MediaRecorder</code> object’s <code>stopRecording</code> method is invoked,
+          then if <code>state</code> is "inactive", the user agent <em title="must" class="rfc2119">must</em>
+          raise an INVALID_STATE exception and return immediately.  Otherwise it <em title="must" class="rfc2119">must</em> 
+          queue a task, using the DOM manipulation task source, that runs the following steps:
+		<ol>	
+			<li>Set <code>state</code> to 'inactive' and stop gathering data. </li>
+			<li>Raise a <code>dataavailable</code> event containing the Blob of data that has been gathered.</li>
+			<li>Raise a <code>recordingdone</code> event</li>		
+			</ol>
+			<div><em>No parameters.</em></div><div><em>Return type: </em><code><a>void</a></code></div></dd><dt id="widl-MediaRecorder-takePhoto-void-DOMString-trackID"><code>takePhoto</code></dt><dd>
+   	When a <code>MediaRecorder</code> object’s <code>takePhoto()</code> method is invoked,
+	then  if the <code>trackID</code> provided is not the 
+          <code>id</code> of a Track object in <code>stream</code>'s  <code>videoTrackList</code>
+          whose <code>readyState</code> is "live", the UA <em title="must" class="rfc2119">must</em> raise an INVALID_TRACK_ID exception
+          and return immediately. Otherwise it <em title="must" class="rfc2119">must</em>
+          queue a task, using the DOM manipulation task source, that runs the following steps:
+		<ol>
+			<li>Gather data from the Track into a Blob containing a single still image. The method of doing
+				this will depend on the underlying device.  Some devices may just do a frame grab, while others
+				may temporarily stop streaming data, reconfigure themselves with the appropriate photo settings, take the photo,
+				and then resume streaming.  In this case, the stopping and restarting of streaming <em title="should" class="rfc2119">should</em>
+				cause <code>mute</code> and <code>unmute</code> events to fire on the Track in question.  </li>
+	 <li>Raise an <code>photo</code> event containing the Blob.</li>
+	</ol>
+   	
+   	<table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">trackID</td><td class="prmType"><code><a>DOMString</a></code></td><td class="prmNullFalse">✘</td><td class="prmOptFalse">✘</td><td class="prmDesc">
+              The id of the video track from which to take a snapshot.
+            </td></tr></table><div><em>Return type: </em><code><a>void</a></code></div></dd><dt id="widl-MediaRecorder-unmuteTrack-void-DOMString-trackID"><code>unmuteTrack</code></dt><dd>
+		When a <code>MediaRecorder</code> object’s <code>unmuteTrack()</code> method is invoked,
+	then if <code>state</code> is not "recording",
+          the user agent <em title="must" class="rfc2119">must</em> raise an INVALID_STATE exception
+          and return immediately. Otherwise if the <code>trackID</code> provided is not the 
+          <code>id</code> of a Track object in <code>stream</code>'s <code>audioTrackList</code>
+          or <code>videoTrackList</code> it <em title="must" class="rfc2119">must</em> raise an INVALID_TRACK_ID exception
+          and return immediately. Otherwise it <em title="must" class="rfc2119">must</em>
+          queue a task, using the DOM manipulation task source, that runs the following steps:
+		<ol>
+			<li>Until such time as data is available for this Track from the underlying media source,
+				 insert black frames (for a video track) or silence (for an audio track) into the current Blob. </li>
+		<li>Once data is available for this Track from the underlying media source, start collecting
+			it into the current Blob. </li>
+	 <li>Raise an <code>unmutetrack</code> event.</li>
+	 </ol>
+		
+          <table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">trackID</td><td class="prmType"><code><a>DOMString</a></code></td><td class="prmNullFalse">✘</td><td class="prmOptFalse">✘</td><td class="prmDesc">
+              The id of the audio or video track to unmute.
+            </td></tr></table><div><em>Return type: </em><code><a>void</a></code></div></dd></dl></section>
+
+
+
+
+<p>The  <code>MediaRecorder()</code>
+      constructor takes one argument which
+      <em title="must" class="rfc2119">must</em> be of type <code>MediaStream</code> (see [<cite><a href="#bib-GETUSERMEDIA" class="bibref">GETUSERMEDIA</a></cite>]). When the constructor
+      is invoked, the UA <em title="must" class="rfc2119">must</em> construct a new <a class="idlType" href="#idl-def-MediaRecorder"><code>MediaRecorder</code></a> object,
+      	 set its <a href="#widl-MediaRecorder-stream">stream</a> attribute to be the provided MediaStream, set its <a href="#widl-MediaRecorder-state">state</a> attribute to 'inactive'
+      	 and return the object.</p>  
+      	 
+	
+
+
+<section id="RecordingStateEnum">
+	<h3><span class="secno">2.3 </span>RecordingStateEnum</h3>
+	<pre class="idl"><span class="idlEnum" id="idl-def-RecordingStateEnum">enum <span class="idlEnumID">RecordingStateEnum</span> {
+    "<span class="idlEnumItem">inactive</span>",
+    "<span class="idlEnumItem">recording</span>",
+    "<span class="idlEnumItem">paused</span>"
+};</span></pre><table class="simple"><tr><th colspan="2">Enumeration description</th></tr><tr><td><code>inactive</code></td><td>Recording is not occurring. (Either it has not been started or it has been stopped.).</td></tr><tr><td><code>recording</code></td><td>Recording has been started and the UA is capturing data..</td></tr><tr><td><code>paused</code></td><td>Recording has been started, then paused, and not yet stopped or resumed.</td></tr></table>
+
+	</section>  
+</section> 
+	
+<section id="blob-event">
+	<!--OddPage--><h2><span class="secno">3. </span>Blob Event</h2>
+	
+	<pre class="idl"><span class="idlInterface" id="idl-def-BlobEvent">[<span class="extAttr">Constructor</span>]
+interface <span class="idlInterfaceID">BlobEvent</span> : <span class="idlSuperclass"><a>Event</a></span> {
+<span class="idlAttribute">    readonly attribute <span class="idlAttrType"><a>Blob</a></span> <span class="idlAttrName"><a href="#widl-BlobEvent-data">data</a></span>;</span>
+};</span></pre><section id="attributes-1"><h3><span class="secno">3.1 </span>Attributes</h3><dl class="attributes"><dt id="widl-BlobEvent-data"><code>data</code> of type <span class="idlAttrType"><a>Blob</a></span>, readonly</dt><dd>
+    Returns a Blob object whose type attribute indicates the encoding of the blob data. An implementation must return a Blob in a format that is capable of being viewed in an HTML <code>&lt;img&gt;</code> tag. .
+  </dd></dl></section>
+
+
+	<h2 id="blobeventinit">BlobEventInit</h2>
+  <pre class="idl"><span class="idlDictionary" id="idl-def-BlobEventInit">dictionary <span class="idlDictionaryID">BlobEventInit</span> {
+<span class="idlMember">    <span class="idlMemberType"><a>Blob</a></span> <span class="idlMemberName"><a href="#widl-BlobEventInit-data">data</a></span>;</span>
+};</span></pre><section id="dictionary-blobeventinit-members"><h3><span class="secno">3.2 </span>Dictionary <a href="#idl-def-BlobEventInit" class="idlType"><code>BlobEventInit</code></a> Members</h3><dl class="dictionary-members"><dt id="widl-BlobEventInit-data"><code>data</code> of type <span class="idlMemberType"><a>Blob</a></span></dt><dd>
+            A Blob object containing the data to deliver via this event.
+          </dd></dl></section>
+</section>
+
+<section id="availablesettings">
+	<!--OddPage--><h2><span class="secno">4. </span>Settings Dictionaries</h2>
+	<pre class="idl"><span class="idlDictionary" id="idl-def-AvailableSettings">dictionary <span class="idlDictionaryID">AvailableSettings</span> {
+<span class="idlMember">    <span class="idlMemberType"><a>CapabilityList</a></span>  <span class="idlMemberName"><a href="#widl-AvailableSettings-MimeType">MimeType</a></span>;</span>
+<span class="idlMember">    <span class="idlMemberType"><a>CapabilityRange</a></span> <span class="idlMemberName"><a href="#widl-AvailableSettings-imageWidth">imageWidth</a></span>;</span>
+<span class="idlMember">    <span class="idlMemberType"><a>CapabilityRange</a></span> <span class="idlMemberName"><a href="#widl-AvailableSettings-imageHeight">imageHeight</a></span>;</span>
+};</span></pre><section id="dictionary-availablesettings-members"><h3><span class="secno">4.1 </span>Dictionary <a href="#idl-def-AvailableSettings" class="idlType"><code>AvailableSettings</code></a> Members</h3><dl class="dictionary-members"><dt id="widl-AvailableSettings-MimeType"><code>MimeType</code> of type <span class="idlMemberType"><a>CapabilityList</a></span></dt><dd>
+            A list of the MIME types that can be selected as encodings for recording.
+          </dd><dt id="widl-AvailableSettings-imageHeight"><code>imageHeight</code> of type <span class="idlMemberType"><a>CapabilityRange</a></span></dt><dd>The maximum and minimum height, in pixels, for the capture of video or photo
+          	images.</dd><dt id="widl-AvailableSettings-imageWidth"><code>imageWidth</code> of type <span class="idlMemberType"><a>CapabilityRange</a></span></dt><dd>The maximum and minimum width, in pixels, for the capture of video or photo
+          	images.</dd></dl></section>
+        
+ <pre class="idl"><span class="idlDictionary" id="idl-def-RecordingSettings">dictionary <span class="idlDictionaryID">RecordingSettings</span> {
+<span class="idlMember">    <span class="idlMemberType"><a>DOMString</a>?</span>     <span class="idlMemberName"><a href="#widl-RecordingSettings-MimeType">MimeType</a></span>;</span>
+<span class="idlMember">    <span class="idlMemberType"><a>unsigned long</a>?</span> <span class="idlMemberName"><a href="#widl-RecordingSettings-imageWidth">imageWidth</a></span>;</span>
+<span class="idlMember">    <span class="idlMemberType"><a>unsigned long</a>?</span> <span class="idlMemberName"><a href="#widl-RecordingSettings-imageHeight">imageHeight</a></span>;</span>
+};</span></pre><section id="dictionary-recordingsettings-members"><h3><span class="secno">4.2 </span>Dictionary <a href="#idl-def-RecordingSettings" class="idlType"><code>RecordingSettings</code></a> Members</h3><dl class="dictionary-members"><dt id="widl-RecordingSettings-MimeType"><code>MimeType</code> of type <span class="idlMemberType"><a>DOMString</a></span>, nullable</dt><dd>
+            Used to set the value of <code>mimeType</code>.
+          </dd><dt id="widl-RecordingSettings-imageHeight"><code>imageHeight</code> of type <span class="idlMemberType"><a>unsigned long</a></span>, nullable</dt><dd>Used to set the value of <code>imageWidth</code>.</dd><dt id="widl-RecordingSettings-imageWidth"><code>imageWidth</code> of type <span class="idlMemberType"><a>unsigned long</a></span>, nullable</dt><dd>Used to set the value of <code>imageWidth</code>.</dd></dl></section>
+   
+	</section>
+
+
+   <section id="error-handling">
+      <!--OddPage--><h2><span class="secno">5. </span>Error Handling</h2>
+
+      <section id="general-principles">
+        <h3><span class="secno">5.1 </span>General Principles</h3>
+
+        <p>Errors are indicated in two ways: exceptions and objects passed to
+        error callbacks. Both forms of error reporting <em title="must" class="rfc2119">must</em> provide an object
+        of type <code>RecordingError</code>. An exception <em title="must" class="rfc2119">must</em> be thrown in the
+        following cases:</p>
+
+        <ul>
+          <li>The type of any argument passed to a function did not match what
+          was expected. An appropriate string from the
+          <code>RecordingExceptionName</code> enum <em title="must" class="rfc2119">must</em> be used as the error
+          name.</li>
+
+          <li>A function call was made when the Recorder is in an
+          invalid state, or a state in which that particular function is not
+          allowed to be executed. In this case, the string
+          <code>INVALID_STATE</code> <em title="must" class="rfc2119">must</em> be used as the error name.</li>
+        </ul>
+
+        <p>In all other cases, an error object <em title="must" class="rfc2119">must</em> be provided to the failure
+        callback. The error name in the object provided <em title="must" class="rfc2119">must</em> be picked from
+         the <code>RecordingErrorName</code>
+        enums.  After raising the error, the UA <em title="must" class="rfc2119">must</em>
+   	raise a  dataavailable event, containing any data that it has gathered,
+   	and then a recordingdone event. The UA  <em title="may" class="rfc2119">may</em> set platform-specific
+   	limits, such those for the minimum and maximum Blob size that it will support, or the number of 
+   	Tracks it will record at once.  It <em title="must" class="rfc2119">must</em> signal a fatal
+   	error if these limits are exceeded.  If a non-fatal error occurs during recording, the UA 
+   	<em title="should" class="rfc2119">should</em> raise a recordingwarning event, with data indicating
+   	the nature of the problem, and continue recording.</p>
+ </section>   
+     
+<section id="recordingerror">
+        <h3><span class="secno">5.2 </span>RecordingError</h3>
+        
+        <pre class="idl"><span class="idlInterface" id="idl-def-RecordingError">interface <span class="idlInterfaceID">RecordingError</span> : <span class="idlSuperclass"><a>Error</a></span> {
+<span class="idlAttribute">    readonly attribute <span class="idlAttrType"><a>RecordingErrorEnum</a></span> <span class="idlAttrName"><a href="#widl-RecordingError-name">name</a></span>;</span>
+<span class="idlAttribute">    readonly attribute <span class="idlAttrType"><a>DOMString</a>?</span>         <span class="idlAttrName"><a href="#widl-RecordingError-message">message</a></span>;</span>
+};</span></pre><section id="attributes-2"><h4><span class="secno">5.2.1 </span>Attributes</h4><dl class="attributes"><dt id="widl-RecordingError-message"><code>message</code> of type <span class="idlAttrType"><a>DOMString</a></span>, readonly, nullable</dt><dd>A human readable description of the error. This string <em title="may" class="rfc2119">may</em> vary between different user agents.</dd><dt id="widl-RecordingError-name"><code>name</code> of type <span class="idlAttrType"><a>RecordingErrorEnum</a></span>, readonly</dt><dd>A string representing the type of the error. </dd></dl></section>
+        	
+ 
+  <pre class="idl"><span class="idlDictionary" id="idl-def-RecordingErrorInit">dictionary <span class="idlDictionaryID">RecordingErrorInit</span> {
+<span class="idlMember">    <span class="idlMemberType"><a>RecordingErrorEnum</a></span> <span class="idlMemberName"><a href="#widl-RecordingErrorInit-name">name</a></span>;</span>
+<span class="idlMember">    <span class="idlMemberType"><a>DOMString</a>?</span>         <span class="idlMemberName"><a href="#widl-RecordingErrorInit-message">message</a></span>;</span>
+};</span></pre><section id="dictionary-recordingerrorinit-members"><h4><span class="secno">5.2.2 </span>Dictionary <a href="#idl-def-RecordingErrorInit" class="idlType"><code>RecordingErrorInit</code></a> Members</h4><dl class="dictionary-members"><dt id="widl-RecordingErrorInit-message"><code>message</code> of type <span class="idlMemberType"><a>DOMString</a></span>, nullable</dt><dd>Used to set the <code>message</code> attribute.</dd><dt id="widl-RecordingErrorInit-name"><code>name</code> of type <span class="idlMemberType"><a>RecordingErrorEnum</a></span></dt><dd>
+            Used to set the <code>name</code> attribute.
+          </dd></dl></section>
+<section id="recordingerrornameenum">
+	<h4><span class="secno">5.2.3 </span>RecordingErrorNameEnum</h4>
+	<pre class="idl"><span class="idlEnum" id="idl-def-RecordingErrorNameEnum">enum <span class="idlEnumID">RecordingErrorNameEnum</span> {
+    "<span class="idlEnumItem">OUT_OF_MEMORY</span>",
+    "<span class="idlEnumItem">ILLEGAL_STREAM_MODIFICATION</span>",
+    "<span class="idlEnumItem">"OTHER_RECORDING_ERROR"</span>"
+};</span></pre><table class="simple"><tr><th colspan="2">Enumeration description</th></tr><tr><td><code>OUT_OF_MEMORY</code></td><td>The UA has exhausted the available memory. User agents <em title="should" class="rfc2119">should</em> provide as much additional information as possible in the <code>message</code> attribute.</td></tr><tr><td><code>ILLEGAL_STREAM_MODIFICATION</code></td><td>A modification to the <code>stream</code> has occurred that makes it impossible to continue recording. An example would be the addition of a Track while recording is occurring. 
+		User agents <em title="should" class="rfc2119">should</em> provide as much additional information  as possible in the <code>message</code> attribute.</td></tr><tr><td><code>"OTHER_RECORDING_ERROR"</code></td><td>Used for an fatal error other than those listed above.  User agents <em title="should" class="rfc2119">should</em> provide as much additional information as possible in the <code>message</code> attribute.</td></tr></table></section>
+</section> 
+<section id="recordingexceptionenum">
+	<h3><span class="secno">5.3 </span>RecordingExceptionEnum</h3>
+	<pre class="idl"><span class="idlEnum" id="idl-def-RecordingExcedptionEnum">enum <span class="idlEnumID">RecordingExcedptionEnum</span> {
+    "<span class="idlEnumItem">INVALID_STATE</span>",
+    "<span class="idlEnumItem">INVALID_MEDIASTREAM_TRACK_ID</span>",
+    "<span class="idlEnumItem">UNSUPPORTED_OPTION</span>"
+};</span></pre><table class="simple"><tr><th colspan="2">Enumeration description</th></tr><tr><td><code>INVALID_STATE</code></td><td>The function was called on a <code>MediaRecorder</code> that
+          is an invalid state, or a state in which the function is not allowed
+          to be executed.</td></tr><tr><td><code>INVALID_MEDIASTREAM_TRACK_ID</code></td><td>	The argument provided is not the ID of any <code>MediaStreamTrack</code> belonging to the <code>MediaRecorder</code>'s <code>stream</code>.</td></tr><tr><td><code>UNSUPPORTED_OPTION</code></td><td>The UA cannot provide the codec or recording option that has
+          	been requested.</td></tr></table></section> 
+  
+</section>  
+ <section id="event-summary" class="informative">
+   <!--OddPage--><h2><span class="secno">6. </span>Event summary</h2><p><em>This section is non-normative.</em></p>
+
+
+    <p>The following additional events fire on <code><a class="idlType" href="#idl-def-MediaRecorder"><code>MediaRecorder</code></a></code>
+    objects:</p>
+
+    <table style="border-width:0; width:60%" border="1">
+      <tbody><tr>
+        <th>Event name</th>
+
+        <th>Interface</th>
+
+        <th>Fired when...</th>
+      </tr>
+
+      </tbody><tbody>
+        <tr>
+          <td><dfn id="event-mediarecorder-recording"><code>recording</code></dfn></td>
+
+          <td><code>Event</code></td>
+
+          <td>The UA has started recording data on the MediaStream.</td>
+        </tr>
+
+        <tr>
+          <td><dfn id="event-mediarecorder-stoprecording"><code>stoprecording</code></dfn></td>
+
+          <td><code>Event</code></td>
+
+          <td>The UA has stopped recording data on the MediaStream.</td>
+        </tr>
+        
+        <tr>
+          <td><dfn id="event-mediarecorder-dataavailable"><code>dataavailable</code></dfn></td>
+
+          <td><a href="#idl-def-BlobEvent"><code>BlobEvent</code></a></td>
+          <td>The UA generates this even to return data to the application.  The 'data' attribute of this 
+          	event contains a Blob of recorded data.</td>
+        </tr>
+        
+         <tr>
+          <td><dfn id="event-mediarecorder-photo"><code>photo</code></dfn></td>
+
+          <td><a href="#idl-def-BlobEvent"><code>BlobEvent</code></a></td>
+
+          <td>The UA uses this event to return a  photo to the application (as a Blob).  The 'data' attribute of this 
+          	event contains a Blob of recorded snapshot data.</td>
+        </tr>
+        
+        <tr>
+          <td><dfn id="event-mediarecorder-pause"><code>pause</code></dfn></td>
+
+          <td><code>Event</code></td>
+
+          <td>The UA has paused recording data on the MediaStream.</td>
+        </tr>
+        
+         <tr>
+          <td><dfn id="event-mediarecorder-resume"><code>resume</code></dfn></td>
+
+          <td><code>MediaStreamEvent</code></td>
+
+          <td>The UA has resumed recording data on the MediaStream.</td>
+        </tr>
+        
+         <tr>
+          <td><dfn id="event-mediarecorder-mutetrack"><code>mutetrack</code></dfn></td>
+
+          <td><a href="http://dev.w3.org/2011/webrtc/editor/getusermedia.html"><code>MediaStreamTrackEvent</code></a></td>
+
+          <td>The MediaRecorder has muted recording on a Track.</td>
+        </tr>
+        
+         <tr>
+          <td><dfn id="event-mediarecorder-unmutetrack"><code>unmutetrack</code></dfn></td>
+
+          <td><a href="http://dev.w3.org/2011/webrtc/editor/getusermedia.html"><code>MediaStreamTrackEvent</code></a></td>
+
+          <td>The MediaRecorder has unmuted recording on a Track.</td>
+        </tr>
+  
+
+        
+
+        <tr>
+          <td><dfn id="event-mediarecorder-recordingerror"><code>recordingerror</code></dfn></td>
+
+          <td><a href="#idl-def-RecordingError"><code>RecordingError</code></a></td>
+
+          <td>A fatal error has occurred and the UA has stopped recording. More  detailed error information
+          	is available in the 'message' attribute. </td>
+        </tr>
+        
+          <tr>
+          <td><dfn id="event-mediarecorder-recordingwarning"><code>recordingwarning</code></dfn></td>
+
+          <td><code>CustomEvent</code></td>
+
+          <td>A problem has occurred, but the UA has not stopped recording. More detailed information
+          	is available in the 'message' attribute. [Not clear if we need this event.]</td>
+        </tr>
+
+      </tbody>
+    </table>
+
+  </section>
+
+  	
+ <section class="appendix" id="openissues"><!--OddPage--><!--OddPage--><h2><span class="secno">A. </span><span class="secno">A. </span>Open Issues</h2>
+ 	<ol>
+ 		<li>Do we need an MTI
+        	format?</li>
+        	<li>Do we need a "setSyncPoint()" operator and a "syncpoint" signal, 
+        		so that the client can tell the recorder to insert a point at 
+        		which a recording can be broken up (typically a new I-frame)? </li>
+        		<li>Do we need to ask the user's permission before we record?</li>
+ 		</ol>
+</section>
+
+
+  
+<section class="appendix" id="references"><!--OddPage--><h2><span class="secno">B. </span>References</h2><section id="normative-references"><h3><span class="secno">B.1 </span>Normative references</h3><dl class="bibliography"><dt id="bib-FILE-API">[FILE-API]</dt><dd>Arun Ranganathan; Jonas Sicking. <a href="http://www.w3.org/TR/2011/WD-FileAPI-20111020/"><cite>File API.</cite></a> 20 October 2011. W3C Working Draft. URL: <a href="http://www.w3.org/TR/2011/WD-FileAPI-20111020/">http://www.w3.org/TR/2011/WD-FileAPI-20111020/</a>
+</dd><dt id="bib-GETUSERMEDIA">[GETUSERMEDIA]</dt><dd>D. Burnett; A. Narayanan. <a href="http://www.w3.org/TR/2012/WD-mediacapture-streams-20120628/"><cite>Media Capture and Streams</cite></a> 28 June 2012. W3C Working Draft. URL: <a href="http://www.w3.org/TR/2012/WD-mediacapture-streams-20120628/">http://www.w3.org/TR/2012/WD-mediacapture-streams-20120628/</a>
+</dd></dl></section></section></body></html>

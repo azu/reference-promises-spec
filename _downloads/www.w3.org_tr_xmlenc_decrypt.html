@@ -1,0 +1,1250 @@
+<!-- http://www.w3.org/TR/xmlenc-decrypt -->
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Decryption Transform for XML Signature</title>
+  <style type="text/css">
+<!--
+/*<![CDATA[*/
+u,ins,.ins            { background: white; color: red;}
+del,strike,.strike    { background: white; color: silver; text-decoration: line-through;}
+code                  { font-weight: normal; }
+.def                  { background: #FFFFFF; font-weight: bold}
+.link-def             { background: #FFFFFF; color: teal;  font-style: italic;}
+.link-sec             { font-style: italic;}
+.comment              { background: #FFFFF5; color: black; padding: .7em; border:
+navy thin solid;}
+.discuss              { color: blue; background: yellow; }
+.xml-example,.xml-dtd { margin-left: -1em; padding: .5em; border: none;}
+.xml-dtd              { background: #efeff8; color: black;}
+/*]]>*/
+-->
+
+
+
+
+
+
+
+
+
+
+  </style>
+  <link rel="stylesheet" type="text/css"
+  href="http://www.w3.org/StyleSheets/TR/W3C-REC.css" />
+</head>
+
+<body xml:lang="en" lang="en">
+
+<div class="head">
+<p><a href="http://www.w3.org/"><img height="48" width="72" alt="W3C"
+src="http://www.w3.org/Icons/w3c_home" /></a></p>
+
+<h1 class="notoc">Decryption Transform for XML Signature</h1>
+
+<h2 class="notoc">W3C Recommendation 10 December 2002</h2>
+<dl>
+  <dt>This version:</dt>
+    <dd><a
+      href="http://www.w3.org/TR/2002/REC-xmlenc-decrypt-20021210">http://www.w3.org/TR/2002/REC-xmlenc-decrypt-20021210</a></dd>
+  <dt>Latest version:</dt>
+    <dd><a
+      href="http://www.w3.org/TR/xmlenc-decrypt">http://www.w3.org/TR/xmlenc-decrypt</a></dd>
+  <dt>Previous version:</dt>
+    <dd><a
+      href="http://www.w3.org/TR/2002/PR-xmlenc-decrypt-20021003">http://www.w3.org/TR/2002/PR-xmlenc-decrypt-20021003</a></dd>
+  <dt>Editors</dt>
+    <dd>Merlin Hughes &lt;<a
+      href="mailto:merlin@baltimore.ie">merlin@baltimore.ie</a>&gt;</dd>
+    <dd>Takeshi Imamura &lt;<a
+      href="mailto:imamu@jp.ibm.com">imamu@jp.ibm.com</a>&gt;</dd>
+    <dd>Hiroshi Maruyama &lt;<a
+      href="mailto:maruyama@jp.ibm.com">maruyama@jp.ibm.com</a>&gt;</dd>
+  <dt>Contributors</dt>
+    <dd>See <a href="#sec-acknlowledgements">Acknlowledgements</a></dd>
+</dl>
+
+<p>Please see the <a
+href="http://www.w3.org/Encryption/2002/12-xmlenc-decrypt-errata"><strong>errata</strong></a>
+for this document, which may include some normative corrections. See also <a
+href="http://www.w3.org/Encryption/2002/12-xmlenc-translations"><strong>translations</strong></a>.</p>
+
+<p class="copyright"><a
+href="http://www.w3.org/Consortium/Legal/ipr-notice-20000612#Copyright">Copyright</a>
+� 2002 <a href="http://www.w3.org/"><abbr
+title="World Wide Web Consortium">W3C</abbr></a><sup>�</sup> (<a
+href="http://www.lcs.mit.edu/"><abbr
+title="Massachusetts Institute of Technology">MIT</abbr></a>, <a
+href="http://www.inria.fr/"><abbr xml:lang="fr" lang="fr"
+title="Institut National de Recherche en Informatique et Automatique">INRIA</abbr></a>,
+<a href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C <a
+href="http://www.w3.org/Consortium/Legal/ipr-notice-20000612#Legal_Disclaimer">liability</a>,
+<a
+href="http://www.w3.org/Consortium/Legal/ipr-notice-20000612#W3C_Trademarks">trademark</a>,
+<a
+href="http://www.w3.org/Consortium/Legal/copyright-documents-19990405">document
+use</a> and <a
+href="http://www.w3.org/Consortium/Legal/copyright-software-19980720">software
+licensing</a> rules apply.</p>
+<hr title="Separator from Header" />
+</div>
+
+<h2>Abstract</h2>
+
+<p>This document specifies an XML Signature "decryption transform" that
+enables XML Signature applications to distinguish between those XML
+Encryption structures that were encrypted before signing (and must not be
+decrypted) and those that were encrypted after signing (and must be
+decrypted) for the signature to validate.</p>
+
+<h2 class="notoc"><a name="sec-Status" id="sec-Status">Status of this
+document</a></h2>
+
+<div class="">
+<p>This document is the W3C Decryption Transform for XML Signature <a
+href="http://www.w3.org/Consortium/Process-20010719/process.html#RecsW3C">Recommendation
+(REC)</a>. This document has been reviewed by W3C Members and other
+interested parties and has been endorsed by the Director as a W3C
+Recommendation. It is a stable document and may be used as reference material
+or cited as a normative reference from another document. W3C's role in making
+the Recommendation is to draw attention to the specification and to promote
+its widespread deployment. This enhances the functionality and
+interoperability of the Web.</p>
+
+<p>This specification was produced by the W3C <a
+href="http://www.w3.org/Encryption/2001/Overview.html">XML Encryption Working
+Group</a> (<a
+href="http://www.w3.org/Encryption/2001/Activity.html">Activity</a>) which
+believes the specification is sufficient for the creation of independent
+interoperable implementations as demonstrated in the <a
+href="http://www.w3.org/Encryption/2002/02-xenc-interop.html#decryption-transform">Interoperablity
+Report.</a></p>
+
+<p>Patent disclosures relevant to this specification may be found on the
+Working Group's <a
+href="http://www.w3.org/Encryption/2001/Disclosures.html">patent disclosure
+page</a> in conformance with W3C policy.</p>
+
+<p>Pleae report errors in this document to <a
+href="mailto:xml-encryption@w3.org">xml-encryption@w3.org</a> (<a
+href="http://lists.w3.org/Archives/Public/xml-encryption/">public
+archive</a>).</p>
+
+<p>The list of known errors in this specification is available at <a
+href="http://www.w3.org/Encryption/2002/12-xmlenc-decrypt-errata">http://www.w3.org/Encryption/2002/12-xmlenc-decrypt-errata</a>.</p>
+
+<p>The English version of this specification is the only normative version.
+Information about translations of this document (if any) is available <a
+href="http://www.w3.org/Encryption/2002/12-xmlenc-translations">http://www.w3.org/Encryption/2002/12-xmlenc-translations</a>.</p>
+
+<p>A list of current W3C Recommendations and other technical documents can be
+found at <a href="http://www.w3.org/TR/">http://www.w3.org/TR/</a>.</p>
+</div>
+
+<h2><a name="sec-ToC" id="sec-ToC">Table of Contents</a></h2>
+<ol>
+  <li><a href="#sec-introduction">Introduction</a> 
+    <ol>
+      <li><a href="#sec-purpose">Purpose</a></li>
+      <li><a href="#sec-conventions">Editorial Conventions</a></li>
+      <li><a href="#sec-acknlowledgements">Acknlowledgments</a></li>
+    </ol>
+  </li>
+  <li><a href="#sec-syntax">Decryption Transform Syntax</a></li>
+  <li><a href="#sec-xml-mode">XML-Mode Decryption Transform</a> 
+    <ol>
+      <li><a href="#sec-xml-processing">Processing Rules</a></li>
+      <li><a href="#sec-xml-creation">Transform Creation
+      (Non-Normative)</a></li>
+      <li><a href="#sec-xml-example">Example</a></li>
+      <li><a href="#sec-xml-restrictions">Restrictions and Limitations</a> 
+        <ol>
+          <li><a href="#sec-well-formed">The Constraint of Well-Formed
+            Data</a></li>
+          <li><a href="#sec-interiting-xml-attributes">Inheriting Attributes
+            from the XML Namespace</a></li>
+          <li><a href="#sec-references-structural-changes">References and
+            Structural Changes</a></li>
+          <li><a href="#sec-references-super-encryption">References and
+            Super-Encryption</a></li>
+          <li><a href="#sec-References-Non-Barename">References Using
+            Non-barename XPointers</a></li>
+          <li><a href="#sec-interactions">Interactions with Other
+          Filters</a></li>
+          <li><a href="#sec-encryptedkey">EncryptedKey is Out of
+          Scope</a></li>
+        </ol>
+      </li>
+    </ol>
+  </li>
+  <li><a href="#sec-binary-mode">Binary-Mode Decryption Transform</a> 
+    <ol>
+      <li><a href="#sec-binary-processing">Processing Rules</a></li>
+      <li><a href="#sec-binary-example">Example</a></li>
+    </ol>
+  </li>
+  <li><a href="#sec-security">Security Considerations</a> 
+    <ol>
+      <li><a href="#sec-security-reveal">Signatures Over Encrypted Data May
+        Reveal Information</a></li>
+      <li><a href="#sec-sign-what-you-see">"Sign What You See"</a></li>
+    </ol>
+  </li>
+  <li><a href="#sec-references">References</a></li>
+</ol>
+<hr />
+
+<h2><a id="sec-introduction" name="sec-introduction">1 Introduction</a></h2>
+
+<h3><a id="sec-purpose" name="sec-purpose">1.1 Purpose</a></h3>
+
+<p>It has been noted by David Solo in [<a href="#Solo">Solo</a>] that both
+signature [<a href="#XML-Signature">XML-Signature</a>] and encryption [<a
+href="#XML-Encryption">XML-Encryption</a>] operations may be performed on an
+XML document at any time and in any order, especially in scenarios such as
+workflow. For example, Alice wishes to order and pay for a book from Bob
+using the mutually trusted payment system ZipPay. Bob creates an order form
+including the book title, price and his account info. He wants to sign all of
+this information, but will subsequently encrypt his account info for ZipPay
+only. He sends this to Alice who affirms the book title and price, signs the
+form and presents the twice-signed order with her own payment information to
+ZipPay. To validate both signatures ZipPay will have to know that the cipher
+data version of the encrypted information is necessary for validating Alice's
+signature, but the plain data form is necessary for validating Bob's
+signature. (See <a class="link-sec" href="#sec-sign-what-you-see">"Sign What
+You See"</a> (section 5.2) for more on signing encrypted data.)</p>
+
+<p>Since encryption operations applied to part of the signed content after a
+signature operation cause a signature not to be verifiable, it is necessary
+to decrypt the portions encrypted after signing before the signature is
+verified. The "decryption transform" proposed in this document provides a
+mechanism; decrypting only signed-then-encrypted portions (and ignoring
+encrypted-then-signed ones). A signer can insert this transform in a
+transform sequence (e.g., before Canonical XML [<a
+href="#XML-C14N">XML-C14N</a>] or XPath [<a href="#XPath">XPath</a>]) if
+there is a possibility that someone will encrypt portions of the
+signature.</p>
+
+<p>The transform defined in this document is intended to propose a resolution
+to the decryption/verification ordering issue within signed resources. It is
+out of scope of this document to deal with the cases where the ordering can
+be derived from the context. For example, when a <code>ds:DigestValue</code>
+element or a (part of) <code>ds:SignedInfo</code> element is encrypted, the
+ordering is obvious (without decryption, signature verification is not
+possible) and there is no need to introduce a new transform.</p>
+
+<h3><a id="sec-conventions" name="sec-conventions">1.2 Editorial
+Conventions</a></h3>
+
+<p>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document
+are to be interpreted as described in RFC 2119 [<a
+href="#Keywords">Keywords</a>].</p>
+
+<p>This document makes use of the [<a
+href="#XML-Encryption">XML-Encryption</a>] and [<a
+href="#XML-Signature">XML-Signature</a>] namespaces, and defines it own, with
+the following prefixes:</p>
+<pre>xmlns:xenc="http://www.w3.org/2001/04/xmlenc#"
+xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+xmlns:dcrpt="http://www.w3.org/2002/07/decrypt#"</pre>
+
+<p>While implementations MUST support XML and XML namespaces, the use of our
+"<code>xenc</code>", "<code>ds</code>", and "<code>dcrpt</code>" XML
+namespace prefixes is OPTIONAL; we use this facility to provide compact and
+readable exposition. Additionally, the entity <code>&amp;xenc;</code> is
+borrowed from [<a href="#XML-Encryption">XML-Encryption</a>] to provide
+short-hand identifiers for URIs defined in that specification. For example
+<code>"&amp;xenc;Element"</code> corresponds to
+"http://www.w3.org/2001/04/xmlenc#Element".</p>
+
+<h3><a id="sec-acknlowledgements" name="sec-acknlowledgements">1.3
+Acknlowledgments</a></h3>
+
+<p>The contributions of the following Working Group participants to this
+specification are gratefully acknowledged:</p>
+<ul>
+  <li>Hal Finney, PGP Security</li>
+  <li>Amir Herzberg, NewGenPay</li>
+  <li>Takeshi Imamura, IBM</li>
+  <li>Ari Kermaier, Phaos</li>
+  <li>Hiroshi Maruyama, IBM</li>
+  <li>Joseph Reagle, W3C</li>
+  <li>David Solo, Citigroup</li>
+</ul>
+
+<h2><a id="sec-syntax" name="sec-syntax">2 Decryption Transform
+Syntax</a></h2>
+
+<p class="">This transform supports two modes of operation. In XML mode the
+data is encrypted XML and the result of decryption is a node set. In binary
+mode the data is an encrypted octet sequence and the result of decryption is
+an octet sequence. In both modes, <code>xenc:EncryptedData</code> elements in
+the input node-set can be excluded from processing using
+<code>dcrpt:Except</code> elements. <code>dcrpt:Except</code> is defined
+below via XML Schema [<a href="#XML-Schema">XML-Schema</a>] and appears as
+direct child elements of the <code>ds:Transform</code> element.</p>
+
+<p>The REQUIRED <code>URI</code> attribute value of the
+<code>dcrpt:Except</code> element identifies <code>xenc:EncryptedData</code>
+elements within the input to the transform. The value MUST be a non-empty
+same-document [<a href="#URI">URI</a>] reference (i.e., a number sign '#'
+character) followed by an XPointer expression [<a
+href="#XPointer">XPointer</a>] as profiled by <a class="link-sec"
+href="http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/#sec-ReferenceProcessingModel">The
+Reference Processing Model</a> [<a href="#XML-Signature">XML-Signature</a>,
+section 4.3.3.2].</p>
+<pre class="xml-dtd">  Schema Definition:
+
+  &lt;?xml version="1.0" encoding="utf-8"?&gt;
+  &lt;!DOCTYPE schema PUBLIC "-//W3C//DTD XMLSchema 200102//EN"
+    "http://www.w3.org/2001/XMLSchema.dtd" [
+    &lt;!ATTLIST schema
+      xmlns:dt CDATA #FIXED "http://www.w3.org/2002/07/decrypt#"&gt;
+    &lt;!ENTITY % p ''&gt;
+    &lt;!ENTITY % s ''&gt;
+  ]&gt;
+
+  &lt;schema xmlns="http://www.w3.org/2001/XMLSchema" version="0.1"
+          xmlns:dt="http://www.w3.org/2002/07/decrypt#"
+          targetNamespace="http://www.w3.org/2002/07/decrypt#"
+          elementFormDefault="qualified"&gt;
+
+    &lt;element name="Except" type="dt:ExceptType"/&gt;
+    &lt;complexType name="ExceptType"&gt;
+      &lt;attribute name="Id" type="ID" use="optional"/&gt;
+      &lt;attribute name="URI" type="anyURI" use="required"/&gt;
+    &lt;/complexType&gt;
+  &lt;/schema&gt;</pre>
+
+<h2><a id="sec-xml-mode" name="sec-xml-mode">3 XML Mode Decryption
+Transform</a></h2>
+<dl>
+  <dt>Identifier:</dt>
+    <dd><a name="XML" id="XML"
+      href="http://www.w3.org/2002/07/decrypt#XML">http://www.w3.org/2002/07/decrypt#XML</a></dd>
+</dl>
+
+<p>This mode of the transform requires an XPath node-set [<a
+href="#XPath">XPath</a>] for input. If an octet stream is given as input, it
+MUST be converted to a node-set as described in <a class="link-sec"
+href="http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/#sec-ReferenceProcessingModel">The
+Reference Processing Model</a> (section 4.3.3.2) of the XML Signature
+specification [<a href="#XML-Signature">XML-Signature</a>]. The transform
+decrypts all the <code>xenc:EncryptedData</code> elements except for those
+specified by <code>dcrpt:Except</code> elements. The output of the transform
+is a node-set.</p>
+
+<h3><a id="sec-xml-processing" name="sec-xml-processing">3.1 Processing
+Rules</a></h3>
+
+<p>This section describes the processing rules of the transform. The rules
+are written as two functions; the inputs and outputs of the transform are
+those of the <a href="#func-decryptXML" class="link-def">decryptXML()</a>
+function, which itself calls the <a href="#func-decryptNodeSet"
+class="link-def">decryptNodeSet()</a> function.</p>
+<dl>
+  <dt><a name="func-decryptXML" id="func-decryptXML" class="link-def">O =
+  decryptXML(N, E)</a></dt>
+    <dd><p>where <em>N</em> is a node-set and <em>E</em> is a set of
+      exception URIs held by <code>URI</code> attributes of
+      <code>dcrpt:Except</code> elements. <em>O</em> is a node-set, computed
+      as follows:</p>
+      <ol>
+        <li>Let <em><strong>Y</strong></em>, a set of replacement node-sets,
+          be <a href="#func-decryptNodeSet"
+          class="link-def">decryptNodeSet(N, <em>E</em>)</a>.</li>
+        <li><a class="def" name="def-Canonicalize-with-Replacement"
+          id="def-Canonicalize-with-Replacement">Canonicalize-with-Replacement</a>:
+          convert <em>N</em> to an octet stream <em>B</em>, (which MUST be <a
+          href="#sec-well-formed">well-formed</a> (see section 3.4.1)), using
+          [<a
+          href="http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/#ref-XML-C14N">XML-C14N</a>]
+          as described in <a class="link-sec"
+          href="http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/#sec-ReferenceProcessingModel">The
+          Reference Processing Model</a> [<a
+          href="#XML-Signature">XML-Signature</a>, section 4.3.3.2]; but, in
+          place of any decrypted <code>xenc:EncryptedData</code> element
+          <em>d</em> and its descendants, process the replacement node-set
+          <em>O<sub>d</sub></em>, from <em><strong>Y</strong></em>. During
+          this step, canonicalization of the replacement node-set MUST be <a
+          href="#sec-interiting-xml-attributes">augmented</a> (see section
+          3.4.2) as follows: 
+          <ul>
+            <li>A namespace declaration <code>xmlns=""</code> MUST be emitted
+              with every <a class="link-def"
+              href="http://www.w3.org/TR/2002/REC-xml-exc-c14n-20020718/#def-apex-node">apex</a>
+              element that has no namespace node declaring a value for the
+              default namespace as described in <a class="link-sec"
+              href="http://www.w3.org/Encryption/2001/Drafts/xmlenc-core/#sec-Serializing-XML">Serializing
+              XML</a> [<a href="#XML-Encryption">XML-Encryption</a>, section
+              4.3.3].</li>
+            <li>If a node-set is replacing an element from <em>N</em> whose
+              parent element is not in <em>N</em>, then its apex elements
+              MUST inherit attributes associated with the <a class=""
+              href="http://www.w3.org/XML/1998/namespace">XML namespace</a>
+              from the parent element., such as <code>xml:base</code>,
+              <code>xml:lang</code> and <code>xml:space</code>.</li>
+          </ul>
+          <p><em>B</em> may not be in canonical form.</p>
+        </li>
+        <li>Let <em>O</em>, the output of this function, be a node-set
+          converted from <em>B</em> as described in <a class="link-sec"
+          href="http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/#sec-ReferenceProcessingModel">The
+          Reference Processing Model</a> [<a
+          href="#XML-Signature">XML-Signature</a>, section 4.3.3.2]. 
+          <ul>
+            <li>If parsing of <em>B</em> fails, then the implementation MUST
+              signal a failure of the transform.</li>
+            <li>Note that even if there are no decrypted
+              <code>xenc:EncryptedData</code> elements, then <em>N</em> is
+              still canonicalized and parsed.</li>
+          </ul>
+        </li>
+      </ol>
+    </dd>
+</dl>
+<dl>
+  <dt><a name="func-decryptNodeSet" id="func-decryptNodeSet"
+  class="link-def"><strong>Y</strong> = decryptNodeSet(N, E)</a></dt>
+    <dd><p>where <em>N</em> is a node-set and <em>E</em> is a set of
+      exception URIs held by <code>URI</code> attributes of
+      <code>dcrpt:Except</code> elements. <em><strong>Y</strong></em> is a
+      set of node-sets, computed as follows:</p>
+      <ol>
+        <li>Let <em>D</em> be a node-set containing all element nodes in
+          <em>N</em> with the type <code>xenc:EncryptedData</code> that are
+          not identified by any exception URI in <em>E</em>. 
+          <ul>
+            <li class="">When dereferencing an exception URI in the context
+              of the original input node set, the implementation MUST behave
+              as if the document node of the input node-set is used to
+              initialize the XPointer evaluation context [<a
+              href="#XPointer">XPointer</a>], even if the node is not part of
+              the node-set. Unlike XML Signature [<a
+              href="#XML-Signature">XML-Signature</a>], the exception URI may
+              be evaluated against a different document than the "root node
+              of the XML document containing the URI attribute." If the input
+              is a different document then, as per XPointer [<a
+              href="#XPointer">XPointer</a>], use of the <a
+              href="http://www.w3.org/TR/2001/CR-xptr-20010911/#N3568"
+              class="link-def">here()</a> function is an error.</li>
+            <li class="">When dereferencing an exception URI in the context
+              of a replacement node-set, bare name [<a
+              href="#XPointer">XPointer</a>] exception URIs are used to
+              locate <code>xenc:EncryptedData</code> elements with matching
+              <code>Id</code> attributes. Implementors MAY attempt to resolve
+              full XPointers into replacement node-sets using appropriate
+              techniques to take into account the location of the replacement
+              node-set in the input document, see <a class="link-sec"
+              href="#sec-References-Non-Barename">References Using
+              Non-barename XPointers</a> (section 3.4.5).</li>
+            <li class="">If an exception URI fails to dereference any nodes,
+              then the resulting error MUST be ignored; it may be the result
+              of part of the input document being encrypted.</li>
+          </ul>
+        </li>
+        <li>Let <em><strong>Y</strong></em> be {}, an empty set.</li>
+        <li>For each <code>xenc:EncryptedData</code> element <em>d</em> from
+          <em>D</em>: 
+          <ol>
+            <li>Decrypt <em>d</em>, without regard for which, if any, of its
+              descendants are in <em>N</em>, and process it in accordance
+              with the value of its <code>Type</code> attribute, resulting in
+              a node-set <em>O<sub>d</sub></em>. 
+              <ul>
+                <li>For example, processing of an
+                  <code>xenc:EncryptedData</code> element with the
+                  <code>Type</code> attribute whose value is <a
+                  href="http://www.w3.org/2001/04/xmlenc#Element">&amp;xenc;Element</a>
+                  or <a
+                  href="http://www.w3.org/2001/04/xmlenc#Content">&amp;xenc;Content</a>
+                  is specified in <a class="link-sec"
+                  href="http://www.w3.org/Encryption/2001/Drafts/xmlenc-core/#sec-Decrypt-Imp">A
+                  Decrypt Implementation</a> (section 4.3.1) of [<a
+                  href="#XML-Encryption">XML-Encryption</a>], and the result
+                  is a node-set.</li>
+                <li>If the <code>Type</code> attribute is absent, is not
+                  known to the decryptor, or the result of its processing is
+                  not a node-set, then the implementation MUST signal a
+                  failure of the transform.</li>
+                <li>If decryption of any <code>xenc:EncryptedData</code>
+                  element fails, then the implementation MUST signal a
+                  failure of the transform.</li>
+              </ul>
+            </li>
+            <li class="">Replace <strong><em>Y</em></strong> with
+              <strong>Y</strong> &#x222a; {<em>O<sub>d</sub>}</em>.</li>
+            <li class="">If <em>O</em><sub><em>d</em></sub> contains
+              <code>xenc:EncryptedData</code> that are not in <em>E,</em>
+              replace <em><strong>Y</strong></em> with
+              <em><strong>Y</strong></em> &#x222a; <a
+              href="#func-decryptNodeSet"
+              class="link-def">decryptNodeSet(O<sub>d</sub>, E)</a>. This
+              recursively decrypts <a class="link-def"
+              href="http://www.w3.org/TR/xmlenc-core/#sec-eg-Super-Encryption">super-encrypted</a>
+              data within the replacement node-set.</li>
+          </ol>
+        </li>
+      </ol>
+    </dd>
+</dl>
+
+<h3><a id="sec-xml-creation" name="sec-xml-creation">3.2 Transform Creation
+(Non-Normative)</a></h3>
+
+<p>This specification does not mandate a mechanism for creating a
+<code>ds:Transform</code> element in a [<a
+href="#XML-Signature">XML-Signature</a>] transform sequence. However, the
+following is one (non-normative) approach:</p>
+<ol>
+  <li>Apply all the transforms being placed before this transform to a data
+    object being signed.</li>
+  <li>If the transform just before this transform outputs an octet stream,
+    convert it to a node-set as described in <a class="link-sec"
+    href="http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/#sec-ReferenceProcessingModel">The
+    Reference Processing Model</a> [<a
+    href="#XML-Signature">XML-Signature</a>, section 4.3.3.2].</li>
+  <li>For each node in the node-set, if the node is an element node with the
+    type <code>xenc:EncryptedData</code>, create an <code>dcrpt:Except</code>
+    element referencing the node.</li>
+  <li>Create a <code>ds:Transform</code> element, including the algorithm
+    identifier of this transform and all the <code>dcrpt:Except</code>
+    elements created in Step 3.</li>
+</ol>
+
+<h3><a id="sec-xml-example" name="sec-xml-example">3.3 Example</a></h3>
+
+<p>Suppose that a part of the following XML document (<code>[02-14]</code>)
+is to be signed. Note that a few parts of the document
+(<code>[05,11,12]</code>) are already encrypted prior to signature. Also
+suppose that the signer anticipates that additional parts of the document
+will be encrypted after signing.</p>
+<pre class="xml-example">  [01] &lt;Document&gt;
+  [02]   &lt;ToBeSigned Id="tbs"&gt;
+  [03]     &lt;Part number="1"&gt;
+  [04]       &lt;Data&gt;...&lt;/Data&gt;
+  [05]       &lt;xenc:EncryptedData Id="#secret-1" .../&gt;
+  [06]     &lt;/Part&gt;
+  [07]     &lt;Part number="2"&gt;
+  [08]       &lt;Data&gt;...&lt;/Data&gt;
+  [09]     &lt;/Part&gt;
+  [10]     &lt;Secrets&gt;
+  [11]       &lt;xenc:EncryptedData .../&gt;
+  [12]       &lt;xenc:EncryptedData .../&gt;
+  [13]     &lt;/Secrets&gt;
+  [14]   &lt;/ToBeSigned&gt;
+  [15] &lt;/Document&gt;</pre>
+
+<p>In order to let the recipient know the proper order of decryption and
+signature verification, the signer includes the decryption transform
+(<code>[a19-a22]</code>) in the signature. The <code>dcrpt:Except</code>
+elements (<code>[a20,a21]</code>) identify parts of the document that are
+already encrypted.</p>
+<pre class="xml-example">  [a01] &lt;Document&gt;
+  [a02]   &lt;ToBeSigned Id="tbs"&gt;
+  [a03]     &lt;Part number="1"&gt;
+  [a04]       &lt;Data&gt;...&lt;/Data&gt;
+  [a05]       &lt;xenc:EncryptedData Id="#secret-1" .../&gt;
+  [a06]     &lt;/Part&gt;
+  [a07]     &lt;Part number="2"&gt;
+  [a08]       &lt;Data&gt;...&lt;/Data&gt;
+  [a09]     &lt;/Part&gt;
+  [a10]     &lt;Secrets&gt;
+  [a11]       &lt;xenc:EncryptedData .../&gt;
+  [a12]       &lt;xenc:EncryptedData .../&gt;
+  [a13]     &lt;/Secrets&gt;
+  [a14]   &lt;/ToBeSigned&gt;
+  [a15]   &lt;dsig:Signature ...&gt;
+  [a16]     ...
+  [a17]     &lt;dsig:Reference URI="#tbs"&gt;
+  [a18]       &lt;dsig:Transforms&gt;
+  [a19]         &lt;dsig:Transform Algorithm="http://www.w3.org/2002/07/decrypt#XML"&gt;
+  [a20]           &lt;dcrpt:Except URI="#secret-1"/&gt;
+  [a21]           &lt;dcrpt:Except URI="#xpointer(id('tbs')/Secrets/*)"/&gt;
+  [a22]         &lt;/dsig:Transform&gt;
+  [a23]       &lt;/dsig:Transforms&gt;
+  [a24]       ...
+  [a25]     &lt;/dsig:Reference&gt;
+  [a26]     ...
+  [a27]   &lt;/dsig:Signature&gt;
+  [a28] &lt;/Document&gt;</pre>
+
+<p>Consider that this document is subsequently encrypted by various
+processes, resulting in the following:</p>
+<pre class="xml-example">  [b01] &lt;Document&gt;
+  [b02]   &lt;ToBeSigned Id="tbs"&gt;
+  [b03]     &lt;xenc:EncryptedData Id="part-1" Type="&amp;enc;Element" .../&gt;
+  [b04]     &lt;xenc:EncryptedData Id="part-2" Type="&amp;enc;Element" .../&gt;
+  [b05]     &lt;Secrets&gt;
+  [b06]       &lt;xenc:EncryptedData .../&gt;
+  [b07]       &lt;xenc:EncryptedData .../&gt;
+  [b08]     &lt;/Secrets&gt;
+  [b09]   &lt;/ToBeSigned&gt;
+  [b10]   &lt;dsig:Signature ...&gt;
+  [b11]     ...
+  [b12]     &lt;dsig:Reference URI="#tbs"&gt;
+  [b13]       &lt;dsig:Transforms&gt;
+  [b14]         &lt;dsig:Transform Algorithm="http://www.w3.org/2002/07/decrypt#XML"&gt;
+  [b15]           &lt;dcrpt:Except URI="#secret-1"/&gt;
+  [b16]           &lt;dcrpt:Except URI="#xpointer(id('tbs')/Secrets/*)"/&gt;
+  [b17]         &lt;/dsig:Transform&gt;
+  [b18]       &lt;/dsig:Transforms&gt;
+  [b19]       ...
+  [b20]     &lt;/dsig:Reference&gt;
+  [b21]     ...
+  [b22]   &lt;/dsig:Signature&gt;
+  [b23] &lt;/Document&gt;</pre>
+
+<p>Execution of the decryption transform will proceed as follows:</p>
+<ol>
+  <li>The input to the transform, <em>N</em>, is a node-set containing the
+    <code>ToBeSigned</code> element and its children, less comments
+    (<code>[b02-b09]</code>). The parameter to the transform, <em>E</em>, is
+    a set containing the two exception URIs (<code>[b15,b16]</code>).</li>
+  <li>The first exception URI does not resolve in this document; the second
+    resolves to the two children of the <code>Secrets</code> element
+    (<code>[b06,b07]</code>).</li>
+  <li>As a result, <em>D</em> for <em>N</em> is a node-set consisting of the
+    two <code>xenc:EncryptedData</code> elements, <em>d<sub>part-1</sub></em>
+    (<code>[d03]</code>) and <em>d<sub>part-2</sub></em>
+    (<code>[d04]</code>). Each of these is decrypted, resulting in the
+    following node-sets for <em>O<sub>part-1</sub></em> and
+    <em>O<sub>part-2</sub></em>: 
+    <pre class="xml-example">  [c01] &lt;Part number="1"&gt;
+  [c02]   &lt;Data&gt;...&lt;/Data&gt;
+  [c03]   &lt;xenc:EncryptedData Id="#secret-1" .../&gt;
+  [c04] &lt;/Part&gt;</pre>
+    <pre class="xml-example">  [d01] &lt;Part number="2"&gt;
+  [d02]   &lt;xenc:EncryptedData Id="#data-2" Type="&amp;enc;Element" .../&gt;
+  [d03] &lt;/Part&gt;</pre>
+  </li>
+  <li>After this decryption stage, two new <code>xenc:EncryptedData</code>
+    elements (<code>[c03]</code> and <code>[d02]</code>) have been revealed.
+    However, the first matches an exception URI with a bare name and so is
+    not considered further; hence, <em>D</em> for <em>O<sub>part-1</sub></em>
+    is empty while <em>D</em> for <em>O<sub>part-2</sub></em> contains just
+    the <code>xenc:EncryptedData</code> element <em>d<sub>data-2</sub></em>
+    (<code>[d02]</code>). This is decrypted again, resulting in the following
+    node-set <em>O<sub>data-2</sub></em>: 
+    <pre class="xml-example">  [e01] &lt;Data&gt;...&lt;/Data&gt;</pre>
+  </li>
+  <li>No new <code>xenc:EncryptedData</code> element are revealed, so
+    <em>D</em> for <em>O<sub>data-2</sub></em> is empty and processing falls
+    through to canonicalization.</li>
+  <li>The canonicalization-with-replace operation canonicalizes the node-set
+    <em>N</em>; but, in place of any <code>xenc:EncryptedData</code> elements
+    that were decrypted, it canonicalizes the replacement node-sets.
+    Similarly, it also replaces any decrypted <code>xenc:EncryptedData</code>
+    elements in the replacement node-sets. Further, canonicalization of any
+    replacement node-sets is augmented such that <code>xmlns=""</code> is
+    emitted on any apex elements that have no namespace node declaring a
+    value for the default namespace. The resulting canonicalized data are the
+    following: 
+    <pre class="xml-example">  [f01] &lt;Document&gt;
+  [f02]   &lt;ToBeSigned Id="tbs"&gt;
+  [f03]     &lt;Part xmlns="" number="1"&gt;
+  [f04]       &lt;Data&gt;...&lt;/Data&gt;
+  [f05]       &lt;xenc:EncryptedData Id="#secret-1" .../&gt;
+  [f06]     &lt;/Part&gt;
+  [f07]     &lt;Part xmlns="" number="2"&gt;
+  [f08]       &lt;Data xmlns=""&gt;...&lt;/Data&gt;
+  [f09]     &lt;/Part&gt;
+  [f10]     &lt;Secrets&gt;
+  [f11]       &lt;xenc:EncryptedData .../&gt;
+  [f12]       &lt;xenc:EncryptedData .../&gt;
+  [f13]     &lt;/Secrets&gt;
+  [f14]   &lt;/ToBeSigned&gt;
+  [f15] &lt;/Document&gt;</pre>
+  </li>
+  <li>This octet stream is then parsed and returned as the output of the
+    transform.</li>
+</ol>
+
+<h3><a id="sec-xml-restrictions" name="sec-xml-restrictions">3.4 Restrictions
+and Limitations</a></h3>
+
+<h4>3.4.1 <a name="sec-well-formed" id="sec-well-formed">The Constraint of
+Well-Formed Data</a></h4>
+
+<p>As specified in step 2 of the <a href="#func-decryptXML"
+class="link-def">decryptXML()</a> function, the octet stream resulting from
+canonicalization-with-replacement MUST be well-formed. Typically this will be
+characterized by a <a href="#def-single-rooted"
+class="link-def">single-rooted</a> input node-set, where a node-set is said
+to be <a name="def-single-rooted" id="def-single-rooted"
+class="link-def">single-rooted</a> if and only if all of its member nodes are
+either (1) the first node in the node-set in the document order, (2) a
+descendant node of the first node, or (3) an attribute node or a namespace
+node of another node in the node-set. Additionally, if the input node-set
+has, at its top level, an <code>xenc:EncryptedData</code> element being
+decrypted, then this SHOULD correspond to an encrypted <a
+href="#def-single-rooted" class="link-def">single-rooted</a> node-set.
+However, this need not be the case: after decryption, multiple top-level
+nodes may be well-formed if they consist of white space, comments, processing
+instructions and a single element. No special processing is required to test
+for this condition because ill-formed data will result in a parsing error.</p>
+
+<h4>3.4.2 <a name="sec-interiting-xml-attributes"
+id="sec-interiting-xml-attributes">Inheriting Attributes from the XML
+Namespace</a></h4>
+
+<p>As specified in step 2 of the <a href="#func-decryptXML"
+class="link-def">decryptXML()</a> function, the canonicalization with
+replacement step requires XML namespace attribute inheritance. One of the
+features of the Canonical XML [<a href="#XML-C14N">XML-C14N</a>] algorithm,
+which is automatically applied by the decryption transform, is that all
+ancestral attributes from the XML namespace (e.g., <code>xml:lang</code>) are
+inherited by any element whose parent node is not in the canonicalized
+node-set. The inheritance in step 2 ensures these attributes are preserved
+during decryption and replacement. For example, consider the following signed
+document:</p>
+<pre class="xml-example">  [01] &lt;Document xml:lang="ga"&gt;
+  [02]   &lt;ToBeSigned Id="tbs"&gt;
+  [03]     ...
+  [04]   &lt;/ToBeSigned&gt;
+  [05]   &lt;dsig:Signature ...&gt;
+  [06]     ...
+  [07]     &lt;dsig:Reference URI="#tbs"&gt;
+  [08]       &lt;dsig:Transforms&gt;
+  [09]         &lt;dsig:Transform Algorithm="http://www.w3.org/2001/04/decrypt#XML" /&gt;
+  [10]       &lt;/dsig:Transforms&gt;
+  [11]       ...
+  [12]     &lt;/dsig:Reference&gt;
+  [13]     ...
+  [14]   &lt;/dsig:Signature&gt;
+  [15] &lt;/Document&gt;</pre>
+
+<p>The canonical form of the <code>ToBeSigned</code> element (the target of
+the <code>#tbs</code> reference, <code>[02-04]</code>) is the following
+(<code>[a01-a03]</code>):</p>
+<pre class="xml-example">  [a01] &lt;ToBeSigned Id="tbs" xml:lang="ga"&gt;
+  [a02]     ...
+  [a03]   &lt;/ToBeSigned&gt;</pre>
+
+<p>Consider, however, if this top-level signed element is subsequently
+encrypted using an XML serialization algorithm that does not include
+inherited attributes from the XML namespace (<code>[b02-b04]</code>):</p>
+<pre class="xml-example">  [b01] &lt;Document xml:lang="ga"&gt;
+  [b02]   &lt;xenc:EncryptedData Id="tbs" ...&gt;
+  [b03]     ...
+  [b04]   &lt;/xenc:EncryptedData&gt;
+  [b05]   &lt;dsig:Signature ...&gt;
+  [b06]     ...</pre>
+
+<p>Upon decryption, the document that would be parsed to form the replacement
+node set would be:</p>
+<pre class="xml-example">  [c01] &lt;dummy&gt;&lt;ToBeSigned xmlns="" Id="tbs"&gt;
+  [c02]     ...
+  [c03]   &lt;/ToBeSigned&gt;&lt;/dummy&gt;</pre>
+
+<p>Because this fragment is no longer in its original ancestral context, the
+canonical form of the resulting <code>ToBeSigned</code> element
+(<code>[d01-d03]</code>) would not match that which was originally signed and
+the signature verification operation would fail.</p>
+<pre class="xml-example">  [d01] &lt;ToBeSigned Id="tbs"&gt;
+  [d02]     ...
+  [d03]   &lt;/ToBeSigned&gt;</pre>
+
+<p class="">As shown, this failure often occurs when a directly-signed
+element was encrypted. The remedy is to augment the internal canonicalization
+of the canonicalization-with-replacement step of <a href="#func-decryptXML"
+class="link-def">decryptXML()</a>: node-sets that are replacing elements
+whose parent node is not part of the original signed node-set are
+canonicalized with attributes from the <a
+href="http://www.w3.org/XML/1998/namespace">XML namespace</a> that would have
+been inherited by the unencrypted element in its original document.</p>
+
+<p>While this change is made to maintain the validity of signatures using [<a
+href="#XML-C14N">XML-C14N</a>], it does not interfere with the validity of
+signatures using [<a href="#ref-XML-exc-C14N">XML-exc-C14N</a>]. This
+transform, and the inclusion of attributes from the <a
+href="http://www.w3.org/XML/1998/namespace">XML namespace</a> (i.e., 'xml:'),
+is performed during signature validation <em>and</em> generation.
+Consequently, the exclusively canonicalized form of the element will maintain
+these 'xml:' attributes &mdash; even if the exclusively canonicalized form of
+the element would not have had them without this transform.</p>
+
+<h4>3.4.3 <a name="sec-references-structural-changes"
+id="sec-references-structural-changes">References and Structural
+Changes</a></h4>
+
+<p>URIs with a full XPointer or child sequence (whether in exceptions,
+encrypted data or elsewhere) may fail to resolve if encryption results in a
+structural change to part of the document relied upon by the reference. For
+example, the URI <code>#xpointer(/ToBeSigned/*[3])</code> will no longer
+function if the first two children of the <code>ToBeSigned</code> element are
+encrypted together. Care SHOULD be taken when employing such references in
+association with the decryption transform.</p>
+
+<h4>3.4.4 <a name="sec-references-super-encryption"
+id="sec-references-super-encryption">References and Super Encryption</a></h4>
+
+<p>Super-encryption may cause problems if a super-encrypted
+<code>xenc:EncryptedData</code> element uses same-document references, or if
+an exceptional super-encrypted <code>xenc:EncryptedData</code> element is
+referenced by a non-bare name XPointer URI. Super-encryption of signed data
+under these conditions is NOT RECOMMENDED: super-encryption is precluded, or
+such references should not be used.</p>
+
+<p>As an example of where super-encryption over same-document references may
+cause problems, consider the following signed document
+(<code>[02-05]</code>):</p>
+<pre class="xml-example">  [01] &lt;Document&gt;
+  [02]   &lt;ToBeSigned Id="tbs"&gt;
+  [03]     &lt;Data&gt;...&lt;/Data&gt;
+  [04]     ...
+  [05]   &lt;/ToBeSigned&gt;
+  [06]   &lt;dsig:Signature ...&gt;
+  [07]     ...
+  [08]     &lt;dsig:Reference URI="#tbs"&gt;
+  [09]       &lt;dsig:Transforms&gt;
+  [10]         &lt;dsig:Transform Algorithm="http://www.w3.org/2002/07/decrypt#XML" /&gt;
+  [11]       &lt;/dsig:Transforms&gt;
+  [12]       ...
+  [13]     &lt;/dsig:Reference&gt;
+  [14]     ...
+  [15]   &lt;/dsig:Signature&gt;
+  [16]   ...
+  [17] &lt;/Document&gt;</pre>
+
+<p>If the <code>Data</code> element (<code>[03]</code>) is subsequently
+encrypted, along with other data elsewhere in the document, the new
+<code>xenc:EncryptedData</code> element could use a same-document retrieval
+method to identify shared keying information (<code>[a06]</code>):</p>
+<pre class="xml-example">  [a01] &lt;Document&gt;
+  [a02]   &lt;ToBeSigned Id="tbs"&gt;
+  [a03]     &lt;xenc:EncryptedData ...&gt;
+  [a04]       ...
+  [a05]       &lt;dsig:KeyInfo ...&gt;
+  [a06]         &lt;dsig:RetrievalMethod URI="#key-info" 
+                 Type="http://www.w3.org/2001/04/xmlenc#EncryptedKey" .../&gt;
+  [a07]       &lt;/dsig:KeyInfo&gt;
+  [a08]       ...
+  [a09]     &lt;/xenc:EncryptedData&gt;
+  [a10]     ...
+  [a11]   &lt;/ToBeSigned&gt;
+  [a12]   &lt;xenc:EncryptedKey Id="key-info" .../&gt;
+  [a13]   &lt;dsig:Signature ...&gt;
+  [a14]     ...
+  [a15]     &lt;dsig:Reference URI="#tbs"&gt;
+  [a16]       &lt;dsig:Transforms&gt;
+  [a17]         &lt;dsig:Transform 
+                 Algorithm="http://www.w3.org/2002/07/decrypt#XML"/&gt;
+  [a18]       &lt;/dsig:Transforms&gt;
+  [a19]       ...
+  [a20]     &lt;/dsig:Reference&gt;
+  [a21]     ...
+  [a22]   &lt;/dsig:Signature&gt;
+  [a23] &lt;/Document&gt;</pre>
+
+<p>If this new <code>xenc:EncryptedData</code> is subsequently
+super-encrypted (<code>[b02]</code>), the decryption transform will fail:
+When the inner retrieval method is processed, it will be dereferenced within
+the context of a new decrypted document that does not contain the referenced
+keying information.</p>
+<pre class="xml-example">  [b01] &lt;Document&gt;
+  [b02]   &lt;xenc:EncryptedData Id="tbs" .../&gt;
+  [b03]   &lt;xenc:EncryptedKey Id="key-info" .../&gt;
+  [b04]   &lt;dsig:Signature ...&gt;
+  [b05]     ...
+  [b06]     &lt;dsig:Reference URI="#tbs"&gt;
+  [b07]       &lt;dsig:Transforms&gt;
+  [b08]         &lt;dsig:Transform Algorithm="http://www.w3.org/2002/07/decrypt#XML" /&gt;
+  [b09]       &lt;/dsig:Transforms&gt;
+  [b10]       ...
+  [b11]     &lt;/dsig:Reference&gt;
+  [b12]     ...
+  [b13]   &lt;/dsig:Signature&gt;
+  [b14] &lt;/Document&gt;</pre>
+
+<p class="">Upon decryption, the document that would be parsed to form the
+replacement node set would be:</p>
+<pre class="xml-example">  [d01] &lt;dummy&gt;&lt;ToBeSigned Id="tbs"&gt;
+  [d02]   &lt;xenc:EncryptedData ...&gt;
+  [d03]     ...
+  [d04]     &lt;dsig:KeyInfo ...&gt;
+  [d05]       &lt;dsig:RetrievalMethod URI="#key-info" 
+               Type="http://www.w3.org/2001/04/xmlenc#EncryptedKey"
+               .../&gt;
+  [d06]     &lt;/dsig:KeyInfo&gt;
+  [d07]     ...
+  [d08]   &lt;/xenc:EncryptedData&gt;
+  [d09]   ...
+  [d10] &lt;/ToBeSigned&gt;&lt;/dummy&gt;</pre>
+
+<h4>3.4.5 <a name="sec-References-Non-Barename"
+id="sec-References-Non-Barename">References Using Non-barename
+XPointers</a></h4>
+
+<p>As an example of where non-barename XPointers may fail, consider the
+following signed document (<code>[02-07]</code>) which uses a full XPointer
+(<code>[13]</code>) to identify data that was already encrypted when the
+signature was generated (<code>[05]</code>), and so should not be processed
+by the decryption transform:</p>
+<pre class="xml-example">  [01] &lt;Document&gt;
+  [02]   &lt;ToBeSigned Id="tbs"&gt;
+  [03]     &lt;Data&gt;...&lt;/Data&gt;
+  [04]     &lt;Secrets&gt;
+  [05]       &lt;xenc:EncryptedData Id="#secret-1" .../&gt;
+  [06]     &lt;/Secrets&gt;
+  [07]   &lt;/ToBeSigned&gt;
+  [08]   &lt;dsig:Signature ...&gt;
+  [09]     ...
+  [10]     &lt;dsig:Reference URI="#tbs"&gt;
+  [11]       &lt;dsig:Transforms&gt;
+  [12]         &lt;dsig:Transform Algorithm="http://www.w3.org/2002/07/decrypt#XML"&gt;
+  [13]           &lt;dcrpt:Except URI="#xpointer(/Document/ToBeSigned/Secrets/*)"/&gt;
+  [14]         &lt;/dsig:Transform&gt;
+  [15]       &lt;/dsig:Transforms&gt;
+  [16]       ...
+  [17]     &lt;/dsig:Reference&gt;
+  [18]     ...
+  [19]   &lt;/dsig:Signature&gt;
+  [20] &lt;/Document&gt;</pre>
+
+<p>If the <code>Secrets</code> element is subsequently encrypted, as shown in
+the following example (<code>[a04]</code>); i.e., the existing
+<code>xenc:EncryptedData</code> is super-encrypted, then the XPointer
+exception URI will no longer resolve. As a result, the decryption transform
+will attempt to perform super-decryption of the inner
+<code>xenc:EncryptedData</code> element and processing will fail.</p>
+<pre class="xml-example">  [a01] &lt;Document&gt;
+  [a02]   &lt;ToBeSigned Id="tbs"&gt;
+  [a03]     &lt;Data&gt;...&lt;/Data&gt;
+  [a04]     &lt;xenc:EncryptedData Id="#secrets" .../&gt;
+  [a05]   &lt;/ToBeSigned&gt;
+  [a06]   &lt;dsig:Signature ...&gt;
+  [a07]     ...
+  [a08]     &lt;dsig:Reference URI="#tbs"&gt;
+  [a09]       &lt;dsig:Transforms&gt;
+  [a10]         &lt;dsig:Transform Algorithm="http://www.w3.org/2002/07/decrypt#XML"&gt;
+  [a11]           &lt;dcrpt:Except URI="#xpointer(/Document/ToBeSigned/Secrets/*)"/&gt;
+  [a12]         &lt;/dsig:Transform&gt;
+  [a13]       &lt;/dsig:Transforms&gt;
+  [a14]       ...
+  [a15]     &lt;/dsig:Reference&gt;
+  [a16]     ...
+  [a17]   &lt;/dsig:Signature&gt;
+  [a18] &lt;/Document&gt;</pre>
+
+<p>The reason that the full XPointer cannot be processed is that the document
+which results from decrypting the outer <code>xenc:EncryptedData</code>
+element will have the following form (<code>[b01-b05]</code>):</p>
+<pre class="xml-example">  [b01] &lt;dummy&gt;
+  [b02]   &lt;Secrets&gt;
+  [b03]     &lt;xenc:EncryptedData Id="#secret-1" .../&gt;
+  [b04]   &lt;/Secrets&gt;
+  [b05] &lt;/dummy&gt;</pre>
+
+<h4>3.4.6 <a name="sec-interactions" id="sec-interactions">Interactions with
+Other Filters</a></h4>
+
+<p>The XML signature reference processing model allows transforms to remove
+parts of a node-set undergoing transformation. It is RECOMMENDED that any
+such transforms appear <em>before</em> the decryption transform. Otherwise,
+encrypted data that appear in parts of the document that are to be removed
+and cannot be processed by the recipient will cause the decryption transform
+to fail.</p>
+
+<p>For example, consider the following document which contains parts that are
+to be signed for receipt by different individuals. The XPath transform
+<code>ancestor-or-self::*[@For="job"]</code> selects only the subset
+<code>[02-04]</code>. If this XPath transform occurs after the decryption
+transform, and another part of the document contains encrypted data (e.g.,
+<code>[07]</code>), whether created before or after the signature, then the
+decryption transform may fail to decrypt them and processing will fail. If
+the XPath transform occurs first, then the encrypted data will not be
+considered by the decryption transform.</p>
+<pre class="xml-example">  [01] &lt;Document&gt;
+  [02]   &lt;ToBeSigned For="job"&gt;
+  [03]     ...
+  [04]   &lt;/ToBeSigned&gt;
+  [05]   &lt;ToBeSigned For="bob"&gt;
+  [06]     ...
+  [07]     &lt;xenc:EncryptedData .../&gt;
+  [08]   &lt;/ToBeSigned&gt;
+  [09] &lt;/Document&gt;</pre>
+
+<h4>3.4.7 <a name="sec-encryptedkey" id="sec-encryptedkey">EncryptedKey is
+Out of Scope</a></h4>
+
+<p>This transform does not include any <code>xenc:EncryptedKey</code>
+elements within its scope of specifically indicating elements, and their
+exceptions, that should be decrypted. An <code>xenc:EncryptedKey</code>
+element that exists as a descendent of <code>xenc:EncryptedData</code>
+element might be decrypted and will be removed from the original document as
+part of processing its ancestor <code>xenc:EncryptedData</code> element with
+the transform. However, a lone <code>xenc:EncryptedKey</code> element will be
+processed like any other data: a signature is presumed to be over that actual
+element and not its decrypted form. Consequently, we RECOMMEND that
+<code>xenc:EncryptedKey</code> elements always be children of an
+<code>xenc:EncryptedData</code> element's <code>ds:KeyInfo</code> element
+when they fall within the scope of a signature.</p>
+
+<h2><a id="sec-binary-mode" name="sec-binary-mode"></a>4 Binary Mode
+Decryption Transform</h2>
+<dl>
+  <dt>Identifier:</dt>
+    <dd><a name="Binary" id="Binary"
+      href="http://www.w3.org/2002/07/decrypt#Binary">http://www.w3.org/2002/07/decrypt#Binary</a></dd>
+</dl>
+
+<p>This mode of the transform requires an XPath node-set [<a
+href="#XPath">XPath</a>] for input. If an octet stream is given as input, it
+MUST be converted to a node-set as described in <a class="link-sec"
+href="http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/#sec-ReferenceProcessingModel">The
+Reference Processing Model</a> (section 4.3.3.2) of the XML Signature
+specification [<a href="#XML-Signature">XML-Signature</a>]. The transform
+decrypts all the <code>xenc:EncryptedData</code> elements except for those
+specified by <code>dcrpt:Except</code> elements. The output of the transform
+is an octet-stream.</p>
+
+<h3><a id="sec-binary-processing" name="sec-binary-processing">4.1 Processing
+Rules</a></h3>
+
+<p>The binary mode of operation is intended for use when generating a
+signature over binary data that are to be encrypted for transmission to the
+recipient. Use of this mode of the transform allows a signature to be
+computed over the plaintext form of the data, rather than the opaque
+ciphertext. This further allows the ciphertext to be stored elsewhere,
+identified by a cipher reference, without the need for the signature to take
+this into account.</p>
+
+<p>This section describes the processing rules of the binary mode of this
+transform. The inputs and outputs of the transform are those of the <a
+href="#func-decryptBinary" class="link-def">decryptBinary()</a> function.</p>
+<dl>
+  <dt><a name="func-decryptBinary" id="func-decryptBinary" class="link-def">O
+  = decryptBinary(N, E)</a></dt>
+    <dd><p>where <em>N</em> is a node-set and <em>E</em> is a set of
+      exception URIs held by <code>URI</code> attributes of
+      <code>dcrpt:Except</code> elements. <em>O</em> is an octet stream,
+      computed as follows:</p>
+      <ol>
+        <li>Let <em>D</em> be a node-set containing all element nodes in
+          <em>N</em> with the type <code>xenc:EncryptedData</code> that are
+          not identified by any exception URI in <em>E</em>. 
+          <ul>
+            <li>When dereferencing an exception URI, the implementation MUST
+              behave as if the document node of the input node-set is used to
+              initialize the XPointer evaluation context [<a
+              href="#XPointer">XPointer</a>], even if the node is not part of
+              the node-set. Unlike XML Signature [<a
+              href="#XML-Signature">XML-Signature</a>], the exception URI may
+              be evaluated against a different document from the signature
+              document. If the input is a different document then, as per
+              XPointer [<a href="#XPointer">XPointer</a>], use of the <a
+              href="http://www.w3.org/TR/2001/CR-xptr-20010911/#N3568"
+              class="link-def">here()</a> function is an error.</li>
+            <li>If an exception URI fails to dereference any nodes, then the
+              resulting error MUST be ignored; it may be the result of part
+              of the input document being encrypted.</li>
+          </ul>
+        </li>
+        <li>For each <code>xenc:EncryptedData</code> element <em>d</em> from
+          <em>D</em>, decrypt <em>d</em>, without regard for which, if any,
+          of its descendants are in <em>N</em>, and without consideration of
+          its <code>Type</code> attribute, resulting in an octet-stream
+          <em>O<sub>d</sub></em>.</li>
+        <li>Let <em>O</em>, the output of this transform, be the
+          concatenation of the octet streams <em>O<sub>d</sub></em>, ordered
+          in the document order of <em>d</em>.</li>
+        <li>If there are no <code>EncryptedData</code> elements in
+          <em>D</em>, then the result is a zero-length octet stream.</li>
+      </ol>
+    </dd>
+</dl>
+
+<h3><a id="sec-binary-example" name="sec-binary-example">4.2 Example</a></h3>
+
+<p>Consider the following example signed document:</p>
+<pre class="xml-example">  &lt;Document&gt;
+    &lt;xenc:EncryptedData Id="image" MimeType="image/png" ...&gt;
+      ...
+      &lt;!-- image data --&gt;
+      ...
+    &lt;/xenc:EncryptedData&gt;
+    &lt;dsig:Signature ...&gt;
+      ...
+      &lt;dsig:Reference URI="#image"&gt;
+        &lt;dsig:Transforms&gt;
+          &lt;dsig:Transform Algorithm="http://www.w3.org/2002/07/decrypt#Binary" /&gt;
+        &lt;/dsig:Transforms&gt;
+        ...
+      &lt;/dsig:Reference&gt;
+      ...
+    &lt;/dsig:Signature&gt;
+  &lt;/Document&gt;</pre>
+
+<p>Much of the encrypted data and signature are elided; the implication of
+the comment in the encrypted data is that the encrypted content is a binary
+image.</p>
+
+<p>Execution of the decryption transform will proceed as follows:</p>
+<ul>
+  <li>The input to the transform, <em>N</em>, is a node set containing the
+    <code>EncryptedData</code> element and its children, less comments. The
+    parameter to the transform, <em>E</em>, is empty.</li>
+  <li>As a result, <em>D</em> is a node set consisting of the one
+    <code>EncryptedData</code> element, <em>d<sub>image</sub></em>. This is
+    decrypted, resulting in an octet string <em>O<sub>image</sub></em>
+    containing the plaintext of the binary image.</li>
+  <li>There are no other data to decrypt, so the result of this transform is
+    the plaintext obtained in the previous step. This will be used directly
+    as input to the digest algorithm.</li>
+</ul>
+
+<h2><a id="sec-security" name="sec-security">5 Security
+Considerations</a></h2>
+
+<h3><a id="sec-security-reveal" name="sec-security-reveal">5.1 Signatures
+Over Encrypted Data May Reveal Information</a></h3>
+
+<p>When this algorithm is used to facilitate subsequent encryption of data
+already signed, the digest value of the signed resource still appears in
+clear text in a <code>ds:Reference</code> element. As noted by Hal Finney in
+[<a href="#Finney">Finney</a>], such a signature may reveal information (via
+the digest value) over encrypted data that increases the encryption's
+vulnerability to plain-text-guessing attacks. This consideration is out of
+scope of this document and (if relevant) should be addressed by applications.
+For example, as proposed by Amir Herzberg in [<a
+href="#Herzberg">Herzberg</a>], one may include a random 'salt' in a resource
+being signed to increase its entropy.</p>
+
+<p>Another approach is that when a signature referent is encrypted, one may
+also encrypt the signature (or at least the <code>ds:DigestValue</code>
+elements). As noted by Joseph Reagle in [<a href="#Reagle">Reagle</a>], this
+latter solution works only if signature and encryption are known to each
+other. For example, the signature may not be known of because it is detached.
+Or, it may be already encrypted! Consider, Alice encrypts element A and the
+signature over the parent of A. Bob encrypts element B (sibling of A) but not
+the signature since he doesn't know about it. Alice then decrypts A and its
+signature, which may provide information to a subsequent plain text attack on
+the encrypted B.</p>
+
+<h3><a id="sec-sign-what-you-see" name="sec-sign-what-you-see">5.2 "Sign What
+You See"</a></h3>
+
+<p>This specification serves scenarios in which a person might sign encrypted
+data. Because XML Signature [<a href="#XML-Signature">XML-Signature</a>] has
+only a simple semantic whereby a key is associated with some data &mdash; and
+nothing more &mdash; the signing of encrypted data is a legitimate process.
+For example, someone might run a content-neutral time stamp service that will
+sign any data sent to it with its time-stamping key under the semantic, "I
+received this on $date $time." However, applications often explicitly or
+implicitly associate more substantive semantics (e.g., authorizes, agrees,
+authors) with a signature. No one should be asked to apply a signature and
+its semantic to data he or she did not see. Just as the principles of <a
+class="link-sec"
+href="http://www.w3.org/TR/2001/PR-xmldsig-core-20010820/#sec-Seen">Only What
+is 'Seen' Should be Signed</a> and <a class="link-sec"
+href="http://www.w3.org/TR/2001/PR-xmldsig-core-20010820/#sec-See">'See' What
+is Signed</a> are important for understanding the import of an XML Signature,
+they are doubly important when semantics are associated with that signature:
+one MUST NOT infer that a signature over encrypted data is also a signature
+over its plain text form, nor that the meaning of that signature over the
+encrypted data also applies to the plain text. If one wishes to sign the
+plain text form of data which is later encrypted, use the transform specified
+in this document!</p>
+
+<h2><a id="sec-references" name="sec-references">6 References</a></h2>
+<dl>
+  <dt><a id="Finney" name="Finney">Finney</a></dt>
+    <dd><a
+      href="http://lists.w3.org/Archives/Public/xml-encryption/2000Nov/0064">Re:
+      Combining signing and encrypting</a>. H. Finney. XML Encryption mailing
+      list, 2000.</dd>
+    <dd><a
+      href="http://lists.w3.org/Archives/Public/xml-encryption/2000Nov/0064">http://lists.w3.org/Archives/Public/xml-encryption/2000Nov/0064</a></dd>
+  <dt><a id="Herzberg" name="Herzberg">Herzberg</a></dt>
+    <dd><a
+      href="http://lists.w3.org/Archives/Public/xml-encryption/2001Mar/0025">Signing
+      encrypted data</a>. A. Herzberg. XML Encryption mailing list, 2001.</dd>
+    <dd><a
+      href="http://lists.w3.org/Archives/Public/xml-encryption/2001Mar/0025">http://lists.w3.org/Archives/Public/xml-encryption/2001Mar/0025</a></dd>
+  <dt><a id="Keywords" name="Keywords">Keywords</a></dt>
+    <dd><a href="http://www.ietf.org/rfc/rfc2119.txt">RFC 2119: Key words for
+      use in RFCs to Indicate Requirement Levels</a>. S. Bradner. Best
+      Current Practices, 1997.</dd>
+    <dd><a
+      href="http://www.ietf.org/rfc/rfc2119.txt">http://www.ietf.org/rfc/rfc2119.txt</a></dd>
+  <dt><a id="Reagle" name="Reagle">Reagle</a></dt>
+    <dd><a
+      href="http://lists.w3.org/Archives/Public/xml-encryption/2001Jan/0100">Re:
+      Signing and Encryption</a>. J. Reagle. XML Encryption mailing list,
+      2001.</dd>
+    <dd><a
+      href="http://lists.w3.org/Archives/Public/xml-encryption/2001Jan/0100">http://lists.w3.org/Archives/Public/xml-encryption/2001Jan/0100</a></dd>
+  <dt><a id="Solo" name="Solo">Solo</a></dt>
+    <dd><a
+      href="http://lists.w3.org/Archives/Public/xml-encryption/2000Nov/0058">Combining
+      signing and encrypting</a>. D. Solo. XML Encryption mailing list,
+    2000.</dd>
+    <dd><a
+      href="http://lists.w3.org/Archives/Public/xml-encryption/2000Nov/0058">http://lists.w3.org/Archives/Public/xml-encryption/2000Nov/0058</a></dd>
+  <dt><a id="URI" name="URI">URI</a></dt>
+    <dd><a href="http://www.ietf.org/rfc/rfc2396.txt">RFC 2396: Uniform
+      Resource Identifiers (URI): Generic Syntax</a>. T. Berners-Lee, R.
+      Fielding, and L. Masinter. Standards Track, 1998.</dd>
+    <dd><a
+      href="http://www.ietf.org/rfc/rfc2396.txt">http://www.ietf.org/rfc/rfc2396.txt</a></dd>
+  <dt><a id="ref-XML" name="ref-XML">XML</a></dt>
+    <dd><a href="http://www.w3.org/TR/2000/REC-xml-20001006">Extensible
+      Markup Language (XML) 1.0 (Second Edition)</a>. T. Bray, J. Paoli, C.
+      M. Sperberg-McQueen, and E. Maler. W3C Recommendation, 2000.</dd>
+    <dd><a
+      href="http://www.w3.org/TR/2000/REC-xml-20001006">http://www.w3.org/TR/2000/REC-xml-20001006</a></dd>
+  <dt><a id="XML-C14N" name="XML-C14N">XML-C14N</a></dt>
+    <dd><a href="http://www.w3.org/TR/2001/REC-xml-c14n-20010315">Canonical
+      XML Version 1.0</a>. J. Boyer. W3C Recommendation, 2001.</dd>
+    <dd><a
+      href="http://www.w3.org/TR/2001/REC-xml-c14n-20010315">http://www.w3.org/TR/2001/REC-xml-c14n-20010315</a></dd>
+  <dt><a name="ref-XML-exc-C14N" id="ref-XML-exc-C14N">XML-exc-C14N</a></dt>
+    <dd><a
+      href="http://www.w3.org/TR/2002/REC-xml-exc-c14n-20020718/">Exclusive
+      XML Canonicalization</a>. J. Boyer, D. Eastlake, and J. Reagle. W3C
+      Recommendation, 2002.</dd>
+    <dd><a
+      href="http://www.w3.org/TR/2002/REC-xml-exc-c14n-20020718/">http://www.w3.org/TR/2002/REC-xml-exc-c14n-20020718/</a></dd>
+  <dt><a id="XML-Encryption" name="XML-Encryption">XML-Encryption</a></dt>
+    <dd><a href="http://www.w3.org/TR/2002/REC-xmlenc-core-20021210/">XML
+      Encryption Syntax and Processing</a>. D. Eastlake and J. Reagle. W3C
+      Recommendation, 2002.</dd>
+    <dd><a
+      href="http://www.w3.org/TR/2002/REC-xmlenc-core-20021210/">http://www.w3.org/TR/2002/REC-xmlenc-core-20021210/</a></dd>
+  <dt><a id="XML-Schema" name="XML-Schema">XML-Schema</a></dt>
+    <dd><a href="http://www.w3.org/TR/2001/REC-xmlschema-1-20010502/">XML
+      Schema Part 1: Structures</a>. H. Thompson, D. Beech, M. Maloney, and
+      N. Mendelsohn. W3C Recommendation, 2001.</dd>
+    <dd><a
+      href="http://www.w3.org/TR/2001/REC-xmlschema-1-20010502/">http://www.w3.org/TR/2001/REC-xmlschema-1-20010502/</a></dd>
+    <dd><a href="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/">XML
+      Schema Part 2: Datatypes</a>. P. Biron and A. Malhotra. W3C
+      Recommendation, 2001.</dd>
+    <dd><a
+      href="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/">http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/</a></dd>
+  <dt><a id="XML-Signature" name="XML-Signature">XML-Signature</a></dt>
+    <dd><a
+      href="http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/">XML-Signature
+      Syntax and Processing</a>. D. Eastlake, J. Reagle, and D. Solo. W3C
+      Recommendation, 2002.</dd>
+    <dd><a
+      href="http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/">http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/</a></dd>
+  <dt><a id="XPath" name="XPath">XPath</a></dt>
+    <dd><a href="http://www.w3.org/TR/1999/REC-xpath-19991116">XML Path
+      Language (XPath) Version 1.0</a>. J. Clark and S. DeRose. W3C
+      Recommendation, 1999.</dd>
+    <dd><a
+      href="http://www.w3.org/TR/1999/REC-xpath-19991116">http://www.w3.org/TR/1999/REC-xpath-19991116</a></dd>
+  <dt><a id="XPointer" name="XPointer">XPointer</a></dt>
+    <dd><a href="http://www.w3.org/TR/2001/CR-xptr-20010911/">XML Pointer
+      Language (XPointer)</a>. S. DeRose, R. Daniel, and E. Maler. W3C
+      Candidate Recommendation, 2001.</dd>
+    <dd><a
+      href="http://www.w3.org/TR/2001/CR-xptr-20010911/">http://www.w3.org/TR/2001/CR-xptr-20010911/</a></dd>
+</dl>
+</body>
+</html>

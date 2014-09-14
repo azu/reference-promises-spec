@@ -1,0 +1,822 @@
+<!-- http://www.w3.org/TR/dap-privacy-reqs/ -->
+<!DOCTYPE html PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN' 'http://www.w3.org/TR/html4/loose.dtd'>
+<html lang="en" dir="ltr">
+<head>
+    <title>Device API Privacy Requirements</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+ <style type="text/css">
+/*****************************************************************
+ * ReSpec CSS
+ * Robin Berjon robin at berjon dot com
+ * v0.05 - 2009-07-31
+ *****************************************************************/
+
+
+/* --- INLINES --- */
+em.rfc2119 { 
+    text-transform:     lowercase;
+    font-variant:       small-caps;
+    font-style:         normal;
+    color:              #900;
+}
+
+h1 acronym, h2 acronym, h3 acronym, h4 acronym, h5 acronym, h6 acronym, a acronym,
+h1 abbr, h2 abbr, h3 abbr, h4 abbr, h5 abbr, h6 abbr, a abbr {
+    border: none;
+}
+
+dfn {
+    font-weight:    bold;
+}
+
+a.internalDFN {
+    color:  inherit;
+    border-bottom:  medium solid #99c;
+    text-decoration:    none;
+}
+
+a.externalDFN {
+    color:  inherit;
+    border-bottom:  medium dotted #ccc;
+    text-decoration:    none;
+}
+
+a.bibref {
+    text-decoration:    none;
+}
+
+code {
+    color:  #ff4500;
+}
+
+
+/* --- WEB IDL --- */
+pre.idl {
+    border-top: 1px solid #90b8de;
+    border-bottom: 1px solid #90b8de;
+    padding:    1em;
+    line-height:    120%;
+}
+
+pre.idl::before {
+    content:    "WebIDL";
+    display:    block;
+    width:      150px;
+    background: #90b8de;
+    color:  #fff;
+    font-family:    initial;
+    padding:    3px;
+    font-weight:    bold;
+    margin: -1em 0 1em -1em;
+}
+
+.idlType {
+    color:  #ff4500;
+    font-weight:    bold;
+    text-decoration:    none;
+}
+
+/*.idlModule*/
+/*.idlModuleID*/
+/*.idlInterface*/
+.idlInterfaceID {
+    font-weight:    bold;
+    color:  #005a9c;
+}
+
+.idlSuperclass {
+    font-style: italic;
+    color:  #005a9c;
+}
+
+/*.idlAttribute*/
+.idlAttrType, .idlFieldType {
+    color:  #005a9c;
+}
+.idlAttrName, .idlFieldName {
+    color:  #ff4500;
+}
+.idlAttrName a, .idlFieldName a {
+    color:  #ff4500;
+    border-bottom:  1px dotted #ff4500;
+    text-decoration: none;
+}
+
+/*.idlMethod*/
+.idlMethType {
+    color:  #005a9c;
+}
+.idlMethName {
+    color:  #ff4500;
+}
+.idlMethName a {
+    color:  #ff4500;
+    border-bottom:  1px dotted #ff4500;
+    text-decoration: none;
+}
+
+/*.idlParam*/
+.idlParamType {
+    color:  #005a9c;
+}
+.idlParamName {
+    font-style: italic;
+}
+
+.extAttr {
+    color:  #666;
+}
+
+/*.idlConst*/
+.idlConstType {
+    color:  #005a9c;
+}
+.idlConstName {
+    color:  #ff4500;
+}
+.idlConstName a {
+    color:  #ff4500;
+    border-bottom:  1px dotted #ff4500;
+    text-decoration: none;
+}
+
+/*.idlException*/
+.idlExceptionID {
+    font-weight:    bold;
+    color:  #c00;
+}
+
+.idlTypedefID, .idlTypedefType {
+    color:  #005a9c;
+}
+
+.idlRaises, .idlRaises a.idlType, .idlRaises a.idlType code, .excName a, .excName a code {
+    color:  #c00;
+    font-weight:    normal;
+}
+
+.excName a {
+    font-family:    monospace;
+}
+
+.idlRaises a.idlType, .excName a.idlType {
+    border-bottom:  1px dotted #c00;
+}
+
+.excGetSetTrue, .excGetSetFalse, .prmNullTrue, .prmNullFalse, .prmOptTrue, .prmOptFalse {
+    width:  45px;
+    text-align: center;
+}
+.excGetSetTrue, .prmNullTrue, .prmOptTrue { color:  #0c0; }
+.excGetSetFalse, .prmNullFalse, .prmOptFalse { color:  #c00; }
+
+.idlImplements a {
+    font-weight:    bold;
+}
+
+dl.attributes, dl.methods, dl.constants, dl.fields {
+    margin-left:    2em;
+}
+
+.attributes dt, .methods dt, .constants dt, .fields dt {
+    font-weight:    normal;
+}
+
+.attributes dt code, .methods dt code, .constants dt code, .fields dt code {
+    font-weight:    bold;
+    color:  #000;
+    font-family:    monospace;
+}
+
+.attributes dt code, .fields dt code {
+    background:  #ffffd2;
+}
+
+.attributes dt .idlAttrType code, .fields dt .idlFieldType code {
+    color:  #005a9c;
+    background:  transparent;
+    font-family:    inherit;
+    font-weight:    normal;
+    font-style: italic;
+}
+
+.methods dt code {
+    background:  #d9e6f8;
+}
+
+.constants dt code {
+    background:  #ddffd2;
+}
+
+.attributes dd, .methods dd, .constants dd, .fields dd {
+    margin-bottom:  1em;
+}
+
+table.parameters, table.exceptions {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    margin: 0.5em 0;
+    width:  100%;
+}
+table.parameters { border-bottom:  1px solid #90b8de; }
+table.exceptions { border-bottom:  1px solid #deb890; }
+
+.parameters th, .exceptions th {
+    color:  #fff;
+    padding:    3px 5px;
+    text-align: left;
+    font-family:    initial;
+    font-weight:    normal;
+    text-shadow:    #666 1px 1px 0;
+}
+.parameters th { background: #90b8de; }
+.exceptions th { background: #deb890; }
+
+.parameters td, .exceptions td {
+    padding:    3px 10px;
+    border-top: 1px solid #ddd;
+    vertical-align: top;
+}
+
+.parameters tr:first-child td, .exceptions tr:first-child td {
+    border-top: none;
+}
+
+.parameters td.prmName, .exceptions td.excName, .exceptions td.excCodeName {
+    width:  100px;
+}
+
+.parameters td.prmType {
+    width:  120px;
+}
+
+table.exceptions table {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    width:  100%;
+}
+
+/* --- TOC --- */
+.toc a {
+    text-decoration:    none;
+}
+
+a .secno {
+    color:  #000;
+}
+
+/* --- TABLE --- */
+table.simple {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    border-bottom:  3px solid #005a9c;
+}
+
+.simple th {
+    background: #005a9c;
+    color:  #fff;
+    padding:    3px 5px;
+    text-align: left;
+}
+
+.simple th[scope="row"] {
+    background: inherit;
+    color:  inherit;
+    border-top: 1px solid #ddd;
+}
+
+.simple td {
+    padding:    3px 10px;
+    border-top: 1px solid #ddd;
+}
+
+.simple tr:nth-child(even) {
+    background: #f0f6ff;
+}
+
+/* --- DL --- */
+.section dd > p:first-child {
+    margin-top: 0;
+}
+
+.section dd > p:last-child {
+    margin-bottom: 0;
+}
+
+.section dd {
+    margin-bottom:  1em;
+}
+
+.section dl.attrs dd, .section dl.eldef dd {
+    margin-bottom:  0;
+}
+
+/* --- EXAMPLES --- */
+pre.example {
+    border-top: 1px solid #ff4500;
+    border-bottom: 1px solid #ff4500;
+    padding:    1em;
+    margin-top: 1em;
+}
+
+pre.example::before {
+    content:    "Example";
+    display:    block;
+    width:      150px;
+    background: #ff4500;
+    color:  #fff;
+    font-family:    initial;
+    padding:    3px;
+    font-weight:    bold;
+    margin: -1em 0 1em -1em;
+}
+
+/* --- EDITORIAL NOTES --- */
+.issue {
+    padding:    1em;
+    border: 1px solid #f00;
+    background: #ffc;
+}
+
+.issue::before {
+    content:    "Issue";
+    display:    block;
+    width:  150px;
+    margin: -1.5em 0 0.5em 0;
+    font-weight:    bold;
+    border: 1px solid #f00;
+    background: #fff;
+    padding:    3px 1em;
+}
+
+.note {
+    padding:    1em;
+    border: 2px solid #cff6d9;
+    background: #e2fff0;
+}
+
+.note::before {
+    content:    "Note";
+    display:    block;
+    width:  150px;
+    margin: -1.5em 0 0.5em 0;
+    font-weight:    bold;
+    border: 1px solid #cff6d9;
+    background: #fff;
+    padding:    3px 1em;
+}
+
+/* --- SYNTAX HIGHLIGHTING --- */
+pre.sh_sourceCode {
+  background-color: white;
+  color: black;
+  font-style: normal;
+  font-weight: normal;
+}
+
+pre.sh_sourceCode .sh_keyword { color: #005a9c; font-weight: bold; }           /* language keywords */
+pre.sh_sourceCode .sh_type { color: #666; }                            /* basic types */
+pre.sh_sourceCode .sh_usertype { color: teal; }                             /* user defined types */
+pre.sh_sourceCode .sh_string { color: red; font-family: monospace; }        /* strings and chars */
+pre.sh_sourceCode .sh_regexp { color: orange; font-family: monospace; }     /* regular expressions */
+pre.sh_sourceCode .sh_specialchar { color: 	#ffc0cb; font-family: monospace; }  /* e.g., \n, \t, \\ */
+pre.sh_sourceCode .sh_comment { color: #A52A2A; font-style: italic; }         /* comments */
+pre.sh_sourceCode .sh_number { color: purple; }                             /* literal numbers */
+pre.sh_sourceCode .sh_preproc { color: #00008B; font-weight: bold; }       /* e.g., #include, import */
+pre.sh_sourceCode .sh_symbol { color: blue; }                            /* e.g., <, >, + */
+pre.sh_sourceCode .sh_function { color: black; font-weight: bold; }         /* function calls and declarations */
+pre.sh_sourceCode .sh_cbracket { color: red; }                              /* block brackets (e.g., {, }) */
+pre.sh_sourceCode .sh_todo { font-weight: bold; background-color: #00FFFF; }   /* TODO and FIXME */
+
+/* Predefined variables and functions (for instance glsl) */
+pre.sh_sourceCode .sh_predef_var { color: #00008B; }
+pre.sh_sourceCode .sh_predef_func { color: #00008B; font-weight: bold; }
+
+/* for OOP */
+pre.sh_sourceCode .sh_classname { color: teal; }
+
+/* line numbers (not yet implemented) */
+pre.sh_sourceCode .sh_linenum { display: none; }
+
+/* Internet related */
+pre.sh_sourceCode .sh_url { color: blue; text-decoration: underline; font-family: monospace; }
+
+/* for ChangeLog and Log files */
+pre.sh_sourceCode .sh_date { color: blue; font-weight: bold; }
+pre.sh_sourceCode .sh_time, pre.sh_sourceCode .sh_file { color: #00008B; font-weight: bold; }
+pre.sh_sourceCode .sh_ip, pre.sh_sourceCode .sh_name { color: #006400; }
+
+/* for Prolog, Perl... */
+pre.sh_sourceCode .sh_variable { color: #006400; }
+
+/* for LaTeX */
+pre.sh_sourceCode .sh_italics { color: #006400; font-style: italic; }
+pre.sh_sourceCode .sh_bold { color: #006400; font-weight: bold; }
+pre.sh_sourceCode .sh_underline { color: #006400; text-decoration: underline; }
+pre.sh_sourceCode .sh_fixed { color: green; font-family: monospace; }
+pre.sh_sourceCode .sh_argument { color: #006400; }
+pre.sh_sourceCode .sh_optionalargument { color: purple; }
+pre.sh_sourceCode .sh_math { color: orange; }
+pre.sh_sourceCode .sh_bibtex { color: blue; }
+
+/* for diffs */
+pre.sh_sourceCode .sh_oldfile { color: orange; }
+pre.sh_sourceCode .sh_newfile { color: #006400; }
+pre.sh_sourceCode .sh_difflines { color: blue; }
+
+/* for css */
+pre.sh_sourceCode .sh_selector { color: purple; }
+pre.sh_sourceCode .sh_property { color: blue; }
+pre.sh_sourceCode .sh_value { color: #006400; font-style: italic; }
+
+/* other */
+pre.sh_sourceCode .sh_section { color: black; font-weight: bold; }
+pre.sh_sourceCode .sh_paren { color: red; }
+pre.sh_sourceCode .sh_attribute { color: #006400; }
+
+</style>    
+    
+    
+    
+
+  <link href="http://www.w3.org/StyleSheets/TR/W3C-WG-NOTE" rel="stylesheet" type="text/css" charset="utf-8"></head><body style="display: inherit; "><div class="head"><p><a href="http://www.w3.org/"><img width="72" height="48" src="http://www.w3.org/Icons/w3c_home" alt="W3C"></a></p><h1 class="title" id="title">Device API Privacy Requirements</h1><h2 id="w3c-working-draft-29-june-2010"><acronym title="World Wide Web Consortium">W3C</acronym> Working Group Note 29 June 2010</h2><dl><dt>This version:</dt><dd><a href="http://www.w3.org/TR/2010/NOTE-dap-privacy-reqs-20100629/">http://www.w3.org/TR/2010/NOTE-dap-privacy-reqs-20100629/</a></dd><dt>Latest version:</dt><dd><a href="http://www.w3.org/TR/dap-privacy-reqs/">http://www.w3.org/TR/dap-privacy-reqs/</a></dd><dt>Latest editor's draft:</dt><dd><a href="http://dev.w3.org/2009/dap/privacy-reqs/">http://dev.w3.org/2009/dap/privacy-reqs/</a></dd><dt>Editors:</dt><dd>Alissa Cooper, <a href="http://www.cdt.org/">Center for Democracy and Technology</a></dd><dd>Frederick Hirsch, <a href="http://www.nokia.com/">Nokia</a></dd><dd>John Morris, <a href="http://www.cdt.org/">Center for Democracy and Technology</a></dd></dl><p class="copyright"><a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2010 <a href="http://www.w3.org/"><acronym title="World Wide Web Consortium">W3C</acronym></a><sup>®</sup> (<a href="http://www.csail.mit.edu/"><acronym title="Massachusetts Institute of Technology">MIT</acronym></a>, <a href="http://www.ercim.eu/"><acronym title="European Research Consortium for Informatics and Mathematics">ERCIM</acronym></a>, <a href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply.</p><hr></div>
+    <div id="abstract" class="introductory section"><h2>Abstract</h2>
+      This document provides definitions, use cases, and  requirements
+      for making device APIs more privacy-friendly. 
+    </div><div id="sotd" class="introductory section"><h2>Status of This Document</h2><p><em>This section describes the status of this document at the time of its publication. Other documents may supersede this document. A list of current <acronym title="World Wide Web Consortium">W3C</acronym> publications and the latest revision of this technical report can be found in the <a href="http://www.w3.org/TR/"><acronym title="World Wide Web Consortium">W3C</acronym> technical reports index</a> at http://www.w3.org/TR/.</em></p>
+      <p>This is the first public Working Group Note of the Device API Privacy Requirements. This document is expected to be further updated based on both Working Group input and public comments. The Working Group anticipates to
+      eventually publish a stabilized version of this document as a <acronym title="World Wide Web Consortium">W3C</acronym>
+      Working Group Note.</p>
+    <p>This document was published by the <a href="http://www.w3.org/2009/dap/">Device APIs and Policy Working Group</a>. If you wish to make comments regarding this document, please send them to <a href="mailto:public-device-apis@w3.org">public-device-apis@w3.org</a> (<a href="mailto:public-device-apis-request@w3.org?subject=subscribe">subscribe</a>, <a href="http://lists.w3.org/Archives/Public/public-device-apis/">archives</a>). All feedback is welcome.</p><p>Publication as a Working Group Note does not imply endorsement by the <acronym title="World Wide Web Consortium">W3C</acronym> Membership. This is a draft document and may be updated, replaced or obsoleted by other documents at any time. It is inappropriate to cite this document as other than work in progress.</p><p>This document was produced by a group operating under the <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 <acronym title="World Wide Web Consortium">W3C</acronym> Patent Policy</a>. <acronym title="World Wide Web Consortium">W3C</acronym> maintains a <a href="http://www.w3.org/2004/01/pp-impl/43696/status" rel="disclosure">public list of any patent disclosures</a> made in connection with the deliverables of the group; that page also includes instructions for disclosing a patent. An individual who has actual knowledge of a patent which the individual believes contains <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential Claim(s)</a> must disclose the information in accordance with <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section 6 of the <acronym title="World Wide Web Consortium">W3C</acronym> Patent Policy</a>.</p></div><div id="toc" class="section"><h2 class="introductory">Table of Contents</h2><ul class="toc"><li class="tocline"><a href="#introduction" class="tocxref"><span class="secno">1. </span>Introduction</a><ul class="toc"><li class="tocline"><a href="#architectural-approach" class="tocxref"><span class="secno">1.1 </span>Architectural Approach</a></li><li class="tocline"><a href="#privacy-principles-relevant-to-apis" class="tocxref"><span class="secno">1.2 </span>Privacy Principles relevant to APIs</a></li></ul></li><li class="tocline"><a href="#privacy-requirements" class="tocxref"><span class="secno">2. </span>Requirements for API Definitions</a><ul class="toc"><li class="tocline"><a href="#privacy-notice" class="tocxref"><span class="secno">2.1 </span>Notice</a></li><li class="tocline"><a href="#privacy-consent" class="tocxref"><span class="secno">2.2 </span>Consent</a></li><li class="tocline"><a href="#privacy-minimization" class="tocxref"><span class="secno">2.3 </span>Minimization</a></li><li class="tocline"><a href="#privacy-control" class="tocxref"><span class="secno">2.4 </span>Control</a></li><li class="tocline"><a href="#privacy-access" class="tocxref"><span class="secno">2.5 </span>Access</a></li></ul></li><li class="tocline"><a href="#privacy-user-expectations" class="tocxref"><span class="secno">3. </span>Requirements related to User Expectations of Data Use</a><ul class="toc"><li class="tocline"><a href="#privacy-retention" class="tocxref"><span class="secno">3.1 </span>Retention</a></li><li class="tocline"><a href="#privacy-secondary-use" class="tocxref"><span class="secno">3.2 </span>Secondary Use</a></li><li class="tocline"><a href="#privacy-sharing" class="tocxref"><span class="secno">3.3 </span>Sharing</a></li></ul></li><li class="tocline"><a href="#acknowledgements" class="tocxref"><span class="secno">A. </span>Acknowledgements</a></li><li class="tocline"><a href="#references" class="tocxref"><span class="secno">B. </span>References</a><ul class="toc"><li class="tocline"><a href="#normative-references" class="tocxref"><span class="secno">B.1 </span>Normative references</a></li><li class="tocline"><a href="#informative-references" class="tocxref"><span class="secno">B.2 </span>Informative references</a></li></ul></li></ul></div> <!-- abstract -->
+
+    
+
+    <div id="introduction" class="section">
+      <!--OddPage--><h2><span class="secno">1. </span>Introduction</h2>
+	<p>Privacy considerations are important to Device APIs, since misuse of information exposed by the APIs can have potentially harmful financial, physical safety, reputational and other impacts. Privacy needs a systemic solution that includes
+	functional requirements on user agents, web sites and other components
+	of the system, since any opportunity for misuse of private information
+	is a risk. Addressing privacy may include functional requirements in
+	technical standards, laws and regulations, and best practices.</p>
+
+<p>While privacy is an important consideration for all APIs, privacy
+  risks may vary according to the information exposed by an individual
+  API. For example, inappropriate disclosure of contacts or location
+  information could create serious personal safety issues in a broad
+  range of cases, while disclosure of certain system information might
+  create privacy risks in fewer contexts.</p> 
+
+    <div id="architectural-approach" class="section">
+      <h3><span class="secno">1.1 </span>Architectural Approach</h3>
+      <p>
+        Privacy is a broad topic with various aspects that involve
+        different parties in a system. In order to be clear which 
+        aspects are addressed and how, we take an architectural
+        approach of breaking down the problem into smaller
+        pieces. This should provide clarity and enable
+        privacy-respecting solutions that can be adopted. We have
+        identified the following pieces:
+      </p>
+      <dl>
+        <dt>Defining APIs in such a way that they are as “naturally” privacy-respecting as possible</dt>
+        <dd><p>
+          This is similar to writing APIs in such a way that they are
+          security-friendly; you can't 
+          keep people from making mistakes, but you can make it easier
+          and more natural to be privacy-respecting through the API
+          design.
+An example is supporting the concept of 
+<a href="#privacy-minimization">Minimization</a> by designing APIs
+          that return the minimum data needed for a task, such as
+          only obtaining address fields when an address is needed.</p>
+        </dd>
+        <dt>Requiring from user agents what they can realistically enforce</dt>
+        <dd><p>
+          User agents are crucial to ensuring that user privacy is protected, but this capability must take implementation and adoption considerations into account. User agent design decisions can be separated to a large degree from API design decisions.</p>
+        </dd>
+		<dt>Empowering users to express privacy preferences</dt>
+        <dd>
+          <p>This can be hard to manage technically but might be possible through a simpler approach of defining and agreeing upon a small set of privacy preferences, similar to
+            <a href="http://creativecommons.org/">Creative Commons</a> copyright licenses, that users can attach to their data.
+            Defining a simple vocabulary
+            for privacy could enable <a href="http://dev.w3.org/2009/dap/privacy-rulesets/">privacy rulesets</a> that can be
+            referenced by URI.
+            <a href="http://www.azarask.in/blog/post/is-a-creative-commons-for-privacy-possible/">Other
+            people  
+            have had this idea</a> as well.
+          </p>
+        </dd>        
+
+<dt>Conducting education and outreach, similar to the accessibility efforts</dt>
+        <dd><p>
+          WAI and the Web community at large have done a great job
+          raising awareness about accessibility 
+          issues, and while implementations are not perfect, their effort has had a very 
+          measurable impact. There is therefore experience to be
+          tapped in such an approach for the parts 
+          of the problem that depend on convincing people to do the
+          right thing (which in some cases can be wide-ranging, including making script libraries support the solution directly, or having various organizations enforce it internally).</p>
+        </dd>
+      </dl>
+    </div>
+    <div id="privacy-principles-relevant-to-apis" class="section">
+      <h3><span class="secno">1.2 </span>Privacy Principles relevant to APIs</h3>
+
+	<p>Privacy protections are frequently understood as a set of
+	principles or elements (one such set is described in
+	[<a class="bibref" rel="biblioentry" href="#bib-PRIVACY-ISSUES-GEO">PRIVACY-ISSUES-GEO</a>]). The core elements of privacy that are
+	relevant to Device APIs, user agents that support the APIs, and
+	applications that use the APIs are as follows: </p>
+		<ul>
+			<li><p><a href="#privacy-notice">Notice</a>: Informing users about the data collected through Device APIs</p></li>
+			<li><p><a href="#privacy-consent">Consent</a>: Obtaining user agreement to sharing data through Device APIs</p></li>
+			<li><p><a href="#privacy-minimization">Minimization</a>: Limiting the amount and level of detail of data collected through Device APIs</p></li>
+			<li><p><a href="#privacy-control">Control</a>: Allowing users to control access to their data once they have consented to having it collected through Device APIs</p></li>
+			<li><p><a href="#privacy-access">Access</a>: Providing users with access to information about the data that has been collected about them through Device APIs</p></li>
+			<li><p><a href="#privacy-retention">Retention</a>: Limiting how long applications retain data that was collected through Device APIs</p></li>
+			<li><p><a href="#privacy-secondary-use">Secondary
+            Use</a>: Limiting applications from using data
+			collected through Device APIs for purposes other than the
+			purpose for which it was collected</p></li> 
+			<li><p><a href="#privacy-sharing">Sharing</a>: Limiting applications from sharing data collected through Device APIs with third parties</p></li>
+		</ul>
+
+	<p>These elements will each need to be approached in different ways. Approaches include specific requirements
+	 on individual APIs, conveying user expectations together with 
+	  the data itself, and/or documenting best practices for application
+	  and content developers. Certain approaches are better suited to safeguarding certain privacy elements than others.</p>
+	<p>This document provides specific requirements for individual APIs, addressing the elements that are most relevant to API definitions: notice, consent, minimization, control, and access. Requirements involving user expectations, which primarily address retention, secondary use, and sharing, will be documented separately. Best practices for developers will also be documented separately, covering notice, minimization, control, access, retention, secondary use, and sharing in the application developer context. </p>
+
+	<p>The following table summarizes the breakdown of how each element is covered:</p>
+
+	<table class="simple">
+		<tbody><tr>
+			<th>Privacy Element</th>
+			<th><a href="#privacy-requirements">Requirements for API Definitions</a></th>
+			<th><a href="#privacy-user-expectations">Requirements
+			related to User Expectations of Data Use</a></th>
+			<th>Best practices for developers</th>
+		</tr>
+		<tr>
+			<td><a href="#privacy-notice">Notice</a></td>
+			<td style="text-align:center">X</td>
+			<td style="text-align:center"></td>
+			<td style="text-align:center">X</td>
+		</tr>
+		<tr>
+			<td><a href="#privacy-consent">Consent</a></td>
+			<td style="text-align:center">X</td>
+			<td style="text-align:center"></td>
+			<td style="text-align:center">X</td>
+		</tr>
+		<tr>
+			<td><a href="#privacy-minimization">Minimization</a></td>
+			<td style="text-align:center">X</td>
+			<td style="text-align:center"></td>
+			<td style="text-align:center">X</td>
+		</tr>
+		<tr>
+			<td><a href="#privacy-control">Control</a></td>
+			<td style="text-align:center">X</td>
+			<td style="text-align:center"></td>
+			<td style="text-align:center">X</td>
+		</tr>
+		<tr>
+			<td><a href="#privacy-access">Access</a></td>
+			<td style="text-align:center">X</td>
+			<td style="text-align:center"></td>
+			<td style="text-align:center">X</td>
+		</tr>
+		<tr>
+			<td><a href="#privacy-retention">Retention</a></td>
+			<td style="text-align:center"></td>
+			<td style="text-align:center">X</td>
+			<td style="text-align:center">X</td>
+		</tr>
+		<tr>
+			<td><a href="#privacy-secondary-use">Secondary Use</a></td>
+			<td style="text-align:center"></td>
+			<td style="text-align:center">X</td>
+			<td style="text-align:center">X</td>
+		</tr>
+		<tr>
+			<td><a href="#privacy-sharing">Sharing</a></td>
+			<td style="text-align:center"></td>
+			<td style="text-align:center">X</td>
+			<td style="text-align:center">X</td>
+		</tr>
+	</tbody></table>		
+		
+
+<p> 		The privacy requirements for individual APIs are provided in the next section. The requirements described in this document are intended
+	        to be applicable to device APIs both in the context of
+	        widgets and web applications.</p> 
+
+</div>
+	<div class="issue"><p>The breakdown described above foreshadows the idea of providing API hooks that allow users to attach their expectations/preferences/policies about privacy to the data they share through the APIs. Attaching policy rules to the data that get shared can provide a legal basis for enhancing the control users have
+	over their data once they are shared; but doing so create the
+	following challenges:</p>
+	<ul><li>getting the user to understand and set rules on sharing their information, and to understand that limits of those rules, is hard;</li>
+	<li>if users set their preferences in the user agent, they may expect
+	the
+	user agent to enforce these preferences while it cannot actually control
+	the data flow once the data has been transmitted;</li>
+	<li>developers may ignore policy rules sent along with the data they're actually interested in (at the risk of encountering legal or market consequences)</li>
+	</ul>
+
+	</div>
+
+    </div>  <!-- introduction -->
+
+<div id="privacy-requirements" class="section">
+<!--OddPage--><h2><span class="secno">2. </span>Requirements for API Definitions</h2>
+
+<p>Many of the requirements listed here are recommendations (SHOULDs) rather than absolute requirements (MUSTs). In many cases this is because making a requirement absolute is appropriate for only a subset of the APIs, but not every API. As appropriate, individual APIs may place stronger normative requirements on user agents than the requirements in this document place on APIs.</p>
+
+<div id="privacy-notice" class="section">
+<h3><span class="secno">2.1 </span>Notice</h3>
+
+<p>Making sure that users understand the implications of using an application that relies on a Device API is fundamental to ensuring the protection of their data. The following requirements can help to make sure that users are properly notified:</p>
+
+<ul>
+	<li><p>
+APIs <em class="rfc2119" title="must">must</em> make it possible for user agents to notify users that their
+    data is being collected via the API. This notification <em class="rfc2119" title="must">must</em>
+    identify the application (for example, by displaying its document
+    origin [<a class="bibref" rel="biblioentry" href="#bib-HTML5">HTML5</a>]) and the precise data being collected.</p></li> 
+    <li><p>APIs <em class="rfc2119" title="should">should</em> provide support for visual indicator(s) that data 
+    is being collected via the APIs.</p> </li>
+</ul>
+
+<p class="issue">Should the APIs have a hook for applications to
+convey the intended usage of the data? If they do, should it be a
+required parameter? And how can this information be conveyed without
+misleading the user about the trustworthiness of that information?</p>
+
+</div> <!-- notice -->
+
+<div id="privacy-consent" class="section">
+<h3><span class="secno">2.2 </span>Consent</h3>
+<p>
+          The semantics of some APIs are defined such that user
+          interaction is essential to make use of the API. An example is
+          a camera API that enables the user to take a photograph, but
+          is defined to require the user to press a shutter key to take
+          the photograph. Another example
+          is an API that produces a message template, but requires the
+          user to press "send" to actually send the message.
+        </p><p>
+          Such user actions constitute <dfn id="dfn-implicit-consent">implicit consent</dfn> to
+          collection of data via the API, since the user has a choice
+          to perform these actions and doing so implies consent for
+          the application to access the associated Device
+          Capabilities. In such situations where it is obvious that
+          performing the action involves sharing data with the
+          application and the application’s intended use of the data
+          is also obvious, additional dialogs that prompt users for
+          consent may not be necessary. 
+        </p><p>
+          Device APIs may also be defined such that consent must be explicit, not implicit. Examples are a camera API that takes a photograph without user involvement, or a messaging API that sends a message without the user pressing "send." In these cases dialogs may be required. 
+        </p>
+
+		<p>To ensure that data is not collected without users knowing or realizing, APIs should be designed with the presumption that the explicit consent model will be used, and should explain the specific circumstances under which implicit consent may be acceptable. This gives rise to the following requirements:</p>
+
+<ul>
+<li><p>APIs <em class="rfc2119" title="must">must</em> make it possible for user agents to obtain user
+consent before sharing any data via the APIs.</p></li>
+
+<li><p>APIs <em class="rfc2119" title="must">must</em> be defined in such a way that explicit consent is assumed, and they <em class="rfc2119" title="should">should</em> articulate the circumstances under which implicit consent is acceptable. </p></li>
+</ul>
+
+	<p>An important caveat to the consent model supported by Device APIs relates to data about other people that the user may have on his or her device and be able to share via the APIs (other people’s contact or calendar information, for example).  A user should not be able to consent through the Device APIs to use of other people’s information beyond the original interaction with the API. Thus, for example, a user should be able to consent to have an application contact another person mentioned in a calendar entry (perhaps to say “I am running late”), but the user should not also be able to consent to have the application make later use of the person’s contact information (perhaps to send marketing messages to that person). This caveat should be conveyed where appropriate in the APIs, best practices, and other Device APIs documents.</p>
+
+</div> <!-- consent -->
+
+<div id="privacy-minimization" class="section">
+<h3><span class="secno">2.3 </span>Minimization</h3>
+
+<p>To reduce the risks of over-exposing users data, it is important to
+design APIs so that Web developers can request as little information
+as they need to accomplish their goals.</p>
+<p>An example use case is a social networking case where the contacts
+  API is used to contacts who are also members of a
+  social network. Email addresses serve as the social network
+  handles. In this case limiting results to the addresses and not
+  other personal information is an example of minimization.
+</p>
+<p>This gives rise to the following requirements:</p>
+
+<ul>
+<li><p>APIs <em class="rfc2119" title="must">must</em> make it easy to request as little information as
+required for the intended usage.</p>
+<p>For instance, an API call should require specific parameters to be
+set to obtain more information, and should default to little or no
+information.</p>
+</li>
+<li><p>APIs <em class="rfc2119" title="should">should</em> make it possible for user agents to convey the
+breadth of
+information that the requester is asking for.</p>
+<p>For instance, if a developer only needs to access a specific field
+of a user address book, it should be possible to explicitly mark that
+  field in the 
+API call so that the user agent can inform the user that this single
+field of data will be shared.</p>
+</li>
+<li><p>APIs <em class="rfc2119" title="should">should</em> make it possible for user agents to let the user
+select, filter, and transform information before it is shared with the requester.</p>
+<p>The user agent can then act as a broker for trusted data, and will
+only transmit data to the requester that the user has explicitly
+allowed.</p></li>
+</ul>
+
+</div> <!-- minimization -->
+
+<div id="privacy-control" class="section">
+<h3><span class="secno">2.4 </span>Control</h3>
+
+<p>Given the sensitivity of the data made available through Device APIs, it is important for users to be able to control which applications have access to that data. The following requirements ensure that (1) users have control over their data even after they have shared it with an application, and (2) users have robust controls over which applications can obtain their data to begin with:</p>
+
+<ul>
+	<li><p>
+APIs <em class="rfc2119" title="must">must</em> make it possible for user agents to support the revocation
+    of user consent to sharing of data via the APIs.</p></li> 
+<li><p>
+APIs <em class="rfc2119" title="should">should</em> support the ability for user agents to allow users to whitelist trusted applications and blacklist untrusted applications.</p></li>
+</ul>
+</div> <!-- control -->
+
+<div id="privacy-access" class="section">
+<h3><span class="secno">2.5 </span>Access</h3>
+
+<p>Notice and control cannot be fully implemented unless users can review how they have shared data in the past. The following requirements suggest how APIs can support users’ access to this information:</p>
+
+<ul>
+	<li><p>
+APIs <em class="rfc2119" title="should">should</em> make it possible for user agents to allow users to view the applications with whom they have shared data.</p></li>
+<li><p> 
+APIs <em class="rfc2119" title="should">should</em> make it possible for user agents to allow users to view, edit, and delete the history of the user's data sharing with each.</p></li>
+</ul>
+
+</div> <!-- access -->
+
+</div> 
+<div id="privacy-user-expectations" class="section">
+<!--OddPage--><h2><span class="secno">3. </span>Requirements related to User Expectations of Data Use</h2>
+<p>Users may have expectations of how their data is used, in
+  particular related to data retention, use for other purposes, and
+  sharing.
+How applications specify how they plan to meet these expectations
+  (application policy), how users express their desires (user policy)
+  and constraints on data use may all be related to managing these
+  expectations. A license approach similar to Creative Commons may
+  offer a simple manner to address these requirements.
+</p>
+
+<div class="issue"><p>This section does not currently contain any requirements. Because retention, secondary use, and sharing are largely out of the control of the APIs, it's not entirely clear that it makes sense to have any API requirements about these aspects. On the other hand, one can envision a requirement that supports the ruleset model, such as:</p>
+
+<ul><li><p>
+APIs <em class="rfc2119" title="must">must</em> support a mechanism for users to convey their preferences about retention, secondary use, and sharing to applications in the context of an API interaction.</p></li></ul>
+
+Likewise, if we wanted the APIs to support applications' ability to convey their intended policies about these aspects, we could have a requirement like:
+
+<ul><li><p>
+APIs <em class="rfc2119" title="must">must</em> support a mechanism for applications to convey their policies about retention, secondary use, and sharing to users prior to or during API interactions.</p></li></ul>
+</div>
+<div id="privacy-retention" class="section">
+<h3><span class="secno">3.1 </span>Retention</h3>
+<p>Retention  is about to user expectations about how long data they
+  provide will be retained, and whether applications must dispose of
+  collected data after 
+fulfilling the purpose for which it was collected.</p>
+</div> <!-- retention -->
+
+<div id="privacy-secondary-use" class="section">
+<h3><span class="secno">3.2 </span>Secondary Use</h3>
+<p>Secondary Use is about to user expectations regarding whether
+  applications can use data for purposes other than that for which 
+the data was collected.</p>
+</div> <!-- secondary use -->
+
+<div id="privacy-sharing" class="section">
+<h3><span class="secno">3.3 </span>Sharing</h3>
+
+<p>Sharing is about user expectations on how data will be shared. Once
+ data have been made available to a requester, the 
+requester is in a position to store and redistribute these data, with
+or without the user consent. Granularity of data shared is an
+ important aspect of sharing.</p>
+
+</div> <!-- sharing -->
+</div>
+<div class="appendix section" id="acknowledgements">
+  <!--OddPage--><h2><span class="secno">A. </span>Acknowledgements</h2>
+  <p>
+
+  </p>
+</div>
+
+
+
+<div id="references" class="appendix section"><!--OddPage--><h2><span class="secno">B. </span>References</h2><div id="normative-references" class="section"><h3><span class="secno">B.1 </span>Normative references</h3><p>No normative references.</p></div><div id="informative-references" class="section"><h3><span class="secno">B.2 </span>Informative references</h3><dl class="bibliography"><dt id="bib-HTML5">[HTML5]</dt><dd>Ian Hickson; David Hyatt. <a href="http://www.w3.org/TR/2010/WD-html5-20100304/"><cite>HTML 5.</cite></a> 4 March 2010. W3C Working Draft. (Work in progress.) URL: <a href="http://www.w3.org/TR/2010/WD-html5-20100304/">http://www.w3.org/TR/2010/WD-html5-20100304/</a> 
+</dd><dt id="bib-PRIVACY-ISSUES-GEO">[PRIVACY-ISSUES-GEO]</dt><dd>Doty, N. Mulligan, D. Wilde, E. <a href="http://escholarship.org/uc/item/0rp834wf"><cite>Privacy Issues of the W3C Geolocation API</cite></a>. UC Berkeley School of Information. 24 February 2010. URI: http://escholarship.org/uc/item/0rp834wf 
+</dd></dl></div></div></body></html>

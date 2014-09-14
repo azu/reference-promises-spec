@@ -1,0 +1,3173 @@
+<!-- http://www.w3.org/TR/wsdl20-rdf/ -->
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Web Services Description Language (WSDL) Version 2.0: RDF Mapping</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+/*<![CDATA[*/
+
+pre.example { overflow: auto; border: 1px; border-style: solid; padding: 2px }
+
+pre.urilist { overflow: auto; border: 1px; border-style: solid; padding: 2px }
+pre.urilist a { text-decoration: none; color: black; }
+
+.mappingtable { margin-left: 2em } 
+
+@media print {
+    body { font-size: 12pt }
+    tt { font-size: 11pt }
+    .mappingtable { font-size: 9pt }
+    .mappingtable tt { font-size: 8pt }
+    pre { font-size: 9pt }
+}
+
+/*]]>*/
+</style>
+<link rel="stylesheet" type="text/css" href="http://www.w3.org/StyleSheets/TR/W3C-WG-NOTE.css" />
+</head>
+<body>
+<div class="head">
+<p><a href="http://www.w3.org/"><img src="http://www.w3.org/Icons/w3c_home" alt="W3C" height="48" width="72"/></a></p>
+<h1>Web Services Description Language (WSDL) Version 2.0: RDF Mapping</h1>
+<h2>W3C Working Group Note 26 June 2007</h2>
+<dl>
+<dt>This version:</dt>
+<dd><a href='http://www.w3.org/TR/2007/NOTE-wsdl20-rdf-20070626/'>http://www.w3.org/TR/2007/NOTE-wsdl20-rdf-20070626/</a></dd>
+<dt>Latest version:</dt>
+<dd><a href='http://www.w3.org/TR/wsdl20-rdf'>http://www.w3.org/TR/wsdl20-rdf</a></dd>
+<dt>Previous version:</dt>
+<dd><a href='http://www.w3.org/TR/2007/WD-wsdl20-rdf-20070523/'>http://www.w3.org/TR/2007/WD-wsdl20-rdf-20070523/</a></dd>
+<dt>Editor:</dt>
+<dd>Jacek Kopeck&yacute;, DERI Innsbruck</dd>
+</dl>
+
+<p class="copyright">
+<a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2007 <a href="http://www.w3.org/"><acronym title="World Wide Web Consortium">W3C</acronym></a><sup>®</sup>
+(<a href="http://www.csail.mit.edu/"><acronym title="Massachusetts Institute of Technology">MIT</acronym></a>, <a href="http://www.ercim.org/"><acronym title="
+European Research Consortium for Informatics and Mathematics">ERCIM</acronym></a>,
+<a href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C 
+<a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>,
+<a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a>
+and <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply.</p>
+</div>
+<hr />
+
+<h2><a id="abstract">Abstract</a></h2>
+<p>Web Services Description Language (WSDL) provides a model and an XML 
+format for describing Web services. This document describes a 
+representation of that model in the Resource Description Language (RDF) and
+in the Web Ontology Language (OWL), and a mapping procedure for transforming
+particular WSDL descriptions into their RDF form.
+</p>
+
+<h2><a id="status">Status of this Document</a></h2>
+<p><em>This section describes the status of this document at the
+time of its publication. Other documents may supersede this
+document. A list of current W3C publications and the latest
+revision of this technical report can be found in the <a href=
+"http://www.w3.org/TR/">W3C technical reports index</a> at
+http://www.w3.org/TR/.</em></p>
+
+<p>This is a <a href=
+"http://www.w3.org/2005/10/Process-20051014/tr.html#WGNote">W3C
+Working Group Note</a> of Web Services Description Language (WSDL)
+Version 2.0 RDF Mapping. It has been produced by the <a href=
+"http://www.w3.org/2002/ws/desc/">Web Services Description Working
+Group</a>, which is part of the <a href=
+"http://www.w3.org/2002/ws/Activity">W3C Web Services
+Activity</a>.</p>
+<p>Please send comments about this document to the public <a href=
+"mailto:public-ws-desc-comments@w3.org">public-ws-desc-comments@w3.org</a>
+mailing list (<a href=
+"http://lists.w3.org/Archives/Public/public-ws-desc-comments/">public
+archive</a>).</p>
+<p>A <a href="wsdl20-rdf-diff.html">diff-marked version
+against the previous version of this document</a> is available.</p>
+
+<p>Implementers are invited to send feedback to the public <a href=
+"mailto:public-ws-desc-comments@w3.org">public-ws-desc-comments@w3.org</a>
+mailing list (<a href=
+"http://lists.w3.org/Archives/Public/public-ws-desc-comments/">public
+archive</a>).</p>
+<p>Publication as a Working Group Note does not imply endorsement by
+the W3C Membership. However, this Working group Note reflects the
+consensus of the Working Group, who provide it for the convenience of
+the community.</p>
+<p>This document is governed by the <a href=
+"http://www.w3.org/TR/2002/NOTE-patent-practice-20020124">24
+January 2002 CPP</a> as amended by the <a href=
+"http://www.w3.org/2004/02/05-pp-transition">W3C Patent Policy
+Transition Procedure</a>. W3C maintains a <a href=
+"http://www.w3.org/2002/ws/desc/2/04/24-IPR-statements.html">public
+list of any patent disclosures</a> made in connection with the
+deliverables of the group; that page also includes instructions for
+disclosing a patent. An individual who has actual knowledge of a
+patent which the individual believes contains <a href=
+"http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">
+
+Essential Claim(s)</a> must disclose the information in accordance
+with <a href=
+"http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">
+section 6 of the W3C Patent Policy</a>.</p>
+
+
+<hr />
+
+<div class="toc">
+
+<h2><a id="contents">Table of Contents</a></h2>
+
+<p class="toc">
+1. <a href="#intro">Introduction</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;1.1 <a href="#naming-conventions">Naming and Notation Conventions</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;1.2 <a href="#overview">Organization of this specification</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;1.3 <a href="#conformance">Conformance</a><br />
+2. <a href="#ontology">WSDL Ontology</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;2.1 <a href="#core">Core WSDL Components</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.1 <a href="#description">Description component</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.2 <a href="#interface">Interface classes</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.3 <a href="#binding">Binding classes</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.4 <a href="#service">Service classes</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;2.2 <a href="#extensions">Handling Extensions and Documentation</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;2.3 <a href="#meps">Message Exchange Patterns</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;2.4 <a href="#predefined_extensions">Predefined Extensions</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;2.5 <a href="#opstyles">Operation Styles</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;2.6 <a href="#soapbinding">SOAP Binding</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;2.7 <a href="#httpbinding">HTTP Binding</a><br />
+3. <a href="#example">Example WSDL document in RDF form</a><br />
+4. <a href="#modelingdiffs">Differences from the WSDL Component Model (Non-Normative)</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;4.1 <a href="#diff-naming">Component naming</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;4.2 <a href="#diff-doc">Documents, imports and includes</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;4.3 <a href="#diff-references">Component references</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;4.4 <a href="#diff-propsasclasses">Representing properties with classes</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;4.5 <a href="#diff-restrictions">Other WSDL restrictions not enforced by the
+ontology</a><br />
+5. <a href="#references">References</a><br />
+
+</p>
+<h3><a id="appendix">Appendices</a></h3>
+<p class="toc">
+A. <a href="#ontologysource">The OWL Ontology Source</a><br />
+B. <a href="#uri-summary">List of URIs used by the WSDL RDF mapping (Non-Normative)</a><br />
+C. <a href="#acknowledgments">Acknowledgments (Non-Normative)</a><br />
+</p>
+</div> 
+<hr />
+<div class="body">
+
+<h2 id="intro">1. Introduction</h2>
+
+<p>Web Services Description Language is defined in XML, because XML is a
+common format for exchange of structured information. WSDL generators and
+parsers benefit from the wide availability of XML processing libraries, and the
+use of XML Schema makes the structure of WSDL well constrained, yet extensible.
+On the other hand, XML in general does not provide generic rules for composing
+different vocabularies,
+so combining for example the WSDL description of a Web service, the service's
+policies and other information (presumably expressed in XML) can be done in
+many significantly different ways (e.g. extending WSDL, extending the policy
+language, creating a special XML container for all the information etc.), and
+little interoperability can be expected when such combined documents are
+used.</p>
+
+<p>For example, a policy can be combined with WSDL by adding the policy
+elements in WSDL service element. Equally, a WSDL description can be combined
+with a policy by adding the WSDL description as part of the policy. While the
+results should be similar (WSDL with policy information), they are in fact very different for the
+processing software, and a policy in WSDL cannot easily be used by software
+that does not understand WSDL.</p>
+
+<p>The Semantic web allows knowledge from many different
+sources to be easily combined so that unexpected data connections can be
+used. Thanks to the Resource Description Framework (RDF) graph structure,
+together with the use of URIs for identifying nodes, it is very easy for
+different documents to be brought together. If some WSDL document describes a
+Web service, a policy document expresses constraints and capabilities of the
+service and a general description specifies the author of the service, all
+this information can be merged in RDF and the resulting graph
+will contain all three kinds of information associated with the single
+service.</p>
+
+<p>The main objective of this specification is to present a standard RDF ([<a
+href="#rdf">RDF</a>]) and OWL ([<a href="#owl">OWL</a>])
+vocabulary to express WSDL&nbsp;2.0, so that WSDL&nbsp;2.0 documents can be
+transformed into RDF and merged with other Semantic Web data. This
+specification can be implemented as a standalone tool, as part of a tool
+that generates WSDL descriptions (outputting the RDF form in parallel to the
+XML form), or as part of a tool that processes RDF data, enabling the ability
+to read WSDL documents as RDF input.
+</p>
+
+<p>Note: the readers of this document are expected to have an understanding of
+the WSDL language and the WSDL component model (see [<a href="#WSDL-PART1">WSDL&nbsp;2.0 Core Language</a>]); this document <strong>is
+not</strong> a standalone specification of the WSDL ontology, independent of
+WSDL specification. Further, the readers are expected to have good knowledge
+of RDF and at least basic knowledge of OWL.</p>
+
+<h3 id="naming-conventions">1.1 Naming and Notation Conventions</h3>
+
+<p>The ontology presented in this specification describes concepts introduced in WSDL&nbsp;2.0 (see [<a
+href="#WSDL-PART1">WSDL&nbsp;2.0 Core Language</a>] and [<a
+href="#WSDL-PART2">WSDL&nbsp;2.0
+Adjuncts</a>]), from where we adopt the names for the ontology classes, properties and
+distinguished instances.</p>
+
+<p>In WSDL&nbsp;2.0, components and their properties are named with words
+separated with spaces, for example <i>Interface Operation</i> component with
+{message exchange pattern} property. In this document, we
+write all WSDL&nbsp;2.0 components and properties in <i>italic</i>. In the WSDL
+ontology, we use the so-called <i>camelCase</i>, with upper-case first letter
+for class names (<code class="wsdl-rdf">InterfaceOperation</code>) and lower-case first letter for
+properties (<code class="wsdl-rdf">messageExchangePattern</code>). We write all the WSDL ontology
+identifiers in <code class="wsdl-rdf">monospace</code>.</p>
+
+<p>The above naming transformation (remove spaces, use camelCase) is used for
+the majority of components and their properties modeled in our ontology, with
+several exception indicated in the text in this specification. One recurring
+exception is that the multivalued properties (like Interface.{interface
+operations}) are not modeled as a single plural property (say
+<code class="wsdl-rdf">interfaceOperations</code>) but instead as a singular property to be used
+multiple times (i.e. <code class="wsdl-rdf">interfaceOperation</code> in our case), as the order
+of the values is irrelevant in WSDL.</p>
+
+<p>In the mapping tables below, we use a simple triple syntax, each
+triple on one line. Variables to be filled in (like generated IDs and
+property values) are in angle brackets, for example &lt;id&gt; generally
+means the ID of the current component. Literal values are in double quotes,
+optionally indicating the data type after double caret, for example
+"&lt;code&gt;"^^xs:int for HTTP status codes. The default data type is
+xs:string. Finally, comments are in parentheses and italic <em>(like
+this)</em>.</p>
+
+<p>This specification uses predefined namespace prefixes
+throughout; they are given in the following list. Note that the
+choice of any namespace prefix is arbitrary and not semantically
+significant (see [<cite><a href="#XMLNS">XML
+Namespaces</a></cite>]).</p>
+
+<dl>
+<dt class="label">wsdl</dt>
+<dd>http://www.w3.org/ns/wsdl-rdf#</dd>
+<dt class="label">wsdlx</dt>
+<dd>http://www.w3.org/ns/wsdl-extensions#</dd>
+<dt class="label">wsoap</dt>
+<dd>http://www.w3.org/ns/wsdl/soap#</dd>
+<dt class="label">whttp</dt>
+<dd>http://www.w3.org/ns/wsdl/http#</dd>
+<dt class="label">wrpc</dt>
+<dd>http://www.w3.org/ns/wsdl/rpc#</dd>
+<dt class="label">rdf</dt>
+<dd>http://www.w3.org/1999/02/22-rdf-syntax-ns#</dd>
+<dt class="label">rdfs</dt>
+<dd>http://www.w3.org/2000/01/rdf-schema#</dd>
+<dt class="label">xs</dt>
+<dd>http://www.w3.org/2001/XMLSchema#</dd>
+<dt class="label">sawsdl</dt>
+<dd>http://www.w3.org/ns/sawsdl#</dd>
+</dl>
+
+
+
+<h3 id="overview">1.2 Organization of this specification</h3>
+
+<p>The remainder of this specification is split into three major sections and
+two appendices:</p>
+
+<ul>
+<li><a href="#ontology">Section 2</a> describes the ontology for representing
+WSDL information and shows the formal mapping tables,</li>
+<li><a href="#example">Section 3</a> shows the RDF form of a complete example
+WSDL document,</li>
+<li><a href="#modelingdiffs">Section 4</a> details the differences in
+modeling between the component model of WSDL and the ontology presented in
+this document,</li>
+<li><a href="#ontologysource">Appendix A</a> contains the full listing (in OWL) of the
+WSDL ontology.</li>
+<li><a href="#uri-summary">Appendix B</a> lists all the URIs used in this
+specification.</li>
+</ul>
+
+
+<h3 id="conformance">1.3 Conformance</h3>
+
+<p>This document defines a mapping from valid WSDL 2.0 documents (interpreted
+as the corresponding component model), into sets of RDF statements. A
+conforming mapping processor must follow all the mappings specified in the
+mapping tables in <a href="#ontology">Section&nbsp;2</a> of this document, to the extent of its
+understanding of the optional WSDL extensions. A WSDL processor that
+does not support the SOAP binding, for example, may not implement any
+mappings specified in <a href="#soapbinding">Section&nbsp;2.6</a>.</p>
+
+<p>This specification does not mandate a particular form of generated unique
+identifiers; while the example in <a href="#example">Section&nbsp;3</a> uses
+the urn:uuid: scheme, this is not required by this specification. Therefore,
+the RDF mapping of a single WSDL document may differ in these generated
+identifiers when created by different tools, or even when created by the same
+tool at different times.</p>
+
+<p>While this RDF mapping does not (and cannot) handle WSDL extensions in
+general (apart from those predefined by the WSDL 2.0 specifications),
+implementations of the RDF mapping may support other WSDL extensions and
+enhance the resulting RDF graph with the appropriate statements. An RDF
+mapping implementation conforms to this specification if it produces all the
+statements mandated by the mapping tables herein; it may produce additional
+statements as well.</p>
+
+
+<h2 id="ontology">2. WSDL Ontology</h2>
+
+<p>This section describes the OWL ontology for WSDL, comparing it to the WSDL
+component model defined in [<a href="#WSDL-PART1">WSDL&nbsp;2.0 Core
+Language</a>] and [<a href="#WSDL-PART2">WSDL&nbsp;2.0
+Adjuncts</a>]. The text in this section aims to be a comprehensive explanation of
+the mapping, and the formal normative mappings are specified in the mapping
+tables at the end of each subsection. Note that the URIs defined by the
+WSDL&nbsp;2.0 specification (binding types,
+operation styles, message exchange patterns etc.) are not repeated in the mapping tables.</p>
+
+<p>This section also touches briefly on some differences between the OWL
+ontology and the component model, but for the full account of these differences and
+for the rationales see <a href="#modelingdiffs">section
+4</a>.</p>
+
+<p>The RDF mapping for the core WSDL components defined in [<a
+href="#WSDL-PART1">WSDL&nbsp;2.0 Core Language</a>] is described in <a href="#core">section 2.1</a>.
+WSDL components are extensible, so <a href="#extensions">section 2.2</a>
+describes how extensions are mapped to RDF. The
+following sections, from <a href="#meps">2.3</a> to <a href="#httpbinding">2.7</a>, describe the mapping for
+the various adjuncts specified in [<a href="#WSDL-PART2">WSDL&nbsp;2.0
+Adjuncts</a>].</p>
+
+<h3 id="core">2.1 Core WSDL Components</h3>
+
+<p>The main components of WSDL are represented as classes in the WSDL
+ontology: <code class="wsdl-rdf">Description</code>, <code class="wsdl-rdf">Interface</code>,
+<code class="wsdl-rdf">Binding</code> and <code class="wsdl-rdf">Service</code>, as described in the following
+subsections. This means that every interface, binding and service described
+by WSDL will be mapped to a single instance in the RDF representation.</p>
+
+<h4 id="description">2.1.1 Description class</h4>
+
+<p>The top-level WSDL component &mdash; <a href="http://www.w3.org/TR/wsdl20/#Description">Description</a> &mdash; is mapped to a
+single instance of the class <code class="wsdl-rdf">Description</code>, which uses the
+properties <code class="wsdl-rdf">interface</code>, <code class="wsdl-rdf">binding</code> and <code class="wsdl-rdf">service</code> to point to its
+constituents, i.e. all the interfaces, bindings and services.</p>
+
+<p>Note that since we do not model element declarations and type definitions
+further than just the QNames, we do not reference them from the <code
+class="wsdl-rdf">Description</code> instance. This also means that while all
+WSDL component models implicitly contain all XML Schema simple type
+definitions, the RDF mapping does not show them. It is possible that if an
+RDF mapping is created for XML Schema, instead of referencing the QNames,
+a future version of this WSDL RDF mapping can use direct pointers to the XML
+Schema component designators for the element declarations and type
+definitions.</p>
+
+<p>A mapping of a single WSDL document (together with any imports or
+includes) will always result in a single instance of the <code
+class="wsdl-rdf">Description</code> class. However, there can be multiple
+individuals of the class <code class="wsdl-rdf">Description</code> in a
+knowledge base that contains the information from multiple WSDL documents.
+The core WSDL specification does not consider the case of combining multiple
+independent WSDL documents and it does not mandate that independent documents
+consistently describe components with the same name. This is, however, an
+assumption when combining the RDF representation of multiple WSDL documents.
+The normative WSDL RDF mapping does not consider merging multiple differing
+definitions of a component with the same name, but some possible resulting
+problems are pointed out in <a href="#diff-doc">section 4.2</a>.</p>
+
+<div class="mappingtable">
+<table cellpadding="4" width="100%" border="1">
+  <caption><a id="table2-1">Table 2-1.</a>&nbsp;Mapping Description Components to RDF</caption>
+  <col width="20%" /><col width="80%" />
+  <tbody>
+    <tr>
+      <th>Property</th>
+      <th>RDF Form</th>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td> <em>(id generated per <a href="http://www.w3.org/TR/wsdl20/#wsdl-iri-references">IRI-References for WSDL&nbsp;2.0 Components</a>)</em><br/>
+           &lt;id&gt; rdf:type wsdl:Description .</td>
+    </tr>
+    <tr>
+      <td>{interfaces}</td>
+      <td> <em>(for interface mapping see <a href="#table2-3">Table 2-3</a>)</em> </td>
+    </tr>
+    <tr>
+      <td> {bindings}</td>
+      <td> <em>(for binding mapping see <a href="#table2-8">Table 2-8</a>)</em> </td>
+    </tr>
+    <tr>
+      <td> {services}</td>
+      <td> <em>(for service mapping see <a href="#table2-13">Table 2-13</a>)</em> </td>
+    </tr>
+    <tr>
+      <td> {type definitions}</td>
+      <td> <em>(not mapped)</em></td>
+    </tr>
+    <tr>
+      <td> {element declarations}</td>
+      <td> <em>(not mapped)</em></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<br />
+
+<div class="mappingtable">
+<table cellpadding="4" width="100%" border="1">
+  <caption><a id="table2-2">Table 2-2.</a>&nbsp;Mapping QNames to RDF</caption>
+  <col width="80%" />
+  <tbody>
+    <tr>
+      <th>RDF Form</th>
+    </tr>                                                                       
+    <tr>
+      <td> <em>(qnameId is a newly generated unique URI)</em><br />
+          &lt;qnameId&gt; rdf:type wsdl:QName .<br/>
+          &lt;qnameId&gt; wsdl:localName "&lt;localName&gt;" .<br/>
+          &lt;qnameId&gt; wsdl:namespace &lt;namespace&gt; .
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+<h4 id="interface">2.1.2 Interface classes</h4>
+
+<p>All <a href="http://www.w3.org/TR/wsdl20/#Interface">WSDL Interface components</a> are represented in RDF as instances of the
+<code class="wsdl-rdf">Interface</code> class. WSDL interfaces can extend other WSDL interfaces,
+which is indicated by the property <code class="wsdl-rdf">extends</code>. Interfaces may
+have operations and faults, represented as instances of the
+<code class="wsdl-rdf">InterfaceOperation</code> and <code class="wsdl-rdf">InterfaceFault</code> classes, and
+each pointed to with the properties <code class="wsdl-rdf">interfaceOperation</code> and
+<code class="wsdl-rdf">interfaceFault</code>, respectively.</p>
+
+<p>Interfaces, operations and faults each have a name, which is a QName. The
+namespace IRI part of this QName is present before the fragment ID of the
+component identifier, and the local name is represented in the RDF form as a
+literal value of the property <code class="wsdl-rdf">rdfs:label</code>.</p>
+
+<p>There are a number of properties applicable to
+<code class="wsdl-rdf">InterfaceOperation</code> instances (corresponding to the properties of the <a href="http://www.w3.org/TR/wsdl20/#component-InterfaceOperation">WSDL Interface Operation component</a>):</p>
+
+<ul>
+  <li><code class="wsdl-rdf">messageExchangePattern</code> property points to an instance of
+  the class <code class="wsdl-rdf">MessageExchangePattern</code> and thus indicates the
+  message exchange pattern (MEP) used by this operation; there can be only one
+  MEP on one operation</li>
+  <li><code class="wsdl-rdf">operationStyle</code> property points to an instance of the class
+  <code class="wsdl-rdf">OperationStyle</code> and indicates that the operation adheres to the
+  given style; there can be multiple operation styles on a single
+  operation</li>
+  <li><code class="wsdl-rdf">interfaceMessageReference</code> and
+  <code class="wsdl-rdf">interfaceFaultReference</code> properties point to instances of
+  <code class="wsdl-rdf">InterfaceMessageReference</code> and
+  <code class="wsdl-rdf">InterfaceFaultReference</code> classes respectively.</li>
+</ul>
+
+<p>Instances of <code class="wsdl-rdf">InterfaceMessageReference</code> and <code class="wsdl-rdf">InterfaceFaultReference</code> can indicate
+their direction &mdash; input message references and input fault references
+all belong to the class <code class="wsdl-rdf">InputMessage</code> and output message
+references and output fault references all belong to the class
+<code class="wsdl-rdf">OutputMessage</code>. Further, both message references and fault
+references indicate the appropriate message labels (instances of
+<code class="wsdl-rdf">MessageLabel</code>, representing particular messages in the
+operation's MEP) using the property <code class="wsdl-rdf">messageLabel</code>. (In <a
+href="#meps">section 2.3</a> we describe how message exchange patterns are
+modeled in our RDF mapping.)</p>
+
+<p>Furthermore, instances of <code
+class="wsdl-rdf">InterfaceMessageReference</code> and of <code
+class="wsdl-rdf">InterfaceFault</code>  point to element declarations (as
+<code class="wsdl-rdf">QName</code> instances)
+using the property <code class="wsdl-rdf">elementDeclaration</code> and
+specify their message content model with the property <code
+class="wsdl-rdf">messageContentModel</code>, indicating one of the four
+possible instances of the class <code
+class="wsdl-rdf">MessageContentModel</code>. And finally, instances of <code
+class="wsdl-rdf">InterfaceFaultReference</code>
+refer to their interface faults directly using the property
+<code class="wsdl-rdf">interfaceFault</code>.</p>
+
+<div class="mappingtable">
+<table cellpadding="4" width="100%" border="1">
+  <caption><a id="table2-3">Table 2-3.</a>&nbsp;Mapping Interface
+    Components to RDF</caption>
+  <col width="20%" /><col width="80%" />
+  <tbody>
+    <tr>
+      <th>Property</th>
+      <th>RDF Form</th>
+    </tr>                                                                       
+    <tr>
+      <td>&nbsp;</td>
+      <td> <em>(id generated per <a href="http://www.w3.org/TR/wsdl20/#wsdl-iri-references">IRI-References for WSDL&nbsp;2.0 Components</a>)</em><br/>
+           &lt;id&gt; rdf:type wsdl:Interface .<br/>
+           &lt;parentDescriptionId&gt; wsdl:interface &lt;id&gt; .</td>
+    </tr>
+    <tr>
+      <td> {name}</td>
+      <td> &lt;id&gt; rdfs:label "&lt;localPart&gt;" .</td>
+    </tr>
+    <tr>
+      <td> {extended interfaces}</td>
+      <td> <em>(for each Interface component)</em><br/> 
+      &lt;id&gt; wsdl:extends &lt;anotherInterfaceId&gt; .</td>
+    </tr>
+    <tr>
+      <td> {interface operations}</td>
+      <td> <em>(for interface operation mapping see <a href="#table2-4">Table 2-4</a>)</em> </td>
+    </tr>
+    <tr>
+      <td> {interface faults}</td>
+      <td> <em>(for interface fault mapping see <a href="#table2-5">Table 2-5</a>)</em> </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<br />
+
+<div class="mappingtable">
+<table cellpadding="4" width="100%" border="1">
+  <caption><a id="table2-4">Table 2-4.</a>&nbsp;Mapping Interface Operation
+    Components to RDF</caption>
+  <col width="20%" /><col width="80%" />
+  <tbody>
+    <tr>
+      <th>Property</th>
+      <th>RDF Form</th>
+    </tr>                                                                       
+    <tr>
+      <td>&nbsp;</td>
+      <td> <em>(id generated per <a href="http://www.w3.org/TR/wsdl20/#wsdl-iri-references">IRI-References for WSDL&nbsp;2.0 Components</a>)</em><br/>
+           &lt;id&gt; rdf:type wsdl:InterfaceOperation .<br/>
+           &lt;parentInterfaceId&gt; wsdl:interfaceOperation &lt;id&gt; .</td>
+    </tr>
+    <tr>
+      <td> {name}</td>
+      <td> &lt;id&gt; rdfs:label "&lt;localPart&gt;" .</td>
+    </tr>
+    <tr>
+      <td> {interface message references}</td>
+      <td> <em>(for interface message reference mapping see <a href="#table2-6">Table 2-6</a>)</em> </td>
+    </tr>
+    <tr>
+      <td> {interface fault references}</td>
+      <td> <em>(for interface fault reference mapping see <a href="#table2-7">Table 2-7</a>)</em> </td>
+    </tr>
+    <tr>
+      <td> {message exchange pattern}</td>
+      <td> &lt;id&gt; wsdl:messageExchangePattern &lt;pattern&gt; . </td>
+    </tr>
+    <tr>
+      <td> {style}</td>
+      <td> <em>(for each style URI)</em><br/>
+           &lt;id&gt; wsdl:operationStyle &lt;style&gt; .</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<br />
+
+<div class="mappingtable">
+<table cellpadding="4" width="100%" border="1">
+  <caption><a id="table2-5">Table 2-5.</a>&nbsp;Mapping Interface Fault
+    Components to RDF</caption>
+  <col width="20%" /><col width="80%" />
+  <tbody>
+    <tr>
+      <th>Property</th>
+      <th>RDF Form</th>
+    </tr>                                                                       
+    <tr>
+      <td>&nbsp;</td>
+      <td> <em>(id generated per <a href="http://www.w3.org/TR/wsdl20/#wsdl-iri-references">IRI-References for WSDL&nbsp;2.0 Components</a>)</em><br/>
+           &lt;id&gt; rdf:type wsdl:InterfaceFault .<br/>
+           &lt;parentInterfaceId&gt; wsdl:interfaceFault &lt;id&gt; .</td>
+    </tr>
+    <tr>
+      <td> {name}</td>
+      <td> &lt;id&gt; rdfs:label "&lt;localPart&gt;" .</td>
+    </tr>
+    <tr>
+      <td> {element declaration}</td>
+      <td> &lt;id&gt; wsdl:elementDeclaration &lt;qnameId&gt; .<br/>
+           <em>(for qname mapping see <a href="#table2-2">Table 2-2</a>)</em> </td>
+    </tr>
+    <tr>
+      <td> {message content model}</td>
+      <td> <em>(for "#any")</em>     &lt;id&gt; wsdl:messageContentModel wsdl:AnyContent .<br/>
+           <em>(for "#none")</em>    &lt;id&gt; wsdl:messageContentModel wsdl:NoContent .<br/>
+           <em>(for "#other")</em>   &lt;id&gt; wsdl:messageContentModel wsdl:OtherContent .<br/>
+           <em>(for "#element")</em> &lt;id&gt; wsdl:messageContentModel wsdl:ElementContent .</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<br />
+
+<div class="mappingtable">
+<table cellpadding="4" width="100%" border="1">
+  <caption><a id="table2-6">Table 2-6.</a>&nbsp;Mapping Interface Message Reference
+    Components to RDF</caption>
+  <col width="20%" /><col width="80%" />
+  <tbody>
+    <tr>
+      <th>Property</th>
+      <th>RDF Form</th>
+    </tr>                                                                       
+    <tr>
+      <td>&nbsp;</td>
+      <td> <em>(id generated per <a href="http://www.w3.org/TR/wsdl20/#wsdl-iri-references">IRI-References for WSDL&nbsp;2.0 Components</a>)</em><br/>
+           &lt;id&gt; rdf:type wsdl:InterfaceMessageReference .<br/>
+           &lt;parentInterfaceOpId&gt; wsdl:interfaceMessageReference &lt;id&gt; .</td>
+    </tr>
+    <tr>
+      <td> {element declaration}</td>
+      <td> &lt;id&gt; wsdl:elementDeclaration &lt;qnameId&gt; .<br/>
+           <em>(for qname mapping see <a href="#table2-2">Table 2-2</a>)</em> </td>
+    </tr>
+    <tr>
+      <td> {direction}</td>
+      <td> <em>(for "in")</em> &lt;id&gt; rdf:type wsdl:InputMessage .<br/>
+           <em>(for "out")</em> &lt;id&gt; rdf:type wsdl:OutputMessage .</td>
+    </tr>
+    <tr>
+      <td> {message content model}</td>
+      <td> <em>(for "#any")</em>     &lt;id&gt; wsdl:messageContentModel wsdl:AnyContent .<br/>
+           <em>(for "#none")</em>    &lt;id&gt; wsdl:messageContentModel wsdl:NoContent .<br/>
+           <em>(for "#other")</em>   &lt;id&gt; wsdl:messageContentModel wsdl:OtherContent .<br/>
+           <em>(for "#element")</em> &lt;id&gt; wsdl:messageContentModel wsdl:ElementContent .</td>
+    </tr>
+    <tr>
+      <td> {message label}</td>
+      <td> &lt;id&gt; wsdl:messageLabel &lt;label&gt; .<br/>
+           <em>(label as defined by the message exchange pattern's mapping to RDF, see <a href="#meps">section 2.3</a>)</em></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<br />
+
+<div class="mappingtable">
+<table cellpadding="4" width="100%" border="1">
+  <caption><a id="table2-7">Table 2-7.</a>&nbsp;Mapping Interface Fault Reference
+    Components to RDF</caption>
+  <col width="20%" /><col width="80%" />
+  <tbody>
+    <tr>
+      <th>Property</th>
+      <th>RDF Form</th>
+    </tr>                                                                       
+    <tr>
+      <td>&nbsp;</td>
+      <td> <em>(id generated per <a href="http://www.w3.org/TR/wsdl20/#wsdl-iri-references">IRI-References for WSDL&nbsp;2.0 Components</a>)</em><br/>
+           &lt;id&gt; rdf:type wsdl:InterfaceFaultReference .<br/>
+           &lt;parentInterfaceOpId&gt; wsdl:interfaceFaultReference &lt;id&gt; .</td>
+    </tr>
+    <tr>
+      <td> {interface fault}</td>
+      <td> &lt;id&gt; wsdl:interfaceFault &lt;faultId&gt; .<br/>
+           <em>(for interface fault mapping see <a href="#table2-5">Table 2-5</a>)</em></td>
+    </tr>
+    <tr>
+      <td> {direction}</td>
+      <td> <em>(for "in")</em> &lt;id&gt; rdf:type wsdl:InputMessage .<br/>
+           <em>(for "out")</em> &lt;id&gt; rdf:type wsdl:OutputMessage .</td>
+    </tr>
+    <tr>
+      <td> {message label}</td>
+      <td> &lt;id&gt; wsdl:messageLabel &lt;label&gt; .<br/>
+           <em>(label as defined by the message exchange pattern's mapping to RDF, see <a href="#meps">section 2.3</a>)</em></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h4 id="binding">2.1.3 Binding classes</h4>
+
+<p><a href="http://www.w3.org/TR/wsdl20/#Binding">WSDL binding components</a> are represented in RDF as instances of the class
+<code class="wsdl-rdf">Binding</code>. To indicate a particular interface for which binding
+information is specified with this WSDL binding, the particular
+<code class="wsdl-rdf">Interface</code> instance is pointed to using the property
+<code class="wsdl-rdf">binds</code>. Binding types (for example SOAP binding or HTTP
+binding, as specified in [<a href="#WSDL-PART2">WSDL&nbsp;2.0 Adjuncts</a>]) are themselves
+classes in RDF, so a binding type is indicated by belonging to the
+appropriate class (using the property <code class="wsdl-rdf">rdf:type</code>).</p>
+
+<p>Every binding component has a name, which is a QName. The
+namespace IRI part of this QName is present before the fragment ID of the
+component identifier, and the local name is represented in the RDF form as a
+literal value of the property <code class="wsdl-rdf">rdfs:label</code>.</p>
+
+<p>As the structure of bindings follows the structure of interfaces, we
+represent binding operations and faults using the classes
+<code class="wsdl-rdf">BindingOperation</code> and <code class="wsdl-rdf">BindingFault</code> respectively. The
+<code class="wsdl-rdf">Binding</code> points to them using the similarly named properties
+<code class="wsdl-rdf">bindingOperation</code> and <code class="wsdl-rdf">bindingFault</code>. Binding
+operations further contain message and fault references, represented as
+instances of the classes <code class="wsdl-rdf">BindingMessageReference</code> and
+<code class="wsdl-rdf">BindingFaultReference</code>, and pointed to by the properties
+<code class="wsdl-rdf">bindingMessageReference</code> and
+<code class="wsdl-rdf">bindingFaultReference</code>.</p>
+
+<p>Within this structure, each component points to the appropriate component
+from the interface structure, i.e. <code class="wsdl-rdf">BindingOperation</code> instances point to <code class="wsdl-rdf">InterfaceOperation</code> instances,
+<code class="wsdl-rdf">BindingFault</code> instances point to <code class="wsdl-rdf">InterfaceFault</code> instances and <code class="wsdl-rdf">BindingMessageReference</code>
+and <code class="wsdl-rdf">BindingFaultReference</code> instances point to <code class="wsdl-rdf">InterfaceMessageReference</code> and <code class="wsdl-rdf">InterfaceFaultReference</code> instances.
+To provide these pointers, we use the property <code class="wsdl-rdf">binds</code> between the
+pairs of components.</p>
+
+<p>Finally, each component is supposed to contain extensions that provide the
+actual binding information. For the description of handling such extensions
+see <a href="#extensions">section 2.2</a> and for the specific bindings
+included in WSDL&nbsp;2.0 specification, see sections <a href="#soapbinding">2.6</a>
+and <a href="#httpbinding">2.7</a>.</p>
+
+<div class="mappingtable">
+<table cellpadding="4" width="100%" border="1">
+  <caption><a id="table2-8">Table 2-8.</a>&nbsp;Mapping Binding
+    Components to RDF</caption>
+  <col width="20%" /><col width="80%" />
+  <tbody>
+    <tr>
+      <th>Property</th>
+      <th>RDF Form</th>
+    </tr>                                                                       
+    <tr>
+      <td>&nbsp;</td>
+      <td> <em>(id generated per <a href="http://www.w3.org/TR/wsdl20/#wsdl-iri-references">IRI-References for WSDL&nbsp;2.0 Components</a>)</em><br/>
+           &lt;id&gt; rdf:type wsdl:Binding .<br/>
+           &lt;parentDescriptionId&gt; wsdl:binding &lt;id&gt; .</td>
+    </tr>
+    <tr>
+      <td> {name}</td>
+      <td> &lt;id&gt; rdfs:label "&lt;localPart&gt;" .</td>
+    </tr>
+    <tr>
+      <td> {interface}</td>
+      <td> &lt;id&gt; wsdl:binds &lt;interfaceId&gt; .</td>
+    </tr>
+    <tr>
+      <td> {type}</td>
+      <td> &lt;id&gt; rdf:type &lt;type&gt; .</td>
+    </tr>
+    <tr>
+      <td> {binding operations}</td>
+      <td> <em>(for binding operation mapping see <a href="#table2-9">Table 2-9</a>)</em> </td>
+    </tr>
+    <tr>
+      <td> {binding faults}</td>
+      <td> <em>(for binding fault mapping see <a href="#table2-10">Table 2-10</a>)</em> </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<br />
+
+<div class="mappingtable">
+<table cellpadding="4" width="100%" border="1">
+  <caption><a id="table2-9">Table 2-9.</a>&nbsp;Mapping Binding Operation
+    Components to RDF</caption>
+  <col width="20%" /><col width="80%" />
+  <tbody>
+    <tr>
+      <th>Property</th>
+      <th>RDF Form</th>
+    </tr>                                                                       
+    <tr>
+      <td>&nbsp;</td>
+      <td> <em>(id generated per <a href="http://www.w3.org/TR/wsdl20/#wsdl-iri-references">IRI-References for WSDL&nbsp;2.0 Components</a>)</em><br/>
+           &lt;id&gt; rdf:type wsdl:BindingOperation .<br/>
+           &lt;parentBindingId&gt; wsdl:bindingOperation &lt;id&gt; .</td>
+    </tr>
+    <tr>
+      <td> {interface operation}</td>
+      <td> &lt;id&gt; wsdl:binds &lt;interfaceOpId&gt; .</td>
+    </tr>
+    <tr>
+      <td> {binding message references}</td>
+      <td> <em>(for binding message reference mapping see <a href="#table2-11">Table 2-11</a>)</em> </td>
+    </tr>
+    <tr>
+      <td> {binding fault references}</td>
+      <td> <em>(for binding fault reference mapping see <a href="#table2-12">Table 2-12</a>)</em> </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<br />
+
+<div class="mappingtable">
+<table cellpadding="4" width="100%" border="1">
+  <caption><a id="table2-10">Table 2-10.</a>&nbsp;Mapping Binding Fault
+    Components to RDF</caption>
+  <col width="20%" /><col width="80%" />
+  <tbody>
+    <tr>
+      <th>Property</th>
+      <th>RDF Form</th>
+    </tr>                                                                       
+    <tr>
+      <td>&nbsp;</td>
+      <td> <em>(id generated per <a href="http://www.w3.org/TR/wsdl20/#wsdl-iri-references">IRI-References for WSDL&nbsp;2.0 Components</a>)</em><br/>
+           &lt;id&gt; rdf:type wsdl:BindingFault .<br/>
+           &lt;parentBindingId&gt; wsdl:bindingFault &lt;id&gt; .</td>
+    </tr>
+    <tr>
+      <td> {interface fault}</td>
+      <td> &lt;id&gt; wsdl:binds &lt;interfaceFaultId&gt; .</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<br />
+
+<div class="mappingtable">
+<table cellpadding="4" width="100%" border="1">
+  <caption><a id="table2-11">Table 2-11.</a>&nbsp;Mapping Binding Message Reference
+    Components to RDF</caption>
+  <col width="20%" /><col width="80%" />
+  <tbody>
+    <tr>
+      <th>Property</th>
+      <th>RDF Form</th>
+    </tr>                                                                       
+    <tr>
+      <td>&nbsp;</td>
+      <td> <em>(id generated per <a href="http://www.w3.org/TR/wsdl20/#wsdl-iri-references">IRI-References for WSDL&nbsp;2.0 Components</a>)</em><br/>
+           &lt;id&gt; rdf:type wsdl:BindingMessageReference .<br/>
+           &lt;parentBindingOperationId&gt; wsdl:bindingMessageReference &lt;id&gt; .</td>
+    </tr>
+    <tr>
+      <td> {interface message reference}</td>
+      <td> &lt;id&gt; wsdl:binds &lt;interfaceMessageReferenceId&gt; .</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<br />
+
+<div class="mappingtable">
+<table cellpadding="4" width="100%" border="1">
+  <caption><a id="table2-12">Table 2-12.</a>&nbsp;Mapping Binding Fault Reference
+    Components to RDF</caption>
+  <col width="20%" /><col width="80%" />
+  <tbody>
+    <tr>
+      <th>Property</th>
+      <th>RDF Form</th>
+    </tr>                                                                       
+    <tr>
+      <td>&nbsp;</td>
+      <td> <em>(id generated per <a href="http://www.w3.org/TR/wsdl20/#wsdl-iri-references">IRI-References for WSDL&nbsp;2.0 Components</a>)</em><br/>
+           &lt;id&gt; rdf:type wsdl:BindingFaultReference .<br/>
+           &lt;parentBindingOperationId&gt; wsdl:bindingFaultReference &lt;id&gt; .</td>
+    </tr>
+    <tr>
+      <td> {interface fault reference}</td>
+      <td> &lt;id&gt; wsdl:binds &lt;interfaceFaultReferenceId&gt; .</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h4 id="service">2.1.4 Service classes</h4>
+
+<p>WSDL services are represented in RDF as instances of the class
+<code class="wsdl-rdf">Service</code>. Each instance points to a single interface; for
+this purpose we reuse the property <code class="wsdl-rdf">implements</code>. Also, each service
+has one or more endpoints, to which it points using the property
+<code class="wsdl-rdf">endpoint</code>.</p>
+
+<p>Services have a name, which is a QName. The namespace URI part of this
+QName is present before the fragment ID of the component identifier, and the
+local name is represented in the RDF form as a literal value of the property
+<code class="wsdl-rdf">rdfs:label</code>. Similarly, endpoints have a name,
+which is an NCName. Its value is also represented in the RDF form as a
+literal value of the property <code class="wsdl-rdf">rdfs:label</code>.</p>
+
+<p>Endpoints are represented as instances of the class <code class="wsdl-rdf">Endpoint</code>,
+with two notable properties: a mandatory single <code class="wsdl-rdf">usesBinding</code> property points to
+the binding used by this endpoint, and an optional single <code class="wsdl-rdf">address</code>
+points to the network resource which actually offers the service.</p>
+
+<div class="mappingtable">
+<table cellpadding="4" width="100%" border="1">
+  <caption><a id="table2-13">Table 2-13.</a>&nbsp;Mapping Service
+    Components to RDF</caption>
+  <col width="20%" /><col width="80%" />
+  <tbody>
+    <tr>
+      <th>Property</th>
+      <th>RDF Form</th>
+    </tr>                                                                       
+    <tr>
+      <td>&nbsp;</td>
+      <td> <em>(id generated per <a href="http://www.w3.org/TR/wsdl20/#wsdl-iri-references">IRI-References for WSDL&nbsp;2.0 Components</a>)</em><br/>
+           &lt;id&gt; rdf:type wsdl:Service .<br/>
+           &lt;parentDescriptionId&gt; wsdl:service &lt;id&gt; .</td>
+    </tr>
+    <tr>
+      <td> {name}</td>
+      <td> &lt;id&gt; rdfs:label "&lt;localPart&gt;" .</td>
+    </tr>
+    <tr>
+      <td> {interface}</td>
+      <td> &lt;id&gt; wsdl:implements &lt;interfaceId&gt; .</td>
+    </tr>
+    <tr>
+      <td> {endpoints}</td>
+      <td> <em>(for endpoint mapping see <a href="#table2-14">Table 2-14</a>)</em> </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<br />
+
+<div class="mappingtable">
+<table cellpadding="4" width="100%" border="1">
+  <caption><a id="table2-14">Table 2-14.</a>&nbsp;Mapping Endpoint
+    Components to RDF</caption>
+  <col width="20%" /><col width="80%" />
+  <tbody>
+    <tr>
+      <th>Property</th>
+      <th>RDF Form</th>
+    </tr>                                                                       
+    <tr>
+      <td>&nbsp;</td>
+      <td> <em>(id generated per <a href="http://www.w3.org/TR/wsdl20/#wsdl-iri-references">IRI-References for WSDL&nbsp;2.0 Components</a>)</em><br/>
+           &lt;id&gt; rdf:type wsdl:Endpoint .<br/>
+           &lt;parentServiceId&gt; wsdl:endpoint &lt;id&gt; .</td>
+    </tr>
+    <tr>
+      <td> {name}</td>
+      <td> &lt;id&gt; rdfs:label "&lt;name&gt;" .</td>
+    </tr>
+    <tr>
+      <td> {binding}</td>
+      <td> &lt;id&gt; wsdl:usesBinding &lt;bindingId&gt; .</td>
+    </tr>
+    <tr>
+      <td> {address}</td>
+      <td> &lt;id&gt; wsdl:address &lt;address&gt; .</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+<h3 id="extensions">2.2 Handling Extensions and Documentation</h3>
+
+<p>In order to enable evolution and reusability of the language, WSDL&nbsp;2.0
+allows extensions on all components. In fact, there are two types of
+extensibility in WSDL&nbsp;2.0: explicit extension points, and XML-based
+extensions.</p>
+
+<p>Extension points are those places in WSDL where a number of options is
+defined by the WSDL&nbsp;2.0 specification, but the list is open. For example,
+interface operations follow message exchange patterns (MEPs), and while
+WSDL&nbsp;2.0 provides some predefined MEPs, new ones can be specified by WSDL&nbsp;2.0 users.
+Similarly, WSDL&nbsp;2.0 specifies two bindings (SOAP and HTTP), but more bindings
+are expected to be specified in the future, either by the WS-Description
+Working Group or by any interested third parties. Often, extension points use
+URIs to refer to the various options, and these URIs are then reflected in
+the RDF form as the appropriate property values. Additionally, some of the
+extensions also introduce data that would be useful in the RDF
+representation, in which case it is the responsibility of the extension
+designers to describe their mappings to RDF. This document describes the
+mapping of the extensions defined together with the WSDL&nbsp;2.0 specification.
+</p>
+
+<p>Apart from the envisioned extensibility points, WSDL&nbsp;2.0 allows the XML WSDL
+documents to contain any "foreign" elements and attributes, so that
+any extensions, even ones that change the core WSDL semantics, can
+also be realized. 
+The actual meaning of general WSDL extensions is, by definition, unknown to the
+core WSDL specification, and it is equally unknown to the RDF mapping (apart
+from the predefined extensions coming with WSDL&nbsp;2.0, whose mapping to
+RDF is described in the following sections). Therefore
+every extension should specify how it is mapped to RDF. For example, the SOAP
+and HTTP bindings in WSDL&nbsp;2.0 add many properties to the core binding
+components and this document defines how these particular properties are
+expressed in RDF. The mapping of WSDL extensions to RDF therefore depends on the
+understanding of those extensions.</p>
+
+<p>In WSDL&nbsp;2.0, extensions can be marked as mandatory (or required).
+Such extensions may alter the semantics of the extended components in ways
+that invalidate the existing semantics. Since the RDF representation of WSDL
+intends to represent the semantics of the WSDL data, components with required
+extensions will be mapped to RDF according to the rules of the extension, not
+according to the rules specified in this document. If a processor that does
+the mapping of a WSDL document to RDF does not understand a particular
+mandatory extension (in other words, when it encounters an <em>unknown
+mandatory</em> extension, it cannot map the component that contains that extension
+into any generic RDF representation, in other words the component will not be
+present in the resulting RDF data. This is to avoid confusing processors that
+do not understand a mandatory extension &mdash; RDF encourages the principle
+of ignoring the unknown parts of an RDF graph (partial understanding) and
+there is no agreed mechanism of marking some parts as mandatory, therefore if
+we decided to map the known WSDL according to our rules above, the potential
+changes introduced by the mandatory unknown extensions could be ignored by
+some RDF processors, which would violate the way WSDL considers them
+mandatory.</p>
+
+<p>Unknown <em>optional</em> extensions also cannot be mapped to RDF with any
+mapping rules defined in this document, because their meaning is unknown.
+However, the parent component is mapped into RDF as though the unknown
+optional extension was not present at all. Effectively, this WSDL RDF mapping
+ignores unknown optional extensions.</p>
+
+<p>In addition to the extensions, all WSDL XML elements can also contain
+documentation. Such documentation can consist of human-readable text or
+machine-processible elements and attributes, but it is not modeled in more
+detail in WSDL&nbsp;2.0. This WSDL RDF mapping does not represent
+documentation in the resulting RDF graph, because it would be an XML literal
+with no explicit meaning, and the XML literal would not be readable enough to
+serve the purpose of human-readable description.</p>
+
+<h3 id="meps">2.3 Message Exchange Patterns</h3>
+
+<p>WSDL&nbsp;2.0 defines an extensible set of <a
+href="http://www.w3.org/TR/wsdl20/#MessageExchangePattern">message exchange
+patterns</a> (MEPs). There are 8 predefined MEPs (three in [<a href="#WSDL-PART2">WSDL&nbsp;2.0 Adjuncts</a>] and five in [<a
+href="#WSDL-MEPS">WSDL&nbsp;2.0 Additional&nbsp;MEPs</a>]), each following one of the
+three predefined fault propagation rules. Every WSDL MEP defines a set of
+message labels by which message references in operations can position
+themselves within the pattern.</p>
+
+<p>In the RDF representation of WSDL, message exchange patterns are
+represented as instances of the class <code class="wsdl-rdf">MessageExchangePattern</code>.
+The three predefined fault propagation rules are disjoint subclasses of that
+class, named <code class="wsdl-rdf">NoFaults</code>, <code class="wsdl-rdf">FaultReplacesMessage</code> and
+<code class="wsdl-rdf">MessageTriggersFault</code>.</p>
+
+<p>All MEPs are identified by IRIs, and the RDF ontology for WSDL assigns classes to
+MEPs; for example
+<code>http://www.w3.org/ns/wsdl/in-only</code> is an instance of the
+class <code class="wsdl-rdf">NoFaults</code>. The message labels, however, are plain string
+names, and the RDF ontology for WSDL gives each of them an IRI formed by the
+MEP IRI, the hash sign '#' and the actual message label, and these IRIs are
+referenced from the MEPs with the property <code class="wsdl-rdf">definesMessageLabel</code>.
+Any newly created MEPs should also provide IRIs for the message labels, as
+the RDF mapping depends on being able to identify the message labels on
+interface message references.</p>
+
+<p>The following mapping table only shows the message label URIs defined by
+the WSDL ontology for the message labels defined by the message exchange
+patterns from [<a href="#WSDL-PART2">WSDL&nbsp;2.0 Adjuncts</a>] and [<a
+href="#WSDL-MEPS">WSDL&nbsp;2.0 Additional&nbsp;MEPs</a>].</p>
+
+<div class="mappingtable">
+<table cellpadding="4" width="100%" border="1">
+  <caption><a id="table2-15">Table 2-15.</a>&nbsp;Mapping Message Exchange Pattern Labels to RDF</caption>
+  <tbody>
+    <tr>
+      <th>MEP</th>
+      <th>Label</th>
+      <th>Label URI</th>
+    </tr>                                                                       
+    <tr>
+      <td>In-Only</td>
+      <td>In</td>
+      <td>http://www.w3.org/ns/wsdl/in-only#In</td>
+    </tr>
+    <tr>
+      <td>Robust In-Only</td>
+      <td>In</td>
+      <td>http://www.w3.org/ns/wsdl/robust-in-only#In</td>
+    </tr>
+    <tr>
+      <td rowspan="2">In-Out</td>
+      <td>In</td>
+      <td>http://www.w3.org/ns/wsdl/in-out#In</td>
+    </tr>
+    <tr>
+      <td>Out</td>
+      <td>http://www.w3.org/ns/wsdl/in-out#Out</td>
+    </tr>
+    <tr>
+      <td rowspan="2">In-Optional-Out</td>
+      <td>In</td>
+      <td>http://www.w3.org/ns/wsdl/in-opt-out#In</td>
+    </tr>
+    <tr>
+      <td>Out</td>
+      <td>http://www.w3.org/ns/wsdl/in-opt-out#Out</td>
+    </tr>
+    <tr>
+      <td>Out-Only</td>
+      <td>Out</td>
+      <td>http://www.w3.org/ns/wsdl/out-only#Out</td>
+    </tr>
+    <tr>
+      <td>Robust Out-Only</td>
+      <td>Out</td>
+      <td>http://www.w3.org/ns/wsdl/robust-out-only#Out</td>
+    </tr>
+    <tr>
+      <td rowspan="2">Out-In</td>
+      <td>Out</td>
+      <td>http://www.w3.org/ns/wsdl/out-in#Out</td>
+    </tr>
+    <tr>
+      <td>In</td>
+      <td>http://www.w3.org/ns/wsdl/out-in#In</td>
+    </tr>
+    <tr>
+      <td rowspan="2">Out-Optional-In</td>
+      <td>Out</td>
+      <td>http://www.w3.org/ns/wsdl/out-opt-in#Out</td>
+    </tr>
+    <tr>
+      <td>In</td>
+      <td>http://www.w3.org/ns/wsdl/out-opt-in#In</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h3 id="predefined_extensions">2.4 Predefined Extensions</h3>
+
+<p>WSDL&nbsp;2.0 Adjuncts contain a single predefined extension, called Operation
+Safety, which adds a property to interface operation components to indicate
+whether an interface operation is known to be safe in terms of [<a
+href="#webarch">Web Architecture</a>].</p>
+
+<p>In the RDF representation of WSDL, we introduce the class <code
+class="wsdl-rdf">SafeInteraction</code>, and we use the Semantic Annotations
+for WSDL and XML Schema ([<a href="#SAWSDL">SAWSDL</a>]) property
+modelReference to annotate any <code
+class="wsdl-rdf">InterfaceOperation</code> instance that is asserted to be
+safe.</p>
+
+<p><b>Note:</b> the fact that the SAWSDL modelReference RDF property is used
+in this WSDL RDF mapping <b>does not</b> introduce the dependency that WSDL
+processors or WSDL RDF mapping implementations would need to understand the SAWSDL
+extension.</p>
+
+<div class="mappingtable">
+<table cellpadding="4" width="100%" border="1">
+  <caption><a id="table2-16">Table 2-16.</a>&nbsp;Mapping Interface Operation
+    Components with Safety to RDF</caption>
+  <col width="20%" /><col width="80%" />
+  <tbody>
+    <tr>
+      <th>Property</th>
+      <th>RDF Form</th>
+    </tr>                                                                       
+    <tr>
+      <td> {safety}</td>
+      <td> <em>(only if true)</em> &lt;operationId&gt; sawsdl:modelReference wsdlx:SafeInteraction .</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h3 id="opstyles">2.5 Operation Styles</h3>
+
+<p>WSDL&nbsp;2.0 predefines 3 operation styles &mdash; RPC style, IRI style and
+Multipart style. These styles are identified with their IRIs, which are, in the RDF
+ontology, instances of the class <code class="wsdl-rdf">OperationStyle</code>.</p>
+
+<p>The RPC style additionally introduces the property {rpc signature},
+which is represented in RDF as a sequence of arguments, indicating the
+direction and element qname. The <code class="wsdl-rdf">signature</code>
+property can be attached to interface operations that follow the RPC style to
+indicate the parameter order for the operation. The property points to an
+instance of the class <code class="wsdl-rdf">Signature</code> (subclass of
+<code class="wsdl-rdf">rdf:Seq</code>); and every member represents an
+argument specification. Each argument uses the property <code
+class="wsdl-rdf">elementDeclaration</code> to specify an element, and the
+<code class="wsdl-rdf">rdf:type</code> of an argument indicates its direction
+(one of the classes <code class="wsdl-rdf">InArgument</code>, <code
+class="wsdl-rdf">OutArgument</code>, <code
+class="wsdl-rdf">InOutArgument</code>, <code
+class="wsdl-rdf">ReturnArgument</code>). </p>
+
+
+<div class="mappingtable">
+<table cellpadding="4" width="100%" border="1">
+  <caption><a id="table2-17">Table 2-17.</a>&nbsp;Mapping Interface Operation
+    Components with RPC Signature to RDF</caption>
+  <col width="20%" /><col width="80%" />
+  <tbody>
+    <tr>
+      <th>Property</th>
+      <th>RDF Form</th>
+    </tr>                                                                       
+    <tr>
+      <td> {rpc signature}</td>
+      <td> &lt;operationId&gt; wrpc:signature &lt;sigId&gt; . <br/>
+           &lt;sigId&gt; rdf:type wrpc:Signature .<br/>
+          <em>(sigId is a newly generated unique URI)</em><br/>
+          <em>(for each argument/direction pair)</em> &lt;sigId&gt; rdf:_nnn &lt;argId&gt; .<br/><br/>
+          <em>(argId is a newly generated unique URI)</em><br/>
+          <em>(_nnn starts from _1 and the number is increased by 1 for each argument)</em><br/>
+          <em>(for #in arguments)</em> &lt;argId&gt; rdf:type wrpc:InArgument .<br/>
+          <em>(for #out arguments)</em> &lt;argId&gt; rdf:type wrpc:OutArgument .<br/>
+          <em>(for #inout arguments)</em> &lt;argId&gt; rdf:type wrpc:InOutArgument .<br/>
+          <em>(for #return arguments)</em> &lt;argId&gt; rdf:type wrpc:ReturnArgument .<br/>
+           &lt;argId&gt; wsdl:elementDeclaration &lt;qnameId&gt; .<br/>
+          <em>(for qname mapping see <a href="#table2-2">Table 2-2</a>)</em></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h3 id="soapbinding">2.6 SOAP Binding</h3>
+
+<p>WSDL bindings that bind to SOAP are identified (using the property
+<code class="wsdl-rdf">rdf:type</code>) as instances of the class
+<code>http://www.w3.org/ns/wsdl/soap</code>. Every such binding 
+indicates the SOAP version that it uses, this is done with the property
+<code class="wsdl-rdf">version</code> (with a value "1.2", for example, meaning SOAP version
+1.2). Every binding also specifies with the property <code class="wsdl-rdf">protocol</code>
+the underlying protocol that is uses.</p>
+
+<p>Each SOAP binding operation specifies the SOAP message exchange pattern
+it uses &mdash; the appropriate URI from the SOAP specification is pointed to
+using the property <code class="wsdl-rdf">soapMEP</code>. The range of this
+property is the SOAP&nbsp;1.2 class <code
+class="wsdl-rdf">http://www.w3.org/2006/02/soap12/abstractions#classOfMEPs</code>
+that contains all the SOAP
+MEPs. Some bindings (especially those that are not specific to any interface)
+will rely on defaulting to set the SOAP message exchange pattern, this
+default is captured using the property <code class="wsdl-rdf">defaultSoapMEP</code>.</p>
+
+<p>SOAP binding operations can additionally specify the value of the action parameter
+(known as SOAP action) for the initial message, using the property
+<code class="wsdl-rdf">action</code>.</p>
+
+<p>Binding faults in the SOAP binding can specify two properties &mdash;
+fault code and fault subcodes. Both fault code and subcodes are QNames, and
+they are pointed to using the properties <code class="wsdl-rdf">faultCode</code> and
+<code class="wsdl-rdf">faultSubcodes</code>. The latter points to an RDF
+sequence (<code class="wsdl-rdf">rdf:Seq</code>) which contains all the
+subcodes.</p>
+
+<p>At any level within a SOAP binding, components can declare the use of a
+SOAP module. Required modules are pointed to using the property
+<code class="wsdl-rdf">requiresSOAPModule</code> and optional modules are pointed to using the
+property <code class="wsdl-rdf">offersSOAPModule</code> &mdash; both of these properties point
+directly from the parent component to the SOAP module, as identified by its
+URI (parameter {ref} of the SOAP Module component).</p>
+
+<p>Message references and faults in SOAP bindings can further declare that
+they require or offer a specific SOAP headers. To do this, the properties
+<code class="wsdl-rdf">requiresHeader</code> and <code class="wsdl-rdf">offersHeader</code> can point to an instance of
+the class <code class="wsdl-rdf">SOAPHeaderBlock</code>, which then uses the property
+<code class="wsdl-rdf">elementDeclaration</code> to specify the exact element that represents
+the header. Instances of <code class="wsdl-rdf">SOAPHeaderBlock</code> can also belong to the class
+<code class="wsdl-rdf">MustUnderstandSOAPHeaderBlock</code>, which means that this SOAP header will
+be marked as mandatory (mustUnderstand="true") in the message.</p>
+
+<p>Apart from these SOAP-binding-specific properties, the SOAP binding reuses
+underlying protocol properties, for example some HTTP binding properties when
+the underlying protocol is HTTP. The following section describes the HTTP
+binding properties.</p>
+
+<div class="mappingtable">
+<table cellpadding="4" width="100%" border="1">
+  <caption><a id="table2-18">Table 2-18.</a>&nbsp;Mapping SOAP Binding
+    Components to RDF</caption>
+  <col width="20%" /><col width="80%" />
+  <tbody>
+    <tr>
+      <th>Property</th>
+      <th>RDF Form</th>
+    </tr>                                                                       
+    <tr>
+      <td> {soap mep default}</td>
+      <td> &lt;bindingId&gt; wsoap:defaultSoapMEP &lt;pattern&gt; .</td>
+    </tr>
+    <tr>
+      <td> {soap underlying protocol}</td>
+      <td> &lt;bindingId&gt; wsoap:protocol &lt;protocol&gt; .</td>
+    </tr>
+    <tr>
+      <td> {soap version}</td>
+      <td> &lt;bindingId&gt; wsoap:version "&lt;version&gt;" .</td>
+    </tr>
+    <tr>
+      <td> {soap modules}</td>
+      <td> <em>(for soap module mapping see <a href="#table2-23">Table 2-23</a>)</em> </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<br />
+
+<div class="mappingtable">
+<table cellpadding="4" width="100%" border="1">
+  <caption><a id="table2-19">Table 2-19.</a>&nbsp;Mapping SOAP Binding Operation
+    Components to RDF</caption>
+  <col width="20%" /><col width="80%" />
+  <tbody>
+    <tr>
+      <th>Property</th>
+      <th>RDF Form</th>
+    </tr>                                                                       
+    <tr>
+      <td> {soap action}</td>
+      <td> &lt;bindingOpId&gt; wsoap:action &lt;action&gt; .</td>
+    </tr>
+    <tr>
+      <td> {soap mep}</td>
+      <td> &lt;bindingOpId&gt; wsoap:soapMEP &lt;pattern&gt; .</td>
+    </tr>
+    <tr>
+      <td> {soap modules}</td>
+      <td> <em>(for soap module mapping see <a href="#table2-23">Table 2-23</a>)</em> </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<br />
+
+<div class="mappingtable">
+<table cellpadding="4" width="100%" border="1">
+  <caption><a id="table2-20">Table 2-20.</a>&nbsp;Mapping SOAP Binding Fault
+    Components to RDF</caption>
+  <col width="20%" /><col width="80%" />
+  <tbody>
+    <tr>
+      <th>Property</th>
+      <th>RDF Form</th>
+    </tr>                                                                       
+    <tr>
+      <td> {soap fault code}</td>
+      <td> <em>(only if not "#any")</em> &lt;bindingFaultId&gt; wsoap:faultCode &lt;qnameId&gt; .<br/>
+          <em>(for qname mapping see <a href="#table2-2">Table 2-2</a>)</em></td>
+    </tr>
+    <tr>
+      <td> {soap fault subcodes}</td>
+      <td> <em>(only if not "#any")</em> <br/>
+           &lt;bindingFaultId&gt; wsoap:faultSubcodes &lt;subId&gt; .<br/>
+           &lt;subId&gt; rdf:type rdf:Seq .<br/>
+           <em>(for each subcode)</em> &lt;subId&gt; rdf:_nnn &lt;qnameId&gt; .<br/><br/>
+          <em>(subId is a newly generated unique URI)</em><br/>
+          <em>(_nnn starts from _1 and the number is increased by 1 for each subcode)</em><br/>
+          <em>(for qname mapping see <a href="#table2-2">Table 2-2</a>)</em></td>
+    </tr>
+    <tr>
+      <td> {soap modules}</td>
+      <td> <em>(for soap module mapping see <a href="#table2-23">Table 2-23</a>)</em> </td>
+    </tr>
+    <tr>
+      <td> {soap headers}</td>
+      <td> <em>(for soap header block mapping see <a href="#table2-24">Table 2-24</a>)</em> </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<br />
+
+<div class="mappingtable">
+<table cellpadding="4" width="100%" border="1">
+  <caption><a id="table2-21">Table 2-21.</a>&nbsp;Mapping SOAP Binding Message Reference
+    Components to RDF</caption>
+  <col width="20%" /><col width="80%" />
+  <tbody>
+    <tr>
+      <th>Property</th>
+      <th>RDF Form</th>
+    </tr>                                                                       
+    <tr>
+      <td> {soap modules}</td>
+      <td> <em>(for soap module mapping see <a href="#table2-23">Table 2-23</a>)</em> </td>
+    </tr>
+    <tr>
+      <td> {soap headers}</td>
+      <td> <em>(for soap header block mapping see <a href="#table2-24">Table 2-24</a>)</em> </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<br />
+
+<div class="mappingtable">
+<table cellpadding="4" width="100%" border="1">
+  <caption><a id="table2-22">Table 2-22.</a>&nbsp;Mapping SOAP Binding Fault Reference
+    Components to RDF</caption>
+  <col width="20%" /><col width="80%" />
+  <tbody>
+    <tr>
+      <th>Property</th>
+      <th>RDF Form</th>
+    </tr>                                                                       
+    <tr>
+      <td> {soap modules}</td>
+      <td> <em>(for soap module mapping see <a href="#table2-23">Table 2-23</a>)</em> </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<br />
+
+<div class="mappingtable">
+<table cellpadding="4" width="100%" border="1">
+  <caption><a id="table2-23">Table 2-23.</a>&nbsp;Mapping SOAP Module Components to RDF</caption>
+  <col width="20%" /><col width="80%" />
+  <tbody>
+    <tr>
+      <th>Property</th>
+      <th>RDF Form</th>
+    </tr>                                                                       
+    <tr>
+      <td> {ref}</td>
+      <td> <em>(value used below)</em> </td>
+    </tr>
+    <tr>
+      <td> {required}</td>
+      <td> <em>(for required)</em> &lt;parentComponentId&gt; wsoap:requiresSOAPModule &lt;ref&gt; .<br/>
+           <em>(for not required)</em> &lt;parentComponentId&gt; wsoap:offersSOAPModule &lt;ref&gt; .</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<br />
+
+<div class="mappingtable">
+<table cellpadding="4" width="100%" border="1">
+  <caption><a id="table2-24">Table 2-24.</a>&nbsp;Mapping SOAP Header Block Components to RDF</caption>
+  <col width="20%" /><col width="80%" />
+  <tbody>
+    <tr>
+      <th>Property</th>
+      <th>RDF Form</th>
+    </tr>                                                                       
+    <tr>
+      <td>&nbsp;</td>
+      <td> <em>(id generated per <a href="http://www.w3.org/TR/wsdl20-adjuncts/#soap-headers-decl-fragid">IRI Identification Of A SOAP Header Block component</a>)</em><br/>
+           &lt;id&gt; rdf:type wsoap:SOAPHeaderBlock .</td>
+    </tr>                                                                       
+    <tr>
+      <td> {required}</td>
+      <td> <em>(for required)</em> &lt;parentComponentId&gt; wsoap:requiresHeader &lt;id&gt; .<br/>
+           <em>(for not required)</em> &lt;parentComponentId&gt; wsoap:offersHeader &lt;id&gt; .</td>
+    </tr>
+    <tr>
+      <td> {mustUnderstand}</td>
+      <td> <em>(only if true)</em> &lt;id&gt; rdf:type wsoap:MustUnderstandSOAPHeaderBlock .</td>
+    </tr>
+    <tr>
+      <td> {element declaration}</td>
+      <td> &lt;id&gt; wsdl:elementDeclaration &lt;qnameId&gt; .<br/>
+           <em>(for qname mapping see <a href="#table2-2">Table 2-2</a>)</em> </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h3 id="httpbinding">2.7 HTTP Binding</h3>
+
+<p>WSDL bindings that bind to HTTP are identified as instances of the class
+<code>http://www.w3.org/ns/wsdl/http</code>.</p>
+
+<p>The HTTP bindings that make use of HTTP cookies, as well as other bindings
+that reuse HTTP and use cookies, are further identified as instances of the
+class <code class="wsdl-rdf">BindingUsingHTTPCookies</code>. </p>
+
+<p>HTTP binding operations can specify a number of HTTP parameters:
+operation-specific location (and what to do with parameters that are not
+serialized in it &mdash; <i>ignore uncited</i>), HTTP method, input and output and fault
+serialization, and query parameter separator. These parameters are
+represented in RDF with the properties <code class="wsdl-rdf">location</code>, <code class="wsdl-rdf">locationIgnoreUncited</code>,
+<code class="wsdl-rdf">method</code>, <code class="wsdl-rdf">inputSerialization</code>,
+<code class="wsdl-rdf">outputSerialization</code>, <code class="wsdl-rdf">faultSerialization</code> and
+<code class="wsdl-rdf">queryParameterSeparator</code>. The HTTP method and query parameter
+separator can also be specified on the binding level as defaults, especially
+in bindings that are not specific to any particular interface. Those defaults
+are preserved using properties <code class="wsdl-rdf">defaultMethod</code> and
+<code class="wsdl-rdf">defaultQueryParameterSeparator</code>. The values of all these properties
+are literals, same as in the XML syntax of WSDL.</p>
+
+<p>Message references and faults in an HTTP binding can specify the use of
+extra HTTP headers. Required headers are pointed to using the property
+<code class="wsdl-rdf">requiresHeader</code>, whereas optional headers are referenced using the
+property <code class="wsdl-rdf">offersHeader</code>. Both properties point to an instance of the
+class <code class="wsdl-rdf">HTTPHeader</code>. Each <code class="wsdl-rdf">HTTPHeader</code> instance has a property
+<code class="wsdl-rdf">headerName</code> that specifies the name of the header, and a property
+<code class="wsdl-rdf">typeDefinition</code> which defines the simple type of the header
+value.</p>
+
+<p>Message references and faults 
+can also specify the content encoding using the property
+<code class="wsdl-rdf">contentEncoding</code> with a literal string value, as in the XML
+representation; and binding operations or even bindings may define the
+default content encoding values using the property
+<code class="wsdl-rdf">defaultContentEncoding</code>. Finally, faults can further specify the HTTP
+status code they will be accompanies with, using the property
+<code class="wsdl-rdf">errorCode</code>.</p>
+
+<p>Service endpoints that use an HTTP binding can specify access authentication
+parameters, in particular authentication scheme and realm. These parameters are
+reflected with the properties <code class="wsdl-rdf">authenticationScheme</code> and
+<code class="wsdl-rdf">authenticationRealm</code> with string values.</p>
+
+<div class="mappingtable">
+<table cellpadding="4" width="100%" border="1">
+  <caption><a id="table2-25">Table 2-25.</a>&nbsp;Mapping HTTP Binding
+    Components to RDF</caption>
+  <col width="20%" /><col width="80%" />
+  <tbody>
+    <tr>
+      <th>Property</th>
+      <th>RDF Form</th>
+    </tr>                                                                       
+    <tr>
+      <td> {http cookies}</td>
+      <td> <em>(only if true)</em> &lt;bindingId&gt; rdf:type whttp:BindingUsingHTTPCookies .</td>
+    </tr>
+    <tr>
+      <td> {http content encoding default}</td>
+      <td> &lt;bindingId&gt; whttp:defaultContentEncoding "&lt;coding&gt;" .</td>
+    </tr>
+    <tr>
+      <td> {http method default}</td>
+      <td> &lt;bindingId&gt; whttp:defaultMethod "&lt;method&gt;" .</td>
+    </tr>
+    <tr>
+      <td> {http query parameter separator default}</td>
+      <td> &lt;bindingId&gt; whttp:defaultQueryParameterSeparator "&lt;separator&gt;" .</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<br />
+
+<div class="mappingtable">
+<table cellpadding="4" width="100%" border="1">
+  <caption><a id="table2-26">Table 2-26.</a>&nbsp;Mapping HTTP Binding Operation
+    Components to RDF</caption>
+  <col width="20%" /><col width="80%" />
+  <tbody>
+    <tr>
+      <th>Property</th>
+      <th>RDF Form</th>
+    </tr>                                                                       
+    <tr>
+      <td> {http location}</td>
+      <td> &lt;bindingOpId&gt; whttp:location "&lt;location&gt;" .</td>
+    </tr>
+    <tr>
+      <td> {http content encoding default}</td>
+      <td> &lt;bindingOpId&gt; whttp:defaultContentEncoding "&lt;coding&gt;" .</td>
+    </tr>
+    <tr>
+      <td> {http input serialization}</td>
+      <td> &lt;bindingOpId&gt; whttp:inputSerialization "&lt;serialization&gt;" .</td>
+    </tr>
+    <tr>
+      <td> {http output serialization}</td>
+      <td> &lt;bindingOpId&gt; whttp:outputSerialization "&lt;serialization&gt;" .</td>
+    </tr>
+    <tr>
+      <td> {http fault serialization}</td>
+      <td> &lt;bindingOpId&gt; whttp:faultSerialization "&lt;serialization&gt;" .</td>
+    </tr>
+    <tr>
+      <td> {http location ignore uncited}</td>
+      <td> &lt;bindingOpId&gt; whttp:locationIgnoreUncited "&lt;ignoreFlag&gt;"^^xs:boolean .</td>
+    </tr>
+    <tr>
+      <td> {http method}</td>
+      <td> &lt;bindingOpId&gt; whttp:method "&lt;method&gt;" .</td>
+    </tr>
+    <tr>
+      <td> {http query parameter separator}</td>
+      <td> &lt;bindingOpId&gt; whttp:queryParameterSeparator "&lt;separator&gt;" .</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<br />
+
+<div class="mappingtable">
+<table cellpadding="4" width="100%" border="1">
+  <caption><a id="table2-27">Table 2-27.</a>&nbsp;Mapping HTTP Binding Fault
+    Components to RDF</caption>
+  <col width="20%" /><col width="80%" />
+  <tbody>
+    <tr>
+      <th>Property</th>
+      <th>RDF Form</th>
+    </tr>                                                                       
+    <tr>
+      <td> {http error status code}</td>
+      <td> <em>(only if not "#any")</em> &lt;bindingFaultId&gt; whttp:errorCode "&lt;code&gt;"^^xs:int .</td>
+    </tr>
+    <tr>
+      <td> {http content encoding}</td>
+      <td> &lt;bindingFaultId&gt; whttp:contentEncoding "&lt;coding&gt;" .</td>
+    </tr>
+    <tr>
+      <td> {http headers}</td>
+      <td> <em>(for http header mapping see <a href="#table2-30">Table 2-30</a>)</em> </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<br />
+
+<div class="mappingtable">
+<table cellpadding="4" width="100%" border="1">
+  <caption><a id="table2-28">Table 2-28.</a>&nbsp;Mapping HTTP Binding Message Reference
+    Components to RDF</caption>
+  <col width="20%" /><col width="80%" />
+  <tbody>
+    <tr>
+      <th>Property</th>
+      <th>RDF Form</th>
+    </tr>                                                                       
+    <tr>
+      <td> {http content encoding}</td>
+      <td> &lt;bindingMessageRefId&gt; whttp:contentEncoding "&lt;coding&gt;" .</td>
+    </tr>
+    <tr>
+      <td> {http headers}</td>
+      <td> <em>(for http header mapping see <a href="#table2-30">Table 2-30</a>)</em> </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<br />
+
+<div class="mappingtable">
+<table cellpadding="4" width="100%" border="1">
+  <caption><a id="table2-29">Table 2-29.</a>&nbsp;Mapping HTTP Endpoint Components to RDF</caption>
+  <col width="20%" /><col width="80%" />
+  <tbody>
+    <tr>
+      <th>Property</th>
+      <th>RDF Form</th>
+    </tr>                                                                       
+    <tr>
+      <td> {http authentication realm}</td>
+      <td> &lt;endpointId&gt; whttp:authenticationRealm "&lt;realm&gt;" .</td>
+    </tr>
+    <tr>
+      <td> {http authentication scheme}</td>
+      <td> &lt;endpointId&gt; whttp:authenticationScheme "&lt;scheme&gt;" .</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<br />
+
+<div class="mappingtable">
+<table cellpadding="4" width="100%" border="1">
+  <caption><a id="table2-30">Table 2-30.</a>&nbsp;Mapping HTTP Header Block Components to RDF</caption>
+  <col width="20%" /><col width="80%" />
+  <tbody>
+    <tr>
+      <th>Property</th>
+      <th>RDF Form</th>
+    </tr>                                                                       
+    <tr>
+      <td>&nbsp;</td>
+      <td> <em>(id generated per <a href="http://www.w3.org/TR/wsdl20-adjuncts/#http-headers-decl-fragid">IRI Identification Of A HTTP Header component</a>)</em><br/>
+           &lt;id&gt; rdf:type whttp:HTTPHeader .</td>
+    </tr>                                                                       
+    <tr>
+      <td> {required}</td>
+      <td> <em>(for required)</em> &lt;parentComponentId&gt; whttp:requiresHeader &lt;id&gt; .<br/>
+           <em>(for not required)</em> &lt;parentComponentId&gt; whttp:offersHeader &lt;id&gt; .</td>
+    </tr>
+    <tr>
+      <td> {type definition}</td>
+      <td> &lt;id&gt; wsdl:typeDefinition &lt;qnameId&gt; .<br/>
+           <em>(for qname mapping see <a href="#table2-2">Table 2-2</a>)</em> </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+<h2 id="example">3. Example WSDL document in RDF form</h2>
+
+<p>The following is a listing of the RDF form of the WSDL
+description of the initial GreatH Web Service (listed as example 2-1) from
+the WSDL&nbsp;2.0 primer (in triple notation):</p>
+
+<pre class="example">
+@prefix rdfs:    &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .
+@prefix sawsdl:  &lt;http://www.w3.org/ns/sawsdl#&gt; .
+@prefix whttp:   &lt;http://www.w3.org/ns/wsdl/http#&gt; .
+@prefix wsdl:    &lt;http://www.w3.org/ns/wsdl-rdf#&gt; .
+@prefix wsdlx:   &lt;http://www.w3.org/ns/wsdl-extensions#&gt; .
+@prefix wsoap:   &lt;http://www.w3.org/ns/wsdl/soap#&gt; .
+
+
+&lt;http://greath.example.com/2004/wsdl/resSvc#wsdl.description()&gt;
+      a     wsdl:Description ;
+      wsdl:interface 
+            &lt;http://greath.example.com/2004/wsdl/resSvc#wsdl.interface(reservationInterface)&gt; ;
+      wsdl:binding 
+            &lt;http://greath.example.com/2004/wsdl/resSvc#wsdl.binding(reservationSOAPBinding)&gt; ;
+      wsdl:service &lt;http://greath.example.com/2004/wsdl/resSvc#wsdl.service(reservationService)&gt; .
+
+
+
+&lt;http://greath.example.com/2004/wsdl/resSvc#wsdl.interface(reservationInterface)&gt;
+      a     wsdl:Interface ;
+      rdfs:label "reservationInterface" ;
+      wsdl:interfaceOperation 
+            &lt;http://greath.example.com/2004/wsdl/resSvc#wsdl.interfaceOperation(reservationInterface/opCheckAvailability)&gt; ;
+      wsdl:interfaceFault 
+            &lt;http://greath.example.com/2004/wsdl/resSvc#wsdl.interfaceFault(reservationInterface/invalidDataFault)&gt; .
+
+&lt;http://greath.example.com/2004/wsdl/resSvc#wsdl.interfaceOperation(reservationInterface/opCheckAvailability)&gt;
+      a     wsdl:InterfaceOperation ;
+      rdfs:label "opCheckAvailability" ;
+      sawsdl:modelReference wsdlx:SafeInteraction ;
+      wsdl:interfaceMessageReference 
+            &lt;http://greath.example.com/2004/wsdl/resSvc#wsdl.interfaceMessageReference(reservationInterface/opCheckAvailability/In)&gt; ,
+            &lt;http://greath.example.com/2004/wsdl/resSvc#wsdl.interfaceMessageReference(reservationInterface/opCheckAvailability/Out)&gt; ; 
+      wsdl:interfaceFaultReference 
+            &lt;http://greath.example.com/2004/wsdl/resSvc#wsdl.interfaceFaultReference(reservationInterface/opCheckAvailability/Out/invalidDataFault)&gt; ;
+      wsdl:messageExchangePattern &lt;http://www.w3.org/ns/wsdl/in-out&gt; ;
+      wsdl:operationStyle &lt;http://www.w3.org/ns/wsdl/style/iri&gt; .
+
+&lt;http://greath.example.com/2004/wsdl/resSvc#wsdl.interfaceMessageReference(reservationInterface/opCheckAvailability/In)&gt;
+      a     wsdl:InterfaceMessageReference , wsdl:InputMessage ;
+      wsdl:elementDeclaration &lt;urn:uuid:ead76f4f-f5bc-4ca7-af8c-460a9c99fa53&gt; ;
+      wsdl:messageContentModel wsdl:ElementContent ;
+      wsdl:messageLabel &lt;http://www.w3.org/ns/wsdl/in-out#In&gt; .
+
+&lt;urn:uuid:ead76f4f-f5bc-4ca7-af8c-460a9c99fa53&gt;
+      a     wsdl:QName ;
+      wsdl:localName "checkAvailability" ;
+      wsdl:namespace &lt;http://greath.example.com/2004/schemas/resSvc&gt; .
+
+&lt;http://greath.example.com/2004/wsdl/resSvc#wsdl.interfaceMessageReference(reservationInterface/opCheckAvailability/Out)&gt;
+      a     wsdl:InterfaceMessageReference , wsdl:OutputMessage ;
+      wsdl:elementDeclaration &lt;urn:uuid:3066fc8c-d060-4bc5-a479-44d752de54ac&gt; ;
+      wsdl:messageContentModel wsdl:ElementContent ;
+      wsdl:messageLabel &lt;http://www.w3.org/ns/wsdl/in-out#Out&gt; .
+
+&lt;urn:uuid:3066fc8c-d060-4bc5-a479-44d752de54ac&gt;
+      a     wsdl:QName ;
+      wsdl:localName "checkAvailabilityResponse" ;
+      wsdl:namespace &lt;http://greath.example.com/2004/schemas/resSvc&gt; .
+
+&lt;http://greath.example.com/2004/wsdl/resSvc#wsdl.interfaceFaultReference(reservationInterface/opCheckAvailability/Out/invalidDataFault)&gt;
+      a     wsdl:InterfaceFaultReference , wsdl:OutputMessage ;
+      wsdl:interfaceFault 
+            &lt;http://greath.example.com/2004/wsdl/resSvc#wsdl.interfaceFault(reservationInterface/invalidDataFault)&gt; ;
+      wsdl:messageLabel &lt;http://www.w3.org/ns/wsdl/in-out#Out&gt; .
+
+&lt;http://greath.example.com/2004/wsdl/resSvc#wsdl.interfaceFault(reservationInterface/invalidDataFault)&gt;
+      a     wsdl:InterfaceFault ;
+      rdfs:label "invalidDataFault" ;
+      wsdl:elementDeclaration &lt;urn:uuid:2e72002d-9472-4c4a-a5b8-c6614b609355&gt; ;
+      wsdl:messageContentModel wsdl:ElementContent .
+
+&lt;urn:uuid:2e72002d-9472-4c4a-a5b8-c6614b609355&gt;
+      a     wsdl:QName ;
+      wsdl:localName "invalidDataError" ;
+      wsdl:namespace &lt;http://greath.example.com/2004/schemas/resSvc&gt; .
+
+
+
+&lt;http://greath.example.com/2004/wsdl/resSvc#wsdl.binding(reservationSOAPBinding)&gt;
+      a     wsdl:Binding , &lt;http://www.w3.org/ns/wsdl/soap&gt; ;
+      rdfs:label "reservationSOAPBinding" ;
+      wsdl:binds 
+            &lt;http://greath.example.com/2004/wsdl/resSvc#wsdl.interface(reservationInterface)&gt; ;
+      wsdl:bindingOperation 
+            &lt;http://greath.example.com/2004/wsdl/resSvc#wsdl.bindingOperation(reservationSOAPBinding/opCheckAvailability)&gt; ;
+      wsdl:bindingFault 
+            &lt;http://greath.example.com/2004/wsdl/resSvc#wsdl.bindingFault(reservationSOAPBinding/invalidDataFault)&gt; ;
+      whttp:defaultQueryParameterSeparator "&amp;" ;
+      wsoap:protocol &lt;http://www.w3.org/2003/05/soap/bindings/HTTP/&gt; ;
+      wsoap:version "1.2" .
+
+&lt;http://greath.example.com/2004/wsdl/resSvc#wsdl.bindingOperation(reservationSOAPBinding/opCheckAvailability)&gt;
+      a     wsdl:BindingOperation ;
+      wsdl:binds 
+            &lt;http://greath.example.com/2004/wsdl/resSvc#wsdl.interfaceOperation(reservationInterface/opCheckAvailability)&gt; ;
+      wsoap:soapMEP &lt;http://www.w3.org/2003/05/soap/mep/soap-response&gt; .
+
+&lt;http://greath.example.com/2004/wsdl/resSvc#wsdl.bindingFault(reservationSOAPBinding/invalidDataFault)&gt;
+      a     wsdl:BindingFault ;
+      wsdl:binds 
+            &lt;http://greath.example.com/2004/wsdl/resSvc#wsdl.interfaceFault(reservationInterface/invalidDataFault)&gt; ;
+      wsoap:faultCode &lt;urn:uuid:2fe62e8f-154a-4d6d-ae16-c8c062c5c60b&gt; .
+
+&lt;urn:uuid:2fe62e8f-154a-4d6d-ae16-c8c062c5c60b&gt;
+      a     wsdl:QName ;
+      wsdl:localName "Sender" ;
+      wsdl:namespace &lt;http://www.w3.org/2003/05/soap-envelope&gt; .
+
+
+
+&lt;http://greath.example.com/2004/wsdl/resSvc#wsdl.service(reservationService)&gt;
+      a     wsdl:Service ;
+      rdfs:label "reservationService" ;
+      wsdl:endpoint 
+            &lt;http://greath.example.com/2004/wsdl/resSvc#wsdl.endpoint(reservationService/reservationEndpoint)&gt; ;
+      wsdl:implements 
+            &lt;http://greath.example.com/2004/wsdl/resSvc#wsdl.interface(reservationInterface)&gt; .
+
+&lt;http://greath.example.com/2004/wsdl/resSvc#wsdl.endpoint(reservationService/reservationEndpoint)&gt;
+      a     wsdl:Endpoint ;
+      rdfs:label "reservationEndpoint" ;
+      wsdl:address &lt;http://greath.example.com/2004/reservation&gt; ;
+      wsdl:usesBinding 
+            &lt;http://greath.example.com/2004/wsdl/resSvc#wsdl.binding(reservationSOAPBinding)&gt; .
+</pre>
+
+<h2 id="modelingdiffs">4. Differences from the WSDL Component Model
+(Non-Normative)</h2>
+
+<p>WSDL defines a component model which consists of components, component
+properties and sets of components. This document supplies an ontology (i.e.,
+a set of classes, properties, datatypes, and distinguished individuals) for
+representing WSDL data. This ontology contains axioms which express some of
+the constraints the WSDL specification imposes on legal sets of WSDL
+components whether indirectly (via the XML Schema constraints on the infoset
+which canonically encodes WSDL component models) or directly (via the natural
+language of the WSDL specs, or the corresponding Z formalization of that
+language).</p>
+
+<p>RDF, RDFS, and OWL are all less (and differently) expressive than the
+subset of Z used to formalize the WSDL specification, and are designed for
+different purposes. In a nutshell, RDF, RDFS, and OWL are relatively small
+fragments of first order logic, whereas Z encompasses all of first order
+logic plus set theory. Z supports <em>validation</em> of component models,
+that is, the acceptance or rejection of component models. This includes type
+checking, consistency checking, and the verification of integrity
+constraints. The current set of Semantic Web languages focus on inference
+and integration of information. To take a simple example, if a Z
+checkable representation of an Interface component lacks a {name} component
+property, a Z based validator will complain that that representation is ill
+formed (given the WSDL specification). An OWL reasoner encountering it will, all
+other things being equal, conclude that there <em>is</em> such a
+property, even though the reasoner has not seen it yet. In general, Semantic
+Web based descriptions of Web services using the WSDL conceptual framework
+tend to be looser than what the WSDL specification prescribes.</p>
+
+<p>This difference effectively introduces two classes of documents that
+use the ontology from this document:</p>
+
+<ol>
+  <li>RDF documents resulting from translating valid WSDL documents,</li>
+  <li>arbitrary RDF documents written using the WSDL ontology.</li>
+</ol>
+
+<p>This document focuses on the mapping from valid WSDL component
+models, and this section in particular talks about differences between a
+valid component model and its RDF representation.</p>
+
+<p>However, we must note that arbitrary RDF, RDFS, or OWL documents that use the
+WSDL ontology may describe component models that are incomplete or even
+illegal. For example, from the point of view of arbitrary RDF documents that
+use the WSDL ontology, interfaces do not need to belong to any Description.
+Therefore, the subsections also contain <i>notes about arbitrary RDF
+documents</i> detailing further differences that an application consuming
+WSDL RDF data can encounter in documents that are not the direct result of
+mapping a valid WSDL document into its RDF form.
+The last subsection (<a href="#diff-restrictions">section 4.5</a>) then describes
+those constraints unenforced by the WSDL, that do not fit in any other
+subsection above it.</p>
+
+<h3 id="diff-naming">4.1 Component naming</h3>
+
+<p>In the RDF representation, all WSDL components are identified with their
+respective component designators (see [<a href="#WSDL-PART1">WSDL&nbsp;2.0 Core
+Language</a>] appendix C <a
+href="http://www.w3.org/TR/2007/REC-wsdl20-20070626/#wsdl-iri-references">IRI-References
+for WSDL&nbsp;2.0
+Components</a>), which are URIs generally
+constructed from the name and namespace of the component and from its parent
+component hierarchy. The original namespaces are not explicitly
+modeled in the RDF representation, which intends to convey the
+semantic meaning of the WSDL component, not the WSDL serialization details;
+the local names, however, are captured as <code
+class="wsdl-rdf">rdfs:label</code>.</p>
+
+<p>In some situations we can see the RDF representation to be used as an
+exchange syntax for WSDL. While it is not an intended use, it is possible that
+in some systems the XML syntax will be lost or inaccessibly hidden in several
+layers of processing software. Such an application that only
+receives the RDF form of WSDL can still need to reconstruct the original
+component names, for example if it uses an API that identifies WSDL
+operations by their parent interface's QName and the operation name. </p>
+
+<p>The component designators put the names of the components in the fragment
+identifier part of the resulting URIs. On the Web (see [<a
+href="#webarch">Web Architecture</a>]), the
+interpretation of fragment identifiers is defined by the MIME media type of
+the representation of the resource identified by the URI without the fragment
+identifier. In our particular case, we expect that the namespace URI
+identifies an <code>application/wsdl+xml</code> document so that the constructed component
+designator fragment identifiers can have their intended meaning. An
+application working with the RDF representation of WSDL can reconstruct the
+names of the components by reversing the process that resulted in the
+component designator, for example for a URI
+<code>http://example.com/service#wsdl.interfaceOperation(TicketInterface/BookTicket)</code> we
+could reconstruct that the name of the interface is "TicketInterface" in the
+namespace <code>http://example.com/service</code> and that the operation is named
+"BookTicket".</p>
+
+<p>Such decomposition is only valid, though, if the URI
+<code>http://example.com/service</code> identifies a document of MIME media
+type <code>application/wsdl+xml</code>, as explained above. Checking the MIME
+media type of every resource identified by a URI in an RDF graph could be
+prohibitively slow for some applications, therefore it may be practical
+(albeit not entirely correct) simply to assume the correct media type and
+deconstruct the component names without the preceding media type check. </p>
+
+<p><b>Note about arbitrary RDF documents:</b> in general,
+it is possible to assert about any resource (identified by any
+kind of URI) that it is, for example, a WSDL operation, and if an application
+tries to deconstruct that URI according to WSDL component designator
+specification, it may find that the URI does not conform to the syntax (e.g.
+<code>http://example.com/service/operation)</code> or, by accident or malice, it does
+conform to the syntax but does not contain the correct data (e.g.
+<code>http://example.com/service#wsdl.interface(TicketInterface)</code> that is marked to
+be a WSDL operation, not an interface as it would seem).</p>
+
+
+<h3 id="diff-doc">4.2 Documents, imports and includes</h3>
+
+<p>In the XML syntax for WSDL, documents can be included and imported,
+allowing for modularization while keeping the ability to validate that a WSDL
+document (plus all the includes and imports) does not use any unknown
+components. Such modularization is lost when the WSDL files are parsed into a
+component model, therefore a straigtforward transformation of such a
+component model into RDF will result in a single RDF document.</p>
+
+<p>As one exception, all references to element declarations and type
+definitions from XML Schema are done in the RDF representation by QName and
+we expect the applications processing this representation to have means of
+locating the appropriate descriptions for these QNames. We do not model XML
+Schema (or any other) type definitions and element declarations in this ontology.</p>
+
+<p><b>Note about arbitrary RDF documents:</b> RDF data can be split into any
+number of pieces, which can be put together by the processing application as
+appropriate. If a piece of WSDL/RDF description uses an unknown component
+(e.g. an interface described in one document may extend other interfaces, not
+described in this document), the application may, if necessary, attempt to
+locate the description of the unknown component, for example using its
+identifier IRI. Note that RDF does not provide a standard generic way of
+including external data, so any inclusion is application-specific.</p>
+
+<p>Additionally, a single RDF document may also contain multiple unrelated
+Descriptions, that is, it may be an aggregation of many unrelated WSDL
+documents, and this may have unexpected results if the aggregated WSDL data
+contains conflicts, i.e. different definitions of components with the same
+name; especially when dealing with different versions of descriptions of the
+same entities.</p>
+
+<h3 id="diff-references">4.3 Component references</h3>
+
+<p>In the XML representation of WSDL, components are referred to using their
+names, and extensibility points usually use IRIs to identify things. All
+these references are, from XML point of view, literals. In the RDF
+representation, on the other hand, most references are direct, using the
+particular identifier IRIs, not represented as literals. For example, most
+instances representing components are identified with their component
+designators (see [<a href="#WSDL-PART1">WSDL&nbsp;2.0 Core
+Language</a>] appendix C <a
+href="http://www.w3.org/TR/2007/REC-wsdl20-20070626/#wsdl-iri-references">IRI-References
+for WSDL&nbsp;2.0
+Components</a>) and all references point directly there &mdash; an
+operation within a binding points to its respective interface operation using
+the interface operation component designator IRI, whereas in the XML syntax
+the operations are correlated using the operation QName.</p>
+
+<p>As a notable exception, references to type definitions and element
+declarations (usually from XML Schema) are represented as instances of
+our class <code class="wsdl-rdf">QName</code>, with local part represented as literal and the
+namespace as a resource. This might change if a standard RDF representation for XML
+Schema element declarations and type definitions is developed &mdash; then
+direct references to the URIs used in that representation would be used.</p>
+
+<p>Additionally, the SOAP Module component in WSDL is really only a
+pointer: it has a literal property {ref} that contains an IRI identifying the
+SOAP module, and a property {required} that indicates whether the use of that
+SOAP module is required. While this component can contain documentation and
+extensions in WSDL, we chose to represent it as a direct link from the parent
+component to the target module, as the indirection seems to add very little
+value and introduces naming difficulties &mdash; we would have to have class
+for the SOAP Module component which would contain a pointer to SOAP Module.
+The requiredness of the SOAP Module is expressed in the type of the property
+that points to the module &mdash; the parent component either <code
+class="wsdl-rdf">offersSOAPModule</code> or <code
+class="wsdl-rdf">requiresSOAPModule</code>.</p>
+
+<h3 id="diff-propsasclasses">4.4 Representing properties with classes</h3>
+
+<p>In certain cases the RDF mapping introduces classes where the WSDL&nbsp;2.0
+component model has a property with a limited number of values. For instance,
+instead of having a direction property on message and fault references, with
+the values either "in" or "out", we introduce two classes,
+<code class="wsdl-rdf">InputMessage</code> and <code class="wsdl-rdf">OutputMessage</code>, and the direction
+of a particular message or fault reference is then indicated by belonging to
+either of these classes. Similarly, binding types are classes and the type of
+a particular binding is indicated by its belonging to that class; we
+predefine the two classes for the two bindings that are part of WSDL 2.
+</p>
+
+<h3 id="diff-restrictions">4.5 Other WSDL restrictions not enforced by the
+ontology</h3>
+
+<p>As already mentioned, the validation-oriented WSDL specification and
+especially its Z formalization capture a number of restrictions and
+limitations that are not expressed in the RDF ontology. None of these
+restrictions or limitations can be violated when a valid WSDL document is
+mapped into its RDF form. When the RDF data is directly manipulated, for
+example merged with other RDF data (for example other WSDL documents
+mapped into RDF), or when new data is created that uses the WSDL ontology,
+further significant WSDL constraints might be violated:</p>
+
+<ul>
+  <li>In WSDL, components of different types do not overlap, e.g. an
+  interface is always a different thing from a binding (even if they have the
+  same name), but an arbitrary RDF document can assert that one resource is
+  both an interface and a binding.</li>
+  <li>In WSDL, a Description cannot directly contain interface operations or
+  endpoints, for example; an endpoint is always in a service and interface
+  operations are always in interfaces. The ontology does not enforce these
+  restrictions so an arbitrary RDF file that is consistent with the
+  ontology may describe a broken hierarchy of components.</li>
+</ul>
+
+<h2 id="references">5. References</h2>
+
+<dl>
+
+<dt class="label"><a name="owl" id="owl"></a>[OWL]</dt>
+<dd><cite><a
+href="http://www.w3.org/TR/2004/REC-owl-ref-20040210/">OWL Web
+Ontology Language Reference</a></cite>, M. Dean and G. Schreiber,
+Editors.  World Wide Web Consortium, 10 February 2004 . This version
+of OWL Web Ontology Language Reference Recommendation is
+http://www.w3.org/TR/2004/REC-owl-ref-20040210/. The <a
+href='http://www.w3.org/TR/owl-ref/'>latest version of OWL Web Ontology Language Reference</a> is
+available at http://www.w3.org/TR/owl-ref/</dd>
+
+<dt class="label"><a name="rdf" id="rdf"></a>[RDF]</dt>
+<dd><cite><a
+href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/">Resource
+Description Framework (RDF): Concepts and Abstract Syntax</a></cite>,
+G. Klyne and J. J. Carroll, Editors. World Wide Web Consortium,
+10 February 2004. This version of Resource Description Framework
+(RDF): Concepts and Abstract Syntax is
+http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/. The <a
+href='http://www.w3.org/TR/rdf-concepts/'>lastest version of Resource
+Description Framework (RDF): Concepts and Abstract Syntax</a> is
+available at http://www.w3.org/TR/rdf-concepts/</dd>
+
+<dt class="label"><a name="SAWSDL" id="SAWSDL"></a>[SAWSDL]</dt>
+<dd><cite><a href="http://www.w3.org/TR/2007/WD-sawsdl-20070410/">Semantic Annotations for WSDL
+and XML Schema</a></cite>, J. Farrell and H. Lausen, Editors. World Wide Web
+Consortium, 10 April 2007. This version of the "Semantic Annotations for WSDL
+and XML Schema" Specification is available is available at
+http://www.w3.org/TR/2007/WD-sawsdl-20070410/. The <a
+href="http://www.w3.org/TR/sawsdl/">latest version of "Semantic Annotations for WSDL
+and XML Schema"</a> is available at
+http://www.w3.org/TR/sawsdl/.</dd>
+
+<dt class="label"><a name="webarch" id="webarch"></a>[Web
+Architecture]</dt>
+<dd><cite><a href=
+"http://www.w3.org/TR/2004/REC-webarch-20041215/">Architecture of the
+World Wide Web, Volume One</a></cite>, I. Jacobs and N.  Walsh,
+Editors. World Wide Web Consortium, 15 December 2004. This version of
+the Architecture of the World Wide Web, Volume One Recommendation is
+http://www.w3.org/TR/2004/REC-webarch-20041215/. The <a
+href='http://www.w3.org/TR/webarch/'>lastest version of Architecture of the World Wide Web, Volume
+One</a> is available at http://www.w3.org/TR/webarch/</dd>
+
+<dt class="label"><a name="WSDL-PART1" id="WSDL-PART1"></a>[WSDL&nbsp;2.0 Core Language]</dt>
+<dd><cite><a href="http://www.w3.org/TR/2007/REC-wsdl20-20070626/">Web Services
+Description Language (WSDL) Version&nbsp;2.0 Part 1: Core
+Language</a></cite>, R. Chinnici, J-J. Moreau, A. Ryman, S.
+Weerawarana, Editors. World Wide Web Consortium, 23 May 2007.
+This version of the "Web Services Description Language (WSDL)
+Version&nbsp;2.0 Part 1: Core Language" Specification is available is
+available at http://www.w3.org/TR/2007/REC-wsdl20-20070626. The
+<a href="http://www.w3.org/TR/wsdl20/">latest version of "Web
+Services Description Language (WSDL) Version&nbsp;2.0 Part 1: Core
+Language"</a> is available at http://www.w3.org/TR/wsdl20/.</dd>
+
+<dt class="label"><a name="WSDL-PART2" id="WSDL-PART2"></a>[WSDL&nbsp;2.0 Adjuncts]</dt>
+<dd><cite><a href=
+"http://www.w3.org/TR/2007/REC-wsdl20-adjuncts-20070626/">Web
+Services Description Language (WSDL) Version&nbsp;2.0 Part 2:
+Adjuncts</a></cite>, R. Chinnici, H. Haas, A. Lewis, J-J. Moreau,
+D. Orchard, S. Weerawarana, Editors. World Wide Web Consortium, 23
+May 2007. This version of the "Web Services Description
+Language (WSDL) Version&nbsp;2.0 Part 2: Adjuncts" Specification is
+available at http://www.w3.org/TR/2007/REC-wsdl20-adjuncts-20070626.
+The <a href="http://www.w3.org/TR/wsdl20-adjuncts/">latest version
+of "Web Services Description Language (WSDL) Version&nbsp;2.0 Part 2:
+Adjuncts"</a> is available at
+http://www.w3.org/TR/wsdl20-adjuncts/.</dd>
+
+<dt class="label"><a name="WSDL-MEPS" id="WSDL-MEPS"></a>[WSDL&nbsp;2.0
+Additional&nbsp;MEPs]</dt>
+<dd><cite><a href=
+"http://www.w3.org/TR/2007/NOTE-wsdl20-additional-meps-20070626/">Web
+Services Description Language (WSDL) Version&nbsp;2.0:
+Additional MEPs</a></cite>, A. Lewis, Editor. World Wide Web Consortium, 23
+May 2007. This version of the "Web Services Description
+Language (WSDL) Version&nbsp;2.0: Additional MEPs" Specification is
+available at http://www.w3.org/TR/2007/NOTE-wsdl20-additional-meps-20070626.
+The <a href="http://www.w3.org/TR/wsdl20-additional-meps/">latest version
+of "Web Services Description Language (WSDL) Version&nbsp;2.0:
+Additional MEPs"</a> is available at
+http://www.w3.org/TR/wsdl20-additional-meps/.</dd>
+
+<dt class="label"><a name="XMLNS" id="XMLNS"></a>[XML
+Namespaces]</dt>
+<dd><cite><a href=
+"http://www.w3.org/TR/2006/REC-xml-names-20060816/">Namespaces in
+XML 1.0 (Second Edition)</a></cite>, T. Bray, D. Hollander, A. Layman, and R. Tobin, Editors.
+World Wide Web Consortium, 14 January 1999, revised 16 August 2006. This version of the
+Namespaces in XML Recommendation is
+http://www.w3.org/TR/2006/REC-xml-names-20060816. The <a href=
+"http://www.w3.org/TR/xml-names">latest version of Namespaces
+in XML</a> is available at http://www.w3.org/TR/xml-names.</dd>
+</dl>
+
+
+<h2 id="ontologysource">Appendix A: The OWL Ontology Source</h2>
+
+<p>Note that the ontology is also available in a <a
+href="wsdl20.rdf">separate RDF file</a>.</p>
+
+
+<pre class="example">
+&lt;rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:wsdl="http://www.w3.org/ns/wsdl-rdf#"
+         xmlns:xml="http://www.w3.org/XML/1998/namespace"
+         xml:base="http://www.w3.org/ns/wsdl-rdf"&gt;
+
+
+&lt;owl:Ontology rdf:about=""&gt;
+&lt;/owl:Ontology&gt;
+
+&lt;owl:Class rdf:about="#Binding"&gt;
+  &lt;rdfs:comment&gt;The type of a binding is indicated with rdf:type&lt;/rdfs:comment&gt;
+&lt;/owl:Class&gt;
+
+&lt;owl:Class rdf:about="#BindingFault"&gt;
+&lt;/owl:Class&gt;
+
+&lt;owl:Class rdf:about="#BindingFaultReference"&gt;
+&lt;/owl:Class&gt;
+
+&lt;owl:Class rdf:about="#BindingMessageReference"&gt;
+&lt;/owl:Class&gt;
+
+&lt;owl:Class rdf:about="#BindingOperation"&gt;
+&lt;/owl:Class&gt;
+
+&lt;owl:Class rdf:about="#Description"&gt;
+&lt;/owl:Class&gt;
+
+&lt;owl:Class rdf:about="#Endpoint"&gt;
+  &lt;rdfs:subClassOf&gt;
+    &lt;owl:Restriction&gt;
+      &lt;owl:onProperty rdf:resource="#address"/&gt;
+      &lt;owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"&gt;1&lt;/owl:maxCardinality&gt;
+    &lt;/owl:Restriction&gt;
+  &lt;/rdfs:subClassOf&gt;
+  &lt;rdfs:subClassOf&gt;
+    &lt;owl:Restriction&gt;
+      &lt;owl:onProperty rdf:resource="#usesBinding"/&gt;
+      &lt;owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"&gt;1&lt;/owl:cardinality&gt;
+    &lt;/owl:Restriction&gt;
+  &lt;/rdfs:subClassOf&gt;
+&lt;/owl:Class&gt;
+
+&lt;owl:Class rdf:about="#Interface"&gt;
+  &lt;rdfs:label&gt;WDSL Interface&lt;/rdfs:label&gt;
+&lt;/owl:Class&gt;
+
+&lt;owl:Class rdf:about="#InterfaceFault"&gt;
+  &lt;rdfs:subClassOf&gt;
+    &lt;owl:Restriction&gt;
+      &lt;owl:onProperty rdf:resource="#messageContentModel"/&gt;
+      &lt;owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"&gt;1&lt;/owl:cardinality&gt;
+    &lt;/owl:Restriction&gt;
+  &lt;/rdfs:subClassOf&gt;
+&lt;/owl:Class&gt;
+
+&lt;owl:Class rdf:about="#InterfaceFaultReference"&gt;
+&lt;/owl:Class&gt;
+
+&lt;owl:Class rdf:about="#InterfaceMessageReference"&gt;
+  &lt;rdfs:subClassOf&gt;
+    &lt;owl:Restriction&gt;
+      &lt;owl:onProperty rdf:resource="#messageContentModel"/&gt;
+      &lt;owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"&gt;1&lt;/owl:cardinality&gt;
+    &lt;/owl:Restriction&gt;
+  &lt;/rdfs:subClassOf&gt;
+&lt;/owl:Class&gt;
+
+&lt;owl:Class rdf:about="#InputMessage"&gt;
+  &lt;rdfs:comment&gt;To be used by message references and fault references instead of direction property&lt;/rdfs:comment&gt;
+  &lt;owl:disjointWith rdf:resource="#OutputMessage"/&gt;
+&lt;/owl:Class&gt;
+
+&lt;owl:Class rdf:about="#OutputMessage"&gt;
+  &lt;rdfs:comment&gt;To be used by message references and fault references instead of direction property&lt;/rdfs:comment&gt;
+&lt;/owl:Class&gt;
+
+&lt;owl:Class rdf:about="#InterfaceOperation"&gt;
+  &lt;rdfs:subClassOf&gt;
+    &lt;owl:Restriction&gt;
+      &lt;owl:onProperty rdf:resource="#messageExchangePattern"/&gt;
+      &lt;owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"&gt;1&lt;/owl:cardinality&gt;
+    &lt;/owl:Restriction&gt;
+  &lt;/rdfs:subClassOf&gt;
+&lt;/owl:Class&gt;
+
+&lt;owl:Class rdf:about="#Service"&gt;
+  &lt;rdfs:subClassOf&gt;
+    &lt;owl:Restriction&gt;
+      &lt;owl:onProperty rdf:resource="#implements"/&gt;
+      &lt;owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"&gt;1&lt;/owl:cardinality&gt;
+    &lt;/owl:Restriction&gt;
+  &lt;/rdfs:subClassOf&gt;
+&lt;/owl:Class&gt;
+
+&lt;owl:Class rdf:about="#MessageExchangePattern"&gt;
+&lt;/owl:Class&gt;
+
+&lt;owl:Class rdf:about="#MessageLabel"&gt;
+&lt;/owl:Class&gt;
+
+&lt;owl:ObjectProperty rdf:about="#definesMessageLabel"&gt;
+  &lt;rdfs:domain rdf:resource="#MessageExchangePattern"/&gt;
+  &lt;rdfs:range  rdf:resource="#MessageLabel"/&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:ObjectProperty rdf:about="#address"&gt;
+  &lt;rdfs:domain rdf:resource="#Endpoint"/&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:ObjectProperty rdf:about="#binding"&gt;
+  &lt;rdfs:range  rdf:resource="#Binding"/&gt;
+  &lt;rdfs:comment&gt;To be used for pointing to a Binding from Description&lt;/rdfs:comment&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:ObjectProperty rdf:about="#usesBinding"&gt;
+  &lt;rdfs:domain rdf:resource="#Endpoint"/&gt;
+  &lt;rdfs:range  rdf:resource="#Binding"/&gt;
+  &lt;rdfs:comment&gt;To be used for pointing to a Binding from Endpoint&lt;/rdfs:comment&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:ObjectProperty rdf:about="#bindingFault"&gt;
+  &lt;rdfs:range  rdf:resource="#BindingFault"/&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:ObjectProperty rdf:about="#bindingOperation"&gt;
+  &lt;rdfs:range  rdf:resource="#BindingOperation"/&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:ObjectProperty rdf:about="#bindingMessageReference"&gt; 
+  &lt;rdfs:range  rdf:resource="#BindingMessageReference"/&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:ObjectProperty rdf:about="#bindingFaultReference"&gt; 
+  &lt;rdfs:range  rdf:resource="#BindingFaultReference"/&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:ObjectProperty rdf:about="#typeDefinition"&gt;
+  &lt;rdfs:range  rdf:resource="#QName"/&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:ObjectProperty rdf:about="#elementDeclaration"&gt;
+  &lt;rdfs:range  rdf:resource="#QName"/&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:ObjectProperty rdf:about="#endpoint"&gt; 
+  &lt;rdfs:range  rdf:resource="#Endpoint"/&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:ObjectProperty rdf:about="#extends"&gt;
+  &lt;rdfs:comment&gt;
+    points from an interface to an interface directly extended by it
+  &lt;/rdfs:comment&gt;
+  &lt;rdfs:range  rdf:resource="#Interface"/&gt;
+  &lt;rdfs:domain rdf:resource="#Interface"/&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:ObjectProperty rdf:about="#implements"&gt; 
+  &lt;rdfs:comment&gt;
+    points from a service to the interface that the service implements
+  &lt;/rdfs:comment&gt;
+  &lt;rdfs:domain rdf:resource="#Service"/&gt;
+  &lt;rdfs:range  rdf:resource="#Interface"/&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:Class rdf:about="#QName"&gt;
+  &lt;rdfs:subClassOf&gt;
+    &lt;owl:Restriction&gt;
+      &lt;owl:onProperty rdf:resource="#localName"/&gt;
+      &lt;owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"&gt;1&lt;/owl:cardinality&gt;
+    &lt;/owl:Restriction&gt;
+  &lt;/rdfs:subClassOf&gt;
+  &lt;rdfs:subClassOf&gt;
+    &lt;owl:Restriction&gt;
+      &lt;owl:onProperty rdf:resource="#namespace"/&gt;
+      &lt;owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"&gt;1&lt;/owl:cardinality&gt;
+    &lt;/owl:Restriction&gt;
+  &lt;/rdfs:subClassOf&gt;
+&lt;/owl:Class&gt;
+
+&lt;owl:DatatypeProperty rdf:about="#localName"&gt; 
+  &lt;rdfs:range  rdf:resource="http://www.w3.org/2001/XMLSchema#NCName"/&gt;
+&lt;/owl:DatatypeProperty&gt;
+
+&lt;owl:ObjectProperty rdf:about="#namespace"&gt; 
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:ObjectProperty rdf:about="#interface"&gt;
+  &lt;rdfs:range  rdf:resource="#Interface"/&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:ObjectProperty rdf:about="#interfaceFault"&gt;
+  &lt;rdfs:range  rdf:resource="#InterfaceFault"/&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:ObjectProperty rdf:about="#interfaceFaultReference"&gt;
+  &lt;rdfs:range  rdf:resource="#InterfaceFaultReference"/&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:ObjectProperty rdf:about="#interfaceMessageReference"&gt;
+  &lt;rdfs:range  rdf:resource="#InterfaceMessageReference"/&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:ObjectProperty rdf:about="#binds"&gt;
+  &lt;rdfs:comment&gt;
+    points from a binding component (or any sub-component) to the respective
+    interface component (or sub-component)
+  &lt;/rdfs:comment&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:ObjectProperty rdf:about="#operationStyle"&gt;
+  &lt;rdfs:domain rdf:resource="#InterfaceOperation"/&gt;
+  &lt;rdfs:range  rdf:resource="#OperationStyle"/&gt;
+  &lt;rdfs:comment&gt;
+    points to one style this operation conforms to (can be used multiple times
+    to point to multiple styles)
+  &lt;/rdfs:comment&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:Class rdf:about="#OperationStyle"&gt;
+&lt;/owl:Class&gt;
+
+&lt;owl:ObjectProperty rdf:about="#interfaceOperation"&gt;
+  &lt;rdfs:range  rdf:resource="#InterfaceOperation"/&gt;
+  &lt;rdfs:comment&gt;
+    used on interface to link to an operation
+  &lt;/rdfs:comment&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:ObjectProperty rdf:about="#messageContentModel"&gt;
+  &lt;rdfs:range  rdf:resource="#MessageContentModel"/&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:Class rdf:about="#MessageContentModel"&gt;
+  &lt;owl:oneOf rdf:parseType="Collection"&gt;
+      &lt;wsdl:MessageContentModel rdf:about="#AnyContent"/&gt;
+      &lt;wsdl:MessageContentModel rdf:about="#NoContent"/&gt;
+      &lt;wsdl:MessageContentModel rdf:about="#ElementContent"/&gt;
+      &lt;wsdl:MessageContentModel rdf:about="#OtherContent"/&gt;
+  &lt;/owl:oneOf&gt;
+&lt;/owl:Class&gt;
+
+&lt;owl:ObjectProperty rdf:about="#messageExchangePattern"&gt;
+  &lt;rdfs:range  rdf:resource="#MessageExchangePattern"/&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:ObjectProperty rdf:about="#messageLabel"&gt;
+  &lt;rdfs:range  rdf:resource="#MessageLabel"/&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:ObjectProperty rdf:about="#service"&gt;
+  &lt;rdfs:range  rdf:resource="#Service"/&gt;
+&lt;/owl:ObjectProperty&gt;
+
+
+&lt;!-- part 2: message exchange patterns --&gt;
+
+&lt;owl:Class rdf:about="#NoFaults"&gt;
+  &lt;rdfs:subClassOf rdf:resource="#MessageExchangePattern" /&gt;
+  &lt;owl:disjointWith rdf:resource="#FaultReplacesMessage"/&gt;
+  &lt;owl:disjointWith rdf:resource="#MessageTriggersFault"/&gt;
+&lt;/owl:Class&gt;
+
+&lt;owl:Class rdf:about="#FaultReplacesMessage"&gt;
+  &lt;rdfs:subClassOf rdf:resource="#MessageExchangePattern" /&gt;
+  &lt;owl:disjointWith rdf:resource="#MessageTriggersFault"/&gt;
+&lt;/owl:Class&gt;
+
+&lt;owl:Class rdf:about="#MessageTriggersFault"&gt;
+  &lt;rdfs:subClassOf rdf:resource="#MessageExchangePattern" /&gt;
+&lt;/owl:Class&gt;
+
+&lt;wsdl:NoFaults rdf:about="http://www.w3.org/ns/wsdl/in-only"&gt;
+  &lt;wsdl:definesMessageLabel&gt;
+    &lt;wsdl:MessageLabel rdf:about="http://www.w3.org/ns/wsdl/in-only#In"/&gt;
+  &lt;/wsdl:definesMessageLabel&gt;
+&lt;/wsdl:NoFaults&gt;
+
+&lt;wsdl:NoFaults rdf:about="http://www.w3.org/ns/wsdl/out-only"&gt;
+  &lt;wsdl:definesMessageLabel&gt;
+    &lt;wsdl:MessageLabel rdf:about="http://www.w3.org/ns/wsdl/out-only#Out"/&gt;
+  &lt;/wsdl:definesMessageLabel&gt;
+&lt;/wsdl:NoFaults&gt;
+
+&lt;wsdl:MessageTriggersFault rdf:about="http://www.w3.org/ns/wsdl/robust-in-only"&gt;
+  &lt;wsdl:definesMessageLabel&gt;
+    &lt;wsdl:MessageLabel rdf:about="http://www.w3.org/ns/wsdl/robust-in-only#In"/&gt;
+  &lt;/wsdl:definesMessageLabel&gt;
+&lt;/wsdl:MessageTriggersFault&gt;
+
+&lt;wsdl:MessageTriggersFault rdf:about="http://www.w3.org/ns/wsdl/in-opt-out"&gt;
+  &lt;wsdl:definesMessageLabel&gt;
+    &lt;wsdl:MessageLabel rdf:about="http://www.w3.org/ns/wsdl/in-opt-out#In"/&gt;
+  &lt;/wsdl:definesMessageLabel&gt;
+  &lt;wsdl:definesMessageLabel&gt;
+    &lt;wsdl:MessageLabel rdf:about="http://www.w3.org/ns/wsdl/in-opt-out#Out"/&gt;
+  &lt;/wsdl:definesMessageLabel&gt;
+&lt;/wsdl:MessageTriggersFault&gt;
+
+&lt;wsdl:MessageTriggersFault rdf:about="http://www.w3.org/ns/wsdl/robust-out-only"&gt;
+  &lt;wsdl:definesMessageLabel&gt;
+    &lt;wsdl:MessageLabel rdf:about="http://www.w3.org/ns/wsdl/robust-out-only#Out"/&gt;
+  &lt;/wsdl:definesMessageLabel&gt;
+&lt;/wsdl:MessageTriggersFault&gt;
+
+&lt;wsdl:MessageTriggersFault rdf:about="http://www.w3.org/ns/wsdl/out-opt-in"&gt;
+  &lt;wsdl:definesMessageLabel&gt;
+    &lt;wsdl:MessageLabel rdf:about="http://www.w3.org/ns/wsdl/out-opt-in#Out"/&gt;
+  &lt;/wsdl:definesMessageLabel&gt;
+  &lt;wsdl:definesMessageLabel&gt;
+    &lt;wsdl:MessageLabel rdf:about="http://www.w3.org/ns/wsdl/out-opt-in#In"/&gt;
+  &lt;/wsdl:definesMessageLabel&gt;
+&lt;/wsdl:MessageTriggersFault&gt;
+
+&lt;wsdl:FaultReplacesMessage rdf:about="http://www.w3.org/ns/wsdl/in-out"&gt;
+  &lt;wsdl:definesMessageLabel&gt;
+    &lt;wsdl:MessageLabel rdf:about="http://www.w3.org/ns/wsdl/in-out#In"/&gt;
+  &lt;/wsdl:definesMessageLabel&gt;
+  &lt;wsdl:definesMessageLabel&gt;
+    &lt;wsdl:MessageLabel rdf:about="http://www.w3.org/ns/wsdl/in-out#Out"/&gt;
+  &lt;/wsdl:definesMessageLabel&gt;
+&lt;/wsdl:FaultReplacesMessage&gt;
+
+&lt;wsdl:FaultReplacesMessage rdf:about="http://www.w3.org/ns/wsdl/out-in"&gt;
+  &lt;wsdl:definesMessageLabel&gt;
+    &lt;wsdl:MessageLabel rdf:about="http://www.w3.org/ns/wsdl/out-in#Out"/&gt;
+  &lt;/wsdl:definesMessageLabel&gt;
+  &lt;wsdl:definesMessageLabel&gt;
+    &lt;wsdl:MessageLabel rdf:about="http://www.w3.org/ns/wsdl/out-in#In"/&gt;
+  &lt;/wsdl:definesMessageLabel&gt;
+&lt;/wsdl:FaultReplacesMessage&gt;
+
+&lt;!-- part 2: safety --&gt;
+
+&lt;owl:Class rdf:about="http://www.w3.org/ns/wsdl-extensions#SafeInteraction"&gt;
+  &lt;rdfs:comment&gt;
+    Class representing safe interactions as defined in Web Architecture at W3C.
+  &lt;/rdfs:comment&gt;
+&lt;/owl:Class&gt;
+
+&lt;!-- part 2: operation styles --&gt;
+
+&lt;wsdl:OperationStyle rdf:about="http://www.w3.org/ns/wsdl/style/rpc"&gt;
+  &lt;rdfs:comment&gt;RPC operation style&lt;/rdfs:comment&gt;
+&lt;/wsdl:OperationStyle&gt;
+
+&lt;owl:DatatypeProperty rdf:about="http://www.w3.org/ns/wsdl/rpc#signature"&gt;
+  &lt;rdfs:domain rdf:resource="#InterfaceOperation"/&gt;
+  &lt;rdfs:range  rdf:resource="http://www.w3.org/ns/wsdl/rpc#Signature"/&gt;
+&lt;/owl:DatatypeProperty&gt;
+
+&lt;owl:Class rdf:about="http://www.w3.org/ns/wsdl/rpc#Signature"&gt;
+  &lt;rdfs:comment&gt;represents an RDF signature, an ordered sequence of Argument instances&lt;/rdfs:comment&gt;
+  &lt;rdfs:subClassOf rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/&gt;
+&lt;/owl:Class&gt;
+
+&lt;owl:Class rdf:about="http://www.w3.org/ns/wsdl/rpc#Argument"&gt;
+  &lt;rdfs:comment&gt;An RPC signature argument, with elementDeclaration; 
+    the direction is indicated by the split into subclasses InArgument,
+    OutArgument, InOutArgument, ReturnArgument&lt;/rdfs:comment&gt;
+  &lt;rdfs:subClassOf&gt;
+    &lt;owl:Restriction&gt;
+      &lt;owl:onProperty rdf:resource="#elementDeclaration"/&gt;
+      &lt;owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"&gt;1&lt;/owl:cardinality&gt;
+    &lt;/owl:Restriction&gt;
+  &lt;/rdfs:subClassOf&gt;
+&lt;/owl:Class&gt;
+
+&lt;owl:Class rdf:about="http://www.w3.org/ns/wsdl/rpc#InArgument"&gt;
+  &lt;rdfs:comment&gt;An RPC signature argument, with elementDeclaration and direction #in&lt;/rdfs:comment&gt;
+  &lt;rdfs:subClassOf rdf:resource="http://www.w3.org/ns/wsdl/rpc#Argument"/&gt;
+&lt;/owl:Class&gt;
+
+&lt;owl:Class rdf:about="http://www.w3.org/ns/wsdl/rpc#OutArgument"&gt;
+  &lt;rdfs:comment&gt;An RPC signature argument, with elementDeclaration and direction #out&lt;/rdfs:comment&gt;
+  &lt;rdfs:subClassOf rdf:resource="http://www.w3.org/ns/wsdl/rpc#Argument"/&gt;
+&lt;/owl:Class&gt;
+
+&lt;owl:Class rdf:about="http://www.w3.org/ns/wsdl/rpc#InOutArgument"&gt;
+  &lt;rdfs:comment&gt;An RPC signature argument, with elementDeclaration and direction #inout&lt;/rdfs:comment&gt;
+  &lt;rdfs:subClassOf rdf:resource="http://www.w3.org/ns/wsdl/rpc#Argument"/&gt;
+&lt;/owl:Class&gt;
+
+&lt;owl:Class rdf:about="http://www.w3.org/ns/wsdl/rpc#ReturnArgument"&gt;
+  &lt;rdfs:comment&gt;An RPC signature argument, with elementDeclaration and direction #return&lt;/rdfs:comment&gt;
+  &lt;rdfs:subClassOf rdf:resource="http://www.w3.org/ns/wsdl/rpc#Argument"/&gt;
+&lt;/owl:Class&gt;
+
+&lt;wsdl:OperationStyle rdf:about="http://www.w3.org/ns/wsdl/style/iri"&gt;
+  &lt;rdfs:comment&gt;IRI operation style&lt;/rdfs:comment&gt;
+&lt;/wsdl:OperationStyle&gt;
+
+&lt;wsdl:OperationStyle rdf:about="http://www.w3.org/ns/wsdl/style/multipart"&gt;
+  &lt;rdfs:comment&gt;multipart operation style&lt;/rdfs:comment&gt;
+&lt;/wsdl:OperationStyle&gt;
+
+
+
+&lt;!-- part 2: bindings --&gt;
+
+&lt;!-- SOAP binding --&gt;
+
+&lt;owl:Class rdf:about="http://www.w3.org/ns/wsdl/soap"&gt;
+  &lt;rdfs:comment&gt;WSDL 2 SOAP binding&lt;/rdfs:comment&gt;
+  &lt;rdfs:subClassOf rdf:resource="#Binding"/&gt;
+  &lt;rdfs:subClassOf&gt;
+    &lt;owl:Restriction&gt;
+      &lt;owl:onProperty rdf:resource="http://www.w3.org/ns/wsdl/soap#version"/&gt;
+      &lt;owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"&gt;1&lt;/owl:cardinality&gt;
+    &lt;/owl:Restriction&gt;
+  &lt;/rdfs:subClassOf&gt;
+  &lt;rdfs:subClassOf&gt;
+    &lt;owl:Restriction&gt;
+      &lt;owl:onProperty rdf:resource="http://www.w3.org/ns/wsdl/soap#protocol"/&gt;
+      &lt;owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"&gt;1&lt;/owl:cardinality&gt;
+    &lt;/owl:Restriction&gt;
+  &lt;/rdfs:subClassOf&gt;
+&lt;/owl:Class&gt;
+
+&lt;owl:DatatypeProperty rdf:about="http://www.w3.org/ns/wsdl/soap#version"&gt;
+  &lt;rdfs:comment&gt;
+    indicates what version of SOAP is used by the binding, usually "1.2"
+  &lt;/rdfs:comment&gt;
+  &lt;rdfs:range  rdf:resource="http://www.w3.org/2001/XMLSchema#string"/&gt;
+&lt;/owl:DatatypeProperty&gt;
+
+&lt;owl:ObjectProperty rdf:about="http://www.w3.org/ns/wsdl/soap#protocol"&gt;
+  &lt;rdfs:comment&gt;
+    indicates the underlying protocol used by a binding
+  &lt;/rdfs:comment&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:ObjectProperty rdf:about="http://www.w3.org/ns/wsdl/soap#faultCode"&gt;
+  &lt;rdfs:comment&gt;
+    indicates the fault code of a binding fault
+  &lt;/rdfs:comment&gt;
+  &lt;rdfs:range  rdf:resource="#QName"/&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:ObjectProperty rdf:about="http://www.w3.org/ns/wsdl/soap#faultSubcodes"&gt;
+  &lt;rdfs:comment&gt;
+    indicates the fault subcodes of a binding fault; there can be multiple
+    subcodes, the range is a sequence whose members are qnames
+  &lt;/rdfs:comment&gt;
+  &lt;rdfs:range  rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq"/&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:ObjectProperty rdf:about="http://www.w3.org/ns/wsdl/soap#soapMEP"&gt;
+  &lt;rdfs:comment&gt;
+    indicates the SOAP MEP this binding operation uses
+  &lt;/rdfs:comment&gt;
+  &lt;rdfs:range rdf:resource="http://www.w3.org/2006/02/soap12/abstractions#classOfMEPs"/&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:ObjectProperty rdf:about="http://www.w3.org/ns/wsdl/soap#defaultSoapMEP"&gt;
+  &lt;rdfs:comment&gt;
+    indicates the default SOAP MEP this binding's operations use
+  &lt;/rdfs:comment&gt;
+  &lt;rdfs:range rdf:resource="http://www.w3.org/2006/02/soap12/abstractions#classOfMEPs"/&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:Class rdf:about="http://www.w3.org/2006/02/soap12/abstractions#classOfMEPs"&gt;
+&lt;/owl:Class&gt;
+
+&lt;rdf:Description rdf:about="http://www.w3.org/2003/05/soap/mep/request-response/"&gt;
+  &lt;rdf:type rdf:resource="http://www.w3.org/2006/02/soap12/abstractions#classOfMEPs"/&gt;
+&lt;/rdf:Description&gt;
+
+&lt;rdf:Description rdf:about="http://www.w3.org/2003/05/soap/mep/soap-response/"&gt;
+  &lt;rdf:type rdf:resource="http://www.w3.org/2006/02/soap12/abstractions#classOfMEPs"/&gt;
+&lt;/rdf:Description&gt;
+
+&lt;owl:ObjectProperty rdf:about="http://www.w3.org/ns/wsdl/soap#action"&gt;
+  &lt;rdfs:comment&gt;
+    indicates the SOAP action this binding operation uses
+  &lt;/rdfs:comment&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:ObjectProperty rdf:about="http://www.w3.org/ns/wsdl/soap#offersSOAPModule"&gt;
+  &lt;rdfs:comment&gt;
+    indicates the SOAP module by its identifier URI
+  &lt;/rdfs:comment&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:ObjectProperty rdf:about="http://www.w3.org/ns/wsdl/soap#requiresSOAPModule"&gt;
+  &lt;rdfs:comment&gt;
+    indicates the SOAP module by its identifier URI
+  &lt;/rdfs:comment&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:ObjectProperty rdf:about="http://www.w3.org/ns/wsdl/soap#offersHeader"&gt;
+  &lt;rdfs:range  rdf:resource="http://www.w3.org/ns/wsdl/soap#SOAPHeaderBlock"/&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:ObjectProperty rdf:about="http://www.w3.org/ns/wsdl/soap#requiresHeader"&gt;
+  &lt;rdfs:range  rdf:resource="http://www.w3.org/ns/wsdl/soap#SOAPHeaderBlock"/&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:Class rdf:about="http://www.w3.org/ns/wsdl/soap#SOAPHeaderBlock"&gt;
+  &lt;rdfs:comment&gt;
+    a SOAP header
+  &lt;/rdfs:comment&gt;
+  &lt;rdfs:subClassOf&gt;
+    &lt;owl:Restriction&gt;
+      &lt;owl:onProperty rdf:resource="#elementDeclaration"/&gt;
+      &lt;owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"&gt;1&lt;/owl:cardinality&gt;
+    &lt;/owl:Restriction&gt;
+  &lt;/rdfs:subClassOf&gt;
+&lt;/owl:Class&gt;
+
+&lt;owl:Class rdf:about="http://www.w3.org/ns/wsdl/soap#MustUnderstandSOAPHeaderBlock"&gt;
+  &lt;rdfs:subClassOf rdf:resource="http://www.w3.org/ns/wsdl/soap#SOAPHeaderBlock" /&gt;
+  &lt;rdfs:comment&gt;
+    a SOAP header that must be marked as mustUnderstand by the sender
+  &lt;/rdfs:comment&gt;
+&lt;/owl:Class&gt;
+
+&lt;!-- HTTP binding --&gt;
+
+&lt;owl:Class rdf:about="http://www.w3.org/ns/wsdl/http"&gt;
+  &lt;rdfs:comment&gt;WSDL 2 HTTP binding&lt;/rdfs:comment&gt;
+  &lt;rdfs:subClassOf rdf:resource="#Binding"/&gt;
+&lt;/owl:Class&gt;
+
+&lt;owl:DatatypeProperty rdf:about="http://www.w3.org/ns/wsdl/http#location"&gt;
+  &lt;rdfs:comment&gt;
+    defines the location for an operation, relative to the address of the
+    service; this is the only URI-valued property modeled as datatype
+    property because the URI is not meant as pointer to a resource
+  &lt;/rdfs:comment&gt;
+  &lt;rdfs:range  rdf:resource="http://www.w3.org/2001/XMLSchema#anyURI"/&gt;
+&lt;/owl:DatatypeProperty&gt;
+
+&lt;owl:DatatypeProperty rdf:about="http://www.w3.org/ns/wsdl/http#locationIgnoreUncited"&gt;
+  &lt;rdfs:range  rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/&gt;
+&lt;/owl:DatatypeProperty&gt;
+
+&lt;owl:DatatypeProperty rdf:about="http://www.w3.org/ns/wsdl/http#defaultMethod"&gt;
+  &lt;rdfs:comment&gt;
+    declares the default HTTP method used by this binding's operations
+  &lt;/rdfs:comment&gt;
+  &lt;rdfs:range  rdf:resource="http://www.w3.org/2001/XMLSchema#string"/&gt;
+&lt;/owl:DatatypeProperty&gt;
+
+&lt;owl:DatatypeProperty rdf:about="http://www.w3.org/ns/wsdl/http#method"&gt;
+  &lt;rdfs:comment&gt;
+    declares the HTTP method used by this operation
+  &lt;/rdfs:comment&gt;
+  &lt;rdfs:range  rdf:resource="http://www.w3.org/2001/XMLSchema#string"/&gt;
+&lt;/owl:DatatypeProperty&gt;
+
+&lt;owl:DatatypeProperty rdf:about="http://www.w3.org/ns/wsdl/http#inputSerialization"&gt;
+  &lt;rdfs:comment&gt;
+    declares the media type of the input message of an operation
+  &lt;/rdfs:comment&gt;
+  &lt;rdfs:range  rdf:resource="http://www.w3.org/2001/XMLSchema#string"/&gt;
+&lt;/owl:DatatypeProperty&gt;
+
+&lt;owl:DatatypeProperty rdf:about="http://www.w3.org/ns/wsdl/http#outputSerialization"&gt;
+  &lt;rdfs:comment&gt;
+    declares the media type of the output message of an operation
+  &lt;/rdfs:comment&gt;
+  &lt;rdfs:range  rdf:resource="http://www.w3.org/2001/XMLSchema#string"/&gt;
+&lt;/owl:DatatypeProperty&gt;
+
+&lt;owl:DatatypeProperty rdf:about="http://www.w3.org/ns/wsdl/http#faultSerialization"&gt;
+  &lt;rdfs:comment&gt;
+    declares the media type of the fault messages of an operation
+  &lt;/rdfs:comment&gt;
+  &lt;rdfs:range  rdf:resource="http://www.w3.org/2001/XMLSchema#string"/&gt;
+&lt;/owl:DatatypeProperty&gt;
+
+&lt;owl:DatatypeProperty rdf:about="http://www.w3.org/ns/wsdl/http#defaultQueryParameterSeparator"&gt;
+  &lt;rdfs:comment&gt;
+    declares the default character to be used as query parameter separator by this binding's operations
+  &lt;/rdfs:comment&gt;
+  &lt;rdfs:range  rdf:resource="http://www.w3.org/2001/XMLSchema#string"/&gt;
+&lt;/owl:DatatypeProperty&gt;
+
+&lt;owl:DatatypeProperty rdf:about="http://www.w3.org/ns/wsdl/http#queryParameterSeparator"&gt;
+  &lt;rdfs:comment&gt;
+    declares the character to be used as query parameter separator by an operation
+  &lt;/rdfs:comment&gt;
+  &lt;rdfs:range  rdf:resource="http://www.w3.org/2001/XMLSchema#string"/&gt;
+&lt;/owl:DatatypeProperty&gt;
+
+&lt;owl:DatatypeProperty rdf:about="http://www.w3.org/ns/wsdl/http#headerName"&gt;
+  &lt;rdfs:range  rdf:resource="http://www.w3.org/2001/XMLSchema#string"/&gt;
+&lt;/owl:DatatypeProperty&gt;
+
+&lt;owl:ObjectProperty rdf:about="http://www.w3.org/ns/wsdl/http#requiresHeader"&gt;
+  &lt;rdfs:range  rdf:resource="http://www.w3.org/ns/wsdl/http#HTTPHeader"/&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:ObjectProperty rdf:about="http://www.w3.org/ns/wsdl/http#offersHeader"&gt;
+  &lt;rdfs:range  rdf:resource="http://www.w3.org/ns/wsdl/http#HTTPHeader"/&gt;
+&lt;/owl:ObjectProperty&gt;
+
+&lt;owl:Class rdf:about="http://www.w3.org/ns/wsdl/http#HTTPHeader"&gt;
+  &lt;rdfs:comment&gt;
+    an HTTP header
+  &lt;/rdfs:comment&gt;
+  &lt;rdfs:subClassOf&gt;
+    &lt;owl:Restriction&gt;
+      &lt;owl:onProperty rdf:resource="#typeDefinition"/&gt;
+      &lt;owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"&gt;1&lt;/owl:cardinality&gt;
+    &lt;/owl:Restriction&gt;
+  &lt;/rdfs:subClassOf&gt;
+  &lt;rdfs:subClassOf&gt;
+    &lt;owl:Restriction&gt;
+      &lt;owl:onProperty rdf:resource="http://www.w3.org/ns/wsdl/http#headerName"/&gt;
+      &lt;owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"&gt;1&lt;/owl:cardinality&gt;
+    &lt;/owl:Restriction&gt;
+  &lt;/rdfs:subClassOf&gt;
+&lt;/owl:Class&gt;
+
+&lt;owl:DatatypeProperty rdf:about="http://www.w3.org/ns/wsdl/http#errorCode"&gt;
+  &lt;rdfs:comment&gt;
+    declares the error status code that a fault will return
+  &lt;/rdfs:comment&gt;
+  &lt;rdfs:range  rdf:resource="http://www.w3.org/2001/XMLSchema#int"/&gt;
+&lt;/owl:DatatypeProperty&gt;
+
+&lt;owl:DatatypeProperty
+rdf:about="http://www.w3.org/ns/wsdl/http#defaultContentEncoding"&gt;
+  &lt;rdfs:comment&gt;
+    declares the default content encoding to be used by this binding's operation messages
+  &lt;/rdfs:comment&gt;
+  &lt;rdfs:range  rdf:resource="http://www.w3.org/2001/XMLSchema#string"/&gt;
+&lt;/owl:DatatypeProperty&gt;
+
+&lt;owl:DatatypeProperty rdf:about="http://www.w3.org/ns/wsdl/http#contentEncoding"&gt;
+  &lt;rdfs:comment&gt;
+    declares the content encoding to be used by operation messages
+  &lt;/rdfs:comment&gt;
+  &lt;rdfs:range  rdf:resource="http://www.w3.org/2001/XMLSchema#string"/&gt;
+&lt;/owl:DatatypeProperty&gt;
+
+&lt;owl:Class rdf:about="http://www.w3.org/ns/wsdl/http#BindingUsingHTTPCookies"&gt;
+  &lt;rdfs:comment&gt;WSDL 2 binding that uses HTTP cookies&lt;/rdfs:comment&gt;
+&lt;/owl:Class&gt;
+
+&lt;owl:DatatypeProperty rdf:about="http://www.w3.org/ns/wsdl/http#authenticationScheme"&gt;
+  &lt;rdfs:comment&gt;
+    declares the authentication scheme used by an endpoint, by default "none"
+  &lt;/rdfs:comment&gt;
+  &lt;rdfs:range  rdf:resource="http://www.w3.org/2001/XMLSchema#string"/&gt;
+&lt;/owl:DatatypeProperty&gt;
+
+&lt;owl:DatatypeProperty rdf:about="http://www.w3.org/ns/wsdl/http#authenticationRealm"&gt;
+  &lt;rdfs:comment&gt;
+    declares the authentication realm used by an endpoint
+  &lt;/rdfs:comment&gt;
+  &lt;rdfs:range  rdf:resource="http://www.w3.org/2001/XMLSchema#string"/&gt;
+&lt;/owl:DatatypeProperty&gt;
+
+
+&lt;/rdf:RDF&gt;
+</pre>
+
+
+
+
+
+
+
+
+
+
+<h2 id="uri-summary">Appendix B: List of URIs used by the WSDL RDF mapping
+(Non-Normative)</h2>
+
+<p>This appendix lists all the URIs that are used by this WSDL RDF mapping,
+summarizing the new ones and the new statements about pre-existing ones.</p>
+
+<p>The URI of the ontology for the WSDL RDF mapping, and also the container
+for all RDF classes and properties related to the core WSDL components,
+listed farther below.</p>
+
+<pre class="urilist">
+http://www.w3.org/ns/wsdl-rdf
+</pre>
+
+<p>The RDF classes and properties mapping from the core WSDL components and
+their properties.</p>
+
+<pre class="urilist">
+http://www.w3.org/ns/wsdl-rdf#Binding
+http://www.w3.org/ns/wsdl-rdf#BindingFault
+http://www.w3.org/ns/wsdl-rdf#BindingFaultReference
+http://www.w3.org/ns/wsdl-rdf#BindingMessageReference
+http://www.w3.org/ns/wsdl-rdf#BindingOperation
+http://www.w3.org/ns/wsdl-rdf#Description
+http://www.w3.org/ns/wsdl-rdf#Endpoint
+http://www.w3.org/ns/wsdl-rdf#Interface
+http://www.w3.org/ns/wsdl-rdf#InterfaceFault
+http://www.w3.org/ns/wsdl-rdf#InterfaceFaultReference
+http://www.w3.org/ns/wsdl-rdf#InterfaceMessageReference
+http://www.w3.org/ns/wsdl-rdf#InterfaceOperation
+http://www.w3.org/ns/wsdl-rdf#Service
+http://www.w3.org/ns/wsdl-rdf#address
+http://www.w3.org/ns/wsdl-rdf#binding
+http://www.w3.org/ns/wsdl-rdf#bindingFault
+http://www.w3.org/ns/wsdl-rdf#bindingFaultReference
+http://www.w3.org/ns/wsdl-rdf#bindingMessageReference
+http://www.w3.org/ns/wsdl-rdf#bindingOperation
+http://www.w3.org/ns/wsdl-rdf#binds
+http://www.w3.org/ns/wsdl-rdf#elementDeclaration
+http://www.w3.org/ns/wsdl-rdf#endpoint
+http://www.w3.org/ns/wsdl-rdf#extends
+http://www.w3.org/ns/wsdl-rdf#implements
+http://www.w3.org/ns/wsdl-rdf#interface
+http://www.w3.org/ns/wsdl-rdf#interfaceFault
+http://www.w3.org/ns/wsdl-rdf#interfaceFaultReference
+http://www.w3.org/ns/wsdl-rdf#interfaceMessageReference
+http://www.w3.org/ns/wsdl-rdf#interfaceOperation
+http://www.w3.org/ns/wsdl-rdf#messageContentModel
+http://www.w3.org/ns/wsdl-rdf#messageExchangePattern
+http://www.w3.org/ns/wsdl-rdf#messageLabel
+http://www.w3.org/ns/wsdl-rdf#operationStyle
+http://www.w3.org/ns/wsdl-rdf#service
+http://www.w3.org/ns/wsdl-rdf#typeDefinition
+http://www.w3.org/ns/wsdl-rdf#usesBinding
+</pre>
+
+<p>A class and two properties for mapping of QName references (used for
+pointing to element
+declarations and type definitions).</p>
+
+<pre class="urilist">
+http://www.w3.org/ns/wsdl-rdf#QName
+http://www.w3.org/ns/wsdl-rdf#localName
+http://www.w3.org/ns/wsdl-rdf#namespace
+</pre>
+
+<p>Classes indicating message direction of message references and fault
+references.</p>
+
+<pre class="urilist">
+http://www.w3.org/ns/wsdl-rdf#InputMessage
+http://www.w3.org/ns/wsdl-rdf#OutputMessage
+</pre>
+
+<p>A class of WSDL 2.0 operation styles.</p>
+
+<pre class="urilist">
+http://www.w3.org/ns/wsdl-rdf#OperationStyle
+</pre>
+
+<p>Classes used in the RDF mapping of WSDL message exchange patterns.</p>
+
+<pre class="urilist">
+http://www.w3.org/ns/wsdl-rdf#MessageExchangePattern
+http://www.w3.org/ns/wsdl-rdf#definesMessageLabel
+http://www.w3.org/ns/wsdl-rdf#MessageLabel
+http://www.w3.org/ns/wsdl-rdf#NoFaults
+http://www.w3.org/ns/wsdl-rdf#MessageTriggersFault
+http://www.w3.org/ns/wsdl-rdf#FaultReplacesMessage
+</pre>
+
+<p>Classes used in the RDF mapping of message content models.</p>
+
+<pre class="urilist">
+http://www.w3.org/ns/wsdl-rdf#MessageContentModel
+http://www.w3.org/ns/wsdl-rdf#AnyContent
+http://www.w3.org/ns/wsdl-rdf#ElementContent
+http://www.w3.org/ns/wsdl-rdf#NoContent
+http://www.w3.org/ns/wsdl-rdf#OtherContent
+</pre>
+
+<p>URIs of predefined WSDL 2.0 message exchange patters, the WSDL RDF mapping
+puts them into the appropriate classes of MEPs, and links them to their
+message labels, also listed.</p>
+
+<pre class="urilist">
+http://www.w3.org/ns/wsdl/in-only
+http://www.w3.org/ns/wsdl/in-only#In
+http://www.w3.org/ns/wsdl/in-opt-out
+http://www.w3.org/ns/wsdl/in-opt-out#In
+http://www.w3.org/ns/wsdl/in-opt-out#Out
+http://www.w3.org/ns/wsdl/in-out
+http://www.w3.org/ns/wsdl/in-out#In
+http://www.w3.org/ns/wsdl/in-out#Out
+http://www.w3.org/ns/wsdl/out-in
+http://www.w3.org/ns/wsdl/out-in#In
+http://www.w3.org/ns/wsdl/out-in#Out
+http://www.w3.org/ns/wsdl/out-only
+http://www.w3.org/ns/wsdl/out-only#Out
+http://www.w3.org/ns/wsdl/out-opt-in
+http://www.w3.org/ns/wsdl/out-opt-in#In
+http://www.w3.org/ns/wsdl/out-opt-in#Out
+http://www.w3.org/ns/wsdl/robust-in-only
+http://www.w3.org/ns/wsdl/robust-in-only#In
+http://www.w3.org/ns/wsdl/robust-out-only
+http://www.w3.org/ns/wsdl/robust-out-only#Out
+</pre>
+
+<p>Introduced in the WSDL RDF mapping as a class of safe interactions, used to capture the
+{safe} property on interface operations.</p>
+
+<pre class="urilist">
+http://www.w3.org/ns/wsdl-extensions#SafeInteraction
+</pre>
+
+<p>URIs of the predefined WSDL 2.0 operation styles. The WSDL RDF mapping
+puts them into the class of operation styles.</p>
+
+<pre class="urilist">
+http://www.w3.org/ns/wsdl/style/iri
+http://www.w3.org/ns/wsdl/style/multipart
+http://www.w3.org/ns/wsdl/style/rpc
+</pre>
+
+<p>URIs of classes and properties related to the RPC operation style,
+introduced in this WSDL RDF mapping.</p>
+
+<pre class="urilist">
+http://www.w3.org/ns/wsdl/rpc#Argument
+http://www.w3.org/ns/wsdl/rpc#InArgument
+http://www.w3.org/ns/wsdl/rpc#InOutArgument
+http://www.w3.org/ns/wsdl/rpc#OutArgument
+http://www.w3.org/ns/wsdl/rpc#ReturnArgument
+http://www.w3.org/ns/wsdl/rpc#Signature
+http://www.w3.org/ns/wsdl/rpc#signature
+</pre>
+
+<p>The URI identifying WSDL 2.0 HTTP binding. The RDF mapping states that it
+is a subclass of WSDL Bindings, and also uses it as the container for the RDF
+mapping of components and properties related to the HTTP binding.</p>
+
+<pre class="urilist">
+http://www.w3.org/ns/wsdl/http
+</pre>
+
+<p>The URIs used in the RDF mapping of components and properties related to
+the HTTP binding.</p>
+
+<pre class="urilist">
+http://www.w3.org/ns/wsdl/http#BindingUsingHTTPCookies
+http://www.w3.org/ns/wsdl/http#HTTPHeader
+http://www.w3.org/ns/wsdl/http#authenticationRealm
+http://www.w3.org/ns/wsdl/http#authenticationScheme
+http://www.w3.org/ns/wsdl/http#contentEncoding
+http://www.w3.org/ns/wsdl/http#defaultContentEncoding
+http://www.w3.org/ns/wsdl/http#defaultMethod
+http://www.w3.org/ns/wsdl/http#defaultQueryParameterSeparator
+http://www.w3.org/ns/wsdl/http#errorCode
+http://www.w3.org/ns/wsdl/http#faultSerialization
+http://www.w3.org/ns/wsdl/http#headerName
+http://www.w3.org/ns/wsdl/http#inputSerialization
+http://www.w3.org/ns/wsdl/http#location
+http://www.w3.org/ns/wsdl/http#locationIgnoreUncited
+http://www.w3.org/ns/wsdl/http#method
+http://www.w3.org/ns/wsdl/http#offersHeader
+http://www.w3.org/ns/wsdl/http#outputSerialization
+http://www.w3.org/ns/wsdl/http#queryParameterSeparator
+http://www.w3.org/ns/wsdl/http#requiresHeader
+</pre>
+
+<p>The URI identifying WSDL 2.0 SOAP binding. The RDF mapping states that it
+is a subclass of WSDL Bindings, and also uses it as the container for the RDF
+mapping of components and properties related to the SOAP binding.</p>
+
+<pre class="urilist">
+http://www.w3.org/ns/wsdl/soap
+</pre>
+
+<p>The URIs used in the RDF mapping of components and properties related to
+the SOAP binding.</p>
+
+<pre class="urilist">
+http://www.w3.org/ns/wsdl/soap#MustUnderstandSOAPHeaderBlock
+http://www.w3.org/ns/wsdl/soap#SOAPHeaderBlock
+http://www.w3.org/ns/wsdl/soap#action
+http://www.w3.org/ns/wsdl/soap#defaultSoapMEP
+http://www.w3.org/ns/wsdl/soap#faultCode
+http://www.w3.org/ns/wsdl/soap#faultSubcodes
+http://www.w3.org/ns/wsdl/soap#offersHeader
+http://www.w3.org/ns/wsdl/soap#offersSOAPModule
+http://www.w3.org/ns/wsdl/soap#protocol
+http://www.w3.org/ns/wsdl/soap#requiresHeader
+http://www.w3.org/ns/wsdl/soap#requiresSOAPModule
+http://www.w3.org/ns/wsdl/soap#soapMEP
+http://www.w3.org/ns/wsdl/soap#version
+</pre>
+
+<p>URIs from SOAP 1.2, the WSDL RDF mapping states that the two MEPs belong to the class.</p>
+
+<pre class="urilist">
+http://www.w3.org/2006/02/soap12/abstractions#classOfMEPs
+http://www.w3.org/2003/05/soap/mep/request-response/
+http://www.w3.org/2003/05/soap/mep/soap-response/
+</pre>
+
+<p>URIs reused from RDF, RDF Schema and XML Schema; no new statements about
+them.</p>
+
+<pre class="urilist">
+http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq
+http://www.w3.org/1999/02/22-rdf-syntax-ns#type
+http://www.w3.org/2000/01/rdf-schema#label
+http://www.w3.org/2001/XMLSchema#boolean
+http://www.w3.org/2001/XMLSchema#int
+</pre>
+
+<p>Reused from SAWSDL, no new statements.</p>
+
+<pre class="urilist">
+http://www.w3.org/ns/sawsdl#modelReference
+</pre>
+
+
+<h2 id="acknowledgments">Appendix C. Acknowledgements (Non-Normative)</h2>
+
+<p>This document is the work of the <a href="http://www.w3.org/2002/ws/desc/">W3C Web Service
+      Description Working Group</a>.</p>
+     
+   <p>Members of the Working Group are (at the time of writing, and by
+      alphabetical order):
+        Charlton Barreto (Adobe Systems, Inc),
+  	Allen Brookes (Rogue Wave Softwave),
+  	Dave Chappell (Sonic Software),
+  	Helen Chen (Agfa-Gevaert N. V.),
+  	Roberto Chinnici (Sun Microsystems),
+  	Kendall Clark (University of Maryland),
+  	Glen Daniels (Sonic Software),
+  	Paul Downey (British Telecommunications),
+  	Youenn Fablet (Canon),
+  	Ram	Jeyaraman (Microsoft),
+  	Tom Jordahl (Adobe Systems),
+  	Anish Karmarkar (Oracle Corporation),
+  	Jacek Kopecky (DERI Innsbruck at the Leopold-Franzens-Universit&auml;t Innsbruck, Austria),
+  	Amelia Lewis (TIBCO Software, Inc.),
+  	Philippe Le Hegaret (W3C),
+  	Michael Liddy (Education.au Ltd.),
+  	Kevin Canyang Liu (SAP AG),
+  	Jonathan Marsh (WSO2),
+  	Monica Martin (Sun Microsystems),
+  	Josephine Micallef (SAIC - Telcordia Technologies),
+  	Jeff Mischkinsky (Oracle Corporation),
+  	Dale Moberg (Cyclone Commerce),
+  	Jean-Jacques Moreau (Canon),
+  	David Orchard (BEA Systems, Inc.),
+  	Gilbert Pilz (BEA Systems, Inc.),
+  	Tony Rogers (Computer Associates),
+  	Arthur Ryman (IBM),
+  	Adi Sakala (IONA Technologies),
+  	Michael Shepherd (Xerox),  	
+  	Asir Vedamuthu (Microsoft Corporation),
+  	Sanjiva Weerawarana (WSO2),
+  	&Uuml;mit Yal&ccedil;&#x0131;nalp (SAP AG),
+  	Peter Zehler (Xerox).</p>
+       
+<p>Previous members were:
+     Eran Chinthaka (WSO2),
+     Mark Nottingham (BEA Systems, Inc.),
+     Hugo Haas (W3C),
+ 	Vivek Pandey (Sun Microsystems),
+ 	Bijan Parsia (University of Maryland),
+ 	Lily Liu
+	(webMethods, Inc.), Don Wright
+	(Lexmark), Joyce Yang
+	(Oracle Corporation), Daniel Schutzer
+	(Citigroup), Dave Solo
+	(Citigroup), Stefano Pogliani
+	(Sun Microsystems), William Stumbo
+	(Xerox), Stephen White
+	(SeeBeyond), Barbara Zengler
+	(DaimlerChrysler Research and Technology), Tim Finin
+	(University of Maryland), Laurent De Teneuille
+	(L'Echangeur), Johan Pauhlsson
+	(L'Echangeur), Mark Jones
+	(AT&amp;T), Steve Lind
+	(AT&amp;T), Sandra Swearingen
+	(U.S. Department of Defense, U.S. Air Force), Philippe Le H&eacute;garet
+	(W3C), Jim Hendler
+	(University of Maryland), Dietmar Gaertner
+	(Software AG), Michael Champion
+	(Software AG), Don Mullen
+	(TIBCO Software, Inc.), Steve Graham
+	(Global Grid Forum), Steve Tuecke
+	(Global Grid Forum), Michael Mahan
+	(Nokia), Bryan Thompson
+	(Hicks &amp; Associates), Ingo Melzer
+	(DaimlerChrysler Research and Technology), Sandeep Kumar
+	(Cisco Systems), Alan Davies
+	(SeeBeyond), Jacek Kopecky
+	(Systinet), Mike Ballantyne
+	(Electronic Data Systems), Mike Davoren
+	(W. W. Grainger), Dan Kulp
+	(IONA Technologies), Mike McHugh
+	(W. W. Grainger), Michael Mealling
+	(Verisign), Waqar Sadiq
+	(Electronic Data Systems), Yaron Goland
+	(BEA Systems, Inc.), &Uuml;mit Yal&ccedil;&#x0131;nalp
+	(Oracle Corporation), Peter Madziak
+	(Agfa-Gevaert N. V.), Jeffrey Schlimmer
+	(Microsoft Corporation), Hao He
+	(The Thomson Corporation), Erik Ackerman
+	(Lexmark), Jerry Thrasher
+	(Lexmark), Prasad Yendluri
+	(webMethods, Inc.), William Vambenepe
+	(Hewlett-Packard Company), David Booth
+	(W3C), Sanjiva Weerawarana
+	(IBM), Asir Vedamuthu
+	(webMethods, Inc.), Igor Sedukhin
+	(Computer Associates), Martin Gudgin
+	(Microsoft Corporation), Rebecca Bergersen
+	(IONA Technologies), Ugo Corda
+	(SeeBeyond).</p>
+       
+<p>The people who have contributed to <a href="http://lists.w3.org/Archives/Public/www-ws-desc/">discussions
+      on www-ws-desc@w3.org</a> are also gratefully acknowledged.</p>
+
+</div>
+
+</body>
+</html>
+

@@ -1,0 +1,2594 @@
+<!-- http://www.w3.org/TR/nfc/ -->
+
+<!DOCTYPE html>
+
+<html lang="en" dir="ltr" typeof="bibo:Document" about="" property=
+"dcterms:language" content="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 (experimental) for Linux/x86 https://github.com/w3c/tidy-html5/tree/8025154">
+
+  <title>Web NFC API</title>
+  <meta charset="UTF-8">
+  <style>
+/*****************************************************************
+  * ReSpec 3 CSS
+  * Robin Berjon - http://berjon.com/
+  *****************************************************************/
+
+  /* --- INLINES --- */
+  em.rfc2119 { 
+    text-transform:     lowercase;
+    font-variant:       small-caps;
+    font-style:         normal;
+    color:              #900;
+  }
+
+  h1 acronym, h2 acronym, h3 acronym, h4 acronym, h5 acronym, h6 acronym, a acronym,
+  h1 abbr, h2 abbr, h3 abbr, h4 abbr, h5 abbr, h6 abbr, a abbr {
+    border: none;
+  }
+
+  dfn {
+    font-weight:    bold;
+  }
+
+  a.internalDFN {
+    color:  inherit;
+    border-bottom:  1px solid #99c;
+    text-decoration:    none;
+  }
+
+  a.externalDFN {
+    color:  inherit;
+    border-bottom:  1px dotted #ccc;
+    text-decoration:    none;
+  }
+
+  a.bibref {
+    text-decoration:    none;
+  }
+
+  cite .bibref {
+    font-style: normal;
+  }
+
+  code {
+    color:  #ff4500;
+  }
+
+  /* --- TOC --- */
+  .toc a, .tof a {
+    text-decoration:    none;
+  }
+
+  a .secno, a .figno {
+    color:  #000;
+  }
+
+  ul.tof, ol.tof {
+    list-style: none outside none;
+  }
+
+  .caption {
+    margin-top: 0.5em;
+    font-style:   italic;
+  }
+
+  /* --- TABLE --- */
+  table.simple {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    border-bottom:  3px solid #005a9c;
+  }
+
+  .simple th {
+    background: #005a9c;
+    color:  #fff;
+    padding:    3px 5px;
+    text-align: left;
+  }
+
+  .simple th[scope="row"] {
+    background: inherit;
+    color:  inherit;
+    border-top: 1px solid #ddd;
+  }
+
+  .simple td {
+    padding:    3px 10px;
+    border-top: 1px solid #ddd;
+  }
+
+  .simple tr:nth-child(even) {
+    background: #f0f6ff;
+  }
+
+  /* --- DL --- */
+  .section dd > p:first-child {
+    margin-top: 0;
+  }
+
+  .section dd > p:last-child {
+    margin-bottom: 0;
+  }
+
+  .section dd {
+    margin-bottom:  1em;
+  }
+
+  .section dl.attrs dd, .section dl.eldef dd {
+    margin-bottom:  0;
+  }
+  </style>
+  <style>
+/* --- EXAMPLES --- */
+  div.example-title {
+    min-width: 7.5em;
+    color: #b9ab2d;
+  }
+  div.example-title span {
+    text-transform: uppercase;   
+  }
+  aside.example, div.example, div.illegal-example {
+    padding: 0.5em;
+    margin: 1em 0;
+    position: relative;
+    clear: both;
+  }
+  div.illegal-example { color: red }
+  div.illegal-example p { color: black }
+  aside.example, div.example {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+    border-color: #e0cb52;
+    background: #fcfaee;    
+  }
+
+  aside.example div.example {
+    border-left-width: .1em;
+    border-color: #999;
+    background: #fff;
+  }
+  aside.example div.example div.example-title {
+    color: #999;
+  }
+  </style>
+  <style>
+/* HIGHLIGHTS */
+  code.prettyprint {
+    color:  inherit;
+  }
+
+  /* this from google-code-prettify */
+  .pln{color:#000}@media screen{.str{color:#080}.kwd{color:#008}.com{color:#800}.typ{color:#606}.lit{color:#066}.pun,.opn,.clo{color:#660}.tag{color:#008}.atn{color:#606}.atv{color:#080}.dec,.var{color:#606}.fun{color:red}}@media print,projection{.str{color:#060}.kwd{color:#006;font-weight:bold}.com{color:#600;font-style:italic}.typ{color:#404;font-weight:bold}.lit{color:#044}.pun,.opn,.clo{color:#440}.tag{color:#006;font-weight:bold}.atn{color:#404}.atv{color:#060}}ol.linenums{margin-top:0;margin-bottom:0}li.L0,li.L1,li.L2,li.L3,li.L5,li.L6,li.L7,li.L8{list-style-type:none}li.L1,li.L3,li.L5,li.L7,li.L9{background:#eee}
+  </style>
+  <style>
+/* --- WEB IDL --- */
+  pre.idl {
+    border-top: 1px solid #90b8de;
+    border-bottom: 1px solid #90b8de;
+    padding:    1em;
+    line-height:    120%;
+  }
+
+  pre.idl::before {
+    content:    "WebIDL";
+    display:    block;
+    width:      150px;
+    background: #90b8de;
+    color:  #fff;
+    font-family:    initial;
+    padding:    3px;
+    font-weight:    bold;
+    margin: -1em 0 1em -1em;
+  }
+
+  .idlType {
+    color:  #ff4500;
+    font-weight:    bold;
+    text-decoration:    none;
+  }
+
+  /*.idlModule*/
+  /*.idlModuleID*/
+  /*.idlInterface*/
+  .idlInterfaceID, .idlDictionaryID, .idlCallbackID, .idlEnumID {
+    font-weight:    bold;
+    color:  #005a9c;
+  }
+  a.idlEnumItem {
+    color:  #000;
+    border-bottom:  1px dotted #ccc;
+    text-decoration: none;
+  }
+
+  .idlSuperclass {
+    font-style: italic;
+    color:  #005a9c;
+  }
+
+  /*.idlAttribute*/
+  .idlAttrType, .idlFieldType, .idlMemberType {
+    color:  #005a9c;
+  }
+  .idlAttrName, .idlFieldName, .idlMemberName {
+    color:  #ff4500;
+  }
+  .idlAttrName a, .idlFieldName a, .idlMemberName a {
+    color:  #ff4500;
+    border-bottom:  1px dotted #ff4500;
+    text-decoration: none;
+  }
+
+  /*.idlMethod*/
+  .idlMethType, .idlCallbackType {
+    color:  #005a9c;
+  }
+  .idlMethName {
+    color:  #ff4500;
+  }
+  .idlMethName a {
+    color:  #ff4500;
+    border-bottom:  1px dotted #ff4500;
+    text-decoration: none;
+  }
+
+  /*.idlCtor*/
+  .idlCtorName {
+    color:  #ff4500;
+  }
+  .idlCtorName a {
+    color:  #ff4500;
+    border-bottom:  1px dotted #ff4500;
+    text-decoration: none;
+  }
+
+  /*.idlParam*/
+  .idlParamType {
+    color:  #005a9c;
+  }
+  .idlParamName, .idlDefaultValue {
+    font-style: italic;
+  }
+
+  .extAttr {
+    color:  #666;
+  }
+
+  /*.idlSectionComment*/
+  .idlSectionComment {
+    color: gray;
+  }
+
+  /*.idlConst*/
+  .idlConstType {
+    color:  #005a9c;
+  }
+  .idlConstName {
+    color:  #ff4500;
+  }
+  .idlConstName a {
+    color:  #ff4500;
+    border-bottom:  1px dotted #ff4500;
+    text-decoration: none;
+  }
+
+  /*.idlException*/
+  .idlExceptionID {
+    font-weight:    bold;
+    color:  #c00;
+  }
+
+  .idlTypedefID, .idlTypedefType {
+    color:  #005a9c;
+  }
+
+  .idlRaises, .idlRaises a.idlType, .idlRaises a.idlType code, .excName a, .excName a code {
+    color:  #c00;
+    font-weight:    normal;
+  }
+
+  .excName a {
+    font-family:    monospace;
+  }
+
+  .idlRaises a.idlType, .excName a.idlType {
+    border-bottom:  1px dotted #c00;
+  }
+
+  .excGetSetTrue, .excGetSetFalse, .prmNullTrue, .prmNullFalse, .prmOptTrue, .prmOptFalse {
+    width:  45px;
+    text-align: center;
+  }
+  .excGetSetTrue, .prmNullTrue, .prmOptTrue { color:  #0c0; }
+  .excGetSetFalse, .prmNullFalse, .prmOptFalse { color:  #c00; }
+
+  .idlImplements a {
+    font-weight:    bold;
+  }
+
+  dl.attributes, dl.methods, dl.constants, dl.constructors, dl.fields, dl.dictionary-members {
+    margin-left:    2em;
+  }
+
+  .attributes dt, .methods dt, .constants dt, .constructors dt, .fields dt, .dictionary-members dt {
+    font-weight:    normal;
+  }
+
+  .attributes dt code, .methods dt code, .constants dt code, .constructors dt code, .fields dt code, .dictionary-members dt code {
+    font-weight:    bold;
+    color:  #000;
+    font-family:    monospace;
+  }
+
+  .attributes dt code, .fields dt code, .dictionary-members dt code {
+    background:  #ffffd2;
+  }
+
+  .attributes dt .idlAttrType code, .fields dt .idlFieldType code, .dictionary-members dt .idlMemberType code {
+    color:  #005a9c;
+    background:  transparent;
+    font-family:    inherit;
+    font-weight:    normal;
+    font-style: italic;
+  }
+
+  .methods dt code {
+    background:  #d9e6f8;
+  }
+
+  .constants dt code {
+    background:  #ddffd2;
+  }
+
+  .constructors dt code {
+    background:  #cfc;
+  }
+
+  .attributes dd, .methods dd, .constants dd, .constructors dd, .fields dd, .dictionary-members dd {
+    margin-bottom:  1em;
+  }
+
+  table.parameters, table.exceptions {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    margin: 0.5em 0;
+    width:  100%;
+  }
+  table.parameters { border-bottom:  1px solid #90b8de; }
+  table.exceptions { border-bottom:  1px solid #deb890; }
+
+  .parameters th, .exceptions th {
+    color:  #fff;
+    padding:    3px 5px;
+    text-align: left;
+    font-family:    initial;
+    font-weight:    normal;
+    text-shadow:    #666 1px 1px 0;
+  }
+  .parameters th { background: #90b8de; }
+  .exceptions th { background: #deb890; }
+
+  .parameters td, .exceptions td {
+    padding:    3px 10px;
+    border-top: 1px solid #ddd;
+    vertical-align: top;
+  }
+
+  .parameters tr:first-child td, .exceptions tr:first-child td {
+    border-top: none;
+  }
+
+  .parameters td.prmName, .exceptions td.excName, .exceptions td.excCodeName {
+    width:  100px;
+  }
+
+  .parameters td.prmType {
+    width:  120px;
+  }
+
+  table.exceptions table {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    width:  100%;
+  }
+  </style>
+  <link href="https://www.w3.org/StyleSheets/TR/W3C-WD" rel=
+  "stylesheet">
+  <!--[if lt IE 9]><script src='https://www.w3.org/2008/site/js/html5shiv.js'></script><![endif]-->
+</head>
+<!--===========================================================================
+Style guide to contributors:
+============================
+- this document uses ReSpec, see
+  http://dev.w3.org/2009/dap/ReSpec.js/documentation.html
+- use 80 characters wide lines, whenever possible (except long links)
+- keep sections 2 empty lines apart
+- put comments in front of sections, for better readability with syntax
+  coloring editors
+- use indentation with care: it may improve readability, but at the expense of
+  line lenght
+- when descriptions of attributes is short, use the <dd> elements even when
+  the text also contains conformance statements (e.g. MUST, SHOULD, MAY).
+  No use repeating the same information in a separate paragraph.
+============================================================================-->
+
+<body id="respecDocument" role="document" class="h-entry">
+  <div id="respecHeader" role="contentinfo" class="head">
+    <p><a href="http://www.w3.org/"><img src=
+    "https://www.w3.org/Icons/w3c_home" alt="W3C" height="48"
+    width="72"></a></p>
+
+    <h1 class="title p-name" id="title" property="dcterms:title">
+    Web NFC API</h1>
+
+    <h2 id="w3c-first-public-working-draft-14-january-2014"
+    property="dcterms:issued" datatype="xsd:dateTime" content=
+    "2014-01-10T17:08:33.000Z"><abbr title=
+    "World Wide Web Consortium">W3C</abbr> First Public Working
+    Draft <time class="dt-published" datetime="2014-01-14">14
+    January 2014</time></h2>
+
+    <dl>
+      <dt>This version:</dt>
+
+      <dd>
+        <a class="u-url" href=
+        "http://www.w3.org/TR/2014/WD-nfc-20140114/">http://www.w3.org/TR/2014/WD-nfc-20140114/</a>
+      </dd>
+
+      <dt>Latest published version:</dt>
+
+      <dd>
+        <a href=
+        "http://www.w3.org/TR/nfc/">http://www.w3.org/TR/nfc/</a>
+      </dd>
+
+      <dt>Latest editor's draft:</dt>
+
+      <dd>
+        <a href=
+        "http://www.w3.org/2012/nfc/">http://www.w3.org/2012/nfc/</a>
+      </dd>
+
+      <dt>Editors:</dt>
+
+      <dd class="p-author h-card vcard" rel="bibo:editor" inlist=
+      ""><span typeof="foaf:Person"><span property="foaf:name"
+      class="p-name fn">Luc Yriarte</span>, <a rel=
+      "foaf:workplaceHomepage" class="p-org org h-org h-card" href=
+      "http://www.intel.com/">Intel</a></span></dd>
+
+      <dd class="p-author h-card vcard" rel="bibo:editor" inlist=
+      ""><span typeof="foaf:Person"><span property="foaf:name"
+      class="p-name fn">Samuel Ortiz</span>, <a rel=
+      "foaf:workplaceHomepage" class="p-org org h-org h-card" href=
+      "http://www.intel.com/">Intel</a></span></dd>
+
+      <dd class="p-author h-card vcard" rel="bibo:editor" inlist=
+      ""><span typeof="foaf:Person"><span property="foaf:name"
+      class="p-name fn">Don Coleman</span>, <a rel=
+      "foaf:workplaceHomepage" class="p-org org h-org h-card" href=
+      "http://chariotsolutions.com/">Chariot
+      Solutions</a></span></dd>
+    </dl>
+
+    <p class="copyright"><a href=
+    "http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a>
+    © 2014 <a href="http://www.w3.org/"><abbr title=
+    "World Wide Web Consortium">W3C</abbr></a><sup>®</sup>
+    (<a href="http://www.csail.mit.edu/"><abbr title=
+    "Massachusetts Institute of Technology">MIT</abbr></a>,
+    <a href="http://www.ercim.eu/"><abbr title=
+    "European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>,
+    <a href="http://www.keio.ac.jp/">Keio</a>, <a href=
+    "http://ev.buaa.edu.cn/">Beihang</a>), All Rights Reserved.
+    <abbr title="World Wide Web Consortium">W3C</abbr> <a href=
+    "http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">
+    liability</a>, <a href=
+    "http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a>
+    and <a href=
+    "http://www.w3.org/Consortium/Legal/copyright-documents">document
+    use</a> rules apply.</p>
+    <hr>
+  </div>
+  <!--============================ Abstract ==================================-->
+
+  <section rel="bibo:chapter" resource="#abstract" typeof=
+  "bibo:Chapter" datatype="" property="dcterms:abstract" class=
+  "introductory" id="abstract">
+    <h2 id="h2_abstract" role="heading" aria-level="1">
+    Abstract</h2>
+
+    <p>Near Field Communication (NFC) is an international standard
+    (ISO/IEC 18092) that specifies an interface and protocol for
+    simple wireless interconnection of closely coupled devices
+    operating at 13.56 MHz. (see <a href=
+    "http://www.nfc-forum.org/specs/spec_list/">http://www.nfc-forum.org/specs/spec_list/</a>).
+    There are three groups of application scenarios for NFC:</p>
+
+    <ul>
+      <li>The first one is to hold a device close to a wireless tag
+      to exchange some digital information or data.</li>
+
+      <li>The second is to hold two devices close to each other in
+      order to exchange some information or data between them.</li>
+
+      <li>The third one is to make payments by holding mobile
+      phones close to point of sales terminals instead of swiping
+      smart cards.</li>
+    </ul>
+
+    <p>NFC enables wireless communication between two devices at
+    close proximity, usually less than a few centimeters.</p>
+  </section>
+
+  <section rel="bibo:chapter" resource="#sotd" typeof=
+  "bibo:Chapter" id="sotd" class="introductory">
+    <h2 id="h2_sotd" role="heading" aria-level="1">Status of This
+    Document</h2>
+
+    <p><em>This section describes the status of this document at
+    the time of its publication. Other documents may supersede this
+    document. A list of current <abbr title=
+    "World Wide Web Consortium">W3C</abbr> publications and the
+    latest revision of this technical report can be found in the
+    <a href="http://www.w3.org/TR/"><abbr title=
+    "World Wide Web Consortium">W3C</abbr> technical reports
+    index</a> at http://www.w3.org/TR/.</em></p>
+
+    <p>This document defines an API for access to the hardware
+    subsystem for near field communications (NFC). It permits
+    Web pages to read and write NFC tags, to send and receive
+    messages between NFC devices, and to handover to WiFi
+    or Bluetooth.</p>
+
+    <p>This document was published by the <a href=
+    "http://www.w3.org/2012/nfc/">NFC working group</a> as a First
+    Public Working Draft. This document is intended to become a
+    <abbr title="World Wide Web Consortium">W3C</abbr>
+    Recommendation. If you wish to make comments regarding this
+    document, please send them to <a href=
+    "mailto:public-nfc@w3.org">public-nfc@w3.org</a> (<a href=
+    "mailto:public-nfc-request@w3.org?subject=subscribe">subscribe</a>,
+    <a href=
+    "http://lists.w3.org/Archives/Public/public-nfc/">archives</a>).
+    All comments are welcome.</p>
+
+    <p>Publication as a First Public Working Draft does not imply
+    endorsement by the <abbr title=
+    "World Wide Web Consortium">W3C</abbr> Membership. This is a
+    draft document and may be updated, replaced or obsoleted by
+    other documents at any time. It is inappropriate to cite this
+    document as other than work in progress.</p>
+
+    <p>This document was produced by a group operating under the
+    <a id="sotd_patent" about="" rel="w3p:patentRules" href=
+    "http://www.w3.org/Consortium/Patent-Policy-20040205/">5
+    February 2004 <abbr title=
+    "World Wide Web Consortium">W3C</abbr> Patent Policy</a>.
+    <abbr title="World Wide Web Consortium">W3C</abbr> maintains a
+    <a href="http://www.w3.org/2004/01/pp-impl/58584/status"
+    rel="disclosure">public list of any patent disclosures</a> made
+    in connection with the deliverables of the group; that page
+    also includes instructions for disclosing a patent. An
+    individual who has actual knowledge of a patent which the
+    individual believes contains <a href=
+    "http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">
+    Essential Claim(s)</a> must disclose the information in
+    accordance with <a href=
+    "http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">
+    section 6 of the <abbr title=
+    "World Wide Web Consortium">W3C</abbr> Patent Policy</a>.</p>
+
+
+  </section>
+
+  <section id="toc">
+    <h2 id="h2_toc" role="heading" aria-level="1" class=
+    "introductory">Table of Contents</h2>
+
+    <ul id="respecContents" role="directory" class="toc">
+      <li class="tocline">
+        <a class="tocxref" href="#introduction"><span class=
+        "secno">1.</span> Introduction</a>
+      </li>
+
+      <li class="tocline">
+        <a class="tocxref" href="#conformance"><span class=
+        "secno">2.</span> Conformance</a>
+      </li>
+
+      <li class="tocline">
+        <a class="tocxref" href="#terminology"><span class=
+        "secno">3.</span> Terminology</a>
+      </li>
+
+      <li class="tocline">
+        <a class="tocxref" href=
+        "#extensions-to-navigator-object"><span class=
+        "secno">4.</span> Extensions to <code>Navigator</code>
+        object</a>
+
+        <ul class="toc">
+          <li class="tocline">
+            <a class="tocxref" href="#attributes"><span class=
+            "secno">4.1</span> Attributes</a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="tocline">
+        <a class="tocxref" href=
+        "#nfcmanager-interface"><span class="secno">5.</span>
+        <span class="formerLink"><code>NFCManager</code></span>
+        Interface</a>
+
+        <ul class="toc">
+          <li class="tocline">
+            <a class="tocxref" href="#attributes-1"><span class=
+            "secno">5.1</span> Attributes</a>
+          </li>
+
+          <li class="tocline">
+            <a class="tocxref" href="#methods"><span class=
+            "secno">5.2</span> Methods</a>
+          </li>
+
+          <li class="tocline">
+            <a class="tocxref" href="#event-handlers"><span class=
+            "secno">5.3</span> Event handlers</a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="tocline">
+        <a class="tocxref" href=
+        "#nfctagevent-interface"><span class="secno">6.</span>
+        <span class="formerLink"><code>NFCTagEvent</code></span>
+        Interface</a>
+
+        <ul class="toc">
+          <li class="tocline">
+            <a class="tocxref" href="#attributes-2"><span class=
+            "secno">6.1</span> Attributes</a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="tocline">
+        <a class="tocxref" href=
+        "#nfcpeerevent-interface"><span class="secno">7.</span>
+        <span class="formerLink"><code>NFCPeerEvent</code></span>
+        Interface</a>
+
+        <ul class="toc">
+          <li class="tocline">
+            <a class="tocxref" href="#attributes-3"><span class=
+            "secno">7.1</span> Attributes</a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="tocline">
+        <a class="tocxref" href=
+        "#ndefmessageevent-interface"><span class="secno">8.</span>
+        <span class=
+        "formerLink"><code>NDEFMessageEvent</code></span>
+        Interface</a>
+
+        <ul class="toc">
+          <li class="tocline">
+            <a class="tocxref" href="#attributes-4"><span class=
+            "secno">8.1</span> Attributes</a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="tocline">
+        <a class="tocxref" href="#nfctag-interface"><span class=
+        "secno">9.</span> <span class=
+        "formerLink"><code>NFCTag</code></span> Interface</a>
+
+        <ul class="toc">
+          <li class="tocline">
+            <a class="tocxref" href="#methods-1"><span class=
+            "secno">9.1</span> Methods</a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="tocline">
+        <a class="tocxref" href="#nfcpeer-interface"><span class=
+        "secno">10.</span> <span class=
+        "formerLink"><code>NFCPeer</code></span> Interface</a>
+
+        <ul class="toc">
+          <li class="tocline">
+            <a class="tocxref" href="#attributes-5"><span class=
+            "secno">10.1</span> Attributes</a>
+          </li>
+
+          <li class="tocline">
+            <a class="tocxref" href="#methods-2"><span class=
+            "secno">10.2</span> Methods</a>
+          </li>
+
+          <li class="tocline">
+            <a class="tocxref" href=
+            "#event-handlers-1"><span class="secno">10.3</span>
+            Event handlers</a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="tocline">
+        <a class="tocxref" href=
+        "#ndefmessage-interface"><span class="secno">11.</span>
+        <span class="formerLink"><code>NDEFMessage</code></span>
+        Interface</a>
+
+        <ul class="toc">
+          <li class="tocline">
+            <a class="tocxref" href="#attributes-6"><span class=
+            "secno">11.1</span> Attributes</a>
+          </li>
+
+          <li class="tocline">
+            <a class="tocxref" href="#methods-3"><span class=
+            "secno">11.2</span> Methods</a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="tocline">
+        <a class="tocxref" href=
+        "#ndefrecord-interface"><span class="secno">12.</span>
+        <span class="formerLink"><code>NDEFRecord</code></span>
+        Interface</a>
+
+        <ul class="toc">
+          <li class="tocline">
+            <a class="tocxref" href="#attributes-7"><span class=
+            "secno">12.1</span> Attributes</a>
+          </li>
+
+          <li class="tocline">
+            <a class="tocxref" href="#methods-4"><span class=
+            "secno">12.2</span> Methods</a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="tocline">
+        <a class="tocxref" href=
+        "#ndefrecordtext-interface"><span class="secno">13.</span>
+        <span class="formerLink"><code>NDEFRecordText</code></span>
+        Interface</a>
+
+        <ul class="toc">
+          <li class="tocline">
+            <a class="tocxref" href="#attributes-8"><span class=
+            "secno">13.1</span> Attributes</a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="tocline">
+        <a class="tocxref" href=
+        "#ndefrecorduri-interface"><span class="secno">14.</span>
+        <span class="formerLink"><code>NDEFRecordURI</code></span>
+        Interface</a>
+
+        <ul class="toc">
+          <li class="tocline">
+            <a class="tocxref" href="#attributes-9"><span class=
+            "secno">14.1</span> Attributes</a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="tocline">
+        <a class="tocxref" href=
+        "#ndefrecordmedia-interface"><span class="secno">15.</span>
+        <span class=
+        "formerLink"><code>NDEFRecordMedia</code></span>
+        Interface</a>
+
+        <ul class="toc">
+          <li class="tocline">
+            <a class="tocxref" href="#attributes-10"><span class=
+            "secno">15.1</span> Attributes</a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="tocline">
+        <a class="tocxref" href=
+        "#ndefrecordsmartposter-interface"><span class=
+        "secno">16.</span> <span class=
+        "formerLink"><code>NDEFRecordSmartPoster</code></span>
+        Interface</a>
+
+        <ul class="toc">
+          <li class="tocline">
+            <a class="tocxref" href="#attributes-11"><span class=
+            "secno">16.1</span> Attributes</a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="tocline">
+        <a class="tocxref" href="#enumerations"><span class=
+        "secno">17.</span> Enumerations</a>
+      </li>
+
+      <li class="tocline">
+        <a class="tocxref" href="#acknowledgements"><span class=
+        "secno">18.</span> Acknowledgements</a>
+      </li>
+
+      <li class="tocline">
+        <a class="tocxref" href="#references"><span class=
+        "secno">A.</span> References</a>
+
+        <ul class="toc">
+          <li class="tocline">
+            <a class="tocxref" href=
+            "#normative-references"><span class="secno">A.1</span>
+            Normative references</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </section>
+  <!--===================== Status of this document ==========================-->
+  <!--=========================== Introduction ===============================-->
+
+  <section id="introduction" class="informative">
+    <!--OddPage-->
+
+    <h2 id="h2_introduction" role="heading" aria-level="1">
+    <span class="secno">1.</span> Introduction</h2>
+
+    <p><em>This section is non-normative.</em></p>The NFC API
+    supports the following features:
+
+    <ul>
+      <li>Reading and writing <a class="internalDFN" href=
+      "#dfn-ndef-message">NDEF message</a>s on <a class=
+      "internalDFN" href="#dfn-nfc-tag">NFC tag</a>s
+      </li>
+
+      <li>Sending and receiving <a class="internalDFN" href=
+      "#dfn-ndef-message">NDEF message</a>s on peer targets
+      </li>
+
+      <li>Bluetooth or WiFi pairing (or "handover") with a peer
+      target</li>
+    </ul>
+
+    <p>Here are some possible use cases:</p>
+
+    <ul>
+      <li>
+        <b>Tap to Play</b>: tap your device to another to play a
+        peer-to-peer game, using the <a class="idlType" href=
+        "#idl-def-NFCPeer"><code>NFCPeer</code></a> interface to
+        exchange <a class="internalDFN" href=
+        "#dfn-ndef-message">NDEF message</a>s.
+      </li>
+
+      <li>
+        <b>Tap to Share</b>: tap to share some data, e.g. coupons,
+        contacts, using the <a class="idlType" href=
+        "#idl-def-NFCPeer"><code>NFCPeer</code></a> interface to
+        exchange <a class="internalDFN" href=
+        "#dfn-ndef-message">NDEF message</a>s.
+      </li>
+
+      <li>
+        <b>Tap to Control</b>: tap to control another device, like
+        a TV remote, using the "handover" capability of the
+        <a class="idlType" href=
+        "#idl-def-NFCPeer"><code>NFCPeer</code></a> interface.
+      </li>
+
+      <li>
+        <b>Tap to Connect</b>: tap to connect via WiFi or
+        Bluetooth, using the "handover" capability of the <a class=
+        "idlType" href="#idl-def-NFCPeer"><code>NFCPeer</code></a>
+        interface.
+      </li>
+
+      <li>
+        <b>Tap to Read</b>: tap to read NFC tags, using the
+        <a class="idlType" href=
+        "#idl-def-NFCTag"><code>NFCTag</code></a> interface.
+      </li>
+
+      <li>
+        <b>Tap to Write</b>: tap to write NFC tags, using the
+        <a class="idlType" href=
+        "#idl-def-NFCTag"><code>NFCTag</code></a> interface.
+      </li>
+    </ul>
+
+    <p>An example of use is provided below:</p>
+
+    <div class="example">
+      <div class="example-title">
+        <span>Example 1</span>
+      </div>
+      <pre class="example highlight prettyprint">
+<span class="kwd">var</span><span class=
+"pln"> hello </span><span class="pun">=</span><span class=
+"pln"> </span><span class="kwd">new</span><span class=
+"pln"> </span><span class="typ">NDEFRecordText</span><span class=
+"pun">(</span><span class="str">"hello world"</span><span class=
+"pun">,</span><span class="pln"> </span><span class=
+"str">"en-US"</span><span class="pun">,</span><span class=
+"pln"> </span><span class="str">"UTF-8"</span><span class=
+"pun">);</span><span class="pln">
+
+navigator</span><span class="pun">.</span><span class=
+"pln">nfc</span><span class="pun">.</span><span class=
+"pln">ontagfound </span><span class="pun">=</span><span class=
+"pln"> </span><span class="kwd">function</span><span class=
+"pun">(</span><span class="pln">e</span><span class=
+"pun">)</span><span class="pln"> </span><span class=
+"pun">{</span><span class="pln">
+    window</span><span class="pun">.</span><span class=
+"pln">console</span><span class="pun">.</span><span class=
+"pln">log</span><span class="pun">(</span><span class=
+"str">'NFC Tag found!'</span><span class=
+"pun">);</span><span class="pln">
+    </span><span class="kwd">var</span><span class=
+"pln"> tag </span><span class="pun">=</span><span class=
+"pln"> e</span><span class="pun">.</span><span class=
+"pln">tag</span><span class="pun">;</span><span class="pln">
+    tag</span><span class="pun">.</span><span class=
+"pln">writeNDEF</span><span class="pun">(</span><span class=
+"kwd">new</span><span class="pln"> </span><span class=
+"typ">NDEFMessage</span><span class="pun">([</span><span class=
+"pln">hello</span><span class="pun">]));</span><span class="pln">
+</span><span class="pun">}</span><span class="pln">
+
+navigator</span><span class="pun">.</span><span class=
+"pln">nfc</span><span class="pun">.</span><span class=
+"pln">startPoll</span><span class="pun">().</span><span class=
+"kwd">catch</span><span class="pun">(</span><span class="pln">
+  </span><span class="kwd">function</span><span class=
+"pun">(</span><span class="pln">e</span><span class=
+"pun">)</span><span class="pln"> </span><span class=
+"pun">{</span><span class="pln">
+    window</span><span class="pun">.</span><span class=
+"pln">console</span><span class="pun">.</span><span class=
+"pln">error</span><span class="pun">(</span><span class=
+"pln">e</span><span class="pun">);</span><span class="pln">
+  </span><span class="pun">});</span>
+</pre>
+    </div>
+  </section>
+  <!--========================== Conformance =================================-->
+
+  <section rel="bibo:chapter" resource="#conformance" typeof=
+  "bibo:Chapter" id="conformance">
+    <!--OddPage-->
+
+    <h2 id="h2_conformance" role="heading" aria-level="1">
+    <span class="secno">2.</span> Conformance</h2>
+
+    <p>As well as sections marked as non-normative, all authoring
+    guidelines, diagrams, examples, and notes in this specification
+    are non-normative. Everything else in this specification is
+    normative.</p>
+
+    <p>The key words <em title="MUST" class="rfc2119">MUST</em>,
+    <em title="MUST NOT" class="rfc2119">MUST NOT</em>, <em title=
+    "REQUIRED" class="rfc2119">REQUIRED</em>, <em title="SHOULD"
+    class="rfc2119">SHOULD</em>, <em title="SHOULD NOT" class=
+    "rfc2119">SHOULD NOT</em>, <em title="RECOMMENDED" class=
+    "rfc2119">RECOMMENDED</em>, <em title="MAY" class=
+    "rfc2119">MAY</em>, and <em title="OPTIONAL" class=
+    "rfc2119">OPTIONAL</em> in this specification are to be
+    interpreted as described in [<cite><a href="#bib-RFC2119"
+    class="bibref">RFC2119</a></cite>].</p>
+
+    <p>This specification defines conformance criteria that apply
+    to a single product: the <dfn id="ua">user agent</dfn> that
+    implements the interfaces that it contains.</p>
+
+    <p>Implementations that use ECMAScript to implement the APIs
+    defined in this specification <em title="MUST" class=
+    "rfc2119">MUST</em> implement them in a manner consistent with
+    the ECMAScript Bindings defined in the Web IDL specification
+    [<cite><a href="#bib-WEBIDL" class="bibref">WEBIDL</a></cite>],
+    as this specification uses that specification and
+    terminology.</p>
+  </section>
+  <!--=========================== Terminology ================================-->
+
+  <section id="terminology">
+    <!--OddPage-->
+
+    <h2 id="h2_terminology" role="heading" aria-level="1">
+    <span class="secno">3.</span> Terminology</h2>
+
+    <p>The <dfn id="dfn-eventhandler"><a href=
+    "http://dev.w3.org/html5/spec/webappapis.html#eventhandler"><code>
+    EventHandler</code></a></dfn> interface represents a callback
+    used for event handlers as defined in [<cite><a href=
+    "#bib-HTML5" class="bibref">HTML5</a></cite>].</p>
+
+    <p>The concepts <dfn id="dfn-queue-a-task"><a href=
+    "http://dev.w3.org/html5/spec/webappapis.html#queue-a-task">queue
+    a task</a></dfn> and <dfn id="dfn-fire-a-simple-event"><a href=
+    "http://dev.w3.org/html5/spec/webappapis.html#firing-a-simple-event-named-e">
+    fire a simple event</a></dfn> are defined in [<cite><a href=
+    "#bib-HTML5" class="bibref">HTML5</a></cite>].</p>
+
+    <p>The terms <dfn id="dfn-event-handler"><a href=
+    "http://dev.w3.org/html5/spec/webappapis.html#event-handlers">event
+    handler</a></dfn> and <dfn id=
+    "dfn-event-handler-event-types"><a href=
+    "http://dev.w3.org/html5/spec/webappapis.html#event-handler-event-type">
+    event handler event types</a></dfn> are defined in
+    [<cite><a href="#bib-HTML5" class=
+    "bibref">HTML5</a></cite>].</p>
+
+    <p>The <dfn id="dfn-event"><code>Event</code></dfn>
+    interface and the <dfn id="dfn-promise"><code>Promise</code></dfn>
+    interface as well as the concept of a <dfn id=
+    "dfn-resolver">resolver</dfn> are defined in
+    [<cite><a href="#bib-DOM4" class="bibref">DOM4</a></cite>].</p>
+
+    <p>A <dfn id="dfn-nfc-tag" title="NFC tag">NFC tag</dfn> is a
+    passive, unpowered NFC device. The <a class="internalDFN" href=
+    "#dfn-nfc-tag">NFC tag</a> is powered by magnetic induction
+    when an active NFC device is in close vicinity. A <a class=
+    "internalDFN" href="#dfn-nfc-tag">NFC tag</a> contains a single
+    <a class="internalDFN" href="#dfn-ndef-message">NDEF
+    message</a>.</p>
+
+    <p>A <dfn id="dfn-ndef-message" title="NDEF message">NDEF
+    message</dfn> encapsulates one or more application-defined
+    <a class="internalDFN" href="#dfn-ndef-record">NDEF
+    record</a>s. NDEF stands for NFC Forum Data Exchange Format, a
+    lightweight binary message format. NDEF messages can be stored
+    on a <a class="internalDFN" href="#dfn-nfc-tag">NFC tag</a> or
+    exchanged between NFC-enabled devices.</p>
+
+    <p>A <dfn id="dfn-ndef-record" title="NDEF record">NDEF
+    record</dfn> has a maximum payload of 2^32-1 bytes. The record
+    also contains information about the payload size, type, and an
+    optional identifier.</p>
+  </section>
+  <!--==================== Extended interface Navigator ======================-->
+
+  <section id="extensions-to-navigator-object">
+    <!--OddPage-->
+
+    <h2 id="h2_extensions-to-navigator-object" role="heading"
+    aria-level="1"><span class="secno">4.</span> Extensions to
+    <code>Navigator</code> object</h2>
+
+    <p>The <a class="idlType" href=
+    "#idl-def-NFCManager"><code>NFCManager</code></a> interface is
+    exposed on [<cite><a href="#bib-HTML" class=
+    "bibref">HTML</a></cite>]'s <a href=
+    "http://www.whatwg.org/specs/web-apps/current-work/#dom-navigator">
+    <code>Navigator</code></a> object.</p>
+    <pre class="idl">
+<span class="idlInterface" id=
+"idl-def-Navigator">partial interface <span class=
+"idlInterfaceID">Navigator</span> {
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a class="idlType" href=
+"#idl-def-NFCManager"><code>NFCManager</code></a></span> <span class="idlAttrName"><a href="#widl-Navigator-nfc">nfc</a></span>;</span>
+};</span>
+</pre>
+
+    <section id="attributes">
+      <h3 id="h3_attributes" role="heading" aria-level="2">
+      <span class="secno">4.1</span> Attributes</h3>
+
+      <dl class="attributes">
+        <dt id="widl-Navigator-nfc"><code>nfc</code> of type
+        <span class="idlAttrType"><a class="idlType" href=
+        "#idl-def-NFCManager"><code>NFCManager</code></a></span>,
+        readonly</dt>
+
+        <dd>The object that exposes the default NFC manager on the
+        device.</dd>
+      </dl>
+    </section>
+  </section>
+  <!--====================== Interface NFCManager ============================-->
+
+  <section id="nfcmanager-interface">
+    <!--OddPage-->
+
+    <h2 id="h2_nfcmanager-interface" role="heading" aria-level="1">
+    <span class="secno">5.</span> <a class="idlType" href=
+    "#idl-def-NFCManager"><code>NFCManager</code></a>
+    Interface</h2>
+
+    <p>The <a class="idlType" href=
+    "#idl-def-NFCManager"><code>NFCManager</code></a> interface
+    defines access to NFC functionality and offers methods to
+    control local NFC behavior like polling for targets.</p>
+    <pre class="idl">
+<span class="idlInterface" id="idl-def-NFCManager">[<span class=
+"extAttr">NoInterfaceObject</span>]
+interface <span class=
+"idlInterfaceID">NFCManager</span> : <span class=
+"idlSuperclass"><a>EventTarget</a></span> {
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>boolean</a></span>      <span class=
+"idlAttrName"><a href=
+"#widl-NFCManager-powered">powered</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>boolean</a></span>      <span class=
+"idlAttrName"><a href=
+"#widl-NFCManager-polling">polling</a></span>;</span>
+<span class="idlMethod">    <span class="idlMethType"><a class=
+"internalDFN" href="#dfn-promise">Promise</a></span> <span class=
+"idlMethName"><a href=
+"#widl-NFCManager-powerOn-Promise">powerOn</a></span> ();</span>
+<span class="idlMethod">    <span class="idlMethType"><a class=
+"internalDFN" href="#dfn-promise">Promise</a></span> <span class=
+"idlMethName"><a href=
+"#widl-NFCManager-powerOff-Promise">powerOff</a></span> ();</span>
+<span class="idlMethod">    <span class="idlMethType"><a class=
+"internalDFN" href="#dfn-promise">Promise</a></span> <span class=
+"idlMethName"><a href=
+"#widl-NFCManager-startPoll-Promise">startPoll</a></span> ();</span>
+<span class="idlMethod">    <span class="idlMethType"><a class=
+"internalDFN" href="#dfn-promise">Promise</a></span> <span class=
+"idlMethName"><a href=
+"#widl-NFCManager-stopPoll-Promise">stopPoll</a></span> ();</span>
+<span class="idlAttribute">                attribute <span class=
+"idlAttrType"><a class="internalDFN" href=
+"#dfn-eventhandler">EventHandler</a></span> <span class=
+"idlAttrName"><a href=
+"#widl-NFCManager-onpoweron">onpoweron</a></span>;</span>
+<span class="idlAttribute">                attribute <span class=
+"idlAttrType"><a class="internalDFN" href=
+"#dfn-eventhandler">EventHandler</a></span> <span class=
+"idlAttrName"><a href=
+"#widl-NFCManager-onpoweroff">onpoweroff</a></span>;</span>
+<span class="idlAttribute">                attribute <span class=
+"idlAttrType"><a class="internalDFN" href=
+"#dfn-eventhandler">EventHandler</a></span> <span class=
+"idlAttrName"><a href=
+"#widl-NFCManager-onpollstart">onpollstart</a></span>;</span>
+<span class="idlAttribute">                attribute <span class=
+"idlAttrType"><a class="internalDFN" href=
+"#dfn-eventhandler">EventHandler</a></span> <span class=
+"idlAttrName"><a href=
+"#widl-NFCManager-onpollstop">onpollstop</a></span>;</span>
+<span class="idlAttribute">                attribute <span class=
+"idlAttrType"><a class="internalDFN" href=
+"#dfn-eventhandler">EventHandler</a></span> <span class=
+"idlAttrName"><a href=
+"#widl-NFCManager-ontagfound">ontagfound</a></span>;</span>
+<span class="idlAttribute">                attribute <span class=
+"idlAttrType"><a class="internalDFN" href=
+"#dfn-eventhandler">EventHandler</a></span> <span class=
+"idlAttrName"><a href=
+"#widl-NFCManager-ontaglost">ontaglost</a></span>;</span>
+<span class="idlAttribute">                attribute <span class=
+"idlAttrType"><a class="internalDFN" href=
+"#dfn-eventhandler">EventHandler</a></span> <span class=
+"idlAttrName"><a href=
+"#widl-NFCManager-onpeerfound">onpeerfound</a></span>;</span>
+<span class="idlAttribute">                attribute <span class=
+"idlAttrType"><a class="internalDFN" href=
+"#dfn-eventhandler">EventHandler</a></span> <span class=
+"idlAttrName"><a href=
+"#widl-NFCManager-onpeerlost">onpeerlost</a></span>;</span>
+};</span>
+</pre>
+
+    <section id="attributes-1">
+      <h3 id="h3_attributes-1" role="heading" aria-level="2">
+      <span class="secno">5.1</span> Attributes</h3>
+
+      <dl class="attributes">
+        <dt id="widl-NFCManager-onpeerfound">
+        <code>onpeerfound</code> of type <span class=
+        "idlAttrType"><a class="internalDFN" href=
+        "#dfn-eventhandler">EventHandler</a></span>,</dt>
+
+        <dd>
+          The <code>peerfound</code> event of type <code><a class=
+          "idlType" href=
+          "#idl-def-NFCPeerEvent"><code>NFCPeerEvent</code></a></code>
+          <em title="MUST" class="rfc2119">MUST</em> be fired
+          whenever a new <a class="idlType" href=
+          "#idl-def-NFCPeer"><code>NFCPeer</code></a> is detected
+          by the NFC manager. The <code><a>peer</a></code> property
+          of the event <em title="MUST" class="rfc2119">MUST</em>
+          contain the corresponding <a class="idlType" href=
+          "#idl-def-NFCPeer"><code>NFCPeer</code></a> object.
+        </dd>
+
+        <dt id="widl-NFCManager-onpeerlost"><code>onpeerlost</code>
+        of type <span class="idlAttrType"><a class="internalDFN"
+        href="#dfn-eventhandler">EventHandler</a></span>,</dt>
+
+        <dd>Event handler called when the <code>peerlost</code>
+        event is dispatched.</dd>
+
+        <dt id="widl-NFCManager-onpollstart">
+        <code>onpollstart</code> of type <span class=
+        "idlAttrType"><a class="internalDFN" href=
+        "#dfn-eventhandler">EventHandler</a></span>,</dt>
+
+        <dd>Event handler called when the <code>pollstart</code>
+        event is dispatched.</dd>
+
+        <dt id="widl-NFCManager-onpollstop"><code>onpollstop</code>
+        of type <span class="idlAttrType"><a class="internalDFN"
+        href="#dfn-eventhandler">EventHandler</a></span>,</dt>
+
+        <dd>Event handler called when the <code>pollstop</code>
+        event is dispatched.</dd>
+
+        <dt id="widl-NFCManager-onpoweroff"><code>onpoweroff</code>
+        of type <span class="idlAttrType"><a class="internalDFN"
+        href="#dfn-eventhandler">EventHandler</a></span>,</dt>
+
+        <dd>Event handler called when the <code>poweroff</code>
+        event is dispatched.</dd>
+
+        <dt id="widl-NFCManager-onpoweron"><code>onpoweron</code>
+        of type <span class="idlAttrType"><a class="internalDFN"
+        href="#dfn-eventhandler">EventHandler</a></span>,</dt>
+
+        <dd>Event handler called when the <code>poweron</code>
+        event is dispatched.</dd>
+
+        <dt id="widl-NFCManager-ontagfound"><code>ontagfound</code>
+        of type <span class="idlAttrType"><a class="internalDFN"
+        href="#dfn-eventhandler">EventHandler</a></span>,</dt>
+
+        <dd>
+          The <code>tagfound</code> event of type <code><a class=
+          "idlType" href=
+          "#idl-def-NFCTagEvent"><code>NFCTagEvent</code></a></code>
+          <em title="MUST" class="rfc2119">MUST</em> be fired
+          whenever a new <a class="idlType" href=
+          "#idl-def-NFCTag"><code>NFCTag</code></a> is detected by
+          the NFC manager. The <code><a>tag</a></code> property of
+          the event <em title="MUST" class="rfc2119">MUST</em>
+          contain the corresponding <a class="idlType" href=
+          "#idl-def-NFCTag"><code>NFCTag</code></a> object.
+        </dd>
+
+        <dt id="widl-NFCManager-ontaglost"><code>ontaglost</code>
+        of type <span class="idlAttrType"><a class="internalDFN"
+        href="#dfn-eventhandler">EventHandler</a></span>,</dt>
+
+        <dd>Event handler called when the <code>taglost</code>
+        event is dispatched.</dd>
+
+        <dt id="widl-NFCManager-polling"><code>polling</code> of
+        type <span class="idlAttrType"><a>boolean</a></span>,
+        readonly</dt>
+
+        <dd>Indicates that the NFC manager is polling.</dd>
+
+        <dt id="widl-NFCManager-powered"><code>powered</code> of
+        type <span class="idlAttrType"><a>boolean</a></span>,
+        readonly</dt>
+
+        <dd>Indicates that the NFC manager is powered.</dd>
+      </dl>
+    </section>
+
+    <section id="methods">
+      <h3 id="h3_methods" role="heading" aria-level="2">
+      <span class="secno">5.2</span> Methods</h3>
+
+      <dl class="methods">
+        <dt id="widl-NFCManager-powerOff-Promise">
+        <code>powerOff</code></dt>
+
+        <dd>
+          Turns NFC hardware power off. This method returns a new
+          <code>Promise</code> to notify the caller that the NFC
+          hardware power is turned off.
+
+          <div>
+            <em>No parameters.</em>
+          </div>
+
+          <div>
+            <em>Return type:</em> <code><a class="internalDFN"
+            href="#dfn-promise">Promise</a></code>
+          </div>
+        </dd>
+
+        <dt id="widl-NFCManager-powerOn-Promise">
+        <code>powerOn</code></dt>
+
+        <dd>
+          Turns NFC hardware power on. This method returns a new
+          <code>Promise</code> to notify the caller that the NFC
+          hardware is now powered.
+
+          <div>
+            <em>No parameters.</em>
+          </div>
+
+          <div>
+            <em>Return type:</em> <code><a class="internalDFN"
+            href="#dfn-promise">Promise</a></code>
+          </div>
+        </dd>
+
+        <dt id="widl-NFCManager-startPoll-Promise">
+        <code>startPoll</code></dt>
+
+        <dd>
+          Start polling for <a class="internalDFN" href=
+          "#dfn-nfc-tag">NFC tag</a>s or peer devices. This method
+          returns a new <code>Promise</code> to notify the caller
+          that the NFC hardware is now polling.
+
+          <div>
+            <em>No parameters.</em>
+          </div>
+
+          <div>
+            <em>Return type:</em> <code><a class="internalDFN"
+            href="#dfn-promise">Promise</a></code>
+          </div>
+        </dd>
+
+        <dt id="widl-NFCManager-stopPoll-Promise">
+        <code>stopPoll</code></dt>
+
+        <dd>
+          Stop polling for <a class="internalDFN" href=
+          "#dfn-nfc-tag">NFC tag</a>s or peer devices. This method
+          returns a new <code>Promise</code> to notify the caller
+          that the NFC hardware stopped polling.
+
+          <div>
+            <em>No parameters.</em>
+          </div>
+
+          <div>
+            <em>Return type:</em> <code><a class="internalDFN"
+            href="#dfn-promise">Promise</a></code>
+          </div>
+        </dd>
+      </dl>
+    </section>
+
+    <section id="event-handlers">
+      <h3 id="h3_event-handlers" role="heading" aria-level="2">
+      <span class="secno">5.3</span> Event handlers</h3>
+
+      <p>The following are the <a>event handlers</a> (and their
+      corresponding <a>event handler types</a>) that <em title=
+      "MUST" class="rfc2119">MUST</em> be supported as attributes
+      by the <a>NFC</a> object.</p>
+
+      <table class="simple">
+        <thead>
+          <tr>
+            <th>event handler</th>
+
+            <th>event name</th>
+
+            <th>event type</th>
+
+            <th>short description</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td><strong><code>onpoweron</code></strong></td>
+
+            <td><code><dfn id=
+            "dfn-poweron">poweron</dfn></code></td>
+
+            <td>
+              <a>simple event</a>
+            </td>
+
+            <td>fired when the <code>powered</code> state changes
+            to <code>true</code></td>
+          </tr>
+
+          <tr>
+            <td><strong><code>onpoweroff</code></strong></td>
+
+            <td><code><dfn id=
+            "dfn-poweroff">poweroff</dfn></code></td>
+
+            <td>
+              <a>simple event</a>
+            </td>
+
+            <td>fired when the <code>powered</code> state changes
+            to <code>false</code></td>
+          </tr>
+
+          <tr>
+            <td><strong><code>onpollstart</code></strong></td>
+
+            <td><code><dfn id=
+            "dfn-pollstart">pollstart</dfn></code></td>
+
+            <td>
+              <a>simple event</a>
+            </td>
+
+            <td>fired when the <code>polling</code> state changes
+            to <code>true</code></td>
+          </tr>
+
+          <tr>
+            <td><strong><code>onpollstop</code></strong></td>
+
+            <td><code><dfn id=
+            "dfn-pollstop">pollstop</dfn></code></td>
+
+            <td>
+              <a>simple event</a>
+            </td>
+
+            <td>fired when the <code>polling</code> state changes
+            to <code>false</code></td>
+          </tr>
+
+          <tr>
+            <td><strong><code>ontagfound</code></strong></td>
+
+            <td><code><dfn id=
+            "dfn-tagfound">tagfound</dfn></code></td>
+
+            <td>
+              <code><a class="idlType" href=
+              "#idl-def-NFCTagEvent"><code>NFCTagEvent</code></a></code>
+              with <a>tag</a> property set to the new <a class=
+              "idlType" href=
+              "#idl-def-NFCTag"><code>NFCTag</code></a> object.
+            </td>
+
+            <td>detect a new <code>NFCTag</code></td>
+          </tr>
+
+          <tr>
+            <td><strong><code>ontaglost</code></strong></td>
+
+            <td><code><dfn id=
+            "dfn-taglost">taglost</dfn></code></td>
+
+            <td>
+              <a>simple event</a>
+            </td>
+
+            <td>fired when the <code>NFCTag</code> detected by the
+            adaptor moves out of range.</td>
+          </tr>
+
+          <tr>
+            <td><strong><code>onpeerfound</code></strong></td>
+
+            <td><code><dfn id=
+            "dfn-peerfound">peerfound</dfn></code></td>
+
+            <td>
+              <code><a class="idlType" href=
+              "#idl-def-NFCPeerEvent"><code>NFCPeerEvent</code></a></code>
+              with <a>peer</a> property set to the new <a class=
+              "idlType" href=
+              "#idl-def-NFCPeer"><code>NFCPeer</code></a> object.
+            </td>
+
+            <td>detect a new <code>NFCPeer</code></td>
+          </tr>
+
+          <tr>
+            <td><strong><code>onpeerlost</code></strong></td>
+
+            <td><code><dfn id=
+            "dfn-peerlost">peerlost</dfn></code></td>
+
+            <td>
+              <a>simple event</a>
+            </td>
+
+            <td>fired when the <code>NFCPeer</code> detected by the
+            adaptor moves out of range.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section><!-- Event handlers -->
+  </section><!-- NFCManager -->
+  <!--====================== Interface NFCTagEvent ===========================-->
+
+  <section id="nfctagevent-interface">
+    <!--OddPage-->
+
+    <h2 id="h2_nfctagevent-interface" role="heading" aria-level=
+    "1"><span class="secno">6.</span> <a class="idlType" href=
+    "#idl-def-NFCTagEvent"><code>NFCTagEvent</code></a>
+    Interface</h2>
+    <pre class="idl">
+<span class="idlInterface" id=
+"idl-def-NFCTagEvent">interface <span class=
+"idlInterfaceID">NFCTagEvent</span> : <span class=
+"idlSuperclass"><a class="internalDFN" href=
+"#dfn-event">Event</a></span> {
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a class="idlType" href=
+"#idl-def-NFCTag"><code>NFCTag</code></a></span> <span class=
+"idlAttrName"><a href=
+"#widl-NFCTagEvent-tag">tag</a></span>;</span>
+};</span>
+</pre>
+
+    <section id="attributes-2">
+      <h3 id="h3_attributes-2" role="heading" aria-level="2">
+      <span class="secno">6.1</span> Attributes</h3>
+
+      <dl class="attributes">
+        <dt id="widl-NFCTagEvent-tag"><code>tag</code> of type
+        <span class="idlAttrType"><a class="idlType" href=
+        "#idl-def-NFCTag"><code>NFCTag</code></a></span>,
+        readonly</dt>
+
+        <dd>
+          When getting, the user agent <em title="MUST" class=
+          "rfc2119">MUST</em> return the <a class="idlType" href=
+          "#idl-def-NFCTag"><code>NFCTag</code></a> that triggered
+          the event.
+        </dd>
+      </dl>
+    </section>
+  </section><!-- NFCTagEvent -->
+  <!--====================== Interface NFCPeerEvent ==========================-->
+
+  <section id="nfcpeerevent-interface">
+    <!--OddPage-->
+
+    <h2 id="h2_nfcpeerevent-interface" role="heading" aria-level=
+    "1"><span class="secno">7.</span> <a class="idlType" href=
+    "#idl-def-NFCPeerEvent"><code>NFCPeerEvent</code></a>
+    Interface</h2>
+    <pre class="idl">
+<span class="idlInterface" id=
+"idl-def-NFCPeerEvent">interface <span class=
+"idlInterfaceID">NFCPeerEvent</span> : <span class=
+"idlSuperclass"><a class="internalDFN" href=
+"#dfn-event">Event</a></span> {
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a class="idlType" href=
+"#idl-def-NFCPeer"><code>NFCPeer</code></a></span> <span class=
+"idlAttrName"><a href=
+"#widl-NFCPeerEvent-peer">peer</a></span>;</span>
+};</span>
+</pre>
+
+    <section id="attributes-3">
+      <h3 id="h3_attributes-3" role="heading" aria-level="2">
+      <span class="secno">7.1</span> Attributes</h3>
+
+      <dl class="attributes">
+        <dt id="widl-NFCPeerEvent-peer"><code>peer</code> of type
+        <span class="idlAttrType"><a class="idlType" href=
+        "#idl-def-NFCPeer"><code>NFCPeer</code></a></span>,
+        readonly</dt>
+
+        <dd>
+          When getting, the user agent <em title="MUST" class=
+          "rfc2119">MUST</em> return the <a class="idlType" href=
+          "#idl-def-NFCPeer"><code>NFCPeer</code></a> that
+          triggered the event.
+        </dd>
+      </dl>
+    </section>
+  </section><!-- NFCPeerEvent -->
+  <!--====================== Interface NDEFMessageEvent ======================-->
+
+  <section id="ndefmessageevent-interface">
+    <!--OddPage-->
+
+    <h2 id="h2_ndefmessageevent-interface" role="heading"
+    aria-level="1"><span class="secno">8.</span> <a class="idlType"
+    href=
+    "#idl-def-NDEFMessageEvent"><code>NDEFMessageEvent</code></a>
+    Interface</h2>
+    <pre class="idl">
+<span class="idlInterface" id=
+"idl-def-NDEFMessageEvent">interface <span class=
+"idlInterfaceID">NDEFMessageEvent</span> : <span class=
+"idlSuperclass"><a class="internalDFN" href=
+"#dfn-event">Event</a></span> {
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a class="idlType" href=
+"#idl-def-NDEFMessage"><code>NDEFMessage</code></a></span> <span class="idlAttrName"><a href="#widl-NDEFMessageEvent-message">message</a></span>;</span>
+};</span>
+</pre>
+
+    <section id="attributes-4">
+      <h3 id="h3_attributes-4" role="heading" aria-level="2">
+      <span class="secno">8.1</span> Attributes</h3>
+
+      <dl class="attributes">
+        <dt id="widl-NDEFMessageEvent-message"><code>message</code>
+        of type <span class="idlAttrType"><a class="idlType" href=
+        "#idl-def-NDEFMessage"><code>NDEFMessage</code></a></span>,
+        readonly</dt>
+
+        <dd>
+          When getting, the user agent <em title="MUST" class=
+          "rfc2119">MUST</em> return the <a class="idlType" href=
+          "#idl-def-NDEFMessage"><code>NDEFMessage</code></a> that
+          triggered the event.
+        </dd>
+      </dl>
+    </section>
+  </section><!-- NDEFMessageEvent -->
+  <!--====================== Interface NFCTag ================================-->
+
+  <section id="nfctag-interface">
+    <!--OddPage-->
+
+    <h2 id="h2_nfctag-interface" role="heading" aria-level="1">
+    <span class="secno">9.</span> <a class="idlType" href=
+    "#idl-def-NFCTag"><code>NFCTag</code></a> Interface</h2>
+    <pre class="idl">
+<span class="idlInterface" id="idl-def-NFCTag">[<span class=
+"extAttr">NoInterfaceObject</span>]
+interface <span class="idlInterfaceID">NFCTag</span> {
+<span class="idlMethod">    <span class="idlMethType"><a class=
+"internalDFN" href="#dfn-promise">Promise</a></span> <span class=
+"idlMethName"><a href=
+"#widl-NFCTag-readNDEF-Promise">readNDEF</a></span> ();</span>
+<span class="idlMethod">    <span class="idlMethType"><a class=
+"internalDFN" href="#dfn-promise">Promise</a></span> <span class=
+"idlMethName"><a href=
+"#widl-NFCTag-writeNDEF-Promise-NDEFMessage-message">writeNDEF</a></span> (<span class="idlParam"><span class="idlParamType"><a class="idlType"
+href=
+"#idl-def-NDEFMessage"><code>NDEFMessage</code></a></span> <span class="idlParamName">message</span></span>);</span>
+};</span>
+</pre>
+
+    <section id="methods-1">
+      <h3 id="h3_methods-1" role="heading" aria-level="2">
+      <span class="secno">9.1</span> Methods</h3>
+
+      <dl class="methods">
+        <dt id="widl-NFCTag-readNDEF-Promise">
+        <code>readNDEF</code></dt>
+
+        <dd>
+          Read NDEF data from the <a class="internalDFN" href=
+          "#dfn-nfc-tag">NFC tag</a>. This method returns a new
+          <code>Promise</code> that will notify the caller with the
+          result of the operation, which is a <a class="idlType"
+          href="#idl-def-NDEFRecord"><code>NDEFRecord</code></a>.
+
+          <div>
+            <em>No parameters.</em>
+          </div>
+
+          <div>
+            <em>Return type:</em> <code><a class="internalDFN"
+            href="#dfn-promise">Promise</a></code>
+          </div>
+        </dd>
+
+        <dt id="widl-NFCTag-writeNDEF-Promise-NDEFMessage-message">
+        <code>writeNDEF</code></dt>
+
+        <dd>
+          Write a <a class="internalDFN" href=
+          "#dfn-ndef-message">NDEF message</a> on the <a class=
+          "internalDFN" href="#dfn-nfc-tag">NFC tag</a>. This
+          method returns a new <code>Promise</code> to notify the
+          caller about the operation success or failure.
+
+          <table class="parameters">
+            <tr>
+              <th>Parameter</th>
+
+              <th>Type</th>
+
+              <th>Nullable</th>
+
+              <th>Optional</th>
+
+              <th>Description</th>
+            </tr>
+
+            <tr>
+              <td class="prmName">message</td>
+
+              <td class="prmType"><code><a class="idlType" href=
+              "#idl-def-NDEFMessage"><code>NDEFMessage</code></a></code></td>
+
+              <td class="prmNullFalse"><span role="img" aria-label=
+              "False">✘</span></td>
+
+              <td class="prmOptFalse"><span role="img" aria-label=
+              "False">✘</span></td>
+
+              <td class="prmDesc">
+                The <a class="internalDFN" href=
+                "#dfn-ndef-message">NDEF message</a> to write on
+                the <a class="internalDFN" href="#dfn-nfc-tag">NFC
+                Tag</a>
+              </td>
+            </tr>
+          </table>
+
+          <div>
+            <em>Return type:</em> <code><a class="internalDFN"
+            href="#dfn-promise">Promise</a></code>
+          </div>
+        </dd>
+      </dl>
+    </section>
+  </section><!-- NFCTag -->
+  <!--====================== Interface NFCPeer ===============================-->
+
+  <section id="nfcpeer-interface">
+    <!--OddPage-->
+
+    <h2 id="h2_nfcpeer-interface" role="heading" aria-level="1">
+    <span class="secno">10.</span> <a class="idlType" href=
+    "#idl-def-NFCPeer"><code>NFCPeer</code></a> Interface</h2>
+    <pre class="idl">
+<span class="idlInterface" id="idl-def-NFCPeer">[<span class=
+"extAttr">NoInterfaceObject</span>]
+interface <span class=
+"idlInterfaceID">NFCPeer</span> : <span class="idlSuperclass"><a>EventTarget</a></span> {
+<span class="idlMethod">    <span class="idlMethType"><a class=
+"internalDFN" href="#dfn-promise">Promise</a></span> <span class=
+"idlMethName"><a href=
+"#widl-NFCPeer-sendNDEF-Promise-NDEFMessage-message">sendNDEF</a></span> (<span class="idlParam"><span class="idlParamType"><a class="idlType"
+href=
+"#idl-def-NDEFMessage"><code>NDEFMessage</code></a></span> <span class="idlParamName">message</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a class=
+"internalDFN" href="#dfn-promise">Promise</a></span> <span class=
+"idlMethName"><a href=
+"#widl-NFCPeer-startHandover-Promise-HandoverType-handoverType">startHandover</a></span> (<span class="idlParam"><span class="idlParamType"><a class="idlType"
+href=
+"#idl-def-HandoverType"><code>HandoverType</code></a></span> <span class="idlParamName">handoverType</span></span>);</span>
+<span class="idlAttribute">                attribute <span class=
+"idlAttrType"><a class="internalDFN" href=
+"#dfn-eventhandler">EventHandler</a></span> <span class=
+"idlAttrName"><a href=
+"#widl-NFCPeer-onmessageread">onmessageread</a></span>;</span>
+};</span>
+</pre>
+
+    <section id="attributes-5">
+      <h3 id="h3_attributes-5" role="heading" aria-level="2">
+      <span class="secno">10.1</span> Attributes</h3>
+
+      <dl class="attributes">
+        <dt id="widl-NFCPeer-onmessageread">
+        <code>onmessageread</code> of type <span class=
+        "idlAttrType"><a class="internalDFN" href=
+        "#dfn-eventhandler">EventHandler</a></span>,</dt>
+
+        <dd>
+          The <code>messageread</code> event of type
+          <code><a class="idlType" href=
+          "#idl-def-NDEFMessageEvent"><code>NDEFMessageEvent</code></a></code>
+          <em title="MUST" class="rfc2119">MUST</em> be fired
+          whenever a new <a class="idlType" href=
+          "#idl-def-NDEFMessage"><code>NDEFMessage</code></a> is
+          sent by the peer device. The <code><a>message</a></code>
+          property of the event <em title="MUST" class=
+          "rfc2119">MUST</em> contain the corresponding <a class=
+          "idlType" href=
+          "#idl-def-NDEFMessage"><code>NDEFMessage</code></a>
+          object.
+        </dd>
+      </dl>
+    </section>
+
+    <section id="methods-2">
+      <h3 id="h3_methods-2" role="heading" aria-level="2">
+      <span class="secno">10.2</span> Methods</h3>
+
+      <dl class="methods">
+        <dt id="widl-NFCPeer-sendNDEF-Promise-NDEFMessage-message">
+        <code>sendNDEF</code></dt>
+
+        <dd>
+          Send a <a class="internalDFN" href=
+          "#dfn-ndef-message">NDEF message</a> to the NFC peer
+          device. This method returns a new <code>Promise</code> to
+          notify the caller about the operation success or failure.
+
+          <table class="parameters">
+            <tr>
+              <th>Parameter</th>
+
+              <th>Type</th>
+
+              <th>Nullable</th>
+
+              <th>Optional</th>
+
+              <th>Description</th>
+            </tr>
+
+            <tr>
+              <td class="prmName">message</td>
+
+              <td class="prmType"><code><a class="idlType" href=
+              "#idl-def-NDEFMessage"><code>NDEFMessage</code></a></code></td>
+
+              <td class="prmNullFalse"><span role="img" aria-label=
+              "False">✘</span></td>
+
+              <td class="prmOptFalse"><span role="img" aria-label=
+              "False">✘</span></td>
+
+              <td class="prmDesc">
+                The <a class="internalDFN" href=
+                "#dfn-ndef-message">NDEF message</a> to send to the
+                NFC peer device.
+              </td>
+            </tr>
+          </table>
+
+          <div>
+            <em>Return type:</em> <code><a class="internalDFN"
+            href="#dfn-promise">Promise</a></code>
+          </div>
+        </dd>
+
+        <dt id=
+        "widl-NFCPeer-startHandover-Promise-HandoverType-handoverType">
+        <code>startHandover</code></dt>
+
+        <dd>
+          Initiates WiFi or Bluetooth pairing with the NFC
+          peer-to-peer target. This method returns a new
+          <code>Promise</code> to notify the caller about the
+          operation success or failure.
+
+          <table class="parameters">
+            <tr>
+              <th>Parameter</th>
+
+              <th>Type</th>
+
+              <th>Nullable</th>
+
+              <th>Optional</th>
+
+              <th>Description</th>
+            </tr>
+
+            <tr>
+              <td class="prmName">handoverType</td>
+
+              <td class="prmType"><code><a class="idlType" href=
+              "#idl-def-HandoverType"><code>HandoverType</code></a></code></td>
+
+              <td class="prmNullFalse"><span role="img" aria-label=
+              "False">✘</span></td>
+
+              <td class="prmOptFalse"><span role="img" aria-label=
+              "False">✘</span></td>
+
+              <td class="prmDesc">Select <code>"wifi"</code> or
+              <code>"bluetooth"</code> pairing.</td>
+            </tr>
+          </table>
+
+          <div>
+            <em>Return type:</em> <code><a class="internalDFN"
+            href="#dfn-promise">Promise</a></code>
+          </div>
+        </dd>
+      </dl>
+    </section>
+
+    <section id="event-handlers-1">
+      <h3 id="h3_event-handlers-1" role="heading" aria-level="2">
+      <span class="secno">10.3</span> Event handlers</h3>
+
+      <p>The following are the <a>event handlers</a> (and their
+      corresponding <a>event handler types</a>) that <em title=
+      "MUST" class="rfc2119">MUST</em> be supported as attributes
+      by the <a class="idlType" href=
+      "#idl-def-NFCPeer"><code>NFCPeer</code></a> object.</p>
+
+      <table class="simple">
+        <thead>
+          <tr>
+            <th>event handler</th>
+
+            <th>event name</th>
+
+            <th>event type</th>
+
+            <th>short description</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td><strong><code>onmessageread</code></strong></td>
+
+            <td><code><dfn id=
+            "dfn-messageread">messageread</dfn></code></td>
+
+            <td>
+              <code><a class="idlType" href=
+              "#idl-def-NDEFMessageEvent"><code>NDEFMessageEvent</code></a></code>
+              with <a>message</a> property set to the new <a class=
+              "idlType" href=
+              "#idl-def-NDEFMessage"><code>NDEFMessage</code></a>
+              object.
+            </td>
+
+            <td>fired when a <code>NDEFMessage</code> is sent by
+            the peer device.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section><!-- Event handlers -->
+  </section><!-- NFCPeer -->
+  <!--====================== Interface NDEFMessage ===========================-->
+
+  <section id="ndefmessage-interface">
+    <!--OddPage-->
+
+    <h2 id="h2_ndefmessage-interface" role="heading" aria-level=
+    "1"><span class="secno">11.</span> <a class="idlType" href=
+    "#idl-def-NDEFMessage"><code>NDEFMessage</code></a>
+    Interface</h2>
+    <pre class="idl">
+<span class="idlInterface" id="idl-def-NDEFMessage">[<span class=
+"extAttr">
+Constructor(byte［］bytes)
+Constructor(NDEFRecord［］records)
+</span>]
+interface <span class="idlInterfaceID">NDEFMessage</span> {
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a class="idlType" href=
+"#idl-def-NDEFRecord"><code>NDEFRecord</code></a>[]</span> <span class="idlAttrName"><a href="#widl-NDEFMessage-records">records</a></span>;</span>
+<span class="idlMethod">    <span class="idlMethType"><a class=
+"internalDFN" href="#dfn-promise">Promise</a></span> <span class=
+"idlMethName"><a href=
+"#widl-NDEFMessage-getBytes-Promise">getBytes</a></span> ();</span>
+};</span>
+</pre>
+
+    <section id="attributes-6">
+      <h3 id="h3_attributes-6" role="heading" aria-level="2">
+      <span class="secno">11.1</span> Attributes</h3>
+
+      <dl class="attributes">
+        <dt id="widl-NDEFMessage-records"><code>records</code> of
+        type array of <span class="idlAttrType"><a class="idlType"
+        href=
+        "#idl-def-NDEFRecord"><code>NDEFRecord</code></a></span>,
+        readonly</dt>
+
+        <dd>
+          <em title="MUST" class="rfc2119">MUST</em> return an
+          array of all <code>NDEFRecord</code> objects part of the
+          <a class="internalDFN" href="#dfn-ndef-message">NDEF
+          message</a>. Otherwise it <em title="MUST" class=
+          "rfc2119">MUST</em> return an empty list.
+        </dd>
+      </dl>
+    </section>
+
+    <section id="methods-3">
+      <h3 id="h3_methods-3" role="heading" aria-level="2">
+      <span class="secno">11.2</span> Methods</h3>
+
+      <dl class="methods">
+        <dt id="widl-NDEFMessage-getBytes-Promise">
+        <code>getBytes</code></dt>
+
+        <dd>
+          Get the binary representation of the <a class=
+          "internalDFN" href="#dfn-ndef-message">NDEF message</a>.
+          This method returns a new <code>Promise</code> to notify
+          the caller with the result of the operation, which is of
+          type <code>byte[]</code> i.e. a Javascript Array of
+          Number objects.
+
+          <div>
+            <em>No parameters.</em>
+          </div>
+
+          <div>
+            <em>Return type:</em> <code><a class="internalDFN"
+            href="#dfn-promise">Promise</a></code>
+          </div>
+        </dd>
+      </dl>
+    </section>
+  </section><!-- NDEFMessage -->
+  <!--====================== Interface NDEFRecord ============================-->
+
+  <section id="ndefrecord-interface">
+    <!--OddPage-->
+
+    <h2 id="h2_ndefrecord-interface" role="heading" aria-level="1">
+    <span class="secno">12.</span> <a class="idlType" href=
+    "#idl-def-NDEFRecord"><code>NDEFRecord</code></a>
+    Interface</h2>
+    <pre class="idl">
+<span class="idlInterface" id="idl-def-NDEFRecord">[<span class=
+"extAttr">
+Constructor(byte tnf, 
+  optional DOMString type, 
+  optional byte［］payload, 
+  optional DOMString id)
+</span>]
+interface <span class="idlInterfaceID">NDEFRecord</span> {
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a class="idlType" href=
+"#idl-def-NDEFRecordType"><code>NDEFRecordType</code></a></span> <span class="idlAttrName"><a href="#widl-NDEFRecord-recordType">recordType</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>byte</a></span>           <span class=
+"idlAttrName"><a href="#widl-NDEFRecord-tnf">tnf</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>DOMString</a>?</span>     <span class=
+"idlAttrName"><a href=
+"#widl-NDEFRecord-type">type</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>DOMString</a>?</span>     <span class=
+"idlAttrName"><a href="#widl-NDEFRecord-id">id</a></span>;</span>
+<span class="idlMethod">    <span class="idlMethType"><a class=
+"internalDFN" href="#dfn-promise">Promise</a></span> <span class=
+"idlMethName"><a href=
+"#widl-NDEFRecord-getPayload-Promise">getPayload</a></span> ();</span>
+};</span>
+</pre>
+
+    <section id="attributes-7">
+      <h3 id="h3_attributes-7" role="heading" aria-level="2">
+      <span class="secno">12.1</span> Attributes</h3>
+
+      <dl class="attributes">
+        <dt id="widl-NDEFRecord-id"><code>id</code> of type
+        <span class="idlAttrType"><a>DOMString</a></span>, readonly
+        , nullable</dt>
+
+        <dd>An identifier for the record, in the form of a URI
+        reference.</dd>
+
+        <dt id="widl-NDEFRecord-recordType"><code>recordType</code>
+        of type <span class="idlAttrType"><a class="idlType" href=
+        "#idl-def-NDEFRecordType"><code>NDEFRecordType</code></a></span>,
+        readonly</dt>
+
+        <dd>The record type, according to the sub-interface in
+        implements.</dd>
+
+        <dt id="widl-NDEFRecord-tnf"><code>tnf</code> of type
+        <span class="idlAttrType"><a>byte</a></span>, readonly</dt>
+
+        <dd>The record's Type Name Format. Possible values are 0
+        (Empty), 1 (Well known), 2 (Media), 3 (URI), 4 (External),
+        5 (Unknown)</dd>
+
+        <dt id="widl-NDEFRecord-type"><code>type</code> of type
+        <span class="idlAttrType"><a>DOMString</a></span>, readonly
+        , nullable</dt>
+
+        <dd>A string identifier describing the type of the
+        payload.</dd>
+      </dl>
+    </section>
+
+    <section id="methods-4">
+      <h3 id="h3_methods-4" role="heading" aria-level="2">
+      <span class="secno">12.2</span> Methods</h3>
+
+      <dl class="methods">
+        <dt id="widl-NDEFRecord-getPayload-Promise">
+        <code>getPayload</code></dt>
+
+        <dd>
+          Extract the binary payload of the <a class="internalDFN"
+          href="#dfn-ndef-record">NDEF record</a>. This method
+          returns a new <code>Promise</code> to notify the caller
+          with the result of the operation, which is of type
+          <code>byte[]</code> i.e. a Javascript Array of Number
+          objects.
+
+          <div>
+            <em>No parameters.</em>
+          </div>
+
+          <div>
+            <em>Return type:</em> <code><a class="internalDFN"
+            href="#dfn-promise">Promise</a></code>
+          </div>
+        </dd>
+      </dl>
+    </section>
+  </section><!-- NDEFRecord -->
+  <!--====================== Interface NDEFRecordText ========================-->
+
+  <section id="ndefrecordtext-interface">
+    <!--OddPage-->
+
+    <h2 id="h2_ndefrecordtext-interface" role="heading" aria-level=
+    "1"><span class="secno">13.</span> <a class="idlType" href=
+    "#idl-def-NDEFRecordText"><code>NDEFRecordText</code></a>
+    Interface</h2>
+    <pre class="idl">
+<span class="idlInterface" id=
+"idl-def-NDEFRecordText">[<span class="extAttr">Constructor(DOMString text, 
+             optional DOMString languageCode,
+             optional DOMString encoding)</span>]
+interface <span class=
+"idlInterfaceID">NDEFRecordText</span> : <span class=
+"idlSuperclass"><a class="idlType" href=
+"#idl-def-NDEFRecord"><code>NDEFRecord</code></a></span> {
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>DOMString</a></span> <span class=
+"idlAttrName"><a href=
+"#widl-NDEFRecordText-text">text</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>DOMString</a></span> <span class=
+"idlAttrName"><a href=
+"#widl-NDEFRecordText-languageCode">languageCode</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>DOMString</a></span> <span class=
+"idlAttrName"><a href=
+"#widl-NDEFRecordText-encoding">encoding</a></span>;</span>
+};</span>
+</pre>
+
+    <section id="attributes-8">
+      <h3 id="h3_attributes-8" role="heading" aria-level="2">
+      <span class="secno">13.1</span> Attributes</h3>
+
+      <dl class="attributes">
+        <dt id="widl-NDEFRecordText-encoding"><code>encoding</code>
+        of type <span class="idlAttrType"><a>DOMString</a></span>,
+        readonly</dt>
+
+        <dd>The encoding type <em title="MUST" class=
+        "rfc2119">MUST</em> be either UTF-8 or UTF-16</dd>
+
+        <dt id="widl-NDEFRecordText-languageCode">
+        <code>languageCode</code> of type <span class=
+        "idlAttrType"><a>DOMString</a></span>, readonly</dt>
+
+        <dd>
+          The language code string value, followed by <a href=
+          "http://www.ietf.org/rfc/rfc3066.txt">IANA[RFC 3066]</a>
+          (ex: en-US, ko-KR).
+        </dd>
+
+        <dt id="widl-NDEFRecordText-text"><code>text</code> of type
+        <span class="idlAttrType"><a>DOMString</a></span>,
+        readonly</dt>
+
+        <dd>The encoded text.</dd>
+      </dl>
+    </section>
+  </section><!-- NDEFRecordText -->
+  <!--====================== Interface NDEFRecordURI =========================-->
+
+  <section id="ndefrecorduri-interface">
+    <!--OddPage-->
+
+    <h2 id="h2_ndefrecorduri-interface" role="heading" aria-level=
+    "1"><span class="secno">14.</span> <a class="idlType" href=
+    "#idl-def-NDEFRecordURI"><code>NDEFRecordURI</code></a>
+    Interface</h2>
+    <pre class="idl">
+<span class="idlInterface" id="idl-def-NDEFRecordURI">[<span class=
+"extAttr">Constructor(DOMString uri)</span>]
+interface <span class=
+"idlInterfaceID">NDEFRecordURI</span> : <span class=
+"idlSuperclass"><a class="idlType" href=
+"#idl-def-NDEFRecord"><code>NDEFRecord</code></a></span> {
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>DOMString</a></span> <span class=
+"idlAttrName"><a href=
+"#widl-NDEFRecordURI-uri">uri</a></span>;</span>
+};</span>
+</pre>
+
+    <section id="attributes-9">
+      <h3 id="h3_attributes-9" role="heading" aria-level="2">
+      <span class="secno">14.1</span> Attributes</h3>
+
+      <dl class="attributes">
+        <dt id="widl-NDEFRecordURI-uri"><code>uri</code> of type
+        <span class="idlAttrType"><a>DOMString</a></span>,
+        readonly</dt>
+
+        <dd>The URI string that will be stored in the payload.</dd>
+      </dl>
+    </section>
+  </section><!-- NDEFRecordURI -->
+  <!--====================== Interface NDEFRecordMedia ========================-->
+
+  <section id="ndefrecordmedia-interface">
+    <!--OddPage-->
+
+    <h2 id="h2_ndefrecordmedia-interface" role="heading"
+    aria-level="1"><span class="secno">15.</span> <a class=
+    "idlType" href=
+    "#idl-def-NDEFRecordMedia"><code>NDEFRecordMedia</code></a>
+    Interface</h2>
+    <pre class="idl">
+<span class="idlInterface" id=
+"idl-def-NDEFRecordMedia">[<span class=
+"extAttr">Constructor(DOMString mimeType,
+             byte［］payload)</span>]
+interface <span class=
+"idlInterfaceID">NDEFRecordMedia</span> : <span class=
+"idlSuperclass"><a class="idlType" href=
+"#idl-def-NDEFRecord"><code>NDEFRecord</code></a></span> {
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>DOMString</a></span> <span class=
+"idlAttrName"><a href=
+"#widl-NDEFRecordMedia-mimeType">mimeType</a></span>;</span>
+};</span>
+</pre>
+
+    <section id="attributes-10">
+      <h3 id="h3_attributes-10" role="heading" aria-level="2">
+      <span class="secno">15.1</span> Attributes</h3>
+
+      <dl class="attributes">
+        <dt id="widl-NDEFRecordMedia-mimeType">
+        <code>mimeType</code> of type <span class=
+        "idlAttrType"><a>DOMString</a></span>, readonly</dt>
+
+        <dd>
+          The MIME type of the payload, as defined in <a href=
+          "http://www.ietf.org/rfc/rfc2046.txt">[RFC 2046]</a>.
+        </dd>
+      </dl>
+    </section>
+  </section><!-- NDEFRecordMedia -->
+  <!--====================== Interface NDEFRecordSmartPoster =================-->
+
+  <section id="ndefrecordsmartposter-interface">
+    <!--OddPage-->
+
+    <h2 id="h2_ndefrecordsmartposter-interface" role="heading"
+    aria-level="1"><span class="secno">16.</span> <a class=
+    "idlType" href=
+    "#idl-def-NDEFRecordSmartPoster"><code>NDEFRecordSmartPoster</code></a>
+    Interface</h2>
+    <pre class="idl">
+<span class="idlInterface" id=
+"idl-def-NDEFRecordSmartPoster">[<span class=
+"extAttr">Constructor(DOMString uri,
+             optional NDEFRecordText［］titles,
+             optional DOMString action,
+             optional NDEFRecordMedia［］icons,
+             optional unsigned long targetSize,
+             optional DOMString targetMIME)</span>]
+interface <span class=
+"idlInterfaceID">NDEFRecordSmartPoster</span> : <span class=
+"idlSuperclass"><a class="idlType" href=
+"#idl-def-NDEFRecord"><code>NDEFRecord</code></a></span> {
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>DOMString</a></span>          <span class=
+"idlAttrName"><a href=
+"#widl-NDEFRecordSmartPoster-uri">uri</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a class="idlType" href=
+"#idl-def-NDEFRecordText"><code>NDEFRecordText</code></a>[]?</span>  <span class="idlAttrName"><a href="#widl-NDEFRecordSmartPoster-titles">titles</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a class="idlType" href=
+"#idl-def-SmartPosterAction"><code>SmartPosterAction</code></a>?</span> <span class="idlAttrName"><a href="#widl-NDEFRecordSmartPoster-action">action</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a class="idlType" href=
+"#idl-def-NDEFRecordMedia"><code>NDEFRecordMedia</code></a>[]?</span> <span class="idlAttrName"><a href="#widl-NDEFRecordSmartPoster-icons">icons</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>unsigned long</a>?</span>     <span class=
+"idlAttrName"><a href=
+"#widl-NDEFRecordSmartPoster-targetSize">targetSize</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>DOMString</a>?</span>         <span class=
+"idlAttrName"><a href=
+"#widl-NDEFRecordSmartPoster-targetMIME">targetMIME</a></span>;</span>
+};</span>
+</pre>
+
+    <section id="attributes-11">
+      <h3 id="h3_attributes-11" role="heading" aria-level="2">
+      <span class="secno">16.1</span> Attributes</h3>
+
+      <dl class="attributes">
+        <dt id="widl-NDEFRecordSmartPoster-action">
+        <code>action</code> of type <span class=
+        "idlAttrType"><a class="idlType" href=
+        "#idl-def-SmartPosterAction"><code>SmartPosterAction</code></a></span>,
+        readonly , nullable</dt>
+
+        <dd>The possible actions defined by the NFC forum Smart
+        Poster Record Type.</dd>
+
+        <dt id="widl-NDEFRecordSmartPoster-icons">
+        <code>icons</code> of type array of <span class=
+        "idlAttrType"><a class="idlType" href=
+        "#idl-def-NDEFRecordMedia"><code>NDEFRecordMedia</code></a></span>,
+        readonly , nullable</dt>
+
+        <dd>The Smart Poster Record can contain one or more icons,
+        that can also be animated.</dd>
+
+        <dt id="widl-NDEFRecordSmartPoster-targetMIME">
+        <code>targetMIME</code> of type <span class=
+        "idlAttrType"><a>DOMString</a></span>, readonly ,
+        nullable</dt>
+
+        <dd>The MIME type of the URI target.</dd>
+
+        <dt id="widl-NDEFRecordSmartPoster-targetSize">
+        <code>targetSize</code> of type <span class=
+        "idlAttrType"><a>unsigned long</a></span>, readonly ,
+        nullable</dt>
+
+        <dd>The size of the URI target in bytes.</dd>
+
+        <dt id="widl-NDEFRecordSmartPoster-titles">
+        <code>titles</code> of type array of <span class=
+        "idlAttrType"><a class="idlType" href=
+        "#idl-def-NDEFRecordText"><code>NDEFRecordText</code></a></span>,
+        readonly , nullable</dt>
+
+        <dd>The title in different languages. There <em title=
+        "MUST NOT" class="rfc2119">MUST NOT</em> be more than one
+        title record with the same language code string value.</dd>
+
+        <dt id="widl-NDEFRecordSmartPoster-uri"><code>uri</code> of
+        type <span class="idlAttrType"><a>DOMString</a></span>,
+        readonly</dt>
+
+        <dd>The URI field of the Smart Poster record, <em title=
+        "REQUIRED" class="rfc2119">REQUIRED</em> by the NFC forum
+        specification.</dd>
+      </dl>
+    </section>
+  </section><!-- NDEFRecordSmartPoster -->
+  <!--====================== Interface Enumerations ==========================-->
+
+  <section id="enumerations">
+    <!--OddPage-->
+
+    <h2 id="h2_enumerations" role="heading" aria-level="1">
+    <span class="secno">17.</span> Enumerations</h2>
+
+    <p>The attribute <code>recordType</code> can have the following
+    values:</p>
+    <pre class="idl">
+<span class="idlEnum" id="idl-def-NDEFRecordType">enum <span class=
+"idlEnumID">NDEFRecordType</span> {
+    "<a href="#idl-def-NDEFRecordType.text" class=
+"idlEnumItem">text</a>",
+    "<a href="#idl-def-NDEFRecordType.uri" class=
+"idlEnumItem">uri</a>",
+    "<a href="#idl-def-NDEFRecordType.media" class=
+"idlEnumItem">media</a>",
+    "<a href="#idl-def-NDEFRecordType.smartPoster" class=
+"idlEnumItem">smartPoster</a>",
+    "<a href="#idl-def-NDEFRecordType.unknown" class=
+"idlEnumItem">unknown</a>"
+};</span>
+</pre>
+
+    <table class="simple">
+      <tr>
+        <th colspan="2">Enumeration description</th>
+      </tr>
+
+      <tr>
+        <td><code id="idl-def-NDEFRecordType.text">text</code></td>
+
+        <td>Corresponding to NDEFRecordText.</td>
+      </tr>
+
+      <tr>
+        <td><code id="idl-def-NDEFRecordType.uri">uri</code></td>
+
+        <td>Corresponding to NDEFRecordURI.</td>
+      </tr>
+
+      <tr>
+        <td><code id=
+        "idl-def-NDEFRecordType.media">media</code></td>
+
+        <td>Corresponding to NDEFRecordMedia.</td>
+      </tr>
+
+      <tr>
+        <td><code id=
+        "idl-def-NDEFRecordType.smartPoster">smartPoster</code></td>
+
+        <td>Corresponding to NDEFRecordSmartPoster.</td>
+      </tr>
+
+      <tr>
+        <td><code id=
+        "idl-def-NDEFRecordType.unknown">unknown</code></td>
+
+        <td>Corresponding to the base NDEFRecord interface.</td>
+      </tr>
+    </table>
+
+    <p>The attribute <code>action</code> can have the following
+    values:</p>
+    <pre class="idl">
+<span class="idlEnum" id=
+"idl-def-SmartPosterAction">enum <span class=
+"idlEnumID">SmartPosterAction</span> {
+    "<a href="#idl-def-SmartPosterAction.do" class=
+"idlEnumItem">do</a>",
+    "<a href="#idl-def-SmartPosterAction.save" class=
+"idlEnumItem">save</a>",
+    "<a href="#idl-def-SmartPosterAction.open" class=
+"idlEnumItem">open</a>"
+};</span>
+</pre>
+
+    <table class="simple">
+      <tr>
+        <th colspan="2">Enumeration description</th>
+      </tr>
+
+      <tr>
+        <td><code id="idl-def-SmartPosterAction.do">do</code></td>
+
+        <td>Do the action. For instance, send a SMS, dial a phone
+        number, or open a URI.</td>
+      </tr>
+
+      <tr>
+        <td><code id=
+        "idl-def-SmartPosterAction.save">save</code></td>
+
+        <td>Store a SMS, bookmark a URI, save a phone number in the
+        address book.</td>
+      </tr>
+
+      <tr>
+        <td><code id=
+        "idl-def-SmartPosterAction.open">open</code></td>
+
+        <td>Open for edition.</td>
+      </tr>
+    </table>
+
+    <p>The attribute <code>handoverType</code> can have the
+    following values:</p>
+    <pre class="idl">
+<span class="idlEnum" id="idl-def-HandoverType">enum <span class=
+"idlEnumID">HandoverType</span> {
+    "<a href="#idl-def-HandoverType.wifi" class=
+"idlEnumItem">wifi</a>",
+    "<a href="#idl-def-HandoverType.bluetooth" class=
+"idlEnumItem">bluetooth</a>"
+};</span>
+</pre>
+
+    <table class="simple">
+      <tr>
+        <th colspan="2">Enumeration description</th>
+      </tr>
+
+      <tr>
+        <td><code id="idl-def-HandoverType.wifi">wifi</code></td>
+
+        <td>Initiate WiFi handover.</td>
+      </tr>
+
+      <tr>
+        <td><code id=
+        "idl-def-HandoverType.bluetooth">bluetooth</code></td>
+
+        <td>Initiate bluetooth pairing.</td>
+      </tr>
+    </table>
+  </section><!-- Enumerations -->
+
+  <section id="acknowledgements">
+    <!--OddPage-->
+
+    <h2 id="h2_acknowledgements" role="heading" aria-level="1">
+    <span class="secno">18.</span> Acknowledgements</h2>
+
+    <p>The editors would like to thank Jaehyun Park and Taehee Lee
+    of Samsung for their work on the initial API design. We would
+    also like to thank the members of the <abbr title=
+    "World Wide Web Consortium">W3C</abbr> SysApps group for their
+    help on the API specification process, and the members of the
+    <abbr title="World Wide Web Consortium">W3C</abbr> NFC group
+    for their feedback on this API.</p>
+  </section>
+
+  <section rel="bibo:chapter" resource="#references" typeof=
+  "bibo:Chapter" class="appendix" id="references">
+    <!--OddPage-->
+
+    <h2 id="h2_references" role="heading" aria-level="1">
+    <span class="secno">A.</span> References</h2>
+
+    <section rel="bibo:chapter" resource="#normative-references"
+    typeof="bibo:Chapter" id="normative-references">
+      <h3 id="h3_normative-references" role="heading" aria-level=
+      "2"><span class="secno">A.1</span> Normative references</h3>
+
+      <dl about="" class="bibliography">
+        <dt id="bib-DOM4">[DOM4]</dt>
+
+        <dd rel="dcterms:requires">
+          Anne van Kesteren; Aryeh Gregor; Lachlan Hunt; Ms2ger.
+          <a href=
+          "http://www.w3.org/TR/dom/"><cite>DOM4</cite></a>. 6
+          December 2012. W3C Working Draft. URL: <a href=
+          "http://www.w3.org/TR/dom/">http://www.w3.org/TR/dom/</a>
+        </dd>
+
+        <dt id="bib-HTML">[HTML]</dt>
+
+        <dd rel="dcterms:requires">
+          Ian Hickson. <a href=
+          "http://www.whatwg.org/specs/web-apps/current-work/"><cite>
+          HTML</cite></a>. Living Standard. URL: <a href=
+          "http://www.whatwg.org/specs/web-apps/current-work/">http://www.whatwg.org/specs/web-apps/current-work/</a>
+        </dd>
+
+        <dt id="bib-HTML5">[HTML5]</dt>
+
+        <dd rel="dcterms:requires">
+          Robin Berjon; Steve Faulkner; Travis Leithead; Erika
+          Doyle Navara; Edward O'Connor; Silvia Pfeiffer. <a href=
+          "http://www.w3.org/TR/html5/"><cite>HTML5</cite></a>. 6
+          August 2013. W3C Candidate Recommendation. URL: <a href=
+          "http://www.w3.org/TR/html5/">http://www.w3.org/TR/html5/</a>
+        </dd>
+
+        <dt id="bib-RFC2119">[RFC2119]</dt>
+
+        <dd rel="dcterms:requires">
+          S. Bradner. <a href=
+          "http://www.ietf.org/rfc/rfc2119.txt"><cite>Key words for
+          use in RFCs to Indicate Requirement Levels.</cite></a>
+          March 1997. Internet RFC 2119. URL: <a href=
+          "http://www.ietf.org/rfc/rfc2119.txt">http://www.ietf.org/rfc/rfc2119.txt</a>
+        </dd>
+
+        <dt id="bib-WEBIDL">[WEBIDL]</dt>
+
+        <dd rel="dcterms:requires">
+          Cameron McCormack. <a href=
+          "http://www.w3.org/TR/WebIDL/"><cite>Web IDL</cite></a>.
+          19 April 2012. W3C Candidate Recommendation. URL:
+          <a href="http://www.w3.org/TR/WebIDL/">http://www.w3.org/TR/WebIDL/</a>
+        </dd>
+      </dl>
+    </section>
+  </section>
+</body>
+</html>
+

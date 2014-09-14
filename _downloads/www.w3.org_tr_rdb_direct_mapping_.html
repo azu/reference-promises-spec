@@ -1,0 +1,3486 @@
+<!-- http://www.w3.org/TR/rdb-direct-mapping/ -->
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>
+			A Direct Mapping of Relational Data to RDF
+		</title>
+		<style type="text/css">
+/*<![CDATA[*/
+		@import url("local.css");
+		code           { font-family: monospace; }
+
+		div.constraint,
+		div.issue,
+		div.note,
+		div.notice     { margin-left: 2em; }
+
+		ol.enumar      { list-style-type: decimal; }
+		ol.enumla      { list-style-type: lower-alpha; }
+		ol.enumlr      { list-style-type: lower-roman; }
+		ol.enumua      { list-style-type: upper-alpha; }
+		ol.enumur      { list-style-type: upper-roman; }
+
+
+		div.exampleInner pre { margin-left: 1em;
+					   margin-top: 0em; margin-bottom: 0em}
+		div.exampleOuter {border: 4px double gray;
+				  margin: 0em; padding: 0em}
+		div.exampleInner { background-color: #d5dee3;
+				   border-top-width: 4px;
+				   border-top-style: double;
+				   border-top-color: #d3d3d3;
+				   border-bottom-width: 4px;
+				   border-bottom-style: double;
+				   border-bottom-color: #d3d3d3;
+				   padding: 4px; margin: 0em }
+		div.exampleWrapper { margin: 4px }
+		div.exampleHeader { font-weight: bold;
+					margin: 4px}
+		.nonnorm { border:1px solid #777;
+		   background-color: #eee;
+		   font-size: smaller;
+		   padding-left: .4em;
+		padding-right: .4em; }
+		dfn { color: #007;
+		font-style: italic;
+		font-weight: bold; }
+		table#table-type-mapping th { padding-right: 1em; }
+		table#table-type-mapping td { padding-right: 1em; }
+		/*]]>*/
+		</style>
+		<link rel="stylesheet" type="text/css" href="http://www.w3.org/StyleSheets/TR/W3C-REC" />
+		<script type="text/javascript" src="buttons.jss">
+</script>
+	</head>
+	<body onkeypress="docKeyPress(event)">
+		<div class="head">
+			<p>
+				<a href="http://www.w3.org/"><img src="http://www.w3.org/Icons/w3c_home" alt="W3C" height="48" width="72" /></a>
+			</p>
+			<h1>
+				<a name="title" id="title"></a>A Direct Mapping of Relational Data to RDF
+			</h1>
+			<h2 id="w3c-doctype">
+				W3C Recommendation 27 September 2012
+			</h2>
+			<dl>
+				<dt>
+					This version:
+				</dt>
+				<dd>
+					<a href="http://www.w3.org/TR/2012/REC-rdb-direct-mapping-20120927/">http://www.w3.org/TR/2012/REC-rdb-direct-mapping-20120927/</a>
+				</dd>
+				<dt>
+					Latest version:
+				</dt>
+				<dd>
+					<a href="http://www.w3.org/TR/rdb-direct-mapping/">http://www.w3.org/TR/rdb-direct-mapping/</a>
+				</dd>
+				<dt>
+					Previous version:
+				</dt>
+				<dd>
+					<a href="http://www.w3.org/TR/2012/PR-rdb-direct-mapping-20120814/">http://www.w3.org/TR/2012/PR-rdb-direct-mapping-20120814/</a>
+				</dd>
+				<dt>
+					Editors:
+				</dt>
+				<dd>
+					Marcelo Arenas, Pontificia Universidad Católica de Chile <a href="mailto:marenas@ing.puc.cl">&lt;marenas@ing.puc.cl&gt;</a>
+				</dd>
+				<dd>
+					Alexandre Bertails, W3C <a href="mailto:bertails@w3.org">&lt;bertails@w3.org&gt;</a>
+				</dd>
+				<dd>
+					Eric Prud'hommeaux, W3C <a href="mailto:eric@w3.org">&lt;eric@w3.org&gt;</a>
+				</dd>
+				<dd>
+					Juan Sequeda, University of Texas at Austin <a href="mailto:jsequeda@cs.utexas.edu">&lt;jsequeda@cs.utexas.edu&gt;</a>
+				</dd>
+			</dl>
+
+    <p>Please refer to the <a href="http://www.w3.org/2001/sw/rdb2rdf/errata.html"><strong>errata</strong></a> for this document, which may include some normative corrections.</p>
+
+    <p>See also <a href="http://www.w3.org/2003/03/Translations/byTechnology?technology=rdb-direct-mapping"><strong>translations</strong></a>.</p>
+
+			<p class="copyright">
+				<a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2012 <a href="http://www.w3.org/"><acronym title="World Wide Web Consortium">W3C</acronym></a><sup>®</sup> (<a href="http://www.csail.mit.edu/"><acronym title="Massachusetts Institute of Technology">MIT</acronym></a>, <a href="http://www.ercim.eu/"><acronym title="European Research Consortium for Informatics and Mathematics">ERCIM</acronym></a>, <a href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply.
+			</p>
+		</div>
+		<hr />
+		<div>
+			<h2>
+				<a name="abstract" id="abstract"></a>Abstract
+			</h2>
+			<p>
+				The need to share data with collaborators motivates custodians and users of relational databases (RDB) to expose relational data on the Web of Data. This document defines a <em>direct mapping</em> from relational data to RDF. This definition provides extension points for refinements within and outside of this document.
+			</p>
+		</div>
+  <div>
+    <h2><a name="status" id="status"></a>Status of this Document</h2>
+
+    <p><em>This section describes the status of this document at the time of its
+    publication. Other documents may supersede this document. A list of current W3C
+    publications and the latest revision of this technical report can be found in the
+    <a href="http://www.w3.org/TR/">W3C technical reports index</a> at
+    http://www.w3.org/TR/.</em></p>
+
+    <p>This document has been reviewed by W3C Members, by software developers,
+    and by other W3C groups and interested parties, and is endorsed by the
+    Director as a
+    <a href="http://www.w3.org/2004/02/Process-20040205/tr.html#RecsW3C">W3C
+    Recommendation</a>. It is a stable document and may be used as reference
+    material or cited from another document. W3C's role in making the
+    Recommendation is to draw attention to the specification and to promote
+    its widespread deployment. This enhances the functionality and
+    interoperability of the Web.</p>
+
+    <p>This document was published by the
+    <a href="http://www.w3.org/2001/sw/rdb2rdf/">RDB2RDF Working Group</a>.
+    Comments on this document should be sent to
+    <a href="mailto:public-rdb2rdf-comments@w3.org">public-rdb2rdf-comments@w3.org</a>,
+    a mailing list with a
+    <a href="http://lists.w3.org/Archives/Public/public-rdb2rdf-comments/">public archive</a>.
+    The following related documents have been made available:</p>
+
+    <ul>
+    <li>A <a href="http://www.w3.org/2001/sw/wiki/RDB2RDF">wiki page</a> with additional information for users and implementers of R2RML,</li>
+    <li>a <a href="PR-to-REC">color-coded diff</a>
+    of all changes since the previous draft,</li> 
+    <li>the <a href="http://www.w3.org/TR/2012/NOTE-rdb2rdf-implementations-20120814/">implementation
+    report</a> used by the director to transition to W3C Recommendation.</li>
+    </ul>
+
+    <p>This document was produced by a group operating under the <a href=
+    "http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 W3C Patent
+    Policy</a>. W3C maintains a <a rel="disclosure" href=
+    "http://www.w3.org/2004/01/pp-impl/43889/status">public list of any patent
+    disclosures</a> made in connection with the deliverables of the group; that page also
+    includes instructions for disclosing a patent. An individual who has actual knowledge
+    of a patent which the individual believes contains <a href=
+    "http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential
+    Claim(s)</a> must disclose the information in accordance with <a href=
+    "http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section 6 of
+    the W3C Patent Policy</a>.</p>
+  </div>
+		<div class="toc">
+			<h2>
+				<a name="contents" id="contents"></a>Table of Contents
+			</h2>
+			<p class="toc">
+				1 <a href="#intro">Introduction</a><br />
+				2 <a href="#emp-addr">Direct Mapping Description (Informative)</a><br />
+				2.1 <a href="#lead-ex">Direct Mapping Example</a><br />
+				2.2 <a href="#fk-candidate">Foreign keys referencing candidate keys</a><br />
+				2.3 <a href="#multi-key">Multi-column primary keys</a><br />
+				2.4 <a href="#no-pk">Empty (non-existent) primary keys</a><br />
+				2.5 <a href="#ref-no-pk">Referencing tables with empty primary keys</a><br />
+				3 <a href="#definition">Direct Graph Definition</a><br />
+				4 <a href="#refs">References</a><br />
+			</p>
+			<h3>
+				<a name="appendices" id="appendices"></a>Appendices
+			</h3>
+			<p class="toc">
+				A <a href="#alg">Direct Mapping Algebra (Informative)</a><br />
+				A.1 <a href="#notation">Notations</a><br />
+				A.2 <a href="#RDB">Relational Data Model</a><br />
+				A.2.1 <a href="#RDB-ADT">RDB Abstract Data Type</a><br />
+				A.2.2 <a href="#RDB-acc">RDB accessor functions</a><br />
+				A.3 <a href="#RDF">RDF Data Model</a><br />
+				A.4 <a href="#denotational-semantics">Denotational semantics</a><br />
+				B <a href="#direct_mapping_rules">Direct Mapping as Rules (Informative)</a><br />
+				B.1 <a href="#rules_row_type_triples">Generating Row Type Triples</a><br />
+				B.1.1 <a href="#rules_row_type_triples_single_pk">Table has a primary key</a><br />
+				B.1.2 <a href="#rules_row_type_triples_no_pk">Table does not have a primary key</a><br />
+				B.2 <a href="#rules_literal_triples">Generating Literal Triples</a><br />
+				B.2.1 <a href="#rules_literal_triples_single_pk">Table has a primary key</a><br />
+				B.2.2 <a href="#rules_literal_triples_no_pk">Table does not have a primary key</a><br />
+				B.3 <a href="#rules_reference_triples">Generating Reference Triples</a><br />
+				B.3.1 <a href="#rules_reference_triples_r1pk_r2pk">Table r1 has a primary key and table r2 has a primary key</a><br />
+				B.3.2 <a href="#rules_reference_triples_r1pk_r2nopk">Table r1 has a primary key and table r2 does not have a primary key</a><br />
+				B.3.3 <a href="#rules_reference_triples_r1nopk_r2pk">Table r1 does not have primary key and table r2 has a primary key</a><br />
+				B.3.4 <a href="#rules_reference_triples_r1nopk_r2nopk">Table r1 does not have primary key and table r2 does not have a primary key</a><br />
+			</p>
+		</div>
+		<hr />
+		<div class="body">
+			<div class="div1">
+				<h2>
+					<a name="intro" id="intro"></a>1 Introduction
+				</h2>
+				<p>
+					Relational databases proliferate both because of their efficiency and their precise definitions, allowing for tools like SQL <a href="#SQLFN">[SQLFN]</a> to manipulate and examine the contents predictably and efficiently. Resource Description Framework (RDF) <a href="#RDF-concepts">[RDF-concepts]</a> is a data format based on a web-scalable architecture for identification and interpretation of terms. This document defines a mapping from relational representation to an RDF representation.
+				</p>
+				<p>
+					Strategies for mapping relational data to RDF abound.
+					The <em>direct mapping</em> defines a simple transformation, providing a basis for defining and comparing more intricate transformations.
+					It can also be used to materialize RDF graphs or define virtual graphs, which can be queried by SPARQL or traversed by an RDF graph API.
+					This document includes an informal and a formal description of the transformation.
+				</p>
+				<p>
+					This specification has a companion, the <a href="http://www.w3.org/TR/2012/REC-r2rml-20120927/">R2RML</a> mapping language <a href="#R2RML">[R2RML]</a>, that allows the creation of customized mapping from relational data to RDF.
+					R2RML defines a <a href="http://www.w3.org/TR/2012/REC-r2rml-20120927/#dfn-duplicate-row-preservation">relaxed variant</a> of the Direct Mapping intended as a <a href="http://www.w3.org/TR/2012/REC-r2rml-20120927/#default-mappings">default mapping</a> for further customization.
+				</p>
+			</div>
+			<div class="div1">
+				<h2>
+					<a name="emp-addr" id="emp-addr"></a>2 Direct Mapping Description (Informative)
+				</h2>
+				<p>
+					The direct mapping defines an <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-rdf-graph">RDF Graph</a> <a href="#RDF-concepts">[RDF-concepts]</a> representation of the data in a relational database. The direct mapping takes as input a relational database (data and schema), and generates an RDF graph that is called the <em>direct graph</em>. The algorithms in this document compose a graph of relative IRIs which must be resolved against a <em>base</em> IRI <a href="#RFC3987">[RFC3987]</a> to form an RDF graph.
+				</p>
+				<p>
+					Foreign keys in relational databases establish a reference from any row in a table to exactly one row in a (potentially different) table. The direct graph conveys these references, as well as each value in the row.
+				</p>
+				<div class="div2">
+					<h3>
+						<a name="lead-ex" id="lead-ex"></a>2.1 Direct Mapping Example
+					</h3>
+					<p>
+						The concepts in direct mapping can be introduced with an example RDF graph produced by a relational database. Following is SQL (DDL) to create a simple example with two tables with single-column primary keys and one foreign key reference between them:
+					</p>
+					<pre class="xsd">
+CREATE TABLE "Addresses" (
+	"ID" INT, PRIMARY KEY("ID"), 
+	"city" CHAR(10), 
+	"state" CHAR(2)
+)
+
+CREATE TABLE "People" (
+	"ID" INT, PRIMARY KEY("ID"), 
+	"fname" CHAR(10), 
+	"addr" INT, 
+	FOREIGN KEY("addr") REFERENCES "Addresses"("ID")
+)
+
+INSERT INTO "Addresses" ("ID", "city", "state") VALUES (18, 'Cambridge', 'MA')
+INSERT INTO "People" ("ID", "fname", "addr") VALUES (7, 'Bob', 18)
+INSERT INTO "People" ("ID", "fname", "addr") VALUES (8, 'Sue', NULL)
+	  
+</pre>
+					<div class="clear"></div>
+					<p>
+						HTML tables will be used in this document to convey SQL tables. The primary key of these tables will be marked with the <code class="triple pk">PK</code> class to convey an SQL primary key such as <code class="triple">ID</code> in <code class="triple">CREATE TABLE "Addresses" ("ID" INT, ... PRIMARY KEY("ID"))</code>. Foreign keys will be illustrated with a notation like "<code class="triple">→ Address(ID)</code>" to convey an SQL foreign key such as <code class="triple">CREATE TABLE "People" (... "addr" INT, FOREIGN KEY("addr") REFERENCES "Addresses"("ID"))</code>.
+					</p>
+					<div class="multicol">
+						<table class="nonRight hover" cellpadding="2" cellspacing="0" border="1">
+							<caption>
+								People
+							</caption>
+							<tbody>
+								<tr class="SQLconstraints">
+									<th class="pk">
+										PK
+									</th>
+									<th></th>
+									<th>
+										→ Address(ID)
+									</th>
+								</tr>
+								<tr>
+									<th class="pk">
+										ID
+									</th>
+									<th>
+										fname
+									</th>
+									<th>
+										addr
+									</th>
+								</tr>
+								<tr>
+									<td onmouseover="hilight('emp-addr_t_7')" onmouseout="lolight('emp-addr_t_7')" id="emp-addr_per7" class="pk">
+										7
+									</td>
+									<td onmouseover="hilight('emp-addr_t_Bob')" onmouseout="lolight('emp-addr_t_Bob')" id="emp-addr_perBob">
+										Bob
+									</td>
+									<td onmouseover="hilight('emp-addr_t_ref18'); hilight('emp-addr_addr18')" onmouseout="lolight('emp-addr_t_ref18'); lolight('emp-addr_addr18')" id="emp-addr_per18">
+										<a href="#emp-addr_addr18">18</a>
+									</td>
+								</tr>
+								<tr>
+									<td onmouseover="hilight('emp-addr_t_8')" onmouseout="lolight('emp-addr_t_8')" id="emp-addr_per8" class="pk">
+										8
+									</td>
+									<td onmouseover="hilight('emp-addr_t_Sue')" onmouseout="lolight('emp-addr_t_Sue')" id="emp-addr_perSue">
+										Sue
+									</td>
+									<td>
+										<em>NULL</em>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<table class="right hover" cellpadding="2" cellspacing="0" border="1">
+							<caption>
+								Addresses
+							</caption>
+							<tbody>
+								<tr class="SQLconstraints">
+									<th class="pk">
+										PK
+									</th>
+									<th colspan="2"></th>
+								</tr>
+								<tr>
+									<th class="pk">
+										ID
+									</th>
+									<th>
+										city
+									</th>
+									<th>
+										state
+									</th>
+								</tr>
+								<tr>
+									<td onmouseover="hilight('emp-addr_t_18')" onmouseout="lolight('emp-addr_t_18')" id="emp-addr_addr18" class="pk">
+										18
+									</td>
+									<td onmouseover="hilight('emp-addr_t_Cambridge')" onmouseout="lolight('emp-addr_t_Cambridge')" id="emp-addr_addrCamb">
+										Cambridge
+									</td>
+									<td onmouseover="hilight('emp-addr_t_MA')" onmouseout="lolight('emp-addr_t_MA')" id="emp-addr_addrMA">
+										MA
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<p style="clear:both;"></p>
+					</div>
+					<p>
+						Given a base IRI <code class="triple">http://foo.example/DB/</code>, the direct mapping of this database produces a direct graph:
+					</p>
+					<pre id="emp-addr-ex1" class="turtle">
+@base &lt;http://foo.example/DB/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+
+<span class="triple" onmouseover="hilight('emp-addr_per7')" onmouseout="lolight('emp-addr_per7')">&lt;People/ID<span class="valsep">=</span>7&gt; rdf:type &lt;People&gt; .</span>
+<span class="triple" id="emp-addr_t_7" onmouseover="hilight('emp-addr_per7')" onmouseout="lolight('emp-addr_per7')">&lt;People/ID<span class="valsep">=</span>7&gt; &lt;People#ID&gt; 7 .</span>
+<span class="triple" id="emp-addr_t_Bob" onmouseover="hilight('emp-addr_perBob')" onmouseout="lolight('emp-addr_perBob')">&lt;People/ID<span class="valsep">=</span>7&gt; &lt;People#fname&gt; "Bob" .</span>
+<span class="triple" id="emp-addr_t_ref18" onmouseover="hilight('emp-addr_per18')" onmouseout="lolight('emp-addr_per18')">&lt;People/ID<span class="valsep">=</span>7&gt; &lt;People#addr&gt; 18 .</span>
+<span class="triple"  onmouseover="hilight('emp-addr_addr18')" onmouseout="lolight('emp-addr_addr18')">&lt;People/ID<span class="valsep">=</span>7&gt; &lt;People#ref<span class="Pnamesep">-</span>addr&gt; &lt;Addresses/ID<span class="valsep">=</span>18&gt; .</span>
+<span class="triple" onmouseover="hilight('emp-addr_per8')" onmouseout="lolight('emp-addr_per8')">&lt;People/ID<span class="valsep">=</span>8&gt; rdf:type &lt;People&gt; .</span>
+<span class="triple" id="emp-addr_t_8" onmouseover="hilight('emp-addr_per8')" onmouseout="lolight('emp-addr_per8')">&lt;People/ID<span class="valsep">=</span>8&gt; &lt;People#ID&gt; 8 .</span>
+<span class="triple" id="emp-addr_t_Sue" onmouseover="hilight('emp-addr_perSue')" onmouseout="lolight('emp-addr_perSue')">&lt;People/ID<span class="valsep">=</span>8&gt; &lt;People#fname&gt; "Sue" .</span>
+
+<span class="triple" onmouseover="hilight('emp-addr_addr18')" onmouseout="lolight('emp-addr_addr18')">&lt;Addresses/ID<span class="valsep">=</span>18&gt; rdf:type &lt;Addresses&gt; .</span>
+<span class="triple" id="emp-addr_t_18" onmouseover="hilight('emp-addr_addr18')" onmouseout="lolight('emp-addr_addr18')">&lt;Addresses/ID<span class="valsep">=</span>18&gt; &lt;Addresses#ID&gt; 18 .</span>
+<span class="triple" id="emp-addr_t_Cambridge" onmouseover="hilight('emp-addr_addrCamb')" onmouseout="lolight('emp-addr_addrCamb')">&lt;Addresses/ID<span class="valsep">=</span>18&gt; &lt;Addresses#city&gt; "Cambridge" .</span>
+<span class="triple" id="emp-addr_t_MA" onmouseover="hilight('emp-addr_addrMA')" onmouseout="lolight('emp-addr_addrMA')">&lt;Addresses/ID<span class="valsep">=</span>18&gt; &lt;Addresses#state&gt; "MA" .</span>
+	  
+</pre>
+					<div class="clear"></div>
+					<p>
+						In this expression, each row, e.g. <code class="triple">(7, "Bob", 18)</code>, produces a set of triples with a common subject. The subject is an IRI formed from the concatenation of the base IRI, table name (<code class="triple">People</code>), primary key column name (<code class="triple">ID</code>) and primary key value (<code class="triple">7</code>). The predicate for each column is an IRI formed from the concatenation of the base IRI, table name and the column name. The values are RDF literals formed from the lexical form of the column value. Each foreign key produces a triple with a predicate composed from the foreign key column names, the referenced table, and the referenced column names. The object of these triples is the row identifier (<code class="triple">&lt;Addresses/ID<span class="valsep">=</span>18&gt;</code>) for the referenced triple. Note that these reference row identifiers must coincide with the subject used for the triples generated from the referenced row. The direct mapping does not generate triples for NULL values. Note that it is not known how to relate the behavior of the obtained RDF graph with the standard SQL semantics of the NULL values of the source RDB.
+					</p>
+				</div>
+				<div class="div2">
+					<h3>
+						<a name="fk-candidate" id="fk-candidate"></a>2.2 Foreign keys referencing candidate keys
+					</h3>
+					<p>
+						More complex schemas include composite keys. In this example, the columns <em>deptName</em> and <em>deptCity</em> in the <em>People</em> table reference <em>name</em> and <em>city</em> in the <em>Department</em> table:
+					</p>
+					<pre class="xsd">
+CREATE TABLE "Addresses" (
+	"ID" INT, 
+	"city" CHAR(10), 
+	"state" CHAR(2), 
+	PRIMARY KEY("ID")
+)
+
+CREATE TABLE "Department" (
+	"ID" INT, 
+	"name" CHAR(10), 
+	"city" CHAR(10), 
+	"manager" INT, 
+	PRIMARY KEY("ID"), 
+	UNIQUE ("name", "city")
+)
+
+CREATE TABLE "People" (
+	"ID" INT, 
+	"fname" CHAR(10), 
+	"addr" INT, 
+	"deptName" CHAR(10), 
+	"deptCity" CHAR(10), 
+	PRIMARY KEY("ID"), 
+	FOREIGN KEY("addr") REFERENCES "Addresses"("ID"), 
+	FOREIGN KEY("deptName", "deptCity") REFERENCES "Department"("name", "city") 
+)
+
+ALTER TABLE "Department" ADD FOREIGN KEY("manager") REFERENCES "People"("ID")
+	
+</pre>
+					<div class="clear"></div>
+					<p>
+						Following is an instance of this schema:
+					</p>
+					<div class="multicol">
+						<table class="nonRight hover" cellpadding="2" cellspacing="0" border="1">
+							<caption>
+								People
+							</caption>
+							<tbody>
+								<tr class="SQLconstraints">
+									<th class="pk">
+										PK
+									</th>
+									<th></th>
+									<th>
+										→ Addresses(ID)
+									</th>
+									<th colspan="2">
+										→ Department(name, city)
+									</th>
+								</tr>
+								<tr>
+									<th class="pk">
+										ID
+									</th>
+									<th>
+										fname
+									</th>
+									<th>
+										addr
+									</th>
+									<th>
+										deptName
+									</th>
+									<th>
+										deptCity
+									</th>
+								</tr>
+								<tr>
+									<td onmouseover="hilight('multi-key_t_7');" onmouseout="lolight('multi-key_t_7');" id="multi-key_per7" class="pk">
+										7
+									</td>
+									<td onmouseover="hilight('multi-key_t_Bob');" onmouseout="lolight('multi-key_t_Bob');" id="multi-key_perBob">
+										Bob
+									</td>
+									<td onmouseover="hilight('multi-key_t_ref18'); hilight('multi-key_addr18')" onmouseout="lolight('multi-key_t_ref18'); lolight('multi-key_addr18')" id="multi-key_per18">
+										<a href="#multi-key_addr18">18</a>
+									</td>
+									<td onmouseover="hilight('multi-key_t_refaccounting'); hilight('multi-key_t_refaccCa'); hilight('multi-key_deptacc');" onmouseout="lolight('multi-key_t_refaccounting'); lolight('multi-key_t_refaccCa'); lolight('multi-key_deptacc');" id="multi-key_peraccounting">
+										<a href="#multi-key_deptacc">accounting</a>
+									</td>
+									<td onmouseover="hilight('multi-key_t_refCambridge'); hilight('multi-key_t_refaccCa'); hilight('multi-key_deptCam')" onmouseout="lolight('multi-key_t_refCambridge'); lolight('multi-key_t_refaccCa'); lolight('multi-key_deptCam')" id="multi-key_perCambridge">
+										<a href="#multi-key_deptCam">Cambridge</a>
+									</td>
+								</tr>
+								<tr>
+									<td onmouseover="hilight('multi-key_t_8');" onmouseout="lolight('multi-key_t_8');" id="multi-key_per8" class="pk">
+										8
+									</td>
+									<td onmouseover="hilight('multi-key_t_Sue');" onmouseout="lolight('multi-key_t_Sue');" id="multi-key_perSue">
+										Sue
+									</td>
+									<td>
+										<em>NULL</em>
+									</td>
+									<td>
+										<em>NULL</em>
+									</td>
+									<td>
+										<em>NULL</em>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<table class="nonRight hover" cellpadding="2" cellspacing="0" border="1">
+							<caption>
+								Addresses
+							</caption>
+							<tbody>
+								<tr class="SQLconstraints">
+									<th class="pk">
+										PK
+									</th>
+									<th colspan="2"></th>
+								</tr>
+								<tr>
+									<th class="pk">
+										ID
+									</th>
+									<th>
+										city
+									</th>
+									<th>
+										state
+									</th>
+								</tr>
+								<tr>
+									<td onmouseover="hilight('multi-key_t_18');" onmouseout="lolight('multi-key_t_18');" id="multi-key_addr18" class="pk">
+										18
+									</td>
+									<td onmouseover="hilight('multi-key_t_Cambridge');" onmouseout="lolight('multi-key_t_Cambridge');" id="multi-key_addrCamb">
+										Cambridge
+									</td>
+									<td onmouseover="hilight('multi-key_t_MA');" onmouseout="lolight('multi-key_t_MA');" id="multi-key_addrMA">
+										MA
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<table class="right hover" cellpadding="2" cellspacing="0" border="1">
+							<caption>
+								Department
+							</caption>
+							<tbody>
+								<tr class="SQLconstraints">
+									<th class="pk">
+										PK
+									</th>
+									<th colspan="2">
+										Unique Key
+									</th>
+									<th>
+										→ People(ID)
+									</th>
+								</tr>
+								<tr>
+									<th class="pk">
+										ID
+									</th>
+									<th>
+										name
+									</th>
+									<th>
+										city
+									</th>
+									<th>
+										manager
+									</th>
+								</tr>
+								<tr>
+									<td onmouseover="hilight('multi-key_t_23');" onmouseout="lolight('multi-key_t_23');" id="multi-key_dept23" class="pk">
+										23
+									</td>
+									<td onmouseover="hilight('multi-key_t_accounting');" onmouseout="lolight('multi-key_t_accounting');" id="multi-key_deptacc">
+										accounting
+									</td>
+									<td onmouseover="hilight('multi-key_t_DeptCam');" onmouseout="lolight('multi-key_t_DeptCam');" id="multi-key_deptCam">
+										Cambridge
+									</td>
+									<td onmouseover="hilight('multi-key_t_ref8'); hilight('multi-key_per8')" onmouseout="lolight('multi-key_t_ref8'); lolight('multi-key_per8')" id="multi-key_dept8">
+										<a href="#multi-key_per8">8</a>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<p style="clear:both;"></p>
+					</div>
+					<p>
+						Per the <em>People</em> table's compound foreign key to Department:
+					</p>
+					<ul>
+						<li>The row in <em>People</em> with <code class="triple">deptName="accounting"</code> and <code class="triple">deptCity="Cambridge"</code> references a row in <em>Department</em> with a primary key of <code class="triple">ID=23</code>.
+						</li>
+						<li>The predicate for this key is formed from "<code class="triple">deptName</code>" and "<code class="triple">deptCity</code>", reflecting the order of the column names in the foreign key.
+						</li>
+						<li>The object of the above predicate is formed from the base IRI, the table name "<code class="triple">Department</code>" and the primary key value "<code class="triple">ID<span class="valsep">=</span>23</code>".
+						</li>
+					</ul>
+					<p>
+Note: The order of a primary key constraint's columns is determined by the DDL statement used to create it. In SQL implementations that support the information schema, this order can be accessed through the <code>INFORMATION_SCHEMA.KEY_COLUMN_USAGE.ORDINAL_POSITION</code> column.
+					</p>
+					<p>
+						In this example, the direct mapping generates the following triples:
+					</p>
+					<pre id="multi-key-ex1" class="turtle">
+@base &lt;http://foo.example/DB/&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+<span class="triple" onmouseover="hilight('multi-key_per7')" onmouseout="lolight('multi-key_per7')">&lt;People/ID<span class="valsep">=</span>7&gt; rdf:type &lt;People&gt; .</span>
+<span class="triple" id="multi-key_t_7" onmouseover="hilight('multi-key_per7')" onmouseout="lolight('multi-key_per7')">&lt;People/ID<span class="valsep">=</span>7&gt; &lt;People#ID&gt; 7 .</span>
+<span class="triple" id="multi-key_t_Bob" onmouseover="hilight('multi-key_perBob')" onmouseout="lolight('multi-key_perBob')">&lt;People/ID<span class="valsep">=</span>7&gt; &lt;People#fname&gt; "Bob" .</span>
+<span class="triple" id="multi-key_t_ref18" onmouseover="hilight('multi-key_per18')" onmouseout="lolight('multi-key_per18')">&lt;People/ID<span class="valsep">=</span>7&gt; &lt;People#addr&gt; 18 .</span>
+<span class="triple" onmouseover="hilight('multi-key_addr18')" onmouseout="lolight('multi-key_addr18')">&lt;People/ID<span class="valsep">=</span>7&gt; &lt;People#ref<span class="Pnamesep">-</span>addr&gt; &lt;Addresses/ID<span class="valsep">=</span>18&gt; .</span>
+<span class="triple new" id="multi-key_t_refaccounting" onmouseover="hilight('multi-key_peraccounting')" onmouseout="lolight('multi-key_peraccounting')">&lt;People/ID<span class="valsep">=</span>7&gt; &lt;People#deptName&gt; "accounting" .</span>
+<span class="triple new" id="multi-key_t_refCambridge" onmouseover="hilight('multi-key_perCambridge')" onmouseout="lolight('multi-key_perCambridge')">&lt;People/ID<span class="valsep">=</span>7&gt; &lt;People#deptCity&gt; "Cambridge" .</span>
+<span class="triple new" id="multi-key_t_refaccCa" onmouseover="hilight('multi-key_peraccounting'); hilight('multi-key_perCambridge')" onmouseout="lolight('multi-key_peraccounting'); lolight('multi-key_perCambridge')">&lt;People/ID<span class="valsep">=</span>7&gt; &lt;People#ref<span class="Pnamesep">-</span>deptName;deptCity&gt; &lt;Department/ID<span class="valsep">=</span>23&gt; .</span>
+<span class="triple" onmouseover="hilight('multi-key_per8')" onmouseout="lolight('multi-key_per8')">&lt;People/ID<span class="valsep">=</span>8&gt; rdf:type &lt;People&gt; .</span>
+<span class="triple" id="multi-key_t_8" onmouseover="hilight('multi-key_per8')" onmouseout="lolight('multi-key_per8')">&lt;People/ID<span class="valsep">=</span>8&gt; &lt;People#ID&gt; 8 .</span>
+<span class="triple" id="multi-key_t_Sue" onmouseover="hilight('multi-key_perSue')" onmouseout="lolight('multi-key_perSue')">&lt;People/ID<span class="valsep">=</span>8&gt; &lt;People#fname&gt; "Sue" .</span>
+
+<span class="triple" onmouseover="hilight('multi-key_addr18')" onmouseout="lolight('multi-key_addr18')">&lt;Addresses/ID<span class="valsep">=</span>18&gt; rdf:type &lt;Addresses&gt; .</span>
+<span class="triple" id="multi-key_t_18" onmouseover="hilight('multi-key_addr18')" onmouseout="lolight('multi-key_addr18')">&lt;Addresses/ID<span class="valsep">=</span>18&gt; &lt;Addresses#ID&gt; 18 .</span>
+<span class="triple" id="multi-key_t_Cambridge" onmouseover="hilight('multi-key_addrCamb')" onmouseout="lolight('multi-key_addrCamb')">&lt;Addresses/ID<span class="valsep">=</span>18&gt; &lt;Addresses#city&gt; "Cambridge" .</span>
+<span class="triple" id="multi-key_t_MA" onmouseover="hilight('multi-key_addrMA')" onmouseout="lolight('multi-key_addrMA')">&lt;Addresses/ID<span class="valsep">=</span>18&gt; &lt;Addresses#state&gt; "MA" .</span>
+
+<span class="triple new" onmouseover="hilight('multi-key_dept23');" onmouseout="lolight('multi-key_dept23');">&lt;Department/ID<span class="valsep">=</span>23&gt; rdf:type &lt;Department&gt; .</span>
+<span class="triple new" id="multi-key_t_23" onmouseover="hilight('multi-key_dept23');" onmouseout="lolight('multi-key_dept23');">&lt;Department/ID<span class="valsep">=</span>23&gt; &lt;Department#ID&gt; 23 .</span>
+<span class="triple new" id="multi-key_t_accounting" onmouseover="hilight('multi-key_deptacc');" onmouseout="lolight('multi-key_deptacc');">&lt;Department/ID<span class="valsep">=</span>23&gt; &lt;Department#name&gt; "accounting" .</span>
+<span class="triple new" id="multi-key_t_DeptCam" onmouseover="hilight('multi-key_deptCam');" onmouseout="lolight('multi-key_deptCam');">&lt;Department/ID<span class="valsep">=</span>23&gt; &lt;Department#city&gt; "Cambridge" .</span>
+<span class="triple new" id="multi-key_t_ref8" onmouseover="hilight('multi-key_dept8');" onmouseout="lolight('multi-key_dept8');">&lt;Department/ID<span class="valsep">=</span>23&gt; &lt;Department#manager&gt; 8 .</span>
+<span class="triple new" onmouseover="hilight('multi-key_per8');" onmouseout="lolight('multi-key_per8');">&lt;Department/ID<span class="valsep">=</span>23&gt; &lt;Department#ref<span class="Pnamesep">-</span>manager&gt; &lt;People#ID<span class="valsep">=</span>8&gt; .</span>
+	
+</pre>
+					<div class="clear"></div>
+					<p>
+						The green triples above are generated by considering the new elements in the augmented database. Note:
+					</p>
+					<ul>
+						<li>
+							<p>
+								The <a href="#defn-reference_triple">Reference Triple</a> <code class="triple">&lt;People/ID<span class="valsep">=</span>7&gt; &lt;People#ref-deptName;deptCity&gt; &lt;Department/ID<span class="valsep">=</span>23&gt;</code> is generated by considering a foreign key referencing a candidate key (different from the primary key).
+							</p>
+						</li>
+					</ul>
+				</div>
+				<div class="div2">
+					<h3>
+						<a name="multi-key" id="multi-key"></a>2.3 Multi-column primary keys
+					</h3>
+					<p>
+						Primary keys may also be composite. If, in <a href="#fk-candidate">the above example</a>, the primary key for <em>Department</em> were (<em>name</em>, <em>city</em>) instead of <em>ID</em>, the identifier for the only row in this table would be <code class="triple">&lt;Department/name<span class="valsep">=</span>accounting<span class="attrsep">;</span>city<span class="valsep">=</span>Cambridge&gt;</code>. The triples involving <code class="triple">&lt;Department/ID<span class="valsep">=</span>23&gt;</code> would be replaced with the following triples:
+					</p>
+					<pre id="multi-col-ex1" class="turtle">
+<span class="triple">&lt;People/ID<span class="valsep">=</span>7&gt; &lt;People#ref-deptName;deptCity&gt; &lt;Department/name<span class="valsep">=</span>accounting<span class="attrsep">;</span>city<span class="valsep">=</span>Cambridge&gt; .</span> 
+<span class="triple">&lt;Department/name<span class="valsep">=</span>accounting<span class="attrsep">;</span>city<span class="valsep">=</span>Cambridge&gt; rdf:type &lt;Department&gt; .</span> 
+<span class="triple">&lt;Department/name<span class="valsep">=</span>accounting<span class="attrsep">;</span>city<span class="valsep">=</span>Cambridge&gt; &lt;Department#ID&gt; 23 .</span> 
+<span class="triple">&lt;Department/name<span class="valsep">=</span>accounting<span class="attrsep">;</span>city<span class="valsep">=</span>Cambridge&gt; &lt;Department#name&gt; "accounting" .</span>
+<span class="triple">&lt;Department/name<span class="valsep">=</span>accounting<span class="attrsep">;</span>city<span class="valsep">=</span>Cambridge&gt; &lt;Department#city&gt; "Cambridge" .</span>
+			
+</pre>
+					<div class="clear"></div>
+				</div>
+				<div class="div2">
+					<h3>
+						<a name="no-pk" id="no-pk"></a>2.4 Empty (non-existent) primary keys
+					</h3>
+					<p>
+						If there is no primary key, each row implies a set of triples with a shared subject, but that subject is a blank node. A <em>Tweets</em> table can be added to <a href="#fk-candidate">the above example</a> to keep track of employees' tweets in Twitter:
+					</p>
+					<pre class="xsd">
+CREATE TABLE "Tweets" (
+	"tweeter" INT,
+	"when" TIMESTAMP,
+	"text" CHAR(140),
+	FOREIGN KEY("tweeter") REFERENCES "People"("ID")
+)
+			
+</pre>
+					<div class="clear"></div>
+					<p>
+						The following is an instance of table <em>Tweets</em>:
+					</p>
+					<div class="multicol">
+						<table class="nonRight hover" cellpadding="2" cellspacing="0" border="1">
+							<caption>
+								Tweets
+							</caption>
+							<tbody>
+								<tr class="SQLconstraints">
+									<th>
+										→ People(ID)
+									</th>
+									<th colspan="2"></th>
+								</tr>
+								<tr>
+									<th>
+										tweeter
+									</th>
+									<th>
+										when
+									</th>
+									<th>
+										text
+									</th>
+								</tr>
+								<tr>
+									<td onmouseover="hilight('no-pk_t_a7')" onmouseout="lolight('no-pk_t_a7')" id="no-pk_tweeta7" class="fk">
+										<a href="#multi-key_per7">7</a>
+									</td>
+									<td onmouseover="hilight('no-pk_t_adt')" onmouseout="lolight('no-pk_t_adt')" id="no-pk_tweetadt">
+										2010-08-30T01:33
+									</td>
+									<td onmouseover="hilight('no-pk_t_atext')" onmouseout="lolight('no-pk_t_atext')" id="no-pk_tweetatext">
+										I really like lolcats.
+									</td>
+								</tr>
+								<tr>
+									<td onmouseover="hilight('no-pk_t_b7')" onmouseout="lolight('no-pk_t_b7')" id="no-pk_tweetb7" class="fk">
+										<a href="#multi-key_per7">7</a>
+									</td>
+									<td onmouseover="hilight('no-pk_t_bdt')" onmouseout="lolight('no-pk_t_bdt')" id="no-pk_tweetbdt">
+										2010-08-30T09:01
+									</td>
+									<td onmouseover="hilight('no-pk_t_btext')" onmouseout="lolight('no-pk_t_btext')" id="no-pk_tweetbtext">
+										I take it back.
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<p style="clear:both;"></p>
+					</div>
+					<p>
+						Given that table <em>Tweets</em> does not have a primary key, each row in this table is identified by a Blank Node. In fact, when translating the above table the direct mapping generates the following triples:
+					</p>
+					<pre id="no-pk-ex1" class="turtle">
+@base &lt;http://foo.example/DB/&gt;
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+<span class="triple" onmouseover="hilight('no-pk_tweeta7')" onmouseout="lolight('no-pk_tweeta7')">_:a rdf:type &lt;Tweets&gt; .</span>
+<span class="triple" id="no-pk_t_a7" onmouseover="hilight('no-pk_tweeta7')" onmouseout="lolight('no-pk_tweeta7')">_:a &lt;Tweets#tweeter&gt; "7" .</span>
+<span class="triple"                 onmouseover="hilight('no-pk_tweeta7')" onmouseout="lolight('no-pk_tweeta7')">_:a &lt;Tweets#ref<span class="Pnamesep">-</span>tweeter&gt; &lt;People/ID<span class="valsep">=</span>7&gt; .</span>
+<span class="triple" id="no-pk_t_adt" onmouseover="hilight('no-pk_tweetadt')" onmouseout="lolight('no-pk_tweetadt')">_:a &lt;Tweets#when&gt; "2010-08-30T01:33"^^xsd:dateTime .</span>
+<span class="triple" id="no-pk_t_atext" onmouseover="hilight('no-pk_tweetatext')" onmouseout="lolight('no-pk_tweetatext')">_:a &lt;Tweets#text&gt; "I really like lolcats." .</span>
+
+<span class="triple" onmouseover="hilight('no-pk_tweetb7')" onmouseout="lolight('no-pk_tweetb7')">_:b rdf:type &lt;Tweets&gt; .</span>
+<span class="triple" id="no-pk_t_b7" onmouseover="hilight('no-pk_tweetb7')" onmouseout="lolight('no-pk_tweetb7')">_:b &lt;Tweets#tweeter&gt; "7" .</span>
+<span class="triple"                 onmouseover="hilight('no-pk_tweetb7')" onmouseout="lolight('no-pk_tweetb7')">_:b &lt;Tweets#ref<span class="Pnamesep">-</span>tweeter&gt; &lt;People/ID<span class="valsep">=</span>7&gt; .</span>
+<span class="triple" id="no-pk_t_bdt" onmouseover="hilight('no-pk_tweetbdt')" onmouseout="lolight('no-pk_tweetbdt')">_:b &lt;Tweets#when&gt; "2010-08-30T09:01"^^xsd:dateTime .</span>
+<span class="triple" id="no-pk_t_btext" onmouseover="hilight('no-pk_tweetbtext')" onmouseout="lolight('no-pk_tweetbtext')">_:b &lt;Tweets#text&gt; "I take it back." .</span>
+	
+</pre>
+					<div class="clear"></div>
+				</div>
+				<div class="div2">
+					<h3>
+						<a name="ref-no-pk" id="ref-no-pk"></a>2.5 Referencing tables with empty primary keys
+					</h3>
+					<p>
+						Rows in tables with no primary key may still be referenced by foreign keys. (Relational database theory tells us that these rows must be unique as foreign keys reference candidate keys and candidate keys are unique across all the rows in a table.) References to rows in tables with no primary key are expressed as RDF triples with blank nodes for objects, where that blank node is the same node used for the subject in the referenced row.
+					</p>
+					<p>
+						Here is DDL for a schema with references to a <code>Projects</code> table which has no primary key:
+					</p>
+					<pre class="xsd">
+CREATE TABLE "Projects" (
+	"lead" INT,
+	FOREIGN KEY ("lead") REFERENCES "People"("ID"),
+	"name" VARCHAR(50), 
+	UNIQUE ("lead", "name"), 
+	"deptName" VARCHAR(50), 
+	"deptCity" VARCHAR(50),
+	UNIQUE ("name", "deptName", "deptCity"),
+	FOREIGN KEY ("deptName", "deptCity") REFERENCES "Department"("name", "city")
+)
+
+CREATE TABLE "TaskAssignments" (
+	"worker" INT,
+	FOREIGN KEY ("worker") REFERENCES "People"("ID"),
+	"project" VARCHAR(50), 
+	PRIMARY KEY ("worker", "project"), 
+	"deptName" VARCHAR(50), 
+	"deptCity" VARCHAR(50),
+	FOREIGN KEY ("worker") REFERENCES "People"("ID"),
+	FOREIGN KEY ("project", "deptName", "deptCity") REFERENCES "Projects"("name", "deptName", "deptCity"),
+	FOREIGN KEY ("deptName", "deptCity") REFERENCES "Department"("name", "city")
+)
+	  
+</pre>
+					<div class="clear"></div>
+					<p>
+						The following is an instance of the preceding schema:
+					</p>
+					<div class="multicol">
+						<table class="nonRight hover" cellpadding="2" cellspacing="0" border="1">
+							<caption>
+								Projects
+							</caption>
+							<tbody>
+								<tr class="SQLconstraints">
+									<th colspan="2">
+										Unique key
+									</th>
+									<th colspan="2"></th>
+								</tr>
+								<tr class="SQLconstraints">
+									<th></th>
+									<th colspan="3">
+										Unique key
+									</th>
+								</tr>
+								<tr class="SQLconstraints">
+									<th>
+										→ People(ID)
+									</th>
+									<th></th>
+									<th colspan="2">
+										→ Department(name, city)
+									</th>
+								</tr>
+								<tr>
+									<th>
+										lead
+									</th>
+									<th>
+										name
+									</th>
+									<th>
+										deptName
+									</th>
+									<th>
+										deptCity
+									</th>
+								</tr>
+								<tr>
+									<td onmouseover="hilight('ref-no-pk_t_c8');" onmouseout="lolight('ref-no-pk_t_c8');" id="ref-no-pk_projc8" class="fk">
+										<a href="#multi-key_per8">8</a>
+									</td>
+									<td onmouseover="hilight('ref-no-pk_t_cpencil');" onmouseout="lolight('ref-no-pk_t_cpencil');" id="ref-no-pk_projcpencil">
+										pencil survey
+									</td>
+									<td onmouseover="hilight('ref-no-pk_t_cacc');hilight('ref-no-pk_t_c23')" onmouseout="lolight('ref-no-pk_t_cacc');lolight('ref-no-pk_t_c23')" id="ref-no-pk_projcacc">
+										accounting
+									</td>
+									<td onmouseover="hilight('ref-no-pk_t_cCam');hilight('ref-no-pk_t_c23')" onmouseout="lolight('ref-no-pk_t_cCam');lolight('ref-no-pk_t_c23')" id="ref-no-pk_projcCam">
+										Cambridge
+									</td>
+								</tr>
+								<tr>
+									<td onmouseover="hilight('ref-no-pk_t_d8');" onmouseout="lolight('ref-no-pk_t_d8');" id="ref-no-pk_projd8" class="fk">
+										<a href="#multi-key_per8">8</a>
+									</td>
+									<td onmouseover="hilight('ref-no-pk_t_deraser');" onmouseout="lolight('ref-no-pk_t_deraser');" id="ref-no-pk_projderaser">
+										eraser survey
+									</td>
+									<td onmouseover="hilight('ref-no-pk_t_dacc');hilight('ref-no-pk_t_d23')" onmouseout="lolight('ref-no-pk_t_dacc');lolight('ref-no-pk_t_d23')" id="ref-no-pk_projdacc">
+										accounting
+									</td>
+									<td onmouseover="hilight('ref-no-pk_t_dCam');hilight('ref-no-pk_t_d23')" onmouseout="lolight('ref-no-pk_t_dCam');lolight('ref-no-pk_t_d23')" id="ref-no-pk_projdCam">
+										Cambridge
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<table class="right hover" cellpadding="2" cellspacing="0" border="1">
+							<caption>
+								TaskAssignments
+							</caption>
+							<tbody>
+								<tr class="SQLconstraints">
+									<th colspan="2" class="pk">
+										PK
+									</th>
+									<th colspan="2"></th>
+								</tr>
+								<tr class="SQLconstraints">
+									<th></th>
+									<th colspan="3">
+										→ Projects(name, deptName, deptCity)
+									</th>
+								</tr>
+								<tr class="SQLconstraints">
+									<th>
+										→ People(ID)
+									</th>
+									<th></th>
+									<th colspan="2">
+										→ Departments(name, city)
+									</th>
+								</tr>
+								<tr>
+									<th class="pk">
+										worker
+									</th>
+									<th class="pk">
+										project
+									</th>
+									<th>
+										deptName
+									</th>
+									<th>
+										deptCity
+									</th>
+								</tr>
+								<tr>
+									<td onmouseover="hilight('ref-no-pk_t_pencil7')" onmouseout="lolight('ref-no-pk_t_pencil7')" id="ref-no-pk_ta7" class="pk">
+										<a href="#multi-key_per7">7</a>
+									</td>
+									<td onmouseover="hilight('ref-no-pk_t_pencilpencil');hilight('ref-no-pk_t_pencilc');hilight('ref-no-pk_projcpencil')" onmouseout="lolight('ref-no-pk_t_pencilpencil');lolight('ref-no-pk_t_pencilc');lolight('ref-no-pk_projcpencil')" id="ref-no-pk_tapencil" class="pk">
+										pencil survey
+									</td>
+									<td onmouseover="hilight('ref-no-pk_t_pencilacc');hilight('ref-no-pk_t_pencilc');hilight('ref-no-pk_t_pencil23');hilight('ref-no-pk_projcacc')" onmouseout="lolight('ref-no-pk_t_pencilacc');lolight('ref-no-pk_t_pencilc');lolight('ref-no-pk_t_pencil23');lolight('ref-no-pk_projcacc')" id="ref-no-pk_taacc">
+										accounting
+									</td>
+									<td onmouseover="hilight('ref-no-pk_t_pencilCam');hilight('ref-no-pk_t_pencilc');hilight('ref-no-pk_t_pencil23');hilight('ref-no-pk_projcCam')" onmouseout="lolight('ref-no-pk_t_pencilCam');lolight('ref-no-pk_t_pencilc');lolight('ref-no-pk_t_pencil23');lolight('ref-no-pk_projcCam')" id="ref-no-pk_taCam">
+										Cambridge
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<p style="clear:both;"></p>
+					</div>
+					<p>
+						In this case, the direct mapping generates the following triples from the preceding tables:
+					</p>
+					<pre id="ref-no-pk-ex1" class="turtle">
+@base &lt;http://foo.example/DB/&gt;
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+<span class="triple" onmouseover="hilight('ref-no-pk_projc8')" onmouseout="lolight('ref-no-pk_projc8')">_:c rdf:type &lt;Projects&gt; .</span>
+<span class="triple" id="ref-no-pk_t_c8" onmouseover="hilight('ref-no-pk_projc8')" onmouseout="lolight('ref-no-pk_projc8')">_:c &lt;Projects#lead&gt; &lt;People/ID<span class="valsep">=</span>8&gt; .</span>
+<span class="triple" id="ref-no-pk_t_cpencil" onmouseover="hilight('ref-no-pk_projcpencil')" onmouseout="lolight('ref-no-pk_projcpencil')">_:c &lt;Projects#name&gt; "pencil survey" .</span>
+<span class="triple" id="ref-no-pk_t_cacc" onmouseover="hilight('ref-no-pk_projcacc')" onmouseout="lolight('ref-no-pk_projcacc')">_:c &lt;Projects#deptName&gt; "accounting" .</span>
+<span class="triple" id="ref-no-pk_t_cCam" onmouseover="hilight('ref-no-pk_projcCam')" onmouseout="lolight('ref-no-pk_projcCam')">_:c &lt;Projects#deptCity&gt; "Cambridge" .</span>
+<span class="triple" id="ref-no-pk_t_c23" onmouseover="hilight('ref-no-pk_projcacc'); hilight('ref-no-pk_projcCam')" onmouseout="lolight('ref-no-pk_projcacc'); lolight('ref-no-pk_projcCam')">_:c &lt;Projects#ref<span class="Pnamesep">-</span>deptName<span class="Pnamensep">;</span>deptCity&gt; &lt;Department/ID<span class="valsep">=</span>23&gt; .</span>
+
+<span class="triple" onmouseover="hilight('ref-no-pk_projd8')" onmouseout="lolight('ref-no-pk_projd8')">_:d rdf:type &lt;Projects&gt; .</span>
+<span class="triple" id="ref-no-pk_t_d8" onmouseover="hilight('ref-no-pk_projd8')" onmouseout="lolight('ref-no-pk_projd8')">_:d &lt;Projects#lead&gt; &lt;People/ID<span class="valsep">=</span>8&gt; .</span>
+<span class="triple" id="ref-no-pk_t_deraser" onmouseover="hilight('ref-no-pk_projderaser')" onmouseout="lolight('ref-no-pk_projderaser')">_:d &lt;Projects#name&gt; "eraser survey" .</span>
+<span class="triple" id="ref-no-pk_t_dacc" onmouseover="hilight('ref-no-pk_projdacc')" onmouseout="lolight('ref-no-pk_projdacc')">_:d &lt;Projects#deptName&gt; "accounting" .</span>
+<span class="triple" id="ref-no-pk_t_dCam" onmouseover="hilight('ref-no-pk_projdCam')" onmouseout="lolight('ref-no-pk_projdCam')">_:d &lt;Projects#deptCity&gt; "Cambridge" .</span>
+<span class="triple" id="ref-no-pk_t_d23" onmouseover="hilight('ref-no-pk_projdacc'); hilight('ref-no-pk_projdCam')" onmouseout="lolight('ref-no-pk_projdacc'); lolight('ref-no-pk_projdCam')">_:d &lt;Projects#ref<span class="Pnamesep">-</span>deptName<span class="Pnamensep">;</span>deptCity&gt; &lt;Department/ID<span class="valsep">=</span>23&gt; .</span>
+
+<span class="triple" onmouseover="hilight('ref-no-pk_ta7')" onmouseout="lolight('ref-no-pk_ta7')">&lt;TaskAssignments/worker<span class="valsep">=</span>7.project<span class="valsep">=</span>pencil%20survey&gt; rdf:type &lt;TaskAssignments&gt; .</span>
+<span class="triple" id="ref-no-pk_t_pencil7" onmouseover="hilight('ref-no-pk_ta7')" onmouseout="lolight('ref-no-pk_ta7')">&lt;TaskAssignments/worker<span class="valsep">=</span>7.project<span class="valsep">=</span>pencil%20survey&gt; &lt;TaskAssignments#worker&gt; 7 .</span>
+<span class="triple" onmouseover="" onmouseout="">&lt;TaskAssignments/worker<span class="valsep">=</span>7.project<span class="valsep">=</span>pencil%20survey&gt; &lt;TaskAssignments#ref<span class="Pnamesep">-</span>worker&gt; &lt;People/ID<span class="valsep">=</span>7&gt; .</span>
+<span class="triple" id="ref-no-pk_t_pencilpencil" onmouseover="hilight('ref-no-pk_tapencil')" onmouseout="lolight('ref-no-pk_tapencil')">&lt;TaskAssignments/worker<span class="valsep">=</span>7.project<span class="valsep">=</span>pencil%20survey&gt; &lt;TaskAssignments#project&gt; "pencil survey" .</span>
+<span class="triple" id="ref-no-pk_t_pencilacc" onmouseover="hilight('ref-no-pk_taacc')" onmouseout="lolight('ref-no-pk_taacc')">&lt;TaskAssignments/worker<span class="valsep">=</span>7.project<span class="valsep">=</span>pencil%20survey&gt; &lt;TaskAssignments#deptName&gt; "accounting" .</span>
+<span class="triple" id="ref-no-pk_t_pencilCam" onmouseover="hilight('ref-no-pk_taCam')" onmouseout="lolight('ref-no-pk_taCam')">&lt;TaskAssignments/worker<span class="valsep">=</span>7.project<span class="valsep">=</span>pencil%20survey&gt; &lt;TaskAssignments#deptCity&gt; "Cambridge" .</span>
+<span class="triple" id="ref-no-pk_t_pencil23" onmouseover="hilight('ref-no-pk_taacc');hilight('ref-no-pk_taCam')" onmouseout="lolight('ref-no-pk_taacc');lolight('ref-no-pk_taCam')">&lt;TaskAssignments/worker<span class="valsep">=</span>7.project<span class="valsep">=</span>pencil%20survey&gt; &lt;TaskAssignments#ref<span class="Pnamesep">-</span>deptName<span class="Pnamensep">;</span>deptCity&gt; &lt;Department/ID<span class="valsep">=</span>23&gt; .</span>
+<span class="triple new" id="ref-no-pk_t_pencilc" onmouseover="hilight('ref-no-pk_tapencil');hilight('ref-no-pk_taacc');hilight('ref-no-pk_taCam')" onmouseout="lolight('ref-no-pk_tapencil');lolight('ref-no-pk_taacc');lolight('ref-no-pk_taCam')">&lt;TaskAssignments/worker<span class="valsep">=</span>7.project<span class="valsep">=</span>pencil%20survey&gt; &lt;TaskAssignments#ref<span class="Pnamesep">-</span>project<span class="Pnamensep">;</span>deptName<span class="Pnamensep">;</span>deptCity&gt; _:c .</span>
+	  
+</pre>
+					<div class="clear"></div>
+					<p>
+						The absence of a primary key forces the generation of blank nodes, but does not change the structure of the direct graph or names of the predicates in that graph.
+					</p>
+				</div>
+			</div>
+			<div class="div1">
+				<h2>
+					<a name="definition" id="definition"></a>3 Direct Graph Definition
+				</h2>
+				<p>
+					The Direct Graph is a formula for creating an RDF graph from the rows of each table and view in a database schema. A base IRI defines a web space for the IRIs in this graph; for the purposes of this specification, all IRIs are generated by appending to a base. Terms enclosed in &lt;&gt; are defined in the SQL specification <a href="#SQLFN">[SQLFN]</a>.
+				</p>
+				<p>
+					An SQL table has a set of uniquely-named columns and has a set of foreign keys, each mapping a &lt;column name list&gt; to a &lt;unique column list&gt; (a list of columns in some table).
+				</p>
+				<p>
+					SQL table and column identifiers compose RDF IRIs in the direct graph.
+					These identifiers are separated by the punctuation characters '#', '<span class="attrsep">;</span>', '/' and '<span class="valsep">=</span>'. All SQL identifiers are escaped following R2RML's escaping rules.
+				</p>
+				<div class="defn">
+					<p id="defn-percent-encode">
+						Definition <em>percent-encode</em>:
+					</p>
+					<ul>
+						<li>Replace the string with the <a href="http://www.w3.org/TR/2012/REC-r2rml-20120927/#dfn-iri-safe">IRI-safe</a> form per section 7.3 of <a href="#R2RML">[R2RML]</a>.</li>
+					</ul>
+				</div>
+				<p id="row_node_def">
+					There is either a blank node or IRI assigned to each each row in a table:
+				</p>
+				<div class="defn">
+					<p id="defn-row_node">
+						Definition <em>row node</em>:
+					</p>
+					<ul>
+						<li>If the table has a primary key, the row node is a relative IRI obtained by concatenating:
+							<ul>
+								<li>the percent-encoded form of the table name,
+								</li>
+								<li>the SOLIDUS character '/',
+								</li>
+								<li>for each column in the primary key, in order:
+									<ul>
+										<li>the percent-encoded form of the column name,</li>
+										<li>a EQUALS SIGN character '<span class="valsep">=</span>',</li>
+										<li>the percent-encoded lexical form of the <a href="http://www.w3.org/TR/2012/REC-r2rml-20120927/#dfn-canonical-rdf-lexical-form">canonical RDF literal</a> representation of the column value as defined in <a href="http://www.w3.org/TR/2012/REC-r2rml-20120927/#natural-mapping">R2RML section 10.2 Natural Mapping of SQL Values</a> <a href="#R2RML">[R2RML]</a>,</li>
+										<li>if it is not the last column in the primary key, a SEMICOLON character '<span class="attrsep">;</span>'</li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+						<li>If the table has no primary key, the row node is a fresh blank node that is unique to this row.
+						</li>
+					</ul>
+				</div>
+				<p id="table_iri">
+					A table forms a table IRI:
+				</p>
+				<div class="defn">
+					<p id="defn-table_IRI">
+						Definition <em>table IRI</em>: the relative IRI consisting of the percent-encoded form of the table name.
+					</p>
+				</div>
+				<p id="lit_prop_iri">
+					A column in a table forms a literal property IRI:
+				</p>
+				<div class="defn">
+					<p id="defn-literal_property_IRI">
+						Definition <em>literal property IRI</em>: the concatenation of:
+					</p>
+					<ul>
+						<li>the percent-encoded form of the table name,
+						</li>
+						<li>the hash character '#',
+						</li>
+						<li>the percent-encoded form of the column name.
+						</li>
+					</ul>
+				</div>
+				<p id="ref_prop_iri">
+					A foreign key in a table forms a reference property IRI:
+				</p>
+				<div class="defn">
+					<p id="defn-reference_property_IRI">
+						Definition <em>reference property IRI</em>: the concatenation of:
+					</p>
+					<ul>
+						<li>the percent-encoded form of the table name,
+						</li>
+						<li>the string '#ref<span class="Pnamesep">-</span>',
+						</li>
+						<li>for each column in the foreign key, in order:
+							<ul>
+								<li>the percent-encoded form of the column name,</li>
+								<li>if it is not the last column in the foreign key, a SEMICOLON character '<span class="attrsep">;</span>'</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+				<p>
+					Any input database with a given schema has a <em>direct graph</em> defined as:
+				</p>
+				<div class="defn">
+					<p id="defn-direct_graph">
+						Definition <em>direct graph</em>: the union of the <a title="" href="#defn-table_graph">table graph</a>s for each table in a database schema.
+					</p>
+					<p id="defn-table_graph">
+						Definition <em>table graph</em>: the union of the <a title="" href="#defn-row_graph">row graph</a>s for each row in a table.
+					</p>
+					<p id="defn-row_graph">
+						Definition <em>row graph</em>: an RDF graph consisting of the following triples:
+					</p>
+					<ul>
+						<li>the <a title="" href="#defn-row_type_triple">row type triple</a>.
+						</li>
+						<li>a <a title="" href="#defn-reference_triple">reference triple</a> for each &lt;column name list&gt; in a table's foreign keys where none of the column values is NULL.
+						</li>
+						<li>a <a title="" href="#defn-literal_triple">literal triple</a> for each column in a table where the column value is non-NULL.
+						</li>
+					</ul>
+					<p id="defn-row_type_triple">
+						Definition <em>row type triple</em>: an RDF triple with:
+					</p>
+					<ul>
+						<li>subject: the <a title="" href="#defn-row_node">row node</a> for the row.
+						</li>
+						<li>predicate: the RDF IRI <code class="triple">rdf:type</code>.
+						</li>
+						<li>object: the <a title="" href="#defn-table_IRI">table IRI</a> for the table name.
+						</li>
+					</ul>
+					<p id="defn-literal_triple">
+						Definition <em>literal triple</em>: an RDF triple with:
+					</p>
+					<ul>
+						<li>subject: the <a title="" href="#defn-row_node">row node</a> for the row.
+						</li>
+						<li>predicate: the <a title="" href="#defn-literal_property_IRI">literal property IRI</a> for the column.
+						</li>
+						<li>object: the <a href="http://www.w3.org/TR/2012/REC-r2rml-20120927/#dfn-natural-rdf-literal">R2RML natural RDF literal</a> representation of the column value as defined in <a href="http://www.w3.org/TR/2012/REC-r2rml-20120927/#natural-mapping">R2RML section 10.2 Natural Mapping of SQL Values</a>.
+						</li>
+					</ul>
+					<p id="defn-reference_triple">
+						Definition <em>reference triple</em>: an RDF triple with:
+					</p>
+					<ul>
+						<li>subject: the <a title="" href="#defn-row_node">row node</a> for the row.
+						</li>
+						<li>predicate: the <a title="" href="#defn-reference_property_IRI">reference property IRI</a> for the columns.
+						</li>
+						<li>object: the <a title="" href="#defn-row_node">row node</a> for the referenced row.
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="div1">
+				<h2>
+					<a name="refs" id="refs"></a>4 References
+				</h2>
+			</div>
+		</div>
+		<div class="back">
+			<dl>
+				<dt class="label">
+					<a name="R2RML" id="R2RML">R2RML</a>
+				</dt>
+				<dd>
+					<cite><a href="http://www.w3.org/TR/2012/REC-r2rml-20120927/">R2RML: RDB to RDF Mapping Language</a></cite>
+					, Souripriya Das, Seema Sundara, Richard Cyganiak, Editors.
+					World Wide Web Consortium, 27 September 2012.
+					This version is http://www.w3.org/TR/2012/REC-r2rml-20120927/.
+					The latest version is http://www.w3.org/TR/r2rml/.
+					This document is work in progress.
+				</dd>
+
+				<dt class="label">
+					<a name="SPARQL" id="SPARQL"></a>SPARQL
+				</dt>
+				<dd>
+					SPARQL Query Language for RDF, Eric Prud'hommeaux and Andy Seaborne 2008. (See http://www.w3.org/TR/rdf-sparql-query/.)
+				</dd>
+				<dt class="label">
+					<a name="SQLFW" id="SQLFW"></a>SQLFW
+				</dt>
+				<dd>
+					SQL. ISO/IEC 9075-1:2008 SQL – Part 1: Framework (SQL/Framework) International Organization for Standardization, 27 January 2009.
+				</dd>
+				<dt class="label">
+					<a name="SQLFN" id="SQLFN"></a>SQLFN
+				</dt>
+				<dd>
+					ISO/IEC 9075-2:2008 SQL – Part 2: Foundation (SQL/Foundation) International Organization for Standardization, 27 January 2009.
+				</dd>
+				<dt class="label">
+					<a name="RDF-concepts" id="RDF-concepts"></a>RDF-concepts
+				</dt>
+				<dd>
+					Resource Description Framework (RDF): Concepts and Abstract Syntax, G. Klyne, J. J. Carroll, Editors, W3C Recommendation, 10 February 2004 (See http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/.)
+				</dd>
+				<dt class="label">
+					<a name="ReuseableIDs" id="ReuseableIDs"></a>ReuseableIDs
+				</dt>
+				<dd>
+					Reusable Identifiers in the RDB2RDF mapping language, Michael Hausenblas and Themis Palpanas, 2009. (See http://esw.w3.org/topic/Rdb2RdfXG/ReusableIdentifier.)
+				</dd>
+				<dt class="label">
+					<a name="URI" id="URI"></a>URI
+				</dt>
+				<dd>
+					RFC3986 - Uniform Resource Identifier (URI): Generic Syntax (See http://tools.ietf.org/html/rfc3986.)
+				</dd>
+				<dt class="label">
+					<a name="RFC3987" id="RFC3987"></a>RFC3987
+				</dt>
+				<dd>
+					RFC3987 - Internationalized Resource Identifier (IRIs) (See http://tools.ietf.org/html/rfc3987.)
+				</dd>
+				<dt class="label">
+					<a name="SQL2SW" id="SQL2SW"></a>SQL2SW
+				</dt>
+				<dd>
+					Translating SQL Applications to the Semantic Web. Syed Hamid Tirmizi, Juan Sequeda and Daniel Miranker. 2008 (See http://www.springerlink.com/content/mv58805364k31734/.)
+				</dd>
+				<dt class="label">
+					<a name="DMSurvey" id="DMSurvey"></a>DMSurvey
+				</dt>
+				<dd>
+					Survey of directly mapping SQL databases to the Semantic Web. Juan Sequeda, Syed Hamid Tirmizi, Oscar Corcho, Daniel P. Miranker. 2011 (See http://journals.cambridge.org/abstract_S0269888911000208.)
+				</dd>
+			</dl>
+			<div class="div1">
+				<h2>
+					<a name="alg" id="alg"></a>A Direct Mapping Algebra (Informative)
+				</h2>
+				<div class="div2">
+					<h3>
+						<a name="notation" id="notation"></a>A.1 Notations
+					</h3>
+					<p>
+						The RDB and RDF data models make use of the commonly defined <a href="http://en.wikipedia.org/wiki/Abstract_data_type">Abstract Data Types</a> <a href="http://en.wikipedia.org/wiki/Set_(computer_science)">Set</a>, <a href="http://en.wikipedia.org/wiki/List_(computer_science)">List</a> and <a href="http://en.wikipedia.org/wiki/Set_(computer_science)#Multiset">MultiSet</a>, used here as type constructors. For example, <code class="triple">Set(A)</code> denotes the type for the sets of elements of type <code class="triple">A</code>. We assume that they come with their common operations, such as the function <code class="triple">size&nbsp;:&nbsp;Set&nbsp;→&nbsp;Int</code>.
+					</p>
+					<p>
+						The definitions follow a type-as-specification approach; thus the models are based on <a href="http://en.wikipedia.org/wiki/Dependent_type">dependent types</a>. For example, <code class="triple">{&nbsp;s:Set(A)&nbsp;|&nbsp;size(s)&nbsp;≤&nbsp;1&nbsp;}</code> is a type denoting the sets for elements of type A, such that those sets have at most one element.
+					</p>
+					<p>
+						The denotational RDF semantics makes use of the <a href="http://en.wikipedia.org/wiki/Set-builder_notation">set-builder notation</a> for building the RDF sets.
+					</p>
+					<div class="syntaxmenu">
+						<p>
+							The buttons below can be used to show or hide the available syntaxes.
+						</p>
+						<form action="">
+							<p>
+								<input id="use-sets" onclick=" sets();" value="Set notation (s)" type="button" /> <input id="use-sbuilder" onclick="sbuilder();" style="display: none;" value="Set-builder notation (b)" type="button" /> <input style="" id="hide-rs" onclick="english_toggle();" value="Hide English Syntax (e)" type="button" /> <input id="show-rs" onclick="english_toggle()" style="display: none;" value="Show English Syntax (e)" type="button" />
+							</p>
+						</form>
+					</div>
+				</div>
+				<div class="div2">
+					<h3>
+						<a name="RDB" id="RDB"></a>A.2 Relational Data Model
+					</h3>
+					<div class="div3">
+						<h4>
+							<a name="RDB-ADT" id="RDB-ADT"></a>A.2.1 RDB Abstract Data Type
+						</h4>
+						<table class="scrap" summary="Scrap">
+							<tbody>
+								<tr class="sbuilder" valign="baseline">
+									<td>
+										<a name="RDB-Database" id="RDB-Database"></a>[1]
+									</td>
+									<td>
+										<code>Database</code>
+									</td>
+									<td>
+										::=
+									</td>
+									<td>
+										<code>Set(<a href="#RDB-Table">Table</a>)</code>
+									</td>
+								</tr>
+								<tr class="sets" valign="baseline">
+									<td>
+										<a name="setRDB-Database" id="setRDB-Database"></a>[1]
+									</td>
+									<td>
+										<code>Database</code>
+									</td>
+									<td>
+										::=
+									</td>
+									<td>
+										<code>{ <a href="#setRDB-Table">Table</a> }</code>
+									</td>
+								</tr>
+								<tr class="english">
+									<td colspan="5" class="nonnorm">
+										A <dfn>relational database</dfn> is a set of tables.
+									</td>
+								</tr>
+							</tbody>
+							<tbody>
+								<tr class="sbuilder" valign="baseline">
+									<td>
+										<a name="RDB-Table" id="RDB-Table"></a>[2]
+									</td>
+									<td>
+										<code>Table</code>
+									</td>
+									<td>
+										::=
+									</td>
+									<td>
+										<code>(<a href="#RDB-TableName">TableName</a>, Set((<a href="#RDB-ColumnName">ColumnName</a>, <a href="#RDB-Datatype">Datatype</a>)), Set(<a href="#RDB-CandidateKey">CandidateKey</a>), Set(<a href="#RDB-PrimaryKey">PrimaryKey</a>) | size() ≤ 1, Set(<a href="#RDB-ForeignKey">ForeignKey</a>), <a href="#RDB-Body">Body</a>)</code>
+									</td>
+								</tr>
+								<tr class="sets" valign="baseline">
+									<td>
+										<a name="setRDB-Table" id="setRDB-Table"></a>[2]
+									</td>
+									<td>
+										<code>Table</code>
+									</td>
+									<td>
+										::=
+									</td>
+									<td>
+										<code>( <a href="#setRDB-TableName">TableName</a>, { <a href="#setRDB-ColumnName">ColumnName</a> → <a href="#setRDB-Datatype">Datatype</a> }, { <a href="#setRDB-CandidateKey">CandidateKey</a> }, <a href="#setRDB-PrimaryKey">PrimaryKey</a>?, { <a href="#setRDB-ForeignKey">ForeignKey</a> }, <a href="#setRDB-Body">Body</a> )</code>
+									</td>
+								</tr>
+								<tr class="english">
+									<td colspan="5" class="nonnorm">
+										A <dfn>relation</dfn> has
+										<ul>
+											<li>a name uniquely defining this table in the database;
+											</li>
+											<li>an <a href="http://en.wikipedia.org/wiki/Associative_array">associative array</a> mapping each column to a SQL datatype;
+											</li>
+											<li>a potentially empty list of candidate keys, possibly including a primary key;
+											</li>
+											<li>a potentially empty set of foreign keys;
+											</li>
+											<li>a body containing the rows of data.
+											</li>
+										</ul>
+									</td>
+								</tr>
+							</tbody>
+							<tbody>
+								<tr class="sbuilder" valign="baseline">
+									<td>
+										<a name="RDB-Body" id="RDB-Body"></a>[3]
+									</td>
+									<td>
+										<code>Body</code>
+									</td>
+									<td>
+										::=
+									</td>
+									<td>
+										<code>MultiSet(<a href="#RDB-Row">Row</a>)</code>
+									</td>
+								</tr>
+								<tr class="sets" valign="baseline">
+									<td>
+										<a name="setRDB-Body" id="setRDB-Body"></a>[3]
+									</td>
+									<td>
+										<code>Body</code>
+									</td>
+									<td>
+										::=
+									</td>
+									<td>
+										<code>[ <a href="#setRDB-Row">Row</a> ]</code>
+									</td>
+								</tr>
+								<tr class="english">
+									<td colspan="5" class="nonnorm">
+										A <dfn>body</dfn> is a set of potentially duplicate rows.
+									</td>
+								</tr>
+							</tbody>
+							<tbody>
+								<tr class="sbuilder" valign="baseline">
+									<td>
+										<a name="RDB-Row" id="RDB-Row"></a>[4]
+									</td>
+									<td>
+										<code>Row</code>
+									</td>
+									<td>
+										::=
+									</td>
+									<td>
+										<code>Set((<a href="#RDB-ColumnName">ColumnName</a>, <a href="#RDB-CellValue">CellValue</a>))</code>
+									</td>
+								</tr>
+								<tr class="sets" valign="baseline">
+									<td>
+										<a name="setRDB-Row" id="setRDB-Row"></a>[4]
+									</td>
+									<td>
+										<code>Row</code>
+									</td>
+									<td>
+										::=
+									</td>
+									<td>
+										<code>{ <a href="#setRDB-ColumnName">ColumnName</a> → <a href="#setRDB-CellValue">CellValue</a> }</code>
+									</td>
+								</tr>
+								<tr class="english">
+									<td colspan="5" class="nonnorm">
+										A <dfn>row</dfn> is a <a href="http://en.wikipedia.org/wiki/Associative_array">associative array</a> mapping each column in a row to a value.
+									</td>
+								</tr>
+							</tbody>
+							<tbody>
+								<tr class="sbuilder" valign="baseline">
+									<td>
+										<a name="RDB-CellValue" id="RDB-CellValue"></a>[5]
+									</td>
+									<td>
+										<code>CellValue</code>
+									</td>
+									<td>
+										::=
+									</td>
+									<td>
+										<code>Value | NULL</code>
+									</td>
+								</tr>
+								<tr class="sets" valign="baseline">
+									<td>
+										<a name="setRDB-CellValue" id="setRDB-CellValue"></a>[5]
+									</td>
+									<td>
+										<code>CellValue</code>
+									</td>
+									<td>
+										::=
+									</td>
+									<td>
+										<code>Value | Null</code>
+									</td>
+								</tr>
+								<tr class="english">
+									<td colspan="5" class="nonnorm">
+										A <dfn>cell value</dfn> is either a lexical value or NULL, denoting the absence of value.
+									</td>
+								</tr>
+							</tbody>
+							<tbody>
+								<tr class="sbuilder" valign="baseline">
+									<td>
+										<a name="RDB-ForeignKey" id="RDB-ForeignKey"></a>[6]
+									</td>
+									<td>
+										<code>ForeignKey</code>
+									</td>
+									<td>
+										::=
+									</td>
+									<td>
+										<code>(List(<a href="#RDB-ColumnName">ColumnName</a>), <a href="#RDB-Table">Table</a>, <a href="#RDB-CandidateKey">CandidateKey</a>)</code>
+									</td>
+								</tr>
+								<tr class="sets" valign="baseline">
+									<td>
+										<a name="setRDB-ForeignKey" id="setRDB-ForeignKey"></a>[6]
+									</td>
+									<td>
+										<code>ForeignKey</code>
+									</td>
+									<td>
+										::=
+									</td>
+									<td>
+										<code>{ [<a href="#setRDB-ColumnName">ColumnName</a>] → ( <a href="#setRDB-Table">Table</a>, [<a href="#setRDB-ColumnName">ColumnName</a>] ) }</code>
+									</td>
+								</tr>
+								<tr class="english">
+									<td colspan="5" class="nonnorm">
+										A <dfn>foreign key</dfn> constrains the values of a &lt;column name list&gt; to be equivalent (by the SQL <code>=</code> operator) to the values of a &lt;unique column list&gt; in some row of the referenced table.
+									</td>
+								</tr>
+							</tbody>
+							<tbody>
+								<tr class="sbuilder" valign="baseline">
+									<td>
+										<a name="RDB-PrimaryKey" id="RDB-PrimaryKey"></a>[7]
+									</td>
+									<td>
+										<code>PrimaryKey</code>
+									</td>
+									<td>
+										::=
+									</td>
+									<td>
+										<code><a href="#RDB-CandidateKey">CandidateKey</a></code>
+									</td>
+								</tr>
+								<tr class="sets" valign="baseline">
+									<td>
+										<a name="setRDB-PrimaryKey" id="setRDB-PrimaryKey"></a>[7]
+									</td>
+									<td>
+										<code>PrimaryKey</code>
+									</td>
+									<td>
+										::=
+									</td>
+									<td>
+										<code><a href="#setRDB-CandidateKey">CandidateKey</a></code>
+									</td>
+								</tr>
+								<tr class="english">
+									<td colspan="5" class="nonnorm">
+										A <dfn>primary key</dfn> is a candidate key with the additional constraint that none of the columns can have a NULL value.
+									</td>
+								</tr>
+							</tbody>
+							<tbody>
+								<tr class="sbuilder" valign="baseline">
+									<td>
+										<a name="RDB-CandidateKey" id="RDB-CandidateKey"></a>[8]
+									</td>
+									<td>
+										<code>CandidateKey</code>
+									</td>
+									<td>
+										::=
+									</td>
+									<td>
+										<code>List(<a href="#RDB-ColumnName">ColumnName</a>)</code>
+									</td>
+								</tr>
+								<tr class="sets" valign="baseline">
+									<td>
+										<a name="setRDB-CandidateKey" id="setRDB-CandidateKey"></a>[8]
+									</td>
+									<td>
+										<code>CandidateKey</code>
+									</td>
+									<td>
+										::=
+									</td>
+									<td>
+										<code>[ <a href="#setRDB-ColumnName">ColumnName</a> ]</code>
+									</td>
+								</tr>
+								<tr class="english">
+									<td colspan="5" class="nonnorm">
+										A <dfn>candidate key</dfn> is an SQL &lt;unique column list&gt; in some table. This constrains that no two rows in the table have values for the &lt;unique column list&gt; which are <em>all</em> equivalent (by the SQL <code>=</code> operator).
+									</td>
+								</tr>
+							</tbody>
+							<tbody>
+								<tr class="sbuilder" valign="baseline">
+									<td>
+										<a name="RDB-Datatype" id="RDB-Datatype"></a>[9]
+									</td>
+									<td>
+										<code>Datatype</code>
+									</td>
+									<td>
+										::=
+									</td>
+									<td>
+										<code>Int | Float | Date | …</code>
+									</td>
+								</tr>
+								<tr class="sets" valign="baseline">
+									<td>
+										<a name="setRDB-Datatype" id="setRDB-Datatype"></a>[9]
+									</td>
+									<td>
+										<code>Datatype</code>
+									</td>
+									<td>
+										::=
+									</td>
+									<td>
+										<code>{ INT | FLOAT | DATE | TIME | TIMESTAMP | CHAR | VARCHAR | STRING }</code>
+									</td>
+								</tr>
+								<tr class="english">
+									<td colspan="5" class="nonnorm">
+										A <dfn>datatype</dfn> is a common SQL datatype.
+									</td>
+								</tr>
+							</tbody>
+							<tbody>
+								<tr class="sbuilder" valign="baseline">
+									<td>
+										<a name="RDB-TableName" id="RDB-TableName"></a>[10]
+									</td>
+									<td>
+										<code>TableName</code>
+									</td>
+									<td>
+										::=
+									</td>
+									<td>
+										<code>String</code>
+									</td>
+								</tr>
+								<tr class="sets" valign="baseline">
+									<td>
+										<a name="setRDB-TableName" id="setRDB-TableName"></a>[10]
+									</td>
+									<td>
+										<code>TableName</code>
+									</td>
+									<td>
+										::=
+									</td>
+									<td>
+										<code>String</code>
+									</td>
+								</tr>
+								<tr class="english">
+									<td colspan="5" class="nonnorm">
+										A <dfn>table name</dfn> is a string.
+									</td>
+								</tr>
+							</tbody>
+							<tbody>
+								<tr class="sbuilder" valign="baseline">
+									<td>
+										<a name="RDB-ColumnName" id="RDB-ColumnName"></a>[11]
+									</td>
+									<td>
+										<code>ColumnName</code>
+									</td>
+									<td>
+										::=
+									</td>
+									<td>
+										<code>String</code>
+									</td>
+								</tr>
+								<tr class="sets" valign="baseline">
+									<td>
+										<a name="setRDB-ColumnName" id="setRDB-ColumnName"></a>[11]
+									</td>
+									<td>
+										<code>ColumnName</code>
+									</td>
+									<td>
+										::=
+									</td>
+									<td>
+										<code>String</code>
+									</td>
+								</tr>
+								<tr class="english">
+									<td colspan="5" class="nonnorm">
+										A <dfn>column name</dfn> is a string.
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="div3">
+						<h4>
+							<a name="RDB-acc" id="RDB-acc"></a>A.2.2 RDB accessor functions
+						</h4>
+						<table class="scrap" summary="Scrap">
+							<tbody>
+								<tr class="sbuilder" valign="baseline">
+									<td>
+										<a name="RDB-tablename" id="RDB-tablename"></a>[12]
+									</td>
+									<td>
+										<code>tablename</code>
+									</td>
+									<td>
+										:
+									</td>
+									<td>
+										<code><a href="#RDB-Table">Table</a> → <a href="#RDB-TableName">TableName</a></code>
+									</td>
+								</tr>
+								<tr class="english">
+									<td colspan="5" class="nonnorm">
+										Given a table, <dfn>tablename</dfn> returns its name.
+									</td>
+								</tr>
+							</tbody>
+							<tbody>
+								<tr class="sbuilder" valign="baseline">
+									<td>
+										<a name="RDB-header" id="RDB-header"></a>[13]
+									</td>
+									<td>
+										<code>header</code>
+									</td>
+									<td>
+										:
+									</td>
+									<td>
+										<code><a href="#RDB-Table">Table</a> → Set((<a href="#RDB-ColumnName">ColumnName</a>, <a href="#RDB-Datatype">Datatype</a>))</code>
+									</td>
+								</tr>
+								<tr class="english">
+									<td colspan="5" class="nonnorm">
+										Given a table, <dfn>header</dfn> returns its header.
+									</td>
+								</tr>
+							</tbody>
+							<tbody>
+								<tr class="sbuilder" valign="baseline">
+									<td>
+										<a name="RDB-candidateKeys" id="RDB-candidateKeys"></a>[14]
+									</td>
+									<td>
+										<code>candidateKeys</code>
+									</td>
+									<td>
+										:
+									</td>
+									<td>
+										<code><a href="#RDB-Table">Table</a> → List(<a href="#RDB-CandidateKey">CandidateKey</a>)</code>
+									</td>
+								</tr>
+								<tr class="english">
+									<td colspan="5" class="nonnorm">
+										Given a table, <dfn>candidateKeys</dfn> returns the list of candidate keys.
+									</td>
+								</tr>
+							</tbody>
+							<tbody>
+								<tr class="sbuilder" valign="baseline">
+									<td>
+										<a name="RDB-primaryKey" id="RDB-primaryKey"></a>[15]
+									</td>
+									<td>
+										<code>primaryKey</code>
+									</td>
+									<td>
+										:
+									</td>
+									<td>
+										<code><a href="#RDB-Table">Table</a> → { s:Set(<a href="#RDB-CandidateKey">CandidateKey</a>) | size(s) ≤ 1 }</code>
+									</td>
+								</tr>
+								<tr class="english">
+									<td colspan="5" class="nonnorm">
+										Given a table, <dfn>primaryKey</dfn> returns a set containing the primary key if it exists, otherwise it returns an empty set.
+									</td>
+								</tr>
+							</tbody>
+							<tbody>
+								<tr class="sbuilder" valign="baseline">
+									<td>
+										<a name="RDB-foreignKeys" id="RDB-foreignKeys"></a>[16]
+									</td>
+									<td>
+										<code>foreignKeys</code>
+									</td>
+									<td>
+										:
+									</td>
+									<td>
+										<code><a href="#RDB-Table">Table</a> → Set(<a href="#RDB-ForeignKey">ForeignKey</a>)</code>
+									</td>
+								</tr>
+								<tr class="english">
+									<td colspan="5" class="nonnorm">
+										Given a table, <dfn>foreignKeys</dfn> returns the set of foreign keys.
+									</td>
+								</tr>
+							</tbody>
+							<tbody>
+								<tr class="sbuilder" valign="baseline">
+									<td>
+										<a name="RDB-unary" id="RDB-unary"></a>[17]
+									</td>
+									<td>
+										<code>unary</code>
+									</td>
+									<td>
+										:
+									</td>
+									<td>
+										<code><a href="#RDB-ForeignKey">ForeignKey</a> → Boolean</code>
+									</td>
+								</tr>
+								<tr class="english">
+									<td colspan="5" class="nonnorm">
+										Given a foreign key, <dfn>unary</dfn> tells if this is a unary foreign key, meaning it has exactly one column.
+									</td>
+								</tr>
+							</tbody>
+							<tbody>
+								<tr class="sbuilder" valign="baseline">
+									<td>
+										<a name="RDB-lexicals" id="RDB-lexicals"></a>[18]
+									</td>
+									<td>
+										<code>lexicals</code>
+									</td>
+									<td>
+										:
+									</td>
+									<td>
+										<code><a href="#RDB-Table">Table</a> → Set({ c:<a href="#RDB-ColumnName">ColumnName</a> | ! <a href="#RDB-unary">unary</a>(c) })</code>
+									</td>
+								</tr>
+								<tr class="english">
+									<td colspan="5" class="nonnorm">
+										Given a table, <dfn>lexicals</dfn> returns the set of columns that do not constitute a unary foreign key.
+									</td>
+								</tr>
+							</tbody>
+							<tbody>
+								<tr class="sbuilder" valign="baseline">
+									<td>
+										<a name="RDB-body" id="RDB-body"></a>[19]
+									</td>
+									<td>
+										<code>body</code>
+									</td>
+									<td>
+										:
+									</td>
+									<td>
+										<code><a href="#RDB-Table">Table</a> → <a href="#RDB-Body">Body</a></code>
+									</td>
+								</tr>
+								<tr class="english">
+									<td colspan="5" class="nonnorm">
+										Given a table, <dfn>body</dfn> returns its body.
+									</td>
+								</tr>
+							</tbody>
+							<tbody>
+								<tr class="sbuilder" valign="baseline">
+									<td>
+										<a name="RDB-datatype" id="RDB-datatype"></a>[20]
+									</td>
+									<td>
+										<code>datatype</code>
+									</td>
+									<td>
+										:
+									</td>
+									<td>
+										<code>{ h:Set((<a href="#RDB-ColumnName">ColumnName</a>, <a href="#RDB-Datatype">Datatype</a>)) } → { c:<a href="#RDB-ColumnName">ColumnName</a> | ∃ d, (c,d) ∈ h } → { d:<a href="#RDB-Datatype">Datatype</a> | (c,d) ∈ h }</code>
+									</td>
+								</tr>
+								<tr class="english">
+									<td colspan="5" class="nonnorm">
+										Given a header and a column in this header, <dfn>datatype</dfn> returns the datatype associated with this column.
+									</td>
+								</tr>
+							</tbody>
+							<tbody>
+								<tr class="sbuilder" valign="baseline">
+									<td>
+										<a name="RDB-table" id="RDB-table"></a>[21]
+									</td>
+									<td>
+										<code>table</code>
+									</td>
+									<td>
+										:
+									</td>
+									<td>
+										<code>{ r:<a href="#RDB-Row">Row</a> } → { t:<a href="#RDB-Table">Table</a> | r ∈ t }</code>
+									</td>
+								</tr>
+								<tr class="english">
+									<td colspan="5" class="nonnorm">
+										Given a row, <dfn>table</dfn> returns the table to which this row belongs.
+									</td>
+								</tr>
+							</tbody>
+							<tbody>
+								<tr class="sbuilder" valign="baseline">
+									<td>
+										<a name="RDB-value" id="RDB-value"></a>[22]
+									</td>
+									<td>
+										<code>value</code>
+									</td>
+									<td>
+										:
+									</td>
+									<td>
+										<code>{ r:<a href="#RDB-Row">Row</a> } → { a:<a href="#RDB-ColumnName">ColumnName</a> | a ∈ r } → <a href="#RDB-CellValue">CellValue</a></code>
+									</td>
+								</tr>
+								<tr class="english">
+									<td colspan="5" class="nonnorm">
+										Given a row and a column in this row, <dfn>value</dfn> returns the cell value (can be NULL) for this column.
+									</td>
+								</tr>
+							</tbody>
+							<tbody>
+								<tr class="sbuilder" valign="baseline">
+									<td>
+										<a name="RDB-dereference" id="RDB-dereference"></a>[23]
+									</td>
+									<td>
+										<code>dereference</code>
+									</td>
+									<td>
+										:
+									</td>
+									<td>
+										<code>{ r:<a href="#RDB-Row">Row</a> } → { fk:<a href="#RDB-ForeignKey">ForeignKey</a> | fk ∈ <a href="#RDB-foreignKeys">foreignKeys</a>(<a href="#RDB-table">table</a>(r)) }<br />
+										→ { targetRow:<a href="#RDB-Row">Row</a> | <em>let</em> (columnNames, targetTable, ck) = fk <em>in</em><br />
+										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;targetRow ∈ <a href="#RDB-body">body</a>(targetTable)<br />
+										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>and</em> ∀ c<sub>i</sub><sup>fk</sup> ∈ columnNames, ∀ c<sub>j</sub><sup>ck</sup> ∈ ck,<br />
+										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;∀ (c<sub>k</sub><sup>r</sup>, v<sub>k</sub><sup>r</sup>) ∈ r, ∀ (c<sub>l</sub><sup>target</sup>, v<sub>l</sub><sup>target</sup>) ∈ targetRow,<br />
+										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; i = j → c<sub>i</sub><sup>fk</sup> = c<sub>k</sub><sup>r</sup> → c<sub>j</sub><sup>ck</sup> = c<sub>l</sub><sup>target</sup> → v<sub>k</sub><sup>r</sup> = v<sub>l</sub><sup>target</sup> }</code>
+									</td>
+								</tr>
+								<tr class="english">
+									<td colspan="5" class="nonnorm">
+										Given a row and a foreign key from the table containing this row, <dfn>dereference</dfn> returns the row which is referenced by this foreign key, i.e. the row for which the values of the foreign key's &lt;unique column list&gt; are <em>all</em> equivalent (by the SQL <code>=</code> operator) to the values for the foreign key's &lt;column name list&gt; in the referring table.
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="div2">
+					<h3>
+						<a name="RDF" id="RDF"></a>A.3 RDF Data Model
+					</h3>
+					<p>
+						Per <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#section-rdf-graph">RDF Concepts and Abstract Syntax</a>, an RDF graph is a set of triples of a subject, predicate and object. The subject may be an IRI or a blank node, the predicate must be an IRI and the object may be an IRI, blank node, or an RDF literal.
+					</p>
+					<p>
+						This section recapitulates for convience the formal definition of RDF.
+					</p>
+					<table class="scrap" summary="Scrap">
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="RDF-Graph" id="RDF-Graph"></a>[24]
+								</td>
+								<td>
+									<code>Graph</code>
+								</td>
+								<td>
+									::=
+								</td>
+								<td>
+									<code>Set(<a href="#RDF-Triple">Triple</a>)</code>
+								</td>
+							</tr>
+							<tr class="sets" valign="baseline">
+								<td>
+									<a name="setRDF-Graph" id="setRDF-Graph"></a>[24]
+								</td>
+								<td>
+									<code>Graph</code>
+								</td>
+								<td>
+									::=
+								</td>
+								<td>
+									<code>{ <a href="#setRDF-Triple">Triple</a> }</code>
+								</td>
+							</tr>
+							<tr class="english">
+								<td colspan="5" class="nonnorm">
+									An <dfn><a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-rdf-graph">RDF graph</a></dfn> is a set of RDF triples.
+								</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="RDF-Triple" id="RDF-Triple"></a>[25]
+								</td>
+								<td>
+									<code>Triple</code>
+								</td>
+								<td>
+									::=
+								</td>
+								<td>
+									<code>(<a href="#RDF-Subject">Subject</a>, <a href="#RDF-Predicate">Predicate</a>, <a href="#RDF-Object">Object</a>)</code>
+								</td>
+							</tr>
+							<tr class="sets" valign="baseline">
+								<td>
+									<a name="setRDF-Triple" id="setRDF-Triple"></a>[25]
+								</td>
+								<td>
+									<code>Triple</code>
+								</td>
+								<td>
+									::=
+								</td>
+								<td>
+									<code>( <a href="#setRDF-Subject">Subject</a>, <a href="#setRDF-Predicate">Predicate</a>, <a href="#setRDF-Object">Object</a> )</code>
+								</td>
+							</tr>
+							<tr class="english">
+								<td colspan="5" class="nonnorm">
+									An <dfn><a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-rdf-triple">RDF triple</a></dfn> is composed of a subject, predicate and object.
+								</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="RDF-Subject" id="RDF-Subject"></a>[26]
+								</td>
+								<td>
+									<code>Subject</code>
+								</td>
+								<td>
+									::=
+								</td>
+								<td>
+									<code><a href="#RDF-IRI">IRI</a> | <a href="#RDF-BlankNode">BlankNode</a></code>
+								</td>
+							</tr>
+							<tr class="sets" valign="baseline">
+								<td>
+									<a name="setRDF-Subject" id="setRDF-Subject"></a>[26]
+								</td>
+								<td>
+									<code>Subject</code>
+								</td>
+								<td>
+									::=
+								</td>
+								<td>
+									<code><a href="#setRDF-IRI">IRI</a> | <a href="#setRDF-BlankNode">BlankNode</a></code>
+								</td>
+							</tr>
+							<tr class="english">
+								<td colspan="5" class="nonnorm">
+									A <dfn><a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-subject">subject</a></dfn> is either an IRI or a blank node.
+								</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="RDF-Predicate" id="RDF-Predicate"></a>[27]
+								</td>
+								<td>
+									<code>Predicate</code>
+								</td>
+								<td>
+									::=
+								</td>
+								<td>
+									<code><a href="#RDF-IRI">IRI</a></code>
+								</td>
+							</tr>
+							<tr class="sets" valign="baseline">
+								<td>
+									<a name="setRDF-Predicate" id="setRDF-Predicate"></a>[27]
+								</td>
+								<td>
+									<code>Predicate</code>
+								</td>
+								<td>
+									::=
+								</td>
+								<td>
+									<code><a href="#setRDF-IRI">IRI</a></code>
+								</td>
+							</tr>
+							<tr class="english">
+								<td colspan="5" class="nonnorm">
+									A <dfn><a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-predicate">predicate</a></dfn> is always an IRI.
+								</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="RDF-Object" id="RDF-Object"></a>[28]
+								</td>
+								<td>
+									<code>Object</code>
+								</td>
+								<td>
+									::=
+								</td>
+								<td>
+									<code><a href="#RDF-IRI">IRI</a> | <a href="#RDF-BlankNode">BlankNode</a> | <a href="#RDF-Literal">Literal</a></code>
+								</td>
+							</tr>
+							<tr class="sets" valign="baseline">
+								<td>
+									<a name="setRDF-Object" id="setRDF-Object"></a>[28]
+								</td>
+								<td>
+									<code>Object</code>
+								</td>
+								<td>
+									::=
+								</td>
+								<td>
+									<code><a href="#setRDF-IRI">IRI</a> | <a href="#setRDF-BlankNode">BlankNode</a> | <a href="#setRDF-Literal">Literal</a></code>
+								</td>
+							</tr>
+							<tr class="english">
+								<td colspan="5" class="nonnorm">
+									An <dfn><a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-object">object</a></dfn> is either an IRI, a blank node, or a literal.
+								</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="RDF-BlankNode" id="RDF-BlankNode"></a>[29]
+								</td>
+								<td>
+									<code>BlankNode</code>
+								</td>
+								<td>
+									::=
+								</td>
+								<td>
+									<code><a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-blank-node">RDF blank node</a></code>
+								</td>
+							</tr>
+							<tr class="sets" valign="baseline">
+								<td>
+									<a name="setRDF-BlankNode" id="setRDF-BlankNode"></a>[29]
+								</td>
+								<td>
+									<code>BlankNode</code>
+								</td>
+								<td>
+									::=
+								</td>
+								<td>
+									<code><a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-blank-node">RDF blank node</a></code>
+								</td>
+							</tr>
+							<tr class="english">
+								<td colspan="5" class="nonnorm">
+									A <dfn><a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-blank-node">blank node</a></dfn> is an arbitrary term used only to establish graph connectivity.
+								</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="RDF-Literal" id="RDF-Literal"></a>[30]
+								</td>
+								<td>
+									<code>Literal</code>
+								</td>
+								<td>
+									::=
+								</td>
+								<td>
+									<code><a href="#RDF-PlainLiteral">PlainLiteral</a> | <a href="#RDF-TypedLiteral">TypedLiteral</a></code>
+								</td>
+							</tr>
+							<tr class="sets" valign="baseline">
+								<td>
+									<a name="setRDF-Literal" id="setRDF-Literal"></a>[30]
+								</td>
+								<td>
+									<code>Literal</code>
+								</td>
+								<td>
+									::=
+								</td>
+								<td>
+									<code><a href="#setRDF-PlainLiteral">PlainLiteral</a> | <a href="#setRDF-TypedLiteral">TypedLiteral</a></code>
+								</td>
+							</tr>
+							<tr class="english">
+								<td colspan="5" class="nonnorm">
+									A <dfn><a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-literal">literal</a></dfn> is either a plain literal or a typed literal.
+								</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="RDF-PlainLiteral" id="RDF-PlainLiteral"></a>[31]
+								</td>
+								<td>
+									<code>PlainLiteral</code>
+								</td>
+								<td>
+									::=
+								</td>
+								<td>
+									<code><a href="#">lexicalForm</a> | (<a href="#">lexicalForm</a>, <a href="#">langageTag</a>)</code>
+								</td>
+							</tr>
+							<tr class="sets" valign="baseline">
+								<td>
+									<a name="setRDF-PlainLiteral" id="setRDF-PlainLiteral"></a>[31]
+								</td>
+								<td>
+									<code>PlainLiteral</code>
+								</td>
+								<td>
+									::=
+								</td>
+								<td>
+									<code>(<a href="#">lexicalForm</a>) | (<a href="#">lexicalForm</a>, <a href="#">langageTag</a>)</code>
+								</td>
+							</tr>
+							<tr class="english">
+								<td colspan="5" class="nonnorm">
+									A <dfn><a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-plain-literal">plain literal</a></dfn> has a <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-lexical-form">lexical form</a> and an optional <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-language-identifier">language tag</a>.
+								</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="RDF-TypedLiteral" id="RDF-TypedLiteral"></a>[32]
+								</td>
+								<td>
+									<code>TypedLiteral</code>
+								</td>
+								<td>
+									::=
+								</td>
+								<td>
+									<code>(<a href="#">lexicalForm</a>, <a href="#RDF-IRI">IRI</a>)</code>
+								</td>
+							</tr>
+							<tr class="sets" valign="baseline">
+								<td>
+									<a name="setRDF-TypedLiteral" id="setRDF-TypedLiteral"></a>[32]
+								</td>
+								<td>
+									<code>TypedLiteral</code>
+								</td>
+								<td>
+									::=
+								</td>
+								<td>
+									<code>(<a href="#">lexicalForm</a>, <a href="#setRDF-IRI">IRI</a>)</code>
+								</td>
+							</tr>
+							<tr class="english">
+								<td colspan="5" class="nonnorm">
+									An <dfn><a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-typed-literal">typed literal</a></dfn> is composed of <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-lexical-form">lexical form</a> and a <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-datatype-URI">datatype IRI</a>.
+								</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="RDF-IRI" id="RDF-IRI"></a>[33]
+								</td>
+								<td>
+									<code>IRI</code>
+								</td>
+								<td>
+									::=
+								</td>
+								<td>
+									<code><a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-URI-reference">RDF URI-reference</a> as subsequently <a href="http://www.w3.org/TR/rdf-sparql-query/#docTerminology">restricted by SPARQL</a></code>
+								</td>
+							</tr>
+							<tr class="sets" valign="baseline">
+								<td>
+									<a name="setRDF-IRI" id="setRDF-IRI"></a>[33]
+								</td>
+								<td>
+									<code>IRI</code>
+								</td>
+								<td>
+									::=
+								</td>
+								<td>
+									<code><a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-URI-reference">RDF URI-reference</a> as subsequently <a href="http://www.w3.org/TR/rdf-sparql-query/#docTerminology">restricted by SPARQL</a></code>
+								</td>
+							</tr>
+							<tr class="english">
+								<td colspan="5" class="nonnorm">
+									An <dfn><a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-URI-reference">IRI</a></dfn> is an <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-URI-reference">RDF URI reference</a> as subsequently <a href="http://www.w3.org/TR/rdf-sparql-query/#docTerminology">restricted by SPARQL</a>.
+								</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="RDF-LexicalForm" id="RDF-LexicalForm"></a>[34]
+								</td>
+								<td>
+									<code>lexicalForm</code>
+								</td>
+								<td>
+									::=
+								</td>
+								<td>
+									<code>a Unicode String</code>
+								</td>
+							</tr>
+							<tr class="sets" valign="baseline">
+								<td>
+									<a name="setRDF-LexicalForm" id="setRDF-LexicalForm"></a>[34]
+								</td>
+								<td>
+									<code>lexicalForm</code>
+								</td>
+								<td>
+									::=
+								</td>
+								<td>
+									<code>a Unicode String</code>
+								</td>
+							</tr>
+							<tr class="english">
+								<td colspan="5" class="nonnorm">
+									SQL string representing a value.
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="div2">
+					<h3>
+						<a name="denotational-semantics" id="denotational-semantics"></a>A.4 Denotational semantics
+					</h3>
+					<p>
+						In this model, Databases are inhabitants of <a href="#RDB">RDB</a> and they are denoted by mathematical objects living in the <a href="#RDF">RDF domain</a>. This <em>denotational semantics</em> is what we call the <em>Direct Mapping</em>.
+					</p>
+					<p>
+						The url-encoding function renders strings in a form suitable to insert into IRIs.
+						Data values are expressed in the XML Schema canonical form before url-encoding.
+					</p>
+					<table class="scrap" summary="Scrap">
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="url-encoding-type" id="url-encoding-type"></a>[35]
+								</td>
+								<td>
+									<code>ue</code>
+								</td>
+								<td>
+									:
+								</td>
+								<td>
+									<code>String → String</code>
+								</td>
+							</tr>
+							<tr class="sets" valign="baseline">
+								<td>
+									<a name="UE" id="UE"></a>[35]
+								</td>
+								<td>
+									<code>UE(s)</code>
+								</td>
+								<td>
+									=
+								</td>
+								<td>
+									s <a href="#defn-percent-encode">percent-encoded</a>.
+								</td>
+							</tr>
+							<tr class="english">
+								<td colspan="5" class="nonnorm">
+					<ul>
+						<li>Replace the string with the <a href="http://www.w3.org/TR/2012/REC-r2rml-20120927/#dfn-iri-safe">IRI-safe</a> form per section 7.3 of <a href="#R2RML">[R2RML]</a>.</li>
+					</ul>
+								</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="canonicalString-type" id="canonicalString-type"></a>
+								</td>
+								<td>
+									<code>⟦&nbsp;,&nbsp;&nbsp;⟧<sub>canon</sub></code>
+								</td>
+								<td>
+									:
+								</td>
+								<td>
+									<code>(<a href="#RDB-Row">Row</a>, <a href="#">Column</a>) → String<!-- //@@ I can't explain why this was: { s:Set((<a href="#">Predicate</a>, <a href="#">Object</a>)) | size(s) ≤ 1 } --></code>
+								</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="canonicalString" id="canonicalString"></a>[36]
+								</td>
+								<td>
+									<code>⟦r, c⟧<sub>canon</sub></code>
+								</td>
+								<td>
+									=
+								</td>
+								<td>
+									<code><em>let</em> v = <a href="#RDB-value">value</a>(r, c) <em>in</em><br />
+									<em>let</em> d = <a href="#RDB-header">header</a>(<a href="#RDB-table">table</a>(r)) <em>in</em><br />
+									<a href="http://www.w3.org/TR/2012/REC-r2rml-20120927/#dfn-canonical-rdf-lexical-form">canonical RDF literal</a>(v, d)</code>
+								</td>
+							</tr>
+							<tr class="sets" valign="baseline">
+								<td>
+									<a name="setcanonicalString" id="setcanonicalString"></a>[36]
+								</td>
+								<td>
+									<code>canon(A)</code>
+								</td>
+								<td>
+									=
+								</td>
+								<td>
+									<code><a href="http://www.w3.org/TR/2012/REC-r2rml-20120927/#dfn-canonical-rdf-lexical-form">canonical RDF literal</a>(A)</code>
+								</td>
+							</tr>
+							<tr class="english">
+								<td colspan="5" class="nonnorm">
+									lexical form of the <a href="http://www.w3.org/TR/2012/REC-r2rml-20120927/#dfn-canonical-rdf-lexical-form">canonical RDF literal</a> representation of the column value as defined in <a href="http://www.w3.org/TR/2012/REC-r2rml-20120927/#natural-mapping">R2RML section 10.2 Natural Mapping of SQL Values</a> <a href="#R2RML">[R2RML]</a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<p>
+						Most of the functions defining the Direct Mapping are higher-order functions parameterized by a function <span class="sbuilder-span"><a href="#row_node">φ</a>(r)</span> <span class="sets-span"><a href="#row_node">row_node</a>(r)</span> which maps any <a href="#RDB-Row">row</a> to a unique <a href="#RDF-IRI">IRI</a> or <a href="#RDF-BlankNode">Blank Node</a>.
+					</p>
+					<table class="scrap" summary="Scrap">
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="row_node" id="row_node"></a>[37]
+								</td>
+								<td>
+									<code>φ</code>
+								</td>
+								<td>
+									:
+								</td>
+								<td>
+									<code>∀ db:<a href="#RDB-Database">Database</a>, ∀ r:<a href="#RDB-Row">Row</a>, r ∈ db<br />
+									<em>if</em> <a href="#RDB-primaryKey">primaryKey</a>(<a href="#RDB-table">table</a>(r)) ≠ ∅ <em>then</em><br />
+									&nbsp;&nbsp;&nbsp;&nbsp;<a href="#url-encoding-type">ue</a>(<a href="#RDB-tablename">tablename</a>(<a href="#RDB-table">table</a>(r))) + '/' + <a href="#url-encoding-type">ue</a>(c<sub>0</sub>) + '<span class="valsep">=</span>' + <a href="#url-encoding-type">ue</a>(<a href="#canonicalString">canon</a>(r, c<sub>0</sub>)) + '<span class="attrsep">;</span>'<br />
+									&nbsp;&nbsp;&nbsp;&nbsp;+ ⋯ + '<span class="attrsep">;</span>' + <a href="#url-encoding-type">ue</a>(c<sub>n-1</sub>) + '<span class="valsep">=</span>' + <a href="#url-encoding-type">ue</a>(<a href="#canonicalString">canon</a>(r, c<sub>n-1</sub>))<br />
+									<em>else</em><br />
+									&nbsp;&nbsp;&nbsp;&nbsp;a <a href="#RDF-BlankNode">BlankNode</a> unique to r</code>
+								</td>
+							</tr>
+							<tr class="sets" valign="baseline">
+								<td>
+									<a name="setrow_node" id="setrow_node"></a>[37]
+								</td>
+								<td>
+									<code>row_node</code>
+								</td>
+								<td>
+									=
+								</td>
+								<td>
+									<code><em>if</em> (pk(R) ≠ ∅) <em>then</em><br />
+									&nbsp;&nbsp;&nbsp;&nbsp;<a href="#setRDF-IRI">IRI</a>(UE(R.name) + "/" + (join('<span class="attrsep">;</span>', UE(A.name) + '<span class="valsep">=</span>' + UE(<a href="#setcanonicalString">canon</a>(A))) ∣ A ∈ As ))<br />
+									<em>else</em><br />
+									&nbsp;&nbsp;&nbsp;&nbsp;a <a href="#setRDF-BlankNode">BlankNode</a> unique to r</code>
+								</td>
+							</tr>
+							<tr class="english">
+								<td colspan="5" class="nonnorm">
+					<ul>
+						<li>If the table has a primary key, the row node is a relative IRI obtained by concatenating:
+							<ul>
+								<li>the percent-encoded form of the table name,
+								</li>
+								<li>the SOLIDUS character '/',
+								</li>
+								<li>for each column in the primary key, in order:
+									<ul>
+										<li>the percent-encoded form of the column name,</li>
+										<li>a EQUALS SIGN character '<span class="valsep">=</span>',</li>
+										<li>the percent-encoded lexical form of the <a href="http://www.w3.org/TR/2012/REC-r2rml-20120927/#dfn-canonical-rdf-lexical-form">canonical RDF literal</a> representation of the column value as defined in <a href="http://www.w3.org/TR/2012/REC-r2rml-20120927/#natural-mapping">R2RML section 10.2 Natural Mapping of SQL Values</a>,</li>
+										<li>if it is not the last column in the primary key, a SEMICOLON character '<span class="attrsep">;</span>'</li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+						<li>If the table has no primary key, the row node is a fresh blank node that is unique to this row.
+						</li>
+					</ul>
+								</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="table_IRI-type" id="table_IRI-type"></a>
+								</td>
+								<td>
+									<code>⟦&nbsp;⟧<sub>tableIRI</sub></code>
+								</td>
+								<td>
+									:
+								</td>
+								<td>
+									<code><a href="#RDB-TableName">TableName</a> → <a href="#">IRI</a></code>
+								</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="table_IRI" id="table_IRI"></a>[38]
+								</td>
+								<td>
+									<code>⟦t⟧<sub>tableIRI</sub></code>
+								</td>
+								<td>
+									=
+								</td>
+								<td>
+									<a href="#url-encoding-type">ue</a>(<a href="#RDB-tablename">tablename</a>(t))
+								</td>
+							</tr>
+							<tr class="sets" valign="baseline">
+								<td>
+									<a name="settable_IRI" id="settable_IRI"></a>[38]
+								</td>
+								<td>
+									<code>table_IRI(R)</code>
+								</td>
+								<td>
+									=
+								</td>
+								<td>
+									<code><a href="#setRDF-IRI">IRI</a>(R.name)</code>
+								</td>
+							</tr>
+							<tr class="english">
+								<td colspan="5" class="nonnorm">
+									the relative IRI consisting of the percent-encoded form of the table name.
+								</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="literal_property_IRI-type" id="literal_property_IRI-type"></a>
+								</td>
+								<td>
+									<code>⟦&nbsp;,&nbsp;&nbsp;⟧<sub>litcol</sub></code>
+								</td>
+								<td>
+									:
+								</td>
+								<td>
+									<code>(<a href="#RDB-Row">Row</a>, <a href="#">Column</a>) → <a href="#">IRI</a></code>
+								</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="literal_property_IRI" id="literal_property_IRI"></a>[39]
+								</td>
+								<td>
+									<code>⟦r, c⟧<sub>litcol</sub></code>
+								</td>
+								<td>
+									=
+								</td>
+								<td>
+									<code><a href="#url-encoding-type">ue</a>(<a href="#RDB-tablename">tablename</a>(<a href="#RDB-table">table</a>(r))) + '#' + <a href="#url-encoding-type">ue</a>(c))</code>
+								</td>
+							</tr>
+							<tr class="sets" valign="baseline">
+								<td>
+									<a name="setliteral_property_IRI" id="setliteral_property_IRI"></a>[39]
+								</td>
+								<td>
+									<code>literal_property_IRI(R, A)</code>
+								</td>
+								<td>
+									=
+								</td>
+								<td>
+									<code><a href="#setRDF-IRI">IRI</a>(UE(R.name) + "#" + UE(A.name))</code>
+								</td>
+							</tr>
+							<tr class="english">
+								<td colspan="5" class="nonnorm">
+					the concatenation of:
+					<ul>
+						<li>the percent-encoded form of the table name,
+						</li>
+						<li>the hash character '#',
+						</li>
+						<li>the percent-encoded form of the column name.
+						</li>
+					</ul>
+								</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="reference_property_IRI-type" id="reference_property_IRI-type"></a>
+								</td>
+								<td>
+									<code>⟦&nbsp;,&nbsp;&nbsp;&nbsp;⟧<sub>refcol</sub></code>
+								</td>
+								<td>
+									:
+								</td>
+								<td>
+									<code>(<a href="#RDB-Row">Row</a>, <a href="#RDB-ForeignKey">ForeignKey</a>) → <a href="#">IRI</a></code>
+								</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="reference_property_IRI" id="reference_property_IRI"></a>[40]
+								</td>
+								<td>
+									<code>⟦r, fk⟧<sub>refcol</sub></code>
+								</td>
+								<td>
+									=
+								</td>
+								<td>
+									<code><em>let</em>(from*, reftable, to*) = fk <em>in</em><br />
+									&nbsp;&nbsp;<a href="#url-encoding-type">ue</a>(<a href="#RDB-tablename">tablename</a>(<a href="#RDB-table">table</a>(r))) + '/ref-'<br />
+									+ <a href="#url-encoding-type">ue</a>(from<sub>0</sub>) + '<span class="attrsep">;</span>' + ⋯ + '<span class="attrsep">;</span>' + <a href="#url-encoding-type">ue</a>(from<sub>n-1</sub>)<!-- + '<span class="attrsep">;</span>'<br />
+									+ <a href="#url-encoding-type">ue</a>(reftable) + '<span class="attrsep">;</span>'<br />
+									+ <a href="#url-encoding-type">ue</a>(to<sub>0</sub>) + '<span class="attrsep">;</span>' + ⋯ + '<span class="attrsep">;</span>' + <a href="#url-encoding-type">ue</a>(to<sub>n-1</sub>)) --></code>
+								</td>
+							</tr>
+							<tr class="sets" valign="baseline">
+								<td>
+									<a name="setreference_property_IRI" id="setreference_property_IRI"></a>[40]
+								</td>
+								<td>
+									<code>reference_property_IRI(R, As)</code>
+								</td>
+								<td>
+									=
+								</td>
+								<td>
+									<code><a href="#setRDF-IRI">IRI</a>(UE(R.name) + "#ref-" + join('<span class="attrsep">;</span>', UE(A.name)) ∣ A ∈ As )</code>
+								</td>
+							</tr>
+							<tr class="english">
+								<td colspan="5" class="nonnorm">
+					the concatenation of:
+					<ul>
+						<li>the percent-encoded form of the table name,
+						</li>
+						<li>the string '#ref<span class="Pnamesep">-</span>',
+						</li>
+						<li>for each column in the foreign key, in order:
+							<ul>
+								<li>the percent-encoded form of the column name,
+								</li>
+								<li>if it is not the last column in the foreign key, a SEMICOLON character '<span class="attrsep">;</span>'
+								</li>
+							</ul>
+						</li>
+					</ul>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<!-- p>
+						The <span class="sbuilder-span"><code class="triple">⟦&nbsp;⟧<sup>φ</sup><sub><a href="#table_IRI">tableIRI</a></sub></code></span> <span class="sets-span"><a href="#table_IRI">table_IRI</a>(r)</span> function maps SQL tables to RDF type IRIs.
+					</p>
+					<table class="scrap" summary="Scrap">
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="table_IRI-type" id="table_IRI-type"></a>
+								</td>
+								<td>
+									<code>⟦&nbsp;⟧<sub>tableIRI</sub></code>
+								</td>
+								<td>
+									:
+								</td>
+								<td>
+									<code><a href="#RDB-TableName">TableName</a> → <a href="#">IRI</a></code>
+								</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="table_IRI" id="table_IRI"></a>[39]
+								</td>
+								<td>
+									<code>⟦t⟧<sub>tableIRI</sub></code>
+								</td>
+								<td>
+									=
+								</td>
+								<td>
+									<a href="#url-encoding-type">ue</a>(<a href="#RDB-tablename">tablename</a>(t))
+								</td>
+							</tr>
+							<tr class="sets" valign="baseline">
+								<td>
+									<a name="settable_IRI" id="settable_IRI"></a>[39]
+								</td>
+								<td>
+									<code>table_IRI(R)</code>
+								</td>
+								<td>
+									=
+								</td>
+								<td>
+									<code><a href="#setRDF-IRI">IRI</a>(R.name)</code>
+								</td>
+							</tr>
+							<tr class="english">
+								<td colspan="5" class="nonnorm">
+									the relative IRI consisting of the percent-encoded form of the table name.
+								</td>
+							</tr>
+						</tbody>
+					</table -->
+					<p>
+						The Direct Mapping is defined by <a href="http://en.wikipedia.org/wiki/Mathematical_induction">induction</a> on the structure of RDB. Thus it is defined for any relational database. The entry point for the Direct Mapping is the function <span class="sbuilder-span"><code class="triple">⟦&nbsp;⟧<sup>φ</sup><sub><a href="#direct_graph">database</a></sub></code></span> <span class="sets-span"><a href="#direct_graph">direct_graph</a>(r)</span>.
+					</p>
+					<table class="scrap" summary="Scrap">
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="direct_graph-type" id="direct_graph-type"></a>
+								</td>
+								<td>
+									<code>⟦&nbsp;&nbsp;⟧<sup>φ</sup><sub>database</sub></code>
+								</td>
+								<td>
+									:
+								</td>
+								<td>
+									<code><a href="#RDB-Database">Database</a> → <a href="#">Graph</a></code>
+								</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="direct_graph" id="direct_graph"></a>[41]
+								</td>
+								<td>
+									<code>⟦db⟧<sup>φ</sup><sub>database</sub></code>
+								</td>
+								<td>
+									=
+								</td>
+								<td>
+									<code>{ triple | triple ∈ ⟦t⟧<sup>φ</sup><sub><a href="#table_graph">table</a></sub> | t ∈ db }</code>
+								</td>
+							</tr>
+							<tr class="sets" valign="baseline">
+								<td>
+									<a name="setdirect_graph" id="setdirect_graph"></a>[41]
+								</td>
+								<td>
+									<code>direct_graph()</code>
+								</td>
+								<td>
+									=
+								</td>
+								<td>
+									<code>{ <a href="#settable_graph">table_graph</a>(R) ∣ R ∈ DB }</code>
+								</td>
+							</tr>
+							<tr class="english">
+								<td colspan="5" class="nonnorm">
+									the union of the <a title="" href="#defn-table_graph">table graph</a>s for each table in a database schema.
+								</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="table_graph-type" id="table_graph-type"></a>
+								</td>
+								<td>
+									<code>⟦&nbsp;⟧<sup>φ</sup><sub>table</sub></code>
+								</td>
+								<td>
+									:
+								</td>
+								<td>
+									<code><a href="#RDB-Table">Table</a> → Set(<a href="#">Triple</a>)</code>
+								</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="table_graph" id="table_graph"></a>[42]
+								</td>
+								<td>
+									<code>⟦t⟧<sup>φ</sup><sub>table</sub></code>
+								</td>
+								<td>
+									=
+								</td>
+								<td>
+									<code>{ triple | triple ∈ ⟦r⟧<sup>φ</sup><sub><a href="#row_graph">row</a></sub> | r ∈ body(t) }</code>
+								</td>
+							</tr>
+							<tr class="sets" valign="baseline">
+								<td>
+									<a name="settable_graph" id="settable_graph"></a>[42]
+								</td>
+								<td>
+									<code>table_graph(R)</code>
+								</td>
+								<td>
+									=
+								</td>
+								<td>
+									<code>{ <a href="#setrow_graph">row_graph</a>(T, R) ∣ T ∈ R.Body }</code>
+								</td>
+							</tr>
+							<tr class="english">
+								<td colspan="5" class="nonnorm">
+									the union of the <a title="" href="#defn-row_graph">row graph</a>s for each row in a table.
+								</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="noNULLs-type" id="noNULLs-type"></a>
+								</td>
+								<td>
+									<code>noNULLs</code>
+								</td>
+								<td>
+									:
+								</td>
+								<td>
+									<code><a href="#RDB-Row">Row</a> → <a href="#RDB-ForeignKey">ForeignKey</a> → <a href="#">Boolean</a></code>
+								</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="noNULLs" id="noNULLs"></a>[43]
+								</td>
+								<td>
+									<code>noNULLs(r, fk)</code>
+								</td>
+								<td>
+									=
+								</td>
+								<td>
+									<code><em>let</em> (columnNames, _, _) = fk <em>in</em><br />
+									∀ c ∈ columnNames, <a href="#RDB-value">value</a>(r, c) ≠ NULL</code>
+								</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr class="sets" valign="baseline">
+								<td>
+									<a name="setnoNULLs" id="setnoNULLs"></a>[43]
+								</td>
+								<td>
+									<code>noNULLs(T, As)</code>
+								</td>
+								<td>
+									=
+								</td>
+								<td>
+									<code>∄(T(A) = Null ∣ A ∈ As)</code>
+								</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="row_graph-type" id="row_graph-type"></a>
+								</td>
+								<td>
+									<code>⟦&nbsp;⟧<sup>φ</sup><sub>row</sub></code>
+								</td>
+								<td>
+									:
+								</td>
+								<td>
+									<code><a href="#RDB-Row">Row</a> → Set(<a href="#">Triple</a>)</code>
+								</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="row_graph" id="row_graph"></a>[44]
+								</td>
+								<td>
+									<code>⟦r⟧<sup>φ</sup><sub>row</sub></code>
+								</td>
+								<td>
+									=
+								</td>
+								<td>
+									<code><em>let</em> s = <a href="#row_node">φ</a>(r) <em>in</em><br />
+									&nbsp;&nbsp;{ ⟦r⟧<sup>φ</sup><sub><a href="#type_triple">type</a></sub> }<br />
+									⋃ { ⟦r, c⟧<sup>φ</sup><sub><a href="#literal_triple">lex</a></sub> | <a href="#RDB-value">value</a>(r, c) ≠ NULL | c ∈ <a href="#RDB-lexicals">lexicals</a>(r) }<br />
+									⋃ { ⟦r, fk⟧<sup>φ</sup><sub><a href="#reference_triple">ref</a></sub> | <a href="#noNULLs">noNULLs</a>(r, fk) | fk ∈ <a href="#RDB-foreignKeys">foreignKeys</a>(<a href="#RDB-table">table</a>(r)) }</code>
+								</td>
+							</tr>
+							<tr class="sets" valign="baseline">
+								<td>
+									<a name="setrow_graph" id="setrow_graph"></a>[44]
+								</td>
+								<td>
+									<code>row_graph(T, R)</code>
+								</td>
+								<td>
+									=
+								</td>
+								<td>
+									<code>&nbsp;&nbsp;{ <a href="#settype_triple">type_triple</a>(R) }<br />
+									∪ { <a href="#setliteral_triple">literal_triple</a>(R, A) ∣ A ≠ Null ∧ [A] ∉ R.<a href="#setRDB-ForeignKey">ForeignKeys</a>(T) }<br />
+									∪ { <a href="#setreference_triple">reference_triple</a>(As, T) ∣ <a href="#setnoNULLs">noNULLs</a>(T, As) ∧ As ≠ R.<a href="#setRDB-PrimaryKey">PrimaryKey</a> ∣ As ∈ R.<a href="#setRDB-ForeignKey">ForeignKeys</a>(T)</code>
+								</td>
+							</tr>
+							<tr class="english">
+								<td colspan="5" class="nonnorm">
+									an RDF graph consisting of the following triples:
+					<ul>
+						<li>the <a title="" href="#defn-row_type_triple">row type triple</a>.
+						</li>
+						<li>a <a title="" href="#defn-reference_triple">reference triple</a> for each &lt;column name list&gt; in a table's foreign keys where none of the column values is NULL.
+						</li>
+						<li>a <a title="" href="#defn-literal_triple">literal triple</a> for each column in a table where the column value is non-NULL.
+						</li>
+					</ul>
+
+								</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="type_triple-type" id="type_triple-type"></a>
+								</td>
+								<td>
+									<code>⟦&nbsp;⟧<sub>type</sub></code>
+								</td>
+								<td>
+									:
+								</td>
+								<td>
+									<code>(<a href="#RDB-Row">Row</a>) → <a href="#">Triple</a></code>
+								</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="type_triple" id="type_triple"></a>[45]
+								</td>
+								<td>
+									<code>⟦r⟧<sub>type</sub></code>
+								</td>
+								<td>
+									=
+								</td>
+								<td>
+									<code><em>let</em> s = <a href="#row_node">φ</a>(r) <em>in</em><br />
+									<em>let</em> t = <a href="#RDB-table">table</a>(r) <em>in</em><br />
+									<em>let</em> o = ⟦t⟧<sub><a href="#table_IRI">tableIRI</a></sub> <em>in</em><br />
+									{ (s, <a href="http://www.w3.org/1999/02/22-rdf-syntax-ns#type">rdf:type</a>, o) }</code>
+								</td>
+							</tr>
+							<tr class="sets" valign="baseline">
+								<td>
+									<a name="settype_triple" id="settype_triple"></a>[45]
+								</td>
+								<td>
+									<code>type_triple(R)</code>
+								</td>
+								<td>
+									=
+								</td>
+								<td>
+									<code><a href="#RDF-Triple">triple</a>(<a href="#row_node">row node</a>(R), <a href="http://www.w3.org/1999/02/22-rdf-syntax-ns#type">rdf:type</a>, <a href="#settable_IRI">table-IRI</a>(R))</code>
+								</td>
+							</tr>
+							<tr class="english">
+								<td colspan="5" class="nonnorm">
+									an RDF triple with:
+					<ul>
+						<li>subject: the <a title="" href="#defn-row_node">row node</a> for the row.
+						</li>
+						<li>predicate: the RDF IRI <code class="triple">rdf:type</code>.
+						</li>
+						<li>object: the <a title="" href="#defn-table_IRI">table IRI</a> for the table name.
+						</li>
+					</ul>
+								</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="literal_triple-type" id="literal_triple-type"></a>
+								</td>
+								<td>
+									<code>⟦&nbsp;,&nbsp;&nbsp;⟧<sub>lex</sub></code>
+								</td>
+								<td>
+									:
+								</td>
+								<td>
+									<code>(<a href="#RDB-Row">Row</a>, <a href="#">Column</a>) → <a href="#">Triple</a><!-- //@@ I can't explain why this was: { s:Set((<a href="#">Predicate</a>, <a href="#">Object</a>)) | size(s) ≤ 1 } --></code>
+								</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="literal_triple" id="literal_triple"></a>[46]
+								</td>
+								<td>
+									<code>⟦r, c⟧<sub>lex</sub></code>
+								</td>
+								<td>
+									=
+								</td>
+								<td>
+									<code><em>let</em> s = <a href="#row_node">φ</a>(r) <em>in</em><br />
+									<em>let</em> p = ⟦<a href="#RDB-table">table</a>(r), c⟧<sub><a href="#literal_property_IRI">litcol</a></sub> <em>in</em><br />
+									<em>let</em> v = <a href="#RDB-value">value</a>(r, c) <em>in</em><br />
+									<em>let</em> d = <a href="#RDB-header">header</a>(<a href="#RDB-table">table</a>(r)) <em>in</em><br />
+									<em>if</em> v is NULL <em>then</em> ∅<br />
+									<em>else</em> <em>let</em> o = <a href="http://www.w3.org/TR/2012/REC-r2rml-20120927/#dfn-natural-rdf-literal">natural RDF literal</a>(v, d) <em>in</em><br />
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ (s, p, o) }</code>
+								</td>
+							</tr>
+							<tr class="sets" valign="baseline">
+								<td>
+									<a name="setliteral_triple" id="setliteral_triple"></a>[46]
+								</td>
+								<td>
+									<code>literal_triple(R, A)</code>
+								</td>
+								<td>
+									=
+								</td>
+								<td>
+									<code><a href="#setRDF-Triple">triple</a>(<a href="#setrow_node">row node</a>(R), <a href="#setliteral_property_IRI">literal_property_IRI</a>(R, [A]), <a href="http://www.w3.org/TR/2012/REC-r2rml-20120927/#dfn-natural-rdf-literal">natural RDF literal</a>(A))</code>
+								</td>
+							</tr>
+							<tr class="english">
+								<td colspan="5" class="nonnorm">
+									an RDF triple with:
+					<ul>
+						<li>subject: the <a title="" href="#defn-row_node">row node</a> for the row.
+						</li>
+						<li>predicate: the <a title="" href="#defn-literal_property_IRI">literal property IRI</a> for the column.
+						</li>
+						<li>object: the <a href="http://www.w3.org/TR/2012/REC-r2rml-20120927/#dfn-natural-rdf-literal">R2RML natural RDF literal</a> representation of the column value as defined in <a href="http://www.w3.org/TR/2012/REC-r2rml-20120927/#natural-mapping">R2RML section 10.2 Natural Mapping of SQL Values</a>.
+						</li>
+						<!-- was: li>object: the <a title="" href="#defn-literal_map">literal map</a> for the column value.
+						</li -->
+					</ul>
+								</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="reference_triple-type" id="reference_triple-type"></a>
+								</td>
+								<td>
+									<code>⟦&nbsp;,&nbsp;&nbsp;&nbsp;⟧<sub>ref</sub></code>
+								</td>
+								<td>
+									:
+								</td>
+								<td>
+									<code>(<a href="#RDB-Row">Row</a>, <a href="#RDB-ForeignKey">ForeignKey</a>) → <a href="#">Triple</a></code>
+								</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr class="sbuilder" valign="baseline">
+								<td>
+									<a name="reference_triple" id="reference_triple"></a>[47]
+								</td>
+								<td>
+									<code>⟦r, fk⟧<sub>ref</sub></code>
+								</td>
+								<td>
+									=
+								</td>
+								<td>
+									<code><em>let</em> s = <a href="#">φ</a>(r) <em>in</em><br />
+									<em>let</em> targetSpec = <a href="#RDB-dereference">dereference</a>(r, fk) <em>in</em><br />
+									<em>let</em> p = ⟦<a href="#RDB-table">table</a>(r), fk⟧<sub><a href="#reference_property_IRI">refcol</a></sub> <em>in</em><br />
+									<em>let</em> o = <a href="#">φ</a>(row(targetSpec)) <em>in</em><br />
+									(s, p, o)</code>
+								</td>
+							</tr>
+							<tr class="sets" valign="baseline">
+								<td>
+									<a name="setreference_triple" id="setreference_triple"></a>[47]
+								</td>
+								<td>
+									<code>reference_triple(R, As)</code>
+								</td>
+								<td>
+									=
+								</td>
+								<td>
+									<code><a href="#setRDF-Triple">triple</a>(<a href="#setrow_node">row node</a>(R), <a href="#setreference_property_IRI">reference_property_IRI</a>(R, As), <a href="#setrow_node">row_node</a>(row referenced by (R, As)))</code>
+								</td>
+							</tr>
+							<tr class="english">
+								<td colspan="5" class="nonnorm">
+									an RDF triple with:
+					<ul>
+						<li>subject: the <a title="" href="#defn-row_node">row node</a> for the row.
+						</li>
+						<li>predicate: the <a title="" href="#defn-reference_property_IRI">reference property IRI</a> for the columns.
+						</li>
+						<li>object: the <a title="" href="#defn-row_node">row node</a> for the referenced row.
+						</li>
+					</ul>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="div1">
+				<h2>
+					<a name="direct_mapping_rules" id="direct_mapping_rules"></a>B Direct Mapping as Rules (Informative)
+				</h2>
+				<p>
+					In this section, we formally present the Direct Mapping as rules in Datalog syntax, inspired by the previous approaches in <a href="#SQL2SW">[SQL2SW]</a> <a href="#DMSurvey">[DMSurvey]</a>. The left hand side of each rule is the RDF Triple output. The right hand side of each rule consists of a sequence of predicates from the relational database and built-in predicates. The built-in predicates are divided into four groups. The first group contains some built-in predicates for dealing with repeated rows in a table without a primary key.
+				</p>
+				<ul>
+					<li id="card">card(r, l, k): Given a table name r without a primary key and the list l of values [v<sub>1</sub>, ..., v<sub>n</sub>] for a row of table r, it returns in k the multiplicity of l in r (that is, k is the number of times row l appears in r)
+					</li>
+					<li id="le_built_in">n ≤ m: This is the usual order on positive integer values (given positive integers n and m, it holds if n is smaller than or equal to m)
+					</li>
+				</ul>
+				<p>
+					The second group contains a predicate to deal with null values.
+				</p>
+				<ul>
+					<li id="nonnull">nonNull(v): Given a value v, it holds if v is not null
+					</li>
+				</ul>
+				<p>
+					The third group of built-in predicates is used to generate IRIs for identifying tables and the columns in a table, and to generate IRIs or blank nodes for identifying each row in a table.
+				</p>
+				<ul>
+					<li id="generateTableIRI">generateTableIRI(r, i): Given a table name r, it generates the <a href="#table_iri">table IRI</a> i of r
+					</li>
+					<li id="generateLiteralPropertyIRI">generateLiteralPropertyIRI(r, a, i): Given a table name r and an attribute name a, it generates the <a href="#lit_prop_iri">literal property IRI</a> i for a
+					</li>
+					<li id="generateReferencePropertyIRI">generateReferencePropertyIRI(r, l, i): Given a table name r and a non-empty list of columns l, it generates the <a href="#ref_prop_iri">reference property IRI</a> i for l
+					</li>
+					<li id="generateRowIRI">generateRowIRI(r, l<sub>1</sub>, l<sub>2</sub>, i): Given a table name r, a non-empty list l<sub>1</sub> of columns and a non-empty list l<sub>2</sub> of values (for the columns in l<sub>1</sub>), it generates the <a href="#row_node_def">row node</a> (or Row IRI) i for the given row
+					</li>
+					<li id="generateRowBlankNode">generateRowBlankNode(r, l, n, i): Given a table name r without a primary key, a list l of values for a row of table r and a positive integer n, it generates the <a href="#row_node_def">row node</a> i for the n-th occurrence of row l in r (which is a <a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/#dfn-blank-node">Blank Node</a> in this case). It is assumed that n is smaller than or equal to the multiplicity of l in r (that is, if card(r, l, k) holds, then 1 ≤ n ≤ k)
+					</li>
+				</ul>
+				
+				<p>
+					Finally, the fourth group of built-in predicates is used to generate typed literals.
+				</p>
+				<ul>
+					<li id="generateTypedLiteral">generateTypedLiteral(u, a, r, v): Given a value u, an attribute name a and a table name r, it generates an <a href="http://www.w3.org/TR/2012/REC-r2rml-20120927/#dfn-natural-rdf-literal">R2RML natural RDF literal</a> v representation of the column value u, given the type of a in r and as defined in <a href="http://www.w3.org/TR/2012/REC-r2rml-20120927/#natural-mapping">R2RML section 10.2 Natural Mapping of SQL Values</a>.
+					</li>
+				</ul>
+				<p>
+				Throughout the section, boxes containing Direct Mapping rules and examples will appear. 
+ 	        These boxes are color-coded. Yellow boxes contain Direct Mapping rules:
+ 	        	</p>
+ 	        	<pre class="rule">
+This box contains a Direct Mapping rule 
+ 	        	</pre>
+ 	        	<div class="clear"></div>
+ 	        	    <p>
+ 	        Green boxes contain examples of applying the previous Direct Mapping rule:
+ 	        </p>
+ 	        <pre class="ruleexample">
+This box contains examples of applying a Direct Mapping rule      
+ 	        </pre>
+ 	        <div class="clear"></div>
+				<p>
+					Consider again the example from Section <a href="#lead-ex">Direct Mapping Example</a>. It should be noticed that in the rules presented in this section, a formula of the form Addresses(X, Y, Z) indicates that the variables X, Y and Z are used to store the values of a row in the three columns of the table Addresses (according to the order specified in the schema of the table, that is, X, Y and Z store the values of ID, city and state, respectively). In particular, uppercase letters like X, Y, Z, S, P and O are used to denote variables. Moreover, double quotes are used in the rules to refer to the string with the name of a table or a column. For example, a formula of the form generateRowIRI("Addresses", ["ID"], [X], S) is used to generate the <a href="#row_node_def">row node</a> (or Row IRI) for the row of table "Addresses" whose value in the primary key "ID" is the value stored in the variable X. The value of this Row IRI is stored in the variable S.
+				</p>
+				
+				<div class="div2">
+					<h3>
+						<a name="rules_row_type_triples" id="rules_row_type_triples"></a>B.1 Generating Row Type Triples
+					</h3>
+					<div class="div3">
+						<h4>
+							<a name="rules_row_type_triples_single_pk" id="rules_row_type_triples_single_pk"></a>B.1.1 Table has a primary key
+						</h4>
+						<p>
+							Assume that r is a table with columns a<sub>1</sub>, ..., a<sub>m</sub> and such that [a<sub>p<sub>1</sub></sub>, ..., a<sub>p<sub>n</sub></sub>] is the primary key of r, where 1 ≤ n ≤ m and 1 ≤ p<sub>1</sub> &lt; ... &lt; p<sub>n</sub> ≤ m. Then the following is the direct mapping rule to generate <a href="#defn-row_type_triple">row type triples</a> from r:
+						</p>
+						<pre class="rule">
+Triple(S, "rdf:type", O) ← r(X<sub>1</sub>, ..., X<sub>m</sub>), generateRowIRI("r", ["a<sub>p<sub>1</sub></sub>", ..., "a<sub>p<sub>n</sub></sub>"], [X<sub>p<sub>1</sub></sub>, ..., X<sub>p<sub>n</sub></sub>], S), generateTableIRI("r", O)   
+		
+</pre>
+						<div class="clear"></div>
+						<p>
+							For example, table <em>Addresses</em> in the <a href="#lead-ex">Direct Mapping Example</a> has columns <em>ID</em>, <em>city</em> and <em>state</em>, and it has column <em>ID</em> as its primary key. Then the following is the direct mapping rule to generate <a href="#defn-row_type_triple">row type triples</a> from <em>Addresses</em>:
+						</p>
+						<pre class="ruleexample">
+Triple(S, "rdf:type", O) ← Addresses(X<sub>1</sub>, X<sub>2</sub>, X<sub>3</sub>), generateRowIRI("Addresses", ["ID"], [X<sub>1</sub>], S), generateTableIRI("Addresses", O)
+				
+</pre>
+						<div class="clear"></div>
+						<p>
+							As a second example, consider table <em>Department</em> from the example in Section <a href="#fk-candidate">Foreign keys referencing candidate keys</a>, which has columns <em>ID</em>, <em>name</em>, <em>city</em> and <em>manager</em>, and assume that (<em>name</em>, <em>city</em>) is the multi-column primary key of this table (instead of <em>ID</em>). Then the following is the direct mapping rule to generate <a href="#defn-row_type_triple">row type triples</a> from <em>Department</em>:
+						</p>
+						<pre class="ruleexample">
+Triple(S, "rdf:type", O) ← Department(X<sub>1</sub>, X<sub>2</sub>, X<sub>3</sub>, X<sub>4</sub>), generateRowIRI("Department", ["name","city"], [X<sub>2</sub>, X<sub>3</sub>], S), 
+                            generateTableIRI("Department", O)
+		
+</pre>
+						<div class="clear"></div>
+					</div>
+					<div class="div3">
+						<h4>
+							<a name="rules_row_type_triples_no_pk" id="rules_row_type_triples_no_pk"></a>B.1.2 Table does not have a primary key
+						</h4>
+						<p>
+							Assume that r is a table with columns a<sub>1</sub>, ..., a<sub>m</sub> and such that r does not have a primary key. Then the following is the direct mapping rule to generate <a href="#defn-row_type_triple">row type triples</a> from r:
+						</p>
+						<pre class="rule">
+Triple(S, "rdf:type", O) ← r(X<sub>1</sub>, ..., X<sub>m</sub>), card("r", [X<sub>1</sub>, ..., X<sub>m</sub>], U), V ≤ U, generateRowBlankNode("r", [X<sub>1</sub>, ..., X<sub>m</sub>], V, S),
+                            generateTableIRI("r", O)   
+	
+</pre>
+						<div class="clear"></div>
+						<p>
+							For example, table <em>Tweets</em> from Section <a href="#no-pk">Empty (non-existent) primary keys</a> has columns <em>tweeter</em>, <em>when</em> and <em>text</em>, and it does not have a primary key. Then the following is the direct mapping rule to generate <a href="#defn-row_type_triple">row type triples</a> from <em>Tweets</em>:
+						</p>
+						<pre class="ruleexample">
+Triple(S, "rdf:type", O) ← Tweets(X<sub>1</sub>, X<sub>2</sub>, X<sub>3</sub>), card("Tweets", [X<sub>1</sub>, X<sub>2</sub>, X<sub>3</sub>], U), V ≤ U, generateRowBlankNode("Tweets", [X<sub>1</sub>, X<sub>2</sub>, X<sub>3</sub>], V, S),
+                            generateTableIRI("Tweets", O)   
+		
+</pre>
+						<div class="clear"></div>
+					</div>
+				</div>
+				<div class="div2">
+					<h3>
+						<a name="rules_literal_triples" id="rules_literal_triples"></a>B.2 Generating Literal Triples
+					</h3>
+					<div class="div3">
+						<h4>
+							<a name="rules_literal_triples_single_pk" id="rules_literal_triples_single_pk"></a>B.2.1 Table has a primary key
+						</h4>
+						<p>
+							Assume that r is a table with columns a<sub>1</sub>, ..., a<sub>m</sub> and such that [a<sub>p<sub>1</sub></sub>, ..., a<sub>p<sub>n</sub></sub>] is the primary key of r, where 1 ≤ n ≤ m and 1 ≤ p<sub>1</sub> &lt; ... &lt; p<sub>n</sub> ≤ m. Then for every a<sub>j</sub> (1 ≤ j ≤ m), the direct mapping includes the following rule for r and a<sub>j</sub> to generate <a href="#defn-literal_triple">literal triples</a>:
+						</p>
+						<pre class="rule">
+Triple(S, P, V) ← r(X<sub>1</sub>, ..., X<sub>m</sub>), nonNull(X<sub>j</sub>), generateRowIRI("r", ["a<sub>p<sub>1</sub></sub>", ..., "a<sub>p<sub>n</sub></sub>"], [X<sub>p<sub>1</sub></sub>, ..., X<sub>p<sub>n</sub></sub>], S),
+                   generateLiteralPropertyIRI("r", "a<sub>j</sub>", P), generateTypedLiteral(X<sub>j</sub>, "a<sub>j</sub>", "r", V)
+		
+</pre>
+						<div class="clear"></div>
+						<p>
+							For example, table <em>Addresses</em> in the <a href="#lead-ex">Direct Mapping Example</a> has columns <em>ID</em>, <em>city</em> and <em>state</em>, and it has column <em>ID</em> as its primary key. Then the following are the direct mapping rules to generate <a href="#defn-literal_triple">literal triples</a> from <em>Addresses</em>:
+						</p>
+						<pre class="ruleexample">
+Triple(S, P, V) ← Addresses(X<sub>1</sub>, X<sub>2</sub>, X<sub>3</sub>), nonNull(X<sub>1</sub>), generateRowIRI("Addresses", ["ID"], [X<sub>1</sub>], S),
+                   generateLiteralPropertyIRI("Addresses", "ID", P), generateTypedLiteral(X<sub>1</sub>, "ID", "Addresses", V)
+Triple(S, P, V) ← Addresses(X<sub>1</sub>, X<sub>2</sub>, X<sub>3</sub>), nonNull(X<sub>2</sub>), generateRowIRI("Addresses", ["ID"], [X<sub>1</sub>], S), 
+                   generateLiteralPropertyIRI("Addresses", "city", P), generateTypedLiteral(X<sub>2</sub>, "city", "Addresses", V)
+Triple(S, P, V) ← Addresses(X<sub>1</sub>, X<sub>2</sub>, X<sub>3</sub>), nonNull(X<sub>3</sub>), generateRowIRI("Addresses", ["ID"], [X<sub>1</sub>], S),
+                   generateLiteralPropertyIRI("Addresses", "state", P), generateTypedLiteral(X<sub>3</sub>, "state", "Addresses", V)
+
+</pre>
+						<div class="clear"></div>
+						<p>
+							As a second example, consider again table <em>Department</em> from the example in Section <a href="#fk-candidate">Foreign keys referencing candidate keys</a>, which has columns <em>ID</em>, <em>name</em>, <em>city</em> and <em>manager</em>, and assume that (<em>name</em>, <em>city</em>) is the multi-column primary key of this table (instead of <em>ID</em>). Then the following are the direct mapping rules to generate <a href="#defn-literal_triple">literal triples</a> from <em>Department</em>:
+						</p>
+						<pre class="ruleexample">
+Triple(S, P, V) ← Department(X<sub>1</sub>, X<sub>2</sub>, X<sub>3</sub>, X<sub>4</sub>), nonNull(X<sub>1</sub>), generateRowIRI("Department", ["name", "city"], [X<sub>2</sub>, X<sub>3</sub>], S), 
+                   generateLiteralPropertyIRI("Department", "ID", P), generateTypedLiteral(X<sub>1</sub>, "ID", "Department", V)
+Triple(S, P, V) ← Department(X<sub>1</sub>, X<sub>2</sub>, X<sub>3</sub>, X<sub>4</sub>), nonNull(X<sub>2</sub>), generateRowIRI("Department", ["name", "city"], [X<sub>2</sub>, X<sub>3</sub>], S), 
+                   generateLiteralPropertyIRI("Department", "name", P), generateTypedLiteral(X<sub>2</sub>, "name", "Department", V)
+Triple(S, P, V) ← Department(X<sub>1</sub>, X<sub>2</sub>, X<sub>3</sub>, X<sub>4</sub>), nonNull(X<sub>3</sub>), generateRowIRI("Department", ["name", "city"], [X<sub>2</sub>, X<sub>3</sub>], S), 
+                   generateLiteralPropertyIRI("Department", "city", P), generateTypedLiteral(X<sub>3</sub>, "city", "Department", V)
+Triple(S, P, V) ← Department(X<sub>1</sub>, X<sub>2</sub>, X<sub>3</sub>, X<sub>4</sub>), nonNull(X<sub>4</sub>), generateRowIRI("Department", ["name", "city"], [X<sub>2</sub>, X<sub>3</sub>], S), 
+                   generateLiteralPropertyIRI("Department", "manager", P), generateTypedLiteral(X<sub>4</sub>, "manager", "Department", V)
+		
+</pre>
+						<div class="clear"></div>
+					</div>
+					<div class="div3">
+						<h4>
+							<a name="rules_literal_triples_no_pk" id="rules_literal_triples_no_pk"></a>B.2.2 Table does not have a primary key
+						</h4>
+						<p>
+							Assume that r is a table with columns a<sub>1</sub>, ..., a<sub>m</sub> and such that r does not have a primary key. Then for every a<sub>j</sub> (1 ≤ j ≤ m), the direct mapping includes the following rule for r and a<sub>j</sub> to generate <a href="#defn-literal_triple">literal triples</a>:
+						</p>
+						<pre class="rule">
+Triple(S, P, V) ← r(X<sub>1</sub>, ..., X<sub>m</sub>), nonNull(X<sub>j</sub>), card("r", [X<sub>1</sub>, ..., X<sub>m</sub>], U), V ≤ U, generateRowBlankNode("r", [X<sub>1</sub>, ..., X<sub>m</sub>], V, S), 
+                   generateLiteralPropertyIRI("r", "a<sub>j</sub>", P), generateTypedLiteral(X<sub>j</sub>, "a<sub>j</sub>", "r", V)
+		
+</pre>
+						<div class="clear"></div>
+						<p>
+							For example, table <em>Tweets</em> from Section <a href="#no-pk">Empty (non-existent) primary keys</a> has columns <em>tweeter</em>, <em>when</em> and <em>text</em>, and it does not have a primary key. Then the following are the direct mapping rules to generate <a href="#defn-literal_triple">literal triples</a> from <em>Tweets</em>:
+						</p>
+						<pre class="ruleexample">
+Triple(S, P, V) ← Tweets(X<sub>1</sub>, X<sub>2</sub>, X<sub>3</sub>), nonNull(X<sub>1</sub>), card("Tweets", [X<sub>1</sub>, X<sub>2</sub>, X<sub>3</sub>], U), V ≤ U, generateRowBlankNode("Tweets", [X<sub>1</sub>, X<sub>2</sub>, X<sub>3</sub>], V, S), 
+                   generateLiteralPropertyIRI("Tweets", "tweeter", P), generateTypedLiteral(X<sub>1</sub>, "tweeter", "Tweets", V)
+Triple(S, P, V) ← Tweets(X<sub>1</sub>, X<sub>2</sub>, X<sub>3</sub>), nonNull(X<sub>2</sub>), card("Tweets", [X<sub>1</sub>, X<sub>2</sub>, X<sub>3</sub>], U), V ≤ U, generateRowBlankNode("Tweets", [X<sub>1</sub>, X<sub>2</sub>, X<sub>3</sub>], V, S), 
+                   generateLiteralPropertyIRI("Tweets", "when", P), generateTypedLiteral(X<sub>2</sub>, "when", "Tweets", V)
+Triple(S, P, V) ← Tweets(X<sub>1</sub>, X<sub>2</sub>, X<sub>3</sub>), nonNull(X<sub>3</sub>), card("Tweets", [X<sub>1</sub>, X<sub>2</sub>, X<sub>3</sub>], U), V ≤ U, generateRowBlankNode("Tweets", [X<sub>1</sub>, X<sub>2</sub>, X<sub>3</sub>], V, S), 
+                   generateLiteralPropertyIRI("Tweets", "text", P), generateTypedLiteral(X<sub>3</sub>, "text", "Tweets", V)
+		
+</pre>
+						<div class="clear"></div>
+					</div>
+				</div>
+				<div class="div2">
+					<h3>
+						<a name="rules_reference_triples" id="rules_reference_triples"></a>B.3 Generating Reference Triples
+					</h3>
+					<p>
+						For each foreign key from a table r<sub>1</sub> to a table r<sub>2</sub>, one of the following four cases is applied.
+					</p>
+					<div class="div3">
+						<h4>
+							<a name="rules_reference_triples_r1pk_r2pk" id="rules_reference_triples_r1pk_r2pk"></a>B.3.1 Table r<sub>1</sub> has a primary key and table r<sub>2</sub> has a primary key
+						</h4>
+						<p>
+							Assume that:
+						</p>
+						<ul>
+							<li>
+								<p>
+									r<sub>1</sub> is a table with columns a<sub>1</sub>, ..., a<sub>i</sub> and such that [a<sub>p<sub>1</sub></sub>, ..., a<sub>p<sub>j</sub></sub>] is the primary key of r<sub>1</sub>, where 1 ≤ j ≤ i and 1 ≤ p<sub>1</sub> &lt; ... &lt; p<sub>j</sub> ≤ i
+								</p>
+							</li>
+							<li>
+								<p>
+									r<sub>2</sub> is a table with columns c<sub>1</sub>, ..., c<sub>k</sub> and such that [c<sub>q<sub>1</sub></sub>, ..., c<sub>q<sub>m</sub></sub>] is the primary key of r<sub>2</sub>, where 1 ≤ m ≤ k and 1 ≤ q<sub>1</sub> &lt; ... &lt; q<sub>m</sub> ≤ k
+								</p>
+							</li>
+							<li>
+								<p>
+									the foreign key indicates that the columns a<sub>s<sub>1</sub></sub>, ..., a<sub>s<sub>n</sub></sub> of r<sub>1</sub> reference the columns c<sub>t<sub>1</sub></sub>, ..., c<sub>t<sub>n</sub></sub> of r<sub>2</sub>, where (1) 1 ≤ s<sub>1</sub>, ..., s<sub>n</sub> ≤ i, (2) 1 ≤ t<sub>1</sub>, ..., t<sub>n</sub> ≤ k, and (3) n ≥ 1
+								</p>
+							</li>
+						</ul>
+						<p>
+							Then the direct mapping includes the following rule for r<sub>1</sub> and r<sub>2</sub> to generate <a href="#defn-reference_triple">Reference Triples:</a>
+						</p>
+						<pre class="rule">
+Triple(S, P, O) ← r<sub>1</sub>(X<sub>1</sub>, ..., X<sub>i</sub>), generateRowIRI("r<sub>1</sub>", ["a<sub>p<sub>1</sub></sub>", ..., "a<sub>p<sub>j</sub></sub>"], [X<sub>p<sub>1</sub></sub>, ..., X<sub>p<sub>j</sub></sub>], S), 
+                   r<sub>2</sub>(Y<sub>1</sub>, ..., Y<sub>k</sub>), generateRowIRI("r<sub>2</sub>", ["c<sub>q<sub>1</sub></sub>", ..., "c<sub>q<sub>m</sub></sub>"], [Y<sub>q<sub>1</sub></sub>, ..., Y<sub>q<sub>m</sub></sub>], O), 
+                   nonNull(X<sub>s<sub>1</sub></sub>), ..., nonNull(X<sub>s<sub>n</sub></sub>), X<sub>s<sub>1</sub></sub> = Y<sub>t<sub>1</sub></sub>, ...,  X<sub>s<sub>n</sub></sub> = Y<sub>t<sub>n</sub></sub>,  generateReferencePropertyIRI("r<sub>1</sub>", ["a<sub>s<sub>1</sub></sub>", ..., "a<sub>s<sub>n</sub></sub>"], P)
+		
+</pre>
+						<div class="clear"></div>
+						<p>
+							For example, table <em>Addresses</em> in the <a href="#lead-ex">Direct Mapping Example</a> has columns <em>ID</em>, <em>city</em> and <em>state</em>, where column <em>ID</em> is the primary key. Table <em>People</em> in this example has columns <em>ID</em>, <em>fname</em> and <em>addr</em>, where column <em>ID</em> is the primary key, and it has a foreign key in the column <em>addr</em> that references the column <em>ID</em> in the table <em>Addresses</em>. In this case, the following is the direct mapping rule to generate <a href="#defn-reference_triple">Reference Triples</a>:
+						</p>
+						<pre class="ruleexample">
+Triple(S, P, O) ← People(X<sub>1</sub>, X<sub>2</sub>, X<sub>3</sub>), generateRowIRI("People", ["ID"], [X<sub>1</sub>], S),  
+                   Addresses(Y<sub>1</sub>, Y<sub>2</sub>, Y<sub>3</sub>), generateRowIRI("Addresses", ["ID"], [Y<sub>1</sub>], O),  
+                   nonNull(X<sub>3</sub>), X<sub>3</sub> = Y<sub>1</sub>,  generateReferencePropertyIRI("People", ["addr"], P)
+				
+</pre>
+						<div class="clear"></div>
+					</div>
+					<div class="div3">
+						<h4>
+							<a name="rules_reference_triples_r1pk_r2nopk" id="rules_reference_triples_r1pk_r2nopk"></a>B.3.2 Table r<sub>1</sub> has a primary key and table r<sub>2</sub> does not have a primary key
+						</h4>
+						<p>
+							Assume that:
+						</p>
+						<ul>
+							<li>
+								<p>
+									r<sub>1</sub> is a table with columns a<sub>1</sub>, ..., a<sub>i</sub> and such that [a<sub>p<sub>1</sub></sub>, ..., a<sub>p<sub>j</sub></sub>] is the primary key of r<sub>1</sub>, where 1 ≤ j ≤ i and and 1 ≤ p<sub>1</sub> &lt; ... &lt; p<sub>j</sub> ≤ i
+								</p>
+							</li>
+							<li>
+								<p>
+									r<sub>2</sub> is a table with columns c<sub>1</sub>, ..., c<sub>k</sub>, and it does not have a primary key
+								</p>
+							</li>
+							<li>
+								<p>
+									the foreign key indicates that the columns a<sub>s<sub>1</sub></sub>, ..., a<sub>s<sub>n</sub></sub> of r<sub>1</sub> reference the columns c<sub>t<sub>1</sub></sub>, ..., c<sub>t<sub>n</sub></sub> of r<sub>2</sub>, where (1) 1 ≤ s<sub>1</sub>, ..., s<sub>n</sub> ≤ i, (2) 1 ≤ t<sub>1</sub>, ..., t<sub>n</sub> ≤ k, and (3) n ≥ 1
+								</p>
+							</li>
+						</ul>
+						<p>
+							Then the direct mapping includes the following rule for r<sub>1</sub> and r<sub>2</sub> to generate <a href="#defn-reference_triple">Reference Triples:</a>
+						</p>
+						<pre class="rule">
+Triple(S, P, O) ← r<sub>1</sub>(X<sub>1</sub>, ..., X<sub>i</sub>), generateRowIRI("r<sub>1</sub>", ["a<sub>p<sub>1</sub></sub>", ..., "a<sub>p<sub>j</sub></sub>"], [X<sub>p<sub>1</sub></sub>, ..., X<sub>p<sub>j</sub></sub>], S),
+                   r<sub>2</sub>(Y<sub>1</sub>, ..., Y<sub>k</sub>), card("r<sub>2</sub>", [Y<sub>1</sub>, ..., Y<sub>k</sub>], U), V ≤ U, generateRowBlankNode("r<sub>2</sub>", [Y<sub>1</sub>, ..., Y<sub>k</sub>], V, O), 
+                nonNull(X<sub>s<sub>1</sub></sub>), ..., nonNull(X<sub>s<sub>n</sub></sub>), X<sub>s<sub>1</sub></sub> = Y<sub>t<sub>1</sub></sub>, ...,  X<sub>s<sub>n</sub></sub> = Y<sub>t<sub>n</sub></sub>,  generateReferencePropertyIRI("r<sub>1</sub>", ["a<sub>s<sub>1</sub></sub>", ..., "a<sub>s<sub>n</sub></sub>"], P)
+		
+</pre>
+						<div class="clear"></div>
+						<p>
+							For example, assume that table <em>Addresses</em> in the <a href="#lead-ex">Direct Mapping Example</a> has columns <em>ID</em>, <em>city</em> and <em>state</em>, and that column <em>ID</em> is a candidate key (instead of a primary key), so that table <em>Addresses</em> does not have a primary key. Moreover, assume that table <em>People</em> in this example has columns <em>ID</em>, <em>fname</em> and <em>addr</em>, it has column <em>ID</em> as its primary key, and it has a foreign key in the column <em>addr</em> to the candidate key <em>ID</em> in the table <em>Addresses</em>. In this case, the following is the direct mapping rule to generate <a href="#defn-reference_triple">Reference Triples</a>:
+						</p>
+						<pre class="ruleexample">
+Triple(S, P, O) ← People(X<sub>1</sub>, X<sub>2</sub>, X<sub>3</sub>), generateRowIRI("People", ["ID"], [X<sub>1</sub>], S), 
+                   Addresses(Y<sub>1</sub>, Y<sub>2</sub>, Y<sub>3</sub>), card("Addresses", [Y<sub>1</sub>, Y<sub>2</sub>, Y<sub>3</sub>], U), V ≤ U, generateRowBlankNode("Addresses", [Y<sub>1</sub>, Y<sub>2</sub>, Y<sub>3</sub>], V, O), 
+                   nonNull(X<sub>3</sub>), X<sub>3</sub> = Y<sub>1</sub>,  generateReferencePropertyIRI("People", ["addr"], P)
+				
+</pre>
+						<div class="clear"></div>
+					</div>
+					<div class="div3">
+						<h4>
+							<a name="rules_reference_triples_r1nopk_r2pk" id="rules_reference_triples_r1nopk_r2pk"></a>B.3.3 Table r<sub>1</sub> does not have primary key and table r<sub>2</sub> has a primary key
+						</h4>
+						<p>
+							Assume that:
+						</p>
+						<ul>
+							<li>
+								<p>
+									r<sub>1</sub> is a table with columns a<sub>1</sub>, ..., a<sub>i</sub>, and it does not have a primary key
+								</p>
+							</li>
+							<li>
+								<p>
+									r<sub>2</sub> is a table with columns c<sub>1</sub>, ..., c<sub>k</sub> and such that [c<sub>q<sub>1</sub></sub>, ..., c<sub>q<sub>m</sub></sub>] is the primary key of r<sub>2</sub>, where 1 ≤ m ≤ k and 1 ≤ q<sub>1</sub> &lt; ... &lt; q<sub>m</sub> ≤ k
+								</p>
+							</li>
+							<li>
+								<p>
+									the foreign key indicates that the columns a<sub>s<sub>1</sub></sub>, ..., a<sub>s<sub>n</sub></sub> of r<sub>1</sub> reference the columns c<sub>t<sub>1</sub></sub>, ..., c<sub>t<sub>n</sub></sub> of r<sub>2</sub>, where (1) 1 ≤ s<sub>1</sub>, ..., s<sub>n</sub> ≤ i, (2) 1 ≤ t<sub>1</sub>, ..., t<sub>n</sub> ≤ k, and (3) n ≥ 1
+								</p>
+							</li>
+						</ul>
+						<p>
+							Then the direct mapping includes the following rule for r<sub>1</sub> and r<sub>2</sub> to generate <a href="#defn-reference_triple">Reference Triples:</a>
+						</p>
+						<pre class="rule">
+Triple(S, P, O) ← r<sub>1</sub>(X<sub>1</sub>, ..., X<sub>i</sub>), card("r<sub>1</sub>", [X<sub>1</sub>, ..., X<sub>i</sub>], U), V ≤ U, generateRowBlankNode("r<sub>1</sub>", [X<sub>1</sub>, ..., X<sub>i</sub>], V, S), 
+                   r<sub>2</sub>(Y<sub>1</sub>, ..., Y<sub>k</sub>), generateRowIRI("r<sub>2</sub>", ["c<sub>q<sub>1</sub></sub>", ..., "c<sub>q<sub>m</sub></sub>"], [Y<sub>q<sub>1</sub></sub>, ..., Y<sub>q<sub>m</sub></sub>], O), 
+                   nonNull(X<sub>s<sub>1</sub></sub>), ..., nonNull(X<sub>s<sub>n</sub></sub>), X<sub>s<sub>1</sub></sub> = Y<sub>t<sub>1</sub></sub>, ...,  X<sub>s<sub>n</sub></sub> = Y<sub>t<sub>n</sub></sub>,  generateReferencePropertyIRI("r<sub>1</sub>", ["a<sub>s<sub>1</sub></sub>", ..., "a<sub>s<sub>n</sub></sub>"], P)
+		
+</pre>
+						<div class="clear"></div>
+						<p>
+							For example, table <em>People</em> in the <a href="#lead-ex">Direct Mapping Example</a> has columns <em>ID</em>, <em>fname</em> and <em>addr</em>, and it has column <em>ID</em> as its primary key, while table <em>Tweets</em> from Section <a href="#no-pk">Empty (non-existent) primary keys</a> has columns <em>tweeter</em>, <em>when</em> and <em>text</em>, it does not have a primary key, and it has a foreign key in column <em>tweeter</em> that references column <em>ID</em> in table <em>People</em>. In this case, the following is the direct mapping rule to generate <a href="#defn-reference_triple">Reference Triples</a>:
+						</p>
+						<pre class="ruleexample">
+Triple(S, P, O) ← Tweets(X<sub>1</sub>, X<sub>2</sub>, X<sub>3</sub>), card("Tweets", [X<sub>1</sub>, X<sub>2</sub>, X<sub>3</sub>], U), V ≤ U, generateRowBlankNode("Tweets", [X<sub>1</sub>, X<sub>2</sub>, X<sub>3</sub>], V, S), 
+                   People(Y<sub>1</sub>, Y<sub>2</sub>, Y<sub>3</sub>), generateRowIRI("People", ["ID"], [Y<sub>1</sub>], O), 
+                   nonNull(X<sub>1</sub>), X<sub>1</sub> = Y<sub>1</sub>, generateReferencePropertyIRI("Tweets", ["tweeter"], P)
+		
+</pre>
+						<div class="clear"></div>
+					</div>
+					<div class="div3">
+						<h4>
+							<a name="rules_reference_triples_r1nopk_r2nopk" id="rules_reference_triples_r1nopk_r2nopk"></a>B.3.4 Table r<sub>1</sub> does not have primary key and table r<sub>2</sub> does not have a primary key
+						</h4>
+						<p>
+							Assume that:
+						</p>
+						<ul>
+							<li>
+								<p>
+									r<sub>1</sub> is a table with columns a<sub>1</sub>, ..., a<sub>i</sub>, and it does not have a primary key
+								</p>
+							</li>
+							<li>
+								<p>
+									r<sub>2</sub> is a table with columns c<sub>1</sub>, ..., c<sub>k</sub>, and it does not have a primary key
+								</p>
+							</li>
+							<li>
+								<p>
+									the foreign key indicates that the columns a<sub>s<sub>1</sub></sub>, ..., a<sub>s<sub>n</sub></sub> of r<sub>1</sub> reference the columns c<sub>t<sub>1</sub></sub>, ..., c<sub>t<sub>n</sub></sub> of r<sub>2</sub>, where (1) 1 ≤ s<sub>1</sub>, ..., s<sub>n</sub> ≤ i, (2) 1 ≤ t<sub>1</sub>, ..., t<sub>n</sub> ≤ k, and (3) n ≥ 1
+								</p>
+							</li>
+						</ul>
+						<p>
+							Then the direct mapping includes the following rule for r<sub>1</sub> and r<sub>2</sub> to generate <a href="#defn-reference_triple">Reference Triples:</a>
+						</p>
+						<pre class="rule">
+Triple(S, P, O) ← r<sub>1</sub>(X<sub>1</sub>, ..., X<sub>i</sub>), card("r<sub>1</sub>", [X<sub>1</sub>, ..., X<sub>i</sub>], U<sub>1</sub>), V<sub>1</sub> ≤ U<sub>1</sub>, generateRowBlankNode("r<sub>1</sub>", [X<sub>1</sub>, ..., X<sub>i</sub>], V<sub>1</sub>, S), 
+                   r<sub>2</sub>(Y<sub>1</sub>, ..., Y<sub>k</sub>), card("r<sub>2</sub>", [Y<sub>1</sub>, ..., Y<sub>k</sub>], U<sub>2</sub>), V<sub>2</sub> ≤ U<sub>2</sub>, generateRowBlankNode("r<sub>2</sub>", [Y<sub>1</sub>, ..., Y<sub>k</sub>], V<sub>2</sub>, O), 
+                   nonNull(X<sub>s<sub>1</sub></sub>), ..., nonNull(X<sub>s<sub>n</sub></sub>), X<sub>s<sub>1</sub></sub> = Y<sub>t<sub>1</sub></sub>, ...,  X<sub>s<sub>n</sub></sub> = Y<sub>t<sub>n</sub></sub>,  generateReferencePropertyIRI("r<sub>1</sub>", ["a<sub>s<sub>1</sub></sub>", ..., "a<sub>s<sub>n</sub></sub>"], P)
+		
+</pre>
+						<div class="clear"></div>
+						<p>
+							For example, assume that table <em>People</em> in the <a href="#lead-ex">Direct Mapping Example</a> has columns <em>ID</em>, <em>fname</em> and <em>addr</em>, and that column <em>ID</em> is a candidate key (instead of a primary key), so that <em>People</em> does not have a primary key. Moreover, assume that table <em>Tweets</em> from Section <a href="#no-pk">Empty (non-existent) primary keys</a> has columns <em>tweeter</em>, <em>when</em> and <em>text</em>, it does not have a primary key, and it has a foreign in column <em>tweeter</em> that references candidate key <em>ID</em> in table <em>People</em>. In this case, the following is the direct mapping rule to generate <a href="#defn-reference_triple">Reference Triples</a>:
+						</p>
+						<pre class="ruleexample">
+Triple(S, P, O) ← Tweets(X<sub>1</sub>, X<sub>2</sub>, X<sub>3</sub>), card("Tweets", [X<sub>1</sub>, X<sub>2</sub>, X<sub>3</sub>], U<sub>1</sub>), V<sub>1</sub> ≤ U<sub>1</sub>, generateRowBlankNode("Tweets", [X<sub>1</sub>, X<sub>2</sub>, X<sub>3</sub>], V<sub>1</sub>, S), 
+                   People(Y<sub>1</sub>, Y<sub>2</sub>, Y<sub>3</sub>), card("People", [Y<sub>1</sub>, Y<sub>2</sub>, Y<sub>3</sub>], U<sub>2</sub>), V<sub>2</sub> ≤ U<sub>2</sub>, generateRowBlankNode("People", [Y<sub>1</sub>, Y<sub>2</sub>, Y<sub>3</sub>], V<sub>2</sub>, O), 
+                   nonNull(X<sub>1</sub>), X<sub>1</sub> = Y<sub>1</sub>, generateReferencePropertyIRI("Tweets", ["tweeter"], P)
+		
+</pre>
+						<div class="clear"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
+//<![CDATA[
+		primerOnLoad();
+		//]]>
+		</script>
+	</body>
+</html>

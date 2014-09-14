@@ -1,0 +1,732 @@
+<!-- http://www.w3.org/TR/sparql11-http-rdf-update/ -->
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <title>SPARQL 1.1 Graph Store HTTP Protocol</title>
+    <style type="text/css">
+      /*<![CDATA[*/
+      pre.data	{ border: thin solid #88AA88;
+      background-color: #E8F0E8;
+      margin: 1em 4em 1em 0em ; }
+      
+      .wgNote	{ border: 0.2em solid red;
+      padding: 0.5em ;
+      margin: 1em 4em 1em 2em ; }
+
+      /*]]>*/
+    </style>
+    <link rel="stylesheet" type="text/css" href="http://www.w3.org/StyleSheets/TR/base" />
+    <link rel="stylesheet" type="text/css" href="http://www.w3.org/StyleSheets/TR/W3C-REC" />
+  </head>
+
+  <body>
+
+    <div class="head">
+      <p><a href="http://www.w3.org/">
+      <img src="http://www.w3.org/Icons/w3c_home" alt="W3C" height="48" width="72" /></a></p>
+
+      <h1 id="main">SPARQL 1.1 Graph Store HTTP Protocol</h1>
+      <!--h2>W3C Working Draft 1 May 2012</h2-->
+      <h2>W3C Recommendation 21 March 2013</h2>
+      <dl>
+	<dt>This version:</dt>
+	<dd><span id="this-version-url"><a href="http://www.w3.org/TR/2013/REC-sparql11-http-rdf-update-20130321/">http://www.w3.org/TR/2013/REC-sparql11-http-rdf-update-20130321/</a></span></dd>
+	<dt>Latest version:</dt>
+	<dd><a href="http://www.w3.org/TR/sparql11-http-rdf-update/">http://www.w3.org/TR/sparql11-http-rdf-update/</a></dd>
+    <dt>Previous version:</dt>
+    <dd><span id="previous-version-url"><a href="http://www.w3.org/TR/2013/PR-sparql11-http-rdf-update-20130129/">http://www.w3.org/TR/2013/PR-sparql11-http-rdf-update-20130129/</a></span></dd>	
+	<dt>Editor:</dt>
+	<dd>Chimezie Ogbuji, <a href="mailto:chimezie@gmail.com">chimezie@gmail.com</a>, Invited Expert<br /></dd>
+      </dl>
+
+      <p>Please refer to the <a href="http://www.w3.org/2013/sparql-errata#sparql11-http-rdf-update"><strong>errata</strong></a> for this document, which may include some normative corrections.</p><p>See also <a href="http://www.w3.org/2003/03/Translations/byTechnology?technology=sparql11-http-rdf-update"><strong>translations</strong></a>.</p>
+      
+
+      <p class="copyright">
+      <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> &#169; 2013 <a href="http://www.w3.org/"><acronym title="World Wide Web Consortium">W3C</acronym></a><sup>&#174;</sup> (<a href="http://www.csail.mit.edu/"><acronym title="Massachusetts Institute of Technology">MIT</acronym></a>, <a href="http://www.ercim.eu/"><acronym title="European Research Consortium for Informatics and Mathematics">ERCIM</acronym></a>, <a href="http://www.keio.ac.jp/">Keio</a>, <a href="http://ev.buaa.edu.cn/">Beihang</a>), All Rights Reserved. W3C <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply.</p>
+
+    </div>
+
+    <hr title="Separator for header" />
+    <div>
+      <h2 class="notoc"><a id="abstract" name="abstract">Abstract</a></h2>
+      <p>This document describes the use of HTTP operations for the purpose of managing a collection of RDF graphs.  This interface is an alternative to the SPARQL 1.1 Update protocol.  Most of the operations defined here can be performed using that interface, but for some clients or servers, this interface may be easier to implement or work with.  This specification may serve as a non-normative suggestion for HTTP operations on RDF graphs which are managed outside of a SPARQL 1.1 graph store.</p>
+    </div>
+    <div>
+      <h2 id="status">Status of This Document</h2><h4 id="may-be">May Be Superseded</h4>
+    
+<p><em>This section describes the status of this document at the time of its publication. Other documents may supersede this document. A list of current W3C publications and the latest revision of this technical report can be found in the <a href="http://www.w3.org/TR/">W3C technical reports index</a> at http://www.w3.org/TR/.</em></p>
+
+<h4 id="related">Set of Documents</h4>
+
+<p>This document is one of eleven SPARQL 1.1 Recommendations produced by the <a href="http://www.w3.org/2001/sw/DataAccess/">SPARQL Working Group</a>: </p>
+
+<ol>
+<li><a href="http://www.w3.org/TR/2013/REC-sparql11-overview-20130321">SPARQL 1.1 Overview</a><!-- sparql11-overview --></li>
+<li><a href="http://www.w3.org/TR/2013/REC-sparql11-query-20130321">SPARQL 1.1 Query Language</a><!-- sparql11-query --></li>
+<li><a href="http://www.w3.org/TR/2013/REC-sparql11-update-20130321">SPARQL 1.1 Update</a><!-- sparql11-update --></li>
+<li><a href="http://www.w3.org/TR/2013/REC-sparql11-service-description-20130321">SPARQL1.1 Service Description</a><!-- sparql11-service-description --></li>
+<li><a href="http://www.w3.org/TR/2013/REC-sparql11-federated-query-20130321">SPARQL 1.1 Federated Query</a><!-- sparql11-federated-query --></li>
+<li><a href="http://www.w3.org/TR/2013/REC-sparql11-results-json-20130321">SPARQL 1.1 Query Results JSON Format</a><!-- sparql11-results-json --></li>
+<li><a href="http://www.w3.org/TR/2013/REC-sparql11-results-csv-tsv-20130321">SPARQL 1.1 Query Results CSV and TSV Formats</a><!-- sparql11-results-csv-tsv --></li>
+<li><a href="http://www.w3.org/TR/2013/REC-rdf-sparql-XMLres-20130321">SPARQL Query Results XML Format (Second Edition)</a><!-- rdf-sparql-XMLres --></li>
+<li><a href="http://www.w3.org/TR/2013/REC-sparql11-entailment-20130321">SPARQL 1.1 Entailment Regimes</a><!-- sparql11-entailment --></li>
+<li><a href="http://www.w3.org/TR/2013/REC-sparql11-protocol-20130321">SPARQL 1.1 Protocol</a><!-- sparql11-protocol --></li>
+<li><a href="http://www.w3.org/TR/2013/REC-sparql11-http-rdf-update-20130321">SPARQL 1.1 Graph Store HTTP Protocol</a><!-- sparql11-http-rdf-update --></li>
+
+</ol>
+
+<h4 class="no-toc no-num" id="status-changes">No Substantive Changes</h4>
+
+<p>There have been no substantive changes to this document since the <a href="http://www.w3.org/TR/2013/PR-sparql11-http-rdf-update-20130129">previous version</a>.   Minor editorial changes, if any, are detailed in the <a href="#changes-since-pr">change log</a> and visible in the <a href="diff">color-coded diff</a>.</p>
+
+
+<h4 class="no-toc no-num" id="please">Please Send Comments</h4><p>Please send any comments to <a class="mailto" href="mailto:public-rdf-dawg-comments@w3.org">public-rdf-dawg-comments@w3.org</a>
+    (<a class="http" href="http://lists.w3.org/Archives/Public/public-rdf-dawg-comments/">public
+    archive</a>).  Although work on this document by the <a href="http://www.w3.org/2009/sparql/">SPARQL Working Group</a> is complete, comments may be addressed in the <a href="http://www.w3.org/2013/sparql-errata">errata</a> or in future revisions.  Open discussion is welcome at <a class="mailto" href="mailto:public-sparql-dev@w3.org">public-sparql-dev@w3.org</a> (<a class="http" href="http://lists.w3.org/Archives/Public/public-sparql-dev/">public archive</a>).</p>
+    
+<h4 class="no-toc no-num" id="endorsement">Endorsed By W3C</h4>
+    
+<p><em>This document has been reviewed by W3C Members, by software developers, and by other W3C groups and interested parties, and is endorsed by the Director as a W3C Recommendation. It is a stable document and may be used as reference material or cited from another document. W3C's role in making the Recommendation is to draw attention to the specification and to promote its widespread deployment. This enhances the functionality and interoperability of the Web.</em></p>
+
+<h4 id="patents">Patents</h4>
+    
+<p><em>This document was produced by a group operating under the <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 W3C Patent Policy</a>. W3C maintains a <a href="http://www.w3.org/2004/01/pp-impl/35463/status" rel="disclosure">public list of any patent disclosures</a> made in connection with the deliverables of the group; that page also includes instructions for disclosing a patent. An individual who has actual knowledge of a patent which the individual believes contains <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential Claim(s)</a> must disclose the information in accordance with <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure"> section 6 of the W3C Patent Policy</a>.</em></p></div><hr /><div class="toc">
+
+      <h2><a id="contents" name="contents">Table of Contents</a></h2>
+      
+<ol>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#terminology">Terminology</a></li>
+    <li><a href="#protocol-model">Protocol Model</a></li>
+    <li><a href="#graph-identification">Graph Identification</a>
+        <ul style="list-style-type: none">
+            <li>4.1<a href="#direct-graph-identification">Direct Graph Identification</a></li>
+            <li>4.2 <a href="#indirect-graph-identification">Indirect Graph Identification</a></li>
+            <!--li>4.3 <a href="#base-resolution">Resolving Relative References</a></li-->
+        </ul>
+    </li>
+    <li><a href="#graph-management">Graph Management Operations</a>
+        <ul style="list-style-type: none">
+            <li>5.1 <a href="#status-codes">Status Codes</a></li>
+            <li>5.2 <a href="#http-get">HTTP GET</a>
+                <ul style="list-style-type: none">
+                    <li>5.2.1<a href="#httpRange-14">Ambiguity Regarding the Range of HTTP GET (Informative)</a></li>
+                </ul>
+            </li>            
+            <li>5.3 <a href="#http-put">HTTP PUT</a></li>
+            <li>5.4 <a href="#http-delete">HTTP DELETE</a></li>
+            <li>5.5 <a href="#http-post">HTTP POST</a></li>
+            <li>5.6 <a href="#http-head">HTTP HEAD</a></li>
+            <li>5.7 <a href="#http-patch">HTTP PATCH (Informative)</a></li>
+            <!--li>5.8 <a href="#http-option">Protocol Service Discovery (Informative)</a></li-->
+        </ul>        
+    </li>
+    <li><a href="#security">Security Considerations</a></li>
+    <li><a href="#sec-bibliography">References</a></li>
+    <li>
+        <a href="#sec-appendix">Appendix</a>
+        <ul style="list-style-type: none">
+            <li>8.1 <a href="#section-appendix-acknowledgement">Acknowledgements</a></li>
+        </ul>
+    </li>
+</ol>  
+      
+    </div>
+
+    <hr />
+
+    <h2>1 <a id="introduction" name="introduction">Introduction</a></h2>
+    
+    <p>This document describes an application protocol for the distributed updating and fetching of RDF graph content in a Graph Store via the mechanics of the Hypertext Transfer Protocol (HTTP) <a href="#rfc3987">[RFC2616]</a>.  In doing so, it appeals to the following interface constraints that emphasize the core, architectural components underlying HTTP:</p>
+    <ol>
+      <li>identification of resources (via Request IRI and the IRI of a graph in a Graph Store)</li>
+      <li>manipulation of resources through representations (via the use of an RDF graph representation as input to RDF graph management actions)</li>
+      <li>self-describing messages (via the inherent characteristics of RDF as the framework for a <a href="http://www.w3.org/2001/tag/doc/selfDescribingDocuments.html">Self-Describing Semantic Web</a>)</li>
+    </ol>
+    <p>This specification relies on an intuitive interpretation of the underlying HTTP protocol semantics to determine interaction with a Graph Store. Where the meaning of the operations are described, a SPARQL Update equivalent syntax is shown for clarity.</p>
+
+    <p>When this document uses the words <em>MUST</em>, <em>MUST NOT</em>, <em>SHOULD</em>, <em>SHOULD NOT</em>, 
+    <em>MAY</em> and <em>RECOMMENDED</em>, and the words appear as emphasized text, they must be interpreted as described in 
+    <a href="http://www.faqs.org/rfcs/rfc2119.html">RFC 2119</a> <a href="#rfc2119">[RFC2119]</a>.</p>
+
+    <!-- THIS STUFF IS NOW IN SOTD     
+    <p>This document is closely related to the following specifications:</p>
+    <ul>
+    	<li><a href="http://www.w3.org/TR/sparql11-overview/">SPARQL 1.1 Overview</a></li>
+    	<li><a href="http://www.w3.org/TR/sparql11-query/">SPARQL 1.1 Query</a></li>
+    	<li><a href="http://www.w3.org/TR/sparql11-update/">SPARQL 1.1 Update</a></li>
+    	<li><a href="http://www.w3.org/TR/sparql11-protocol/">SPARQL 1.1 Protocol for RDF</a></li>
+    	<li>SPARQL 1.1 Graph Store HTTP Protocol (this document)</li>
+    	<li><a href="http://www.w3.org/TR/sparql11-entailment/">SPARQL 1.1 Entailment Regimes</a></li>
+    	<li><a href="http://www.w3.org/TR/sparql11-service-description/">SPARQL 1.1 Service Description</a></li>
+    	<li><a href="http://www.w3.org/TR/sparql11-federated-query/">SPARQL 1.1 Federated Query</a></li>
+    	<li><a href="http://www.w3.org/2009/sparql/docs/tests/">SPARQL 1.1 Conformance Tests</a></li>
+	<li><a href="http://www.w3.org/TR/sparql11-results-json/">SPARQL 1.1 Query Results JSON Format</a></li>
+	<li><a href="http://www.w3.org/TR/sparql11-results-csv-tsv/">SPARQL 1.1 Query Results CSV and TSV Formats</a></li>
+    	<li><a href= "http://www.w3.org/TR/rdf-sparql-XMLres/">SPARQL Query Results XML Format</a></li>
+      </ul>    
+
+    -->
+
+    <h2>2 <a id="terminology" name="introduction">Terminology</a></h2>
+    
+    <p>
+    The following terminology is used in this document:
+    </p>
+    
+    <ul>
+        <!--li><em>Architectural style</em> - An architectural design perspective that limits a system in order to induce harmonous behavior</li-->
+        <!--li><em>Representation State Transfer architectural style (REST) <a href="#REST">[REST]</a></em> - An architectural style for distributed hypermedia systems.</li-->
+        <li><em>URI</em> - A Uniform Resource Identifier as defined in <a href="#rfc3986">[RFC3986]</a>. </li>
+        <li><em>IRI</em> - An Internationalized Resource Identifier as defined in <a href="#rfc3987">[RFC3987]</a>. Before an IRI found in a document is used by HTTP, the IRI is first converted to a URI. </li>        
+        <li>
+            <em>Resource</em> - Per <a href="#RDF-MT">[RDF-MT]</a>, the referents of RDF URI references are called "resources", but no assumptions are made about their nature.  For the sake of this protocol, the <a href="#rfc2616">[RFC2616]</a> definition is used (unless the term "RDF Resource" is used explicitly): a network-accessible data object or service identified by an IRI.
+        </li>
+        <li><em>Resolvable URI</em> - A URI whose resource potentially has one or more representations available via invoking HTTP <strong>GET</strong> on the URI as defined in <a href="#WEBARCH">[WEBARCH]</a>. </li>
+        <!--li><em>Serialize (verb.)</em> - When used in a sentence where the subject is an RDF document and the object is an RDF graph, this is understood to mean that the result of parsing the document is the graph.</li-->
+        <li><em>RDF document</em> - A serialization of an RDF Graph into a concrete syntax, typically an RDF/XML or Turtle document.</li>
+        <li><em>Graph Store</em> - A mutable repository of RDF graphs managed by one or more services <a href="#SPARQL-UPDATE">[SPARQL-UPDATE]</a>.</li>        
+        <li><em>Graph IRI</em> - An IRI involved in this protocol that is specified as a request URI or embedded as the query component of a request URI and corresponds to the IRI of a graph in the underlying Graph Store.   </li>               
+        <li><em>RDF graph content</em> - An information resource identified by the graph IRI of a named graph and managed by a server that implements this protocol or
+        identified by an indirect operation or the default graph. See <a href="#WEBARCH">[WEBARCH]</a> for further discussion on Resources.</li>
+        <!--li><em>Semantic</em> (adj.) , semantics (n.). Concerned with the specification of meanings. Often contrasted with syntactic to emphasize the distinction between expressions and what they denote <a href="#RDF-MT">[RDF-MT]</a>.</li-->
+        <li><em>RDF payload</em> - The representation <a href="#rfc2616">[RFC2616]</a> comprised of an RDF document that is sometimes included with the body of invocations of the operations defined here.</li>
+    </ul>
+    
+    <p>Servers implementing this protocol are HTTP/1.1 servers <a href="#rfc2616">[RFC2616]</a> and MUST interpret request messages as graph management operations on an underlying Graph Store.  The subject of the operation is indicated by the request IRI.</p>
+    
+    <h2>3 <a id="protocol-model" name="prot-model">Protocol Model</a></h2>
+    
+    <p>This protocol specifies the semantics of HTTP operations for managing a Graph Store.  In particular, it provides operations
+    for removing, creating, and replacing RDF graph content as well as for adding RDF statements to existing RDF graph content.  The interface defined here uses IRIs to direct native HTTP operations to an implementation of this protocol which responds by making appropriate
+    modifications to the underlying Graph Store.  A compliant implementation of this specification MUST accept HTTP 
+    requests directed at its Graph Store and handle them as specified by this protocol with the exception of security considerations such as those discussed in section 7 and others (Denial-of-Service attacks, etc.)</p>
+       
+   <h2>4 <a id="graph-identification" name="graph-identification">Graph Identification</a></h2>
+   
+   <p>A client using this protocol to manipulate a graph store needs an IRI for each graph.  Within the graph store, each graph (except the default graph) is associated with a graph IRI. In some cases ("Direct Graph Identification"), the graph IRIs can be directly used as the request URI of a graph management operation. In other cases ("Indirect Graph Identification"), the Graph Store IRI is used to route the operations onto RDF graph content.</p>
+   
+   <h3>4.1 <a id="direct-graph-identification" name="direct-graph-identification">Direct Graph Identification</a></h3>
+   
+   <p>We recall from <a href="#SPARQL">[SPARQL]</a> that IRIs for RDF graphs in SPARQL queries identify a resource, and the resource can have a
+ representation that serializes that graph (or, more precisely: by an RDF document of the graph)</p>
+   
+   <p>Consider the following HTTP request to a server that implements this protocol:</p>
+   
+   <pre class="defn">
+   GET /rdf-graphs/employees HTTP/1.1
+   Host: example.com
+   Accept: text/turtle; charset=utf-8
+   </pre>
+   
+   <p>Per <a href="#rfc2616">[RFC2616]</a>, the most common usage of a Request-URI is to identify a resource on an origin server or gateway.  In our example, 
+   the corresponding request, <strong>http://example.com/rdf-graphs/employees</strong> is meant to identify RDF triples on the example.com server that describe
+   employees.  In addition, the 
+   request specifies the <strong>GET</strong> method, which means that a representation of these triples should be returned.  In this case,
+   the preferred representation format is <em>text/turtle</em></p>
+   
+   <p>In this way, the server would route operations onto a <em>named graph</em> in a Graph Store via its Graph IRI.  However, in using an IRI in this way,
+    we are not <em>directly</em> identifying an RDF graph but rather the RDF graph content that is represented by an RDF document, which is a serialization of that graph.
+    Intuitively, the set of interpretations that satisfy <a href="#RDF-MT">[RDF-MT]</a> the RDF graph the RDF document <em>serializes</em> can be thought of as this RDF graph content.</p>
+   
+   <p>The diagram illustrates this distinction.  This diagram illustrates the basic kind of operation where the request URI
+   identifies the RDF graph content being manipulated over the protocol.  Requests to an implementation of this protocol receive HTTP requests using one of the HTTP methods that is directed at some RDF graph content.  Above the arrows indicating the request is the relevant HTTP methods and below is any message body content or additional headers that accompany the request.  At the head of the arrows leaving RDF graph content is the message body for the corresponding response.</p>
+   
+   <p><img src="ProtocolModel.jpg" alt="Protocol model diagram" /><br />
+       <b>Figure 1</b>: A diagram of the protocol model for direct graph references.</p>
+   
+   <h3>4.2 <a id="indirect-graph-identification" name="indirect-graph-identification">Indirect Graph Identification</a></h3>
+   
+   <p>Despite the convenience of using the request URI to identify RDF graph content for manipulation, it is often the case that:</p>
+   <ul>
+     <li>the naming authority associated with the IRI of an RDF graph in a Graph Store is not the same as the server managing the identified RDF content</li>
+     <li>the naming authority is not available</li>
+     <li>the IRI is not <a href="http://www.w3.org/TR/webarch/#uri-dereference">dereferenceable</a> (i.e., when dereferenced, it does not produce a RDF graph representation)</li>
+   </ul> 
+   <p>As discussed in <a href="#rfc3986">[RFC3986]</a>, query components are often used to carry identifying information in the form of key / value pairs where the value is another IRI.  This protocol leverages this convention and 
+   provides a specific interface whereby a graph IRI can be embedded within the query component of the request IRI:</p>
+      
+   <pre class="defn">
+   GET /rdf-graph-store?<strong>graph</strong>=<em>http%3A//www.example.com/other/graph</em> HTTP/1.1
+   Host: example.com
+   Accept: text/turtle; charset=utf-8
+   </pre>   
+                
+   <p>In the example above, the encoded graph IRI (<code>http://www.example.com/other/graph</code>) is percent-encoded <a href="#rfc3986">[RFC3986]</a> and <em>indirectly</em> 
+   identifies RDF triples to manipulate.  Any server that implements this protocol and receives a request IRI 
+   in this form MUST perform the indicated operation on the RDF graph content identified by the IRI embedded in the query component where the IRI is the 
+   result of percent-decoding the value associated with the <em>graph</em> key.  The query string IRI MUST be an absolute IRI and the server MUST
+   respond with a <code>400 Bad Request</code> if it is not.  The diagram below illustrates this.</p>
+   
+   <p><img src="ProtocolModelIndirect.jpg" alt="Protocol model diagram for indirect manipulation" /><br />
+       <b>Figure 2</b>: A diagram of the protocol model for indirect graph references (uses the same legend as the previous diagramT).</p>
+       
+   <p> As indicated in <a href="http://www.apps.ietf.org/rfc/rfc3986.html#sec-3.3">section 3.3</a> of <a href="#rfc3986">[RFC3986]</a>, the path component (of an IRI) contains data, usually organized in hierarchical form, that, along with data in the 
+       non-hierarchical query component, serves to identify a resource within the scope of the IRI's scheme and naming authority.  As a result, the full request 
+       IRI identifies the same RDF graph content as does the IRI embedded in the query component.</p>
+
+       <p>A future Working Group may provide additional interfaces for indirectly identifying RDF graph content as well as mechanisms for their discovery.</p>
+    
+   <p>In a similar manner, a query component comprised of the string <em>default</em> can be used to indicate that the operation indirectly identifies 
+       the default graph in the Graph Store.  In this way, the example above can be modified to a request for an RDF/XML document that serializes
+   the default graph in the Graph Store:</p>    
+   
+   <pre class="defn">
+   GET /rdf-graph-store?<strong>default</strong> HTTP/1.1
+   Host: example.com
+   Accept: text/turtle; charset=utf-8
+   </pre>      
+    
+   <p>In a request such as:</p>      
+       
+   <pre class="defn">
+   GET /rdf-graph-store?<strong>graph</strong>=<em>http%3A//www.example.com/other/graph</em> HTTP/1.1
+   Host: example.com
+   Accept: text/turtle; charset=utf-8
+   </pre>   
+       
+   <p><code>http://www.example.com/rdf-graph-store</code> identifies the Graph Store managed by the HTTP service.  In order to dispatch requests
+    to manage named or default graphs by embedding them in the query component of the Graph Store URL, the URL will need to be known a priori.
+    <!--As will be discussed later in this document, HTTP <strong>OPTIONS</strong> requests can be sent to the Graph Store and the response
+     to such a request could be an RDF graph that leverages service description vocabulary to appropriately describe extensions to HTTP method behavior, URI routing
+     templates, etc., in addition to meta-data about the underlying Graph Store.--></p>
+       
+   <h2>5 <a id="graph-management" name="graph-management">Graph Management Operations</a></h2>
+   
+   <p>This section describes the use of the HTTP verbs to determine the operations performed on RDF graph content.  In places where an equivalent SPARQL Update operation is given, 
+   &lt;graph_uri> is understood to be either the request IRI or the IRI indirectly specified via the query component as described above.  Similarly, in the case of
+   an operation that manages the default graph, the SPARQL Update operation will not include any mention of a graph.</p>
+   
+   <p>If the <em>Accept</em> header is not provided with a GET request, the server MUST return one of RDF XML, Turtle, or N-Triples.  For operations involving an RDF payload (PUT and POST), the server MUST parse the RDF payload according to media type specified in the <em>Content-Type</em> header if it is provided in the request.  If the header is not provided, the implementation has a routine that can guess the type by the content of the resource or via the extension of the file it was loaded from, and such a routine reported that the resource was clearly some other document format and not RDF/XML, then the implementation MAY attempt to parse the document using this format.  Otherwise, if this header is not provided, the server SHOULD attempt to parse the RDF payload as RDF/XML.</p>
+   
+   <p>This protocol also supports the proper handling of operations involving "multipart/form-data" <a href="#html4">[html4]</a>.  In particular,
+   section <a href="http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4.2">17.13.4 Form content types</a> discusses how content indicated
+   with the <em>multipart/form-data</em> content type are messages containing a series of parts.  This protocol supports the submission of multiple
+   RDF documents in operations involving some indicated RDF graph content via this mechanism, where each document is uploaded using the standard web form file upload widget. The specifics of this mechanism is discussed in section <a href="#http-post">5.5</a> (HTTP POST).</p>
+   
+   <!--p>If the contents of a file are submitted with a form, the file input should be identified by the appropriate content type (e.g., "application/octet-stream"). If multiple files are to be returned as the result of a single form entry, they should be returned as "multipart/mixed" embedded within the "multipart/form-data".</p>
+
+   <p>The user agent should attempt to supply a file name for each submitted file. The file name may be specified with the "filename" parameter of the 'Content-Disposition: form-data' header, or, in the case of multiple files, in a 'Content-Disposition: file' header of the subpart.</p-->
+   
+   <p>Developers of implementations of this protocol should refer to <a href="#rfc2616">[RFC2616]</a> for additional details of appropriate behavior beyond those specified here.  Section 
+   5 only serves to define the behavior specific to the manipulation of RDF graph content.  For example, conditional requests that make use of headers such as
+    If-Modified-Since that are intended to reduce unnecessary network usage should be handled appropriately by implementations of this protocol per <a href="#rfc2616">[RFC2616]</a>.</p>
+    
+    <h3>5.1 <a id="status-codes" name="http-put">Status Codes</a></h3>
+
+<p>Implementations MUST use the response status codes defined in HTTP <a href="#rfc2616">[RFC2616]</a> to indicate the success or failure of an operation.  Developers should consult the HTTP specification for detailed definitions of each status code.  For example, in response to operations involving an RDF payload, if 
+the attempt to parse the RDF payload according to the provided <em>Content-Type</em> fails then the server MUST respond with a <code>400 Bad Request</code>.</p>
+
+    <p>A request using an unsupported HTTP verb in 
+        conjunction with a malformed or unsupported request syntax MUST receive a response with a <code>405 Method Not Allowed</code>.  If the RDF graph content identified in the request does not exist in the server, 
+        and the operation requires that it does, a <code>404 Not Found</code> response code MUST be provided in the response.</p>
+        
+    <p>If a clients issues a POST or PUT with a content type that is not understood by the graph store, the implementation MUST respond with <code>415 Unsupported Media Type</code>.  The use of 401 and 403 is covered later in the section regarding security.</p>
+    
+    <h3>5.2 <a id="http-get" name="http-get">HTTP GET</a></h3>
+
+    <p>A request that uses the HTTP <strong>GET</strong> method MUST retrieve an RDF payload that is a serialization of the named graph paired with the graph IRI in the Graph Store.  Developers of implementations of this protocol should refer to <a href="#rfc2616">[RFC2616]</a> (section 13) for details on recommended cache-control headers and usage.</p>
+    
+    <p>The following two operations are considered to be equivalent</p>
+    
+    <pre class="defn">
+    GET /rdf-graph-store?graph=..graph_uri.. HTTP/1.1
+    Host: example.com
+    Accept: text/turtle; charset=utf-8
+    </pre>             
+    
+    <pre class="defn">
+    CONSTRUCT { ?s ?p ?o } WHERE { GRAPH &lt;graph_uri> { ?s ?p ?o } }
+    </pre>
+        
+    <p>Where the request involves the <em>default</em> query component, the following two operations are equivalent</p> 
+
+    <pre class="defn">
+    GET /rdf-graph-store?default HTTP/1.1
+    Host: example.com
+    Accept: text/turtle; charset=utf-8
+    </pre>             
+    
+    <pre class="defn">
+    CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o } 
+    </pre>    
+    
+    <p>The response to such request SHOULD be made cacheable wherever possible and in any of the preferred representation formats specified in the Accept request-header field.  In the event that the specified representation format is not supported, 
+    a <code>406 Not Acceptable</code> response code SHOULD be returned.</p>
+    
+    <h4>5.2.1 <a id="httpRange-14">Ambiguity Regarding the Range of HTTP GET (Informative)</a></h4>
+    
+    <p>Historically, there has been some <a href="http://www.w3.org/2001/tag/issues.html#httpRange-14">ambiguity</a> regarding the nature of what
+        is returned from dereferencing an IRI.  When an HTTP <strong>GET</strong> is invoked with a request IRI, what is returned and what is its relation to the resource
+        identified by the request IRI?  In resolving this ambiguity, the  W3C Technical Architecture Group specified a <a href="http://lists.w3.org/Archives/Public/www-tag/2005Jun/0039">simple rule</a>
+        that determines the nature of the resource based on the response code returned.  In this protocol, HTTP <strong>GET</strong> requests
+        are used to retrieve a representation of the RDF graph content identified (directly or indirectly) by the request IRI.  Graph IRIs identify 
+        RDF graph content (an information resource) and so such a request should receive a response with a <code>200 (Ok)</code> which is consistent
+        with these rules, the first of which states:
+        
+    <span>If an "http" resource responds to a <strong>GET</strong> request with a <code>2xx</code> response, then the resource identified by that IRI is an information resource.</span>
+    </p>
+    <p>Information resources are resources with essential characteristics that can all be conveyed in a message <a href="#WEBARCH">[WEBARCH]</a>.  In this case,
+        the characteristics of RDF graph content can be conveyed as RDF payload which serializes the named graph paired with the
+        graph IRI in the underlying Graph Store.  This protocol provides a means
+        for requesting the representation without the need for indirection at the protocol level even if 
+        the naming authority associated with the IRI of the named RDF graph in the Graph Store is not the same as the 
+        server managing the identified RDF graph content.</p>    
+    
+   
+   <h3>5.3 <a id="http-put" name="http-put">HTTP PUT</a></h3>
+   
+   <p>A request that uses the HTTP <strong>PUT</strong> method MUST store the enclosed RDF payload as RDF graph content.  In the examples below, the initial HTTP
+   request MUST be understood to have the same effect as the sequence of SPARQL Update operations that follow</p>
+   
+      <pre class="defn">
+    PUT /rdf-graph-store?graph=..graph_uri.. HTTP/1.1
+    Host: example.com
+    Content-Type: text/turtle
+    
+    ... RDF payload ...    
+    </pre>         
+   
+   <pre class="defn">
+    DROP SILENT GRAPH &lt;graph_uri>;
+    INSERT DATA { GRAPH &lt;graph_uri> { .. RDF payload .. } }   
+   </pre>
+   
+   <p>In the case where the default graph is targeted (via <em>default</em> query component) for management, the following operations are equivalent</p>
+
+      <pre class="defn">
+    PUT /rdf-graph-store?default HTTP/1.1
+    Host: example.com
+    Content-Type: text/turtle
+    
+    ... RDF payload ...    
+    </pre>         
+
+
+   <pre class="defn">
+    DROP SILENT DEFAULT;
+    INSERT DATA { .. RDF payload .. } 
+   </pre>
+      
+   <p>Either the request or the encoded IRI (embedded in the query component) identifies the RDF payload enclosed with the request as RDF graph content.
+     The server MUST NOT attempt to apply the request to some other resource. If the identified RDF graph content already exists, the enclosed entity MUST be considered 
+   as a modified version of the one residing on the origin server. If the identified RDF graph content does not exist and that IRI is capable of being defined as new RDF graph content by the requesting user 
+   agent, the origin server MUST create the RDF graph content with that IRI in the underlying Graph Store.  <tt>DROP</tt> is needed to remove any previous 
+   RDF graph content.  Developers should refer to <a href="#SPARQL-UPDATE">[SPARQL-UPDATE]</a> for the specifics of how to handle empty graphs.  For implementations that support empty graphs, if the request body is empty and there is sufficient authorization to create a new named graph using the IRI used in the request IRI, then an empty graph would need to be created.  Note, this option is only relevant for situations where an empty body is appropriate for the indicated content-type.  Otherwise, as described in section 5.1, a <code>400 Bad Request</code> SHOULD be returned. </p>
+   
+   <p>If new RDF graph content is created, the origin server MUST inform the user agent via the <code>201 Created</code> response. If existing RDF graph content 
+   is modified, either the <code>200 OK</code> or <code>204 No Content</code> response codes MUST be sent to indicate successful completion of the request. 
+   If the resource could not be created or modified with the request IRI (perhaps due to security considerations), an appropriate error response SHOULD be given that reflects 
+   the nature of the problem.</p>
+   
+   <h3>5.4 <a id="http-delete" name="http-delete">HTTP DELETE</a></h3>
+   
+   <p>A request that uses the HTTP <strong>DELETE</strong> method SHOULD delete the RDF graph content identified by either the request or encoded IRI. This method MAY be overridden
+    by human intervention (or other means) on the origin server.  If there is no such RDF graph content in the Graph Store, the server MUST respond with a 
+    <code>404 Not Found</code> response code.  An example of when the method may be overridden is in a content management system with optimistic concurrency controls.</p>
+    
+    <pre class="defn">
+    DELETE /rdf-graph-store?graph=..graph_uri.. HTTP/1.1
+    Host: example.com
+    </pre>         
+        
+    <p>Is equivalent to:</p>
+    <pre class="defn">
+    DROP GRAPH &lt;graph_uri> 
+    </pre>
+    
+    <p>in the case where a named graph is targeted for management.  Otherwise, the following</p> 
+
+    <pre class="defn">
+    DELETE /rdf-graph-store?default HTTP/1.1
+    Host: example.com
+    </pre>         
+    
+    <p>is equivalent to</p>
+    
+    <pre class="defn">
+    DROP DEFAULT
+    </pre>
+        
+    <p> A response code of <code>200 OK</code> or <code>204 No Content</code> MUST be given in the response if the operation succeeded or <code>202 (Accepted)</code> if the action has not
+   yet been enacted.  However, the server SHOULD NOT indicate success unless, at the time the response is given, it intends to delete 
+   the RDF graph content or move it to an inaccessible location.  In the event the operation is overridden, a response code of <code>403 Forbidden</code>
+   should be returned.</p>
+   
+   <h3>5.5 <a id="http-post" name="http-post">HTTP POST</a></h3>
+   
+   <p>A request that uses the HTTP <strong>POST</strong> method and a request IRI that identifies RDF graph content MUST be understood as a request that the origin server perform an RDF merge of the enclosed 
+   RDF payload enclosed into the RDF graph content identified by the request or encoded IRI.  The following two operations are considered to have the same effect</p>
+
+    <pre class="defn">
+    POST /rdf-graph-store?graph=..graph_uri.. HTTP/1.1
+    Host: example.com
+    Content-Type: text/turtle
+    
+    ... RDF payload ...    
+    </pre>         
+
+    <pre class="defn">
+    INSERT DATA { GRAPH &lt;graph_uri> { .. RDF payload .. } }
+    </pre>
+
+    <p>In the case where a default graph is targeted for management, the following are equivalent</p> 
+    
+    <pre class="defn">
+    POST /rdf-graph-store?default HTTP/1.1
+    Host: example.com
+    Content-Type: text/turtle
+    
+    ... RDF payload ...    
+    </pre>         
+        
+    <pre class="defn">
+    INSERT DATA { .. RDF payload .. } 
+    </pre>
+    
+    <p>As mentioned earlier, "multipart/form-data" can be dispatched to implementations of this protocol.  When used with POST this operation MUST be understood as a request that the origin server perform an RDF merge of the graphs - that the documents submitted with the multipart form are a serialization of - into the RDF graph content identified by the request or encoded IRI.  In such a case, if the <em>Content-Type</em> is not provided, implementations MAY attempt to determine it from the file's extension rather than respond with <code>400 Bad Request</code>.</p> 
+      
+    <p>If the request IRI identifies the underlying Graph Store, 
+    the origin server MUST create a new RDF graph comprised of the statements in the RDF payload and return a designated graph IRI associated with the new graph.
+    The new graph IRI should be specified in the Location HTTP header along with a <code>201 Created</code> code and be different from the request IRI.  </p>
+    
+    <!--p>Then the following are equivalent:</p>
+    
+    <pre class="defn">
+    POST /rdf-graphs HTTP/1.1
+    Host: example.com
+    Content-Type: application/rdf+xml
+    
+    ... RDF payload ...    
+    </pre>         
+    
+    <pre class="defn">
+    HTTP/1.1 201 Created
+    Date: .. some date ..
+    Server: ... etc ...
+    Last-Modified: .. some date ..
+    Location: http://example.com/rdf-graphs/newGraph1
+    </pre>
+        
+    <pre class="defn">
+    CREATE GRAPH &lt;new_uri>
+    INSERT DATA { GRAPH &lt;new_uri> {.. RDF payload .. } } 
+    </pre>
+        
+    <p>Where &lt;new_uri> is a new IRI that is designated by the service, is different from <em>http://www.example.com/rdf-graphs</em>, does not correspond to
+    an existing graph IRI in the store, and is returned as the value of the Location HTTP header along with a <code>201 Created</code> code, if the RDF payload is comprised of a single RDF document.</p-->
+        
+    <p>This scenario is useful for situations where the requesting agent either does not want to specify the graph IRI of a new graph to create 
+    (via the PUT method) or does not have the appropriate authorization to do so.  If the graph IRI does not identify either a Graph Store or RDF graph content, the origin server should respond with a <code>404 Not Found</code>.</p>
+
+    <p>In either case, if the request body is empty, the implementation SHOULD respond with <code>204 No Content</code>.</p>
+    
+    <p>This protocol is a companion to the use of both SPARQL Update and SPARQL Query over the SPARQL protocol via HTTP POST.  Both protocols specify <em>different</em> operations performed via the HTTP POST method.</p>
+
+    <h3>5.6 <a id="http-head" name="http-get">HTTP HEAD</a></h3>
+
+    <p>When used in this protocol, the HTTP <strong>HEAD</strong> method is identical to <strong>GET</strong> except that the server MUST NOT return a message-body in the response.  It is meant to be used for 
+    testing dereferenceable IRIs for validity, accessibility, and recent modification.</p>
+    
+    <p>The response to such a request from a server that manages a Graph Store 
+    MAY be cacheable.  If the new field values indicate that the cached RDF graph content differs from the current entity (as would be indicated by a change in Content-Length, Content-MD5, ETag or Last-Modified), then the cache MUST treat the cache entry as stale.  As mentioned in the beginning of the previous section, developers should refer to <a href="#rfc2616">[RFC2616]</a> for the specifics of this.  </p>
+    
+    <h3>5.7 <a id="http-patch">HTTP PATCH</a> (Informative)</h3>
+    <p>
+        The IETF specified <a href="http://tools.ietf.org/html/rfc5789">Patch Method for HTTP</a> can be used to request that a set of changes described 
+        in the request entity be applied to the named graph associated with the graph IRI of the RDF graph content resource identified by the request IRI. </p>
+    <p>SPARQL 1.1 Update can be used as a patch document.  In particular, SPARQL 1.1 Update requests that manage
+        the graph associated with the RDF graph content identified (directly or indirectly) in the request can be used
+        as the RDF payload of a HTTP PATCH request to modify it.  If a SPARQL 1.1 Update request is used as the RDF payload for a PATCH request that
+        makes changes to more than one graph or the graph it modifies is not the one indicated, it would be prudent for the server
+        to respond with a <code>422 Unprocessable Entity</code> status.  <!--Such a request would be counter to the intuition that "REST uses a 
+        resource identifier to identify the particular resource involved in an interaction between components." <a href="#REST">[REST]</a--></p>
+    <p>Intuitively, the difference between the PUT and PATCH requests is reflected in the
+           way the server processes the enclosed entity to modify the RDF graph content
+           given by the request IRI.  In a PUT request, the enclosed entity
+           is considered to be a modified version of the RDF graph content stored on the
+           origin server, and the client is requesting that the stored version
+           be replaced.  With PATCH, however, the enclosed entity contains a set
+           of instructions describing how the RDF graph content residing on the
+           origin server should be modified to produce a new version.  
+    </p>
+    <!--h2>6 <a id="conditions" name="conditions">Conditional Requests</a></h2>
+    <p>The semantics of an invocation of any of the operations in this protocol is conditioned on an additional set of criteria if the request message includes an 
+    If-Modified-Since, If-Unmodified-Since, If-Match, If-None-Match, or If-Range header field that indicate this criteria. Such an invocation SHOULD be used to 
+    request that the operation be performed only under the circumstances described by the conditional header field(s).  For example, a conditional <strong>GET</strong> requests 
+    that the graph representation be transferred only under the circumstances described by the conditional header field(s) (see <a href="#rfc2616">[RFC2616]</a> for more information on this) 
+    and is intended to reduce unnecessary network usage by allowing cached entities to be refreshed without requiring multiple requests or transferring data already 
+    held by the client.</p-->
+    <!--h3>5.8 <a id="http-option">Protocol Service Discovery (Informative)</a></h3>
+    <p>The <strong>OPTIONS</strong> method can be used in a request whose IRI identifies the underlying a Graph Store being managed by an implementation of this protocol in order to retrieve information about  extensions to HTTP method behavior, URI routing templates, and other such extension mechanisms in addition to meta data about the topology of the underlying Graph Store.    
+        Per section 2 of <a href="http://www.w3.org/TR/sparql11-service-description/">SPARQL 1.1 Service Descriptions</a>, a service description document can be returned from such a request, especially if the implementation also supports the SPARQL Protocol for RDF.  A service implementing this protocol can share the same address of a SPARQL endpoint.  This can aid a web agent in the client-side creation, and use of request IRIs for the discovery and augmentation of an underlying Graph store by dispatching RDF documents to its content via HTTP operations.</p--> 
+    <!-- <p>Service description RDF statements can be made about the <a id="dataset-protocol-descriptions">Graph Store</a> being managed by an implementation of this
+        protocol (as in the example <a href="#graph-store-description-example">below</a>).  These statements can aid a web agent in discovering and augmenting the
+        underlying Graph store (<code>http://www.example.com/rdf-graphs</code>) by dispatching RDF documents to its content via HTTP POST operations. They also aid in the client-side creation
+        and use of request URIs for subsequent HTTP operations on RDF graph content that must be indirectly identified in the request (for e.g: <code>http://www.example.com/rdf-graph-store?graph=..</code>)
+        as well as the default graph.</p>
+    <p>In such a use of Service Description RDF graphs to
+    describe the components of this protocol, the protocol listener itself (<code>http://www.example.com/rdf-graphs/service</code>) can be stated as being an instance of the <code>sd:Service</code> class
+        wherein the graph store being managed is the corresponding default dataset.  Note, the graph store could more appropriately be stated as an instance of a <code>sd:RESTDataset</code> class.
+    As required by the SPARQL 1.1 Service Description document, the protocol listener would also need to implement the SPARQL Protocol for RDF.</p>
+    
+    Within a
+    service description document for an implementation of this protocol, the object of an sd:defaultDataset statement is understood to be the identifier of the Graph Store</p>
+    
+    <p>So, given the following request and response:</p>
+    
+    <pre class="defn">
+    GET /rdf-graphs/service HTTP/1.1
+    Host: example.com
+    Accept: text/turtle; charset=utf-8
+    </pre>         
+    
+    <pre class="defn">
+    <a id="graph-store-description-example"/>
+    HTTP/1.1 200 OK
+    Date: .. some date ..
+    Server: ... etc ...
+    Last-Modified: .. some date ..
+    ETag: ".. etc .."
+    Content-Length: .. length of service description document ..
+    Connection: close
+    Content-Type: text/turtle
+        
+    @prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+    @prefix sd: &lt;http://www.w3.org/ns/sparql-service-description#> .
+    
+    &lt;> a sd:Service;
+       sd:defaultDataset  &lt;http://www.example.com/rdf-graphs> .
+    &lt;http://www.example.com/rdf-graphs> a sd:Dataset 
+    ..snip..    
+    </pre> -->
+    
+    <h2>6 <a id="security" name="security">Security Considerations</a></h2>
+    <p>As with any protocol that is implemented as a layer above HTTP, implementations SHOULD take advantage of the many security-related facilities associated with it and are not required to carry out requested graph management operations that may be in contradistinction to a particular security policy in place.  For example, when faced with an unauthenticated request to replace system critical RDF statements in a graph through the PUT method, applications may consider responding with the 
+    <code>401 status code (Unauthorized)</code>, indicating that the appropriate authorization is required.  In cases where authentication is provided fails to meet the requirements of a particular access control policy, the 
+    <code>403 status code (Forbidden)</code> can be sent back to the client to indicate this failure to meet the access control policy.</p>
+        
+    <!--h2>8 <a id="conformance" name="conformance">Conformance</a></h2>
+    
+    <p>@@Additional input is needed regarding whether specific language (beyond describing the expected behavior) is needed
+    to determine levels of conformance</p-->
+ 
+ <h2>7 <a id="sec-bibliography">References</a></h2>
+
+<h3>7.1 
+<a id="section-Normative-References" name="section-Normative-References"></a>Normative References
+</h3>
+
+<dl class="bib">
+<dt id="rfc2119">RFC2119</dt>
+<dd>
+  <cite><a href="http://www.ietf.org/rfc/rfc2119.txt">RFC 2119: Key words for use in RFCs to Indicate Requirement Levels</a>,
+  Scott Bradner, 1997.  (See http://www.ietf.org/rfc/rfc2119.txt) </cite>
+</dd>
+
+<dt id="html4">HTML 4.01</dt>
+<dd>
+  <cite><a href="http://www.w3.org/TR/html4/">HTML 4.01 Specification</a>,
+  D. Raggett, A. Le Hors, and I. Jacobs,  1999.  (See http://www.w3.org/TR/html4/) </cite>
+</dd>
+
+<dt id="rfc3986">RFC3986</dt>
+<dd><cite><a href="http://www.apps.ietf.org/rfc/rfc3986.html">Uniform Resource Identifier (URI): Generic Syntax</a></cite>, Berners-Lee, Fielding, Masinter, January 2005.
+</dd>
+
+<dt id="rfc2616">RFC2616</dt>
+<dd><cite><a href="http://www.ietf.org/rfc/rfc2616.txt">Hypertext Transfer Protocol - HTTP/1.1</a></cite>. J. Gettys, J. Mogul, H. Frystyk, L. Masinter, P. Leach, T. Berners-Lee,
+June 1999. Available at http://www.ietf.org/rfc/rfc2616.txt.
+</dd>
+
+
+<dt>
+<a name="WEBARCH" id="WEBARCH">WEBARCH</a>
+</dt>
+<dd>
+<cite>
+<a href="http://www.w3.org/TR/2004/REC-webarch-20041215/">Architecture of the World Wide Web, Volume One</a>
+</cite>, N. Walsh, I. Jacobs,  Editors, W3C Recommendation, 15 December 2004, http://www.w3.org/TR/2004/REC-webarch-20041215/ . <a href="http://www.w3.org/TR/webarch/">Latest version</a> available at http://www.w3.org/TR/webarch/ .</dd>
+
+<dt id="rfc3987">RFC3987</dt>
+<dd><cite><a href="http://www.ietf.org/rfc/rfc3987.txt">Internationalized Resource Identifiers (IRIs)</a></cite>, Duerst, Suignard, January 2005.</dd>
+
+<dt>
+            <a name="SPARQL-UPDATE" id="SPARQL-UPDATE">SPARQL-UPDATE</a>
+
+         </dt>
+         <dd><cite><a href="http://www.w3.org/TR/2013/REC-sparql11-update-20130321">SPARQL 1.1 Update</a></cite>, P. Gearon, A. Passant, A. Polleres, Editors, W3C Recommendation, 21 March 2013, http://www.w3.org/TR/2013/REC-sparql11-update-20130321. <a href="http://www.w3.org/TR/sparql11-update/" title="Latest version of SPARQL 1.1 Update">Latest version</a> available at http://www.w3.org/TR/sparql11-update.</dd>
+</dl>
+
+<h3>7.2 
+<a id="section-Informative-References" name="section-informative-references"></a>Informative References
+</h3>
+
+<dl>
+<dt>
+            <a name="RDF-MT" id="RDF-MT">RDF-MT</a>
+
+         </dt>
+         <dd>
+            <cite>
+               <a href="http://www.w3.org/TR/2004/REC-rdf-mt-20040210/">RDF Semantics</a>
+            </cite>, P. Hayes,  Editor, W3C Recommendation, 10 February 2004, http://www.w3.org/TR/2004/REC-rdf-mt-20040210/ . <a href="http://www.w3.org/TR/rdf-mt/" title="Latest version of RDF Semantics">Latest version</a> available at http://www.w3.org/TR/rdf-mt/ .</dd>
+<!--dt>
+            <a name="REST" id="REST">REST</a>
+
+         </dt>
+         <dd>
+            <cite>
+               <a href="http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm">Representational State Transfer (REST)</a>
+            </cite>, R. Fielding, Ph.D. dissertation, 2000, <a href="http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm" title="Latest version of RDF Semantics">Latest version</a> available at http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm .</dd-->
+<dt>
+            <a name="SPARQL" id="SPARQL">SPARQL</a>
+
+         </dt>
+         <dd><cite><a href="http://www.w3.org/TR/2013/REC-sparql11-query-20130321">SPARQL 1.1 Query Language</a></cite>, S. Harris, A. Seaborne, Editors, W3C Recommendation, 21 March 2013, http://www.w3.org/TR/2013/REC-sparql11-query-20130321. <a href="http://www.w3.org/TR/sparql11-query/" title="Latest version of SPARQL 1.1 Query Language">Latest version</a> available at http://www.w3.org/TR/sparql11-query.</dd>
+</dl>
+
+<h2>8 <a id="sec-appendix">Appendix</a></h2>
+<h3>Acknowledgements
+<a id="section-appendix-acknowledgement" name="section-appendix-acknowledgement"></a>
+</h3>
+
+<p>
+The editor would like to thank the following individuals for their input into the creation of this document:
+</p>
+
+<p>Sandro Hawke, Birte Glimm, Andy Seaborne, Steve Harris, Arnaud Le Hors, Ivan Mikhailov, David Booth, Simon Johnston, Kjetil Kjernsmo, Gregg Reynolds, Leigh Dodds, Tim Berners-Lee, and Ian Davis</p>
+
+   
+
+<div>
+  <h2 id="changelog">Change Log</h2>
+
+  
+    <h3 id="changes-since-pr">Changes since Proposed Recommendation</h3>
+
+    <ul>
+      <li>None</li>
+    </ul>
+
+    <h3 id="changes-since-cr">Changes since Candidate Recommendation</h3>
+
+    <ul>
+      <li>None</li>
+    </ul>
+
+
+    <h3 id="changes-since-lc">Changes since Last Call</h3>
+
+    <ul>
+      <li>Removed reference to REST</li>
+    </ul>
+
+</div>
+
+  </body>
+
+</html>

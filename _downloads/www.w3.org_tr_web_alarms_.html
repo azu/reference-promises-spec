@@ -1,0 +1,761 @@
+<!-- http://www.w3.org/TR/web-alarms/ -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 (experimental) for Linux https://github.com/w3c/tidy-html5/tree/8025154">
+  <meta content="text/html; charset=utf-8" http-equiv=
+  "content-type">
+
+  <title>Web Alarms API Specification</title>
+  <style type="text/css">
+pre.idl { border:solid thin; background:#eee; color:#000; padding:0.5em }
+   pre.idl :link, pre.idl :visited { color:inherit; background:transparent }
+   pre code { color:inherit; background:transparent }
+   div.example { margin-left:1em; padding-left:1em; border-left:double; color:#222; background:#fcfcfc }
+   .note { margin-left:2em; font-weight:bold; font-style:italic; color:#008000 }
+   p.note::before { content:"Note: " }
+   .XXX { padding:.5em; border:solid #f00 }
+   p.XXX::before { content:"Issue: " }
+   dl.switch { padding-left:2em }
+   dl.switch > dt { text-indent:-1.5em }
+   dl.switch > dt:before { content:'\21AA'; padding:0 0.5em 0 0; display:inline-block; width:1em; text-align:right; line-height:0.5em }
+   dl.domintro { color: green; margin: 2em 0 2em 2em; padding: 0.5em 1em; border: none; background: #DDFFDD; }
+   dl.domintro dt, dl.domintro dt * { color: black; text-decoration: none; }
+   dl.domintro dd { margin: 0.5em 0 1em 2em; padding: 0; }
+   dl.domintro dd p { margin: 0.5em 0; }
+   dl.domintro:before { display: table; margin: -1em -0.5em -0.5em auto; width: auto; content: 'This box is non-normative. Implementation requirements are given below this box.'; color: red; border: solid 2px; background: white; padding: 0 0.25em; }
+   em.ct { text-transform:lowercase; font-variant:small-caps; font-style:normal }
+   dfn { font-weight:bold; font-style:normal }
+   code { color:orangered }
+   code :link, code :visited { color:inherit }
+   table { border-collapse:collapse; border-style:hidden hidden none hidden }
+   table thead { border-bottom:solid }
+   table tbody th:first-child { border-left:solid }
+   table td, table th { border-left:solid; border-right:solid; border-bottom:solid thin; vertical-align:top; padding:0.2em }
+  </style>
+  <link href="http://www.w3.org/StyleSheets/TR/W3C-WD" rel=
+  "stylesheet">
+</head>
+
+<body class="draft">
+  <div class="head">
+    <p><a href="http://www.w3.org/"><img src=
+    "http://www.w3.org/Icons/w3c_home" alt="W3C" height="48" width=
+    "72"></a></p>
+
+    <h1 class="title" id="title">Web Alarms API Specification</h1>
+
+    <h2 id="date"><abbr title=
+    "World Wide Web Consortium">W3C</abbr> Working Draft 5 February
+    2013</h2>
+
+    <dl>
+      <dt>This version:</dt>
+
+      <dd>
+        <a href=
+        "http://www.w3.org/TR/2013/WD-web-alarms-20130205/">http://www.w3.org/TR/2013/WD-web-alarms-20130205/</a>
+      </dd>
+
+      <dt>Latest published version:</dt>
+
+      <dd>
+        <a href=
+        "http://www.w3.org/TR/web-alarms/">http://www.w3.org/TR/web-alarms/</a>
+      </dd>
+
+      <dt>Latest editor's draft:</dt>
+
+      <dd>
+        <a href=
+        "http://sysapps.github.com/sysapps/proposals/alarm/Overview.html">
+        http://sysapps.github.com/sysapps/proposals/alarm/Overview.html</a>
+      </dd>
+
+      <dt>Editors:</dt>
+
+      <dd class="vcard"><span class="fn">Christophe Dumez</span>,
+      <span class="org"><a href="http://www.intel.com">Intel
+      Corporation</a></span>, <span class="email"><a href=
+      "mailto:christophe.dumez@intel.com">christophe.dumez@intel.com</a></span></dd>
+    </dl>
+
+    <div class="w3conly">
+      <p class="copyright"><a href=
+      "http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a>
+      © 2013 <a href="http://www.w3.org/"><acronym title=
+      "World Wide Web Consortium">W3C</acronym></a><sup>®</sup>
+      (<a href="http://www.csail.mit.edu/"><acronym title=
+      "Massachusetts Institute of Technology">MIT</acronym></a>,
+      <a href="http://www.ercim.eu/"><acronym title=
+      "European Research Consortium for Informatics and Mathematics">
+      ERCIM</acronym></a>, <a href=
+      "http://www.keio.ac.jp/">Keio</a>, <a href=
+      "http://ev.buaa.edu.cn/">Beihang</a>), All Rights Reserved.
+      W3C <a href=
+      "http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">
+      liability</a>, <a href=
+      "http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">
+      trademark</a> and <a href=
+      "http://www.w3.org/Consortium/Legal/copyright-documents">document
+      use</a> rules apply.</p>
+      <hr />
+    </div>
+  </div>
+
+  <h2 class="no-num no-toc" id="specabstract">Abstract</h2>
+
+  <p>This specification defines a System Level API to provide
+  access to the device alarm settings, which can schedule a
+  notification or for an application to be started at a specific
+  time. For example, some applications like alarm-clock, calendar
+  or auto-update might need to utilize Alarm API to trigger
+  particular device behaviors at specified time points.</p>
+
+  <h2 id="sotd">Status of This Document</h2>
+
+  <p><em>This section describes the status of this document at the
+  time of its publication. Other documents may supersede this
+  document. A list of current <abbr title=
+  "World Wide Web Consortium">W3C</abbr> publications and the
+  latest revision of this technical report can be found in the
+  <a href="http://www.w3.org/TR/"><abbr title=
+  "World Wide Web Consortium">W3C</abbr> technical reports
+  index</a> at http://www.w3.org/TR/.</em></p>
+
+  <p>This document defines a System Level API to provide access to
+  the device alarm settings, which can be used to either schedule a
+  notification or to indicate that an application is to be started
+  at a specific time.</p>
+
+  <p>This document was published by the <a href=
+  "http://www.w3.org/2012/sysapps/">System Applications Working
+  Group</a> as a First Public Working Draft. This document is
+  intended to become a <abbr title=
+  "World Wide Web Consortium">W3C</abbr> Recommendation. If you
+  wish to make comments regarding this document, please send them
+  to <a href=
+  "mailto:public-sysapps@w3.org">public-sysapps@w3.org</a>
+  (<a href="mailto:public-sysapps-request@w3.org?subject=subscribe">subscribe</a>,
+  <a href=
+  "http://lists.w3.org/Archives/Public/public-sysapps/">archives</a>).
+  All feedback is welcome.</p>
+
+  <p>Publication as a Working Draft does not imply endorsement by
+  the <abbr title="World Wide Web Consortium">W3C</abbr>
+  Membership. This is a draft document and may be updated, replaced
+  or obsoleted by other documents at any time. It is inappropriate
+  to cite this document as other than work in progress.</p>
+
+  <p>This document was produced by a group operating under the
+  <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5
+  February 2004 <abbr title="World Wide Web Consortium">W3C</abbr>
+  Patent Policy</a>. <abbr title=
+  "World Wide Web Consortium">W3C</abbr> maintains a <a href=
+  "http://www.w3.org/2004/01/pp-impl/58119/status" rel=
+  "disclosure">public list of any patent disclosures</a> made in
+  connection with the deliverables of the group; that page also
+  includes instructions for disclosing a patent. An individual who
+  has actual knowledge of a patent which the individual believes
+  contains <a href=
+  "http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">
+  Essential Claim(s)</a> must disclose the information in
+  accordance with <a href=
+  "http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">
+  section 6 of the <abbr title=
+  "World Wide Web Consortium">W3C</abbr> Patent Policy</a>.</p>
+
+  <h2 class="no-num no-toc" id="toc">Table of Contents</h2>
+  <!--begin-toc-->
+
+  <ol class="toc">
+    <li>
+      <a href="#introduction"><span class="secno">1</span>
+      Introduction</a>
+    </li>
+
+    <li>
+      <a href="#conformance"><span class="secno">2</span>
+      Conformance</a>
+    </li>
+
+    <li>
+      <a href="#terminology"><span class="secno">3</span>
+      Terminology</a>
+    </li>
+
+    <li>
+      <a href="#web-alarms-api"><span class="secno">4</span> Web
+      Alarms API</a>
+
+      <ol class="toc">
+        <li>
+          <a href="#interface-navigator"><span class=
+          "secno">4.1</span> Interface <code title=
+          "">Navigator</code></a>
+        </li>
+
+        <li>
+          <a href="#interface-alarmmanager"><span class=
+          "secno">4.2</span> Interface <code title=
+          "">AlarmManager</code></a>
+        </li>
+
+        <li>
+          <a href="#interface-alarm"><span class="secno">4.3</span>
+          Interface <code title="">Alarm</code></a>
+        </li>
+
+        <li>
+          <a href="#interface-alarmrequest"><span class=
+          "secno">4.4</span> Interface <code title=
+          "">AlarmRequest</code></a>
+        </li>
+
+        <li>
+          <a href="#interface-alarmevent"><span class=
+          "secno">4.5</span> Interface <code title=
+          "AlarmEvent">AlarmEvent</code></a>
+        </li>
+
+        <li>
+          <a href="#timezone-dst"><span class="secno">4.6</span>
+          Timezones and daylight savings</a>
+
+          <ol class="toc">
+            <li>
+              <a href=
+              "#crossing-daylight-savings-time-boundaries"><span class="secno">
+              4.6.1</span> Crossing daylight savings time
+              boundaries</a>
+            </li>
+
+            <li>
+              <a href="#crossing-timezone-boundaries"><span class=
+              "secno">4.6.2</span> Crossing timezone boundaries</a>
+            </li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+
+    <li>
+      <a class="no-num" href="#references">References</a>
+    </li>
+
+    <li>
+      <a class="no-num" href=
+      "#acknowledgments">Acknowledgements</a>
+    </li>
+  </ol><!--end-toc-->
+
+  <h2 id="introduction"><span class="secno">1</span>
+  Introduction</h2>
+
+  <p><em>This section is non-normative.</em></p>
+
+  <div class="example">
+    <p>Example use of the Alarm API for adding, getting and
+    removing and listening to alarms in the device:</p>
+
+    <p>How to add an <code>"ignoreTimezone"</code> alarm?</p>
+    <pre>
+ var alarmId1;
+ var request = navigator.alarms.add(new Date("May 15, 2012 16:20:00"), "ignoreTimezone", { mydata: "bar" });
+ request.onsuccess = function (e) { alarmId1 = e.target.result; };
+ request.onerror = function (e) { alert(e.target.error.name); };
+</pre>
+
+    <p>How to add an <code>"respectTimezone"</code> alarm?</p>
+    <pre>
+ var alarmId2;
+ var request = navigator.alarms.add(new Date("June 29, 2012 07:30:00"), "respectTimezone", { mydata: "foo" });
+ request.onsuccess = function (e) { alarmId2 = e.target.result; };
+ request.onerror = function (e) { alert(e.target.error.name); };
+</pre>
+
+    <p>How to retrieve the information of added alarms?</p>
+    <pre>
+ var request = navigator.alarms.getAll();
+ request.onsuccess = function (e) { alert(JSON.stringify(e.target.result)); };
+ request.onerror = function (e) { alert(e.target.error.name); };
+</pre>
+
+    <p>How to remove an added alarm?</p>
+    <pre>
+ var request = navigator.alarms.remove(alarmId1);
+ request.onsuccess = function (e) { alert("alarm removed"); };
+ request.onerror = function (e) { alert(e.target.error.name); };
+</pre>
+
+    <p>How to listen to the <code title="AlarmEvent"><a href=
+    "#alarmevent">alarm</a></code> event with a callback function
+    which will run whem an alarm goes off?</p>
+    <pre>
+ navigator.alarms.addEventListener("alarm", function (e) { alert("alarm fired: " + JSON.stringify(e)); }, false);
+</pre>
+  </div>
+
+  <h2 id="conformance"><span class="secno">2</span>
+  Conformance</h2>
+
+  <p>This specification defines conformance criteria that apply to
+  a single product: the <dfn id="ua">user agent</dfn> that
+  implements the interfaces that it contains.</p>
+
+  <p>Implementations that use ECMAScript to implement the APIs
+  defined in this specification MUST implement them in a manner
+  consistent with the ECMAScript Bindings defined in the Web IDL
+  specification <a href="#refsWEBIDL">[WEBIDL]</a>, as this
+  specification uses that specification and terminology.</p>
+
+  <h2 id="terminology"><span class="secno">3</span>
+  Terminology</h2>
+
+  <p>The <code><a href=
+  "http://dev.w3.org/html5/spec/webappapis.html#eventhandler">EventHandler</a></code>
+  interface represents a callback used for event handlers as
+  defined in <a href="#refsHTML5">[HTML5]</a>.</p>
+
+  <p>The concepts <dfn id="queue-a-task"><a href=
+  "http://dev.w3.org/html5/spec/webappapis.html#queue-a-task">queue
+  a task</a></dfn>, <dfn id="event-handler-attributes"><a href=
+  "http://www.w3.org/TR/2011/WD-html5-20110525/webappapis.html#event-handler-attributes">
+  event handler attributes</a></dfn> and <dfn id=
+  "fire-a-simple-event"><a href=
+  "http://dev.w3.org/html5/spec/webappapis.html#fire-a-simple-event">
+  fire a simple event</a></dfn> are defined in <a href=
+  "#refsHTML5">[HTML5]</a>.</p>
+
+  <p>The terms <dfn id="event-handler"><a href=
+  "http://dev.w3.org/html5/spec/webappapis.html#event-handlers">event
+  handler</a></dfn> and <dfn id=
+  "event-handler-event-types"><a href="http://dev.w3.org/html5/spec/webappapis.html#event-handler-event-type">
+  event handler event types</a></dfn> are defined in <a href=
+  "#refsHTML5">[HTML5]</a>.</p>
+
+  <h2 id="web-alarms-api"><span class="secno">4</span> Web Alarms
+  API</h2>The Alarm API supports the following features:
+
+  <ul>
+    <li>Web applications can add multiple alarms and get a returned
+    ID for each of them.</li>
+
+    <li>The returned ID is unique (within the application origin)
+    and can be used to specify and remove the added alarm.</li>
+
+    <li>Web applications can pass a customized JSON object data to
+    describe more details about each alarm setting.</li>
+
+    <li>Web applications can only access their own alarms.</li>
+
+    <li>When the alarm goes off, an alarm event will be fired.</li>
+
+    <li>All the alarms that have been added can be automatically
+    restored after rebooting the system.</li>
+
+    <li>Alarm API actually does more than setTimeout because it can
+    actively <b>wake up</b> the system from sleeping.</li>
+
+    <li>Whenever the system clock or timezone is adjusted at
+    run-time, all the saved alarms will be rescheduled.</li>
+  </ul>
+
+  <h3 id="interface-navigator"><span class="secno">4.1</span>
+  Interface <code title="">Navigator</code></h3>
+  <pre class="idl">
+partial interface Navigator {
+  readonly attribute <a href=
+"#alarmmanager">AlarmManager</a> <a href="#navigator-alarms" title=
+"Navigator-alarms">alarms</a>;
+}
+</pre>
+
+  <p>The <dfn id="navigator-alarms" title=
+  "Navigator-alarms"><code>alarms</code></dfn> attribute must
+  return the object through which the alarms functionality can be
+  accessed.</p>
+
+  <h3 id="interface-alarmmanager"><span class="secno">4.2</span>
+  Interface <code title="">AlarmManager</code></h3>The <a href=
+  "#alarmmanager"><code>AlarmManager</code></a> interface exposes
+  methods to get, set or remove alarms. Alarms are application
+  specific, so there is no way to see the alarms scheduled by other
+  applications nor to modify them. This interface also notifies the
+  application when an alarm goes off, using an event handler
+  attribute <a href="#refsDOM3EVENTS">[DOM3EVENTS]</a>.
+  <pre class="idl">
+enum <dfn id=
+"timezonedirective">TimezoneDirective</dfn> { "respectTimezone", "ignoreTimezone" };
+
+[NoInterfaceObject]
+interface <dfn id="alarmmanager">AlarmManager</dfn> : <a class=
+"external" href=
+"http://dom.spec.whatwg.org/#eventtarget">EventTarget</a> {
+  <a href="#alarmrequest">AlarmRequest</a> <a href=
+"#alarmmanager-getall" title="AlarmManager-getAll">getAll</a>();
+  <a href="#alarmrequest">AlarmRequest</a> <a href=
+"#alarmmanager-add" title=
+"AlarmManager-add">add</a>(Date <var title="">date</var>, <a href=
+"#timezonedirective">TimezoneDirective</a> <var title=
+"">respectTimezone</var>, optional Object <var title=
+"">data</var>);
+  <a href="#alarmrequest">AlarmRequest</a> <a href=
+"#alarmmanager-remove" title=
+"AlarmManager-remove">remove</a>(DOMString <var title=
+"">alarmId</var>);
+
+  [TreatNonCallableAsNull]
+  attribute Function? <a href="#alarmmanager-onalarm" title=
+"AlarmManager-onalarm">onalarm</a>;
+};
+</pre>
+
+  <p>The <dfn id="alarmmanager-getall" title=
+  "AlarmManager-getAll"><code>getAll()</code></dfn> method is used
+  to to retrieve all the alarms added to the device as an array of
+  <a href="#alarm">Alarm</a> objects.</p>
+
+  <p>The error cases must be handled as follows:</p>
+
+  <ol>
+    <li>If any error is returned, the implementation must set the
+    <code>error</code> attribute of the <code><a href=
+    "#alarmrequest">AlarmRequest</a></code> to a
+    <code>DOMError</code> whose name is
+    <code>"UnknownError"</code>, and <a class="external" href=
+    "http://dom.spec.whatwg.org/#concept-event-fire" title=
+    "concept-event-fire">fire an event</a> named <code>error</code>
+    at the request.
+    </li>
+  </ol>
+
+  <p>The <dfn id="alarmmanager-add" title=
+  "AlarmManager-add"><code>add(<var>date</var>,
+  <var>respectTimezone</var>[, <var>data</var>])</code></dfn>
+  method is used to register an alarm.</p>
+
+  <ol>
+    <li>The first argument <code>date</code> can is a
+    <code>Date</code> object indicating when the alarm should
+    trigger.</li>
+
+    <li>The second argument <code>respectTimezone</code> can be
+    either <code>"respectTimezone"</code> or
+    <code>"ignoreTimezone"</code> to specify if we need to ignore
+    the timezone information of that <code>Date</code> object. When
+    <code>"respectTimezone"</code> is passed, we will alert that
+    application when that time happens in that timezone. See
+    <a href="#timezone-dst">Timezones and daylight savings</a>
+    section for examples.
+    </li>
+
+    <li>The third argument <code>data</code> can be optionally
+    specified to pass the customized JSON object data for that
+    alarm. Note that a unique ID will be returned to refer to the
+    added alarm.</li>
+  </ol>
+
+  <p>The error cases must be handled as follows:</p>
+
+  <ol>
+    <li>If the <code>date</code> argument is in the past, the
+    implementation must set the <code>error</code> attribute of the
+    <code><a href="#alarmrequest">AlarmRequest</a></code> to a
+    <code>DOMError</code> whose name is
+    <code>"InvalidStateError"</code>, and <a class="external"
+      href="http://dom.spec.whatwg.org/#concept-event-fire" title=
+      "concept-event-fire">fire an event</a> named
+      <code>error</code> at the request.
+    </li>
+
+    <li>For other error cases, a <code>DOMError</code> whose name
+    is <code>"UnknownError"</code> is used.</li>
+  </ol>
+
+  <p>The <dfn id="alarmmanager-remove" title=
+  "AlarmManager-remove"><code>remove(<var>alarmId</var>)</code></dfn>
+  method is used to remove an alarm that has been added in the
+  device with a unique ID.</p>
+
+  <p>If the alarm was successfully removed, the implementation must
+  set the <code>result</code> attribute of the <code><a href=
+  "#alarmrequest">AlarmRequest</a></code> to <code>true</code>, and
+  <a class="external" href=
+  "http://dom.spec.whatwg.org/#concept-event-fire" title=
+  "concept-event-fire">fire an event</a> named <code>success</code>
+  at the request. If there was no alarm with the given identifier,
+  the implementation must follow the same steps but set the
+  <code>result</code> attribute of the <code><a href=
+  "#alarmrequest">AlarmRequest</a></code> to
+  <code>false</code>.</p>
+
+  <p>The error cases must be handled as follows:</p>
+
+  <ol>
+    <li>If any error is returned, the implementation must set the
+    <code>error</code> attribute of the <code><a href=
+    "#alarmrequest">AlarmRequest</a></code> to a
+    <code>DOMError</code> whose name is
+    <code>"UnknownError"</code>, and dispatch an <code>error</code>
+    event at the request.</li>
+  </ol>
+
+  <p>The <dfn id="alarmmanager-onalarm" title=
+  "AlarmManager-onalarm"><code>onalarm</code></dfn> attribute is
+  the event handler of type <code>Function</code> for the
+  <code><a href="#alarm">alarm</a></code> event. This event uses
+  the <a href="#alarmevent"><code>AlarmEvent</code></a> interface
+  is fired when an alarm goes off.</p>
+
+  <h3 id="interface-alarm"><span class="secno">4.3</span> Interface
+  <code title="">Alarm</code></h3>
+
+  <p>The <a href="#alarm"><code>Alarm</code></a> interface captures
+  the properties of a registered alarm.</p>
+  <pre class="idl">
+interface <dfn id="alarm">Alarm</dfn> {
+  readonly attribute DOMString <a href="#alarm-id" title=
+"Alarm-id">id</a>;
+
+  attribute Date <a href="#alarm-date" title="Alarm-date">date</a>;
+  attribute <a href=
+"#timezonedirective">TimezoneDirective</a> <a href=
+"#alarm-respecttimezone" title=
+"Alarm-respectTimezone">respectTimezone</a>;
+  attribute Object <a href="#alarm-data" title=
+"Alarm-data">data</a>;
+};
+</pre>
+
+  <p>The <dfn id="alarm-id" title="Alarm-id"><code>id</code></dfn>
+  attribute must return an identifier for the given <a href=
+  "#alarm"><code>Alarm</code></a> object that is unique within the
+  origin. An implementation must maintain this identifier when a
+  <a href="#alarm"><code>Alarm</code></a> is added.</p>
+
+  <p>The <dfn id="alarm-date" title=
+  "Alarm-date"><code>date</code></dfn> attribute is a
+  <code>Date</code> object indicating when the alarm goes off.</p>
+
+  <p>The <dfn id="alarm-respecttimezone" title=
+  "Alarm-respectTimezone"><code>respectTimezone</code></dfn>
+  attribute indicates if the timezone information of the
+  <code>Date</code> object is ignored.</p>
+
+  <p>The <dfn id="alarm-data" title=
+  "Alarm-data"><code>data</code></dfn> attribute optionally defines
+  the customized JSON object data pass to the alarm.</p>
+
+  <h3 id="interface-alarmrequest"><span class="secno">4.4</span>
+  Interface <code title="">AlarmRequest</code></h3>
+
+  <p>An <code><a href="#alarmrequest">AlarmRequest</a></code>
+  object represents an ongoing operation; it notifies the
+  application when the operation completes using event handler
+  attributes <a href="#refsDOM3EVENTS">[DOM3EVENTS]</a>, as well as
+  a reference to the operation's result. A DOM method that
+  initiates an ongoing operation may return a <code><a href=
+  "#alarmrequest">AlarmRequest</a></code> object that you can use
+  to monitor the progress of that operation.</p>
+
+  <p>This interface is identical to the <code>DOMRequest</code>
+  interface <a href="#refsDOMREQUEST">[DOMREQUEST]</a>.</p>
+  <pre class="idl">
+interface <dfn id="alarmrequest">AlarmRequest</dfn> : <a class=
+"external" href=
+"http://dom.spec.whatwg.org/#eventtarget">EventTarget</a>
+  readonly attribute DOMString <a href="#alarmrequest-readystate"
+title="AlarmRequest-readyState">readyState</a>;
+
+  readonly attribute any <a href="#alarmrequest-result" title=
+"AlarmRequest-result">result</a>;
+  readonly attribute <a class="external" href=
+"http://dom.spec.whatwg.org/#domerror">DOMError</a> <a href=
+"#alarmrequest-error" title="AlarmRequest-error">error</a>;
+
+  [TreatNonCallableAsNull]
+  attribute Function? <a href="#alarmrequest-onsuccess" title=
+"AlarmRequest-onsuccess">onsuccess</a>;
+
+  [TreatNonCallableAsNull]
+  attribute Function? <a href="#alarmrequest-onerror" title=
+"AlarmRequest-onerror">onerror</a>;
+};
+</pre>
+
+  <p>The <dfn id="alarmrequest-readystate" title=
+  "AlarmRequest-readyState"><code>readyState</code></dfn> attribute
+  must return the state of this <a href=
+  "#alarmrequest"><code>AlarmRequest</code></a>. Possible values
+  are <code>"pending"</code> and <code>"done"</code>.</p>
+
+  <p>The <dfn id="alarmrequest-result" title=
+  "AlarmRequest-result"><code>result</code></dfn> attribute must
+  return the result of this <a href=
+  "#alarmrequest"><code>AlarmRequest</code></a> (if any), once the
+  <a href="#alarmrequest-readystate" title=
+  "AlarmRequest-readyState"><code>readyState</code></a> is
+  <code>"done"</code> and the <code>success</code> event is
+  fired.</p>
+
+  <p>The <dfn id="alarmrequest-error" title=
+  "AlarmRequest-error"><code>error</code></dfn> attribute must
+  return the error that occurred for this <a href=
+  "#alarmrequest"><code>AlarmRequest</code></a> (if any). This
+  attribute is populated when the <code>error</code> event is
+  fired.</p>
+
+  <p>The <dfn id="alarmrequest-onsuccess" title=
+  "AlarmRequest-onsuccess"><code>onsuccess</code></dfn> attribute
+  is the event handler of type <code>Function</code> for the
+  <code>success</code> event.</p>
+
+  <p>The <dfn id="alarmrequest-onerror" title=
+  "AlarmRequest-onerror"><code>onerror</code></dfn> attribute is
+  the event handler of type <code>Function</code> for the
+  <code>error</code> event.</p>
+
+  <h3 id="interface-alarmevent"><span class="secno">4.5</span>
+  Interface <code title="AlarmEvent"><a href=
+  "#alarmevent">AlarmEvent</a></code></h3>
+
+  <p>The <code title="AlarmEvent"><a href=
+  "#alarmevent">alarm</a></code> event is fired when an alarm goes
+  off.</p>
+
+  <p>When this happens, the user agent must queue a task to fire an
+  event with the name <code title="AlarmEvent"><a href=
+  "#alarmevent">alarm</a></code>, which does not bubble and is not
+  cancelable, and which uses the <a href=
+  "#alarmevent"><code>AlarmEvent</code></a> interface, at each
+  <a href="#alarmmanager"><code>AlarmManager</code></a> object that
+  is affected.</p>
+  <pre class="idl">
+[Constructor(DOMString <var title="">type</var>, optional <a href=
+"#alarmeventinit">AlarmEventInit</a> <var title=
+"">eventInitDict</var>)]
+interface <dfn id="alarmevent">AlarmEvent</dfn> : <a class=
+"external" href="http://dom.spec.whatwg.org/#event">Event</a> {
+  readonly attribute <a href="#alarm">Alarm</a> <a href=
+"#alarmevent-alarm" title="AlarmEvent-alarm">alarm</a>;
+};
+
+dictionary <dfn id=
+"alarmeventinit">AlarmEventInit</dfn> : <a class="external" href=
+"http://dom.spec.whatwg.org/#eventinit">EventInit</a> {
+  <a href="#alarm">Alarm</a> alarm;
+};
+</pre>
+
+  <p>The <dfn id="alarmevent-alarm" title=
+  "AlarmEvent-alarm"><code>alarm</code></dfn> attribute must return
+  the alarm that is going off.</p>
+
+  <h3 id="timezone-dst"><span class="secno">4.6</span> Timezones
+  and daylight savings</h3>
+
+  <p>The implementation needs to consider timezones and respect
+  daylight savings. We will provide examples in this section to
+  clarify how non-obvious cases should be handled.</p>
+
+  <h4 id="crossing-daylight-savings-time-boundaries"><span class=
+  "secno">4.6.1</span> Crossing daylight savings time
+  boundaries</h4>
+
+  <div class="example">
+    <p><b>Let's consider an alarm on March 10, 2013 at 2:00am in a
+    timezone where daylight savings time starts at that time (e.g.
+    in San Francisco, CA):</b></p>
+    <pre>
+add(new Date(2013, 2, 10, 2, 00, 00), "ignoreTimezone");
+</pre>In San Francisco, CA, clocks are turned forward 1 hour on
+Sunday, March 10, 2013 at 2:00am due to daylight savings. In this
+case, the alarm must fire at 3:00am, i.e. one minute after 1:59am.
+
+    <p><b>Let's consider an alarm on November 3, 2013 at 1:10am in
+    a timezone where daylight savings time ends on that date (e.g.
+    in San Francisco, CA):</b></p>
+    <pre>
+add(new Date(2013, 10, 3, 1, 10, 00), "ignoreTimezone");
+</pre>
+
+    <p>In San Francisco, CA, clocks are turned backward 1 hour on
+    Sunday, November 3, 2013 at 2:00am. In this case, the alarm
+    fires <em>once</em> the first time that the device is running
+    and the local time is past 1:10am on November 3, 2013. After
+    that the alarm is deleted.</p>
+  </div>
+
+  <h4 id="crossing-timezone-boundaries"><span class=
+  "secno">4.6.2</span> Crossing timezone boundaries</h4>
+
+  <div class="example">
+    <p><b>Let's consider an alarm set for January 21, 2013 at
+    7:00am in Pacific Standard Time (PST) with respectTimezone
+    argument set to "ignoreTimezone":</b></p>
+    <pre>
+add(new Date(2013, 0, 21, 7, 0, 00), "ignoreTimezone"); // User is currently in Pacific Standard Time (PST)
+</pre>If the user is traveling to New York on that day and
+currently in Eastern Standard Time (EST), the alarm must fire on
+January 21, 2013 when it is 7:00am in Eastern Standard Time (EST).
+
+    <p><b>Let's consider an alarm set for January 21, 2013 at
+    7:00am in Pacific Standard Time (PST) with respectTimezone
+    argument set to "respectTimezone":</b></p>
+    <pre>
+add(new Date(2013, 0, 21, 7, 0, 00), "respectTimezone"); // User is currently in Pacific Standard Time (PST)
+</pre>If the user is traveling to New York on that day and
+currently in Eastern Standard Time (EST), the alarm must fire on
+January 21, 2013 when it is 7:00am in Pacific Standard Time (PST),
+that is 10:00am for the user in Eastern Standard Time (EST).
+  </div>
+
+  <h2 class="no-num" id="references">References</h2>
+
+  <div id="anolis-references">
+    <dl>
+      <dt id="refsB2G-ALARM">[B2G-ALARM]</dt>
+
+      <dd><cite><a href=
+      "https://wiki.mozilla.org/WebAPI/AlarmAPI">B2G Alarm API
+      Specification</a></cite>, Mounir Lamouri, Kan-Ru Chen and
+      Jonas Sicking. Mozilla.</dd>
+
+      <dt id="refsDOM3EVENTS">[DOM3EVENTS]</dt>
+
+      <dd><cite><a href=
+      "http://dev.w3.org/2006/webapi/DOM-Level-3-Events/html/DOM3-Events.html">
+      Document Object Model (DOM) Level 3 Events
+      Specification</a></cite>, Travis Leithead. W3C.</dd>
+
+      <dt id="refsDOMREQUEST">[DOMREQUEST]</dt>
+
+      <dd><cite><a href=
+      "https://developer.mozilla.org/en-US/docs/DOM/DOMRequest">DOMRequest
+      Reference</a></cite>. Mozilla.</dd>
+
+      <dt id="refsHTML5">[HTML5]</dt>
+
+      <dd><cite><a href=
+      "http://dev.w3.org/html5/spec/">HTML5</a></cite>, Ian
+      Hickson. W3C.</dd>
+
+      <dt id="refsWEBIDL">[WEBIDL]</dt>
+
+      <dd><cite><a href="http://dev.w3.org/2006/webapi/WebIDL/">Web
+      IDL</a></cite>, Cameron McCormack. W3C.</dd>
+    </dl>
+  </div>
+
+  <h2 class="no-num" id="acknowledgments">Acknowledgements</h2>
+
+  <p>We would like to thank Kan-Ru Chen, Mounir Lamouri, Gene Lian
+  and Jonas Sicking for their work on the API design, as well as
+  the WebAPI/B2G teams at Mozilla <a href=
+  "#refsB2G-ALARM">[B2G-ALARM]</a>.</p>
+</body>
+</html>

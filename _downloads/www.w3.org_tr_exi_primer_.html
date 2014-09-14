@@ -1,0 +1,1429 @@
+<!-- http://www.w3.org/TR/exi-primer/ -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en-US"><head><META http-equiv="Content-Type" content="text/html; charset=utf-8"><title>Efficient XML Interchange (EXI) Primer</title><style type="text/css">
+code           { font-family: monospace; }
+
+div.constraint,
+div.issue,
+div.note       { margin-left: 2em; }
+div.notice     { margin-left: 2em; font-weight: bold; font-size: larger; color: red }
+
+ol.enumar      { list-style-type: decimal; }
+ol.enumla      { list-style-type: lower-alpha; }
+ol.enumlr      { list-style-type: lower-roman; }
+ol.enumua      { list-style-type: upper-alpha; }
+ol.enumur      { list-style-type: upper-roman; }
+
+
+div.exampleInner pre { margin-left: 1em;
+                       margin-top: 0em; margin-bottom: 0em}
+div.exampleOuter {border: 4px double gray;
+                  margin: 0em; padding: 0em}
+div.exampleInner { background-color: #d5dee3;
+                   border-top-width: 4px;
+                   border-top-style: double;
+                   border-top-color: #d3d3d3;
+                   border-bottom-width: 4px;
+                   border-bottom-style: double;
+                   border-bottom-color: #d3d3d3;
+                   padding: 4px; margin: 0em }
+div.exampleWrapper { margin: 4px }
+div.exampleHeader { font-weight: bold;
+                    margin: 4px}
+
+  
+   tr.silver td { color: silver; font-style: italic }
+
+   tr.bold td { font-weight: bold }
+   
+   td.xml { background-color: black; color: white; font-weight: bold; font-size: 100% }
+   .schema-less { background-color: silver; font-style: italic }
+   .schema-informed { background-color: gray; }
+   
+   td.footnote { font-size: 75% }
+
+</style><link rel="stylesheet" type="text/css" href="http://www.w3.org/StyleSheets/TR/W3C-WD.css"></head><body><div class="head"><p><a href="http://www.w3.org/"><img src="http://www.w3.org/Icons/w3c_home" alt="W3C" height="48" width="72"></a></p>
+<h1><a name="title" id="title"></a>Efficient XML Interchange (EXI) Primer</h1>
+<h2><a name="w3c-doctype" id="w3c-doctype"></a>W3C Working Draft 24 April 2014</h2><dl><dt>This version:</dt><dd>
+            <a href="http://www.w3.org/TR/2014/WD-exi-primer-20140424/">http://www.w3.org/TR/2014/WD-exi-primer-20140424/</a>
+        </dd><dt>Latest version:</dt><dd>
+            <a href="http://www.w3.org/TR/exi-primer/">http://www.w3.org/TR/exi-primer/</a>
+        </dd><dt>Previous version:</dt><dd>
+            <a href="http://www.w3.org/TR/2009/WD-exi-primer-20091208/">http://www.w3.org/TR/2009/WD-exi-primer-20091208/</a>
+        </dd><dt>Editors:</dt><dd>Daniel Peintner, Siemens AG</dd><dd>Santiago Pericas-Geertsen, Sun Microsystems (till 2009-12-08)</dd></dl><p class="copyright"><a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a>&nbsp;&copy;&nbsp;2014&nbsp;<a href="http://www.w3.org/"><acronym title="World Wide Web Consortium">W3C</acronym></a><sup>&reg;</sup> (<a href="http://www.csail.mit.edu/"><acronym title="Massachusetts Institute of Technology">MIT</acronym></a>, <a href="http://www.ercim.org/"><acronym title="European Research Consortium for Informatics and Mathematics">ERCIM</acronym></a>, <a href="http://www.keio.ac.jp/">Keio</a>, <a href="http://ev.buaa.edu.cn/">Beihang</a>), All Rights Reserved. W3C <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply.</p></div><hr><div>
+<h2><a name="abstract" id="abstract"></a>Abstract</h2><p>This is a non-normative document intended to provide an easily readable technical
+                background on the Efficient XML Interchange (EXI) format. It is oriented towards
+                quickly understanding how the EXI format can be used in practice and how options can
+                be set to achieve specific needs. Section <a href="#basicConcepts"><b>2. Concepts</b></a> describes
+                the structure and content of an EXI document and introduces the notions of EXI
+                header, EXI body, and EXI grammar which are fundamental to the understanding of the
+                EXI format. Furthermore, additional details about data type representation,
+                compression, and their interaction with other format features are presented.
+                
+                Finally, Section <a href="#exiByExample"><b>3. Efficient XML Interchange by Example</b></a> provides a detailed, bit-level
+                description of both, a schema-less and a schema-informed example.
+                
+            </p></div><div>
+<h2><a name="status" id="status"></a>Status of this Document</h2><p>
+                <em>This section describes the status of this document at the time of its
+                    publication. Other documents may supersede this document. A list of current W3C
+                    publications and the latest revision of this technical report can be found in
+                    the W3C technical reports index at <a href="http://www.w3.org/TR/">http://www.w3.org/TR/</a>.</em>
+            </p><p>This working draft is an updated version of the EXI Primer document to reflect changes
+                according to the <a href="http://www.w3.org/TR/2014/REC-exi-20140211/">Second Edition Recommendation of the Efficient XML Interchange Format 1.0</a>.
+                At the same time the encoding and decoding examples have been improved and harmonized to
+                ease understanding.
+            </p><p>This document has been produced by the <a href="http://www.w3.org/XML/EXI/">Efficient XML Interchange Working Group</a> as part of the W3C <a href="http://www.w3.org/XML/Activity">XML Activity</a>. The goals of the
+                Efficient XML Interchange (EXI) Format are discussed in the <a href="http://www.w3.org/TR/exi/">Efficient XML Interchange (EXI) Format</a>
+                document. The authors of this document are the members of the Efficient XML
+                Interchange Working Group.</p><p>Publication as a Working Draft does not imply endorsement by the W3C Membership. This
+                is a draft document and may be updated, replaced or obsoleted by other documents at
+                any time. It is inappropriate to cite this document as other than work in
+                progress.</p><p> This document was produced by a group operating under the <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 W3C
+                    Patent Policy</a>. The group does not expect this document to become a W3C Recommendation. W3C maintains a <a href="http://www.w3.org/2004/01/pp-impl/38502/status#specs">public list of any
+                    patent disclosures</a> made in connection with the deliverables of the group;
+                that page also includes instructions for disclosing a patent. An individual who has
+                actual knowledge of a patent which the individual believes contains <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential Claim(s)</a> must disclose the information in accordance with <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section 6 of the W3C Patent Policy</a>. </p><p>Please send comments about this document to the <a href="mailto:public-exi@w3.org">public-exi@w3.org</a> mailing list (<a href="http://lists.w3.org/Archives/Public/public-exi/">Archives</a>).</p></div><div class="toc">
+<h2><a name="contents" id="contents"></a>Table of Contents</h2><p class="toc">1. <a href="#introduction">Introduction</a><br>
+2. <a href="#basicConcepts">Concepts</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;2.1 <a href="#exiStreams">EXI Streams</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.1 <a href="#exiHeader">EXI Header</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.2 <a href="#exiBody">EXI Body</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.3 <a href="#exiGrammars">EXI Grammars</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.3.1 <a href="#builtInGrammar">Built-In Grammar</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.3.2 <a href="#schemaInformedGrammar">Schema-informed Grammar</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;2.2 <a href="#contentRepresentation">Content Representation</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.2.1 <a href="#builtInTypes">Built-in EXI Datatype Representations</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.2.2 <a href="#stringTable">String Table</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;2.3 <a href="#compression">Compression</a><br>
+3. <a href="#exiByExample">Efficient XML Interchange by Example</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;3.1 <a href="#encodingNotation">Notation</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;3.2 <a href="#encodingOptions">Options</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;3.3 <a href="#encoding">Encoding Example</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;3.4 <a href="#neitherDecoding">Decoding Example</a><br>
+</p>
+<h3><a name="appendices" id="appendices"></a>Appendix</h3><p class="toc">A <a href="#references">References</a><br>
+</p></div><hr><div class="body"><div class="div1">
+<h2><a name="introduction" id="introduction"></a>1. Introduction</h2><p>The intended audience of this document includes users and developers of EXI with a
+                basic understanding of XML and XML Schema. This document provides an informal
+                description of the EXI format; the reader is referred to the <a href="#exiSpec">[Efficient XML Interchange (EXI) Format 1.0 (Second Edition)]</a>
+                document for further details. Hereinafter, the presentation assumes that the reader
+                is familiar with the basic concepts of XML and the way XML Schema can be used to
+                describe and enforce constraints on XML documents.</p><p>The document is comprised of two major parts. The first part describes the structure
+                and content of an EXI document with and without compression. More specifically, it
+                describes the concept of an EXI stream and how it is generated using EXI grammars,
+                as well as the implications on structure and content ordering in an EXI stream when
+                compression is enabled. As a practical application of the concepts from the first
+                part, the second part presents a complete bit-level description of an EXI
+                document.</p></div><div class="div1">
+<h2><a name="basicConcepts" id="basicConcepts"></a>2. Concepts</h2><p> The development of the Efficient XML Interchange (EXI) format was guided by five
+                    <a href="http://www.w3.org/TR/exi/#principles"><cite>design
+                    principles</cite></a>, namely, the format had to be general, minimal, efficient,
+                flexible, and interoperable. The format satisfies these prerequisites, achieving
+                generality, efficiency, and flexibility while at the same time keeping complexity in
+                check.</p><p>Many of the concepts employed by the EXI format are applicable to the encoding of
+                arbitrary languages that can be described by a grammar. Even though EXI utilizes
+                schema information to improve compactness and processing efficiency, it does not
+                depend on accurate, complete, or current schemas to work.</p><div class="div2">
+<h3><a name="exiStreams" id="exiStreams"></a>2.1 EXI Streams</h3><p>EXI represents the contents of an XML document as an EXI stream. As shown below,
+                    an EXI stream consists of an EXI header followed by an EXI body. </p><table border="1"><caption>Table 2-1. EXI Stream Structure</caption><tbody><tr><th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; EXI Header
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </th><th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; EXI Body
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </th></tr></tbody></table><p>The EXI header conveys format version information and may also include the set of
+                    options that were used during encoding. If these options are omitted, it is
+                    assumed that the decoder has access to them out of band. The EXI body comprises
+                    an event sequence describing the document (or document fragment) that is
+                    encoded. The following two sections describe the EXI header and EXI body in more
+                    detail. </p><div class="div3">
+<h4><a name="exiHeader" id="exiHeader"></a>2.1.1 EXI Header</h4><p>The header communicates encoding properties that are needed to decode the EXI
+                        body. The minimal header can be represented in a single byte. This keeps the
+                        overhead and complexity to a minimum and does not sacrifice compactness,
+                        especially for small documents where a header can introduce a large constant
+                        factor.</p><p>The structure of an EXI header is depicted in the following figure.</p><table border="1"><caption>Table 2-2. EXI Header Structure</caption><tbody><tr><th>[EXI Cookie]</th><th>Distinguishing Bits</th><th>Presence Bit for EXI Options</th><th>EXI Format Version</th><th>[EXI Options]</th><th>[Padding Bits]</th></tr></tbody></table><p>The EXI header starts with an optional four-byte <a href="http://www.w3.org/TR/exi/#key-exiCookie">EXI Cookie</a>. The
+                        four byte field consists of four characters " $ " , " E ", " X " and " I "
+                        in that order, each represented as an ASCII octet, that can be used to
+                        distinguish an EXI stream from a broad range of data streams. </p><p> The EXI Cookie is followed by a pair of <a href="http://www.w3.org/TR/exi/#DistinguishingBits">Distinguishing
+                            Bits</a>. The two bit-sequence (1 0) can be used to distinguish an EXI
+                        document from a textual XML document and is sufficient to distinguish EXI
+                        streams from XML streams based on a broad range of character encodings. </p><p>The Presence Bit for EXI Options follows the distinguishing bits. The value
+                        of this single bit is used to indicate the presence or absence of the EXI
+                        Options that appear later in the header.</p><p> The EXI Format Version identifies the version of EXI in use and allows
+                        future improvements and modifications. A leading 0 (zero) bit indicates that
+                        the document is encoded according to the final version of the
+                        recommendation, while a leading 1 (one) indicates that it is a preview
+                        version. The differentiation is introduced to facilitate early releases of
+                        preview versions with less strict interoperability requirements. Only final
+                        versions are required to be processed by compliant processors. The leading
+                        bit is followed by one or more 4-bit sequences which are collectively
+                        interpreted as a format version number starting at 1. For example, the 4-bit
+                        sequence 0000 is interpreted as version 1 and the two 4-bit sequences 1111
+                        0001 are interpreted as 15 + 2 or version 17.</p><p>The <a href="http://www.w3.org/TR/exi/#options">EXI Options</a> specify
+                        how the body of an EXI stream is encoded and, as stated earlier, their
+                        presence is controlled by the presence bit earlier in the header. The
+                        overhead introduced by the EXI options is comparatively small given that
+                        they are formally described using an XML schema and are encoded using EXI as
+                        well. The following table describes the EXI options that can be specified in
+                        the EXI header. When the <a href="http://www.w3.org/TR/exi/#key-optionsDoc">EXI Options
+                            document</a> does not specify a value for a particular option, the
+                        default value is assumed.</p><a name="exiOptions" id="exiOptions"></a><table border="1"><caption>Table 2-3. EXI Options</caption><thead><tr><th>EXI Option</th><th>Description</th><th>Default Value</th></tr></thead><tbody><tr><td id="key-alignmentOption">alignment</td><td>Alignment of event codes and content items</td><td>
+                                    <a href="http://www.w3.org/TR/exi/#key-unaligned">bit-packed</a>
+                                </td></tr><tr><td id="key-compressionOption">compression</td><td>Indicates if EXI compression is to be used for better
+                                    compactness</td><td>false</td></tr><tr><td id="key-strictOption">strict</td><td>Strict interpretation of schema is used to achieve better
+                                    compactness</td><td>false</td></tr><tr><td id="key-fragmentOption">fragment</td><td>Indicates if the body is to be encoded as an EXI fragment
+                                    instead of an EXI document</td><td>false</td></tr><tr><td id="key-preserveOption">preserve</td><td>A set of options that controls whether comments, processing
+                                    instructions, etc. are preserved</td><td>all false</td></tr><tr><td id="key-selfContainedOption">selfContained</td><td>Enables self-contained elements. Self-contained elements may be
+                                    read independently from the rest of the EXI body</td><td>false</td></tr><tr><td id="key-schemaIDOption">schemaId</td><td>Identify the schema information, if any, used to encode the body</td><td>
+                                    <em>no default value</em>
+                                </td></tr><tr><td id="key-datatypeRepresentationMapOption">datatypeRepresentationMap</td><td>Specify alternate datatype representations for typed values in the EXI body</td><td>
+                                    <em>no default value</em>
+                                </td></tr><tr><td id="key-blockSizeOption">blockSize</td><td>Specifies the number of Attribute (AT) and Character (CH) values
+                                    for each block used for EXI compression </td><td>1,000,000</td></tr><tr><td id="key-valueMaxLengthOption">valueMaxLength</td><td>Specifies the maximum string length of value content items to be
+                                    considered for addition to the string table</td><td>
+                                    <em>unbounded</em>
+                                </td></tr><tr><td id="key-valuePartitionCapacityOption">valuePartitionCapacity</td><td>Specifies the total capacity of value partitions in a string
+                                    table </td><td>
+                                    <em>unbounded</em>
+                                </td></tr><tr><td>[user defined meta-data]</td><td>User defined options may be added</td><td>
+                                    <em>no default value</em>
+                                </td></tr></tbody></table><p>Most of the options are straightforward and act as boolean values to enable
+                        or disable a feature. They are represented using optional XML elements which
+                        are also encoded using EXI. For more information on the XML schema that is
+                        used to encode these options, the reader is referred to <a href="http://www.w3.org/TR/exi/#optionsSchema"> XML Schema for EXI
+                            Options Header</a>.</p><p>The preserve options shown in the table above are really a family of options
+                        that control which XML items are preserved and which XML items are ignored.
+                        These are collectively known as <em>fidelity options</em>. These options
+                        can be used to eliminate the associated overhead of communicating unused XML
+                        items. Certain XML items such as processing instructions or DTDs may never
+                        occur (like in SOAP) or are simply unimportant to the use case or
+                        application domain. Fidelity options are used to manage filters for certain
+                        XML items as shown in the following table.</p><a name="fidelityOptions" id="fidelityOptions"></a><table border="1"><caption>Table 2-4. Fidelity Options</caption><colgroup span="1"></colgroup><colgroup align="center" span="1"></colgroup><colgroup span="1"></colgroup><thead><tr><th>Fidelity Option</th><th>Effect</th></tr></thead><tbody><tr><td>Preserve.comments</td><td>Productions of CM (Comment) events are preserved in
+                                    grammars</td></tr><tr><td>Preserve.pis</td><td>Productions of PI (Processing Instruction) events are preserved
+                                    in grammars</td></tr><tr><td>Preserve.dtd</td><td>Productions of DOCTYPE and ER (Entity Reference) events are
+                                    preserved</td></tr><tr><td>Preserve.prefixes</td><td>NS (Namespace Declaration) events and namespace prefixes are
+                                    preserved</td></tr><tr><td>Preserve.lexicalValues</td><td>Lexical form of element and attribute values is preserved</td></tr></tbody></table><p> Naturally, XML items that are discarded at encoding time (due to a
+                        particular setting of the fidelity options) cannot be reconstructed exactly
+                        at decoding time. The next section deals with the EXI Body and discusses in
+                        more detail the effects of enabling and disabling fidelity options.</p></div><div class="div3">
+<h4><a name="exiBody" id="exiBody"></a>2.1.2 EXI Body</h4><p>The body of an EXI document is composed of a sequence of EXI events. The
+                        notion of an <em>event</em> in this context is similar to that in the
+                        StAX and SAX APIs. XML items are encoded into one or more EXI events; for
+                        example, an attribute named foo can be encoded as AT("foo") and an element
+                        named bar as the pair of events SE("bar") and EE. EXI events may have
+                        additional content associated with them. For example, the attribute event
+                        AT("foo") may have an attribute value <em>foo1</em> associated with it.
+                        The following table shows all the possible event types together with their
+                        associated information items distinguished by structure and content. In EXI
+                        terminology, <em>content</em> denotes attribute and character values
+                        while all other information items are considered as belonging to the
+                            <em>structure</em> category.</p><a name="eventTypes" id="eventTypes"></a><table border="1"><caption>Table 2-5. EXI Event types</caption><thead><tr><th colspan="2" rowspan="2">EXI Event Type</th><th rowspan="2">Grammar Notation</th><th colspan="2"> Information Items</th></tr><tr><th>Structure</th><th>Content</th></tr></thead><tfoot><tr><td colspan="5" class="footnote"> &sup1;<a href="#exiOptions">EXI
+                                            Options</a> such as preserve and selfContained can be
+                                        used to prune events from the EXI stream to realize a more
+                                        compact representation. </td></tr></tfoot><tbody><tr><td colspan="2">Start Document</td><td>SD</td><th>&nbsp;</th><td>&nbsp;</td></tr><tr><td colspan="2">End Document</td><td>ED</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td colspan="2" rowspan="3">Start Element</td><td>SE ( <em>qname</em> )</td><td>[<em>prefix</em>]</td><td>&nbsp;</td></tr><tr><td>SE ( <em>uri</em>:* )</td><td>
+                                    <em>local-name, </em> [<em>prefix</em>] </td><td>&nbsp;</td></tr><tr><td>SE ( * )</td><td>
+                                    <em>qname, </em> [<em>prefix</em>] </td><td>&nbsp;</td></tr><tr><td colspan="2">End Element</td><td>EE</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td colspan="2" rowspan="3">Attribute</td><td>AT ( <em>qname</em> )</td><td>[<em>prefix</em>]</td><td rowspan="3">
+                                    <em>value</em>
+                                </td></tr><tr><td>AT ( <em>uri</em>:* )</td><td>
+                                    <em>local-name, </em> [<em>prefix</em>] </td></tr><tr><td>AT ( * )</td><td>
+                                    <em>qname, </em> [<em>prefix</em>] </td></tr><tr><td colspan="2">Characters</td><td>CH</td><td>&nbsp;</td><td>
+                                    <em>value</em>
+                                </td></tr><tr><td colspan="2">Namespace Declaration&sup1;</td><td>NS</td><td>
+                                    <em>uri, prefix, local-element-ns</em>
+                                </td><td>&nbsp;</td></tr><tr><td colspan="2">Comment&sup1;</td><td>CM</td><td>
+                                    <em>text</em>
+                                </td><td>&nbsp;</td></tr><tr><td colspan="2">Processing Instruction&sup1;</td><td>PI</td><td>
+                                    <em>name, text</em>
+                                </td><td>&nbsp;</td></tr><tr><td colspan="2">DOCTYPE&sup1;</td><td>DT</td><td>
+                                    <em>name, public, system, text</em>
+                                </td><td>&nbsp;</td></tr><tr><td colspan="2">Entity Reference&sup1;</td><td>ER</td><td>
+                                    <em>name</em>
+                                </td><td>&nbsp;</td></tr><tr><td colspan="2">Self Contained&sup1;</td><td>SC</td><td> &nbsp; </td><td>&nbsp;</td></tr></tbody></table><p>For named XML items, such as elements and attributes, there are three types
+                        of events: SE(<em>qname</em>), SE(<em>uri</em>:*) and SE(*) as well
+                        as AT(<em>qname</em>), AT(<em>uri</em>:*) and AT(*). These events
+                        differ in their associated structure: when SE(<em>qname</em>) or
+                            AT(<em>qname</em>) are used, the actual qname of the XML item is
+                            <em>not</em> encoded as part of the event while
+                        SE(<em>uri</em>:*) and AT(<em>uri</em>:*) events do not encode the
+                            <em>uri</em>. The decision to use one type of event over the other
+                        will be explained later after introducing the notion of EXI grammars.
+                        Additionally, <a href="#fidelityOptions">Fidelity Options</a> may allow
+                        the preservation of namespace prefixes. </p><p>The fidelity options introduced in Section <a href="#exiHeader"><b>2.1.1 EXI Header</b></a> may be
+                        used to prune EXI events such as Namespace Declaration (NS), Comment (CM),
+                        Processing Instruction (PI), DOCTYPE (DT) or Entity Reference (ER). Grammar
+                        pruning simplifies the encoding and decoding process and also improves
+                        compactness by filtering out unused event types.</p><p>Consider a simple XML document from a notebook application:</p><div class="exampleOuter">
+<div class="exampleHeader"><a name="notebookXML" id="notebookXML"></a><i><span>Example 2-1. </span>Notebook (XML Document)</i></div><div class="exampleInner"><pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt; 
+&lt;notebook date="2007-09-12"&gt;
+&nbsp;&lt;note category="EXI" date="2007-07-23"&gt;
+&nbsp; &lt;subject&gt;EXI&lt;/subject&gt;
+&nbsp; &lt;body&gt;Do not forget it!&lt;/body&gt;
+&nbsp;&lt;/note&gt;
+&nbsp;&lt;note date="2007-09-12"&gt;
+&nbsp; &lt;subject&gt;Shopping List&lt;/subject&gt;
+&nbsp; &lt;body&gt;milk, honey&lt;/body&gt;
+&nbsp;&lt;/note&gt;
+&lt;/notebook&gt;
+</pre></div></div><p>The sequence of EXI events corresponding to the body of this XML document is
+                        shown below. </p><div class="figure" style="text-align: center"><a name="exi-body-stream" id="exi-body-stream"></a><br><img src="images/exi-body-stream.png" alt="EXI Body Stream"><p style="text-align:left"><i><span>Figure 2-1. </span>EXI Body Stream</i></p><br></div><p>This sequence of EXI events can be easily mapped to the structure of the XML
+                        document shown above. Every document begins with a <em>Start
+                            Document</em> (SD) and ends with an <em>End Document</em> (ED).
+                        The order in which attributes are encoded may be different in schema-less
+                        and schema-informed EXI streams, as is the exact content associated with
+                        each event.</p><p>The actual number of bits used to represent each type of event, excluding its
+                        content, differs depending on the context. The more event types can occur in
+                        a certain context, the larger the number of bits required to represent an
+                        event in that context. What constitutes a context in this case is more
+                        formally defined by an EXI grammar production in the next section.</p></div><div class="div3">
+<h4><a name="exiGrammars" id="exiGrammars"></a>2.1.3 EXI Grammars</h4><p>EXI is a knowledge based encoding that uses a set of grammars to determine
+                        which events are most likely to occur at any given point in an EXI stream
+                        and encodes the most likely alternatives in fewer bits. It does this by
+                        mapping the stream of events to a lower entropy set of representative values
+                        and encoding those values using a set of simple variable length codes or an
+                        EXI compression algorithm.</p><p>EXI grammars are regular grammars in which productions are associated with
+                            <em>event codes</em>. An EXI encoder, driven by an XML event stream,
+                        matches events to grammar productions and uses their associated event codes
+                        to represent an XML document or XML fragment. Since EXI grammars are regular
+                        grammars, the sequence of event codes written by an encoder corresponds to a
+                        path in the finite automaton that accepts the grammar. In reality, given
+                        that XML is not a regular language, a single grammar cannot be used to
+                        represent an entire XML event stream. Instead, an EXI encoder uses a stack
+                        of grammars, one for each element content model (just like an XML Schema
+                        validator might do).</p><p id="eventCodes">An event code is represented by a sequence of one to three
+                        parts, where each part is a non-negative integer. Event codes in an EXI
+                        grammar are assigned to productions in such a way that shorter event codes
+                        are used to represent productions that are more likely to occur. Conversely,
+                        longer event codes are used to represent productions that are less likely to
+                        occur. EXI grammars are designed in a way that the <em>average</em>
+                        number of bits needed to represent each production is less than that for a
+                        grammar in which more likely and less likely productions are not
+                        distinguished. The following tables illustrate this principle via an
+                        example. </p><table border="0"><caption>Table 2-6. Event Code Assignment </caption><tbody><tr><th>
+                                    <table border="1"><tbody><tr><th>Event</th><th>Indicator</th><th></th><th>#bits</th></tr><tr><td>AT(<code>date</code>)</td><td>0</td><td rowspan="11"></td><td rowspan="9" align="center">4</td></tr><tr><td>AT(<code>category</code>)</td><td>1</td></tr><tr><td>EE</td><td>2</td></tr><tr><td>AT(*)</td><td>3</td></tr><tr><td>NS</td><td>4</td></tr><tr><td>SE(*)</td><td>5</td></tr><tr><td>CH</td><td>6</td></tr><tr><td>CM</td><td>7</td></tr><tr><td>PI</td><td>8</td></tr><tr><td colspan="4"></td></tr><tr><th>#distinct values</th><td>9</td><td>&nbsp;</td></tr></tbody></table>
+                                </th><th> &nbsp; &nbsp; &nbsp; </th><th>
+                                    <table border="1"><tbody><tr><th>Event</th><th colspan="3">EventCode</th><th></th><th>#bits</th></tr><tr><td>AT(<code>date</code>)</td><td>0</td><td>&nbsp;</td><td>&nbsp;</td><td rowspan="11"></td><td rowspan="2" align="center">2</td></tr><tr><td>AT(<code>category</code>)</td><td>1</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>EE</td><td>2</td><td>0</td><td>&nbsp;</td><td rowspan="5" align="center">2&nbsp;+&nbsp;3</td></tr><tr><td>AT(*)</td><td>2</td><td>1</td><td>&nbsp;</td></tr><tr><td>NS</td><td>2</td><td>2</td><td>&nbsp;</td></tr><tr><td>SE(*)</td><td>2</td><td>3</td><td>&nbsp;</td></tr><tr><td>CH</td><td>2</td><td>4</td><td>&nbsp;</td></tr><tr><td>CM</td><td>2</td><td>5</td><td>0</td><td align="center" rowspan="2">2&nbsp;+&nbsp;3&nbsp;+&nbsp;1</td></tr><tr><td>PI</td><td>2</td><td>5</td><td>1</td></tr><tr><td colspan="6"></td></tr><tr><th>#distinct&nbsp;values</th><td>3</td><td>6</td><td>2</td><td>&nbsp;</td></tr></tbody></table>
+                                </th></tr><tr><td align="center"><em>Naive</em> Event Code Assignment</td><td align="center">vs.</td><td align="center">EXI Event Code Assignment</td></tr></tbody></table><p>In the first table, where productions are not separated according to their
+                        probability, a 4-bit code is needed to represent each entry. In the second
+                        table, on the other hand, code lengths vary from 2 bits to 6 bits since
+                        productions are grouped based on their likelihood to occur. Assuming the
+                        content model for the element being encoded corresponds to the sequence
+                            AT(<code>category</code>) AT(<code>date</code>) (i.e., the element
+                        declares two attributes) then the encoding of all the event codes will be 4
+                        bits shorter using the second table. </p><p>EXI grammars take advantage of a priori knowledge of the kind of data being
+                        encoded, namely, XML documents and XML fragments. In particular, EXI
+                        grammars can take advantage of the fact that, on any given grammar, certain
+                        XML items are more popular than others. For example, by simple inspection of
+                        real-world documents, it is easy to verify that attributes occur more
+                        frequently than processing instructions and should therefore receive shorter
+                        event codes.</p><p>Further improvements in grammar design are possible if schema information is
+                        available. In this case, we can not only take advantage of generic XML
+                        knowledge but also of knowledge that is specific to the type of documents
+                        being encoded. For example, as shown in the tables above, we can add
+                        specific productions such as AT(<code>category</code>) and
+                            AT(<code>date</code>) with shorter event codes than AT(*).</p><p>The following two sections describe the differences between the built-in
+                        grammars and the schema-informed grammars. Note that an EXI encoder may only
+                        have <em>partial</em> schema information in which case it will use a
+                        combination of built-in and schema-informed grammars during encoding.</p><div class="div4">
+<h5><a name="builtInGrammar" id="builtInGrammar"></a>2.1.3.1 Built-In Grammar</h5><p>EXI uses a set of built-in grammars to encode XML documents and XML
+                            fragments when no schema information is available. There are built-in
+                            grammars to encode documents, fragments, and elements. Document grammars
+                            and fragment grammars describe the top-level structure, while element
+                            grammars describe the structure of every element. Fragment grammars are
+                            more lenient than document grammars; for example, they allow multiple
+                            top-level elements to be encoded as siblings. For more information on
+                            these grammars, the reader is referred to <a href="http://www.w3.org/TR/exi/#builtinGrammars">Built-in XML
+                                Grammars</a>.</p><p>The EXI format describes a mechanism by which built-in grammars are
+                            dynamically extended using information from the actual instance being
+                            encoded. Stated differently, the EXI format describes a
+                                <em>learning</em> mechanism to further improve efficiency when
+                            no schema information is available statically. Newly learned productions
+                            are assigned short event codes, improving compactness for every
+                            subsequent use of those productions. In addition, by adding new
+                            productions to the grammar, certain data associated with an event only
+                            needs to be encoded once. For example, if an element named
+                                <code>notebook</code> is matched by SE(*) and subsequently matched
+                            by SE(<code>notebook</code>), the actual localName "notebook" is only
+                            encoded once as part of the SE(*) event.</p><p>As pointed out in the previous section, EXI grammars are always regular
+                            and can, therefore, be accepted by finite automata (FA). To provide a
+                            more operational view of an EXI processor, we will opt for the use of FA
+                            to explain how grammars work. The following figure shows a stack of
+                            grammars in which the top-level grammar accepts "note" elements. State
+                            transitions in black correspond to the built-in element grammar; state
+                            transitions in red have been learned as a result of encoding the element
+                            before. </p><div class="figure" style="text-align: center"><a name="exampleBuiltInGrammar" id="exampleBuiltInGrammar"></a><br><img src="images/Built-In_Grammar_Note.png" alt="Built-In Grammar for SE(note)"><p style="text-align:left"><i><span>Figure 2-2. </span>Built-In Grammar for SE(note)</i></p><br></div><p>The built-in element automaton has two distinguished states: StartTag and
+                            Element. The former accepts attribute and namespace events that must
+                            occur before any element content; the latter accepts only element
+                            content which excludes attribute and namespace events. This separation
+                            enables the use of short codes which improves compactness and processing
+                            time.</p><p>As stated earlier, transitions in red are extensions to the built-in
+                            element grammar based on knowledge acquired about the element
+                                <code>note</code>. Notice how AT(<code>date</code>),
+                                AT(<code>category</code>) and SE(<code>subject</code>) have been
+                            added out of the StartTag state while SE(<code>body</code>) has been
+                            added out of the Element state. In particular, this suggests that
+                                SE(<code>subject</code>) is expected to occur before
+                                SE(<code>body</code>), and that both of these SE events are expected
+                            to occur after any AT event. In addition, notice that both AT(*) and
+                            SE(*) are still available to enable future learning.</p></div><div class="div4">
+<h5><a name="schemaInformedGrammar" id="schemaInformedGrammar"></a>2.1.3.2 Schema-informed Grammar</h5><p>EXI grammars can be further improved if schema information is known
+                            statically. Schema information can be interpreted in two different ways
+                            or encoding modes: <em>strict</em> and <em>non-strict</em>. In
+                            strict mode, the instances being encoded must be largely valid with
+                            respect to the schema; most deviations from the schema will result in an
+                            encoding error. In non-strict mode, any deviations are accepted and
+                            encoded using more generic events. Examples of deviations are attributes
+                            whose actual values do not match the type defined in the schema or
+                            elements whose structure does not correspond to that in the schema.
+                            Given that strict grammars have fewer productions (no need for SE(*) or
+                            AT(*) in most cases) shorter event codes can be used to encode each
+                            option.</p><p>Instead of being dynamically extensible as the built-in grammars,
+                            schema-informed grammars are created statically based on the information
+                            in the available schema. This process will add productions of the form
+                                AT(<em>qname</em>) or SE(<em>qname</em>) guided by the
+                            attribute and element declarations in the schema. Let us continue the
+                            example from the previous section by assuming the following schema is
+                            available statically.</p><div class="exampleOuter">
+<div class="exampleHeader"><a name="notebookSchema" id="notebookSchema"></a><i><span>Example 2-2. </span>Notebook (XML Schema)</i></div><div class="exampleInner"><pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"&gt;
+&nbsp; &lt;xs:element name="notebook"&gt;
+&nbsp;&nbsp;&nbsp; &lt;xs:complexType&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;xs:sequence maxOccurs="unbounded"&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;xs:element name="note" type="Note"/&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/xs:sequence&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;xs:attribute ref="date" /&gt;
+&nbsp;&nbsp;&nbsp; &lt;/xs:complexType&gt;
+&nbsp; &lt;/xs:element&gt;
+&nbsp; &lt;xs:complexType name="Note"&gt;
+&nbsp;&nbsp;&nbsp; &lt;xs:sequence&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;xs:element name="subject" type="xs:string"/&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;xs:element name="body" type="xs:string"/&gt;
+&nbsp;&nbsp;&nbsp; &lt;/xs:sequence&gt;
+&nbsp;&nbsp;&nbsp; &lt;xs:attribute ref="date" use="required" /&gt;
+&nbsp;&nbsp;&nbsp; &lt;xs:attribute name="category" type="xs:string"/&gt;
+&nbsp; &lt;/xs:complexType&gt;
+&nbsp; &lt;xs:attribute name="date" type="xs:date"&nbsp; /&gt;
+&lt;/xs:schema&gt;
+</pre></div></div><p>The schema for the element <code>note</code> states that it has a
+                            mandatory attribute <code>date</code> and an optional attribute
+                                <code>category</code>, and that its structure is composed of an
+                            element <code>subject</code> followed by an element <code>body</code>.
+                            An automaton that corresponds to the <em>strict</em> grammar for
+                            this element is shown next. </p><div class="figure" style="text-align: center"><br><img src="images/Schema-Informed_Grammar_Note.png" alt="Strict Schema-Informed Grammar for SE(note)"><p style="text-align:left"><i><span>Figure 2-3. </span>Strict Schema-Informed Grammar for SE(note)</i></p><br></div><p>Note that AT(<code>category</code>) is accepted before
+                                AT(<code>date</code>) even though their order is reversed in the
+                            schema. This is because attributes in schema-informed grammars must be
+                            sorted lexicographically, first by local name and then by namespace URI.
+                            Attribute sorting reduces the number of options which, in turn, greatly
+                            simplifies grammar creation and improves compactness. Since this
+                            automaton does not include transitions on AT(*) or SE(*), any deviations
+                            from the schema will result in an encoding error. </p><p> Generally speaking, schema-informed grammars should be favored over
+                            built-in grammars. Schema knowledge characterizes constraints of the
+                            structure and content type of XML information items. Hence
+                            schema-informed grammars do not evolve while processing and value items
+                            such as characters and attribute values are encoded according to their
+                            types. As a consequence, processing speed increases and compaction is
+                            improved. </p></div></div></div><div class="div2">
+<h3><a name="contentRepresentation" id="contentRepresentation"></a>2.2 Content Representation</h3><div class="div3">
+<h4><a name="builtInTypes" id="builtInTypes"></a>2.2.1 Built-in EXI Datatype Representations</h4><p>EXI uses built-in datatype representations to represent so called content
+                        value items in an efficient manner. In other words, all attribute and
+                        character values are encoded according to their EXI datatype representation
+                        associated with their XML Schema datatype. Type information can be retrieved
+                        from available schema information. The following table lists the mapping
+                        between <a href="#schemaDatatypes2">[XML Schema Datatypes]</a> and the Built-in Datatype
+                        Representations supported in EXI.</p><a name="builtInEXITypes" id="builtInEXITypes"></a><table border="1"><caption>Table 2-7. Built-in EXI Datatypes</caption><thead><tr><th>Built-in EXI Datatype Representation</th><th>XML Schema Datatypes</th></tr></thead><tbody><tr><td>Binary</td><td>
+                                    <a href="http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#base64Binary">base64Binary</a>, <a href="http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#hexBinary">hexBinary</a>
+                                </td></tr><tr><td>Boolean</td><td colspan="2">
+                                    <a href="http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#boolean">boolean</a>
+                                </td></tr><tr><td>Date-Time</td><td colspan="2">
+                                    <a href="http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#dateTime">dateTime</a>, <a href="http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#time">time</a>, <a href="http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#date">date</a>, <a href="http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#gYearMonth">gYearMonth</a>, <a href="http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#gYear">gYear</a>, <a href="http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#gMonthDay">gMonthDay</a>, <a href="http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#gDay">gDay</a>, <a href="http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#gMonth">gMonth</a>
+                                </td></tr><tr><td>Decimal</td><td colspan="2">
+                                    <a href="http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#decimal">decimal</a>
+                                </td></tr><tr><td>Float</td><td colspan="2">
+                                    <a href="http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#float">float</a>, <a href="http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#double">double</a>
+                                </td></tr><tr><td>n-bit Unsigned Integer</td><td colspan="2"><a href="http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#integer">integer</a> with bounded range 4096 or smaller as
+                                    determined by the values of <em>minInclusive</em>,
+                                        <em>minExclusive</em>, <em>maxInclusive</em> and
+                                        <em>maxExclusive</em> facets.</td></tr><tr><td>Unsigned Integer</td><td>
+                                    <a href="http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#nonNegativeInteger">nonNegativeInteger</a> or <a href="http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#integer">integer</a> with either <em>minInclusive</em>
+                                    facet specified with a value equal to or greater than 0, or
+                                        <em>minExclusive</em> facet specified with a value equal
+                                    to or greater than -1.</td></tr><tr><td>Integer</td><td> any other <a href="http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#integer">integer</a> that is not already covered by
+                                        <em>n-bit Unsigned Integer</em> or <em>Unsigned
+                                        Integer</em></td></tr><tr><td>String</td><td>
+                                    <a href="http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#string">string</a>, <a href="http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#anySimpleType-component">anySimpleType</a>
+                                    
+                                    and all types directly derived by union</td></tr><tr><td>List</td><td colspan="2">All types directly derived by list, including
+                                    <a href="http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#NMTOKENS">NMTOKENS</a>,
+                                    <a href="http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#IDREFS">IDREFS</a> and <a href="http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/#ENTITIES">ENTITIES</a>
+                                </td></tr><tr><td>QName</td><td>xsi:type attribute values when Preserve.lexicalValues option value is false
+                                   </td></tr></tbody></table><div class="note"><p class="prefix"><b>Note:</b></p><p>The built-in EXI datatype <em>QName</em> is used for structure
+                        coding, such as qualified names for XML elements and attributes. </p><table border="1" summary="Editorial note: DP"><tr><td align="left" valign="top" width="50%"><b>Editorial note: DP</b></td><td align="right" valign="top" width="50%">&nbsp;</td></tr><tr><td colspan="2" align="left" valign="top">Does this note still make sense?</td></tr></table></div><p> Enumerated values are efficiently encoded as n-bit Unsigned Integers where n
+                        = &lceil; log <sub>2</sub> m &rceil; and m is the number of items in
+                        the enumerated type. The ordinal position (starting with position zero) of
+                        each value item in the enumeration in schema-order is used as identifier.
+                        Exceptions are for schema
+                        union datatypes, list datatypes, as well as QName or Notation and types derived therefrom by restriction.
+                        The
+                        values of such types are processed by their respective built-in EXI datatype
+                        representations instead of being represented as enumerations. </p><p>The interested reader is referred to the <a href="http://www.w3.org/TR/exi/#encodingDatatypes">Efficient XML
+                            Interchange (EXI) Format 1.0</a> document which describes in details
+                        the encoding rules for representing built-in EXI datatypes. When the
+                            <a title="" href="#fidelityOptions">preserve.lexicalValues</a> option
+                        is true, all values are represented as Strings. Some values that would have
+                        otherwise been designated to certain built-in EXI datatype representations
+                        are represented as Strings with <a href="http://www.w3.org/TR/exi/#builtInRestrictedStrings">restricted
+                            character sets</a>. In the absence of external type information (no
+                        available schema information) all attribute and character values are typed
+                        as Strings. </p></div><div class="div3">
+<h4><a name="stringTable" id="stringTable"></a>2.2.2 String Table</h4><p>String tables are used in memory-sensitive areas allowing a compact
+                        representation of repeated string values. Re-occurring string values are
+                        represented using an associated compact identifier rather than encoding the
+                        string literally again. When a string value is found in the string table
+                        (i.e. a string table <em>hit</em>) the value is encoded using a compact
+                        identifier. Only if a string value is not found in the associated table
+                        (i.e. a string table <em>miss</em>) is the string encoded as String and
+                        a new compact identifier is introduced.</p><p>EXI puts the following four information items into string tables and
+                        partitions the string tables based on the context in which they occur.</p><ul><li><p>
+                                <em>uri</em>
+                            </p></li><li><p>
+                                <em>prefix</em>
+                            </p></li><li><p>
+                                <em>local-name</em>
+                            </p></li><li><p>
+                                <em>value</em>
+                            </p></li></ul><p>The table below shows EXI information items used in section <a href="#exiBody"><b>2.1.2 EXI Body</b></a> and its relations to the string table partitions (e.g. a
+                            <em>prefix</em> information item is assigned to the
+                            <em>Prefix</em> partition while <em>value</em> information items
+                        are assigned to the <em>Value</em> partition).</p><a name="eventContentItems" id="eventContentItems"></a><table border="1"><caption>Table 2-8. String Table Partition Assignment</caption><thead><tr><th>Information item</th><th>Used in EXI Event</th><th>String Table Partition</th></tr></thead><tbody><tr><td>
+                                    <em>local-name</em>
+                                </td><td>SE (uri:*), AT (uri:*)</td><td>
+                                    <em>LocalName</em>
+                                </td></tr><tr><td>
+                                    <em>prefix</em>
+                                </td><td>NS, SE, AT</td><td>
+                                    <em>Prefix</em>
+                                </td></tr><tr><td rowspan="2">
+                                    <em>qname</em>
+                                </td><td rowspan="2">SE ( * ), AT ( * )</td><td>
+                                    <em>URI</em>
+                                    <sub>(uri portion of qname)</sub>
+                                </td></tr><tr><td>
+                                    <em>LocalName</em>
+                                    <sub>(local-name portion of qname)</sub>
+                                </td></tr><tr><td>
+                                    <em>uri</em>
+                                </td><td>NS</td><td>
+                                    <em>URI</em>
+                                </td></tr><tr><td>
+                                    <em>value</em>
+                                </td><td>CH, AT</td><td>
+                                    <em>Value</em>
+                                </td></tr></tbody></table><p>Each EXI string table partition is optimized for more frequent use of either
+                        compact identifiers or string literals depending on the purpose of the
+                        partition. The <em>URI</em> and the <em>Prefix</em> partitions are
+                            <a href="http://www.w3.org/TR/exi/#encodingOptimizedForHits"><cite>optimized for frequent use of compact identifiers</cite></a> while the
+                            <em>LocalName</em> and the <em>Value</em> partitions are
+                            <a href="http://www.w3.org/TR/exi/#encodingOptimizedForMisses"><cite>optimized for frequent use of string literals</cite></a>. </p><p>In the subsequent paragraphs, more details about the different partitions are
+                        given by making use of the previously introduced <em>Notebook</em>
+                        example. The <a title="" href="#notebookXML">Notebook XML Document</a>
+                        example is repeated here to simplify algorithm illustrations.
+                        </p><div class="exampleOuter"><div class="exampleInner"><pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt; 
+&lt;notebook date="2007-09-12"&gt;
+&nbsp;&lt;note category="EXI" date="2007-07-23"&gt;
+&nbsp; &lt;subject&gt;EXI&lt;/subject&gt;
+&nbsp; &lt;body&gt;Do not forget it!&lt;/body&gt;
+&nbsp;&lt;/note&gt;
+&nbsp;&lt;note date="2007-09-12"&gt;
+&nbsp; &lt;subject&gt;Shopping List&lt;/subject&gt;
+&nbsp; &lt;body&gt;milk, honey&lt;/body&gt;
+&nbsp;&lt;/note&gt;
+&lt;/notebook&gt;</pre></div></div><p>The uri portion of <em>qname</em> content items and <em>uri</em>
+                        content items are assigned to the <em>URI</em> partition. The partition
+                        is initially pre-populated with three likely entries (see figure below).
+                        When a schema is provided, there is an additional entry that is appended and
+                        the <em>URI</em> partition is also pre-populated with the name of each
+                        target namespace declared in the schema, plus namespace URIs allowed in
+                        wildcard terms and attribute wildcards.</p><div class="figure" style="text-align: center"><br><img src="images/StringTable_Uris.png" alt="Initial Entries in URI Partition"><p style="text-align:left"><i><span>Figure 2-4. </span>Initial Entries in URI Partition</i></p><br></div><p>The local-name portion of <em>qname</em> content items and
+                            <em>local-name</em> content items are assigned to
+                            <em>LocalName</em> partitions. Respectively, <em>prefix</em>
+                        content items are assigned to <em>Prefix</em> partitions. Both partition
+                        types are initially pre-populated with likely entries (see figure below).
+                        These types of partitions are further differentiated according to the
+                        associated namespace URI. In our notebook example no prefixes are used and
+                        the default namespace URI (<code>"" [empty-string]</code>) is used. When a
+                        schema is provided, <em>LocalName</em> partitions are also pre-populated
+                        with the local-name of each attribute, element and type declared in the
+                        schema, sorted lexicographically. Further local-name entries are appended in
+                        the order they appear in the actual XML instance (no additional sorting is
+                        applied). </p><div class="figure" style="text-align: center"><br><img src="images/StringTable_Prefixes_LocalNames.png" alt="Initial Entries in Prefix and LocalName Partitions"><p style="text-align:left"><i><span>Figure 2-5. </span>Initial Entries in Prefix and LocalName Partitions</i></p><br></div><p>The figure above shows in highlighted form <em>uri</em> and
+                            <em>local-name</em> items used throughout the entire example
+                        document. For instance, the notebook sample assigns 7 local-name entries,
+                        such as <code>notebook</code> and <code>date</code>, to the empty URI
+                        namespace. Whenever <em>local-name</em> and/or <em>uri</em>
+                        information items occur again, the compact identifier is used instead.</p><p>The last string table partition type is the <em>Value</em> partition. A
+                            <em>Value</em> partition is initially empty and grows while
+                        processing an XML instance. The total number of <em>value</em> items or
+                        the maximum string length of <em>value</em> content items can be
+                        restricted to save memory on small devices (see
+                            <em>valuePartitionCapacity</em> and <em>valueMaxLength</em>
+                        <a href="#exiOptions">EXI Options</a>). Attribute and Character
+                        content-values of type String are assigned to this partition.</p><div class="figure" style="text-align: center"><br><img src="images/StringTable_Values.png" alt="Final Entries in Value Partition"><p style="text-align:left"><i><span>Figure 2-6. </span>Final Entries in Value Partition</i></p><br></div><p>The figure above illustrates that <em>value</em> content items can be
+                        indexed from two different partitions, a 'global' partition and a 'local'
+                        partition. When a string value is neither found in the global nor in the
+                        local value section its string literal is encoded as String and the string
+                        value is added to both, the associated local and the global string
+                        index.</p><p>In our example we assume that all <em>value</em> items are represented as
+                        String, as it is the case in schema-less grammars or if the fidelity option
+                        Preserve.lexicalValues is true. When a string value is found in the local
+                        value section for a given element or attribute, EXI can use the
+                        corresponding compact identifier to encode the re-appearance more
+                        efficiently. The value "<code>2007-09-12</code>" appears twice in the
+                            <code>date</code> context. The second occurrence results in a local
+                        value hit and is respectively encoded as a 1 bit compact identifier.</p><p>On the other side, if a string value is not found in the local section, but
+                        is found in the global section, the corresponding global compact identifier
+                        is used. The value "<code>EXI</code>" appears two times in the notebook
+                        example, respectively in the context of <code>category</code> and
+                            <code>subject</code>. Hence, the second appearance results in a global
+                        value hit encoded as a 3 bit compact identifier since there are 6 entries in
+                        the global section (3 = &lceil; log <sub>2</sub> 6 &rceil;). Due to
+                        the different table sizes, a global compact identifier is generally less
+                        compact than a local compact identifier. Still, global value hits avoid the
+                        repeated encoding of string literals. </p><p>The number of bits needed to encode a compact identifier depends on the
+                        actual number of entries of the associated table at that time. Since all
+                        tables are growing while parsing an XML instance, the number of bits is not
+                        fixed. The figure above illustrates the situation after coding the entire
+                        XML instance. This <em>growth</em> effect applies to all string table
+                        partitions and makes the format very compact for small documents.</p><div class="note"><p class="prefix"><b>Note:</b></p><p>This section describes EXI String Tables at a conceptual level. The exact
+                            bit representation of table misses and indices is not presented in this
+                            document, but is described in full in the <a href="http://www.w3.org/TR/exi/#stringTable"><cite>Efficient XML
+                                Interchange (EXI) Format 1.0</cite></a> document. </p></div></div></div><div class="div2">
+<h3><a name="compression" id="compression"></a>2.3 Compression</h3><p>EXI can use additional computational resources to achieve higher compaction. EXI
+                    compression leverages knowledge of XML to achieve higher compression efficiency
+                    than generic compression of an EXI stream. It multiplexes an EXI stream of
+                    heterogeneous data elements into channels of more homogeneous data elements that
+                    compress better together.</p><p>The mechanism used to combine homogeneous data is simple and flexible enough so
+                    that it can be used in both, schema-informed and schema-less EXI streams.
+                    Element and attribute values are grouped according to their <em>qname</em>s.
+                    Structure information such as Event Codes is also combined. To keep compression
+                    overhead at a minimum, smaller <em>qname</em> channels are combined while
+                    larger channels are compressed separately.</p><p>The figure below depicts a bit-packed EXI Body Stream where no EXI compression is
+                    in use. Grey buckets represent structure information and colored buckets are
+                    used for content information. The color is determined by the associated
+                        <em>qname</em> (e.g. date, category, subject, body). </p><div class="figure" style="text-align: center"><br><img src="images/exi-body-stream.png" alt="EXI Body Stream"><p style="text-align:left"><i><span>Figure 2-7. </span>EXI Body Stream</i></p><br></div><p> XML instances can thus be treated as a combination of structure and content
+                    information. The content information can be further divided in different
+                    sections according to the context (surrounding structure as indicated by a
+                        <em>qname</em>). EXI treats XML instances this way and uses these
+                    implied partitions, referred to as <em>channels</em>, to provide blocked
+                    input to a standard compression algorithm. This grouping of similar data
+                    increases compression efficiency.</p><div class="figure" style="text-align: center"><a name="compressionX" id="compressionX"></a><br><img src="images/compression.png" alt="EXI Compression"><p style="text-align:left"><i><span>Figure 2-8. </span>EXI Compression</i></p><br></div><div class="note"><p class="prefix"><b>Note:</b></p><p>An pre-compression phase creates a byte-aligned representation of event codes
+                        and content items that is more amenable to compression algorithms compared
+                        to unaligned representations. Most compression algorithms operate on a
+                        series of bytes to identify redundancies in the octets.</p></div><p>By combining smaller channels into the same compressed stream while others are
+                    compressed separately, EXI keeps the compression overhead at a minimum. The
+                    mechanism to determine whether channels are combined or compressed separately is
+                    guided by the number of value content items present in the EXI stream. For
+                        <em>small</em> documents (&le; 100 value content items) EXI uses
+                    a single compressed stream while <em>larger</em> documents (&gt; 100
+                    value content items) result in several independent compressed streams. The
+                    notebook example falls in the first category and is encoded as a single
+                    compressed <a href="http://www.w3.org/TR/exi/#RFC1951"><cite>deflate</cite></a>
+                    stream containing first the structure channel, followed by the
+                        <em>qname</em> channels in the order they appear in the document (date,
+                    category, subject, body). The reader is referred to the <a href="http://www.w3.org/TR/exi/#CompressedStreams"><cite>Efficient XML Interchange
+                        (EXI) Format 1.0</cite></a> document for further details.</p><p>The additional task of applying EXI compression is legitimated by the fact that,
+                    in many use-cases, encoded files become over 100 times smaller than XML and up
+                    to 14 times more compact than gzipped XML. In addition, the use of computational
+                    resources to achieve higher compaction is in most cases less than that of
+                    conventional compression such as GZip (see <a href="#exiEval">[EXI Evaluation Note]</a>). </p></div></div><div class="div1">
+<h2><a name="exiByExample" id="exiByExample"></a>3. Efficient XML Interchange by Example</h2><p> This section walks through the EXI coding of the <a title="" href="#notebookXML">Notebook
+                    Example</a>, explaining the concepts previously introduced in a
+                step-by-step approach. </p><div class="div2">
+<h3><a name="encodingNotation" id="encodingNotation"></a>3.1 Notation</h3><p>The table below shows the notation that is used in the description of EXI
+                    encoding and decoding in subsequent sections.</p><table border="1"><caption>Table 3-1. Example Notation</caption><colgroup span="1"></colgroup><colgroup align="center" span="1"></colgroup><colgroup span="1"></colgroup><thead><tr><th>Notation</th><th>Description</th></tr></thead><tbody><tr><td>
+                                <em>N <sub>n</sub>
+                                </em>
+                            </td><td> An unsigned integer <em>N</em> is represented as <a href="http://www.w3.org/TR/exi#encodingBoundedUnsigned">n-bit
+                                    Unsigned Integer</a>. </td></tr><tr><td>
+                                <em>N</em>
+                                <sub>uint</sub>
+                            </td><td>An unsigned integer <em>N</em> is represented as <a href="http://www.w3.org/TR/exi#encodingUnsignedInteger">Unsigned
+                                    Integer</a>. </td></tr><tr><td>"Literal&nbsp;String"</td><td>The string shown between double quotation marks is represented as <a href="http://www.w3.org/TR/exi#encodingString">String</a>
+                                (length prefixed sequence of characters) with the length part of the
+                                string being omitted. </td></tr><tr><td>"Literal&nbsp;String"<em>&nbsp;<sub>+n</sub>
+                                </em>
+                            </td><td>The string shown between double quotation marks is represented as <a href="http://www.w3.org/TR/exi#encodingString">String</a>
+                                (length prefixed sequence of characters) with the length part being
+                                the length of the string incremented by <em>n</em>. </td></tr></tbody></table></div><div class="div2">
+<h3><a name="encodingOptions" id="encodingOptions"></a>3.2 Options</h3><p>We do not make use of specific encoding options such as using compression or
+                    user-defined datatype representations to encode and decode the body. The table below shows
+                    the <a href="http://www.w3.org/TR/exi#fidelityOptions">fidelity options</a>
+                    used throughout the presented example.</p><table border="1"><caption>Table 3-2. Fidelity options used in this document</caption><colgroup span="1"></colgroup><colgroup align="center" span="1"></colgroup><colgroup span="1"></colgroup><thead><tr><th>Fidelity option</th><th>Value</th><th>Effect</th></tr></thead><tbody><tr><td>Preserve.comments</td><td>false</td><td>Productions of CM events are pruned from grammars</td></tr><tr><td>Preserve.pis</td><td>false</td><td>Productions of PI events are pruned from grammars</td></tr><tr><td>Preserve.dtd</td><td>false</td><td>Productions of DOCTYPE and ER events are pruned from grammars</td></tr><tr><td>Preserve.prefixes</td><td>false</td><td>NS events are pruned from grammars and namespace prefixes are not
+                                preserved</td></tr><tr><td id="key-preserveLexicalValuesOption">Preserve.lexicalValues</td><td>false</td><td>Lexical form of element and attribute values is not preserved</td></tr></tbody></table><p>The fidelity options setting shown above prunes those productions in an EXI
+                    grammar that contain CM (Comment), PI (Processing Instruction), DT (DocType) or
+                    ER (Entity Reference) events. This is so as to make the grammar presentation as
+                    concise as possible, yet preserving the variety of event types that are actually
+                    used in the example XML document. </p><p>In the example encodings, whitespaces that are originally present in the example
+                    XML document are omitted, which is intentional. EXI format is capable of
+                    representing those whitespaces in an efficient manner. They are omitted in the
+                    example encodings to make the encoding description more articulate by focusing
+                    on the primary data and structure without being distracted by the frequent
+                    occurrence of indentation whitespaces. </p></div><div class="div2">
+<h3><a name="encoding" id="encoding"></a>3.3 Encoding Example</h3><p>This section describes the encoding of an <a title="" href="#exiBody">EXI
+                        Body</a>. The sample XML document is transcoded on the one hand into
+                    an EXI document in the absence of any schemas using built-in grammars and on the
+                    other hand using schema-informed grammars according to provided schema
+                    information (see <a title="" href="#notebookSchema">Notebook XML
+                    Schema</a>).</p><table border="1"><tbody><tr><td class="xml" colspan="2">XML information set item</td></tr><tr><td class="schema-less"> &nbsp;&nbsp; EXI &nbsp;&nbsp; </td><td> &nbsp;&nbsp; without a schema
+                                &nbsp;&nbsp;&nbsp; </td></tr><tr><td class="schema-informed"> &nbsp;&nbsp; EXI
+                                &nbsp;&nbsp; </td><td> &nbsp;&nbsp; with schema information
+                                &nbsp;&nbsp;&nbsp; </td></tr></tbody></table><p>While coding an EXI Body stream a stack of EXI grammars is in use. A grammar
+                    
+                    consists of an ordered list of productions. Each production (e.g.
+                    SD&nbsp;&nbsp;DocContent&nbsp;&nbsp;0) is made up of an EXI
+                    Event, a following grammar (except for End&nbsp;Element), and an associated
+                        <a href="#eventCodes"><cite>Event Code</cite></a>. </p><p> The initial stack item is a Document or a Fragment Grammar, depending on whether
+                    we deal with an XML document or with an XML fragment, respectively. The grammar
+                    at the top of the stack represents the context and constitutes the possible
+                    productions or events of this context. In addition, Start&nbsp;Element (SE)
+                    events push a new grammar onto the top of the stack while End&nbsp;Element
+                    (EE) events pop the current grammar.</p><p>Each XML information set item is split up into the according event, grammar, and
+                    encoding part accompanied with notes.</p><table border="1"><caption>Table 3-3. Encoding Example Illustration</caption><colgroup span="1"></colgroup><colgroup align="center" span="1"></colgroup><colgroup span="1"></colgroup><thead><tr align="center"><th rowspan="2">Event</th><th rowspan="2">Grammar</th><th colspan="2">EXI Encoding</th><th rowspan="2">Note</th></tr><tr align="center"><th>EventCode</th><th>Content</th></tr></thead><tbody><tr id="xmlDecl"><td colspan="5" class="xml">
+                                <code>&lt;?xml version="1.0"
+                                    encoding="UTF-8"?&gt;</code>
+                            </td></tr><tr><td align="center" class="schema-less">SD</td><td>
+                                <table><thead><tr><th colspan="3" align="left">Document</th></tr></thead><tbody><tr><td>SD</td><td>DocContent</td><td>0</td></tr></tbody></table>
+                            </td><td>0<sub>0</sub>
+                            </td><td>&nbsp;</td><td rowspan="2">
+                                <p>The Document grammar is the starting point for any EXI document.
+                                    Given that there is only one possible production
+                                    <em>SD</em>, the associated Event Code 0 is represented in
+                                    zero bits (i.e., omitted). </p>
+                                <ol class="enumar"><li> The current <em>Document</em> grammar moves on to the
+                                            <em>DocContent</em> grammar. </li></ol>
+                            </td></tr><tr><td align="center" class="schema-informed">SD</td><td>
+                                <table><thead><tr><th colspan="3" align="left">Document</th></tr></thead><tbody><tr><td>SD</td><td>DocContent</td><td>0</td></tr></tbody></table>
+                            </td><td>0<sub>0</sub>
+                            </td><td>&nbsp;</td></tr><tr id="xmlNotebook"><td colspan="5" class="xml">
+                                <code>&lt;notebook&gt;</code>
+                            </td></tr><tr><td align="center" class="schema-less">SE</td><td>
+                                <table><thead><tr><th colspan="3" align="left">DocContent</th></tr></thead><tbody><tr><td>SE(*)</td><td>DocEnd</td><td>0</td></tr></tbody></table>
+                            </td><td>0<sub>0 </sub>
+                            </td><td> 1<sub>2</sub> "notebook"<sub>+1</sub>
+                            </td><td>
+                                <ol class="enumar"><li><p>1<sub>2</sub> (uri hit)</p><table border="1"><thead><tr><th colspan="2">URIs</th></tr></thead><tbody><tr><td>0</td><td>[uri miss]</td></tr><tr class="bold"><td>1</td><td>"" [empty string]</td></tr><tr><td>2</td><td>".../XML/1998/namespace"</td></tr><tr><td>3</td><td>".../XMLSchema-instance"</td></tr></tbody></table></li><li><p>"notebook"<sub>+1</sub> (local-name miss)</p><table border="1"><thead><tr><th colspan="2">Local-Names (default)</th></tr></thead><tbody><tr class="silver"><td>0</td><td>"notebook"</td></tr></tbody></table></li><li><p>DocContent moves on to DocEnd and StartTagNotebook is
+                                            pushed on grammar-stack </p></li></ol>
+                            </td></tr><tr><td align="center" class="schema-informed">SE</td><td>
+                                <table><thead><tr><th colspan="3" align="left">DocContent</th></tr></thead><tbody><tr><td>SE(notebook)</td><td>DocEnd</td><td>0</td></tr><tr><td>[Undeclared]</td><td></td><td>1</td></tr></tbody></table>
+                            </td><td>0<sub>1</sub>
+                            </td><td>&nbsp;</td><td>
+                                <ol class="enumar"><li><p>DocContent moves on to DocEnd and StartTagNotebook1 is
+                                            pushed on grammar-stack </p></li></ol>
+                            </td></tr><tr id="xmlNotebookDate"><td colspan="5" class="xml">
+                                <code>date = "2007-09-12"</code>
+                            </td></tr><tr><td align="center" class="schema-less">AT</td><td>
+                                <table><thead><tr><th colspan="3" align="left">StartTagNotebook</th></tr></thead><tbody><tr><td colspan="2">EE</td><td>0.0</td></tr><tr><td>AT(*)</td><td>StartTagNotebook</td><td>0.1</td></tr><tr><td>SE(*)</td><td>ElementNotebook</td><td>0.2</td></tr><tr><td>CH</td><td>ElementNotebook</td><td>0.3</td></tr></tbody></table>
+                            </td><td> 0<sub>0</sub>&nbsp;1<sub>2</sub>
+                            </td><td>
+                                    1<sub>2</sub>&nbsp;"date"<sub>+1</sub>&nbsp;"2007-09-12"<sub>+2</sub>
+                            </td><td>
+                                <ol class="enumar"><li><p>1<sub>2</sub> (uri hit)</p><table border="1"><thead><tr><th colspan="2">URIs</th></tr></thead><tbody><tr><td>0</td><td>[uri miss]</td></tr><tr class="bold"><td>1</td><td>"" [empty string]</td></tr><tr><td>2</td><td>".../XML/1998/namespace"</td></tr><tr><td>3</td><td>".../XMLSchema-instance"</td></tr></tbody></table></li><li><p>"date"<sub>+1</sub> (local-name miss)</p><table border="1"><thead><tr><th colspan="2">Local-Names (default)</th></tr></thead><tbody><tr><td>0</td><td>"notebook"</td></tr><tr class="silver"><td>1</td><td>"date"</td></tr></tbody></table></li><li><p>"2007-09-12"<sub>+2</sub> (value miss)</p><table border="1"><thead><tr><th colspan="2">Values (date)</th></tr></thead><tbody><tr class="silver"><td>0</td><td>"2007-09-12"</td></tr></tbody></table></li><li><p>StartTagNotebook extended by leading AT(date)</p></li></ol>
+                            </td></tr><tr><td align="center" class="schema-informed">AT</td><td>
+                                <table><thead><tr><th colspan="3" align="left">StartTagNotebook1</th></tr></thead><tbody><tr><td>AT(date)</td><td>StartTagNotebook2</td><td>0</td></tr><tr><td>SE(note)</td><td>ElementNotebook1</td><td>1</td></tr><tr><td>[Undeclared]</td><td></td><td>2</td></tr></tbody></table>
+                            </td><td> 0<sub>2</sub>
+                            </td><td>0<sub>1</sub>&nbsp;7<sub>uint</sub>&nbsp;300<sub>9</sub>&nbsp;0<sub>1</sub></td><td>
+                                <ol class="enumar"><li><p>"2007-09-12" as Date-Time (date)</p><table><tbody><tr><td>Year</td><td>Offset from 2000 as Integer</td><td>0<sub>1</sub>&nbsp;7<sub>uint</sub></td></tr><tr><td>MonthDay</td><td>(Month * 32 + Day) as 9-bit Unsigned
+                                                  Integer</td><td>300<sub>9</sub></td></tr><tr><td>presence</td><td>Boolean indicator</td><td>0<sub>1</sub></td></tr><tr><td>[TimeZone]</td><td></td><td></td></tr></tbody></table></li><li><p>StartTagNotebook1 moves on to StartTagNotebook2</p></li></ol>
+                            </td></tr><tr id="xmlNote1"><td colspan="5" class="xml">
+                                <code>&lt;note&gt;</code>
+                            </td></tr><tr><td align="center" class="schema-less">SE</td><td>
+                                <table><thead><tr><th colspan="3" align="left">StartTagNotebook</th></tr></thead><tbody><tr><td>AT(date)</td><td>StartTagNotebook</td><td>0</td></tr><tr><td colspan="2">EE</td><td>1.0</td></tr><tr><td>AT(*)</td><td>StartTagNotebook</td><td>1.1</td></tr><tr><td>SE(*)</td><td>ElementNotebook</td><td>1.2</td></tr><tr><td>CH</td><td>ElementNotebook</td><td>1.3</td></tr></tbody></table>
+                            </td><td> 1<sub>1</sub>&nbsp;2<sub>2</sub>
+                            </td><td> 1<sub>2</sub> "note"<sub>+1</sub>
+                            </td><td>
+                                <ol class="enumar"><li><p>1<sub>2</sub> (uri hit)</p><table border="1"><thead><tr><th colspan="2">URIs</th></tr></thead><tbody><tr><td>0</td><td>[uri miss]</td></tr><tr class="bold"><td>1</td><td>"" [empty string]</td></tr><tr><td>2</td><td>".../XML/1998/namespace"</td></tr><tr><td>3</td><td>".../XMLSchema-instance"</td></tr></tbody></table></li><li><p>"note"<sub>+1</sub> (local-name miss)</p><table border="1"><thead><tr><th colspan="2">Local-Names (default)</th></tr></thead><tbody><tr><td>0</td><td>"notebook"</td></tr><tr><td>1</td><td>"date"</td></tr><tr class="silver"><td>2</td><td>"note"</td></tr></tbody></table></li><li><p>StartTagNotebook extended by leading SE(note)</p></li><li><p>StartTagNotebook moves on to ElementNotebook and
+                                            StartTagNote is pushed on grammar-stack</p></li></ol>
+                            </td></tr><tr><td align="center" class="schema-informed">SE</td><td>
+                                <table><thead><tr><th colspan="3" align="left">StartTagNotebook2</th></tr></thead><tbody><tr><td>SE(note)</td><td>ElementNotebook1</td><td>0</td></tr><tr><td>[Undeclared]</td><td></td><td>1</td></tr></tbody></table>
+                            </td><td> 0<sub>1</sub>
+                            </td><td>&nbsp;</td><td>
+                                <ol class="enumar"><li>StartTagNotebook2 moves on to ElementNotebook1 and
+                                        StartTagNote1 is pushed on grammar-stack</li></ol>
+                            </td></tr><tr id="xmlNote1Category"><td colspan="5" class="xml">
+                                <code>category="EXI"</code>
+                            </td></tr><tr><td align="center" class="schema-less">AT</td><td>
+                                <table><thead><tr><th colspan="3" align="left">StartTagNote</th></tr></thead><tbody><tr><td colspan="2">EE</td><td>0.0</td></tr><tr><td>AT(*)</td><td>StartTagNote</td><td>0.1</td></tr><tr><td>SE(*)</td><td>ElementNote</td><td>0.2</td></tr><tr><td>CH</td><td>ElementNote</td><td>0.3</td></tr></tbody></table>
+                            </td><td> 0<sub>0</sub>&nbsp;1<sub>2</sub>
+                            </td><td> 1<sub>2</sub>&nbsp;"category"+1&nbsp;"EXI"<sub>+2</sub>
+                            </td><td>
+                                <ol class="enumar"><li><p>1<sub>2</sub> (uri hit)</p><table border="1"><thead><tr><th colspan="2">URIs</th></tr></thead><tbody><tr><td>0</td><td>[uri miss]</td></tr><tr class="bold"><td>1</td><td>"" [empty string]</td></tr><tr><td>2</td><td>".../XML/1998/namespace"</td></tr><tr><td>3</td><td>".../XMLSchema-instance"</td></tr></tbody></table></li><li><p>"category"<sub>+1</sub> (local-name miss)</p><table border="1"><thead><tr><th colspan="2">Local-Names (default)</th></tr></thead><tbody><tr><td>0</td><td>"notebook"</td></tr><tr><td>1</td><td>"date"</td></tr><tr><td>2</td><td>"note"</td></tr><tr class="silver"><td>3</td><td>"category"</td></tr></tbody></table></li><li><p>"EXI"<sub>+2</sub> (value miss)</p><table border="1"><thead><tr><th colspan="2">Values (category)</th></tr></thead><tbody><tr class="silver"><td>0</td><td>"EXI"</td></tr></tbody></table></li><li><p>StartTagNote extended by leading AT(category)</p></li></ol>
+                            </td></tr><tr><td align="center" class="schema-informed">AT</td><td>
+                                <table><thead><tr><th colspan="3" align="left">StartTagNote1</th></tr></thead><tbody><tr><td>AT(category)</td><td>StartTagNote2</td><td>0</td></tr><tr><td>AT(date)</td><td>StartTagNote3</td><td>1</td></tr><tr><td>[Undeclared]</td><td></td><td>2</td></tr></tbody></table>
+                            </td><td> 0<sub>2</sub>
+                            </td><td>"EXI"<sub>+2</sub>
+                            </td><td>
+                                <ol class="enumar"><li><p>"EXI"<sub>+2</sub> (value miss)</p><table border="1"><thead><tr><th colspan="2">Values (category)</th></tr></thead><tbody><tr class="silver"><td>0</td><td>"EXI"</td></tr></tbody></table></li><li>StartTagNote1 moves on to StartTagNote2</li></ol>
+                            </td></tr><tr id="xmlNote1Date"><td colspan="5" class="xml">
+                                <code>date="2007-07-23"</code>
+                            </td></tr><tr><td align="center" class="schema-less">AT</td><td>
+                                <table><thead><tr><th colspan="3" align="left">StartTagNote</th></tr></thead><tbody><tr><td>AT(category)</td><td>StartTagNote</td><td>0</td></tr><tr><td colspan="2">EE</td><td>1.0</td></tr><tr><td>AT(*)</td><td>StartTagNote</td><td>1.1</td></tr><tr><td>SE(*)</td><td>ElementNote</td><td>1.2</td></tr><tr><td>CH</td><td>ElementNote</td><td>1.3</td></tr></tbody></table>
+                            </td><td> 1<sub>1</sub>&nbsp;1<sub>2</sub>
+                            </td><td>
+                                    1<sub>2</sub>&nbsp;0<sub>uint</sub>&nbsp;1<sub>2</sub>&nbsp;"2007-07-23"<sub>+2</sub>
+                            </td><td>
+                                <ol class="enumar"><li><p>1<sub>2</sub> (uri hit)</p><table border="1"><thead><tr><th colspan="2">URIs</th></tr></thead><tbody><tr><td>0</td><td>[uri miss]</td></tr><tr class="bold"><td>1</td><td>"" [empty string]</td></tr><tr><td>2</td><td>".../XML/1998/namespace"</td></tr><tr><td>3</td><td>".../XMLSchema-instance"</td></tr></tbody></table></li><li><p>0<sub>uint</sub>&nbsp;1<sub>2</sub> (local-name
+                                            hit)</p><table border="1"><thead><tr><th colspan="2">Local-Names (default)</th></tr></thead><tbody><tr><td>0</td><td>"notebook"</td></tr><tr><td>1</td><td>"date"</td></tr><tr><td>2</td><td>"note"</td></tr></tbody></table></li><li><p>"2007-07-23"<sub>+2</sub> (value miss)</p><table border="1"><thead><tr><th colspan="2">Values (date)</th></tr></thead><tbody><tr><td>0</td><td>"2007-09-12"</td></tr><tr class="silver"><td>1</td><td>"2007-07-23"</td></tr></tbody></table></li><li><p>StartTagNote extended by leading AT(date)</p></li></ol>
+                            </td></tr><tr><td align="center" class="schema-informed">AT</td><td>
+                                <table><thead><tr><th colspan="3" align="left">StartTagNote2</th></tr></thead><tbody><tr><td>AT(date)</td><td>StartTagNote3</td><td>0</td></tr><tr><td>[Undeclared]</td><td></td><td>1</td></tr></tbody></table>
+                            </td><td>0<sub>1</sub>
+                            </td><td>0<sub>1</sub>&nbsp;7<sub>uint</sub>&nbsp;247<sub>9</sub>&nbsp;0<sub>1</sub></td><td>
+                                <ol class="enumar"><li><p>"2007-07-23" as Date-Time (date) </p><table><tbody><tr><td>Year</td><td>Offset from 2000 as Integer</td><td>0<sub>1</sub>&nbsp;7<sub>uint</sub></td></tr><tr><td>MonthDay</td><td>(Month * 32 + Day) as 9-bit Unsigned
+                                                  Integer</td><td>247<sub>9</sub></td></tr><tr><td>presence</td><td>Boolean indicator</td><td>0<sub>1</sub></td></tr><tr><td>[TimeZone]</td><td></td><td></td></tr></tbody></table></li><li>StartTagNote2 moves on to StartTagNote3</li></ol>
+                            </td></tr><tr id="xmlNote1Subject"><td colspan="5" class="xml">
+                                <code>&lt;subject&gt;</code>
+                            </td></tr><tr><td align="center" class="schema-less">SE</td><td>
+                                <table><thead><tr><th colspan="3" align="left">StartTagNote</th></tr></thead><tbody><tr><td>AT(date)</td><td>StartTagNote</td><td>0</td></tr><tr><td>AT(category)</td><td>StartTagNote</td><td>1</td></tr><tr><td colspan="2">EE</td><td>2.0</td></tr><tr><td>AT(*)</td><td>StartTagNote</td><td>2.1</td></tr><tr><td>SE(*)</td><td>ElementNote</td><td>2.2</td></tr><tr><td>CH</td><td>ElementNote</td><td>2.3</td></tr></tbody></table>
+                            </td><td> 2<sub>2</sub>&nbsp;2<sub>2</sub>
+                            </td><td> 1<sub>2</sub>&nbsp;"subject"<sub>+1</sub>
+                            </td><td>
+                                <ol class="enumar"><li><p>1<sub>2</sub> (uri hit)</p><table border="1"><thead><tr><th colspan="2">URIs</th></tr></thead><tbody><tr><td>0</td><td>[uri miss]</td></tr><tr class="bold"><td>1</td><td>"" [empty string]</td></tr><tr><td>2</td><td>".../XML/1998/namespace"</td></tr><tr><td>3</td><td>".../XMLSchema-instance"</td></tr></tbody></table></li><li><p>"subject"<sub>+1</sub> (local-name miss)</p><table border="1"><thead><tr><th colspan="2">Local-Names (default)</th></tr></thead><tbody><tr><td>0</td><td>"notebook"</td></tr><tr><td>1</td><td>"date"</td></tr><tr><td>2</td><td>"note"</td></tr><tr><td>3</td><td>"category"</td></tr><tr class="silver"><td>4</td><td>"subject"</td></tr></tbody></table></li><li><p>StartTagNote extended by leading SE(subject)</p></li><li><p>StartTagNote moves on to ElementNote and StartTagSubject
+                                            is pushed on grammar-stack</p></li></ol>
+                            </td></tr><tr><td align="center" class="schema-informed">SE</td><td>
+                                <table><thead><tr><th colspan="3" align="left">StartTagNote3</th></tr></thead><tbody><tr><td>SE(subject)</td><td>ElementNote1</td><td>0</td></tr><tr><td>[Undeclared]</td><td></td><td>1</td></tr></tbody></table>
+                            </td><td>0<sub>1</sub>
+                            </td><td>&nbsp;</td><td>
+                                <ol class="enumar"><li>StartTagNote3 moves on to ElementNote1 and
+                                        StartTagSubject1 is pushed on grammar-stack</li></ol>
+                            </td></tr><tr id="xmlNote1SubjectCH"><td colspan="5" class="xml">
+                                <code>EXI</code>
+                            </td></tr><tr><td align="center" class="schema-less">CH</td><td>
+                                <table><thead><tr><th colspan="3" align="left">StartTagSubject</th></tr></thead><tbody><tr><td colspan="2">EE</td><td>0.0</td></tr><tr><td>AT(*)</td><td>StartTagSubject</td><td>0.1</td></tr><tr><td>SE(*)</td><td>ElementSubject</td><td>0.2</td></tr><tr><td>CH</td><td>ElementSubject</td><td>0.3</td></tr></tbody></table>
+                            </td><td> 0<sub>0</sub>&nbsp;3<sub>2</sub>
+                            </td><td> 1<sub>uint</sub>&nbsp;1<sub>2</sub>
+                            </td><td>
+                                <ol class="enumar"><li><p>1<sub>uint</sub>&nbsp;1<sub>2</sub> (global-value
+                                            hit)</p><table border="1"><thead><tr><th colspan="2">Global-Values</th></tr></thead><tbody><tr><td>0</td><td>"2007-09-12"</td></tr><tr class="bold"><td>1</td><td>"EXI"</td></tr><tr><td>2</td><td>"2007-07-23"</td></tr></tbody></table></li><li><p>StartTagSubject extended by leading CH</p></li><li><p>StartTagSubject moves on to ElementSubject </p></li></ol>
+                            </td></tr><tr><td align="center" class="schema-informed">CH</td><td>
+                                <table><thead><tr><th colspan="3" align="left">StartTagSubject1</th></tr></thead><tbody><tr><td>CH</td><td>ElementSubject1</td><td>0</td></tr><tr><td colspan="2">[Undeclared]</td><td>1</td></tr></tbody></table>
+                            </td><td> 0<sub>1</sub></td><td> 1<sub>uint</sub>&nbsp;0<sub>0</sub>
+                            </td><td>
+                                <ol class="enumar"><li><p>1<sub>uint</sub>&nbsp;0<sub>0</sub> (global-value
+                                            hit)</p><table border="1"><thead><tr><th colspan="2">Global-Values</th></tr></thead><tbody><tr class="bold"><td>0</td><td>"EXI"</td></tr></tbody></table></li><li><p>StartTagSubject1 moves on to ElementSubject1 </p></li></ol>
+                            </td></tr><tr id="xmlNote1SubjectEE"><td colspan="5" class="xml">
+                                <code>&lt;/subject&gt;</code>
+                            </td></tr><tr><td align="center" class="schema-less">EE</td><td>
+                                <table><thead><tr><th colspan="3" align="left">ElementSubject</th></tr></thead><tbody><tr><td colspan="2">EE</td><td>0</td></tr><tr><td>SE(*)</td><td>ElementSubject</td><td>1.0</td></tr><tr><td>CH</td><td>ElementSubject</td><td>1.1</td></tr></tbody></table>
+                            </td><td> 0<sub>1</sub>
+                            </td><td> &nbsp; </td><td>
+                                <ol class="enumar"><li><p>ElementSubject popped from grammar-stack</p></li></ol>
+                            </td></tr><tr><td align="center" class="schema-informed">EE</td><td>
+                                <table><thead><tr><th colspan="3" align="left">ElementSubject1</th></tr></thead><tbody><tr><td colspan="2">EE</td><td>0</td></tr><tr><td colspan="2">[Undeclared]</td><td>1</td></tr></tbody></table>
+                            </td><td> 0<sub>1</sub>
+                            </td><td> &nbsp; </td><td>
+                                <ol class="enumar"><li><p>ElementSubject1 popped from grammar-stack</p></li></ol>
+                            </td></tr><tr id="xmlNote1Body"><td colspan="5" class="xml">
+                                <code>&lt;body&gt;</code>
+                            </td></tr><tr><td align="center" class="schema-less">SE</td><td>
+                                <table><thead><tr><th colspan="3" align="left">ElementNote</th></tr></thead><tbody><tr><td colspan="2">EE</td><td>0</td></tr><tr><td>SE(*)</td><td>ElementNote</td><td>1.0</td></tr><tr><td>CH</td><td>ElementNote</td><td>1.1</td></tr></tbody></table>
+                            </td><td> 1<sub>1</sub>&nbsp;0<sub>1</sub>
+                            </td><td> 1<sub>2</sub>&nbsp;"body"<sub>+1</sub>
+                            </td><td>
+                                <ol class="enumar"><li><p>1<sub>2</sub> (uri hit)</p><table border="1"><thead><tr><th colspan="2">URIs</th></tr></thead><tbody><tr><td>0</td><td>[uri miss]</td></tr><tr class="bold"><td>1</td><td>"" [empty string]</td></tr><tr><td>2</td><td>".../XML/1998/namespace"</td></tr><tr><td>3</td><td>".../XMLSchema-instance"</td></tr></tbody></table></li><li><p>"body"<sub>+1</sub> (local-name miss)</p><table border="1"><thead><tr><th colspan="2">Local-Names (default)</th></tr></thead><tbody><tr><td>0</td><td>"notebook"</td></tr><tr><td>1</td><td>"date"</td></tr><tr><td>2</td><td>"note"</td></tr><tr><td>3</td><td>"category"</td></tr><tr><td>4</td><td>"subject"</td></tr><tr class="silver"><td>5</td><td>"body"</td></tr></tbody></table></li><li><p>ElementNote extended by leading SE(body)</p></li><li><p>StartTagBody is pushed on grammar-stack</p></li></ol>
+                            </td></tr><tr><td align="center" class="schema-informed">SE</td><td>
+                                <table><thead><tr><th colspan="3" align="left">ElementNote1</th></tr></thead><tbody><tr><td>SE(body)</td><td>ElementNote2</td><td>0</td></tr><tr><td colspan="2">[Undeclared]</td><td>1</td></tr></tbody></table>
+                            </td><td>0<sub>1</sub></td><td>&nbsp;</td><td>
+                                <ol class="enumar"><li><p>ElementNote1 moves on to ElementNote2 and StartTagBody1
+                                            is pushed on grammar-stack</p></li></ol>
+                            </td></tr><tr id="xmlNote1BodyCH"><td colspan="5" class="xml">
+                                <code>Do not forget it!</code>
+                            </td></tr><tr><td align="center" class="schema-less">CH</td><td>
+                                <table><thead><tr><th colspan="3" align="left">StartTagBody</th></tr></thead><tbody><tr><td colspan="2">EE</td><td>0.0</td></tr><tr><td>AT(*)</td><td>StartTagBody</td><td>0.1</td></tr><tr><td>SE(*)</td><td>ElementBody</td><td>0.2</td></tr><tr><td>CH</td><td>ElementBody</td><td>0.3</td></tr></tbody></table>
+                            </td><td> 0<sub>0</sub>&nbsp;3<sub>2</sub>
+                            </td><td> "Do not forget it!"<sub>+2</sub>
+                            </td><td>
+                                <ol class="enumar"><li><p>"Do not forget it!"<sub>+2</sub> (value miss)</p><table border="1"><thead><tr><th colspan="2">Values (body)</th></tr></thead><tbody><tr class="silver"><td>0</td><td>"Do not forget it!"</td></tr></tbody></table></li><li><p>StartTagBody extended by leading CH</p></li><li><p>StartTagBody moves on to ElementBody </p></li></ol>
+                            </td></tr><tr><td align="center" class="schema-informed">CH</td><td>
+                                <table><thead><tr><th colspan="3" align="left">StartTagBody1</th></tr></thead><tbody><tr><td>CH</td><td>ElementBody1</td><td>0</td></tr><tr><td colspan="2">[Undeclared]</td><td>1</td></tr></tbody></table>
+                            </td><td> 0<sub>1</sub></td><td> "Do not forget it!"<sub>+2</sub>
+                            </td><td>
+                                <ol class="enumar"><li><p>"Do not forget it!"<sub>+2</sub> (value miss)</p><table border="1"><thead><tr><th colspan="2">Values (body)</th></tr></thead><tbody><tr class="silver"><td>0</td><td>"Do not forget it!"</td></tr></tbody></table></li><li><p>StartTagBody1 moves on to ElementBody1</p></li></ol>
+                            </td></tr><tr id="xmlNote1BodyEE"><td colspan="5" class="xml">
+                                <code>&lt;/body&gt;</code>
+                            </td></tr><tr><td align="center" class="schema-less">EE</td><td>
+                                <table><thead><tr><th colspan="3" align="left">ElementBody</th></tr></thead><tbody><tr><td colspan="2">EE</td><td>0</td></tr><tr><td>SE(*)</td><td>ElementBody</td><td>1.0</td></tr><tr><td>CH</td><td>ElementBody</td><td>1.1</td></tr></tbody></table>
+                            </td><td> 0<sub>1</sub>
+                            </td><td> &nbsp; </td><td>
+                                <ol class="enumar"><li><p>ElementBody popped from grammar-stack</p></li></ol>
+                            </td></tr><tr><td align="center" class="schema-informed">EE</td><td>
+                                <table><thead><tr><th colspan="3" align="left">ElementBody1</th></tr></thead><tbody><tr><td colspan="2">EE</td><td>0</td></tr><tr><td colspan="2">[Undeclared]</td><td>1</td></tr></tbody></table>
+                            </td><td> 0<sub>1</sub>
+                            </td><td> &nbsp; </td><td>
+                                <ol class="enumar"><li><p>ElementBody1 popped from grammar-stack</p></li></ol>
+                            </td></tr><tr id="xmlNote1EE"><td colspan="5" class="xml">
+                                <code>&lt;/note&gt;</code>
+                            </td></tr><tr><td align="center" class="schema-less">EE</td><td>
+                                <table><thead><tr><th colspan="3" align="left">ElementNote</th></tr></thead><tbody><tr><td>SE(body)</td><td>ElementNote</td><td>0</td></tr><tr><td colspan="2">EE</td><td>1</td></tr><tr><td>SE(*)</td><td>ElementNote</td><td>2.0</td></tr><tr><td>CH</td><td>ElementNote</td><td>2.1</td></tr></tbody></table>
+                            </td><td> 1<sub>2</sub>
+                            </td><td> &nbsp; </td><td>
+                                <ol class="enumar"><li><p>ElementNote popped from grammar-stack</p></li></ol>
+                            </td></tr><tr><td align="center" class="schema-informed">EE</td><td>
+                                <table><thead><tr><th colspan="3" align="left">ElementNote2</th></tr></thead><tbody><tr><td colspan="2">EE</td><td>0</td></tr><tr><td colspan="2">[Undeclared]</td><td>1</td></tr></tbody></table>
+                            </td><td>0<sub>1</sub>
+                            </td><td> &nbsp; </td><td>
+                                <ol class="enumar"><li><p>ElementNote2 popped from grammar-stack</p></li></ol>
+                            </td></tr><tr id="xmlNote2"><td colspan="5" class="xml">
+                                <code>&lt;note&gt;</code>
+                            </td></tr><tr><td align="center" class="schema-less">SE</td><td>
+                                <table><thead><tr><th colspan="3" align="left">ElementNotebook</th></tr></thead><tbody><tr><td colspan="2">EE</td><td>0</td></tr><tr><td>SE(*)</td><td>ElementNotebook</td><td>1.0</td></tr><tr><td>CH</td><td>ElementNotebook</td><td>1.1</td></tr></tbody></table>
+                            </td><td> 1<sub>1</sub>&nbsp;0<sub>1</sub>
+                            </td><td> 1<sub>2</sub>&nbsp;0<sub>uint</sub>&nbsp;2<sub>3</sub>
+                            </td><td>
+                                <ol class="enumar"><li><p>1<sub>2</sub> (uri hit)</p><table border="1"><thead><tr><th colspan="2">URIs</th></tr></thead><tbody><tr><td>0</td><td>[uri miss]</td></tr><tr class="bold"><td>1</td><td>"" [empty string]</td></tr><tr><td>2</td><td>".../XML/1998/namespace"</td></tr><tr><td>3</td><td>".../XMLSchema-instance"</td></tr></tbody></table></li><li><p>0<sub>unit</sub>&nbsp;2<sub>3</sub> (local-name
+                                            hit)</p><table border="1"><thead><tr><th colspan="2">Local-Names (default)</th></tr></thead><tbody><tr><td>0</td><td>"notebook"</td></tr><tr><td>1</td><td>"date"</td></tr><tr class="bold"><td>2</td><td>"note"</td></tr><tr><td>3</td><td>"category"</td></tr><tr><td>4</td><td>"subject"</td></tr><tr><td>5</td><td>"body"</td></tr></tbody></table></li><li><p>ElementNotebook extended by leading SE(note)</p></li><li><p>StartTagNote is pushed on grammar-stack</p></li></ol>
+                            </td></tr><tr><td align="center" class="schema-informed">SE</td><td>
+                                <table><thead><tr><th colspan="3" align="left">ElementNotebook1</th></tr></thead><tbody><tr><td>SE(note)</td><td>ElementNotebook1</td><td>0</td></tr><tr><td colspan="2">EE</td><td>1</td></tr><tr><td colspan="2">[Undeclared]</td><td>2</td></tr></tbody></table>
+                            </td><td>0<sub>2</sub></td><td>&nbsp;</td><td>
+                                <ol class="enumar"><li><p>StartTagNote1 is pushed on grammar-stack</p></li></ol>
+                            </td></tr><tr id="xmlNote2Date"><td colspan="5" class="xml">
+                                <code>date="2007-09-12"</code>
+                            </td></tr><tr><td align="center" class="schema-less">AT</td><td>
+                                <table><thead><tr><th colspan="3" align="left">StartTagNote</th></tr></thead><tbody><tr><td>SE(subject)</td><td>ElementNote</td><td>0</td></tr><tr><td>AT(date)</td><td>StartTagNote</td><td>1</td></tr><tr><td>AT(category)</td><td>StartTagNote</td><td>2</td></tr><tr><td colspan="2">EE</td><td>3.0</td></tr><tr><td>AT(*)</td><td>StartTagNote</td><td>3.1</td></tr><tr><td>SE(*)</td><td>ElementNote</td><td>3.2</td></tr><tr><td>CH</td><td>ElementNote</td><td>3.3</td></tr></tbody></table>
+                            </td><td>1<sub>2</sub>
+                            </td><td> 0<sub>uint</sub>&nbsp;0<sub>1</sub>
+                            </td><td>
+                                <ol class="enumar"><li><p>0<sub>uint</sub>&nbsp;0<sub>1</sub> (value hit)</p><table border="1"><thead><tr><th colspan="2">Values (date)</th></tr></thead><tbody><tr class="bold"><td>0</td><td>"2007-09-12"</td></tr><tr><td>1</td><td>"2007-07-23"</td></tr></tbody></table></li></ol>
+                            </td></tr><tr><td align="center" class="schema-informed">AT</td><td>
+                                <table><thead><tr><th colspan="3" align="left">StartTagNote1</th></tr></thead><tbody><tr><td>AT(category)</td><td>StartTagNote2</td><td>0</td></tr><tr><td>AT(date)</td><td>StartTagNote3</td><td>1</td></tr><tr><td>[Undeclared]</td><td></td><td>2</td></tr></tbody></table>
+                            </td><td> 1<sub>2</sub>
+                            </td><td>0<sub>1</sub>&nbsp;7<sub>uint</sub>&nbsp;300<sub>9</sub>&nbsp;0<sub>1</sub></td><td>
+                                <ol class="enumar"><li><p>"2007-09-12" as Date-Time (date) </p><table><tbody><tr><td>Year</td><td>Offset from 2000 as Integer</td><td>0<sub>1</sub>&nbsp;7<sub>uint</sub></td></tr><tr><td>MonthDay</td><td>(Month * 32 + Day) as 9-bit Unsigned
+                                                  Integer</td><td>300<sub>9</sub></td></tr><tr><td>presence</td><td>Boolean indicator</td><td>0<sub>1</sub></td></tr><tr><td>[TimeZone]</td><td></td><td></td></tr></tbody></table></li><li>StartTagNote1 moves on to StartTagNote3</li></ol>
+                            </td></tr><tr id="xmlNote2Subject"><td colspan="5" class="xml">
+                                <code>&lt;subject&gt;</code>
+                            </td></tr><tr><td align="center" class="schema-less">SE</td><td>
+                                <table><thead><tr><th colspan="3" align="left">StartTagNote</th></tr></thead><tbody><tr><td>SE(subject)</td><td>ElementNote</td><td>0</td></tr><tr><td>AT(date)</td><td>StartTagNote</td><td>1</td></tr><tr><td>AT(category)</td><td>StartTagNote</td><td>2</td></tr><tr><td colspan="2">EE</td><td>3.0</td></tr><tr><td>AT(*)</td><td>StartTagNote</td><td>3.1</td></tr><tr><td>SE(*)</td><td>ElementNote</td><td>3.2</td></tr><tr><td>CH</td><td>ElementNote</td><td>3.3</td></tr></tbody></table>
+                            </td><td> 0<sub>2</sub>
+                            </td><td>&nbsp;</td><td>
+                                <ol class="enumar"><li><p>StartTagNote moves on to ElementNote and StartTagSubject
+                                            is pushed on grammar-stack</p></li></ol>
+                            </td></tr><tr><td align="center" class="schema-informed">SE</td><td>
+                                <table><thead><tr><th colspan="3" align="left">StartTagNote3</th></tr></thead><tbody><tr><td>SE(subject)</td><td>ElementNote1</td><td>0</td></tr><tr><td>[Undeclared]</td><td></td><td>1</td></tr></tbody></table>
+                            </td><td>0<sub>1</sub>
+                            </td><td>&nbsp;</td><td>
+                                <ol class="enumar"><li>StartTagNote3 moves on to ElementNote1 and
+                                        StartTagSubject1 is pushed on grammar-stack</li></ol>
+                            </td></tr><tr id="xmlNote2SubjectCH"><td colspan="5" class="xml">
+                                <code>Shopping List</code>
+                            </td></tr><tr><td align="center" class="schema-less">CH</td><td>
+                                <table><thead><tr><th colspan="3" align="left">StartTagSubject</th></tr></thead><tbody><tr><td>CH</td><td>ElementSubject</td><td>0</td></tr><tr><td colspan="2">EE</td><td>1.0</td></tr><tr><td>AT(*)</td><td>StartTagSubject</td><td>1.1</td></tr><tr><td>SE(*)</td><td>ElementSubject</td><td>1.2</td></tr><tr><td>CH</td><td>ElementSubject</td><td>1.3</td></tr></tbody></table>
+                            </td><td> 0<sub>1</sub>
+                            </td><td> "Shopping List"<sub>+2</sub>
+                            </td><td>
+                                <ol class="enumar"><li><p>"Shopping List"<sub>+2</sub> (value miss)</p><table border="1"><thead><tr><th colspan="2">Values (subject)</th></tr></thead><tbody><tr class="silver"><td>0</td><td>"Shopping List"</td></tr></tbody></table></li><li><p>StartTagSubject moves on to ElementSubject </p></li></ol>
+                            </td></tr><tr><td align="center" class="schema-informed">CH</td><td>
+                                <table><thead><tr><th colspan="3" align="left">StartTagSubject1</th></tr></thead><tbody><tr><td>CH</td><td>ElementSubject1</td><td>0</td></tr><tr><td colspan="2">[Undeclared]</td><td>1</td></tr></tbody></table>
+                            </td><td> 0<sub>1</sub></td><td> "Shopping List"<sub>+2</sub>
+                            </td><td>
+                                <ol class="enumar"><li><p>"Shopping List"<sub>+2</sub> (value miss)</p><table border="1"><thead><tr><th colspan="2">Values (subject)</th></tr></thead><tbody><tr class="silver"><td>0</td><td>"Shopping List"</td></tr></tbody></table></li><li><p>StartTagSubject1 moves on to ElementSubject1 </p></li></ol>
+                            </td></tr><tr id="xmlNote2SubjectEE"><td colspan="5" class="xml">
+                                <code>&lt;/subject&gt;</code>
+                            </td></tr><tr><td align="center" class="schema-less">EE</td><td>
+                                <table><thead><tr><th colspan="3" align="left">ElementSubject</th></tr></thead><tbody><tr><td colspan="2">EE</td><td>0</td></tr><tr><td>SE(*)</td><td>ElementSubject</td><td>1.0</td></tr><tr><td>CH</td><td>ElementSubject</td><td>1.1</td></tr></tbody></table>
+                            </td><td> 0<sub>1</sub>
+                            </td><td> &nbsp; </td><td>
+                                <ol class="enumar"><li><p>ElementSubject popped from grammar-stack</p></li></ol>
+                            </td></tr><tr><td align="center" class="schema-informed">EE</td><td>
+                                <table><thead><tr><th colspan="3" align="left">ElementSubject1</th></tr></thead><tbody><tr><td colspan="2">EE</td><td>0</td></tr><tr><td colspan="2">[Undeclared]</td><td>1</td></tr></tbody></table>
+                            </td><td> 0<sub>1</sub>
+                            </td><td> &nbsp; </td><td>
+                                <ol class="enumar"><li><p>ElementSubject1 popped from grammar-stack</p></li></ol>
+                            </td></tr><tr id="xmlNote2Body"><td colspan="5" class="xml">
+                                <code>&lt;body&gt;</code>
+                            </td></tr><tr><td align="center" class="schema-less">SE</td><td>
+                                <table><thead><tr><th colspan="3" align="left">ElementNote</th></tr></thead><tbody><tr><td>SE(body)</td><td>ElementNote</td><td>0</td></tr><tr><td colspan="2">EE</td><td>1</td></tr><tr><td>SE(*)</td><td>ElementNote</td><td>2.0</td></tr><tr><td>CH</td><td>ElementNote</td><td>2.1</td></tr></tbody></table>
+                            </td><td> 0<sub>2</sub>
+                            </td><td>&nbsp;</td><td>
+                                <ol class="enumar"><li>StartTagBody is pushed on grammar-stack</li></ol>
+                            </td></tr><tr><td align="center" class="schema-informed">SE</td><td>
+                                <table><thead><tr><th colspan="3" align="left">ElementNote1</th></tr></thead><tbody><tr><td>SE(body)</td><td>ElementNote2</td><td>0</td></tr><tr><td colspan="2">[Undeclared]</td><td>1</td></tr></tbody></table>
+                            </td><td>0<sub>1</sub></td><td>&nbsp;</td><td>
+                                <ol class="enumar"><li><p>ElementNote1 moves on to ElementNote2 and StartTagBody1
+                                            is pushed on grammar-stack</p></li></ol>
+                            </td></tr><tr id="xmlNote2BodyCH"><td colspan="5" class="xml">
+                                <code>milk, honey</code>
+                            </td></tr><tr><td align="center" class="schema-less">CH</td><td>
+                                <table><thead><tr><th colspan="3" align="left">StartTagBody</th></tr></thead><tbody><tr><td>CH</td><td>ElementBody</td><td>0</td></tr><tr><td colspan="2">EE</td><td>1.0</td></tr><tr><td>AT(*)</td><td>StartTagBody</td><td>1.1</td></tr><tr><td>SE(*)</td><td>ElementBody</td><td>1.2</td></tr><tr><td>CH</td><td>ElementBody</td><td>1.3</td></tr></tbody></table>
+                            </td><td> 0<sub>1</sub>
+                            </td><td> "milk, honey"<sub>+2</sub>
+                            </td><td>
+                                <ol class="enumar"><li><p>"milk, honey"<sub>+2</sub> (value miss)</p><table border="1"><thead><tr><th colspan="2">Values (body)</th></tr></thead><tbody><tr><td>0</td><td>"Do not forget it!"</td></tr><tr class="silver"><td>1</td><td>"milk, honey"</td></tr></tbody></table></li><li><p>StartTagBody moves on to ElementBody </p></li></ol>
+                            </td></tr><tr><td align="center" class="schema-informed">CH</td><td>
+                                <table><thead><tr><th colspan="3" align="left">StartTagBody1</th></tr></thead><tbody><tr><td>CH</td><td>ElementBody1</td><td>0</td></tr><tr><td colspan="2">[Undeclared]</td><td>1</td></tr></tbody></table>
+                            </td><td> 0<sub>1</sub></td><td> "milk, honey"<sub>+2</sub>
+                            </td><td>
+                                <ol class="enumar"><li><p>"milk, honey"<sub>+2</sub> (value miss)</p><table border="1"><thead><tr><th colspan="2">Values (body)</th></tr></thead><tbody><tr><td>0</td><td>"Do not forget it!"</td></tr><tr class="silver"><td>1</td><td>"milk, honey"</td></tr></tbody></table></li><li><p>StartTagBody1 moves on to ElementBody1</p></li></ol>
+                            </td></tr><tr id="xmlNote2BodyEE"><td colspan="5" class="xml">
+                                <code>&lt;/body&gt;</code>
+                            </td></tr><tr><td align="center" class="schema-less">EE</td><td>
+                                <table><thead><tr><th colspan="3" align="left">ElementBody</th></tr></thead><tbody><tr><td colspan="2">EE</td><td>0</td></tr><tr><td>SE(*)</td><td>ElementBody</td><td>1.0</td></tr><tr><td>CH</td><td>ElementBody</td><td>1.1</td></tr></tbody></table>
+                            </td><td> 0<sub>1</sub>
+                            </td><td> &nbsp; </td><td>
+                                <ol class="enumar"><li><p>ElementBody popped from grammar-stack</p></li></ol>
+                            </td></tr><tr><td align="center" class="schema-informed">EE</td><td>
+                                <table><thead><tr><th colspan="3" align="left">ElementBody1</th></tr></thead><tbody><tr><td colspan="2">EE</td><td>0</td></tr><tr><td colspan="2">[Undeclared]</td><td>1</td></tr></tbody></table>
+                            </td><td> 0<sub>1</sub>
+                            </td><td> &nbsp; </td><td>
+                                <ol class="enumar"><li><p>ElementBody1 popped from grammar-stack</p></li></ol>
+                            </td></tr><tr id="xmlNote2EE"><td colspan="5" class="xml">
+                                <code>&lt;/note&gt;</code>
+                            </td></tr><tr><td align="center" class="schema-less">EE</td><td>
+                                <table><thead><tr><th colspan="3" align="left">ElementNote</th></tr></thead><tbody><tr><td>SE(body)</td><td>ElementNote</td><td>0</td></tr><tr><td colspan="2">EE</td><td>1</td></tr><tr><td>SE(*)</td><td>ElementNote</td><td>2.0</td></tr><tr><td>CH</td><td>ElementNote</td><td>2.1</td></tr></tbody></table>
+                            </td><td>1<sub>2</sub>
+                            </td><td> &nbsp; </td><td>
+                                <ol class="enumar"><li><p>ElementNote popped from grammar-stack</p></li></ol>
+                            </td></tr><tr><td align="center" class="schema-informed">EE</td><td>
+                                <table><thead><tr><th colspan="3" align="left">ElementNote2</th></tr></thead><tbody><tr><td colspan="2">EE</td><td>0</td></tr><tr><td colspan="2">[Undeclared]</td><td>1</td></tr></tbody></table>
+                            </td><td>0<sub>1</sub>
+                            </td><td> &nbsp; </td><td>
+                                <ol class="enumar"><li><p>ElementNote2 popped from grammar-stack</p></li></ol>
+                            </td></tr><tr id="xmlNotebookEE"><td colspan="5" class="xml">
+                                <code>&lt;/notebook&gt;</code>
+                            </td></tr><tr><td align="center" class="schema-less">EE</td><td>
+                                <table><thead><tr><th colspan="3" align="left">ElementNotebook</th></tr></thead><tbody><tr><td>SE(note)</td><td>ElementNote</td><td>0</td></tr><tr><td colspan="2">EE</td><td>1</td></tr><tr><td>SE(*)</td><td>ElementNote</td><td>2.0</td></tr><tr><td>CH</td><td>ElementNote</td><td>2.1</td></tr></tbody></table>
+                            </td><td>1<sub>2</sub>
+                            </td><td>&nbsp;</td><td>
+                                <ol class="enumar"><li>ElementNotebook popped from grammar-stack </li></ol>
+                            </td></tr><tr><td align="center" class="schema-informed">EE</td><td>
+                                <table><thead><tr><th colspan="3" align="left">ElementNotebook1</th></tr></thead><tbody><tr><td>SE(note)</td><td>ElementNotebook1</td><td>0</td></tr><tr><td colspan="2">EE</td><td>1</td></tr><tr><td colspan="2">[Undeclared]</td><td>2</td></tr></tbody></table>
+                            </td><td>1<sub>2</sub></td><td>&nbsp;</td><td>
+                                <ol class="enumar"><li><p>ElementNotebook1 is popped from grammar-stack</p></li></ol>
+                            </td></tr><tr><td colspan="5" class="xml">
+                                <code>EOF</code>
+                            </td></tr><tr><td align="center" class="schema-less">ED</td><td>
+                                <table><thead><tr><th colspan="3" align="left">DocEnd</th></tr></thead><tbody><tr><td colspan="2">ED</td><td>0</td></tr></tbody></table>
+                            </td><td>0<sub>0</sub>
+                            </td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td align="center" class="schema-informed">ED</td><td>
+                                <table><thead><tr><th colspan="3" align="left">DocEnd</th></tr></thead><tbody><tr><td colspan="2">ED</td><td>0</td></tr></tbody></table>
+                            </td><td>0<sub>0</sub>
+                            </td><td>&nbsp;</td><td>&nbsp;</td></tr></tbody></table><p>Please find below the resulting byte sequences of the step-by-step encoding descriptions:</p><table border="1"><tbody><tr><td class="xml" colspan="2">EXI body streams</td></tr><tr><td class="schema-less">without a schema</td><td>
+                                42 5B 9B DD 19 58 9B DB DA D4 15 91 85 D1 94 30 C8 C0 C0 DC B4 C0 E4 B4 C4 CB 20 AD CD EE 8C AA 00 86 19 18 18 1B 96 98 1B 96 99 19 D4 25 8D 85 D1 95 9D BD C9 E4 15 15 61 26 90 87 37 56 26 A6 56 37 4C 06 48 2B 13 7B 23 CE 26 88 DE 40 DC DE E8 40 CC DE E4 CE CA E8 40 D2 E8 42 64 01 40 00 1E E6 D0 DE E0 E0 D2 DC CE 40 D8 D2 E6 E8 01 AD AD 2D 8D 65 84 0D 0D ED CC AF 25
+                            </td></tr><tr><td class="schema-informed">with schema information</td><td>
+                                00 79 60 02 A2 AC 24 80 EF 70 02 04 D1 1B C8 1B 9B DD 08 19 9B DC 99 D9 5D 08 1A 5D 08 41 03 CB 00 7B 9B 43 7B 83 83 4B 73 39 03 63 4B 9B A0 0D 6D 69 6C 6B 2C 20 68 6F 6E 65 79 10
+                            </td></tr></tbody></table></div><div class="div2">
+<h3><a name="neitherDecoding" id="neitherDecoding"></a>3.4 Decoding Example</h3><p>This section describes the process of decoding an 
+                   <a title="" href="#exiBody">EXI Body</a> stream using an example. 
+                   The EXI body streams produced by the encoding example in the previous 
+                   section are parsed into EXI events. As was the case with the encoding 
+                   example, the process is shown using two separate modes in parallel.
+                   One mode uses no schema information (i.e. schema-less), and the other 
+                   mode uses an appropriate schema (<a title="" href="#notebookSchema">Notebook 
+                   XML Schema</a>).</p><table border="1"><tbody><tr><td class="xml" colspan="2">EXI Grammar</td></tr><tr><td class="schema-less"> &nbsp;&nbsp; Tinged with light gray &nbsp;&nbsp; </td><td> &nbsp;&nbsp; without a schema (i.e. schema-less)
+                                &nbsp;&nbsp;&nbsp; </td></tr><tr><td class="schema-informed"> &nbsp;&nbsp; Tinged with dark gray
+                                &nbsp;&nbsp; </td><td> &nbsp;&nbsp; with schema information
+                                &nbsp;&nbsp;&nbsp; </td></tr></tbody></table><p>Given an initial grammar (either a Document Grammar or a Fragment Grammar as
+                   determined by assumed or specified EXI options), the process of decoding an EXI 
+                   Body Stream simply repeats the following steps.</p><ol class="enumar"><li><p>Decode Event Code (according to grammar-rule context)</p></li><li><p>Decode event content (if present, see <a href="#eventTypes"><cite>EXI
+                                Event Types</cite></a>) </p></li><li><p>Move forward in grammar according to current grammar rules</p></li><li><p>Return to step 1 if last event was not EndDocument (ED)</p></li><li><p>[Done]</p></li></ol><table border="1"><caption>Table 3-4. Decoding Example Illustration</caption><colgroup span="1"></colgroup><colgroup align="center" span="1"></colgroup><colgroup span="1"></colgroup><thead><tr align="center"><th rowspan="2">Grammar</th><th colspan="3">EXI Decoding</th><th rowspan="2">Note</th></tr><tr align="center"><th>EventCode</th><th>Event</th><th>Content</th></tr></thead><tbody><tr><td class="schema-less">
+                                <table><thead><tr><th colspan="3" align="left">Document</th></tr></thead><tbody><tr><td>SD</td><td>DocContent</td><td>0</td></tr></tbody></table>
+                            </td><td>0<sub>0</sub>
+                            </td><td align="center">SD</td><td>&nbsp;</td><td rowspan="2">
+                                <ul><li>The Document grammar is the starting point for any EXI document.
+                                    Given that there is only one possible production
+                                    <em>SD</em>, the associated Event Code 0 is represented in
+                                    zero bits (i.e., omitted). </li><li> The current <em>Document</em> grammar moves on to the
+                                            <em>DocContent</em> grammar. </li></ul>
+                            </td></tr><tr><td class="schema-informed">
+                                <table><thead><tr><th colspan="3" align="left">Document</th></tr></thead><tbody><tr><td>SD</td><td>DocContent</td><td>0</td></tr></tbody></table>
+                            </td><td>0<sub>0</sub>
+                            </td><td align="center">SD</td><td>&nbsp;</td></tr><tr id="outXmlDecl"><td colspan="5" class="xml">
+                                <code>&lt;?xml version="1.0"
+                                    encoding="UTF-8"?&gt;</code>
+                            </td></tr><tr><td class="schema-less">
+                                <table><thead><tr><th colspan="3" align="left">DocContent</th></tr></thead><tbody><tr><td>SE(*)</td><td>DocEnd</td><td>0</td></tr></tbody></table>
+                            </td><td>0<sub>0 </sub>
+                            </td><td align="center">SE</td><td> 1<sub>2</sub> "notebook"<sub>+1</sub>
+                            </td><td>
+                                <p>Decode content as <em>qname</em>.</p>
+                                <ol class="enumar"><li><p>1<sub>2</sub> makes uri id 0 (i.e. 1<sub>2</sub> - 1 = 0)</p><table border="1"><thead><tr><th colspan="2">URIs</th></tr></thead><tbody><tr class="bold"><td>0</td><td>"" [empty string]</td></tr><tr><td>1</td><td>".../XML/1998/namespace"</td></tr><tr><td>2</td><td>".../XMLSchema-instance"</td></tr></tbody></table></li><li><p>"notebook"<sub>+1</sub> (literal local-name)</p><p>Add it to local-name partition for uri "" (empty string).</p><table border="1"><thead><tr><th colspan="2">Local-Names (default)</th></tr></thead><tbody><tr class="silver"><td>0</td><td>"notebook"</td></tr></tbody></table></li></ol>
+                                <p>Then,</p>
+                                <ul><li>DocContent moves on to DocEnd and StartTagNotebook is
+                                      pushed on grammar-stack
+                                    </li></ul>
+
+                            </td></tr><tr><td class="schema-informed">
+                                <table><thead><tr><th colspan="3" align="left">DocContent</th></tr></thead><tbody><tr><td>SE(notebook)</td><td>DocEnd</td><td>0</td></tr><tr><td>[Undeclared]</td><td></td><td>1</td></tr></tbody></table>
+                            </td><td>0<sub>1</sub>
+                            </td><td align="center">SE</td><td>&nbsp;</td><td>
+                                <ul><li>DocContent moves on to DocEnd and StartTagNotebook1 is
+                                            pushed on grammar-stack </li></ul>
+                            </td></tr><tr id="outXmlNotebook"><td colspan="5" class="xml">
+                                <code>&lt;notebook&gt;</code>
+                            </td></tr><tr><td class="schema-less">
+                                <table><thead><tr><th colspan="3" align="left">StartTagNotebook</th></tr></thead><tbody><tr><td colspan="2">EE</td><td>0.0</td></tr><tr><td>AT(*)</td><td>StartTagNotebook</td><td>0.1</td></tr><tr><td>SE(*)</td><td>ElementNotebook</td><td>0.2</td></tr><tr><td>CH</td><td>ElementNotebook</td><td>0.3</td></tr></tbody></table>
+                            </td><td> 0<sub>0</sub>&nbsp;1<sub>2</sub>
+                            </td><td align="center">AT</td><td>
+                                    1<sub>2</sub>&nbsp;"date"<sub>+1</sub>&nbsp;"2007-09-12"<sub>+2</sub>
+                            </td><td>
+                                <p>Decode content as <em>qname</em> and <em>value</em> (String)</p>
+                                <ol class="enumar"><li><p>1<sub>2</sub> makes uri id 0 (i.e. 1<sub>2</sub> - 1 = 0)</p><table border="1"><thead><tr><th colspan="2">URIs</th></tr></thead><tbody><tr class="bold"><td>0</td><td>"" [empty string]</td></tr><tr><td>1</td><td>".../XML/1998/namespace"</td></tr><tr><td>2</td><td>".../XMLSchema-instance"</td></tr></tbody></table></li><li><p>"date"<sub>+1</sub> (literal local-name)</p><p>Add it to local-name partition for uri "" (empty string).</p><table border="1"><thead><tr><th colspan="2">Local-Names (default)</th></tr></thead><tbody><tr><td>0</td><td>"notebook"</td></tr><tr class="silver"><td>1</td><td>"date"</td></tr></tbody></table></li><li><p>"2007-09-12"<sub>+2</sub> (literal string value)</p><p>Add it to local value partition for <em>qname</em> date.</p><table border="1"><thead><tr><th colspan="2">Values (date)</th></tr></thead><tbody><tr class="silver"><td>0</td><td>"2007-09-12"</td></tr></tbody></table></li></ol>
+                                <p>Then,</p>
+                                <ul><li>StartTagNotebook extended by leading AT(date)</li></ul>
+                            </td></tr><tr><td class="schema-informed">
+                                <table><thead><tr><th colspan="3" align="left">StartTagNotebook1</th></tr></thead><tbody><tr><td>AT(date)</td><td>StartTagNotebook2</td><td>0</td></tr><tr><td>SE(note)</td><td>ElementNotebook1</td><td>1</td></tr><tr><td>[Undeclared]</td><td></td><td>2</td></tr></tbody></table>
+                            </td><td> 0<sub>2</sub>
+                            </td><td align="center">AT</td><td>0<sub>1</sub>&nbsp;7<sub>uint</sub>&nbsp;300<sub>9</sub>&nbsp;0<sub>1</sub></td><td>
+                                <p>Decode content as <em>value</em> of Date-Time (date):</p>
+                                <ol class="enumar"><li>0<sub>1</sub>&nbsp;7<sub>uint</sub> (Year offset from 2000 as Integer)
+                                    </li><li>300<sub>9</sub> (Month*32+Day as 9-bit Unsigned Integer)
+                                    </li><li>0<sub>1</sub> (TimeZone presence indicator as Boolean)
+                                    </li></ol>
+                                <p>to reconstitute "2007-09-12".</p>
+                                <p>Then,</p>
+                                <ul><li>StartTagNotebook1 moves on to StartTagNotebook2</li></ul>
+                            </td></tr><tr id="outXmlNotebookDate"><td colspan="5" class="xml">
+                                <code>date = "2007-09-12"</code>
+                            </td></tr><tr><td class="schema-less">
+                                <table><thead><tr><th colspan="3" align="left">StartTagNotebook</th></tr></thead><tbody><tr><td>AT(date)</td><td>StartTagNotebook</td><td>0</td></tr><tr><td colspan="2">EE</td><td>1.0</td></tr><tr><td>AT(*)</td><td>StartTagNotebook</td><td>1.1</td></tr><tr><td>SE(*)</td><td>ElementNotebook</td><td>1.2</td></tr><tr><td>CH</td><td>ElementNotebook</td><td>1.3</td></tr></tbody></table>
+                            </td><td> 1<sub>1</sub>&nbsp;2<sub>2</sub>
+                            </td><td align="center">SE</td><td> 1<sub>2</sub> "note"<sub>+1</sub>
+                            </td><td>
+                                <p>Decode content as <em>qname</em>.</p>
+                                <ol class="enumar"><li><p>1<sub>2</sub> makes uri id 0 (i.e. 1<sub>2</sub> - 1 = 0)</p><table border="1"><thead><tr><th colspan="2">URIs</th></tr></thead><tbody><tr class="bold"><td>0</td><td>"" [empty string]</td></tr><tr><td>1</td><td>".../XML/1998/namespace"</td></tr><tr><td>2</td><td>".../XMLSchema-instance"</td></tr></tbody></table></li><li><p>"note"<sub>+1</sub> (literal local-name)</p><p>Add it to local-name partition for uri "" (empty string).</p><table border="1"><thead><tr><th colspan="2">Local-Names (default)</th></tr></thead><tbody><tr><td>0</td><td>"notebook"</td></tr><tr><td>1</td><td>"date"</td></tr><tr class="silver"><td>2</td><td>"note"</td></tr></tbody></table></li></ol>
+                                <p>Then,</p>
+                                <ul><li><p>StartTagNotebook extended by leading SE(note)</p></li><li><p>StartTagNotebook moves on to ElementNotebook and
+                                            StartTagNote is pushed on grammar-stack</p></li></ul>
+                            </td></tr><tr><td class="schema-informed">
+                                <table><thead><tr><th colspan="3" align="left">StartTagNotebook2</th></tr></thead><tbody><tr><td>SE(note)</td><td>ElementNotebook1</td><td>0</td></tr><tr><td>[Undeclared]</td><td></td><td>1</td></tr></tbody></table>
+                            </td><td> 0<sub>1</sub>
+                            </td><td align="center">SE</td><td>&nbsp;</td><td>
+                                <ul><li>StartTagNotebook2 moves on to ElementNotebook1 and
+                                        StartTagNote1 is pushed on grammar-stack</li></ul>
+                            </td></tr><tr id="outXmlNote1"><td colspan="5" class="xml">
+                                <code>&lt;note&gt;</code>
+                            </td></tr><tr><td class="schema-less">
+                                <table><thead><tr><th colspan="3" align="left">StartTagNote</th></tr></thead><tbody><tr><td colspan="2">EE</td><td>0.0</td></tr><tr><td>AT(*)</td><td>StartTagNote</td><td>0.1</td></tr><tr><td>SE(*)</td><td>ElementNote</td><td>0.2</td></tr><tr><td>CH</td><td>ElementNote</td><td>0.3</td></tr></tbody></table>
+                            </td><td> 0<sub>0</sub>&nbsp;1<sub>2</sub>
+                            </td><td align="center">AT</td><td> 1<sub>2</sub>&nbsp;"category"+1&nbsp;"EXI"<sub>+2</sub>
+                            </td><td>
+                                <p>Decode content as <em>qname</em> and <em>value</em> (String).</p>
+                                <ol class="enumar"><li><p>1<sub>2</sub> makes uri id 0 (i.e. 1<sub>2</sub> - 1 = 0)</p><table border="1"><thead><tr><th colspan="2">URIs</th></tr></thead><tbody><tr class="bold"><td>0</td><td>"" [empty string]</td></tr><tr><td>1</td><td>".../XML/1998/namespace"</td></tr><tr><td>2</td><td>".../XMLSchema-instance"</td></tr></tbody></table></li><li><p>"category"<sub>+1</sub> (literal local-name)</p><p>Add it to local-name partition for uri "" (empty string).</p><table border="1"><thead><tr><th colspan="2">Local-Names (default)</th></tr></thead><tbody><tr><td>0</td><td>"notebook"</td></tr><tr><td>1</td><td>"date"</td></tr><tr><td>2</td><td>"note"</td></tr><tr class="silver"><td>3</td><td>"category"</td></tr></tbody></table></li><li><p>"EXI"<sub>+2</sub> (literal string value)</p><p>Add it to local value partition for <em>qname</em> category.</p><table border="1"><thead><tr><th colspan="2">Values (category)</th></tr></thead><tbody><tr class="silver"><td>0</td><td>"EXI"</td></tr></tbody></table></li></ol>
+                                <p>Then,</p>
+                                <ul><li><p>StartTagNote extended by leading AT(category)</p></li></ul>
+                            </td></tr><tr><td class="schema-informed">
+                                <table><thead><tr><th colspan="3" align="left">StartTagNote1</th></tr></thead><tbody><tr><td>AT(category)</td><td>StartTagNote2</td><td>0</td></tr><tr><td>AT(date)</td><td>StartTagNote3</td><td>1</td></tr><tr><td>[Undeclared]</td><td></td><td>2</td></tr></tbody></table>
+                            </td><td> 0<sub>2</sub>
+                            </td><td align="center">AT</td><td>"EXI"<sub>+2</sub>
+                            </td><td>
+                                <p>Decode content as <em>value</em> (String).</p>
+                                <ol class="enumar"><li><p>"EXI"<sub>+2</sub> (literal string value)</p><p>Add it to local value partition for <em>qname</em> category.</p><table border="1"><thead><tr><th colspan="2">Values (category)</th></tr></thead><tbody><tr class="silver"><td>0</td><td>"EXI"</td></tr></tbody></table></li></ol>
+                                <p>Then,</p>
+                                <ul><li>StartTagNote1 moves on to StartTagNote2</li></ul>
+                            </td></tr><tr id="outXmlNote1Category"><td colspan="5" class="xml">
+                                <code>category="EXI"</code>
+                            </td></tr><tr><td class="schema-less">
+                                <table><thead><tr><th colspan="3" align="left">StartTagNote</th></tr></thead><tbody><tr><td>AT(category)</td><td>StartTagNote</td><td>0</td></tr><tr><td colspan="2">EE</td><td>1.0</td></tr><tr><td>AT(*)</td><td>StartTagNote</td><td>1.1</td></tr><tr><td>SE(*)</td><td>ElementNote</td><td>1.2</td></tr><tr><td>CH</td><td>ElementNote</td><td>1.3</td></tr></tbody></table>
+                            </td><td> 1<sub>1</sub>&nbsp;1<sub>2</sub>
+                            </td><td align="center">AT</td><td>
+                                    1<sub>2</sub>&nbsp;0<sub>uint</sub>&nbsp;1<sub>2</sub>&nbsp;"2007-07-23"<sub>+2</sub>
+                            </td><td>
+                                <p>Decode content as <em>qname</em> and <em>value</em> (String).</p>
+                                <ol class="enumar"><li><p>1<sub>2</sub> makes uri id 0 (i.e. 1<sub>2</sub> - 1 = 0)</p><table border="1"><thead><tr><th colspan="2">URIs</th></tr></thead><tbody><tr class="bold"><td>0</td><td>"" [empty string]</td></tr><tr><td>1</td><td>".../XML/1998/namespace"</td></tr><tr><td>2</td><td>".../XMLSchema-instance"</td></tr></tbody></table></li><li><p>0<sub>uint</sub>&nbsp;1<sub>2</sub> (local-name id)</p><table border="1"><thead><tr><th colspan="2">Local-Names (default)</th></tr></thead><tbody><tr><td>0</td><td>"notebook"</td></tr><tr class="bold"><td>1</td><td>"date"</td></tr><tr><td>2</td><td>"note"</td></tr></tbody></table></li><li><p>"2007-07-23"<sub>+2</sub> (literal string value)</p><p>Add it to local value partition for <em>qname</em> date.</p><table border="1"><thead><tr><th colspan="2">Values (date)</th></tr></thead><tbody><tr><td>0</td><td>"2007-09-12"</td></tr><tr class="silver"><td>1</td><td>"2007-07-23"</td></tr></tbody></table></li></ol>
+                                <p>Then,</p>
+                                <ul><li><p>StartTagNote extended by leading AT(date)</p></li></ul>
+                            </td></tr><tr><td class="schema-informed">
+                                <table><thead><tr><th colspan="3" align="left">StartTagNote2</th></tr></thead><tbody><tr><td>AT(date)</td><td>StartTagNote3</td><td>0</td></tr><tr><td>[Undeclared]</td><td></td><td>1</td></tr></tbody></table>
+                            </td><td>0<sub>1</sub>
+                            </td><td align="center">AT</td><td>0<sub>1</sub>&nbsp;7<sub>uint</sub>&nbsp;247<sub>9</sub>&nbsp;0<sub>1</sub></td><td>
+                                <p>Decode content as <em>value</em> of Date-Time (date):</p>
+                                <ol class="enumar"><li>0<sub>1</sub>&nbsp;7<sub>uint</sub> (Year offset from 2000 as Integer)
+                                    </li><li>247<sub>9</sub> (Month*32+Day as 9-bit Unsigned Integer)
+                                    </li><li>0<sub>1</sub> (TimeZone presence indicator as Boolean)
+                                    </li></ol>
+                                <p>to reconstitute "2007-07-23".</p>
+
+                                <p>Then,</p>
+                                <ul><li>StartTagNote2 moves on to StartTagNote3</li></ul>
+                            </td></tr><tr id="outXmlNote1Date"><td colspan="5" class="xml">
+                                <code>date="2007-07-23"</code>
+                            </td></tr><tr><td class="schema-less">
+                                <table><thead><tr><th colspan="3" align="left">StartTagNote</th></tr></thead><tbody><tr><td>AT(date)</td><td>StartTagNote</td><td>0</td></tr><tr><td>AT(category)</td><td>StartTagNote</td><td>1</td></tr><tr><td colspan="2">EE</td><td>2.0</td></tr><tr><td>AT(*)</td><td>StartTagNote</td><td>2.1</td></tr><tr><td>SE(*)</td><td>ElementNote</td><td>2.2</td></tr><tr><td>CH</td><td>ElementNote</td><td>2.3</td></tr></tbody></table>
+                            </td><td> 2<sub>2</sub>&nbsp;2<sub>2</sub>
+                            </td><td align="center">SE</td><td> 1<sub>2</sub>&nbsp;"subject"<sub>+1</sub>
+                            </td><td>
+                                <p>Decode content as <em>qname</em>.</p>
+                                <ol class="enumar"><li><p>1<sub>2</sub> makes uri id 0 (i.e. 1<sub>2</sub> - 1 = 0)</p><table border="1"><thead><tr><th colspan="2">URIs</th></tr></thead><tbody><tr class="bold"><td>0</td><td>"" [empty string]</td></tr><tr><td>1</td><td>".../XML/1998/namespace"</td></tr><tr><td>2</td><td>".../XMLSchema-instance"</td></tr></tbody></table></li><li><p>"subject"<sub>+1</sub> (literal local-name)</p><p>Add it to local-name partition for uri "" (empty string).</p><table border="1"><thead><tr><th colspan="2">Local-Names (default)</th></tr></thead><tbody><tr><td>0</td><td>"notebook"</td></tr><tr><td>1</td><td>"date"</td></tr><tr><td>2</td><td>"note"</td></tr><tr><td>3</td><td>"category"</td></tr><tr class="silver"><td>4</td><td>"subject"</td></tr></tbody></table></li></ol>
+                                <p>Then,</p>
+                                <ul><li><p>StartTagNote extended by leading SE(subject)</p></li><li><p>StartTagNote moves on to ElementNote and StartTagSubject
+                                            is pushed on grammar-stack</p></li></ul>
+                            </td></tr><tr><td class="schema-informed">
+                                <table><thead><tr><th colspan="3" align="left">StartTagNote3</th></tr></thead><tbody><tr><td>SE(subject)</td><td>ElementNote1</td><td>0</td></tr><tr><td>[Undeclared]</td><td></td><td>1</td></tr></tbody></table>
+                            </td><td>0<sub>1</sub>
+                            </td><td align="center">SE</td><td>&nbsp;</td><td>
+                                <ul><li>StartTagNote3 moves on to ElementNote1 and
+                                        StartTagSubject1 is pushed on grammar-stack</li></ul>
+                            </td></tr><tr id="outXmlNote1Subject"><td colspan="5" class="xml">
+                                <code>&lt;subject&gt;</code>
+                            </td></tr><tr><td class="schema-less">
+                                <table><thead><tr><th colspan="3" align="left">StartTagSubject</th></tr></thead><tbody><tr><td colspan="2">EE</td><td>0.0</td></tr><tr><td>AT(*)</td><td>StartTagSubject</td><td>0.1</td></tr><tr><td>SE(*)</td><td>ElementSubject</td><td>0.2</td></tr><tr><td>CH</td><td>ElementSubject</td><td>0.3</td></tr></tbody></table>
+                            </td><td> 0<sub>0</sub>&nbsp;3<sub>2</sub>
+                            </td><td align="center">CH</td><td> 1<sub>uint</sub>&nbsp;1<sub>2</sub>
+                            </td><td>
+                                <p>Decode content as <em>value</em> (String).</p>
+                                <ol class="enumar"><li><p>1<sub>uint</sub>&nbsp;1<sub>2</sub> (value id in global value partition)</p><table border="1"><thead><tr><th colspan="2">Global-Values</th></tr></thead><tbody><tr><td>0</td><td>"2007-09-12"</td></tr><tr class="bold"><td>1</td><td>"EXI"</td></tr><tr><td>2</td><td>"2007-07-23"</td></tr></tbody></table></li></ol>
+                                <p>Then,</p>
+                                <ul><li><p>StartTagSubject extended by leading CH</p></li><li><p>StartTagSubject moves on to ElementSubject </p></li></ul>
+                            </td></tr><tr><td class="schema-informed">
+                                <table><thead><tr><th colspan="3" align="left">StartTagSubject1</th></tr></thead><tbody><tr><td>CH</td><td>ElementSubject1</td><td>0</td></tr><tr><td colspan="2">[Undeclared]</td><td>1</td></tr></tbody></table>
+                            </td><td> 0<sub>1</sub></td><td align="center">CH</td><td> 1<sub>uint</sub>&nbsp;0<sub>0</sub>
+                            </td><td>
+                                <p>Decode content as <em>value</em> (String).</p>
+                                <ol class="enumar"><li><p>1<sub>uint</sub>&nbsp;0<sub>0</sub> (value id in global value partition)</p><table border="1"><thead><tr><th colspan="2">Global-Values</th></tr></thead><tbody><tr class="bold"><td>0</td><td>"EXI"</td></tr></tbody></table></li></ol>
+                                <p>Then,</p>
+                                <ul><li><p>StartTagSubject1 moves on to ElementSubject1 </p></li></ul>
+                            </td></tr><tr id="outXmlNote1SubjectCH"><td colspan="5" class="xml">
+                                <code>EXI</code>
+                            </td></tr><tr><td class="schema-less">
+                                <table><thead><tr><th colspan="3" align="left">ElementSubject</th></tr></thead><tbody><tr><td colspan="2">EE</td><td>0</td></tr><tr><td>SE(*)</td><td>ElementSubject</td><td>1.0</td></tr><tr><td>CH</td><td>ElementSubject</td><td>1.1</td></tr></tbody></table>
+                            </td><td> 0<sub>1</sub>
+                            </td><td align="center">EE</td><td> &nbsp; </td><td>
+                                <ul><li><p>ElementSubject popped from grammar-stack</p></li></ul>
+                            </td></tr><tr><td class="schema-informed">
+                                <table><thead><tr><th colspan="3" align="left">ElementSubject1</th></tr></thead><tbody><tr><td colspan="2">EE</td><td>0</td></tr><tr><td colspan="2">[Undeclared]</td><td>1</td></tr></tbody></table>
+                            </td><td> 0<sub>1</sub>
+                            </td><td align="center">EE</td><td> &nbsp; </td><td>
+                                <ul><li><p>ElementSubject1 popped from grammar-stack</p></li></ul>
+                            </td></tr><tr id="outXmlNote1SubjectEE"><td colspan="5" class="xml">
+                                <code>&lt;/subject&gt;</code>
+                            </td></tr><tr><td class="schema-less">
+                                <table><thead><tr><th colspan="3" align="left">ElementNote</th></tr></thead><tbody><tr><td colspan="2">EE</td><td>0</td></tr><tr><td>SE(*)</td><td>ElementNote</td><td>1.0</td></tr><tr><td>CH</td><td>ElementNote</td><td>1.1</td></tr></tbody></table>
+                            </td><td> 1<sub>1</sub>&nbsp;0<sub>1</sub>
+                            </td><td align="center">SE</td><td> 1<sub>2</sub>&nbsp;"body"<sub>+1</sub>
+                            </td><td>
+                                <p>Decode content as <em>qname</em>.</p>
+                                <ol class="enumar"><li><p>1<sub>2</sub> makes uri id 0 (i.e. 1<sub>2</sub> - 1 = 0)</p><table border="1"><thead><tr><th colspan="2">URIs</th></tr></thead><tbody><tr class="bold"><td>0</td><td>"" [empty string]</td></tr><tr><td>1</td><td>".../XML/1998/namespace"</td></tr><tr><td>2</td><td>".../XMLSchema-instance"</td></tr></tbody></table></li><li><p>"body"<sub>+1</sub> (literal local-name)</p><p>Add it to local-name partition for uri "" (empty string).</p><table border="1"><thead><tr><th colspan="2">Local-Names (default)</th></tr></thead><tbody><tr><td>0</td><td>"notebook"</td></tr><tr><td>1</td><td>"date"</td></tr><tr><td>2</td><td>"note"</td></tr><tr><td>3</td><td>"category"</td></tr><tr><td>4</td><td>"subject"</td></tr><tr class="silver"><td>5</td><td>"body"</td></tr></tbody></table></li></ol>
+                                <p>Then,</p>
+                                <ul><li><p>ElementNote extended by leading SE(body)</p></li><li><p>StartTagBody is pushed on grammar-stack</p></li></ul>
+                            </td></tr><tr><td class="schema-informed">
+                                <table><thead><tr><th colspan="3" align="left">ElementNote1</th></tr></thead><tbody><tr><td>SE(body)</td><td>ElementNote2</td><td>0</td></tr><tr><td colspan="2">[Undeclared]</td><td>1</td></tr></tbody></table>
+                            </td><td>0<sub>1</sub></td><td align="center">SE</td><td>&nbsp;</td><td>
+                                <ul><li><p>ElementNote1 moves on to ElementNote2 and StartTagBody1
+                                            is pushed on grammar-stack</p></li></ul>
+                            </td></tr><tr id="outXmlNote1Body"><td colspan="5" class="xml">
+                                <code>&lt;body&gt;</code>
+                            </td></tr><tr><td class="schema-less">
+                                <table><thead><tr><th colspan="3" align="left">StartTagBody</th></tr></thead><tbody><tr><td colspan="2">EE</td><td>0.0</td></tr><tr><td>AT(*)</td><td>StartTagBody</td><td>0.1</td></tr><tr><td>SE(*)</td><td>ElementBody</td><td>0.2</td></tr><tr><td>CH</td><td>ElementBody</td><td>0.3</td></tr></tbody></table>
+                            </td><td> 0<sub>0</sub>&nbsp;3<sub>2</sub>
+                            </td><td align="center">CH</td><td> "Do not forget it!"<sub>+2</sub>
+                            </td><td>
+                                <p>Decode content as <em>value</em> (String).</p>
+                                <ol class="enumar"><li><p>"Do not forget it!"<sub>+2</sub> (literal string value)</p><p>Add it to local value partition for <em>qname</em> body.</p><table border="1"><thead><tr><th colspan="2">Values (body)</th></tr></thead><tbody><tr class="silver"><td>0</td><td>"Do not forget it!"</td></tr></tbody></table></li></ol>
+                                <p>Then,</p>
+                                <ul><li><p>StartTagBody extended by leading CH</p></li><li><p>StartTagBody moves on to ElementBody </p></li></ul>
+                            </td></tr><tr><td class="schema-informed">
+                                <table><thead><tr><th colspan="3" align="left">StartTagBody1</th></tr></thead><tbody><tr><td>CH</td><td>ElementBody1</td><td>0</td></tr><tr><td colspan="2">[Undeclared]</td><td>1</td></tr></tbody></table>
+                            </td><td> 0<sub>1</sub></td><td align="center">CH</td><td> "Do not forget it!"<sub>+2</sub>
+                            </td><td>
+                                <p>Decode content as <em>value</em> (String).</p>
+                                <ol class="enumar"><li><p>"Do not forget it!"<sub>+2</sub> (literal string value)</p><p>Add it to local value partition for <em>qname</em> body.</p><table border="1"><thead><tr><th colspan="2">Values (body)</th></tr></thead><tbody><tr class="silver"><td>0</td><td>"Do not forget it!"</td></tr></tbody></table></li></ol>
+                                <p>Then,</p>
+                                <ul><li><p>StartTagBody1 moves on to ElementBody1</p></li></ul>
+                            </td></tr><tr id="outXmlNote1BodyCH"><td colspan="5" class="xml">
+                                <code>Do not forget it!</code>
+                            </td></tr><tr><td class="schema-less">
+                                <table><thead><tr><th colspan="3" align="left">ElementBody</th></tr></thead><tbody><tr><td colspan="2">EE</td><td>0</td></tr><tr><td>SE(*)</td><td>ElementBody</td><td>1.0</td></tr><tr><td>CH</td><td>ElementBody</td><td>1.1</td></tr></tbody></table>
+                            </td><td> 0<sub>1</sub>
+                            </td><td align="center">EE</td><td> &nbsp; </td><td>
+                                <ul><li><p>ElementBody popped from grammar-stack</p></li></ul>
+                            </td></tr><tr><td class="schema-informed">
+                                <table><thead><tr><th colspan="3" align="left">ElementBody1</th></tr></thead><tbody><tr><td colspan="2">EE</td><td>0</td></tr><tr><td colspan="2">[Undeclared]</td><td>1</td></tr></tbody></table>
+                            </td><td> 0<sub>1</sub>
+                            </td><td align="center">EE</td><td> &nbsp; </td><td>
+                                <ul><li><p>ElementBody1 popped from grammar-stack</p></li></ul>
+                            </td></tr><tr id="outXmlNote1BodyEE"><td colspan="5" class="xml">
+                                <code>&lt;/body&gt;</code>
+                            </td></tr><tr><td class="schema-less">
+                                <table><thead><tr><th colspan="3" align="left">ElementNote</th></tr></thead><tbody><tr><td>SE(body)</td><td>ElementNote</td><td>0</td></tr><tr><td colspan="2">EE</td><td>1</td></tr><tr><td>SE(*)</td><td>ElementNote</td><td>2.0</td></tr><tr><td>CH</td><td>ElementNote</td><td>2.1</td></tr></tbody></table>
+                            </td><td> 1<sub>2</sub>
+                            </td><td align="center">EE</td><td> &nbsp; </td><td>
+                                <ul><li><p>ElementNote popped from grammar-stack</p></li></ul>
+                            </td></tr><tr><td class="schema-informed">
+                                <table><thead><tr><th colspan="3" align="left">ElementNote2</th></tr></thead><tbody><tr><td colspan="2">EE</td><td>0</td></tr><tr><td colspan="2">[Undeclared]</td><td>1</td></tr></tbody></table>
+                            </td><td>0<sub>1</sub>
+                            </td><td align="center">EE</td><td> &nbsp; </td><td>
+                                <ul><li><p>ElementNote2 popped from grammar-stack</p></li></ul>
+                            </td></tr><tr id="outXmlNote1EE"><td colspan="5" class="xml">
+                                <code>&lt;/note&gt;</code>
+                            </td></tr><tr><td class="schema-less">
+                                <table><thead><tr><th colspan="3" align="left">ElementNotebook</th></tr></thead><tbody><tr><td colspan="2">EE</td><td>0</td></tr><tr><td>SE(*)</td><td>ElementNotebook</td><td>1.0</td></tr><tr><td>CH</td><td>ElementNotebook</td><td>1.1</td></tr></tbody></table>
+                            </td><td> 1<sub>1</sub>&nbsp;0<sub>1</sub>
+                            </td><td align="center">SE</td><td> 1<sub>2</sub>&nbsp;0<sub>uint</sub>&nbsp;2<sub>3</sub>
+                            </td><td>
+                                <p>Decode content as <em>qname</em>.</p>
+                                <ol class="enumar"><li><p>1<sub>2</sub> makes uri id 0 (i.e. 1<sub>2</sub> - 1 = 0)</p><table border="1"><thead><tr><th colspan="2">URIs</th></tr></thead><tbody><tr class="bold"><td>0</td><td>"" [empty string]</td></tr><tr><td>1</td><td>".../XML/1998/namespace"</td></tr><tr><td>2</td><td>".../XMLSchema-instance"</td></tr></tbody></table></li><li><p>0<sub>unit</sub>&nbsp;2<sub>3</sub> (local-name id)</p><table border="1"><thead><tr><th colspan="2">Local-Names (default)</th></tr></thead><tbody><tr><td>0</td><td>"notebook"</td></tr><tr><td>1</td><td>"date"</td></tr><tr class="bold"><td>2</td><td>"note"</td></tr><tr><td>3</td><td>"category"</td></tr><tr><td>4</td><td>"subject"</td></tr><tr><td>5</td><td>"body"</td></tr></tbody></table></li></ol>
+                                <p>Then,</p>
+                                <ul><li><p>ElementNotebook extended by leading SE(note)</p></li><li><p>StartTagNote is pushed on grammar-stack</p></li></ul>
+                            </td></tr><tr><td class="schema-informed">
+                                <table><thead><tr><th colspan="3" align="left">ElementNotebook1</th></tr></thead><tbody><tr><td>SE(note)</td><td>ElementNotebook1</td><td>0</td></tr><tr><td colspan="2">EE</td><td>1</td></tr><tr><td colspan="2">[Undeclared]</td><td>2</td></tr></tbody></table>
+                            </td><td>0<sub>2</sub></td><td align="center">SE</td><td>&nbsp;</td><td>
+                                <ul><li><p>StartTagNote1 is pushed on grammar-stack</p></li></ul>
+                            </td></tr><tr id="outXmlNote2"><td colspan="5" class="xml">
+                                <code>&lt;note&gt;</code>
+                            </td></tr><tr><td class="schema-less">
+                                <table><thead><tr><th colspan="3" align="left">StartTagNote</th></tr></thead><tbody><tr><td>SE(subject)</td><td>ElementNote</td><td>0</td></tr><tr><td>AT(date)</td><td>StartTagNote</td><td>1</td></tr><tr><td>AT(category)</td><td>StartTagNote</td><td>2</td></tr><tr><td colspan="2">EE</td><td>3.0</td></tr><tr><td>AT(*)</td><td>StartTagNote</td><td>3.1</td></tr><tr><td>SE(*)</td><td>ElementNote</td><td>3.2</td></tr><tr><td>CH</td><td>ElementNote</td><td>3.3</td></tr></tbody></table>
+                            </td><td>1<sub>2</sub>
+                            </td><td align="center">AT</td><td> 0<sub>uint</sub>&nbsp;0<sub>1</sub>
+                            </td><td>
+                                <p>Decode content as <em>value</em> (String).</p>
+                                <ol class="enumar"><li><p>0<sub>uint</sub>&nbsp;0<sub>1</sub> (value id in local value partition for <em>qname</em> date)</p><table border="1"><thead><tr><th colspan="2">Values (date)</th></tr></thead><tbody><tr class="bold"><td>0</td><td>"2007-09-12"</td></tr><tr><td>1</td><td>"2007-07-23"</td></tr></tbody></table></li></ol>
+                            </td></tr><tr><td class="schema-informed">
+                                <table><thead><tr><th colspan="3" align="left">StartTagNote1</th></tr></thead><tbody><tr><td>AT(category)</td><td>StartTagNote2</td><td>0</td></tr><tr><td>AT(date)</td><td>StartTagNote3</td><td>1</td></tr><tr><td>[Undeclared]</td><td></td><td>2</td></tr></tbody></table>
+                            </td><td> 1<sub>2</sub>
+                            </td><td align="center">AT</td><td>0<sub>1</sub>&nbsp;7<sub>uint</sub>&nbsp;300<sub>9</sub>&nbsp;0<sub>1</sub></td><td>
+                                <p>Decode content as <em>value</em> of Date-Time (date):</p>
+                                <ol class="enumar"><li>0<sub>1</sub>&nbsp;7<sub>uint</sub> (Year offset from 2000 as Integer)
+                                    </li><li>300<sub>9</sub> (Month*32+Day as 9-bit Unsigned Integer)
+                                    </li><li>0<sub>1</sub> (TimeZone presence indicator as Boolean)
+                                    </li></ol>
+                                <p>to reconstitute "2007-09-12".</p>
+                                <p>Then,</p>
+                                <ul><li>StartTagNote1 moves on to StartTagNote3</li></ul>
+                            </td></tr><tr id="outXmlNote2Date"><td colspan="5" class="xml">
+                                <code>date="2007-09-12"</code>
+                            </td></tr><tr><td class="schema-less">
+                                <table><thead><tr><th colspan="3" align="left">StartTagNote</th></tr></thead><tbody><tr><td>SE(subject)</td><td>ElementNote</td><td>0</td></tr><tr><td>AT(date)</td><td>StartTagNote</td><td>1</td></tr><tr><td>AT(category)</td><td>StartTagNote</td><td>2</td></tr><tr><td colspan="2">EE</td><td>3.0</td></tr><tr><td>AT(*)</td><td>StartTagNote</td><td>3.1</td></tr><tr><td>SE(*)</td><td>ElementNote</td><td>3.2</td></tr><tr><td>CH</td><td>ElementNote</td><td>3.3</td></tr></tbody></table>
+                            </td><td> 0<sub>2</sub>
+                            </td><td align="center">SE</td><td>&nbsp;</td><td>
+                                <ul><li><p>StartTagNote moves on to ElementNote and StartTagSubject
+                                            is pushed on grammar-stack</p></li></ul>
+                            </td></tr><tr><td class="schema-informed">
+                                <table><thead><tr><th colspan="3" align="left">StartTagNote3</th></tr></thead><tbody><tr><td>SE(subject)</td><td>ElementNote1</td><td>0</td></tr><tr><td>[Undeclared]</td><td></td><td>1</td></tr></tbody></table>
+                            </td><td>0<sub>1</sub>
+                            </td><td align="center">SE</td><td>&nbsp;</td><td>
+                                <ul><li>StartTagNote3 moves on to ElementNote1 and
+                                        StartTagSubject1 is pushed on grammar-stack</li></ul>
+                            </td></tr><tr id="outXmlNote2Subject"><td colspan="5" class="xml">
+                                <code>&lt;subject&gt;</code>
+                            </td></tr><tr><td class="schema-less">
+                                <table><thead><tr><th colspan="3" align="left">StartTagSubject</th></tr></thead><tbody><tr><td>CH</td><td>ElementSubject</td><td>0</td></tr><tr><td colspan="2">EE</td><td>1.0</td></tr><tr><td>AT(*)</td><td>StartTagSubject</td><td>1.1</td></tr><tr><td>SE(*)</td><td>ElementSubject</td><td>1.2</td></tr><tr><td>CH</td><td>ElementSubject</td><td>1.3</td></tr></tbody></table>
+                            </td><td> 0<sub>1</sub>
+                            </td><td align="center">CH</td><td> "Shopping List"<sub>+2</sub>
+                            </td><td>
+                                <p>Decode content as <em>value</em> (String).</p>
+                                <ol class="enumar"><li><p>"Shopping List"<sub>+2</sub> (literal string value)</p><p>Add it to local value partition for <em>qname</em> subject.</p><table border="1"><thead><tr><th colspan="2">Values (subject)</th></tr></thead><tbody><tr class="silver"><td>0</td><td>"Shopping List"</td></tr></tbody></table></li></ol>
+                                <p>Then,</p>
+                                <ul><li><p>StartTagSubject moves on to ElementSubject </p></li></ul>
+                            </td></tr><tr><td class="schema-informed">
+                                <table><thead><tr><th colspan="3" align="left">StartTagSubject1</th></tr></thead><tbody><tr><td>CH</td><td>ElementSubject1</td><td>0</td></tr><tr><td colspan="2">[Undeclared]</td><td>1</td></tr></tbody></table>
+                            </td><td> 0<sub>1</sub></td><td align="center">CH</td><td> "Shopping List"<sub>+2</sub>
+                            </td><td>
+                                <p>Decode content as <em>value</em> (String).</p>
+                                <ol class="enumar"><li><p>"Shopping List"<sub>+2</sub> (literal string value)</p><p>Add it to local value partition for <em>qname</em> subject.</p><table border="1"><thead><tr><th colspan="2">Values (subject)</th></tr></thead><tbody><tr class="silver"><td>0</td><td>"Shopping List"</td></tr></tbody></table></li></ol>
+                                <p>Then,</p>
+                                <ul><li><p>StartTagSubject1 moves on to ElementSubject1 </p></li></ul>
+                            </td></tr><tr id="outXmlNote2SubjectCH"><td colspan="5" class="xml">
+                                <code>Shopping List</code>
+                            </td></tr><tr><td class="schema-less">
+                                <table><thead><tr><th colspan="3" align="left">ElementSubject</th></tr></thead><tbody><tr><td colspan="2">EE</td><td>0</td></tr><tr><td>SE(*)</td><td>ElementSubject</td><td>1.0</td></tr><tr><td>CH</td><td>ElementSubject</td><td>1.1</td></tr></tbody></table>
+                            </td><td> 0<sub>1</sub>
+                            </td><td align="center">EE</td><td> &nbsp; </td><td>
+                                <ul><li><p>ElementSubject popped from grammar-stack</p></li></ul>
+                            </td></tr><tr><td class="schema-informed">
+                                <table><thead><tr><th colspan="3" align="left">ElementSubject1</th></tr></thead><tbody><tr><td colspan="2">EE</td><td>0</td></tr><tr><td colspan="2">[Undeclared]</td><td>1</td></tr></tbody></table>
+                            </td><td> 0<sub>1</sub>
+                            </td><td align="center">EE</td><td> &nbsp; </td><td>
+                                <ul><li><p>ElementSubject1 popped from grammar-stack</p></li></ul>
+                            </td></tr><tr id="outXmlNote2SubjectEE"><td colspan="5" class="xml">
+                                <code>&lt;/subject&gt;</code>
+                            </td></tr><tr><td class="schema-less">
+                                <table><thead><tr><th colspan="3" align="left">ElementNote</th></tr></thead><tbody><tr><td>SE(body)</td><td>ElementNote</td><td>0</td></tr><tr><td colspan="2">EE</td><td>1</td></tr><tr><td>SE(*)</td><td>ElementNote</td><td>2.0</td></tr><tr><td>CH</td><td>ElementNote</td><td>2.1</td></tr></tbody></table>
+                            </td><td> 0<sub>2</sub>
+                            </td><td align="center">SE</td><td>&nbsp;</td><td>
+                                <ul><li>StartTagBody is pushed on grammar-stack</li></ul>
+                            </td></tr><tr><td class="schema-informed">
+                                <table><thead><tr><th colspan="3" align="left">ElementNote1</th></tr></thead><tbody><tr><td>SE(body)</td><td>ElementNote2</td><td>0</td></tr><tr><td colspan="2">[Undeclared]</td><td>1</td></tr></tbody></table>
+                            </td><td>0<sub>1</sub></td><td align="center">SE</td><td>&nbsp;</td><td>
+                                <ul><li><p>ElementNote1 moves on to ElementNote2 and StartTagBody1
+                                            is pushed on grammar-stack</p></li></ul>
+                            </td></tr><tr id="outXmlNote2Body"><td colspan="5" class="xml">
+                                <code>&lt;body&gt;</code>
+                            </td></tr><tr><td class="schema-less">
+                                <table><thead><tr><th colspan="3" align="left">StartTagBody</th></tr></thead><tbody><tr><td>CH</td><td>ElementBody</td><td>0</td></tr><tr><td colspan="2">EE</td><td>1.0</td></tr><tr><td>AT(*)</td><td>StartTagBody</td><td>1.1</td></tr><tr><td>SE(*)</td><td>ElementBody</td><td>1.2</td></tr><tr><td>CH</td><td>ElementBody</td><td>1.3</td></tr></tbody></table>
+                            </td><td> 0<sub>1</sub>
+                            </td><td align="center">CH</td><td> "milk, honey"<sub>+2</sub>
+                            </td><td>
+                                <p>Decode content as <em>value</em> (String).</p>
+                                <ol class="enumar"><li><p>"milk, honey"<sub>+2</sub> (literal string value)</p><p>Add it to local value partition for <em>qname</em> body.</p><table border="1"><thead><tr><th colspan="2">Values (body)</th></tr></thead><tbody><tr><td>0</td><td>"Do not forget it!"</td></tr><tr class="silver"><td>1</td><td>"milk, honey"</td></tr></tbody></table></li></ol>
+                                <p>Then,</p>
+                                <ul><li><p>StartTagBody moves on to ElementBody </p></li></ul>
+                            </td></tr><tr><td class="schema-informed">
+                                <table><thead><tr><th colspan="3" align="left">StartTagBody1</th></tr></thead><tbody><tr><td>CH</td><td>ElementBody1</td><td>0</td></tr><tr><td colspan="2">[Undeclared]</td><td>1</td></tr></tbody></table>
+                            </td><td> 0<sub>1</sub></td><td align="center">CH</td><td> "milk, honey"<sub>+2</sub>
+                            </td><td>
+                                <p>Decode content as <em>value</em> (String).</p>
+                                <ol class="enumar"><li><p>"milk, honey"<sub>+2</sub> (literal string value)</p><p>Add it to local value partition for <em>qname</em> body.</p><table border="1"><thead><tr><th colspan="2">Values (body)</th></tr></thead><tbody><tr><td>0</td><td>"Do not forget it!"</td></tr><tr class="silver"><td>1</td><td>"milk, honey"</td></tr></tbody></table></li></ol>
+                                <p>Then,</p>
+                                <ul><li><p>StartTagBody1 moves on to ElementBody1</p></li></ul>
+                            </td></tr><tr id="outXmlNote2BodyCH"><td colspan="5" class="xml">
+                                <code>milk, honey</code>
+                            </td></tr><tr><td class="schema-less">
+                                <table><thead><tr><th colspan="3" align="left">ElementBody</th></tr></thead><tbody><tr><td colspan="2">EE</td><td>0</td></tr><tr><td>SE(*)</td><td>ElementBody</td><td>1.0</td></tr><tr><td>CH</td><td>ElementBody</td><td>1.1</td></tr></tbody></table>
+                            </td><td> 0<sub>1</sub>
+                            </td><td align="center">EE</td><td> &nbsp; </td><td>
+                                <ul><li><p>ElementBody popped from grammar-stack</p></li></ul>
+                            </td></tr><tr><td class="schema-informed">
+                                <table><thead><tr><th colspan="3" align="left">ElementBody1</th></tr></thead><tbody><tr><td colspan="2">EE</td><td>0</td></tr><tr><td colspan="2">[Undeclared]</td><td>1</td></tr></tbody></table>
+                            </td><td> 0<sub>1</sub>
+                            </td><td align="center">EE</td><td> &nbsp; </td><td>
+                                <ul><li><p>ElementBody1 popped from grammar-stack</p></li></ul>
+                            </td></tr><tr id="outXmlNote2BodyEE"><td colspan="5" class="xml">
+                                <code>&lt;/body&gt;</code>
+                            </td></tr><tr><td class="schema-less">
+                                <table><thead><tr><th colspan="3" align="left">ElementNote</th></tr></thead><tbody><tr><td>SE(body)</td><td>ElementNote</td><td>0</td></tr><tr><td colspan="2">EE</td><td>1</td></tr><tr><td>SE(*)</td><td>ElementNote</td><td>2.0</td></tr><tr><td>CH</td><td>ElementNote</td><td>2.1</td></tr></tbody></table>
+                            </td><td>1<sub>2</sub>
+                            </td><td align="center">EE</td><td> &nbsp; </td><td>
+                                <ul><li><p>ElementNote popped from grammar-stack</p></li></ul>
+                            </td></tr><tr><td class="schema-informed">
+                                <table><thead><tr><th colspan="3" align="left">ElementNote2</th></tr></thead><tbody><tr><td colspan="2">EE</td><td>0</td></tr><tr><td colspan="2">[Undeclared]</td><td>1</td></tr></tbody></table>
+                            </td><td>0<sub>1</sub>
+                            </td><td align="center">EE</td><td> &nbsp; </td><td>
+                                <ul><li><p>ElementNote2 popped from grammar-stack</p></li></ul>
+                            </td></tr><tr id="outXmlNote2EE"><td colspan="5" class="xml">
+                                <code>&lt;/note&gt;</code>
+                            </td></tr><tr><td class="schema-less">
+                                <table><thead><tr><th colspan="3" align="left">ElementNotebook</th></tr></thead><tbody><tr><td>SE(note)</td><td>ElementNote</td><td>0</td></tr><tr><td colspan="2">EE</td><td>1</td></tr><tr><td>SE(*)</td><td>ElementNote</td><td>2.0</td></tr><tr><td>CH</td><td>ElementNote</td><td>2.1</td></tr></tbody></table>
+                            </td><td>1<sub>2</sub>
+                            </td><td align="center">EE</td><td>&nbsp;</td><td>
+                                <ul><li>ElementNotebook popped from grammar-stack </li></ul>
+                            </td></tr><tr><td class="schema-informed">
+                                <table><thead><tr><th colspan="3" align="left">ElementNotebook1</th></tr></thead><tbody><tr><td>SE(note)</td><td>ElementNotebook1</td><td>0</td></tr><tr><td colspan="2">EE</td><td>1</td></tr><tr><td colspan="2">[Undeclared]</td><td>2</td></tr></tbody></table>
+                            </td><td>1<sub>2</sub></td><td align="center">EE</td><td>&nbsp;</td><td>
+                                <ul><li><p>ElementNotebook1 is popped from grammar-stack</p></li></ul>
+                            </td></tr><tr id="outXmlNotebookEE"><td colspan="5" class="xml">
+                                <code>&lt;/notebook&gt;</code>
+                            </td></tr><tr><td class="schema-less">
+                                <table><thead><tr><th colspan="3" align="left">DocEnd</th></tr></thead><tbody><tr><td colspan="2">ED</td><td>0</td></tr></tbody></table>
+                            </td><td>0<sub>0</sub>
+                            </td><td align="center">ED</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td class="schema-informed">
+                                <table><thead><tr><th colspan="3" align="left">DocEnd</th></tr></thead><tbody><tr><td colspan="2">ED</td><td>0</td></tr></tbody></table>
+                            </td><td>0<sub>0</sub>
+                            </td><td align="center">ED</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td colspan="5" class="xml">
+                                <code>EOF</code>
+                            </td></tr></tbody></table><p>The resulting XML instance assembled from decoded EXI events is shown below.</p><div class="exampleOuter">
+<div class="exampleHeader"><a name="questionnaireXML" id="questionnaireXML"></a><i><span>Example 3-1. </span>Decoded XML Document (Notebook)</i></div><div class="exampleInner"><pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt; 
+&lt;notebook date="2007-09-12"&gt;
+&nbsp;&lt;note category="EXI" date="2007-07-23"&gt;
+&nbsp; &lt;subject&gt;EXI&lt;/subject&gt;
+&nbsp; &lt;body&gt;Do not forget it!&lt;/body&gt;
+&nbsp;&lt;/note&gt;
+&nbsp;&lt;note date="2007-09-12"&gt;
+&nbsp; &lt;subject&gt;Shopping List&lt;/subject&gt;
+&nbsp; &lt;body&gt;milk, honey&lt;/body&gt;
+&nbsp;&lt;/note&gt;
+&lt;/notebook&gt;</pre></div></div></div></div></div><div class="back"><div class="div1">
+<h2><a name="references" id="references"></a>A References</h2><dl><dt class="label"><a name="exiSpec" id="exiSpec"></a>Efficient XML Interchange (EXI) Format 1.0 (Second Edition)</dt><dd>
+                    <a href="http://www.w3.org/TR/2014/REC-exi-20140211/"><cite>Efficient XML Interchange (EXI) Format 1.0 (Second Edition)</cite></a>, John Schneider,
+                    Takuki Kamiya, Daniel Peintner, Rumen Kyusakov, Editors. World Wide Web Consortium. The latest version is
+                    available at <a href="http://www.w3.org/TR/exi/">
+                        http://www.w3.org/TR/exi/</a>.   (See http://www.w3.org/TR/2014/REC-exi-20140211/.)</dd><dt class="label"><a name="exiEval" id="exiEval"></a>EXI Evaluation Note</dt><dd>
+                    <a href="http://www.w3.org/TR/2009/WD-exi-evaluation-20090407/"><cite>Efficient XML Interchange Evaluation</cite></a>, Carine Bournez,
+                    Editor. World Wide Web Consortium. The latest version is available at <a href="http://www.w3.org/TR/exi-evaluation/">
+                        http://www.w3.org/TR/exi-evaluation/</a>.   (See http://www.w3.org/TR/2009/WD-exi-evaluation-20090407/.)</dd><dt class="label"><a name="schemaDatatypes2" id="schemaDatatypes2"></a>XML Schema Datatypes</dt><dd>
+                    <a href="http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/"><cite>XML Schema Part 2: Datatypes Second Edition</cite></a>, P. Byron and
+                    A. Malhotra, Editors. World Wide Web Consortium, 2 May 2001, revised 28 October
+                    2004. The latest version is available at <a href="http://www.w3.org/TR/xmlschema-2/">
+                        http://www.w3.org/TR/xmlschema-2</a>.   (See http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/.)</dd></dl></div></div></body></html>

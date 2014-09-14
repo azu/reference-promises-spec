@@ -1,0 +1,1649 @@
+<!-- http://www.w3.org/TR/WD-ilu-requestor -->
+<!doctype html system "html.dtd">
+<HTML>
+<HEAD>
+<META    name="Author" content="Paul Everitt, Digital Creations">
+<TITLE>The ILU Requestor for HTTP servers</TITLE>
+</HEAD>
+<BODY>
+<DIV class=titlepage>
+<p><A HREF="http://www.w3.org/"><IMG BORDER="0" align=left
+ALT="W3C:" SRC="http://www.w3.org/pub/WWW/Icons/WWW/w3c_home.gif"></A>
+WD-ilu-requestor-960307
+<H1 class=doctitle align=center>
+The ILU Requester:<BR>Object Services in HTTP Servers
+</H1>
+<H3 align=center>
+W3C Informational Draft 07-Mar-96
+</H3>
+<DL>
+<DT>
+This version:
+<DD>
+http://www.w3.org/pub/WWW/TR/WD-ilu-requestor-960307
+<DT>
+Latest version:
+<DD>
+http://www.w3.org/pub/WWW/TR/WD-ilu-requestor
+<DT>
+Authors:
+<DD>
+Paul Everitt, <A HREF="http://www.digicool.com/">Digital Creations</A>
+&lt;paul@digicool.com&gt;
+</DL>
+<P>
+<HR>
+<DIV class=status>
+<H2>
+Status of this document
+</H2>
+<P>
+This document provides information for the W3C members and other
+interested
+community.  This document does not specify a W3C standard of any kind.
+<P>
+Feedback should be directed to the author.
+<P>
+A list of current W3C documents can be found at:
+<A
+href="http://www.w3.org/pub/WWW/TR">http://www.w3.org/pub/WWW/TR</A>
+<P>
+<HR>
+</DIV>
+<DIV class=abstract>
+</DIV>
+<H2>
+Abstract
+</H2>
+<P>
+The 
+<A HREF="http://www.w3.org/pub/WWW/CGI/">Common Gateway Interface</A> 
+(CGI) is not scaling to meet the requirements
+of today's dynamic, interactive webs. For this reason, multiple vendors have
+proposed C callable APIs. These APIs allow authors to alleviate the performance
+penalty of CGI, and allow tighter integration of add-in modules. Unfortunately,
+this comes at the price of complexity and portability.
+<P>
+This document describes a new model for extending WWW servers.  First, HTTP
+is captured using an
+<A HREF="http://www.w3.org/pub/WWW/Protocols/OORPC/">interface
+specification</A>, 
+which eliminates the ambiguities of interpretating a standards-track document.
+This interface is then implemented atop a particular httpd's API.  Finally,
+all 
+of this is done using a standard distributed object model called
+<A HREF="ftp://ftp.parc.xerox.com/pub/ilu/ilu.html">ILU</A>.
+<P>
+Digital Creations' work on our
+<A HREF="http://www.digicool.com/releases/ilurequester"><EM>ILU
+Requester</EM></A> reflects 
+this design and shows its advantages. This paper describes the ILU Requester.
+<H2>
+Table of Contents
+</H2>
+<P>
+<OL>
+<LI>
+<A HREF="#introduction">Introduction</A>
+<LI>
+<A HREF="#requirements">Requirements</A> for a Requester architecture
+<LI>
+<A HREF="#description">Detailed Description</A>
+<LI>
+<A HREF="#status">Current Status</A> of Implementation
+<LI>
+Examples of <A HREF="#interfaces">Interfaces</A>
+<LI>
+<A HREF="#performance">Performance Analysis</A>
+<LI>
+Outstanding <A HREF="#issues">Issues</A>
+<LI>
+<A HREF="#future">Future Plans</A>
+<LI>
+<A HREF="#alternatives">Alternatives</A>
+<LI>
+<A HREF="#references">References</A>
+<LI>
+<A HREF="http://www.digicool.com/releases/appendices">Appendices</A>
+<LI>
+<A HREF="#author">Author's Info</A>
+</OL>
+<H2>
+<A NAME="introduction">Introduction</A>
+</H2>
+<P>
+Applications deployed over the World-Wide Web often involve an HTTP 
+server integrated with a legacy information system, or a custom information
+system.  The Common Gateway Interface, or CGI, is the most widely deployed
+mechanism for integrating HTTP servers with other information systems, but
+<A HREF="http://www.netscape.com/comprod/server_central/performance_benchmarks.html">
+studies have shown</A> that 
+its design does not scale to the performance demands of contemporary
+applications.
+Microsoft states that applications for their API are
+<A HREF="http://www.microsoft.com/intdev/server/IIS.HTM">five times faster</A>
+than 
+CGI applications.
+<P>
+Moreover, CGI applications do not run in the httpd process.  In addition
+to 
+the performance penalty, this means that CGI applications cannot modifiy
+the 
+behavior of the httpd's internal operations, such as logging and authorization.
+Finally, CGI is viewed as a
+<A HREF="http://hoohoo.ncsa.uiuc.edu/cgi/security.html">security issue</A>
+by 
+some server operators, due to its connection to a user-level shell.
+<P>
+A current solution is to use an httpd with an API, such as
+<A HREF="http://www.apache.org/">Apache 1.x</A> or
+<A HREF="http://www.netscape.com/comprod/server_central/index.html">Netscape</A>.
+By using the API, you have 
+a performance increase and a load decrease by running your application in
+the 
+httpd process, rather than starting a new process for every request.  Also,
+the 
+API exposes some of the httpd's own behavior, allowing you to modify its
+operation.  In fact, servers like Apache implement large portions of their
+functionality, such as ISMAP handling and logging, as
+<A HREF="http://www.apache.org/docs/modules.html">modules</A>.
+<P>
+Unfortunately, the API benefits come at a price.  Running a user-written
+module 
+inside the httpd process leads to possible reliability concerns.  For instance,
+when developing our requesters, early code would regularly lead to core dumps
+from 
+unhandled errors, as well as memory leaks.  Also, most current servers use
+either 
+multiple pre-forked subprocesses or separate threads for each new request.
+ Thus, 
+applications which change state, such as a simple counter script, have data
+concurrency issues that are the burden of the programmer to solve.
+<P>
+Most importantly, the API route eliminates the casual CGI programmer. In
+a <A HREF="http://www.cc.gatech.edu/gvu/user_surveys/survey-10-1995/">recent
+survey</A>, Perl beat C 4 to 1 with 46% of the total votes. It appears
+that the possibilities for language-choice in a C-based API mechanism are
+restrictive.
+<P>
+Finally, the portability of CGI applications from one httpd implementation
+to another, would be lost with an API strategy.  Since each API has a different
+syntax, authors would be forced to know each API beforehand.  Thus, APIs
+could 
+become instruments used by vendors to ensure market retention.
+<P>
+The elimination of scripting by an API strategy is a serious issue.  Web
+services are usually built using scripting languages such as Perl, Python,
+Tcl, Visual Basic, Rexx, etc.  This seems to be the case because web apps
+are 
+frequently:
+<OL>
+<LI>
+quick and dirty
+<LI>
+complex in their data relationships
+<LI>
+short-lived
+<LI>
+written by casual programmers
+</OL>
+<P>
+In essence, the genre of CGI applications are usually complex enough to use
+tools 
+good for rapid prototyping, but which rarely get past the prototype stage
+and 
+into C.
+<P>
+To address this next generation of server-extending, we developed a mechanism
+based on a uniform interface specification for HTTP.  This is the
+<A HREF="#http.isl"><EM>HTTP.isl</EM></A>. By basing our extension mechanism
+on 
+a distributed object protocol like ILU, we get the performance and features
+of 
+an API strategy (as shown below), with the portability and simplicity of
+CGI. 
+Moreover, it permits the httpd to be extended not only out of its address
+space, 
+but off its machine, and thus into capabilities available only on a remote
+node. 
+This is in the true client-server fashion.
+<P>
+We call this extension mechanism the <EM>ILU Requester</EM>.
+<H4 ALIGN="CENTER">
+ILU Requester in a Nutshell
+</H4>
+<P ALIGN="CENTER">
+<OL>
+<LI>
+<B>Performance of API</B>
+<LI>
+<B>Features of API</B>
+<LI>
+<B>Portability of CGI</B>
+<LI>
+<B>Simplicity of CGI</B>
+<LI>
+<B>Bridge into distributed objects</B>
+</OL>
+<H2>
+<A NAME="requirements">Requirements for a Requester strategy</A>
+</H2>
+<P>
+We have listed the problems with the current CGI/API situation. And
+we have described an ILU Requester architecture. What are its requirements,
+and what are some preferred possibilities?
+<H3>
+Requirements
+</H3>
+<UL>
+<LI>
+portable across platforms and vendors
+<LI>
+based on well-understood industry standards
+<LI>
+infrastructure uses freely-available, high-quality code base
+<LI>
+active and sustainable development
+<LI>
+wide choice of language (i.e. not language-based)
+<LI>
+significant performance win
+<LI>
+scaleable to N clients and N servers
+<LI>
+non-blocking on threaded servers
+</UL>
+<H3>
+Preferences
+</H3>
+<UL>
+<LI>
+configurable servers (e.g. adding methods to HTTP, and implementing
+them yourself to erase bugs)
+<LI>
+designed for an eventual absorption into the server's code base as
+a common encapsulation
+<LI>
+designed also for an eventually-encapsulated browser which has an object
+runtime available for messaging
+<LI>
+some standard interfaces, such as a site catalogue, authorizer, logger,
+gatherer, broker
+</UL>
+<H2>
+<A NAME="description">Detailed Description</A>
+</H2>
+<P>
+We have implemented the ILU Requester for several platforms, and have extended
+development to include other interested parties. First, we will give some
+background, and then a description.
+<H3>
+Background
+</H3>
+<P>
+In December of 1994, we were tasked with developing a complex WWW service.
+This service necessitated a dynamic language, and had state. Yet, we were
+forced to use CGI. Thus, we made a first implementation using a long-running
+process that managed the state using a dynamic language
+(<A HREF="http://www.python.org/">Python</A>), and a
+small "controller" script that would message it on each hit.
+<P>
+Over time, we found that we were inventing our own client/server protocol.
+For this and other reasons, we started looking at using ILU to manage
+interactions
+between processes. Thus, the CGI script got a surrogate reference to an
+encapsulation of the stateful system.
+<P>
+Still, we had the performance penalty of CGI. In April of 1995, we wrote
+a patch for Apache 0.6.5 that embedded the ILU runtime. With this,
+we had access to objects via registered URL constructs. This served several
+production systems into the fall. At this point, we started to refer to
+this embedded ILU module as the <DFN>requester</DFN>.
+<P>
+In August, a version of Apache was released that had an API, so we started
+reworking the requester to use it. By October we had a related requester
+for Netsite working on Unix and partially on NT. In December, based on a
+new draft
+of the HTTP spec, we consolidated the two feature sets, and wrote an HTTP
+ISL that was comprehensive with respect to the new specification. Also,
+we started work with ILU 2.0.
+<P>
+In January of this year, we started standardizing on a Python "framework"
+module 
+for creating our online services. For this, we developed an ISL for installing
+object-based Authorizers and Loggers "into" the httpd.
+<H3>
+Case Study: Broadcast
+</H3>
+<P>
+Also in January, we released our first major product based on this architecture
+called <A HREF="http://www.digicool.com/products/broadcast/">Broadcast</A>.
+This is 
+a Web-based chat application that had one primary goal: it should be very
+fast 
+under very highly-loaded conditions. Some design choices were:
+<DL>
+<DT>
+Perl-based CGI
+<DD>
+The product that ours was replacing started in life as a perl-based chat.
+ It became 
+very popular, or at least popular enough that many simultaneous users would
+load 
+the system up too much. This suffered from the startup cost of an interpreter,
+the 
+cost of reading the state in from disk, and from design issues for multiple
+processes 
+changing the state.
+<DT>
+C-based CGI
+<DD>
+Same as the above, but moved to C.  Still faced with the problems of state
+and concurrency.
+<DT>
+CGI-based requester-daemon service
+<DD>
+One choice for solving the problem of state would be to have a long-running
+server process that managed the state of the chat, and have skinny requesters
+that 
+message the chat server from CGI over a socket. This design solves the problem
+of 
+reincarnating state for each request.  Also, it provides a DBMS-like function
+for 
+modifying the state, since everything goes through one process.<BR>
+However, there is still the cost of starting up a CGI requester on each hit,
+and 
+the socket create/teardown issue. Also, you have invented a nice little
+client-server 
+system that speaks your protocol, but no other.  Plus, this protocol has
+to be interpreted 
+on the wire, using your custom parser. Finally, the chat daemon must be 
+equipped with concurrency, or else it becomes a bottleneck.
+<DT>
+RPC service
+<DD>
+A more elegant version of the chat daemon strategy might be to use RPC to
+the 
+chat server, either from a CGI requester or an API-based requester. This
+would replace 
+your custom protocol, and would allow an API-based requester to keep connections
+open.<BR>
+On the other hand, you have produced a system that is procedure-oriented,
+rather than
+<A HREF="http://www-db.stanford.edu/~testbed/ilu/ilu20doc/manual_1.html#SEC4">object-oriented</A>.
+</DL>
+<P>
+We chose to use an ILU Requester that would make generic calls on published
+objects 
+that represented the chat site's components.  This allowed us to have very
+low latency 
+(by avoiding startup costs), and expose the OO design of the chat implementation.
+<P>
+It appears that the design choice was valid.  Performance is fantastic, and
+load is 
+low. Also, using the requester strategy, we now have many new possibilites
+for 
+application partitioning. Finally, using our <A HREF="#api_scripting">API
+Scripting</A> 
+infrastructure, we are able to add new features in a very coherent fashion.
+<H3>
+Description
+</H3>
+<P>
+As alluded to above, the entire system is based around ILU. From this,
+we get language-independence, cross-process communication, and
+platform-independence.
+<P>
+The goal is to add an abstract object interface to an httpd in a uniform
+way. For this, we wrote an interface for HTTP that encapsulates the behavior
+of the HTTP transaction. We then implement this interface in C by mapping
+it to the semantics of a particular httpd's API. This implementation is
+called the <DFN>requester</DFN>, and gives an httpd a mechanism for passing
+certain incoming requests to an ILU published object.
+<P>
+This architecture mimics the interaction between the browser and the 
+httpd using the same concepts as HTTP. For instance, the information 
+contained in the request is mapped into a Request type in the interface
+specification.  The requested object is a Resource, and the result of 
+the operation on the Resource is a Response.  Both of the Request and 
+Response are types defined in the interface.
+<P>
+Fortunately, because of the uniform, abstract ISL, the services you write
+do not have to know anything about the semantics of the server or its API.
+In fact, it would be possible to skip the httpd altogether, and communicate
+directly with the published object. The objects could do this: they can
+have multiple representations, and can communicate via HTTP requests, ILU
+requests, or some other request structure.
+<P>
+When writing a service, therefore, all you have to do is publish an
+object that is based on the skeleton code generated from the interface.
+Pretty standard stuff here. Then, if the published object is listed in
+the httpd's configuration file, incoming requests matching a certain URI
+form will be sent to the requester, which will make an ILU call to
+the published object.
+<P>
+Also, it is possible to map the requester to remotely-published objects 
+using ILU's String Binding Handle mechanism. This makes it possible to 
+bridge the httpd into services available on other platforms.  Future ILU
+mechanisms will make this process easier.
+<H2>
+<A NAME="status">Current Status of Implementation</A>
+</H2>
+<P>
+As of this writing, we have solid requesters based on ILU 1.8 and 2.0 for
+Netsite (Unix) and Apache. They have been tested by others, reviewed for
+optimizations, passed through simple memory leak testers, and documented.
+We are making distributions freely available in source, and some in binary
+form. 
+Currently, the requesters are known to work fine on Solaris, Digital Unix,
+Linux, AIX, and BSDI. Additionally, we have preliminary support for NT. 
+Full support is waiting for us to finish up our work on threading with 
+ILU. Finally, ILU has been reported to work on OS/2, and there is work on
+and Apache implementation for that platform.
+<P>
+The threading issue will become increasingly important as we build more
+sophisticated systems, especially when we might want to have a common 
+ORB.  However, for systems such as Netsite and Microsoft's IIS on NT, 
+as well as Spyglass' server, it is <EM>required</EM> in the requester. 
+This is because these platforms service each incoming request as a thread,
+rather than passing the request to an isolated process. Thread-safeing the
+requester is thus becoming a requirement.
+<P>
+We have just added support for aliasing multiply-published objects 
+inside the requester. For instance, you could make a request to info@system,
+and have "system map" to one of several published objects. This is mainly
+for 
+a performance increase in read-only situations. Note that this may be 
+subsumed by the ILU work on multicast.
+<P>
+Another area we are working on is making the object systems easier 
+to use. We have just added an HTTP header that gets returned, stating the
+ILU 
+version and requester version. We are adding support for a discoverable
+interface, 
+using a standard 'info@root' that is built in to every requester. This object
+will 
+return catalogue information from config file directives, and will attempt
+to 
+contact the ILU servers listed in the config file and get their 'info@root'
+information, if implemented.
+<H3>
+<A NAME="api_scripting">API Scripting</A>
+</H3>
+<P>
+Making an httpd able to call distributed objects is only half of the 
+system: you must have objects that can be called.
+<P>
+We have intended for this system to replace CGI as a server-extension 
+mechanism. To do this, it must be nearly as easy to create services as CGI
+is currently. For this, we have been working on an infrastructure for 
+publishing requester-capable objects called <EM>API Scripting</EM>.
+<P>
+For creating services, we are focusing on Python, and building up a
+toolset to of components. We have made parts of this toolset available,
+and have released our demonstration programs and load testing modules.
+Based on this Python toolset and the requester, we are fielding high-performance
+Internet services for commercial use.
+<P>
+For instance, here is a very simple script in Python that publishes an 
+object which echoes the contents of a request:
+<HR>
+<PRE>
+#!/usr/local/bin/python
+"""Every good module deserves docstrings.
+This is a very simple script that subclasses a Resource, fills in the 
+blanks, and echoes incoming Requests. It then publishes the object and 
+goes into a main loop.
+"""
+import ilu
+import wwworb	# our toolset
+class ILUforDummies(wwworb.Resource):
+  def GET(self,request,connect):
+    request = wwworb.Request(request)
+    response = wwworb.Response(`request`)
+    return response
+  POST = GET
+# Create an ILU server
+ilu.CreateServer('paul.demos')
+# Now, create an instance of your class, passing it a parameter
+# for the name of the published object.
+nitwit = ILUforDummies('dumb')
+print nitwit.IluSBH()
+ilu.RunMainLoop()
+</PRE><P><HR>
+<P>Note that there are really only nine necessary lines in the above.  This 
+should put it into the realm of CGI for ease of use.
+<P>Our next step is to make highly-concurrent systems available in Python. To do 
+this, we are working with the ILU team to thread the iluPrmodule. This work 
+is related to the work on threading the ILU kernel.
+<P>For all of these, we have an emerging development group, and an infrastructure
+for documentation, tutorials, bug reports, etc.
+<H2><A NAME="interfaces">Examples of Interfaces</A>
+</H2>
+<P>
+Currently, we have stabilized our 
+<A HREF="#http.isl">HTTP interface</A>, and feel that it accurately
+represents the interaction between a browser and a client in a way useful
+for published objects behind an httpd. Therefore, we are now focusing on
+problem-specific interfaces.
+<P>
+First, we would like to have a discoverable interface for online services.
+For instance, one should be able to go to any requester-enabled site, send
+a 
+request to an <TT>info@root</TT> published object, and get an inventory of
+that 
+site. The contents of this inventory might vary, might support a set of minimum
+operations, might extend, and might change. All the things that an
+<DFN>interface</DFN>
+allows you to do over time.
+<P>
+This discoverable interface is being worked on. There are other interfaces
+that have already rolled out.
+<H3>
+<A NAME="authorizer.isl">The Authorizer ISL</A>
+</H3>
+<P>
+Most of our "API scripting" services involve persistent Python objects 
+that receive requests from the ILU main loop. Some of these services need
+some type of Access Control List (ACL) mechanism on them.  However, we 
+really don't want to interface into some external, httpd-controlled,
+single-filesystem-based password file.
+<P>
+The API-based servers have modules already that allow you store 
+user authentication information in a SQL table. Yet, we already have 
+users defined in our object system.  Moreover, we might want to have some
+instance-based authorization mechanism.
+<P>
+To extend the ACL-capabilities of the httpd, we wrote an Authorizer 
+interface, and implemented it into the APIs we support. Thus, accesses to
+protected URIs are mapped to an object call, which determines if that 
+operation is allowed by that identity.
+<H3>
+<A NAME="logger.isl">The Logger ISL</A>
+</H3>
+<P>
+Another area we wanted to standardize on was an intelligent logging
+mechanism. Currently, there is the Common Log File format for writing to
+disk. However, we wanted something more structured and more dynamic. Thus,
+we wrote an interface for logging, mapped it into the httpd's API functions,
+and created an installable logging facility. A smart implementation could
+publish an object which is registered for successful or unsuccessful requests
+to document or ILU-based requests. If there is an error, you could decide
+whether send a page to someone's beeper. For all requests, you can take
+the incoming data structure, and write parts of it into a miniSQL table.
+<P>
+We wanted to extend the httpd's logging facilities in new and interesting
+ways. For instance, we wanted to do processing and take special actions if
+an error was raised. Also, we wanted to investigate logging from a Unix 
+httpd into a Windows-based personal DBMS like Microsoft Access.
+<P>
+To do this, we made an interface for loggging, and implemented it on the
+APIs we support. This mapping forces the httpd to run our object call during
+logging events. The interface is very simple; it just 
+sends the Request object to LoggerObject via an asynchronous method. One
+could then subtype from there to do more interesting, platform-specific 
+things.
+<H3>
+The Stanford Digital Library Common Object Services
+</H3>
+<P>
+The Stanford Digital Library team has produced interfaces and implementations
+for CORBA-type
+<A HREF="http://diglib.stanford.edu/diglib/pub/software/testbed/cos/">
+Common Object Services (COS)</A>. Common Object Services are objects or groups
+of 
+objects that provide the basic requirements which most objects need in order
+to 
+function in a distributed environment. These services are designed to be
+generic; 
+they do not depend on the type of client object or type of data passed. Note:
+this 
+is hard to do in ILU since there is no concept of the Object or Any type.
+<H3>
+Other Interfaces
+</H3>
+<P>
+There are other good candidates for interfaces. For instance, the Harvest
+system has its own protocol for collecting indexing information, and doing
+searches. If an interface was written, it could perhaps be moved into this
+architecture.
+<P>
+We have started on some other standard interfaces, such as a Data Access
+interface and a an OLE interface (via Python). These, though, are not necessarily
+related to the ILU Requester, and are thus outside the scope of this paper.
+<H2>
+<A NAME="performance">Performance Analysis</A>
+</H2>
+<P>
+It should be apparent that the architecture lends itself to good performance.
+However, we felt that some performance numbers were important, so we came
+up 
+with a performance-testing program, and a regimen to exercise it.
+<P>
+To test, I used a Sparc 5 running Solaris 2.4 with 32 Mb as the testing client,
+and an Alpha with 64 Mb running Digital Unix as the testing server. The test
+program was written in Python, and used the httplib and thread modules to
+make 
+concurrent requests. The server was running Netsite, using our requester
+and ILU 2.0.  
+We had Netsite configured to use up to 32 processes.
+<P>
+We then ran through a series or URLs (listed below) in a series of two tests:
+a 
+latency test and a throughput test. The latency test sent a series of requests
+on one 
+thread, to test the response time. The throughput test dispatched the same
+number of 
+requests on several simultaneous threads, to test concurrent use. Thus, the
+throughput test attempted to detail the affects of load, concurrency, and
+aggregate response time for a batch of requests.
+<P>
+For the URIs, the index.html test merely retrieved a very short HTML file.
+ The 
+others were:
+<HR>
+<PRE>
+simple.sh
+---------
+#!/bin/sh
+echo 'Content-type: text/html\n\n'
+echo Hello.
+simple.pl
+---------
+#!/usr/local/bin/perl
+print "Content-type: text/html\n\n";
+print "hello.";
+simple.py
+---------
+#!/usr/users/paul/cgipython
+"""Simple script to echo the dictionary back.
+"""
+print 'Content-type: text/html\n\n'
+print 'Hello.'
+simple1.py
+----------
+#!/usr/users/paul/cgipython
+"""\
+Simple script to echo the dictionary back.
+"""
+print 'Content-type: text/html\n\n'
+import simple_lib
+simple_lib.py
+-------------
+#!/usr/users/paul/cgipython
+"""\
+Simple script to echo the dictionary back.
+"""
+import cgi
+f = cgi.SvFormContentDict()
+print f.items()
+dumb.py
+-------
+# Note: echo is equivalent to simple.py, and dumb is equivalent to simple1.py
+"""\
+The simplest, dumbest API script around.
+This Python program has one goal: fewest lines for an interactive script.
+The script reads the form variables, and sends them back, without very much
+formatting.
+Note that we have embedded the HTML into the class, which has added some
+characters.  Normally this class would be even shorter, as we would use the
+"pyhtml" external representation.  But, that would be smart, and this one is,
+well, dumb.
+"""
+import sys
+sys.path.append('wwworb')
+sys.path.append('interfaces')
+import string, ilu, wwworb
+print ilu.Version
+# Make a class derived from the Resource class in wwworb. Remember
+# that the base class (wwworb.Resource) requires a parameter to be
+# passed to its __init__ startup call.  This parameter is the name
+# of the published object.
+class EchoforDummies(wwworb.Resource):
+  def GET(self,request,connect):
+    return wwworb.Response('Hello.')
+  POST = GET
+class ILUforDummies(wwworb.Resource):
+  def GET(self,request,connect):
+    request = wwworb.Request(request)
+    response = wwworb.Response(`request`)
+    return response
+  POST = GET
+# Create an ILU server
+ilu.CreateServer('paul.demos')
+# Now, create an instance of your class, passing it a parameter
+# for the name of the published object.
+nitwit = ILUforDummies('dumb')
+echo = EchoforDummies('echo')
+print nitwit.IluSBH()
+print echo.IluSBH()
+ilu.RunMainLoop()
+</PRE><P><HR>
+<P>These scripts were chosen to reflect both the least that could be done with 
+a CGI script (echo back a string) vs. very little that could be done (parse 
+the incoming request into data structures, and echo it back). The Bourne 
+shell script and the Perl script are thrown in as reference points. It is 
+the comparison of Python scripts that is relevant.
+<P>The Python interpreter used for the CGI scripts was very small. I removed 
+nearly everything from the Modules setup, and did not link with threads (a 
+source of startup time problems on Digital Unix). I used Python 1.3 for all 
+of these, and ILU 2.0a3.
+<P>Thus, the comparison is between Python CGI and Python "API Scripting". 
+The two tests are a simple echo of a string, and a slightly-computational 
+parsing of the incoming information. Obviously, a real-world application, 
+where files have to read, or marshals loaded, or databases connected-to, 
+would tilt the scales towards API scripting, since the state is always in 
+memory.
+<P>In the following, <B>HPS</B> refers to hits per second,  
+<B>SPH</B> refers to seconds per hit, and <B>SD</B> refers 
+to standard deviation.
+<H3>Latency test
+</H3>
+<P>
+This test used 10 runs of 1 thread, 20 requests on the thread:
+<TABLE BORDER=1>
+<TR>
+<TD>
+URI
+</TD>
+<TD>
+Min
+</TD>
+<TD>
+Max
+</TD>
+<TD>
+Avg<BR>HPS
+</TD>
+<TD>
+SD<BR>(HPS)
+</TD>
+<TD>
+Avg<BR>SPH
+</TD>
+<TD>
+SD<BR>(SPH)
+</TD>
+</TR>
+<TR>
+<TD>
+/index.html
+</TD>
+<TD>
+0.142
+</TD>
+<TD>
+0.580
+</TD>
+<TD>
+4.774
+</TD>
+<TD>
+0.1394
+</TD>
+<TD>
+0.2097
+</TD>
+<TD>
+0.0066
+</TD>
+</TR>
+<TR>
+<TD>
+/cgi-bin/simple.sh
+</TD>
+<TD>
+0.171
+</TD>
+<TD>
+0.221
+</TD>
+<TD>
+4.814
+</TD>
+<TD>
+0.0074
+</TD>
+<TD>
+0.2077
+</TD>
+<TD>
+0.0003
+</TD>
+</TR>
+<TR>
+<TD>
+/cgi-bin/simple.pl
+</TD>
+<TD>
+0.182
+</TD>
+<TD>
+0.224
+</TD>
+<TD>
+4.821
+</TD>
+<TD>
+0.0349
+</TD>
+<TD>
+0.2074
+</TD>
+<TD>
+0.0015
+</TD>
+</TR>
+<TR>
+<TD>
+/cgi-bin/simple.py
+</TD>
+<TD>
+0.176
+</TD>
+<TD>
+0.222
+</TD>
+<TD>
+4.825
+</TD>
+<TD>
+0.0133
+</TD>
+<TD>
+0.2073
+</TD>
+<TD>
+0.0006
+</TD>
+</TR>
+<TR>
+<TD>
+/cgi-bin/simple1.py?x=1&amp;y=2&amp;z=3&amp;z=4&amp;z=5
+</TD>
+<TD>
+0.382
+</TD>
+<TD>
+0.566
+</TD>
+<TD>
+2.315
+</TD>
+<TD>
+0.0436
+</TD>
+<TD>
+0.4321
+</TD>
+<TD>
+0.0083
+</TD>
+</TR>
+<TR>
+<TD>
+/echo@paul.demos
+</TD>
+<TD>
+0.111
+</TD>
+<TD>
+0.847
+</TD>
+<TD>
+4.687
+</TD>
+<TD>
+0.4048
+</TD>
+<TD>
+0.2152
+</TD>
+<TD>
+0.0235
+</TD>
+</TR>
+<TR>
+<TD>
+/dumb@paul.demos
+</TD>
+<TD>
+0.182
+</TD>
+<TD>
+0.351
+</TD>
+<TD>
+4.824
+</TD>
+<TD>
+0.0703
+</TD>
+<TD>
+0.2073
+</TD>
+<TD>
+0.0031
+</TD>
+</TR>
+</TABLE>
+<H3>
+Throughput test
+</H3>
+<P>
+This test used 10 runs of 10 threads, 20 requests apiece.  In this 
+case, the Min and Max refer to the thread completion times:
+<TABLE BORDER=1>
+<TR>
+<TD>
+URI
+</TD>
+<TD>
+Min
+</TD>
+<TD>
+Max
+</TD>
+<TD>
+Avg<BR>HPS
+</TD>
+<TD>
+SD<BR>(HPS)
+</TD>
+<TD>
+Avg<BR>SPH
+</TD>
+<TD>
+SD<BR>(SPH)
+</TD>
+</TR>
+<TR>
+<TD>
+/index.html
+</TD>
+<TD>
+0.060
+</TD>
+<TD>
+1.402
+</TD>
+<TD>
+20.853
+</TD>
+<TD>
+0.4736
+</TD>
+<TD>
+0.0480
+</TD>
+<TD>
+0.0011
+</TD>
+</TR>
+<TR>
+<TD>
+/cgi-bin/simple.sh
+</TD>
+<TD>
+0.106
+</TD>
+<TD>
+1.279
+</TD>
+<TD>
+15.128
+</TD>
+<TD>
+0.4986
+</TD>
+<TD>
+0.0662
+</TD>
+<TD>
+0.0022
+</TD>
+</TR>
+<TR>
+<TD>
+/cgi-bin/simple.pl
+</TD>
+<TD>
+0.119
+</TD>
+<TD>
+1.354
+</TD>
+<TD>
+13.626
+</TD>
+<TD>
+0.3116
+</TD>
+<TD>
+0.0734
+</TD>
+<TD>
+0.0017
+</TD>
+</TR>
+<TR>
+<TD>
+/cgi-bin/simple.py
+</TD>
+<TD>
+0.143
+</TD>
+<TD>
+1.926
+</TD>
+<TD>
+9.155
+</TD>
+<TD>
+0.1296
+</TD>
+<TD>
+0.1093
+</TD>
+<TD>
+0.0015
+</TD>
+</TR>
+<TR>
+<TD>
+/cgi-bin/simple1.py?x=1&amp;y=2&amp;z=3&amp;z=4&amp;z=5
+</TD>
+<TD>
+0.738
+</TD>
+<TD>
+4.817
+</TD>
+<TD>
+2.597
+</TD>
+<TD>
+0.0092
+</TD>
+<TD>
+0.3850
+</TD>
+<TD>
+0.0014
+</TD>
+</TR>
+<TR>
+<TD>
+/echo@paul.demos
+</TD>
+<TD>
+0.093
+</TD>
+<TD>
+1.221
+</TD>
+<TD>
+20.362
+</TD>
+<TD>
+0.6996
+</TD>
+<TD>
+0.0492
+</TD>
+<TD>
+0.0017
+</TD>
+</TR>
+<TR>
+<TD>
+/dumb@paul.demos
+</TD>
+<TD>
+0.109
+</TD>
+<TD>
+1.597
+</TD>
+<TD>
+19.862
+</TD>
+<TD>
+0.6895
+</TD>
+<TD>
+0.0504
+</TD>
+<TD>
+0.0017
+</TD>
+</TR>
+</TABLE>
+<P>
+Understand that the HPS and SPH numbers on the throughput test 
+reflect the ability of the server to service multiple requests 
+simultaneously.  Thus, each hit effectively is done faster.
+<H3>
+Analysis
+</H3>
+<P>
+Looking at the latency tests, you see that HTML and the simple CGI 
+scripts are about the same HPS. These simple scripts don't parse the 
+environment, and thus do no calculation. The simple1.py script which 
+does parse the environment and imports a module suffers a 50% rise 
+in latency. Yet, the API Scripting apps stay at the same level as 
+the HTML and simple CGI, even though one is parsing the environment.
+<P>
+In the throughput test, the reference point -- the index.html file -- 
+shows that a 10-thread request gets just over a five-fold bump in 
+throughput.  Certainly not a ten-fold, but a enough to show that it is 
+handling simultaneous requests well. However, the CGI scripts start to 
+show less benefit. Yet, the API Scripting applications stay at the
+<P>
+<TABLE BORDER=1>
+<TR>
+<TD>
+URI
+</TD>
+<TD>
+Percent of<BR>single-threaded HPS
+</TD>
+</TR>
+<TR>
+<TD>
+/index.html
+</TD>
+<TD>
+437
+</TD>
+</TR>
+<TR>
+<TD>
+/simple.sh
+</TD>
+<TD>
+314
+</TD>
+</TR>
+<TR>
+<TD>
+/simple.pl
+</TD>
+<TD>
+282
+</TD>
+</TR>
+<TR>
+<TD>
+/simple.py
+</TD>
+<TD>
+190
+</TD>
+</TR>
+<TR>
+<TD>
+/simple1.py??x=1&amp;y=2&amp;z=3&amp;z=4&amp;z=5
+</TD>
+<TD>
+112
+</TD>
+</TR>
+<TR>
+<TD>
+/echo@paul
+</TD>
+<TD>
+434
+</TD>
+</TR>
+<TR>
+<TD>
+/dumb@paul
+</TD>
+<TD>
+411
+</TD>
+</TR>
+</TABLE>
+<P>
+If we consider getting an HTML file -- both in single-threaded and 
+ten-threaded batches -- to be a baseline, we see the relation of these 
+tests. Again, we see that getting an HTML file gets a four-fold bump 
+from a ten-thread batch. A simple Bash CGI script yields a three-fold 
+improvement (317 percent) over single-thread HTML batches. A simple 
+CGI script that parses the environment, run in ten-threaded batches, 
+achieves <EM>only half</EM> the aggregate throughput of a single-threaded
+HTML request. Thus, concurrent CGI is slower than single-request HTML. 
+Again, the API Scripting applications keep pace with the baseline.
+<P>
+<TABLE BORDER=1>
+<TR>
+<TD>
+URI
+</TD>
+<TD>
+1-thread % of<BR>1-thread HTML
+</TD>
+<TD>
+10-thread % of<BR>1-thread HTML
+</TD>
+<TD>
+10-thread % of<BR>10-thread HTML
+</TD>
+</TR>
+<TR>
+<TD>
+/index.html
+</TD>
+<TD>
+100
+</TD>
+<TD>
+437
+</TD>
+<TD>
+100
+</TD>
+</TR>
+<TR>
+<TD>
+/simple.sh
+</TD>
+<TD>
+101
+</TD>
+<TD>
+317
+</TD>
+<TD>
+73
+</TD>
+</TR>
+<TR>
+<TD>
+/simple.pl
+</TD>
+<TD>
+101
+</TD>
+<TD>
+285
+</TD>
+<TD>
+65
+</TD>
+</TR>
+<TR>
+<TD>
+/simple.py
+</TD>
+<TD>
+101
+</TD>
+<TD>
+192
+</TD>
+<TD>
+44
+</TD>
+</TR>
+<TR>
+<TD>
+/simple1.py??x=1&amp;y=2&amp;z=3&amp;z=4&amp;z=5
+</TD>
+<TD>
+49
+</TD>
+<TD>
+54
+</TD>
+<TD>
+12
+</TD>
+</TR>
+<TR>
+<TD>
+/echo@paul
+</TD>
+<TD>
+98
+</TD>
+<TD>
+427
+</TD>
+<TD>
+98
+</TD>
+</TR>
+<TR>
+<TD>
+/dumb@paul
+</TD>
+<TD>
+101
+</TD>
+<TD>
+416
+</TD>
+<TD>
+95
+</TD>
+</TR>
+</TABLE>
+<P>
+In the rightmost column above, which is a throughput measurement, an API
+Scripting application is over <EM>eight times faster</EM> than an equivalent
+CGI application.
+<P>
+A conclusion is that, even for simple state applications of reading in the
+form 
+data, CGI loses to API Scripting in latency, and loses significantly in
+concurrent use. It would appear that the performance win would increase even
+more 
+for complex applications, especially those that have to initialize some 
+state, or make a connection to a SQL database. Getting the state setup for
+these is more complicated, and the increase in latency and load mean 
+pileups for service.
+<P>
+ A caveat in the testing must be noted.  A more representative sample of
+API scripting vs. HTML would be to use an ILU C program and an API C program.
+This would also allow the testing of HTML vs. CGI vs. straight API C apps
+vs. 
+ILU Requester with objects written in C.
+<H2>
+<A NAME="issues">Outstanding Issues</A>
+</H2>
+<P>
+At this time, movement to ILU 2.0 is the biggest issue. First,
+there are some minor bugs with the current prerelease. The real issue is
+embracing some new capabilities:
+<UL>
+<LI>
+poor ILU support for bulk data (e.g. RPC limit)
+<LI>
+missing 
+<A HREF="http://www.w3.org/pub/WWW/OOP/interfaces/vhll.isl">data types</A>
+(soon to be
+<A HREF="http://www-diglib.stanford.edu/ilu/ilu-archive/0611.html">alleviated
+in Python</A>)
+<LI>
+investigation of Stanford Digital Library's COS (mentioned above)
+<LI>
+distributed concurrency and threading
+<LI>
+performance of surrogate object references
+<LI>
+true object inside httpd process
+</UL>
+<P>
+For more on this, see
+<H2>
+<A NAME="future">Future Plans</A>
+</H2>
+<P>
+We have a number of directions we intend to pursue internally, and a
+suggested direction for industry adoption.
+<H3>
+Internal
+</H3>
+<P>
+Some of our plans are:
+<UL>
+<LI>
+discoverable interface for debugging and cataloging
+<LI>
+better performance numbers
+<LI>
+better story on concurrency
+</UL>
+<H3>
+Industry
+</H3>
+<P>
+Some requirements:
+<UL>
+<LI>
+Use of ILU
+<LI>
+Integration of the ILU runtime into their product
+<LI>
+Support of a basic HTTP ISL
+<LI>
+Use of standard Resource, Request, and Response mechanism
+<LI>
+Mapping the HTTP spec's error codes into HTTP exceptions
+<LI>
+Ensure the safety of concurrent requesters running across threads or
+forked daemons
+</UL>
+<P>
+Some optional support:
+<UL>
+<LI>
+Extensions of the base HTTP ISL to expose advanced functionality within
+the ILU type system
+<LI>
+Support for discoverable objects
+<LI>
+Connections through native ILU protocol
+<LI>
+Publishing true objects inside the httpd for high-performance apps
+<LI>
+Agreement on reference implementation suite for compliance testing
+and performance testing
+</UL>
+<H2>
+<A NAME="alternatives">Alternatives</A>
+</H2>
+<P>
+Many ideas have floated around. Press releases have discussed, for instance,
+embedding Java inside of Web servers as a better fit than APIs. While this
+does 
+get many of the benefits of this architecture, it is language-based, and
+thus 
+does not have language-independent interfaces. Some, though, view this as
+a benefit.
+<P>
+Another option is <A HREF="http://ring.etl.go.jp/openlab/horb/">HORB</A>,
+which is a Java-based remote object 
+operation environment. From the
+<A HREF="http://ring.etl.go.jp/openlab/horb/doc/faq.htm">HORB FAQ</A>:
+<BLOCKQUOTE>
+I wanted to have a good language for parallel and distributed computing.
+For those purposes, 
+however, the classic Java has very poor functionality. I like Java because
+it's simple and 
+easy. But the basic idea of Java is not far from C++. C++ can also make objects,
+threads, 
+and sockets. Java has no direct support for distributed object processing
+as C++ does not. 
+So I decided to make a new framework for parallel and distributed computing.
+</BLOCKQUOTE>
+<P>
+Also in the FAQ, a comparison of HORB to CORBA:
+<BLOCKQUOTE>
+CORBA and CORBA2 are desinged for Interoperability between different languages
+and 
+different systems. You have to write interface definitions in CORBA IDL language
+in 
+addition to real code. It must be annoying for casual use. CORBA cannot pass
+instances. 
+It limits programming. CORBA ORB tends to huge to comply the CORBA standard.
+Since HORB 
+ORB for clients is only 20KBytes, modem users can wait for dynamic loading.
+Current CORBA 
+systems are very expensive. HORB is free of charge.
+</BLOCKQUOTE>
+<P>
+As stated on a
+<A HREF="http://ring.etl.go.jp/openlab/horb/examples/worldClock/WorldClock.htm">demo
+page</A>, 
+HORB aims to "replace CGI or socket programming with smart remote object
+operations of HORB".
+<P>
+For Windows-based platforms, Microsoft's server-extension solution in their
+<A HREF="http://www.microsoft.com/INFOSERV/">IIS WWW server</A> is an
+<A HREF="http://www.microsoft.com/intdev/iis/iis.htm">SDK</A>. One of the
+sample applications for their API is an
+<A HREF="http://www.microsoft.com/intdev/inttech/oleisapi.htm">OLE
+interface</A>.
+<H2>
+<A NAME="references">References</A>
+</H2>
+<UL>
+<LI>
+CGI spec, ILU, Python
+<LI>
+Dan's web
+<LI>
+API thread in www-talk archives
+<LI>
+Our releases and HTTP.isl
+</UL>
+<H2>
+<A NAME="appendices">Appendices</A>
+</H2>
+<H3>
+<A NAME="http.isl">The HTTP ISL</A>
+</H3>
+<P>
+The interface for HTTP is used to extend the WWW server by mapping the
+browser-server interaction to an object request. We used the latest 
+HTTP specification, as mentioned in the comment.
+<PRE>
+(* $Id: WD-ilu-requestor-960307.html,v 1.6 1996/12/09 03:45:26 jigsaw Exp $ *)
+(* 
+   Proposed HTTP interface 
+   Digital Creations &lt;info@digicool.com&gt;
+   Reference: http://www.w3.org/pub/WWW/Protocols/HTTP1.0/draft-ietf-http-spec.html
+*)
+(* 
+The following is a list of headers guaranteed to be included with
+the request, regardless of the requester used.  This list is probably
+incomplete and will grow as I become more familiar with requesters
+other than NetSite:
+In "request.headers":
+	None
+	
+In "connection":
+	"remote-ip" == the IP address of the remote client
+	"remote-name" == the name of the remote clinet, or the IP
+address if the name cannot be determined
+*)
+INTERFACE http;
+TYPE field-name = ilu.CString;
+TYPE field-value = ilu.CString;
+TYPE optional-field-value = OPTIONAL field-value;
+TYPE RequestURI = ilu.CString;
+(* Should we handle URI parsing???
+TYPE RequestURI = RECORD
+	scheme   : ilu.CString,
+	net_loc  : ilu.CString,
+	path     : ilu.CString,
+	params   : ilu.CString,
+	query    : ilu.CString,
+	fragment : ilu.CString
+  END;
+*)
+TYPE Header = RECORD
+	name  : field-name,
+	value : optional-field-value
+  END;
+TYPE HTTPHeader = Header;
+TYPE HTTPHeaders = SEQUENCE of HTTPHeader;
+TYPE EntityBody = SEQUENCE of BYTE;
+TYPE OptionalEntityBody = OPTIONAL EntityBody;
+TYPE Request = RECORD
+	URI     : RequestURI,
+	headers : HTTPHeaders,
+	body    : OptionalEntityBody
+  END;
+TYPE StatusCode = ENUMERATION
+	OK = 200,
+	Created = 201,
+	Accepted = 202,
+	NoContent = 204,
+	MovedPermanently = 301,
+	MovedTemporarily = 302,
+	NotModified = 304,
+	BadRequest = 400,
+	Unauthorized = 401,
+	Forbidden = 403,
+	NotFound = 404,
+	InternalError = 500,
+	NotImplemented = 501,
+	BadGateway = 502,
+	ServiceUnavailable = 503
+  END;
+TYPE Response = RECORD
+	status  : StatusCode,
+	headers : HTTPHeaders,
+	body    : OptionalEntityBody
+END;
+TYPE ConnectionParameter = Header;
+TYPE Connection = SEQUENCE of ConnectionParameter;
+TYPE Resource = OBJECT
+  METHODS
+	GET  (request: Request, connection: Connection) : Response,
+	HEAD (request: Request, connection: Connection) : Response,
+	POST (request: Request, connection: Connection) : Response
+  END;
+TYPE OptionalResource = OPTIONAL Resource;
+</PRE><H3><A NAME="logger.isl">The Logger ISL</A>
+</H3>
+<PRE>
+(* $Id: WD-ilu-requestor-960307.html,v 1.6 1996/12/09 03:45:26 jigsaw Exp $ *)
+(* I've thought about just eliminating this ISL and using HTTP to do 
+logging, but I'm sticking with this right now to allow logging to be 
+asynchronous. Comments? *)
+(* 
+The following list is are the name-value pairs that must be contained
+in the headers (the separate requesters may include their own unique
+headers, and various clients might send different headers which should
+be passed along here):
+	"content-length" == the length in bytes of the returned data
+	"content-type" == the mime type of the returned data
+	"method" == the method of the request
+	"remote-ip" == the IP address of the remote client
+	"remote-name" == the name of the remote client, or the IP address if the name cannot be determined
+	"status" == the status code of the response
+	"uri" == the URI of the request
+*)
+	
+INTERFACE logger IMPORTS ilu, http END;
+TYPE LoggerObject = OBJECT
+  METHODS
+    ASYNCHRONOUS LogRequest(params: http.HTTPHeaders)
+  END;
+</PRE><H3><A NAME="authorizer.isl">The Authorizer ISL</A>
+</H3>
+<PRE>
+(* $Id: WD-ilu-requestor-960307.html,v 1.6 1996/12/09 03:45:26 jigsaw Exp $ *)
+INTERFACE authorize IMPORTS http END;
+TYPE NameType = ilu.CString;
+TYPE GroupList = SEQUENCE OF ilu.CString;
+EXCEPTION AuthenticationFailed;
+EXCEPTION Forbidden;
+EXCEPTION AuthorizationRequired: ilu.CString;
+TYPE AuthorizationRecord = RECORD
+  name: ilu.CString,
+  groups: GroupList
+END;
+TYPE OptionalAuthorizationRecord = OPTIONAL AuthorizationRecord;
+TYPE Authenticator = OBJECT
+  METHODS
+    AuthenticateUser(name: NameType, password: ilu.CString): AuthorizationRecord RAISES AuthenticationFailed END
+  END;
+TYPE Authorizer = OBJECT
+  METHODS
+    AuthorizeUser(authorization-record: OptionalAuthorizationRecord) RAISES Forbidden, AuthorizationRequired END
+  END;
+</PRE><H2><A NAME="author">Author Info</A>
+</H2>
+<P>
+Paul Everitt is Vice President of 
+<A HREF="http://www.digicool.com/">Digital Creations</A>.  His email address
+is <A HREF="mailto:paul@digicool.com">paul@digicool.com</A>.
+</DIV>
+</BODY></HTML>

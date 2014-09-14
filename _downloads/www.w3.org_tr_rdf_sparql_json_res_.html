@@ -1,0 +1,706 @@
+<!-- http://www.w3.org/TR/rdf-sparql-json-res/ -->
+<?xml version="1.0" encoding="utf-8"?><!--*- nxml -*-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta name="generator" content=
+"HTML Tidy for Linux/x86 (vers 12 April 2005), see www.w3.org" />
+<meta http-equiv="Content-Type" content=
+"text/html; charset=utf-8" />
+<title>Serializing SPARQL Query Results in JSON</title>
+
+<style type="text/css">
+/*<![CDATA[*/
+code           { font-family: monospace; }
+
+div.constraint,
+div.issue,
+div.note,
+div.notice     { margin-left: 2em; }
+
+dt.label       { display: run-in; }
+
+.diff-chg       { background-color: yellow; }
+.diff-del       { background-color: red; text-decoration: line-through;}
+.diff-add       { background-color: lime; }
+
+table          { empty-cells: show; }
+
+table caption {
+        font-weight: normal;
+        font-style: italic;
+        text-align: left;
+        margin-bottom: .5em;
+}
+
+div.issue {
+  color: red;
+}
+
+div.exampleInner pre { margin-left: 1em;
+                       margin-top: 0em; margin-bottom: 0em}
+div.exampleOuter {border: 4px double gray;
+                  margin: 0em; padding: 0em}
+div.exampleInner { background-color: #d5dee3;
+                   border-top-width: 4px;
+                   border-top-style: double;
+                   border-top-color: #d3d3d3;
+                   border-bottom-width: 4px;
+                   border-bottom-style: double;
+                   border-bottom-color: #d3d3d3;
+                   padding: 4px; margin: 0em }
+div.exampleWrapper { margin: 4px }
+div.exampleHeader { font-weight: bold;
+                    margin: 4px}
+/*]]>*/
+</style>
+  <link rel="stylesheet" type="text/css" href="http://www.w3.org/StyleSheets/TR/W3C-WG-NOTE" />
+<!-- not until it's published...
+<link rel="stylesheet" href="http://www.w3.org/StyleSheets/TR/W3C-WD" />
+-->
+<link rel="contents" href="#contents" />
+</head>
+<body>
+<div class="head">
+<p><a href="http://www.w3.org/"><img src=
+"http://www.w3.org/Icons/w3c_home" alt="W3C" height="48" width=
+"72" /></a></p>
+
+<h1>Serializing SPARQL Query Results in JSON</h1>
+<h2 id="h2-title">W3C Working Group Note 18 June 2007</h2>
+<dl>
+<dt id="dt-this-version">This version:</dt>
+<dd><a href="http://www.w3.org/TR/2007/NOTE-rdf-sparql-json-res-20070618/">http://www.w3.org/TR/2007/NOTE-rdf-sparql-json-res-20070618/</a></dd>
+<dt>Latest version:</dt>
+<dd><a href="http://www.w3.org/TR/rdf-sparql-json-res/">http://www.w3.org/TR/rdf-sparql-json-res/</a></dd>
+<dt id="dt-previous-version">Previous version:</dt>
+<dd><a href="http://www.w3.org/TR/2006/NOTE-rdf-sparql-json-res-20061004/">http://www.w3.org/TR/2006/NOTE-rdf-sparql-json-res-20061004/</a></dd>
+<dt>Editors:</dt>
+<dd><a href="mailto:kendall@monkeyfist.com">Kendall Grant Clark</a>, UMD Mindswap</dd>
+<dd><a href="mailto:feigenbl@us.ibm.com">Lee Feigenbaum</a>, IBM</dd>
+<dd><a href="mailto:eliast@us.ibm.com">Elias Torres</a>, IBM</dd>
+</dl>
+<p class="copyright"><a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">  Copyright</a> &#xa9;2007 <a href="http://www.w3.org/"><acronym title="World Wide Web Consortium">W3C</acronym></a><sup>&#xae;</sup>  (<a href="http://www.csail.mit.edu/"><acronym title="Massachusetts Institute of Technology">MIT</acronym></a>, <a href="http://www.ercim.org/"><acronym title="European Research Consortium for Informatics and Mathematics">ERCIM</acronym></a>, <a href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a>  and <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply.</p>
+</div>
+<hr />
+<h2><a name="abstract" id="abstract">Abstract</a></h2>
+
+<p><a class="norm" href="http://www.w3.org/TR/rdf-sparql-query/">SPARQL</a> is a query language and a protocol for RDF developed
+by the W3C's RDF Data Access Working Group. Included in that work is an XML vocabulary for serializing the results of two SPARQL
+query forms, <code>SELECT</code> and <code>ASK</code>. This document defines an alternative means of serializing the results of
+those SPARQL query forms using <a class="norm" href="http://json.org/">JSON</a>, a lightweight representation format which
+emphasizes concision and legibility.</p>
+
+<h2><a name="status" id="status">Status of this Document</a></h2>
+
+<p><em>This section describes the status of  this document at the time of its
+publication. Other documents may  supersede this document. A list of current
+W3C publications and the  latest revision of this technical report can be
+found in the <a href="http://www.w3.org/TR/">W3C technical reports index</a>
+at http://www.w3.org/TR/.</em></p>
+
+<p>This document is a
+<a href="http://www.w3.org/2005/10/Process-20051014/#WGNote">Working 
+Group Note</a>, produced by the
+<a href="http://www.w3.org/2001/sw/DataAccess/">RDF Data Access Working Group</a>, part of the
+<a href="http://www.w3.org/2001/sw/">W3C Semantic Web Activity</a>.
+
+      The working group has issued a new <a href="http://www.w3.org/TR/2007/WD-rdf-sparql-XMLres-20070614/">Last Call Working Draft of the SPARQL Query Results XML Format</a> in order to simplify the specification by eliminating the <code>ordered</code> and <code>distinct</code> attributes. This second draft of a  <a href="http://www.json.org/">JSON</a> result set serialization eliminates those attributes.
+The working group does not promise to answer comments, however, the appropriate forum for comments is
+<a href="mailto:public-rdf-dawg-comments@w3.org">public-rdf-dawg-comments@w3.org</a>,
+a mailing list with a 
+<a href="http://lists.w3.org/Archives/Public/public-rdf-dawg-comments/"
+>public archive</a>.
+</p>
+
+
+
+<p>Publication as a Working Group Note does not imply endorsement by the W3C Membership. This is a draft document and may be updated, replaced or obsoleted by other documents at any time. It is inappropriate to cite this document as other than work in progress.</p>
+
+  <p> This document was produced by a group operating under the <a
+  href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5
+  February 2004 W3C Patent Policy</a>. W3C maintains a <a
+  rel="disclosure"
+  href="http://www.w3.org/2004/01/pp-impl/35463/status">public list of
+  any patent disclosures</a> made in connection with the deliverables
+  of the group; that page also includes instructions for disclosing a
+  patent. An individual who has actual knowledge of a patent which the
+  individual believes contains <a
+  href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential
+  Claim(s)</a> must disclose the information in accordance with <a
+  href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section
+  6 of the W3C Patent Policy</a>. </p>
+
+<div class="toc">
+	<h2><a id="contents" name="contents">Table of Contents</a></h2>
+	<ol class="toc">
+		<li class="tocline1"><a class="tocxref" href="#document-element">Document Element</a></li>
+		<li class="tocline1"><a class="tocxref" href="#header">Header</a></li>
+		<li class="tocline1"><a class="tocxref" href="#results">Results</a>
+			<ol class="toc"><!-- type="a"-->
+			<li class="tocline2"><a class="tocxref" href="#variable-binding-results">Variable Binding Results</a></li>
+			<li class="tocline2"><a class="tocxref" href="#boolean-results">Boolean Results</a></li>
+			</ol>
+		</li>
+		<li class="tocline1"><a class="tocxref" href="#examples">Examples</a></li>
+		<li class="tocline1"><a class="tocxref" href="#programmatic-utility">Programmatic Utility</a></li>
+	</ol>
+</div>
+
+<h3><a id="appendices" name="appendices">Appendices</a></h3>
+
+<ol class="toc"><!-- type="A" -->
+	<li class="tocline1"><a href="#mediaType">Internet Media Type, File Extension and Macintosh File Type</a></li>
+	<li class="tocline1"><a href="#references">References</a></li>
+	<li class="tocline1"><a href="#acknowledgements">Acknowledgements</a></li>
+</ol>
+
+<h1 id="title">Serializing SPARQL Query Results with JSON</h1>
+
+<p>SPARQL variable binding and boolean query results may be serialized in <a href="http://json.org/">JSON</a>:</p>
+
+<pre><code>{
+  "head": { "vars": [ "book" , "title" ]
+  } ,
+  "results": { 
+    "bindings": [
+      {
+        "book": { "type": "uri" , "value": "http://example.org/book/book6" } ,
+        "title": { "type": "literal" , "value": "Harry Potter and the Half-Blood Prince" }
+      } ,
+      {
+        "book": { "type": "uri" , "value": "http://example.org/book/book5" } ,
+        "title": { "type": "literal" , "value": "Harry Potter and the Order of the Phoenix" }
+      } ,
+      {
+        "book": { "type": "uri" , "value": "http://example.org/book/book4" } ,
+        "title": { "type": "literal" , "value": "Harry Potter and the Goblet of Fire" }
+      } ,
+      {
+        "book": { "type": "uri" , "value": "http://example.org/book/book3" } ,
+        "title": { "type": "literal" , "value": "Harry Potter and the Prisoner Of Azkaban" }
+      } ,
+      {
+        "book": { "type": "uri" , "value": "http://example.org/book/book2" } ,
+        "title": { "type": "literal" , "value": "Harry Potter and the Chamber of Secrets" }
+      } ,
+      {
+        "book": { "type": "uri" , "value": "http://example.org/book/book1" } ,
+        "title": { "type": "literal" , "value": "Harry Potter and the Philosopher's Stone" }
+      }
+    ]
+  }
+}</code></pre>
+
+
+<p>The JSON serialization of SPARQL variable binding and boolean query results are accomplished
+according to the following specification.</p>
+
+<div class="section">
+<h2><a id="document-element" name="document-element">1. Document Element</a></h2>
+
+<p>The Document Element is represented as a JSON Object.</p>
+
+<p><strong>XML</strong>:</p>
+<pre>&lt;?xml version="1.0"&gt;
+    &lt;sparql xmlns="http://www.w3.org/2005/sparql-results#"&gt;
+ ...
+&lt;/sparql&gt;</pre>
+<p><strong>JSON</strong>:</p>
+<pre>{...}
+
+</pre>
+</div>
+<div class="section">
+
+<h2><a id="header" name="header">2. Header</a></h2>
+
+<p>The Header is represented as a member (key-value pair) in the document element JSON Object, where the key is a string
+<code>head</code> and where the value is a JSON Object containing a member, the key of which is a string <code>vars</code> and
+the value of which is a JSON array:</p>
+
+<p><strong>XML</strong>:</p>
+
+<pre>&lt;head&gt;...&lt;/head&gt;
+</pre>
+<p><strong>JSON</strong>:</p>
+<pre>"head": {"vars": [...]}
+</pre>
+
+<p>The <code>vars</code> member array contains a sequence of strings, which represent "the set of Query Variable names in the
+Solution Sequence" <a class="citation-reference" href="#SQRXF">[SQRXF]</a>. That is, for each Query Variable name in the Solution
+Sequence, there is one string element in the <code>vars</code> array with the variable name as the element string.</p>
+
+<p><strong>XML</strong>:</p>
+<pre>&lt;?xml version="1.0"?&gt;
+&lt;sparql xmlns="http://www.w3.org/2005/sparql-results#"&gt;
+
+&lt;head&gt;
+  &lt;variable name="x"/&gt;
+  &lt;variable name="hpage"/&gt;
+  &lt;variable name="name"/&gt;
+
+  &lt;variable name="mbox"/&gt;
+  &lt;variable name="blurb"/&gt;
+&lt;/head&gt;
+ ...
+&lt;/sparql&gt;
+</pre>
+<p><strong>JSON</strong>:</p>
+<pre>{
+  "head": { "vars": [
+          "x",
+          "hpage",
+          "name",
+          "mbox",
+          "age",
+          "blurb",
+          "friend"
+          ]
+ }...
+
+</pre>
+
+<p>The same order constraints described in <a class="citation-reference" href="#SQRXF">[SQRXF]</a>
+apply to the JSON format described here. The order of variable names in the <code>vars</code> array
+must be the same as "the order of the variable names given to the argument of the SELECT statement
+in the SPARQL query" <a class="citation-reference" href="#SQRXF">[SQRXF]</a>. Further, "[i]f SELECT
+* is used, the order of the names is undefined" <a class="citation-reference" href="#SQRXF"
+>[SQRXF]</a>.</p>
+
+<p>For either boolean or variable binding query results, the <code>head</code> object may also
+contain another member, the key of which is a string "link" and the value of which is a JSON array.
+Each element of the <code>link</code> array is a URI represented as a JSON string. These URIs must
+be absolute.</p>
+
+<p><strong>XML</strong>:</p> 
+
+<pre>&lt;?xml version="1.0"?&gt;
+    &lt;sparql xmlns="http://www.w3.org/2005/sparql-results#"&gt;
+
+&lt;head&gt;
+
+  ...
+  &lt;link href="metadata.rdf"/&gt;
+&lt;/head&gt;
+...
+&lt;/sparql&gt;</pre>
+
+<p><strong>JSON</strong>:</p>
+<pre>{
+  "head": {
+      "link": ["http://example.org/metadata.rdf"],
+      ...
+}...</pre></div>
+
+<div class="section">
+
+<h2><a id="results" name="results">3. Results</a></h2> 
+
+<p>The Results are serialized as an object member, the key of which is the string
+<code>results</code> or the string <code>boolean</code>, for variable bindings
+(<code>SELECT</code>) and boolean (<code>ASK</code>) results respectively. The value of the object
+member <code>results</code> is a JSON object with one required members: 
+<code>bindings</code>. The value of the object member <code>boolean</code>
+is a JSON boolean value (either <code>true</code> or <code>false</code>).</p>
+
+<p><strong>XML</strong>:</p>
+
+<pre>&lt;results&gt;
+  &lt;result&gt;
+    ...
+  &lt;/result&gt;
+
+...
+&lt;/results&gt;
+</pre>
+
+<p><strong>JSON</strong>:</p>
+
+<pre>{... 
+      "results": { 
+        "bindings": [...] 
+      }
+}</pre>
+
+<div class="section">
+
+<h3><a name="variable-binding-results">3.a Variable Binding Results</a></h3>
+
+<p>For "each Query Solution in the query results" a Query Solution Object -- that is, a JSON object
+-- is added to the <code>bindings</code> array <a class="citation-reference"
+href="#SQRXF">[SQRXF]</a>. Each Query Solution Object "corresponds to one Query Solution in a
+result" <a class="citation-reference" href="#SQRXF">[SQRXF]</a>. For each Query Variable that
+appears in the solution, the Query Solution Object has a member that is a JSON object with one key,
+and that key is a string that is equivalent to one element in the <code>vars</code> array. The
+members of the Query Solution Objects are unordered.</p>
+
+<p>The following describes the serialization of RDF Terms in XML and JSON:</p>
+
+<dl class="docutils">
+<dt>RDF URI Reference <em>U</em></dt>
+<dd><p class="first">XML:  <code>&lt;binding&gt;&lt;uri&gt;</code> 
+<em>U</em> <code>&lt;/uri&gt;&lt;binding&gt;</code></p>
+<p class="last">JSON: <code>"name"</code> <code>:</code> 
+<code>{"type":"uri",</code> <code>"value":"</code><em>U</em><code>""}</code></p>
+
+</dd>
+<dt>RDF Literal <em>S</em></dt>
+<dd><p class="first">XML:  <code>&lt;binding&gt;&lt;literal&gt;</code> <em>S</em> 
+<code>&lt;/literal&gt;&lt;binding&gt;</code></p>
+<p class="last">JSON: <code>"name"</code> <code>:</code> 
+<code>{"type":"literal",</code> <code>"value":"</code> <em>S</em>
+<code>"}</code></p>
+
+</dd>
+<dt>RDF Literal <em>S</em> with language <em>L</em></dt>
+<dd><p class="first">XML:  <code>&lt;binding&gt;&lt;literal</code> 
+<code>xml:lang="</code> <em>L</em> <code>"&gt;</code> <em>S</em> <code>&lt;/literal&gt;&lt;binding&gt;</code></p>
+
+<p class="last">JSON: <code>"name"</code> <code>:</code> 
+<code>{"type":"literal",</code> <code>"xml:lang":"</code> <em>L</em> <code>",</code> <code>"value":"</code> <em>S</em><code>"}</code></p>
+
+</dd>
+<dt>RDF Typed Literal <em>S</em> with datatype URI <em>D</em></dt>
+<dd><p class="first">XML:  <code>&lt;binding&gt;&lt;literal</code> 
+<code>datatype="</code> <em>D</em> <code>"&gt;</code> <em>S</em> <code>&lt;/literal&gt;&lt;binding&gt;</code></p>
+
+<p class="last">JSON: <code>"name"</code> <code>:</code> 
+<code>{"type":"typed-literal",</code> <code>"datatype":"</code> <em>D</em> 
+<code>",</code> <code>"value":"</code> <em>S</em> 
+<code>"}</code></p>
+
+</dd>
+<dt>Blank Node label <em>I</em></dt>
+<dd><p class="first">XML: <code>&lt;binding&gt;&lt;bnode&gt;</code> <em>I</em> 
+<code>&lt;/bnode&gt;&lt;binding&gt;</code></p>
+<p class="last">JSON: <code>"name"</code> <code>:</code> 
+<code>{"type":"bnode",</code> <code>"value":"</code> <em>I</em> 
+<code>"}</code></p>
+
+</dd>
+</dl>
+<p>No binding</p>
+<blockquote>
+<p>XML: "If, for a particular solution, a variable is <em>unbound</em>, no
+<code>binding</code> element for that variable is included in the
+<code>result</code> element" <a class="citation-reference" 
+href="#SQRXF">[SQRXF]</a>.</p>
+
+<p>JSON: If, for a particular solution, a variable is <em>unbound</em>, no JSON Object for that variable is included in the
+<code>bindings</code> array.</p> </blockquote> </div>
+
+
+<div class="section">
+
+<h3><a name="boolean-results">3.b Boolean Results</a></h3>
+
+<p>A boolean is serialized as an object member, the key of which is the string "boolean". The value
+of the object member <code>boolean</code> is a <a class="reference"
+href="http://json.org/">JSON</a> boolean value (either <code>true</code> or
+<code>false</code>).</p>
+
+<p><strong>XML</strong>:</p>
+<pre>&lt;?xml version="1.0"?&gt;
+&lt;sparql xmlns="http://www.w3.org/2005/sparql-results#"&gt;
+
+&lt;head&gt;
+  ...
+&lt;/head&gt;
+&lt;boolean&gt;true&lt;/boolean&gt;
+
+&lt;/sparql&gt;
+</pre>
+<p><strong>JSON</strong>:</p>
+<pre>{
+  "head": ...
+  "boolean" : true
+}
+</pre>
+
+<p>The <code>vars</code> object member must not be present in <code>head</code>. In the case of boolean results with no
+<code>link</code> member in <code>head</code>, the value of <code>head</code> may be JSON <code>null</code> or an empty JSON
+object, <code>{}</code>.</p>
+
+</div>
+</div>
+
+<div class="section">
+
+<h2><a id="examples" name="examples">4. Example</a></h2>
+
+<p>The following JSON is a serialization of the XML document <a class="reference" 
+href="http://www.w3.org/TR/rdf-sparql-XMLres/output.srx">output.srx</a>:</p>
+
+<pre>{
+   "head": {
+       "link": [
+           "http://www.w3.org/TR/rdf-sparql-XMLres/example.rq"
+           ],
+       "vars": [
+           "x",
+           "hpage",
+           "name",
+           "mbox",
+           "age",
+           "blurb",
+           "friend"
+           ]
+       },
+   "results": {
+       "bindings": [
+               {
+                   "x" : {
+                     "type": "bnode",
+                     "value": "r1"
+                   },
+
+                   "hpage" : {
+                     "type": "uri",
+                     "value": "http://work.example.org/alice/"
+                   },
+
+                   "name" : {
+                     "type": "literal",
+                     "value": "Alice"
+                   },
+                   
+                   "mbox" : {
+                     "type": "literal",
+                     "value": ""
+                   },
+
+                   "blurb" : {
+                     "datatype": "http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral",
+                     "type": "typed-literal",
+                     "value": "&lt;p xmlns=\"http://www.w3.org/1999/xhtml\"&gt;My name is &lt;b&gt;alice&lt;/b&gt;&lt;/p&gt;"
+                   },
+
+                   "friend" : {
+                     "type": "bnode",
+                     "value": "r2"
+                   }
+               },{
+                   "x" : {
+                     "type": "bnode",
+                     "value": "r2"
+                   },
+                   
+                   "hpage" : {
+                     "type": "uri",
+                     "value": "http://work.example.org/bob/"
+                   },
+                   
+                   "name" : {
+                     "type": "literal",
+                     "value": "Bob",
+                     "xml:lang": "en"
+                   },
+
+                   "mbox" : {
+                     "type": "uri",
+                     "value": "mailto:bob@work.example.org"
+                   },
+
+                   "friend" : {
+                     "type": "bnode",
+                     "value": "r1"
+                   }
+               }
+           ]
+       }
+   }
+</pre>
+</div>
+<div class="section">
+<h2><a id="programmatic-utility" name="programmatic-utility">5. Programmatic Utility</a></h2>
+
+<p>In programming languages with a concise syntax for accessing data structures and their elements,
+the JSON serialization of SQRXF offers a path-like language for accessing the parts of SPARQL query
+results. For example, consider the following code fragments:</p>
+
+<p><strong>JavaScript</strong></p>
+<pre>// The array of metadata links
+// returns: http://www.w3.org/TR/rdf-sparql-XMLres/example.rq
+alert(sr.head.link); 
+
+// The first link in the array
+// returns: http://www.w3.org/TR/rdf-sparql-XMLres/example.rq
+alert(sr.head.link[0]);
+
+// The bindings array
+// [object Object],...,[object Object]
+alert(sr.results.bindings);
+
+// The name of the last variable
+// returns: friend
+alert(sr.head.vars.slice(-1));
+
+var bindings = sr.results.bindings;
+
+// JavaScript  for...in loop iterates
+// through the properties of bindings array
+// which are [0,1,length-1] as opposed to the
+// array item.
+
+for(i in bindings) {
+  var binding = bindings[i];
+  alert(binding); // a for-loop to print all the bindings
+}
+
+// The only difference here (a subtle one) is
+// that the iterator variable is n as opposed to r
+// n=name, r=row index
+for(i in bindings) {
+  var binding = bindings[i];
+  for(n in binding) {
+    alert(binding[n].value); // a nested for-loop to print binding values
+  }
+}
+
+alert(bindings[0].hpage.value);</pre>
+</div>
+
+<h2><a name="mediaType">A. Internet Media Type, File Extension and Macintosh File
+Type (Normative)</a></h2>
+
+    <p>The Internet Media Type / MIME Type for the SPARQL Query Results JSON Format
+is "application/sparql-results+json".</p>
+
+    <p>It is recommended that SPARQL query files have the extension ".srj" (all
+lowercase) on all platforms.</p>
+
+    <p>It is recommended that SPARQL query files stored on Macintosh HFS file
+systems be given a file type of "TEXT".</p>
+
+    <p>This information that follows is intended to be submitted to the IESG
+for review, approval, and registration with IANA.</p>
+
+    <dl>
+      <dt>Type name:</dt>
+      <dd>application</dd>
+
+      <dt>Subtype name:</dt>
+
+      <dd>sparql-results+json</dd>
+
+      <dt>Required parameters:</dt>
+      <dd>None</dd>
+
+      <dt>Optional parameters:</dt>
+      <dd>None</dd>
+
+      <dt>Encoding considerations:</dt>
+      <dd>The encoding considerations of the SPARQL Query Results JSON Format is identical to those of the "application/json" as specified in [JSON-IETF-DRAFT]</dd>
+
+      <dt>Security considerations:</dt>
+
+      <dd>SPARQL query results uses URIs. See Section 7 of [RFC3986].<br/>
+      SPARQL query results uses IRIs. See Section 8 of [RFC3987].<br/>
+
+      The security considerations of the SPARQL Query Results JSON Format is identical to those of the "application/json" as specified in [JSON-IETF-DRAFT]</dd>
+
+      <dt>Interoperability considerations:</dt>
+      <dd>There are no known interoperability issues.</dd>
+
+      <dt>Published specification:</dt>
+      <dd>http://www.w3.org/TR/2006/NOTE-rdf-sparql-json-res-20061004/</dd>
+
+      <dt>Applications which use this media type:</dt>
+      <dd>No known applications currently use this media type.</dd>
+
+      <dt>Additional information:</dt>
+
+      <dt>Magic number(s):</dt>
+      <dd>n/a</dd>
+
+      <dt>File extension(s): </dt>
+      <dd>".srj"</dd>
+
+      <dt>Macintosh file type code(s):</dt>
+      <dd>"TEXT"</dd>
+
+      <dt>Person &amp; email address to contact for further information:</dt>
+
+      <dd>Kendall Clark, Elias Torres, Lee Feigenbaum &lt;public-rdf-dawg-comments@w3.org&gt;</dd>
+
+      <dt>Intended usage:</dt>
+      <dd>COMMON</dd>
+
+      <dt>Restrictions on usage:</dt>
+      <dd>None</dd>
+
+      <dt>Author/Change controller:</dt>
+      <dd>The SPARQL specification is a work product of the World Wide Web
+  Consortium's RDF Data Access Working Group.  The W3C has change
+  control over these specifications.</dd>
+    </dl>
+
+
+<h2><a id="references" name="refeferences">B. References</a></h2>
+
+<!--
+http://www.w3.org/2002/01/tr-automation/tr-biblio-ui
+[SQRXF] http://www.w3.org/TR/2004/WD-rdf-sparql-XMLres-20041221/
+-->
+
+<h3><a name="references-normative">Normative</a></h3>
+
+<dl>
+
+<dt>
+<a name="SQRXF" id="SQRXF">[SQRXF]</a>
+</dt>
+<dd>
+<cite>
+<a href="http://www.w3.org/TR/rdf-sparql-XMLres/">SPARQL Query Results XML Format</a>
+
+</cite>, D. Beckett and J. Broekstra Editors, W3C Last Call Working Draft.</dd>
+
+</dl>
+
+<h3><a name="references-informative">Informative</a></h3>
+
+<dl>
+    <dt>
+        <a name="JSON" id="JSON">[JSON]</a>
+    </dt>
+    <dd>
+      <cite>JavaScript Object Notation, <a href="http://json.org">JSON</a></cite>
+    </dd>
+    <dt>
+    <a name="JSON-IETF-DRAFT" id="JSON-IETF-DRAFT">[JSON-IETF-DRAFT]</a>
+    </dt>
+    <dd>
+      <cite>The application/json Media Type for JavaScript Object Notation (JSON), Internet Draft, D. Crockford, <a href="http://www.ietf.org/rfc/rfc4627.txt">http://www.ietf.org/rfc/rfc4627.txt</a></cite>
+    </dd>
+</dl>        
+
+<h2>C. <a name="acknowledgements" id="acknowledgements">Acknowledgements</a></h2>
+
+<p>The SPARQL RDF Query Language is a product of the whole of the <a href="http://www.w3.org/2001/sw/DataAccess/">W3C RDF Data
+Access Working Group</a>, and our thanks for discussions, comments and reviews go to all <a
+href="http://www.w3.org/2001/sw/DataAccess/#who">present and past members</a>.</p>
+
+<h2 id="chlog">Changes Since October 2006 Publication</h2>
+<pre>
+Revision 1.10  2007/05/07 17:34:50  lfeigenb
+removed distinct and ordered attributes to match XML format
+
+Revision 1.9  2006/06/16 17:11:02  etorres
+*** empty log message ***
+
+Revision 1.8  2006/06/06 14:12:47  lfeigenb
+changed text/json to application/json and added a cite for the JSON IETF Internet Draft
+
+Revision 1.7  2006/05/17 13:23:28  eric
+validate for publication
+
+Revision 1.6  2006/04/05 15:55:17  etorres
+- changed final URL suggestion
+
+</pre>
+
+</body>
+</html>

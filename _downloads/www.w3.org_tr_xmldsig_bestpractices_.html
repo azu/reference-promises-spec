@@ -1,0 +1,1997 @@
+<!-- http://www.w3.org/TR/xmldsig-bestpractices/ -->
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;
+                                             charset=UTF-8">
+    <title>XML Signature Best Practices</title>
+      
+          
+    <!-- <script src="../../../dap-dev/ReSpec.js/js/respec.js" class="remove"></script>  -->
+    
+  <style>/*****************************************************************
+ * ReSpec 3 CSS
+ * Robin Berjon - http://berjon.com/
+ *****************************************************************/
+
+/* --- INLINES --- */
+em.rfc2119 { 
+    text-transform:     lowercase;
+    font-variant:       small-caps;
+    font-style:         normal;
+    color:              #900;
+}
+
+h1 acronym, h2 acronym, h3 acronym, h4 acronym, h5 acronym, h6 acronym, a acronym,
+h1 abbr, h2 abbr, h3 abbr, h4 abbr, h5 abbr, h6 abbr, a abbr {
+    border: none;
+}
+
+dfn {
+    font-weight:    bold;
+}
+
+a.internalDFN {
+    color:  inherit;
+    border-bottom:  1px solid #99c;
+    text-decoration:    none;
+}
+
+a.externalDFN {
+    color:  inherit;
+    border-bottom:  1px dotted #ccc;
+    text-decoration:    none;
+}
+
+a.bibref {
+    text-decoration:    none;
+}
+
+cite .bibref {
+    font-style: normal;
+}
+
+code {
+    color:  #ff4500;
+}
+
+
+/* --- --- */
+ol.algorithm { counter-reset:numsection; list-style-type: none; }
+ol.algorithm li { margin: 0.5em 0; }
+ol.algorithm li:before { font-weight: bold; counter-increment: numsection; content: counters(numsection, ".") ") "; }
+
+/* --- TOC --- */
+.toc a, .tof a {
+    text-decoration:    none;
+}
+
+a .secno, a .figno {
+    color:  #000;
+}
+
+ul.tof, ol.tof {
+    list-style: none outside none;
+}
+
+.caption {
+    margin-top: 0.5em;
+    font-style:   italic;
+}
+
+/* --- TABLE --- */
+table.simple {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    border-bottom:  3px solid #005a9c;
+}
+
+.simple th {
+    background: #005a9c;
+    color:  #fff;
+    padding:    3px 5px;
+    text-align: left;
+}
+
+.simple th[scope="row"] {
+    background: inherit;
+    color:  inherit;
+    border-top: 1px solid #ddd;
+}
+
+.simple td {
+    padding:    3px 10px;
+    border-top: 1px solid #ddd;
+}
+
+.simple tr:nth-child(even) {
+    background: #f0f6ff;
+}
+
+/* --- DL --- */
+.section dd > p:first-child {
+    margin-top: 0;
+}
+
+.section dd > p:last-child {
+    margin-bottom: 0;
+}
+
+.section dd {
+    margin-bottom:  1em;
+}
+
+.section dl.attrs dd, .section dl.eldef dd {
+    margin-bottom:  0;
+}
+</style><style>/* --- EXAMPLES --- */
+div.example-title {
+    min-width: 7.5em;
+    color: #b9ab2d;
+}
+div.example-title span {
+    text-transform: uppercase;   
+}
+aside.example, div.example, div.illegal-example {
+    padding: 0.5em;
+    margin: 1em 0;
+    position: relative;
+    clear: both;
+}
+div.illegal-example { color: red }
+div.illegal-example p { color: black }
+aside.example, div.example {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+    border-color: #e0cb52;
+    background: #fcfaee;    
+}
+
+aside.example div.example {
+    border-left-width: .1em;
+    border-color: #999;
+    background: #fff;
+}
+aside.example div.example div.example-title {
+    color: #999;
+}
+</style><style>/* --- ISSUES/NOTES --- */
+div.issue-title, div.note-title {
+    padding-right:  1em;
+    min-width: 7.5em;
+    color: #b9ab2d;
+}
+div.issue-title { color: #e05252; }
+div.note-title { color: #2b2; }
+div.issue-title span, div.note-title span {
+    text-transform: uppercase;
+}
+div.note, div.issue {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+.note > p:first-child, .issue > p:first-child { margin-top: 0 }
+.issue, .note {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+}
+div.issue, div.note {
+    padding: 1em 1.2em 0.5em;
+    margin: 1em 0;
+    position: relative;
+    clear: both;
+}
+span.note, span.issue { padding: .1em .5em .15em; }
+
+.issue {
+    border-color: #e05252;
+    background: #fbe9e9;
+}
+.note {
+    border-color: #52e052;
+    background: #e9fbe9;
+}
+
+
+</style><style>/* HIGHLIGHTS */
+code.prettyprint {
+    color:  inherit;
+}
+
+/* this from google-code-prettify */
+.pln{color:#000}@media screen{.str{color:#080}.kwd{color:#008}.com{color:#800}.typ{color:#606}.lit{color:#066}.pun,.opn,.clo{color:#660}.tag{color:#008}.atn{color:#606}.atv{color:#080}.dec,.var{color:#606}.fun{color:red}}@media print,projection{.str{color:#060}.kwd{color:#006;font-weight:bold}.com{color:#600;font-style:italic}.typ{color:#404;font-weight:bold}.lit{color:#044}.pun,.opn,.clo{color:#440}.tag{color:#006;font-weight:bold}.atn{color:#404}.atv{color:#060}}ol.linenums{margin-top:0;margin-bottom:0}li.L0,li.L1,li.L2,li.L3,li.L5,li.L6,li.L7,li.L8{list-style-type:none}li.L1,li.L3,li.L5,li.L7,li.L9{background:#eee}
+</style><style>/* --- Best Practices --- */
+div.practice {
+    border: solid #bebebe 1px;
+    margin: 2em 1em 1em 2em;
+}
+
+span.practicelab {
+    margin: 1.5em 0.5em 1em 1em;
+    font-weight: bold;
+    font-style: italic;
+    background: #dfffff;
+    position: relative;
+    padding: 0 0.5em;
+    top: -1.5em;
+}
+
+p.practicedesc {
+    margin: 1.5em 0.5em 1em 1em;
+}
+
+@media screen {
+    p.practicedesc {
+        position: relative;
+        top: -2em;
+        padding: 0;
+        margin: 1.5em 0.5em -1em 1em;
+    }
+}
+</style><link rel="stylesheet" href="http://www.w3.org/StyleSheets/TR/W3C-WG-NOTE"><!--[if lt IE 9]><script src='http://www.w3.org/2008/site/js/html5shiv.js'></script><![endif]--></head> 
+  <body><div class="head">
+  <p>
+    
+      <a href="http://www.w3.org/"><img width="72" height="48" src="http://www.w3.org/Icons/w3c_home" alt="W3C"></a>
+    
+  </p>
+  <h1 class="title" id="title">XML Signature Best Practices</h1>
+  
+  <h2 id="w3c-working-group-note-11-april-2013"><abbr title="World Wide Web Consortium">W3C</abbr> Working Group Note 11 April 2013</h2>
+  <dl>
+    
+      <dt>This version:</dt>
+      <dd><a href="http://www.w3.org/TR/2013/NOTE-xmldsig-bestpractices-20130411/">http://www.w3.org/TR/2013/NOTE-xmldsig-bestpractices-20130411/</a></dd>
+      <dt>Latest published version:</dt>
+      <dd><a href="http://www.w3.org/TR/xmldsig-bestpractices/">http://www.w3.org/TR/xmldsig-bestpractices/</a></dd>
+    
+    
+      <dt>Latest editor's draft:</dt>
+      <dd><a href="http://www.w3.org/2008/xmlsec/Drafts/best-practices/Overview.html">http://www.w3.org/2008/xmlsec/Drafts/best-practices/Overview.html</a></dd>
+    
+    
+    
+    
+    
+      <dt>Previous version:</dt>
+      <dd><a href="http://www.w3.org/TR/2013/NOTE-xmldsig-bestpractices-20130124/">http://www.w3.org/TR/2013/NOTE-xmldsig-bestpractices-20130124/</a></dd>
+    
+    
+    <dt>Editors:</dt>
+    <dd><span>Frederick Hirsch</span>, Nokia</dd>
+<dd><span>Pratik Datta</span>, Oracle</dd>
+
+    
+  </dl>
+  
+  
+  
+  
+    
+      <p class="copyright">
+        <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 
+        2013
+        
+        <a href="http://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>®</sup> 
+        (<a href="http://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>,
+        <a href="http://www.ercim.eu/"><abbr title="European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>,
+        <a href="http://www.keio.ac.jp/">Keio</a>, <a href="http://ev.buaa.edu.cn/">Beihang</a>), All Rights Reserved.
+        <abbr title="World Wide Web Consortium">W3C</abbr> <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>,
+        <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and
+        <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply.
+      </p>
+    
+  
+  <hr>
+</div>
+    <section id="abstract" class="introductory"><h2>Abstract</h2>
+      <p>This document collects best practices for implementers and
+        users of the XML Signature specification [<cite><a class="bibref" href="#bib-XMLDSIG-CORE1">XMLDSIG-CORE1</a></cite>].
+        Most of these  
+        best practices are related to improving security and
+        mitigating attacks, yet others are for best practices in the
+        practical use of XML Signature, such as signing XML that
+        doesn't use namespaces, for example.
+      </p>
+    </section><section id="sotd" class="introductory"><h2>Status of This Document</h2>
+  
+    
+      
+        <p>
+          <em>This section describes the status of this document at the time of its publication. Other
+          documents may supersede this document. A list of current <abbr title="World Wide Web Consortium">W3C</abbr> publications and the latest revision
+          of this technical report can be found in the <a href="http://www.w3.org/TR/"><abbr title="World Wide Web Consortium">W3C</abbr> technical reports
+          index</a> at http://www.w3.org/TR/.</em>
+        </p>
+        
+      <p>
+        The practices in this document have been found generally useful and  
+        safe.  However, they do not constitute a normative update to the XML  
+        Signature specification, and might not be applicable in certain  
+        situations.
+      </p>
+      <p>This Working Group Note publication updates the references that
+      have changed since the previous Working Group Note  publication 
+      (<a href="Overview_diff.html">diff</a>).</p> 
+    
+        <p>
+          This document was published by the <a href="http://www.w3.org/2008/xmlsec/">XML Security Working Group</a> as a Working Group Note.
+          
+          
+          If you wish to make comments regarding this document, please send them to 
+          <a href="mailto:public-xmlsec@w3.org">public-xmlsec@w3.org</a> 
+          (<a href="mailto:public-xmlsec-request@w3.org?subject=subscribe">subscribe</a>,
+          <a href="http://lists.w3.org/Archives/Public/public-xmlsec/">archives</a>).
+          
+          
+          
+          
+        All comments are welcome.
+        
+        
+          </p><p>
+            Publication as a Working Group Note does not imply endorsement by the <abbr title="World Wide Web Consortium">W3C</abbr> Membership.
+            This is a draft document and may be updated, replaced or obsoleted by other documents at 
+            any time. It is inappropriate to cite this document as other than work in progress.
+          </p>
+        
+        
+        <p>
+          
+            This document was produced by a group operating under the 
+            <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>.
+          
+          
+          
+            
+              <abbr title="World Wide Web Consortium">W3C</abbr> maintains a <a href="http://www.w3.org/2004/01/pp-impl/42458/status" rel="disclosure">public list of any patent disclosures</a> 
+            
+            made in connection with the deliverables of the group; that page also includes instructions for 
+            disclosing a patent. An individual who has actual knowledge of a patent which the individual believes contains
+            <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential Claim(s)</a> must disclose the
+            information in accordance with <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section
+            6 of the <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>.
+          
+          
+        </p>
+        
+      
+    
+  
+</section><section id="toc"><h2 class="introductory">Table of Contents</h2><ul class="toc"><li class="tocline"><a href="#Overview" class="tocxref"><span class="secno">1. </span>Overview</a></li><li class="tocline"><a href="#practices-implementers" class="tocxref"><span class="secno">2. </span>Best Practices for Implementers</a><ul class="toc"><li class="tocline"><a href="#denial-of-service" class="tocxref"><span class="secno">2.1 </span>For Implementers: Reduce the opportunities for denial of service attacks</a><ul class="toc"><li class="tocline"><a href="#xslt-denial" class="tocxref"><span class="secno">2.1.1 </span>Example: XSLT transform that causes denial of service</a></li><li class="tocline"><a href="#avoid-xslt-extensions" class="tocxref"><span class="secno">2.1.2 </span>Example: XSLT transform that executes arbitrary code</a></li><li class="tocline"><a href="#xpath-filtering-denial" class="tocxref"><span class="secno">2.1.3 </span>Example: XPath Filtering transform that causes denial of service</a></li><li class="tocline"><a href="#xpath-streaming-denial-of-service" class="tocxref"><span class="secno">2.1.4 </span>Example: XPath selection that causes denial of service
+            in streaming mode</a></li><li class="tocline"><a href="#retrieval-method-loop" class="tocxref"><span class="secno">2.1.5 </span>Example: Retrieval method that causes an infinite loop</a></li><li class="tocline"><a href="#problematic-external-references" class="tocxref"><span class="secno">2.1.6 </span>Example: Problematic external references</a></li><li class="tocline"><a href="#too-many-tranforms" class="tocxref"><span class="secno">2.1.7 </span>Example: Denial of service caused by too many transforms</a></li></ul></li><li class="tocline"><a href="#provide-what-is-signed-api" class="tocxref"><span class="secno">2.2 </span>For Implementers: provide a mechanism to determine what
+          was signed</a><ul class="toc"><li class="tocline"><a href="#return-pre-digested-data" class="tocxref"><span class="secno">2.2.1 </span>Return pre digested data</a></li><li class="tocline"><a href="#return-pre-c14n-data" class="tocxref"><span class="secno">2.2.2 </span>Return pre C14N data</a></li></ul></li><li class="tocline"><a href="#certificate-encoding" class="tocxref"><span class="secno">2.3 </span>For Implementers: be aware of certificate encoding
+          issues
+        </a></li></ul></li><li class="tocline"><a href="#practices-applications" class="tocxref"><span class="secno">3. </span>Best Practices for Applications</a><ul class="toc"><li class="tocline"><a href="#check-what-is-signed" class="tocxref"><span class="secno">3.1 </span>For Applications: Check what is signed</a><ul class="toc"><li class="tocline"><a href="#base-approval-example" class="tocxref"><span class="secno">3.1.1 </span>Base Approval example</a></li><li class="tocline"><a href="#modified-approval-example" class="tocxref"><span class="secno">3.1.2 </span>Modified Approval Example: XPath transform that causes
+            nothing to be selected for signing</a></li><li class="tocline"><a href="#incorrect-xpath-syntax" class="tocxref"><span class="secno">3.1.3 </span>Modified Approval Example: Incorrect XPath syntax signals no error and results in nothing selected for signing </a></li><li class="tocline"><a href="#modified-approval-example-nothing-selected" class="tocxref"><span class="secno">3.1.4 </span>Modified Approval Example: XSLT transform that causes
+            nothing to be selected for signing</a></li><li class="tocline"><a href="#modified-approval-example-wrapping-attack" class="tocxref"><span class="secno">3.1.5 </span>Modified Approval Example: Wrapping attack</a></li></ul></li><li class="tocline"><a href="#prevent-replay-attacks" class="tocxref"><span class="secno">3.2 </span>For Applications: prevent replay attacks</a><ul class="toc"><li class="tocline"><a href="#sign-what-matters" class="tocxref"><span class="secno">3.2.1 </span>Sign what matters</a></li><li class="tocline"><a href="#datetime-and-nonces" class="tocxref"><span class="secno">3.2.2 </span>Make Effective use of signing time and Nonces to protect against
+            Replay Attacks
+          </a></li></ul></li><li class="tocline"><a href="#timestamps" class="tocxref"><span class="secno">3.3 </span>For Applications: Enable Long-Lived Signatures</a><ul class="toc"><li class="tocline"><a href="#timestamp-authorities" class="tocxref"><span class="secno">3.3.1 </span>Timestamp Authorities</a></li><li class="tocline"><a href="#long-lived-timestamp" class="tocxref"><span class="secno">3.3.2 </span>Include time of signing in Long-Lived Signatures</a></li></ul></li><li class="tocline"><a href="#signing-xml-without-namespaces" class="tocxref"><span class="secno">3.4 </span>For Applications: Signing XML without namespace information
+          ("legacy XML")
+        </a></li><li class="tocline"><a href="#prefer-xpath-filter2" class="tocxref"><span class="secno">3.5 </span>For Applications: Prefer the XPath Filter 2
+          Transform to the XPath Filter Transform
+        </a></li></ul></li><li class="tocline"><a href="#practices-signers-verifiers" class="tocxref"><span class="secno">4. </span>Best Practices for Signers and Verifiers</a><ul class="toc"><li class="tocline"><a href="#external-unparsed-entities" class="tocxref"><span class="secno">4.1 </span>For Signers: Do not transmit external unparsed entity
+          references</a></li><li class="tocline"><a href="#for-signers-and-verifiers-be-aware-of-schema-processing" class="tocxref"><span class="secno">4.2 </span>For signers and verifiers: Be aware of schema processing</a></li><li class="tocline"><a href="#signers-truncate-hmac" class="tocxref"><span class="secno">4.3 </span>For Signers: When using an HMAC, truncate the output to
+          increase attack resistance</a></li><li class="tocline"><a href="#signers-separate-keys" class="tocxref"><span class="secno">4.4 </span>For Signers: When encrypting and signing use distinct
+        keys</a></li></ul></li><li class="tocline"><a href="#bp-summary" class="tocxref"><span class="secno">5. </span>Best Practices Summary</a></li><li class="tocline"><a href="#thanks" class="tocxref"><span class="secno">6. </span>Acknowledgments</a></li><li class="tocline"><a href="#references" class="tocxref"><span class="secno">A. </span>References</a><ul class="toc"><li class="tocline"><a href="#informative-references" class="tocxref"><span class="secno">A.1 </span>Informative references</a></li></ul></li></ul></section>
+    
+    <section id="Overview">
+      <!--OddPage--><h2><span class="secno">1. </span>Overview</h2>
+      <p>
+        The XML Signature specification [<cite><a class="bibref" href="#bib-XMLDSIG-CORE1">XMLDSIG-CORE1</a></cite>] 
+        offers powerful and flexible mechanisms to support a variety of use
+        cases.
+        This flexibility has the downside of increasing the number of possible
+        attacks.
+        One countermeasure to the increased number of threats is to follow
+        best practices, including a simplification of use of XML Signature
+        where possible. This document outlines best practices
+        noted by the <a href="http://www.w3.org/2007/xmlsec/">XML
+          Security Specifications Maintenance Working Group</a>,
+        the <a href="http://www.w3.org/2008/xmlsec/">XML Security
+          Working Group</a>, as well as items brought to the 
+        attention of the community in a Workshop on Next Steps for XML
+        Security [<cite><a class="bibref" href="#bib-XMLSEC-NEXTSTEPS-2007">XMLSEC-NEXTSTEPS-2007</a></cite>], [<cite><a class="bibref" href="#bib-XMLDSIG-SEMANTICS">XMLDSIG-SEMANTICS</a></cite>],
+        [<cite><a class="bibref" href="#bib-XMLDSIG-COMPLEXITY">XMLDSIG-COMPLEXITY</a></cite>]. While most of these best
+        practices are related to improving security and mitigating
+        attacks, yet others are for best practices in the practical
+        use 
+        of XML Signature, such as
+        signing XML that doesn't use namespaces.
+      </p>
+    </section>
+    <section id="practices-implementers">
+      <!--OddPage--><h2><span class="secno">2. </span>Best Practices for Implementers</h2>
+      <section id="denial-of-service">
+        <h3><span class="secno">2.1 </span>For Implementers: Reduce the opportunities for denial of service attacks</h3>
+        <p>XML Signature  may be used in application server
+          systems, where multiple incoming messages are being
+          processed simultaneously. In this situation incoming
+          messages should be assumed to be possibly hostile with
+          the concern that a single poison message could bring
+          down an entire set of web applications and services. 
+        </p>
+        <p>
+          Implementation of the XML Signature specification should not always be
+          literal. For example,  reference validation before signature
+          validation is extremely susceptible to denial of service attacks in
+          some scenarios. As will be seen below, certain kinds of transforms may
+          require an enormous amount of processing time and certain external URI
+          references can lead to possible security violations. One
+          recommendation for implementing the XML Signature Recommendation is to
+          first "authenticate" the signature, before running any of these
+          dangerous operations. 
+        </p>
+        <div class="practice">
+          <p><span id="bp-authenticate-signature-first" class="practicelab">Best Practice 1: Implementers:
+              Mitigate
+              denial of service attacks by 
+              executing potentially dangerous operations only
+              after successfully authenticating the signature. </span></p>
+          <p class="practicedesc">
+            Validate the <code>ds:Reference</code> elements for a signature only after
+            establishing trust, for example by verifying the key and validating
+            <code>ds:SignedInfo</code> first.
+            
+          </p>
+        </div>
+        <p>
+          XML Signature operations should follow this order of
+          operations:                 
+          </p><ol>
+            <li>
+              <p>
+                <em>Step 1</em> fetch the
+                verification key and establish trust in
+                that key (see <a href="#bp-validate-signing-key">Best
+                  Practice 2</a>).
+              </p> 
+            </li>
+            <li>
+              <p>
+                <em>Step 2</em> validate <code>ds:SignedInfo</code>
+                with that key 
+              </p>
+            </li>
+            <li>
+              <p>
+                <em>Step 3</em> validate the references
+              </p>
+            </li>
+          </ol>
+        <p>
+          In step 1 and step 2 the message should be assumed to
+          be untrusted, so no dangerous operations should be
+          carried out. But by step 3, the entire <code>ds:SignedInfo</code> has
+          been authenticated, and so all the URIs and transforms
+          in the <code>ds:SignedInfo</code> can be attributed to a responsible
+          party. However an implementation may still choose to
+          disallow these operations even in step 3, if the party
+          is not trusted to perform them. 
+        </p>
+        <p>In step 1, if the verification key is not known
+          beforehand and needs to be fetched from <code>ds:KeyInfo</code>, the
+          care should be taken in its
+          processing. The <code>ds:KeyInfo</code> can contain
+          a <code>ds:RetrievalMethod</code> 
+          child element, and this could contain dangerous
+          transforms, insecure external references and infinite
+          loops (see Best Practice #5 and examples below for
+          more information).
+        </p>
+        <p>
+          Another potential security issue in step 1 is the handling of untrusted public keys in <code>ds:KeyInfo</code>.
+          Just because an XML Signature validates mathematically
+          with a public key in the <code>ds:KeyInfo</code> does not mean that
+          the signature should be trusted.  
+          The public key should be verified before validating the
+          signature value. 
+        </p>
+        <p>For example, keys may be exchanged out of band, allowing
+          the use of a <code>ds:KeyValue</code>
+          or <code>X509Certificate</code> element
+          directly. Alternatively, 
+          certificate and path validation as described by RFC 5280 or
+          some other specification can be applied to information in
+          an <code>X509Data</code> 
+          element to validate the key bound to a certificate.
+          This usually includes verifying information in the
+          certificate such as the expiration date, the purpose of the
+          certificate, 
+          checking that it is not revoked, etc.
+        </p>
+        <p>Key Validation is typically more than a library
+          implementation issue, and often involves the
+          incorporation of application specific
+          information. While there are no specific
+          processing rules required by the XML Signature
+          specification, it is critical that applications
+          include key validation processing that is
+          appropriate to their domain of use.
+        </p>
+        <div class="practice">
+          <p>
+            <span id="bp-validate-signing-key" class="practicelab">Best Practice 2: Implementers: Establish trust in the
+              verification/validation key.</span></p>
+          <p class="practicedesc">Establish appropriate trust in a
+            key, validating X.509 certificates, 
+            certificate chains and revocation status, for example.
+          </p>
+        </div>
+        <section id="xslt-denial">
+          <h4><span class="secno">2.1.1 </span>Example: XSLT transform that causes denial of service</h4>
+          <p>
+            The <a href="samples/dos_xslt.xml">following XSLT transform</a> contains 4 levels
+            of nested loops, and for each loop it iterates
+            over all the nodes of the document. So if the
+            original document has 100 elements, this would
+            take 100^4 = 100 million operations. A
+            malicious message could include this transform
+            and cause an application server to spend hours
+            processing it. The scope of this denial of
+            service attack is greatly reduced when
+            following the best practices described above,
+            since  it is unlikely that an authenticated
+            user would include this kind of transform. 
+            XSLT transforms should only be
+            processed for References, and not
+            for <code>ds:KeyInfo</code> <code>ds:RetrievalMethod</code>s,
+            and 
+            only after first authenticating the entire signature and
+            establishing 
+            an appropriate degree of trust in the originator of the message. 
+          </p>
+
+          <div><div class="example"><div class="example-title"><span>Example 1</span></div><pre class="example highlight prettyprint"><span class="tag">&lt;Transform</span><span class="pln"> </span><span class="atn">Algorithm</span><span class="pun">=</span><span class="atv">"http://www.w3.org/TR/1999/REC-xslt-19991116"</span><span class="tag">&gt;</span><span class="pln">
+  </span><span class="tag">&lt;xsl:stylesheet</span><span class="pln"> </span><span class="atn">version</span><span class="pun">=</span><span class="atv">"1.0"</span><span class="pln"> </span><span class="atn">xmlns:xsl</span><span class="pun">=</span><span class="atv">"http://www.w3.org/1999/XSL/Transform"</span><span class="tag">&gt;</span><span class="pln">
+    </span><span class="tag">&lt;xsl:template</span><span class="pln"> </span><span class="atn">match</span><span class="pun">=</span><span class="atv">"/"</span><span class="tag">&gt;</span><span class="pln">
+      </span><span class="tag">&lt;xsl:for-each</span><span class="pln"> </span><span class="atn">select</span><span class="pun">=</span><span class="atv">"//. | //@*"</span><span class="tag">&gt;</span><span class="pln">
+        </span><span class="tag">&lt;xsl:for-each</span><span class="pln"> </span><span class="atn">select</span><span class="pun">=</span><span class="atv">"//. | //@*"</span><span class="tag">&gt;</span><span class="pln">
+          </span><span class="tag">&lt;xsl:for-each</span><span class="pln"> </span><span class="atn">select</span><span class="pun">=</span><span class="atv">"//. | //@*"</span><span class="tag">&gt;</span><span class="pln">
+            </span><span class="tag">&lt;foo</span><span class="pln"> </span><span class="tag">/&gt;</span><span class="pln">
+          </span><span class="tag">&lt;/xsl:for-each&gt;</span><span class="pln">
+        </span><span class="tag">&lt;/xsl:for-each&gt;</span><span class="pln">
+      </span><span class="tag">&lt;/xsl:for-each&gt;</span><span class="pln">
+    </span><span class="tag">&lt;/xsl:template&gt;</span><span class="pln">
+  </span><span class="tag">&lt;/xsl:stylesheet&gt;</span><span class="pln">
+</span><span class="tag">&lt;/Transform&gt;</span><span class="pln"> </span></pre></div></div>
+          <p> 
+            As discussed further, below, support for XSLT transforms may also
+            expose the signature processor or consumer to further risks in
+            regard to external references or modified approvals. An
+            implementation 
+            of XML Signature may choose not to support XSLT, may provide
+            interfaces to allow the application to optionally disable
+            support for 
+            it, or may otherwise mitigate risks associated with XSLT.   
+          </p>
+          <div class="practice">
+            <p>
+              <span id="bp-avoid-xslt" class="practicelab">Best Practice 3: Implementers: Consider avoiding XSLT
+                Transforms.</span></p> 
+            <p class="practicedesc">
+              Arbitrary XSLT processing might lead to denial of service or other
+              risks, so either do not allow XSLT transforms, only
+              enable them for 
+              trusted sources, or consider mitigation of the risks.
+            </p>
+          </div>
+          <p>
+            Instead of using the XML Signature XSLT transform, deployments can
+            define a named transform of their own, by simply coining a URI in
+            their own domain that can be used as the Algorithm.  How that
+            transform is implemented is then out of scope for the signature
+            protocol - a named transform can very well be built in XSLT.
+          </p>
+          <p>
+            Choosing to name a new transform rather than embedding an XSLT  
+            transform in the signature reference has the advantage
+            that the  semantic intent of the transform can be made clear and  
+            limited in scope, as opposed to a general XSLT transform, possibly  
+            reducing the attack surface and allowing alternate implementations.
+          </p>
+          <p>
+            What may be lost is the general flexibility of using XSLT,
+            requiring   
+            closer coordination between signer and verifiers since all will be  
+            required to understand the meaning of the new named transform.
+          </p>
+        </section>
+        <section id="avoid-xslt-extensions">
+          <h4><span class="secno">2.1.2 </span>Example: XSLT transform that executes arbitrary code</h4>
+          <p> 
+            The  <a href="samples/xslt_transform_extensions.xml">XSLT transform in the example below</a> makes use of the
+            user-defined 
+            extension feature to execute arbitrary code when validating an XML
+            Signature.  The example syntax is specific to the Xalan XSLT engine,
+            but this approach is valid for most XSLT engines.  The example calls
+            "os:exec"  as a user-defined extension, which is mapped to the Java
+            lang.Runtime.exec() method which can execute any program the process
+            has the rights to run.   While the example calls the
+            shutdown command, 
+            one should expect more painful attacks if a series of attack
+            signatures are allowed. 
+            If an implementation of XML Signature allows XSLT
+            processing it should 
+            disable support for user-defined extensions. 
+            Changing the Transforms element does invalidate the signature.  XSLT
+            transforms should only be processed after first authenticating the
+            entire signature and establishing an appropriate degree of trust in
+            the originator of the message. 
+          </p>
+          <div><div class="example"><div class="example-title"><span>Example 2</span></div><pre class="example highlight prettyprint"><span class="tag">&lt;Transforms</span><span class="pln"> </span><span class="atn">xmlns:ds</span><span class="pun">=</span><span class="atv">"http://www.w3.org/2000/09/xmldsig#"</span><span class="tag">&gt;</span><span class="pln">
+  </span><span class="tag">&lt;Transform</span><span class="pln"> </span><span class="atn">Algorithm</span><span class="pun">=</span><span class="atv">"http://www.w3.org/TR/1999/REC-xslt-19991116"</span><span class="tag">&gt;</span><span class="pln">
+    </span><span class="tag">&lt;xsl:stylesheet</span><span class="pln"> </span><span class="atn">version</span><span class="pun">=</span><span class="atv">"1.0"</span><span class="pln"> </span><span class="atn">xmlns:xsl</span><span class="pun">=</span><span class="atv">"http://www.w3.org/1999/XSL/Transform"</span><span class="pln"> </span><span class="atn">xmlns:java</span><span class="pun">=</span><span class="atv">"java"</span><span class="tag">&gt;</span><span class="pln">
+      </span><span class="tag">&lt;xsl:template</span><span class="pln"> </span><span class="atn">match</span><span class="pun">=</span><span class="atv">"/"</span><span class="pln"> </span><span class="atn">xmlns:os</span><span class="pun">=</span><span class="atv">"java:lang.Runtime"</span><span class="pln"> </span><span class="tag">&gt;</span><span class="pln">
+        </span><span class="tag">&lt;xsl:variable</span><span class="pln"> </span><span class="atn">name</span><span class="pun">=</span><span class="atv">"runtime"</span><span class="pln"> 
+                      </span><span class="atn">select</span><span class="pun">=</span><span class="atv">"java:lang.Runtime.getRuntime()"</span><span class="tag">/&gt;</span><span class="pln">
+        </span><span class="tag">&lt;xsl:value-of</span><span class="pln"> </span><span class="atn">select</span><span class="pun">=</span><span class="atv">"os:exec($runtime, 'shutdown -i')"</span><span class="pln"> </span><span class="tag">/&gt;</span><span class="pln">
+      </span><span class="tag">&lt;/xsl:template&gt;</span><span class="pln">
+    </span><span class="tag">&lt;/xsl:stylesheet&gt;</span><span class="pln">
+  </span><span class="tag">&lt;/Transform&gt;</span><span class="pln">
+</span><span class="tag">&lt;/Transforms&gt;</span></pre></div></div>
+          <div class="practice">
+            <p>
+              <span id="bp-avoid-xslt-extensions" class="practicelab">Best Practice 4: Implementers: When XSLT is
+                required disallow the 
+                use of user-defined extensions.</span></p> 
+            <p class="practicedesc">
+              Arbitrary XSLT processing leads to a variety of serious
+              risks, so if 
+              the best practice of disallowing XSLT transforms cannot
+              be followed, 
+              ensure that user-defined extensions are disabled in your
+              XSLT engine. 
+            </p>
+          </div>
+        </section>
+        <section id="xpath-filtering-denial">
+          <h4><span class="secno">2.1.3 </span>Example: XPath Filtering transform that causes denial of service</h4>
+          <p>
+            The  <a href="samples/dos_xpath.xml">following XPath Transform</a> has an expression that
+            simply counts all the nodes in the document, but it is
+            embedded in special 
+            document that has a 100 namespaces ns0 to ns99 and a 100
+            &lt;e2&gt; elements. The XPath model expects namespace
+            nodes for each in-scope 
+            namespace to be attached to each element, and since in
+            this special document all the 100 namespaces are in scope
+            for each 
+            of the 100 elements, the document ends up having 100x100 =
+            10,000 NamespaceNodes.Now in an XPath Filtering transform,
+            the 
+            XPath expression is evaluated for every node in the
+            document. So it takes 10,000 x 10,000 = 100 million
+            operations to evaluate 
+            this document. Again the scope of this attack can be
+            reduced by following the above best practices 
+          </p>
+          <div><div class="example"><div class="example-title"><span>Example 3</span></div><pre class="example highlight prettyprint"><span class="tag">&lt;dsig:Transform</span><span class="pln"> </span><span class="atn">Algorithm</span><span class="pun">=</span><span class="atv">"http://www.w3.org/TR/1999/REC-xpath-19991116"</span><span class="tag">&gt;</span><span class="pln">
+  </span><span class="tag">&lt;dsig:XPath&gt;</span><span class="pln">count(//. | //@* | //namespace::*)</span><span class="tag">&lt;/dsig:XPath&gt;</span><span class="pln">
+</span><span class="tag">&lt;/dsig:Transform&gt;</span></pre></div></div>
+
+          <p>
+            An implementation of XML Signature may choose not to
+            support the XPath 
+            Filter Transform, may provide interfaces to allow the application to
+            optionally disable support for it, or otherwise mitigate risks
+            associated with it. Another option is to support a limited
+            set of XPath expressions - which only use the ancestor or
+            self 
+            axes and do not compute string-value of elements.
+            Yet another option is to use the XPath Filter 2.0
+            transform instead, because in this transform, the XPath
+            expressions 
+            are only evaluated once, not for every node of the transform.
+          </p>
+          <div class="practice">
+            <p>
+              <span id="bp-avoid-xpath" class="practicelab">Best Practice 5: Implementers: Try to avoid or
+                limit XPath 
+                transforms.</span></p>
+            <p class="practicedesc"> 
+              Complex XPath expressions (or those constructed together
+              with content 
+              to produce expensive processing) might lead to a denial
+              of service risk, 
+              so either do not allow XPath transforms or take steps to
+              mitigate the 
+              risk of denial of service.
+            </p>
+          </div>
+        </section>
+        <section id="xpath-streaming-denial-of-service">
+          <h4><span class="secno">2.1.4 </span>Example: XPath selection that causes denial of service
+            in streaming mode</h4> 
+          <p>
+            When an XML Signature is to be verified in streaming mode,
+            additional 
+            denial of service attack vectors occur. As an example, consider the
+            following XPath expression that is conforming to the
+            [<cite><a class="bibref" href="#bib-XMLDSIG-XPATH">XMLDSIG-XPATH</a></cite>]: "//A//B". This XPath is intended to 
+            select every occurrence of &lt;B&gt; elements in the
+            document that have an &lt;A&gt; 
+            element ancestor. Hence, on streaming parsing the document, every
+            occurrence of an &lt;A&gt; element will trigger a new
+            search context for the 
+            subsequent &lt;B&gt; element. Thus, an attacker may modify
+            the XML document 
+            itself to contain lots of nested &lt;A&gt; elements, i.e.
+            "&lt;A&gt;&lt;A&gt;&lt;A&gt;&lt;A&gt;&lt;A&gt;&lt;A&gt;&lt;A&gt;&lt;A&gt;&lt;A&gt;&lt;A&gt;....". This
+            will result in n search 
+            contexts, with n being the number of &lt;A&gt; elements in
+            the document, and 
+            hence in O(n^2) comparisons in total. Even worse, if an
+            attacker also 
+            manages to tamper the XPath expression used for selection
+            itself, he can 
+            trigger an even more rapid Denial of Service: an XPath of
+            "//A//A//A//A//A..." causes the number of search contexts
+            to explode to 
+            O(2^n).
+          </p>
+          <p>
+            Hence, besides following Best Practice 1, it is strongly
+            recommended to 
+            reduce the use of "wildcard" XPath axes (such as "descendant",
+            "following" etc.) in XML Signatures to a minimum.
+          </p>
+          <div class="practice">
+            <p>
+              <span id="bp-streaming-xpath-limits" class="practicelab">Best Practice 6: Implementers: Avoid
+                using the "descendant", "descendant-or-self", 
+                "following-sibling", and "following" axes when using
+                streaming XPaths. 
+            </span></p>
+            <p class="practicedesc">
+              The evaluation of such "wildcard" axes may cause an
+              excessive number of 
+              evaluation contexts being triggered concurrently when
+              using a 
+              streaming-based XPath evaluation engine. Since this may
+              lead to Denial 
+              of Service, it is essential that an attacker can not
+              alter the XPaths 
+              prior to evaluation (see Best Practice 1), and that the
+              valid XPath 
+              expressions reduce the use of these axes to a minimum.
+            </p>
+          </div>
+        </section>
+        <section id="retrieval-method-loop">
+          <h4><span class="secno">2.1.5 </span>Example: Retrieval method that causes an infinite loop</h4>
+          <p>
+            The <code>ds:KeyInfo</code> of a signature can contain
+            a <code>ds:RetrievalMethod</code> child element, which can
+            be used to reference a key somewhere 
+            else in the document. <code>ds:RetrievalMethod</code> has
+            legitimate uses; for example when there are multiple
+            signatures in the same document, 
+            these signatures can use a <code>ds:RetrievalMethod</code>
+            to avoid duplicate <code>ds:KeyInfo</code> certificate
+            entries. However, referencing a certificate 
+            (or most other <code>ds:KeyInfo</code> child elements)
+            requires at least one transform, because the reference URI
+            can only refer to the <code>ds:KeyInfo</code> 
+            element itself (only it carries an Id attribute). Also,
+            there is nothing that prevents
+            the <code>ds:RetrievalMethod</code> from pointing back 
+            to itself directly or indirectly and forming a cyclic
+            chain of references. 
+            An implementation that must handle potentially hostile messages
+            should constrain 
+            the <code>ds:RetrievalMethod</code> elements that it
+            processes - e.g. 
+            permitting only a same-document URI reference, and
+            limiting the transforms allowed. 
+          </p>
+<p>The following examples are of
+		  <a href="samples/dos_retrieval_loop1.xml">a loop
+  within a single RetrievalMethod</a> 
+  and   			  <a href="samples/dos_retrieval_loop2.xml">a loop
+  with two RetrievalMethod elements</a>.
+</p>
+          <div><div class="example"><div class="example-title"><span>Example 4</span></div><pre class="example highlight prettyprint"><span class="tag">&lt;RetrievalMethod</span><span class="pln"> </span><span class="atn">xml:id</span><span class="pun">=</span><span class="atv">"r1"</span><span class="pln"> </span><span class="atn">URI</span><span class="pun">=</span><span class="atv">"#r1"</span><span class="tag">/&gt;</span></pre></div></div>
+          <div><div class="example"><div class="example-title"><span>Example 5</span></div><pre class="example highlight prettyprint"><span class="tag">&lt;RetrievalMethod</span><span class="pln"> </span><span class="atn">Id</span><span class="pun">=</span><span class="atv">"r1"</span><span class="pln"> </span><span class="atn">URI</span><span class="pun">=</span><span class="atv">"#r2"</span><span class="pln"> </span><span class="tag">/&gt;</span><span class="pln">
+</span><span class="tag">&lt;RetrievalMethod</span><span class="pln"> </span><span class="atn">Id</span><span class="pun">=</span><span class="atv">"r2"</span><span class="pln"> </span><span class="atn">URI</span><span class="pun">=</span><span class="atv">"#r1"</span><span class="pln"> </span><span class="tag">/&gt;</span></pre></div></div>
+          <div class="practice">
+            <p>
+              <span id="bp-avoid-retrievalmethod" class="practicelab">Best Practice 7: Implementers: Try to avoid or
+                limit <code>ds:RetrievalMethod</code> 
+                support with <code>ds:KeyInfo</code>.</span></p>
+            <p class="practicedesc">
+              <code>ds:RetrievalMethod</code> can cause security risks
+              due to transforms, so 
+              consider limiting support for it.
+            </p>
+          </div>
+        </section>
+        <section id="problematic-external-references">
+          <h4><span class="secno">2.1.6 </span>Example: Problematic external references</h4>
+          <p>
+            An XML Signature message can use URIs to references keys
+            or to reference data to be signed. Same document
+            references 
+            are fine, but external references to the file system or other web sites can cause exceptions or cross site attacks.  For example,
+            a message could have a URI reference to
+            "file://etc/passwd" in
+            its <code>ds:KeyInfo</code>. Obviously there is no key
+            present in file://etc/passwd, 
+            but if the xmlsec implementation blindly tries to resolve
+            this URI, it will end up reading the /etc/passwd file. If
+            this implementation 
+            is running in a sandbox, where access to sensitive files
+            is prohibited, it may be terminated by the container for
+            trying to 
+            access this file. 
+          </p>
+          <p>
+            URI references based on HTTP can cause a different kind of
+            damage since these URIs can have query parameters that can cause
+            some data to be submitted/modified in another web site. Suppose
+            there is a company internal HR website that is not accessible from
+            outside the company. If there is a web service exposed to the
+            outside world that accepts signed requests it may be possible to
+            inappropriately access the HR site. A malicious message from the
+            outside world can send a signature, with a reference URI like this
+            http://hrwebsite.example.com/addHoliday?date=May30. If the
+            XML Security implementation blindly tries to dereference this URI
+            when verifying the signature, it may unintentionally have the side
+            effect of adding an extra holiday.
+          </p>
+          <p>When implementing XML Signature, it is recommended to take caution
+            in retrieving references with 
+            arbitrary URI schemes which may trigger unintended side-effects
+            and/or when retrieving references over the network. Care should
+            be taken to limit the size and timeout values for content retrieved
+            over the network in order to avoid denial of service conditions.
+          </p>
+          <p>When implementing XML Signature, it is recommended to
+            follow the recommendations in section 2.3
+            to provide cached references to the verified content, as remote
+            references may change between the time they are retrieved for
+            verification and subsequent retrieval for use by the application.
+            Retrieval of remote references may also leak information about the
+            verifiers of a message, such as a "web bug" that causes
+            access to the server,  
+            resulting in notification being provided to the server
+            regarding the web page  
+            access. An example is an image that cannot be seen but
+            results in a server  
+            access [<cite><a class="bibref" href="#bib-WebBug-Wikipedia">WebBug-Wikipedia</a></cite>].
+          </p>
+          <p>
+            When implementing XML Signature with support for XSLT
+            transforms, it can be useful 
+            to constrain outbound network connectivity from the XSLT
+            processor in order to avoid information disclosure risks as XSLT
+            instructions may be able to dynamically retrieve content from local
+            files and network resources and disclose this to other networks.
+          </p>
+          <p>
+            Some kinds of external references are perfectly
+            acceptable, e.g. Web Services Security uses a "cid:" URL
+            for referencing 
+            data inside attachments, and this can be considered to be
+            a same document reference.  Another legitimate example
+            would be 
+            to allow references to content in the same ZIP or other
+            virtual file system package as a signature, but not to
+            content outside 
+            of the package.
+          </p>
+          <p>
+            The scope of this attack is much reduced by following the
+            above best practices, because with that only URIs inside a 
+            validated <code>ds:SignedInfo</code> section will be
+            accessed. But to totally eliminate this kind of attack, an
+            implementation can choose 
+            not to support external references at all.
+          </p>
+          <div class="practice">
+            <p>
+              <span id="bp-control-external-references" class="practicelab">Best Practice 8: Implementers: Control external references.</span></p>
+            <p class="practicedesc">To reduce risks
+              associated with <code>ds:Reference</code> URIs that
+              access non 
+              local content, it is recommended to be mitigate risks
+              associated with 
+              query parameters, unknown URI schemes, or attempts to access
+              inappropriate content.
+            </p>
+          </div>
+        </section>
+        <section id="too-many-tranforms">
+          <h4><span class="secno">2.1.7 </span>Example: Denial of service caused by too many transforms</h4>
+          <p>XML Signature spec does not limit the number of
+            transforms, and a malicious message could come in with
+            10,000 C14N transforms. 
+            C14N transforms involve lot of processing, and 10,000
+            transforms could starve all other messages. 
+          </p>
+          <p> Again the scope of this attack is also reduced by
+            following the above best practices, as now an
+            unauthenticated user would 
+            need to at first obtain a valid signing key and sign
+            this <code>ds:SignedInfo</code> section with 10,000 C14N
+            transform. 
+          </p>
+          <p>This signature has a 1000 C14N and a 1000 XPath
+            transforms, which makes it slow. This document has a 100
+            namespaces ns0 to 
+            ns99 and a 100 &lt;e2&gt; elements, like in the XPath
+            denial of service example.  
+            Since XPath expands all the namespaces for each element,
+            it means that there are 100x100 = 10,000 NamespaceNodes 
+            All of these are processed for every C14N and XPath
+            transform, so total operations is 2000 x 10,000 =
+            20,000,000 operations. 
+            Note some C14N implementations do not expand all the
+            Namespace nodes but do shortcuts for performance, to
+            thwart that this 
+            example has an XPath before every C14N. 
+          </p>
+          <div><div class="example"><div class="example-title"><span>Example 6</span></div><pre class="example highlight prettyprint"><span class="tag">&lt;Transform</span><span class="pln"> </span><span class="atn">Algorithm</span><span class="pun">=</span><span class="atv">"http://www.w3.org/TR/1999/REC-xpath-19991116"</span><span class="tag">&gt;</span><span class="pln">
+  </span><span class="tag">&lt;XPath&gt;</span><span class="pln">1=1</span><span class="tag">&lt;/XPath&gt;</span><span class="pln">
+</span><span class="tag">&lt;/Transform&gt;</span><span class="pln">
+</span><span class="tag">&lt;Transform</span><span class="pln"> </span><span class="atn">Algorithm</span><span class="pun">=</span><span class="atv">"http://www.w3.org/TR/2001/REC-xml-c14n-20010315"</span><span class="pln"> </span><span class="tag">/&gt;</span><span class="pln">
+</span><span class="tag">&lt;Transform</span><span class="pln"> </span><span class="atn">Algorithm</span><span class="pun">=</span><span class="atv">"http://www.w3.org/TR/1999/REC-xpath-19991116"</span><span class="tag">&gt;</span><span class="pln">
+  </span><span class="tag">&lt;XPath&gt;</span><span class="pln">1=1</span><span class="tag">&lt;/XPath&gt;</span><span class="pln">
+</span><span class="tag">&lt;/Transform&gt;</span><span class="pln">
+</span><span class="tag">&lt;Transform</span><span class="pln"> </span><span class="atn">Algorithm</span><span class="pun">=</span><span class="atv">"http://www.w3.org/TR/2001/REC-xml-c14n-20010315"</span><span class="pln"> </span><span class="tag">/&gt;</span><span class="pln">
+</span><span class="tag">&lt;Transform</span><span class="pln"> </span><span class="atn">Algorithm</span><span class="pun">=</span><span class="atv">"http://www.w3.org/TR/1999/REC-xpath-19991116"</span><span class="tag">&gt;</span><span class="pln">
+  </span><span class="tag">&lt;XPath&gt;</span><span class="pln">1=1</span><span class="tag">&lt;/XPath&gt;</span><span class="pln">
+</span><span class="tag">&lt;/Transform&gt;</span><span class="pln">
+... repeated 1000 times</span></pre></div></div>
+
+		  
+          <p>To totally eliminate this kind of attack, an
+            implementation can choose to have an upper limit of the
+            number of transforms 
+            in each Reference.
+          </p>
+          <div class="practice">
+            <p>
+              <span id="bp-limit-number-of-transforms" class="practicelab">Best Practice 9: Implementers: Limit number
+                of <code>ds:Reference</code> transforms
+                allowed.</span></p> 
+            <p class="practicedesc">
+              Too many transforms in a processing chain for
+              a <code>ds:Reference</code> can 
+              produce a denial of service effect, consider limiting
+              the number of 
+              transforms allowed in a transformation chain.
+            </p>
+          </div>
+        </section>
+      </section>
+      <section id="provide-what-is-signed-api">
+        <h3><span class="secno">2.2 </span>For Implementers: provide a mechanism to determine what
+          was signed</h3> 
+        <p>As shown above, it is very hard for the application
+          to know what was signed, especially if the signature
+          uses complex XPath expressions to identify
+          elements. 
+          When implementing XML Signature some environments may require a means
+          to provide a means to be able to return what was signed when
+          inspecting a signature. 
+          This is
+          especially important when implementations allow
+          references to content retrieved over the network, so
+          that an application does not have to retrieve such
+          references again.  A second dereference raises the
+          risk that that is obtained is not the same -- avoiding
+          this guarantees receiving the same information
+          originally used to validate the signature. This
+          section discusses two approaches for this.
+        </p>
+        <section id="return-pre-digested-data">
+          <h4><span class="secno">2.2.1 </span>Return pre digested data</h4>
+          <p>While doing reference validation, the implementation
+            needs to run through the transforms for each reference,
+            the output of 
+            which is a byte array, and then digest this byte
+            array. The implementation should provide a way to cache
+            this byte array and 
+            return it tot he application. This would let the
+            application know exactly what was considered for signing
+            This is the only 
+            recommended approach for processors and applications that
+            allow remote DTDs, as entity expansion during C14N may
+            introduce 
+            another opportunity for a malicious party to supply
+            different content between signature validation and an
+            application's subsequent 
+            re-processing of the message.
+          </p>
+        </section>
+        <section id="return-pre-c14n-data">
+          <h4><span class="secno">2.2.2 </span>Return pre C14N data</h4>
+          <p>While the above mechanism let the application
+            know exactly what was signed, it cannot be used by
+            application to programmatically compare with what
+            was expected to be signed. For programmatic
+            comparison the application needs another byte
+            array, and it is hard for the application to
+            generate a byte array that will match byte for
+            byte with the expected byte array.
+          </p>
+          <div class="practice">
+            <p>
+              <span id="bp-see-sign-api" class="practicelab">Best Practice 10: Implementers: Offer interfaces for
+                application to learn what was 
+                signed.
+            </span></p>
+            <p class="practicedesc">Returning pre-digested data and
+              pre-C14N data may help an application 
+              determine what was signed correctly.
+            </p>
+          </div>
+          <p>A better but more complicated approach is to
+            return the pre-C14N data as a nodeset. 
+            This should include all the
+            transforms except the last C14N transform - the
+            output of this should be nodeset. If there are
+            multiple references in the signature,the result
+            should be a union of these nodesets. 
+            The application can
+            compare this nodeset with the expected
+            nodeset. The expected nodeset should be a subset
+            of the signed nodeset.
+          </p>
+          <p> DOM implementations usually provide a function to
+            compare if two nodes are the same - in some DOM
+            implementations just comparing 
+            pointers or references is sufficient to know if they are
+            the same, DOM3 specifies a "isSameNode()" function for
+            node comparison. 
+          </p>
+          <p> This approach only works for XML data, not for binary
+            data. Also the transform list should follow these rules. 
+            </p><ul>
+              <li>
+                <p>The C14N transform should be last transform in the
+                  list. Note if there no C14N transform, an inclusive
+                  C14N is implicitly 
+                  added
+                </p>
+              </li>
+              <li>
+                <p>There should be no transform which causes data to
+                  be converted to binary and then back to a
+                  nodeset. The reason is that this 
+                  would cause the nodeset to be from a completely
+                  different document, which cannot be compared with
+                  the expected nodeset.  
+                </p>
+              </li>
+            </ul>
+        </section>
+      </section>
+      <section id="certificate-encoding">
+        <h3><span class="secno">2.3 </span>For Implementers: be aware of certificate encoding
+          issues
+        </h3>
+        <div class="practice">
+          <p>
+            <span id="bp-certificate-encoding" class="practicelab">Best Practice 11: Implementers: Do not re-encode
+              certificates, 
+              use DER when 
+              possible with the X509Certificate element.
+          </span></p>
+          <p class="practicedesc">Changing the encoding of a
+            certificate can break the signature on the
+            certificate if the encoding is not the same in
+            each case. Using DER offers increased opportunity
+            for interoperability.
+          </p>
+        </div>
+        <p>
+          Although X.509 certificates are meant to be encoded using
+          DER before being 
+          signed, many implementations (particularly older ones) got
+          various aspects 
+          of DER wrong, so that their certificates are encoded using
+          BER, which is a 
+          less rigorous form of DER. Thus, following the X.509 specification to
+          re-encode in DER before applying the signature check will 
+          invalidate the signature on the certificate.
+        </p><p>
+          In practice, X.509 implementations check the signature on certificates
+          exactly as encoded, which means that they're verifying
+          exactly the same data 
+          as the signer signed, and the signature will remain valid
+          regardless of 
+          whether the signer and verifier agree on what constitutes a
+          DER encoding. As 
+          a result, the safest course is to treat the certificate opaquely where
+          possible and avoid any re-encoding steps that might invalidate the
+          signature.
+        </p>
+        <p>
+          The <code>X509Certificate</code> element is generically
+          defined to contain a 
+          base64-encoded certificate without regard to the underlying
+          ASN.1 encoding 
+          used. However, experience has shown that interoperability issues are
+          possible if encodings other than BER or DER are used, and use of other
+          certificate encodings should be approached with caution. While some
+          applications may not have flexibility in the certificates
+          they must deal 
+          with, others might, and such applications may wish to consider further
+          constraints on the encodings they allow.
+        </p>
+      </section>
+    </section>
+    <section id="practices-applications">
+      <!--OddPage--><h2><span class="secno">3. </span>Best Practices for Applications</h2>
+      <section id="check-what-is-signed">
+        <h3><span class="secno">3.1 </span>For Applications: Check what is signed</h3>
+        <p>XML Signature offers many complex features, which
+          can make it very difficult to keep track of what was
+          really signed. 
+          When implementing XML Signature it is important to understand what is
+          provided by a signature verification library, and whether additional
+          steps are required to allow a user to see what is being verified. 
+          The examples below illustrate how an
+          errant XSLT or XPath transform can change what was
+          supposed to have been signed. So the application
+          should inspect the signature and check all the
+          references and the transforms, before accepting
+          it. This is done much easier if the application sets
+          up strict rules on what kinds of URI references and
+          transforms are acceptable. Here are some sample
+          rules. 
+        </p>
+        <ul>
+          <li>
+            <p>
+              <em>For simple disjoint signatures:</em> Reference URI
+              must use local ID reference, and only one transform -
+              C14N 
+            </p>
+          </li>
+          <li>
+            <p>
+              <em>For simple enveloped signatures: </em>References URI
+              must use local ID  reference, and two transforms -
+              Enveloped Signature and C14N, in that order 
+            </p>
+          </li>
+          <li>
+            <p>
+              <em>For signatures on base64 encoded binary
+                content:</em> Reference URI must local ID references,
+              and only one transform - Base64 decode. 
+            </p>
+          </li>
+        </ul>
+        <p>
+          These sample rules may need to be adjusted for the anticipated use.
+          When used with web services WS-Security, for example, consider the
+          STR Transform  in place of a C14N transform, and with SWA Attachment,
+          Attachment Content/Complete transform could be used in place of a
+          base64 transform. 
+        </p>
+        <p>
+          Sometimes ID references may not be acceptable, because the
+          element to be signed may have a very closed schema, and
+          adding 
+          an ID attributes would make it invalid. In that case the
+          element should be identified with an XPath filter
+          transform. Other 
+          choices are to use an XPath Filter 2 transform, or XPath in
+          XPointer URI, but support for these are optional. 
+          However XPath expressions can be very complicated, so using
+          an XPath makes it very hard for the application to know
+          exactly 
+          what was signed, but again the application could put in a
+          strict rule about the kind of XPath expressions that are
+          allowed, 
+          for example:
+        </p>
+        <ul>
+          <li>
+            <p>
+              <em>For XPath expressions</em> The expression must be of
+              the farm : ancestor-or-self:elementName.  This
+              expressions includes all elements whose name is 
+              elementName. Choosing a specific element by name and
+              position requires a very complex XPath, and that would
+              be too hard for 
+              the application to verify 
+            </p>
+          </li>
+        </ul>
+        <div class="practice">
+          <p>
+            <span id="bp-inspect-reference-uri-and-transforms" class="practicelab">Best Practice 12: Applications: Enable 
+              verifier to automate "see
+              what is signed" functionality.</span></p>
+          <p class="practicedesc">
+            Enable the application to verify that what is signed is what was
+            expected to be signed, by providing access to id and transform
+            information.
+          </p>
+        </div>
+        <section id="base-approval-example">
+          <h4><span class="secno">3.1.1 </span>Base Approval example</h4>
+          <p>
+            Consider an application which is processing approvals, and
+            expects a message of the following format where the where 
+            the Approval is supposed to be signed
+          </p>
+          <div><div class="example"><div class="example-title"><span>Example 7</span></div><pre class="example highlight prettyprint"><span class="tag">&lt;Doc&gt;</span><span class="pln">
+  </span><span class="tag">&lt;Approval</span><span class="pln"> </span><span class="atn">xml:id</span><span class="pun">=</span><span class="atv">"ap"</span><span class="pln"> </span><span class="tag">&gt;</span><span class="pln">...</span><span class="tag">&lt;/Approval&gt;</span><span class="pln">
+  </span><span class="tag">&lt;Signature&gt;</span><span class="pln">
+    ...
+    </span><span class="tag">&lt;Reference</span><span class="pln"> </span><span class="atn">URI</span><span class="pun">=</span><span class="atv">"ap"</span><span class="tag">/&gt;</span><span class="pln">
+    ...
+  </span><span class="tag">&lt;/Signature&gt;</span><span class="pln"> 
+</span><span class="tag">&lt;/Doc&gt;</span><span class="pln"> 	</span></pre></div></div>
+
+          <p>It is not sufficient for the application to
+            check if there is a URI in the reference and that
+            reference points to the Approval. Because there
+            may be some transforms in that reference which
+            modify what is really signed. 
+          </p>
+        </section>
+        <section id="modified-approval-example">
+          <h4><span class="secno">3.1.2 </span>Modified Approval Example: XPath transform that causes
+            nothing to be selected for signing</h4>
+          <p>In this case there is an XPath transform that
+            evaluates to zero or false for every node, so it
+            ends up selecting nothing.
+          </p>
+          <p>Whether this is an error or not needs to be determined by the
+            application. It is an error and the document should be
+            rejected if the 
+            application expected some content to be signed. There may be cases,
+            however, where this is not an error. For example, an application may
+            wish to ensure that every <em>price</em> element is signed,
+            without knowing how many there are. In some cases there
+            might be none 
+            in the signed document. This signature allows the
+            application to detect added 
+            <em>price</em> elements, so it is useful even if the were no
+            content in the initial signing.
+          </p>
+          <div><div class="example"><div class="example-title"><span>Example 8</span></div><pre class="example highlight prettyprint"><span class="tag">&lt;Doc&gt;</span><span class="pln">
+  </span><span class="tag">&lt;Approval</span><span class="pln"> </span><span class="atn">xml:id</span><span class="pun">=</span><span class="atv">"ap"</span><span class="tag">&gt;</span><span class="pln">...</span><span class="tag">&lt;/Approval&gt;</span><span class="pln">
+  </span><span class="tag">&lt;Signature&gt;</span><span class="pln">
+    ...
+    </span><span class="tag">&lt;Reference</span><span class="pln"> </span><span class="atn">URI</span><span class="pun">=</span><span class="atv">"ap"</span><span class="tag">&gt;</span><span class="pln">
+      </span><span class="tag">&lt;Transforms&gt;</span><span class="pln">
+        </span><span class="tag">&lt;Transform</span><span class="pln"> </span><span class="atn">Algorithm</span><span class="pun">=</span><span class="atv">"...XPath..."</span><span class="tag">&gt;</span><span class="pln">
+          </span><span class="tag">&lt;XPath&gt;</span><span class="pln">0</span><span class="tag">&lt;/XPath&gt;</span><span class="pln">
+        </span><span class="tag">&lt;/Transform&gt;</span><span class="pln">
+      </span><span class="tag">&lt;/Transforms&gt;</span><span class="pln">
+    </span><span class="tag">&lt;/Reference&gt;</span><span class="pln">
+  </span><span class="tag">&lt;/Signature&gt;</span><span class="pln"> 
+</span><span class="tag">&lt;/Doc&gt;</span><span class="pln"> 	</span></pre></div></div>
+        </section>
+        <section id="incorrect-xpath-syntax">
+          <h4><span class="secno">3.1.3 </span>Modified Approval Example: Incorrect XPath syntax signals no error and results in nothing selected for signing </h4>
+          <p>
+            An XPath evaluation will not raise an
+            exception, nor give any other advice that the XPath selected nothing
+            if the XPath expression has incorrect syntax. This is due
+            to the fact 
+            that an XPath parser will 
+            interpret misspelled function names as regular XPath tokens,
+            leading to completely different semantics that do not match the
+            intended selection.
+          </p>
+          <div><div class="example"><div class="example-title"><span>Example 9</span></div><pre class="example highlight prettyprint"><span class="tag">&lt;Doc</span><span class="pln"> </span><span class="atn">xmlns</span><span class="pun">=</span><span class="atv">"http://any.ns"</span><span class="pln"> </span><span class="atn">xmlns:dsig-xpath</span><span class="pun">=</span><span class="atv">"http://www.w3.org/2002/06/xmldsig-filter2"</span><span class="tag">&gt;</span><span class="pln">
+  </span><span class="tag">&lt;Approval</span><span class="pln"> </span><span class="atn">xml:id</span><span class="pun">=</span><span class="atv">"ap"</span><span class="tag">&gt;</span><span class="pln">...</span><span class="tag">&lt;/Approval&gt;</span><span class="pln">
+  </span><span class="tag">&lt;Signature&gt;</span><span class="pln">
+    ...
+    </span><span class="tag">&lt;Reference</span><span class="pln"> </span><span class="atn">URI</span><span class="pun">=</span><span class="atv">""</span><span class="tag">&gt;</span><span class="pln">
+      </span><span class="tag">&lt;Transforms&gt;</span><span class="pln">
+        </span><span class="tag">&lt;Transform</span><span class="pln"> </span><span class="atn">Algorithm</span><span class="pun">=</span><span class="atv">"...xmldsig-filter2"</span><span class="tag">&gt;</span><span class="pln">
+          </span><span class="tag">&lt;dsig-xpath:XPath</span><span class="pln"> </span><span class="atn">Filter</span><span class="pun">=</span><span class="atv">"intersect"</span><span class="tag">&gt;</span><span class="pln">//*[localname="Approval" and namespace-uri="http://any.ns"]</span><span class="tag">&lt;/dsig-xpath:XPath&gt;</span><span class="pln">
+        </span><span class="tag">&lt;/Transform&gt;</span><span class="pln">
+      </span><span class="tag">&lt;/Transforms&gt;</span><span class="pln">
+    </span><span class="tag">&lt;/Reference&gt;</span><span class="pln">
+  </span><span class="tag">&lt;/Signature&gt;</span><span class="pln">
+</span><span class="tag">&lt;/Doc&gt;</span></pre></div></div>
+          <p>
+            In this case, the XPath filter looks like it is selecting the
+            <em>Approval</em> 
+            element 
+            of namespace <em>http://any.ns</em>. In reality it selects
+            nothing at all since the function should be spelled
+            "local-name" instead of 
+            "localname" and 
+            both function calls need brackets <em>()</em> in the correct
+            syntax. The correct XPath 
+            expression to match the intent is:
+          </p>
+          <p>
+            <em>//*[local-name()="Approval" and
+              namespace-uri()="http://any.ns"]</em>.
+          </p>
+          <p>
+            Since nothing is selected, the digital signature does not 
+            provide any data integrity properties. It also raises no exception
+            on either signature generation or on verification. Hence, when
+            applying XML Signatures using XPath it is recommended to
+            always actively 
+            verify that the signature protects the intended elements.
+          </p>
+          <div class="practice">
+            <p>
+              <span id="bp-verify-signed-vs-expected" class="practicelab">Best Practice 13: Applications: When
+                applying XML Signatures using XPath it is recommended
+                to always actively 
+                verify that the signature protects the intended
+                elements and not more or 
+                less.</span></p>
+            <p class="practicedesc">
+              Since incorrect XPath expressions can result in incorrect signing,
+              applications should verify that what is signed is what
+              is expected to 
+              be signed.
+            </p>
+          </div>
+        </section>
+        <section id="modified-approval-example-nothing-selected">
+          <h4><span class="secno">3.1.4 </span>Modified Approval Example: XSLT transform that causes
+            nothing to be selected for signing</h4> 
+          <p>Similar to the previous example, this one uses an XSLT
+            transform which takes the incoming document, ignores it,
+            and emits 
+            a "&lt;foo/&gt;" . So the actual Approval isn't
+            signed. Obviously this message needs to be rejected.  
+          </p>
+          <div><div class="example"><div class="example-title"><span>Example 10</span></div><pre class="example highlight prettyprint"><span class="tag">&lt;Doc&gt;</span><span class="pln">
+  </span><span class="tag">&lt;Approval</span><span class="pln"> </span><span class="atn">xml:id</span><span class="pun">=</span><span class="atv">"ap"</span><span class="tag">&gt;</span><span class="pln">...</span><span class="tag">&lt;/Approval&gt;</span><span class="pln">
+  </span><span class="tag">&lt;Signature&gt;</span><span class="pln">
+    ...
+    </span><span class="tag">&lt;Reference</span><span class="pln"> </span><span class="atn">URI</span><span class="pun">=</span><span class="atv">"ap"</span><span class="tag">&gt;</span><span class="pln">
+      </span><span class="tag">&lt;Transforms&gt;</span><span class="pln">
+        </span><span class="tag">&lt;Transform</span><span class="pln"> </span><span class="atn">Algorithm</span><span class="pun">=</span><span class="atv">"...xslt..."</span><span class="tag">&gt;</span><span class="pln">
+          </span><span class="tag">&lt;xsl:stylesheet&gt;</span><span class="pln">
+            </span><span class="tag">&lt;xsl:template</span><span class="pln"> </span><span class="atn">match</span><span class="pun">=</span><span class="atv">"/"</span><span class="tag">&gt;</span><span class="pln">
+              </span><span class="tag">&lt;foo/&gt;</span><span class="pln">
+            </span><span class="tag">&lt;/xsl:template&gt;</span><span class="pln">
+          </span><span class="tag">&lt;/xsl:stylesheet&gt;</span><span class="pln"> 
+        </span><span class="tag">&lt;/Transform&gt;</span><span class="pln">
+      </span><span class="tag">&lt;/Transforms&gt;</span><span class="pln">
+    </span><span class="tag">&lt;/Reference&gt;</span><span class="pln">
+  </span><span class="tag">&lt;/Signature&gt;</span><span class="pln"> 
+</span><span class="tag">&lt;/Doc&gt;</span><span class="pln"> 	</span></pre></div></div>
+
+        </section>
+        <section id="modified-approval-example-wrapping-attack">
+          <h4><span class="secno">3.1.5 </span>Modified Approval Example: Wrapping attack</h4>
+          <p>This one is a different kind of problem - a wrapping
+            attack.There are no transforms here, but notice that
+            Reference URI is 
+            not "ap" but "ap2". And "ap2" points to another
+            &lt;Approval&gt; element that is squirreled away in an
+            Object element. An Object 
+            element allows any content. The application will be fooled
+            into thinking that the approval element is properly
+            signed, it 
+            just checks the name of what the element that the
+            Reference points to. It should check both the name and the
+            position of the 
+            element.
+          </p>
+          <div class="practice">
+            <p>
+              <span id="bp-inspect-reference-uri" class="practicelab">Best Practice 14: Applications: When checking a reference URI,
+                don't 
+                just check the name of the element.</span></p>
+            <p class="practicedesc">To mitigate attacks where the
+              content that is present in the 
+              document is not what was actually signed due to various
+              transformations, verifiers should check both the name
+              and position of an 
+              element as part of signature verification.
+            </p>
+          </div>
+          <div><div class="example"><div class="example-title"><span>Example 11</span></div><pre class="example highlight prettyprint"><span class="tag">&lt;Doc&gt;</span><span class="pln">
+  </span><span class="tag">&lt;Approval</span><span class="pln"> </span><span class="atn">xml:id</span><span class="pun">=</span><span class="atv">"ap"</span><span class="tag">&gt;</span><span class="pln">...</span><span class="tag">&lt;/Approval&gt;</span><span class="pln">
+  </span><span class="tag">&lt;Signature&gt;</span><span class="pln">
+    ...
+    </span><span class="tag">&lt;Reference</span><span class="pln"> </span><span class="atn">URI</span><span class="pun">=</span><span class="atv">"ap2"</span><span class="tag">/&gt;</span><span class="pln">
+    ...
+    </span><span class="tag">&lt;Object&gt;</span><span class="pln">
+      </span><span class="tag">&lt;Approval</span><span class="pln"> </span><span class="atn">xml:id</span><span class="pun">=</span><span class="atv">"ap2"</span><span class="tag">&gt;</span><span class="pln">...</span><span class="tag">&lt;/Approval&gt;</span><span class="pln">
+    </span><span class="tag">&lt;/Object&gt;</span><span class="pln"> 
+  </span><span class="tag">&lt;/Signature&gt;</span><span class="pln"> 
+</span><span class="tag">&lt;/Doc&gt;</span><span class="pln"> 	</span></pre></div></div>
+
+        </section>
+      </section>
+      <section id="prevent-replay-attacks">
+        <h3><span class="secno">3.2 </span>For Applications: prevent replay attacks</h3>
+        <section id="sign-what-matters">
+          <h4><span class="secno">3.2.1 </span>Sign what matters</h4>
+          <p>
+            By electing to only sign portions of a document this opens the
+            potential for substitution attacks.
+          </p>
+          <div class="practice">
+            <p>
+              <span id="bp-sign-everything" class="practicelab">Best Practice 15: Applications: Unless
+                impractical, sign all parts of 
+                the document.</span></p>
+            <p class="practicedesc">Signing all parts of a document
+              helps prevent substitution and 
+              wrapping attacks.
+            </p>
+          </div>
+          <p>
+            To give an example, consider the case where someone signed
+            the action 
+            part of 
+            the request, but didn't include the user name part.  In this
+            case  an
+            attacker can easily take the signed request as is, and just
+            change the user name and resubmit it.  These Replay attacks are
+            much easier when you are signing a small part of the
+            document. To prevent replay attacks, it is recommended to
+            include user names, keys, timestamps, etc into the signature.
+          </p>
+          <p>
+            A second example is a "wrapping attack" [<cite><a class="bibref" href="#bib-MCINTOSH-WRAP">MCINTOSH-WRAP</a></cite>]
+            where additional XML content is added to change what is signed.
+            An example is where only the amounts in a PurchaseOrder are signed
+            rather than the entire purchase order.
+          </p>
+        </section>
+        <section id="datetime-and-nonces">
+          <h4><span class="secno">3.2.2 </span>Make Effective use of signing time and Nonces to protect against
+            Replay Attacks
+          </h4>
+          <div class="practice">
+            <p><span id="bp-nonce-plus-datetime" class="practicelab">Best Practice 16: Applications: Use a nonce in
+                combination with 
+                signing 
+                time.</span></p>
+            <p class="practicedesc">A nonce enables detection of
+              duplicate signed items. 
+            </p>
+          </div>
+          <p>
+            In many cases replay detection is provided as a part of application
+            logic, often and a by product of normal processing. For example, if
+            purchase orders are required to have a unique serial
+            number, duplicates 
+            may be automatically discarded. In these cases, it is not strictly
+            necessary for the security mechanisms to provide replay detection.
+            However, since application logic may be unknown or change over time,
+            providing replay detection is the safest policy.
+          </p>
+          <div class="practice">
+            <p>
+              <span id="bp-not-app" class="practicelab">Best Practice 17: Applications:
+                Do not rely on 
+                application logic to prevent 
+                replay attacks since
+                applications may change.</span></p>
+            <p class="practicedesc">Supporting replay detection at the
+              security processing layer removes a 
+              requirement for application designers to be concerned about this
+              security issue and may prevent a risk if support for
+              replay detection 
+              is removed from the application processing for various
+              other reasons. 
+            </p>
+          </div>
+          <p>
+            Nonces and passwords must fall under at least one signature to be
+            effective. In addition, the signature should include at
+            least a critical 
+            portion of the message payload, otherwise an attacker
+            might be able to 
+            discard the dateTime and its signature without arousing suspicion.
+          </p>
+          <div class="practice">
+            <p>
+              <span id="bp-sign-nonce-dateTime" class="practicelab">Best Practice 18: Applications: Nonce and
+                    signing time must be 
+                signature 
+                protected.</span></p>
+            <p class="practicedesc">A signature must include the nonce
+              and signing time in the signature 
+              calculation for them to be effective, since otherwise an attacker
+              could change them without detection.
+            </p>
+          </div>
+          <p>
+            Web Services Security [<cite><a class="bibref" href="#bib-WS-SECURITY11">WS-SECURITY11</a></cite>]
+            defines a
+            &lt;Timestamp&gt; element which can contain a Created dateTime value
+            and/or a Expires dateTime value. The Created value
+            obviously represents an 
+            observation 
+            made. The expires value is more problematic, as it
+            represents a policy 
+            choice which should belong to the receiver not the
+            sender. Setting an 
+            expiration date on a Token may reflect how long the data
+            is expected to 
+            be correct or how long the secret may remain
+            uncompromised. However, the 
+            semantics of a signature "expiring" is not clear.
+          </p>
+          <p>
+            WSS provides for the use of a nonce in conjunction with hashed
+            passwords, but not for general use with asymmetric or symmetric
+            signatures.
+          </p>
+          <p>
+            WSS sets a limit of one &lt;Timestamp&gt; element per
+            Security header, but their can be 
+            several signatures. In the typical case where all signatures are
+            generated at about the same time, this is not a problem, but SOAP
+            messages may pass through multiple intermediaries and be
+            queued for a 
+            time, so this limitation could possibly create problems. In general
+            Senders should ensure and receivers should assume that the
+            &lt;Timestamp&gt; 
+            represents the first (oldest) signature. It is not clear
+            how if at all a 
+            &lt;Timestamp&gt; relates to encrypted data.
+          </p>
+        </section>
+      </section>
+      <section id="timestamps">
+        <h3><span class="secno">3.3 </span>For Applications: Enable Long-Lived Signatures</h3>
+        <section id="timestamp-authorities">
+          <h4><span class="secno">3.3.1 </span>Timestamp Authorities</h4>
+          <div class="practice">
+            <p>
+              <span id="bp-timestamp-authorities-for-long-lived-sigs" class="practicelab">Best Practice 19: Applications: Use Timestamp tokens
+                issued by 
+                Timestamp 
+                authorities for long lived signatures.</span></p>
+            <p class="practicedesc">Such time-stamps prove that what was  
+              time-stamped actually existed at the time indicated,
+              whereas any other   
+              time indication is only a claim by the signer and is
+              less useful in   
+              dispute resolution.
+            </p>
+          </div>
+          <p>
+            The X.509 Public Key Infrastructure Time-Stamp Protocol,  RFC 3161
+            [<cite><a class="bibref" href="#bib-RFC3161">RFC3161</a></cite>],   
+            describes the use of a time stamp authority to establish
+            evidence that   
+            a signature existed before a given time, useful in
+            applications where   
+            dispute resolution may be necessary.
+          </p>
+          <div class="note"><div class="note-title" role="heading" aria-level="5"><span>Note</span></div><p class="">
+            The IETF PKIX WG "ESSCertIDv2 update for RFC 3161"
+            should be consulted when referencing
+            RFC 3161 [<cite><a class="bibref" href="#bib-RFC3161-PKIX-UPDATE-9">RFC3161-PKIX-UPDATE-9</a></cite>]. 
+          </p></div>
+          <p>ETSI has produced TS 101 903: "XML Advanced
+            Electronic Signatures" [<cite><a class="bibref" href="#bib-XADES">XADES</a></cite>],
+            which among other ones, deals with the issue of
+            long-term electronic signatures. It has defined a
+            standard way for incorporating time-stamps to XML
+            signatures. In addition to the signature
+            time-stamp, which should be generated soon after
+            the generation of the signature, other time-stamps
+            may be added to the signature structure protecting
+            the validation material used by the
+            verifier. Recurrent time-stamping (with stronger
+            algorithms and keys) on all these items, i.e., the
+            signature, the validation material and previous
+            time-stamps counters the revocation of validation
+            data and weaknesses of cryptographic algorithms
+            and keys. RFC 3161 and OASIS DSS time-stamps may
+            be incorporated in XAdES signatures.
+          </p>
+          <p>OASIS DSS core specifies a XML format for
+            time-stamps based in XML Sig. In addition DSS core
+            and profiles allow the generation and verification
+            of signatures, time-stamps, and time-stamped
+            signatures by a centralized server.
+          </p>
+          <p>The XAdES and DSS Timestamps should not be
+            confused with WSS Timestamps. Although they are
+            both called Timestamps, the WSS &lt;Timestamp&gt;
+            is just a xsd:dateTime value added by the signer
+            representing the claimed time of signing. XAdES
+            and DSS Timestamps are full fledged signatures
+            generated by a Time-stamp Authority (TSA) binding
+            together a the digest of what is being
+            time-stamped and a dateTime value. TSAs are
+            trusted third parties which operate under certain
+            rules on procedures, software and hardware
+            including time accuracy assurance mechanisms. 
+          </p>
+        </section>
+        <section id="long-lived-timestamp">
+          <h4><span class="secno">3.3.2 </span>Include time of signing in Long-Lived Signatures</h4>
+          <div class="practice">
+            <p><span id="bp-use-timestamp" class="practicelab">Best Practice 20: Applications: Long lived
+                signatures should include a xsd:dateTime field to
+                indicate the time of 
+                signing just as a handwritten signature does.</span></p>
+            <p class="practicedesc">The time of signing is an important consideration for use of
+              long-lived signatures and should be included.
+              
+            </p>
+          </div>
+          <p>
+            Note that in the absence
+            of a trusted time source, such a signing time should be viewed as
+            indicating a minimum, but not a maximum age. This is
+            because we assume 
+            that a time in the future would be noticed during
+            processing. So if the 
+            time does not indicate when the signature was computed it at least
+            indicates earliest time it might have been made available for
+            processing.
+          </p>
+          <p>
+            It is considered desirable for ephemeral signature to be relatively
+            recently signed and not to be replayed. The signing time
+            is useful for either 
+            or both of these. The use for freshness is
+            obvious. Signing time is not 
+            ideal for preventing replay, since depending on the granularity,
+            duplicates are possible. 
+          </p>
+          <p>
+            A better scheme is to use a nonce and a signing time The
+            nonce is checked 
+            to see if it duplicates a previously presented value. The
+            signing time 
+            allows receivers to limit how long nonces are retained (or
+            how many are 
+            retained).
+          </p>
+        </section>
+      </section>
+      <section id="signing-xml-without-namespaces">
+        <h3><span class="secno">3.4 </span>For Applications: Signing XML without namespace information
+          ("legacy XML")
+        </h3>
+        <div class="practice">
+          <p>
+            <span id="bp-namespace-inheritance" class="practicelab">Best Practice 21: Applications: When creating an enveloping
+              signature over XML 
+              without namespace information, take steps to avoid
+              having that content 
+              inherit the XML Signature namespace.</span></p>
+          <p class="practicedesc">Avoid enveloped content from
+            inheriting the XML Signature namespace by 
+            either inserting an empty default namespace declaration or
+            by defining 
+            a namespace prefix for the Signature Namespace usage.
+          </p>
+        </div>
+        <p>
+          When creating an enveloping 
+          signature over XML without namespace information, it may
+          inherit the XML  
+          Signature namespace of the Object element, which is not the intended 
+          behavior. There are two potential workarounds:
+        </p>
+        <ol>
+          <li>
+            <p>Insert an xmlns="" namespace definition in the legacy
+              XML. However,  
+              this is not always practical.
+            </p>
+          </li>
+          <li>
+            <p>Insulate it from the XML Signature namespace by
+              defining a namespace  
+              prefix on the XML Signature (ex: "ds").
+            </p>
+          </li>
+        </ol>
+        <p>This was also discussed in the OASIS Digital Signature Services
+          technical committee,
+          see <a href="https://lists.oasis-open.org/archives/dss/200504/msg00048.html">https://lists.oasis-open.org/archives/dss/200504/msg00048.html</a>. 
+        </p>
+      </section>
+      <section id="prefer-xpath-filter2">
+        <h3><span class="secno">3.5 </span>For Applications: Prefer the XPath Filter 2
+          Transform to the XPath Filter Transform
+        </h3>
+        <div class="practice">
+          <p>
+            <span id="bp-prefer-xpath-filter2" class="practicelab">Best Practice 22: Applications: Prefer the XPath
+              Filter 2 Transform 
+              to the 
+              XPath Filter Transform if possible.
+          </span></p>
+          <p class="practicedesc">
+            Applications should prefer the XPath Filter 2 
+            Transform to the 
+            XPath Filter 
+            Transform when generating XML Signatures.
+          </p>
+        </div>
+        <p>The XPath Filter 2 
+          Transform was designed to improve the performance issues
+          associated with  
+          the XPath Filter Transform and allow signing operations to
+          be expressed  
+          more clearly and efficiently, as well as helping to mitigate
+          the denial  
+          of service attacks discussed in section 2.1.2. See 
+          <a href="http://www.w3.org/TR/xmldsig-filter2/#sec-Intro">XML-Signature 
+            XPath Filter 2.0</a> for 
+          more information. 
+        </p>
+        <p>Even though XPath Filter 2.0 is not recommended in XML Signature
+          1.0, implementations may still be able to support it. In this case
+          signers and verifiers may be  able 
+          to follow this best practice.
+        </p>
+      </section>
+    </section>
+    <section id="practices-signers-verifiers">
+      <!--OddPage--><h2><span class="secno">4. </span>Best Practices for Signers and Verifiers</h2>
+      <section id="external-unparsed-entities">
+        <h3><span class="secno">4.1 </span>For Signers: Do not transmit external unparsed entity
+          references</h3> 
+        <p>
+          Resolving external unparsed entity references can imply network access
+          and can in certain circumstances be a security concern for signature
+          verifiers. As a policy decision, signature verifiers may choose not to
+          resolve such entities, leading to a loss of interoperability.
+        </p>
+        <div class="practice">
+          <p>
+            <span id="unparsed-external-entity-refs" class="practicelab">Best Practice 23: Signers: Do not transmit unparsed external
+              entity 
+              references.</span></p> 
+          <p class="practicedesc">Do not transmit unparsed external
+            entity references in signed 
+            material.  Expand all entity references before creating
+            the cleartext 
+            that is transmitted.
+          </p>
+        </div>
+      </section>
+      <section id="for-signers-and-verifiers-be-aware-of-schema-processing">
+        <h3><span class="secno">4.2 </span>For signers and verifiers: Be aware of schema processing</h3>
+        <p>
+          Part of the validation process defined by XML Schema includes the
+          "normalization" of lexical values in a document into a "schema
+          normalized value" that allows schema type validation to
+          occur against a 
+          predictable form.
+        </p>
+        <p>
+          Some implementations of validating parsers, particular early
+          ones, often 
+          modified DOM information "in place" when performing this
+          process. Unless 
+          the signer also performed a similar validation process on the input
+          document, verification is likely to fail. Newer validating parsers
+          generally include an option to disable type normalization,
+          or take steps 
+          to avoid modifying the DOM, usually by storing normalized values
+          internally alongside the original data.
+        </p>
+        <p>
+          Verifiers should be aware of the effects of their chosen parser and
+          adjust the order of operations or parser options accordingly. Signers
+          might also choose to operate on the normalized form of an XML instance
+          when possible.
+        </p>
+        <p>
+          Additionally, validating processors will add default values taken from
+          an XML schema to the DOM of an XML instance.
+        </p>
+        <div class="practice">
+          <p>
+            <span id="consider-schema-processing" class="practicelab">Best Practice 24: Signers: Do not rely on a
+              validating processor on the consumer's 
+              end.</span></p>
+          <p class="practicedesc">Do not rely on a validating
+            processor on the consumer's end to normalize XML
+            documents. Instead, explicitly include default attribute
+            values, and use normalized attributes when possible.  
+        </p></div>
+        <div class="practice">
+          <p><span id="avoid-destructive-validation" class="practicelab">Best Practice 25: Verifiers: Avoid destructive validation before signature validation.</span></p>
+          <p class="practicedesc">Applications relying on validation
+            should either consider verifying 
+            signatures before schema validation, or select
+            implementations that can 
+            avoid destructive DOM changes while validating.
+          </p>
+        </div>
+      </section>
+      <section id="signers-truncate-hmac">
+        <h3><span class="secno">4.3 </span>For Signers: When using an HMAC, truncate the output to
+          increase attack resistance</h3>
+        <div class="practice">
+          <p>
+            <span id="bp-truncate-hmac" class="practicelab">Best Practice 26: 
+              Signers: When using an HMAC, set the HMAC Output Length to one
+              half the number of bits in the hash size.
+          </span></p>
+          <p class="practicedesc">
+            Setting the HMAC Output Length of an HMAC to one half the
+            bit length of the hash function increases the 
+            resistance to attack without weakening its resistance to a
+            brute force guessing attack.
+          </p>
+        </div>
+        <p>
+          An HMAC is computed by combining a secret such as a password
+          with a hash function over the data to be protected.
+          The HMAC provides Authentication and
+          Data Integrity protection in a shared secret  
+          environment. Its security properties depend crucially on the
+          cryptographic properties of the hash  
+          algorithm employed. 
+          It is widely understood that a collision attack  (finding
+          two messages   
+          which have the same hash value) on a hash 
+          function or an HMAC has a work factor
+          proportional to the square root of the hash value.  
+        </p>
+        <p>
+          Recently published research  has shown that other
+          attacks on an HMAC, such as Forgery (being  
+          able to compute a correct HMAC value without knowing the
+          key) and Key Recovery (being able to  
+          compute the correct HMAC for any message) may also have a
+          work factor proportional to the square  
+          root of the hash value [<cite><a class="bibref" href="#bib-HMAC-Security">HMAC-Security</a></cite>]. In other words,
+          the strength of an 
+          HMAC is no better than a brute force guessing  
+          attack on half the bits in the HMAC value. 
+          The same paper demonstrates that reducing the number of bits
+          in the HMAC value available to an  
+          attacker, by means of the HMAC Output Length parameter, makes
+          these attacks more difficult or  
+          impossible. Prior research has reported the same finding for
+          other attacks on an HMAC. 
+        </p>
+      </section>
+      <section id="signers-separate-keys">
+        <h3><span class="secno">4.4 </span>For Signers: When encrypting and signing use distinct
+        keys</h3>
+        <div class="practice">
+          <p>
+            <span id="bp-separate-keys" class="practicelab">Best Practice 27: 
+              Signers: When encrypting and signing use distinct keys
+          </span></p>
+          <p class="practicedesc">
+            If the same key is used for different operations such as signing and
+            encryption attacks are possible that can allow signatures
+            to be forged, so separate possibly derived keys should be
+            used for different functions.
+          </p>
+          <p>
+            Use of state-of-the-art and secure encryption algorithms
+            such as RSA-OAEP and AES-GCM can become insecure when the
+            adversary can force the server to process eavesdropped
+            ciphertext with legacy algorithms such as RSA-PKCS#1 v1.5
+            or AES-CBC [<cite><a class="bibref" href="#bib-XMLENC-BACKWARDS-COMP">XMLENC-BACKWARDS-COMP</a></cite>].
+            In this case the  attacker may be able to forge valid
+            server signatures if the server decrypts RSA-PKCS#1 v1.5 
+            ciphertexts   [<cite><a class="bibref" href="#bib-XMLENC-PKCS15-ATTACK">XMLENC-PKCS15-ATTACK</a></cite>]  and the signatures are computed with the same
+            asymmetric key pair.  
+          </p>
+          <p>
+            Accordingly, in situations where an attacker may be able to mount chosen-ciphertext attacks, we recommend applications
+            should always use a different symmetric key for data
+            confidentiality and for data integrity functionality
+            (likewise for public key functions). When use of a single
+            key is planned, key derivation
+            should be used to produce different keys for these functions.
+          </p>
+        </div>
+      </section>
+    </section>
+
+<section id="bp-summary">
+<!--OddPage--><h2><span class="secno">5. </span>Best Practices Summary</h2><ul><li><a href="#bp-authenticate-signature-first">Best Practice 1</a>: Implementers:
+              Mitigate
+              denial of service attacks by 
+              executing potentially dangerous operations only
+              after successfully authenticating the signature. </li><li><a href="#bp-validate-signing-key">Best Practice 2</a>: Implementers: Establish trust in the
+              verification/validation key.</li><li><a href="#bp-avoid-xslt">Best Practice 3</a>: Implementers: Consider avoiding XSLT
+                Transforms.</li><li><a href="#bp-avoid-xslt-extensions">Best Practice 4</a>: Implementers: When XSLT is
+                required disallow the 
+                use of user-defined extensions.</li><li><a href="#bp-avoid-xpath">Best Practice 5</a>: Implementers: Try to avoid or
+                limit XPath 
+                transforms.</li><li><a href="#bp-streaming-xpath-limits">Best Practice 6</a>: Implementers: Avoid
+                using the "descendant", "descendant-or-self", 
+                "following-sibling", and "following" axes when using
+                streaming XPaths. 
+            </li><li><a href="#bp-avoid-retrievalmethod">Best Practice 7</a>: Implementers: Try to avoid or
+                limit ds:RetrievalMethod 
+                support with ds:KeyInfo.</li><li><a href="#bp-control-external-references">Best Practice 8</a>: Implementers: Control external references.</li><li><a href="#bp-limit-number-of-transforms">Best Practice 9</a>: Implementers: Limit number
+                of ds:Reference transforms
+                allowed.</li><li><a href="#bp-see-sign-api">Best Practice 10</a>: Implementers: Offer interfaces for
+                application to learn what was 
+                signed.
+            </li><li><a href="#bp-certificate-encoding">Best Practice 11</a>: Implementers: Do not re-encode
+              certificates, 
+              use DER when 
+              possible with the X509Certificate element.
+          </li><li><a href="#bp-inspect-reference-uri-and-transforms">Best Practice 12</a>: Applications: Enable 
+              verifier to automate "see
+              what is signed" functionality.</li><li><a href="#bp-verify-signed-vs-expected">Best Practice 13</a>: Applications: When
+                applying XML Signatures using XPath it is recommended
+                to always actively 
+                verify that the signature protects the intended
+                elements and not more or 
+                less.</li><li><a href="#bp-inspect-reference-uri">Best Practice 14</a>: Applications: When checking a reference URI,
+                don't 
+                just check the name of the element.</li><li><a href="#bp-sign-everything">Best Practice 15</a>: Applications: Unless
+                impractical, sign all parts of 
+                the document.</li><li><a href="#bp-nonce-plus-datetime">Best Practice 16</a>: Applications: Use a nonce in
+                combination with 
+                signing 
+                time.</li><li><a href="#bp-not-app">Best Practice 17</a>: Applications:
+                Do not rely on 
+                application logic to prevent 
+                replay attacks since
+                applications may change.</li><li><a href="#bp-sign-nonce-dateTime">Best Practice 18</a>: Applications: Nonce and
+                    signing time must be 
+                signature 
+                protected.</li><li><a href="#bp-timestamp-authorities-for-long-lived-sigs">Best Practice 19</a>: Applications: Use Timestamp tokens
+                issued by 
+                Timestamp 
+                authorities for long lived signatures.</li><li><a href="#bp-use-timestamp">Best Practice 20</a>: Applications: Long lived
+                signatures should include a xsd:dateTime field to
+                indicate the time of 
+                signing just as a handwritten signature does.</li><li><a href="#bp-namespace-inheritance">Best Practice 21</a>: Applications: When creating an enveloping
+              signature over XML 
+              without namespace information, take steps to avoid
+              having that content 
+              inherit the XML Signature namespace.</li><li><a href="#bp-prefer-xpath-filter2">Best Practice 22</a>: Applications: Prefer the XPath
+              Filter 2 Transform 
+              to the 
+              XPath Filter Transform if possible.
+          </li><li><a href="#unparsed-external-entity-refs">Best Practice 23</a>: Signers: Do not transmit unparsed external
+              entity 
+              references.</li><li><a href="#consider-schema-processing">Best Practice 24</a>: Signers: Do not rely on a
+              validating processor on the consumer's 
+              end.</li><li><a href="#avoid-destructive-validation">Best Practice 25</a>: Verifiers: Avoid destructive validation before signature validation.</li><li><a href="#bp-truncate-hmac">Best Practice 26</a>: 
+              Signers: When using an HMAC, set the HMAC Output Length to one
+              half the number of bits in the hash size.
+          </li><li><a href="#bp-separate-keys">Best Practice 27</a>: 
+              Signers: When encrypting and signing use distinct keys
+          </li></ul></section>
+<section id="thanks">
+  <!--OddPage--><h2><span class="secno">6. </span>Acknowledgments</h2>
+  <p>
+        This document records best practices related to XML Signature
+        from a variety of sources, including 
+        the <abbr title="World Wide Web Consortium">W3C</abbr> Workshop on Next Steps for XML Signature and XML
+        Encryption [<cite><a class="bibref" href="#bib-XMLSEC-NEXTSTEPS-2007">XMLSEC-NEXTSTEPS-2007</a></cite>]. 
+      </p>
+</section>
+
+
+<section id="references" class="appendix"><!--OddPage--><h2><span class="secno">A. </span>References</h2><p>Dated references below are to the latest known or appropriate edition of the referenced work.  The referenced works may be subject to revision, and conformant implementations may follow, and are encouraged to investigate the appropriateness of following, some or all more recent editions or replacements of the works cited. It is in each case implementation-defined which  editions are supported.</p><section id="informative-references"><h3><span class="secno">A.1 </span>Informative references</h3><dl class="bibliography"><dt id="bib-HMAC-Security">[HMAC-Security]</dt><dd>C. Rechberger, V. Rijmen. <a href="http://www.jucs.org/jucs_14_3/new_results_on_nmac/jucs_14_3_0347_0376_rechberger.pdf"><cite>New Results on NMAC/HMAC when Instantiated with Popular Hash Functions</cite></a>. 2 January 2008. Journal of Universal Computer Science, vol. 14, no. 3 (2008), 347-376.  URL: <a href="http://www.jucs.org/jucs_14_3/new_results_on_nmac/jucs_14_3_0347_0376_rechberger.pdf">http://www.jucs.org/jucs_14_3/new_results_on_nmac/jucs_14_3_0347_0376_rechberger.pdf</a>
+</dd><dt id="bib-MCINTOSH-WRAP">[MCINTOSH-WRAP]</dt><dd> Michael McIntosh; Paula Austel. <cite>XML signature element wrapping attacks and countermeasures.</cite> In Workshop on Secure Web Services, 2005
+</dd><dt id="bib-RFC3161">[RFC3161]</dt><dd>C. Adams; P. Cain; D. Pinkas; R. Zuccherato. <a href="http://www.rfc-editor.org/rfc/rfc3161.txt"><cite>Internet X.509 Public Key Infrastructure Time-Stamp Protocol (TSP) (RFC 3161)</cite></a>. August 2001. RFC. URL: <a href="http://www.rfc-editor.org/rfc/rfc3161.txt">http://www.rfc-editor.org/rfc/rfc3161.txt</a>
+</dd><dt id="bib-RFC3161-PKIX-UPDATE-9">[RFC3161-PKIX-UPDATE-9]</dt><dd>Stefan Santesson, Nick Pope. <a href="http://tools.ietf.org/id/draft-ietf-pkix-rfc3161-update-09.txt"><cite> ESSCertIDv2 update for RFC 3161</cite></a> 29 April 2010, IETF Internet Draft. URL: <a href="http://tools.ietf.org/id/draft-ietf-pkix-rfc3161-update-09.txt"> http://tools.ietf.org/id/draft-ietf-pkix-rfc3161-update-09.txt</a> 
+</dd><dt id="bib-WS-SECURITY11">[WS-SECURITY11]</dt><dd>A. Nadalin, C. Kaler, R. Monzillo, P. Hallam-Baker. <a href="https://www.oasis-open.org/standards#wssv1.1"><cite>Web Services Security: SOAP Message Security 1.1 (WS-Security 2004)</cite></a>. OASIS Standard, 1 February 2006. URL: <a href="https://www.oasis-open.org/standards#wssv1.1">https://www.oasis-open.org/standards#wssv1.1</a> 
+</dd><dt id="bib-WebBug-Wikipedia">[WebBug-Wikipedia]</dt><dd><a href="http://en.wikipedia.org/wiki/Web_bug"><cite>Wikipedia Web Bug definition</cite></a> URL: <a href="http://en.wikipedia.org/wiki/Web_bug"> http://en.wikipedia.org/wiki/Web_bug</a> 
+</dd><dt id="bib-XADES">[XADES]</dt><dd><a href="http://www.etsi.org/deliver/etsi_ts/101900_101999/101903/01.04.01_60/ts_101903v010401p.pdf"><cite>XML Advanced Electronic Signatures (XAdES)</cite></a>.  ETSI TS 101 903 V1.4.1 (2009-06) URL: <a href="http://www.etsi.org/deliver/etsi_ts/101900_101999/101903/01.04.01_60/ts_101903v010401p.pdf">http://www.etsi.org/deliver/etsi_ts/101900_101999/101903/01.04.01_60/ts_101903v010401p.pdf</a>
+</dd><dt id="bib-XMLDSIG-COMPLEXITY">[XMLDSIG-COMPLEXITY]</dt><dd>Brad Hill. <a href="http://www.w3.org/2007/xmlsec/ws/papers/04-hill-isecpartners/"><cite>Complexity as the Enemy of Security: Position Paper for W3C Workshop on Next Steps for XML Signature and XML Encryption</cite></a>. 25-26 September. W3C Working Draft. URL: <a href="http://www.w3.org/2007/xmlsec/ws/papers/04-hill-isecpartners/">http://www.w3.org/2007/xmlsec/ws/papers/04-hill-isecpartners/</a>
+</dd><dt id="bib-XMLDSIG-CORE1">[XMLDSIG-CORE1]</dt><dd>D. Eastlake; J. Reagle; D. Solo; F. Hirsch; T. Roessler; K. Yiu. <a href="http://www.w3.org/TR/2013/REC-xmldsig-core1-20130411/"><cite>XML Signature Syntax and Processing Version 1.1</cite></a>. 11 April 2013. W3C Recommendation. URL: <a href="http://www.w3.org/TR/2013/REC-xmldsig-core1-20130411/">http://www.w3.org/TR/2013/REC-xmldsig-core1-20130411/</a>
+</dd><dt id="bib-XMLDSIG-SEMANTICS">[XMLDSIG-SEMANTICS]</dt><dd>Sebastian Gajek; Lijun Liao; and Jörg Schwenk. <a href="http://www.w3.org/2007/xmlsec/ws/papers/07-gajek-rub/"><cite> Towards a Semantic of XML Signature: Position Paper for W3C Workshop on Next Steps for XML Signature and XML Encryption </cite></a>. 25-26 September 2007. W3C Workshop. URL: <a href="http://www.w3.org/2007/xmlsec/ws/papers/07-gajek-rub/">http://www.w3.org/2007/xmlsec/ws/papers/07-gajek-rub/</a>
+</dd><dt id="bib-XMLDSIG-XPATH">[XMLDSIG-XPATH]</dt><dd>Pratik Datta; Frederick Hirsch; Meiko Jensen. <a href="http://www.w3.org/TR/2013/NOTE-xmldsig-xpath-20130411/"><cite>XML Signature Streaming Profile of XPath 1.0</cite></a>. 11 April 2013. W3C Working Group Note. URL: <a href="http://www.w3.org/TR/2013/NOTE-xmldsig-xpath-20130411/">http://www.w3.org/TR/2013/NOTE-xmldsig-xpath-20130411/</a>
+</dd><dt id="bib-XMLENC-BACKWARDS-COMP">[XMLENC-BACKWARDS-COMP]</dt><dd>Tibor Jager; Kenneth G. Paterson; Juraj Somorovsky. <a href="http://www.nds.ruhr-uni-bochum.de/research/publications/backwards-compatibility/"><cite>One Bad Apple: Backwards Compatibility Attacks on State-of-the-Art Cryptography</cite></a>. 2013. URL: <a href="http://www.nds.ruhr-uni-bochum.de/research/publications/backwards-compatibility/">http://www.nds.ruhr-uni-bochum.de/research/publications/backwards-compatibility/</a>
+</dd><dt id="bib-XMLENC-PKCS15-ATTACK">[XMLENC-PKCS15-ATTACK]</dt><dd>Tibor Jager; Sebastian Schinzel; Juraj Somorovsky. <a href="http://www.nds.rub.de/research/publications/breaking-xml-encryption-pkcs15.pdf"><cite>Bleichenbacher"s Attack Strikes Again: Breaking PKCS#1.5 in XML Encryption</cite></a>. 2012. URL: <a href="http://www.nds.rub.de/research/publications/breaking-xml-encryption-pkcs15.pdf">http://www.nds.rub.de/research/publications/breaking-xml-encryption-pkcs15.pdf</a>
+</dd><dt id="bib-XMLSEC-NEXTSTEPS-2007">[XMLSEC-NEXTSTEPS-2007]</dt><dd>Frederick Hirsch; Thomas Roessler. <a href="http://www.w3.org/2007/xmlsec/ws/report.html"><cite>Workshop Report W3C Workshop on Next Steps for XML Signature and XML Encryption</cite></a>. 25-26 September 2007. W3C Workshop Report. URL: <a href="http://www.w3.org/2007/xmlsec/ws/report.html">http://www.w3.org/2007/xmlsec/ws/report.html</a>
+</dd></dl></section></section></body></html>

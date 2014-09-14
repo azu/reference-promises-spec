@@ -1,0 +1,892 @@
+<!-- http://www.w3.org/TR/UMP/ -->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en-US">
+<head>
+  <title>Uniform Messaging Policy, Level One</title>
+  <meta http-equiv="Content-type" content="text/html;charset=US-ASCII">
+  <style type="text/css">
+   .example { margin-left:1em; padding-left:1em; border-left:double; color:#222; background:#fcfcfc }
+   .note { margin-left:2em; font-weight:bold; font-style:italic; color:green }
+   .note pre { font-weight:normal; font-style:normal }
+   pre > code, li > code { color:inherit; background:transparent }
+   .XXX { padding:.5em; border:solid #f00 }
+   dl.switch { padding-left:2em }
+   dl.switch > dt { text-indent:-1.5em }
+   dl.switch > dt:before { content:'\21AA'; padding:0 0.5em 0 0; display:inline-block; width:1em; text-align:right; line-height:0.5em }
+   em.ct {
+    text-transform:lowercase;
+    font-variant:small-caps;
+    font-style:normal
+   }
+   dfn { font-weight:bold; font-style:normal }
+   code { color: maroon; }
+   code:link, code:visited { color:inherit }
+  </style>
+  <link rel="stylesheet" type="text/css" href="http://www.w3.org/StyleSheets/TR/W3C-WD">
+</head>
+<body>
+
+<div class="head">
+  <p><a href="http://www.w3.org/"><img alt="W3C" height="48" width="72"
+    src="http://www.w3.org/Icons/w3c_home"></a></p>
+
+  <h1>Uniform Messaging Policy, Level One</h1>
+  <h2>W3C Working Draft 26 January 2010</h2>
+  <dl>
+    <dt>This Version:</dt>
+    <dd><a href="http://www.w3.org/TR/2010/WD-UMP-20100126/">http://www.w3.org/TR/2010/WD-UMP-20100126/</a></dd>
+    <dt>Latest Version:</dt>
+    <dd><a href="http://www.w3.org/TR/UMP/">http://www.w3.org/TR/UMP/</a></dd>
+    <dt>Editor's Version:</dt>
+    <dd><a href="http://dev.w3.org/2006/waf/UMP/">http://dev.w3.org/2006/waf/UMP/</a></dd>
+  </dl>
+  <dl>
+    <dt>Editors:</dt>
+      <dd>Tyler Close (<a href="http://www.google.com/">Google</a>)</dd>
+      <dd>Mark Miller (<a href="http://www.google.com/">Google</a>)</dd>
+  </dl>
+  <p class="copyright"><a
+  href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a>
+  &copy; 2010 <a href="http://www.w3.org/"><acronym title="World Wide Web
+  Consortium">W3C</acronym></a><sup>&reg;</sup> (<a
+  href="http://www.csail.mit.edu/"><acronym title="Massachusetts Institute of
+  Technology">MIT</acronym></a>, <a href="http://www.ercim.eu/"><acronym
+  title="European Research Consortium for Informatics and
+  Mathematics">ERCIM</acronym></a>, <a href="http://www.keio.ac.jp/">Keio</a>),
+  All Rights Reserved. W3C <a
+  href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>,
+  <a
+  href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a>
+  and <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document
+  use</a> rules apply.</p>
+</div>
+
+<hr>
+
+<h2 class="no-num no-toc" id="abstract">Abstract</h2>
+<p>The Uniform Messaging Policy (UMP) enables cross-site messaging that avoids
+Cross-Site-Request-Forgery and similar attacks that abuse HTTP cookies and other
+credentials.  For example, content from <code>customer.example.org</code> can
+safely specify requests to resources determined by
+<code>service.example.com</code>. Rather than restricting information retrieval
+to a single origin, as the Same Origin Policy almost does, the Uniform Messaging
+Policy supports origin independent messaging.</p>
+
+<h2 class="no-num no-toc" id="sotd">Status of This Document</h2>
+<p><em>This section describes the status of this document at the time of its
+publication. Other documents may supersede this document. A list of current W3C
+publications and the latest revision of this technical report can be found in
+the <a href="http://www.w3.org/TR/">W3C technical reports index</a>  at
+http://www.w3.org/TR/.</em></p>
+
+<p>This is the 26 January 2010 First Public Working Draft of the "Uniform
+Messaging Policy" document.  It is expected that this document will progress
+along the W3C Recommendation track. This document is produced by the <a
+href="http://www.w3.org/2008/webapps/">Web Applications</a> (WebApps) Working
+Group. The WebApps Working Group is part of the <a
+href="http://www.w3.org/2006/rwc/Activity">Rich Web Clients Activity</a> in the
+W3C <a href="http://www.w3.org/Interaction/">Interaction Domain</a>.</p>
+
+<p>Please send comments to the WebApps Working Group's public mailing list <a
+href="mailto:public-webapps@w3.org?subject=%5BUMP%5D">public-webapps@w3.org</a>
+with <kbd title="">[UMP]</kbd> at the start of the subject line. <a
+href="http://lists.w3.org/Archives/Public/public-webapps/">Archives</a> of this
+list are available. See also <a href="http://www.w3.org/Mail/">W3C mailing list
+and archive usage guidelines</a>.</p>
+
+<p>This document was produced by a group operating under the <a
+  href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004
+  W3C Patent Policy</a>. W3C maintains a <a
+  href="http://www.w3.org/2004/01/pp-impl/42538/status" rel=disclosure>public
+  list of any patent disclosures</a> made in connection with the deliverables of
+the group; that page also includes instructions for disclosing a patent. An
+individual who has actual knowledge of a patent which the individual believes
+contains <a
+  href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential
+  Claim(s)</a> must disclose the information in accordance with <a
+  href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section
+  6 of the W3C Patent Policy</a>.</p>
+
+<p>Publication as a Working Draft does not imply endorsement by the W3C
+Membership. This is a draft document and may be updated, replaced or obsoleted
+by other documents at any time. It is inappropriate to cite this document as
+other than work in progress.</p>
+
+<h2 class="no-num no-toc" id="toc">Table of Contents</h2>
+<!--begin-toc-->
+<ul class=toc>
+  <li><a href="#introduction"><span class=secno>1</span> Introduction</a></li>
+  <li><a href="#conformance"><span class=secno>2</span> Conformance Criteria</a>
+  <ul class=toc>
+    <li><a href="#terminology"><span class=secno>2.1</span> Terminology</a></li>
+  </ul></li>
+  <li><a href="#request-handling"><span class=secno>3</span> Uniform Request</a>
+  <ul class=toc>
+    <li><a href="#request-parameters"><span class=secno>3.1</span> Uniform
+    Request Parameters</a></li>
+    <li><a href="#request-sending"><span class=secno>3.2</span> Sending a
+    Uniform Request</a></li>
+  </ul></li>
+  <li><a href="#response-handling"><span class=secno>4</span> Uniform
+  Response</a>
+  <ul class=toc>
+    <li><a href="#access-control-allow-origin-header"><span
+    class=secno>4.1</span> <code>Access-Control-Allow-Origin</code> Response
+    Header</a></li>
+    <li><a href="#redirection"><span class=secno>4.2</span> Redirection</a></li>
+    <li><a href="#response"><span class=secno>4.3</span> Uniform Request Response</a></li>
+    <li><a href="#state-changes"><span class=secno>4.4</span> Changes to
+    User-Agent State</a></li>
+  </ul></li>
+  <li><a href="#ump-api-advice"><span class=secno>5</span> Uniform Messaging
+  Policy API Specification Advice</a>
+  <ul class=toc>
+    <li><a href="#ump-api-request"><span class=secno>5.1</span> Constructing a
+    Uniform Request</a></li>
+    <li><a href="#ump-api-status"><span class=secno>5.2</span> Uniform Messaging
+    Status</a></li>
+    <li><a href="#ump-api-algorithm"><span class=secno>5.3</span> Uniform
+    Messaging Algorithm</a></li>
+    <li><a href="#ump-api-name"><span class=secno>5.4</span> Naming a Uniform Messaging Policy API</a></li>
+  </ul></li>
+  <li><a href="#security"><span class=secno>6</span> Security
+    Considerations</a></li>
+  <li class=no-num><a href="#requirements">Requirements</a></li>
+  <li class=no-num><a href="#use-cases">Use Cases</a></li>
+  <li class=no-num><a href="#design-decision-faq">Design Decision FAQ</a></li>
+  <li class=no-num><a href="#references">References</a>
+  <ul class=toc>
+    <li class=no-num><a href="#normative-references">Normative
+    References</a></li>
+    <li class=no-num><a href="#non-normative-references">Non-normative
+    References</a></li>
+  </ul></li>
+  <li class=no-num><a href="#acknowledgments">Acknowledgments</a></li>
+</ul>
+<!--end-toc-->
+
+<h2 id="introduction"><span class="secno">1 </span>Introduction</h2>
+<p><em>This section is non-normative.</em></p>
+<p>Web applications increasingly seek to interact with resources from multiple
+administrative domains. Consider the case of content from
+<code>customer.example.org</code> specifying a request (via a script, a form,
+etc.) to a resource hosted by <code>service.example.com</code>. For the
+protection of <code>service</code>, user-agents enforce a Same Origin Policy
+that restricts this message exchange. To enable the message exchange,
+<code>service</code> needs some means to opt-out of this protection.</p>
+
+<p>The main goals of this specification are:</p>
+<ol>
+  <li>Provide a means for a resource owner to consent to cross-origin
+  information retrieval.</li>
+  <li>Support origin independent messaging that avoids
+  Cross-Site-Request-Forgery <a href="#ref-csrf">[CSRF]</a> and similar
+  attacks.</li>
+</ol>
+
+<p>We introduce an HTTP response header that enables opting-out of Same Origin
+Policy protection for a given HTTP response in order to meet the first of these
+goals.</p>
+
+<p>To understand the second goal, consider an attack case, in which
+<code>service</code> is the attacker and wants a request delivered to a resource
+that <code>customer</code> has permission to use but <code>service</code> does
+not.  When informing <code>customer</code> of the intended request target,
+<code>service</code> provides the URL for a resource hosted by
+<code>customer</code>, such as
+<code>https://customer.example.org/deleteImportantStuff</code>. When the user
+agent sends the request, <code>customer</code> receives a request with the
+user's cookies, sent by content hosted by <code>customer</code>. The request is
+indistinguishable from a legitimate request to the resource, so it is processed.
+In a variation on this attack, <code>service</code> provides the URL for a
+resource hosted by a third-site, <code>partner.example.net</code>. The user has
+permission to use the resource at <code>partner</code>, and the site accepts
+cross-site requests from <code>customer</code>, but again <code>service</code>
+does not have permission to use the resource.  This attack variation is
+particularly troublesome, since it is indistinguishable from a legitimate
+variation in which <code>service</code> does have permission to use the
+<code>partner</code> resource.</p>
+
+<p>In the attack cases, user credentials (such as cookies) are automatically
+included in requests whose content is partly determined by another site. These
+cases are similar to the familiar CSRF attack, in which another site uses an
+HTML <code>&lt;form&gt;</code> element to determine the target and body of a
+request that includes the user's credentials. To avoid this class of attacks,
+and so meet the second goal, we introduce a messaging policy for <dfn
+id="uniform">uniform</dfn> requests that don't automatically include any
+credentials. By withholding credentials, requests can be safely produced in
+collaboration with other sites, even when the request target is within the same
+origin.</p>
+
+<p>Many of the most popular user-agents have recently deployed messaging
+mechanisms that support opting-out of Same Origin Policy protection. Level One
+of the Uniform Messaging Policy is within the intersection of HTTP messaging
+functionality supported across all these user-agents. Unfortunately, this subset
+does not include many parts of HTTP messaging, such as custom request headers
+and methods such as <code>PUT</code> and <code>DELETE</code>. It is expected
+that a Level Two specification will eventually provide this functionality.</p>
+
+<p>The HTTP messaging subset supported by Level One has the virtue of being
+within the subset defined by the <code>&lt;form&gt;</code> element in HTML 4.01.
+<a href="#ref-html4">[HTML4]</a> All of the requests that can be sent in Level
+One can also be sent using the HTML <code>&lt;form&gt;</code> element, as
+commonly implemented in currently deployed user-agents.  Consequently, Level One
+introduces no new request vulnerabilities for existing resources.  Responses
+that lack the newly defined Same Origin Policy opt-out header are not delivered
+to the requestor, as with the HTML <code>&lt;form&gt;</code> element, so there
+also can be no new response vulnerabilities for existing resources.</p>
+
+<p>In this specification, we only define a security model for cross-site
+messaging.  Other specifications, so-called <a href="#ump-api">UMP API
+specifications</a>, define messaging APIs that adhere to this security model.
+Among others, such specifications are likely to include Server-Sent Events, XBL
+2.0, and a uniform alternative to XMLHttpRequest.  <a href="#ref-sse">[SSE]</a>
+<a href="#ref-xbl">[XBL]</a> <a href="#ref-xhr">[XHR]</a></p>
+
+<p>The design of the Uniform Messaging Policy is based on <a
+  href="#requirements">requirements</a> and <a href="#use-cases">use cases</a>,
+both included as appendix. A FAQ describing the <a
+  href="#design-decision-faq">design decisions</a> is also available.</p>
+
+<div class=example>
+<p>If a resource author has a simple text resource residing at
+<code>https://service.example.com/hello</code> which contains the string "Hello
+World!" and would like other sites to be able to access it, the response
+combined with the introduced Same Origin Policy opt-out response header would
+look as follows:</p>
+<pre><code>Access-Control-Allow-Origin: *
+
+Hello World!</code></pre>
+
+<p>Using a <code>XMLHttpRequest</code>-like API, a client-side application from
+<code>customer.example.org</code> can access this resource as follows:</p>
+
+<pre><code>var xhr = new UniformRequest();
+xhr.open("GET", "https://service.example.com/hello");
+xhr.onreadystatechange = function() { /* do something */ };
+xhr.send();</code></pre>
+
+</div>
+
+<h2 id="conformance"><span class="secno">2 </span>Conformance Criteria</h2>
+<p>This specification is written for resource authors and user-agents. It
+includes advice for specifications that define APIs that use the Uniform
+Messeaging Policy defined in this specification. The general <a
+href="#security">security considerations</a> section includes some advice for
+application authors.</p>
+
+<p>As well as sections and appendices marked as non-normative, all diagrams,
+examples, and notes in this specification are non-normative.  Everything else in
+this specification is normative.</p>
+
+<p>In this specification, the terms <em class=ct>MUST</em> and <em class=ct>MUST
+NOT</em> are to be interpreted as described in <a
+href="#ref-ct">[RFC2119]</a>.</p>
+
+<p>A conformant resource is one that implements all the requirements listed in
+this specification that are applicable to resources.</p>
+
+<p>A conformant user-agent is one that implements all the requirements listed in
+this specification that are applicable to user-agents.</p>
+
+<h3 id="terminology"><span class="secno">2.1 </span>Terminology</h3>
+<p>This specification reuses the terminology and ABNF syntax used in <a
+href="#ref-http">[HTTP]</a>.</p>
+
+<h2 id="request-handling"><span class="secno">3 </span>Uniform Request</h2>
+<p>A <dfn id="uniform-request">uniform request</dfn> is an HTTP request produced
+according to the restrictions defined in this section.</p>
+
+<h3 id="request-parameters"><span class="secno">3.1 </span>Uniform Request
+Parameters</h3>
+<p>Content specifying a uniform request <em class=ct>MUST</em> only provide
+values for the following parameters:</p>
+<dl>
+  <dt><dfn id="request-url">request URL</dfn></dt>
+  <dd><p>The URL for the request. The URL <em class=ct>MUST NOT</em> contain the
+  <code>userinfo</code> <a href="#ref-uri">[RFC3986]</a> production.</p></dd>
+
+  <dt><dfn id="request-method">request method</dfn></dt>
+  <dd><p>The method for the request.</p>
+  <p>The request method <em class=ct>MUST</em> be one of the following <dfn
+  id="allowed-methods">allowed methods</dfn>:</p> 
+  <ul>
+    <li><code>GET</code>
+    <li><code>POST</code>
+  </ul>
+  <p class=XXX>Issue: It might be safe to also allow <code>OPTIONS</code> and
+  <code>HEAD</code>, but these are not currently allowed since they are not
+  allowed by the HTML <code>&lt;form&gt;</code> element.</p>
+  </dd>
+
+  <dt><dfn id="request-entity-media-type">request entity media type</dfn>
+  <em>(optional)</em></dt>
+  <dd><p>The media type of the <a href="#request-entity-body">request
+  entity-body</a>.</p>
+  <p>The request entity media type (excluding media type parameters) <em
+  class=ct>MUST</em> be one of the following <dfn
+  id="allowed-media-types">allowed media types</dfn>:</p> <ul>
+  <li><code>application/x-www-form-urlencoded</code></li>
+  <li><code>multipart/form-data</code></li> <li><code>text/plain</code></li>
+  </ul>
+  <p>At most a single <code>charset</code> media type parameter is allowed.</p>
+  <p class="note">Note: These are the same media types supported by the HTML
+  <code>&lt;form&gt;</code> element.</p>
+  </dd>
+
+  <dt><dfn id="request-entity-body">request entity body</dfn>
+      <em>(optional)</em></dt>
+  <dd><p>The entity body for the request.</p></dd>
+</dl>
+
+<h3 id="request-sending"><span class="secno">3.2</span> Sending a Uniform
+Request</h3>
+<p>The content of a <a href="#uniform-request">uniform request</a> is determined
+solely by the provided <a href="#request-parameters">uniform request
+parameters</a>, the status of the sender's response cache and the required
+structure of an HTTP request. If a user-agent is configured to send the request
+via a proxy, instead of directly to the host specified by the <a
+href="#request-url">request URL</a>, this proxy configuration information can be
+used to send the request to the proxy.  In this case, the request sent by the
+user-agent is not a <a href="#uniform-request">uniform request</a>; however, the
+request ultimately delivered to the resource host will be, since any
+<code>Proxy-Authorization</code> request header is removed by the proxy before
+forwarding the request to the resource host.  Other than this proxy information,
+the user-agent <em class=ct>MUST NOT</em> augment the sent request with any data
+that identifies the user or the origin of the request. In particular, the
+user-agent <em class=ct>MUST NOT</em> add any information obtained from: HTTP
+cookies, HTTP Auth headers, client certificates, or the referring resource,
+including its origin (other than the request parameters).</p>
+
+<h2 id="response-handling"><span class="secno">4</span> Uniform Response</h2>
+<p>This section places restrictions on the handling of a response to a <a
+href="#uniform-request">uniform request</a>.</p>
+
+<h3 id="access-control-allow-origin-header"><span class=secno>4.1</span>
+<code>Access-Control-Allow-Origin</code> Response Header</h3>
+<p>A <dfn id="uniform-response">uniform response</dfn> is an HTTP response with
+a single <code><dfn
+id="access-control-allow-origin">Access-Control-Allow-Origin</dfn></code>
+header, with the literal string "<code>*</code>" as its value.  This header <em
+class=ct>MUST</em> only be present if the resource owner permits access to the
+response by the content that specified the corresponding request, regardless of
+that content's origin.</p>
+
+<pre>Access-Control-Allow-Origin = "Access-Control-Allow-Origin" ":" "*"</pre>
+
+<div class="XXX">
+<p>Issue: The length of this header name is unfortunate since it is included,
+uncompressed, on all shared responses. Ideally, we'd prefer:</p>
+<pre>Access-Control-Allow-Origin = "U" ":" ""</pre>
+<p>Where user-agents would only check for the presence of a header named
+"<code>U</code>" and ignore its value.</p>
+</div>
+
+<h3 id="redirection"><span class="secno">4.2</span> Redirection</h3>
+<p>If the response to a <a href="#uniform-request">uniform request</a> is an
+HTTP redirect, it is handled as specified by <a href="#ref-http">[HTTP]</a>,
+whether or not the redirect is itself a <a href="#uniform-response">uniform
+response</a>. If the redirect is not a <a href="#uniform-response">uniform
+response</a>, the user-agent <em class=ct>MUST</em> still prevent the requesting
+content from accessing the content of the redirect itself, though a response to
+a redirected request might be accessible if it is a <a
+href="#uniform-response">uniform response</a>.  If the response to a <a
+href="#uniform-request">uniform request</a> is an HTTP redirect, any redirected
+request <em class=ct>MUST</em> also be a <a href="#uniform-request">uniform
+request</a>.</p>
+
+<p class="note">Note: The HTML <code>&lt;form&gt;</code> element can also follow
+any redirect, without restriction by the Same Origin Policy.</p>
+
+<h3 id="response"><span class="secno">4.3</span> Uniform Request Response</h3>
+<p>When processing a <a href="#uniform-request">uniform request</a>, the
+user-agent <em class=ct>MUST</em> only make corresponding <a
+href="#uniform-response">uniform responses</a> accessible to the requesting
+content.</p>
+
+<h3 id="state-changes"><span class="secno">4.4</span> Changes to User-Agent
+State</h3>
+<p>When processing a <a href="#uniform-request">uniform request</a>, the
+user-agent <em class=ct>MUST NOT</em> make any state changes, other than
+delivering any corresponding <a href="#uniform-response">uniform responses</a>
+to the requesting content and updating the response cache. In particular, the
+user-agent <em class=ct>MUST</em> ignore any <code>Set-Cookie</code> response
+header.</p>
+
+<h2 id="ump-api-advice"><span class="secno">5 </span>Uniform Messaging Policy
+API Specification Advice</h2>
+<p><em>This section is non-normative.</em></p>
+<p>A <dfn id="ump-api">Uniform Messaging Policy (UMP) API</dfn> is a messaging
+API that only produces <a href="#uniform-request">uniform requests</a>. This
+section provides implementation advice for such API specifications.</p>
+
+<h3 id="ump-api-request"><span class="secno">5.1</span> Constructing a Uniform
+Request</h3>
+
+<p>For all requests an UMP API makes, ensure the <a
+href="#request-parameters">uniform request parameters</a> are set
+appropriately.</p>
+
+<p>Values for these parameters can be specified by content via the API, or the
+API may set fixed values.</p>
+
+<p class=example>For example, an UMP API that only supports information
+retrieval might set <a href="#request-method">request method</a> to
+<code>GET</code>, <a href="#request-entity-body">request entity body</a> and <a
+href="#request-entity-media-type">request entity media type</a> to empty, and
+let the other parameters be specified by content.</p>
+
+<h3 id="ump-api-status"><span class="secno">5.2 </span>Uniform Messaging
+Status</h3>
+<p>For each <a href="#uniform-request">uniform request</a> there is an
+associated <dfn id="uniform-messaging-status">uniform messaging status</dfn>
+that indicates the status of enforcement of the Uniform Messaging Policy. The
+values are:</p>
+<dl>
+  <dt><i>pending</i></dt>
+  <dd><p>Enforcement has not yet completed and so the response cannot yet be
+  shared. This status might change. The API should handle this case analogous to
+  a request where no response has yet been received. Ensure not to reveal any
+  further information about the response.</p></dd>
+
+  <dt><i>success</i></dt>
+  <dd><p>The response can be shared with the requesting content. This status is
+  final.</p>
+  <p class=note>The HTTP response itself can still be progressing. I.e. the <a
+  href="#uniform-messaging-status">uniform messaging status</a> does not
+  indicate that the full HTTP response has been received.</p></dd>
+
+  <dt><i>failure</i></dt>
+  <dd><p>An error of some sorts occurred and so the response cannot be shared.
+  This status is final.  Ensure not to reveal any further information about the
+  response.</p></dd>
+</dl>
+
+<h3 id="ump-api-algorithm"><span class="secno">5.3 </span>Uniform Messaging
+Algorithm</h3>
+<p>The steps below describe how to process a <a href="#uniform-request">uniform
+request</a>. Initially, the <a href="#ump-api-status">uniform messaging
+status</a> is <i>pending</i>:</p>
+<ol>
+  <li><p>Make a request to <a href="#request-url">request URL</a>, using the <a
+    href="#request-method">request method</a>. If the request method supports an
+  entity body, include a <code>Content-Type</code> request header whose value is
+  the <a href="#request-entity-media-type">request entity media type</a>, and
+  include the <a href="#request-entity-body">request entity body</a>.</p></li>
+  <li><dl class=switch>
+    <dt>If the response is an HTTP redirect:</dt>
+    <dd><p>If the URL conveyed by the <code>Location</code> response header
+    contains the <code>userinfo</code> production, or its scheme is not
+    supported, or infinite loop precautions are violated, or the user-agent does
+    not wish to make the new request for some other reason, terminate the
+    request and set the <a href="#ump-api-status">uniform messaging status</a>
+    to <i>failure</i>.</p>
+    <p>Otherwise, handle the redirect as specified by <a
+    href="#ref-http">[HTTP]</a>, using a uniform request for any redirected
+    request.</p>
+    </dd>
+
+    <dt>If the response includes a single <code><a
+    href="#access-control-allow-origin">Access-Control-Allow-Origin</a></code>
+    header, whose value is the literal "<code>*</code>" character</dt>
+    <dd><p>Set the <a href="#ump-api-status">uniform messaging status</a> to
+    <i>success</i> and allow the request to complete, making the response
+    headers and response entity body available to the requestor.</p></dd>
+
+    <dt>Otherwise</dt>
+    <dd><p>Terminate the request and set the <a href="#ump-api-status">uniform
+    messaging status</a> to <i>failure</i>.</p></dd>
+  </dl></li>
+</ol>
+
+<h3 id="ump-api-name"><span class="secno">5.4 </span>Naming a Uniform Messaging
+Policy API</h3>
+<p>In an UMP API, both cross-origin and same-origin requests are made according
+to the Uniform Messaging Policy. An existing API for same-origin messaging
+cannot be extended for cross-origin messaging by adopting the Uniform Messaging
+Policy for only the cross-origin requests. In an UMP API, the policy is applied
+to all requests, including same-origin requests.  Since changing the policy
+applied to same-origin requests in an existing API could create compatibility
+issues, use a new name for the corresponding UMP API.</p>
+<div class="example"><p>For example, to extend the existing
+<code>XMLHttpRequest</code> API to support cross-origin messaging, the
+constructor could be renamed, leaving the rest of the API intact:</p>
+<pre><code>xhr = new UniformRequest();
+xhr.open("GET", "https://service.example.com/hello");
+xhr.send();</code></pre>
+</div>
+
+<h2 id="security"><span class="secno">6</span> Security Considerations</h2>
+<p><em>This section is non-normative.</em></p>
+<p>An application author, in designing the server-side behavior of a resource,
+should consider one of the following choices:</p>
+<ol>
+  <li><p>A resource that is not useful to other sites, such as a login page,
+  should not return <a href="#uniform-response">uniform responses</a>.</p>
+  <p>The resource still must protect itself against CSRF attacks, such as by
+  including an unguessable token in the explicitly provided content of the
+  request. If the unguessable token is provided in response to a same-origin GET
+  request, the resource may still be vulnerable to clickjacking <a
+    href="#ref-clickjacking">[clickjacking]</a>.  (Note that scriptless HTML
+  pages are sufficient to cause clickjacking vulnerabilities.) To guard against
+  clickjacking, applications should perform additional access checks on that GET
+  request (such as also requiring an unguessable token in that GET request).</p>
+  <p>The security properties of such resources are unaffected by user-agents
+  conformant to this specification.</p>
+
+  <li><p>A resource that is publicly accessible, with no access control checks,
+  should always return <a href="#uniform-response">uniform responses</a>.</p>
+  <p>Legacy user-agents remain limited by the Same Origin Policy from accessing
+  such resources cross-origin. Currently deployed user-agents that understand
+  the <code><a
+  href="#access-control-allow-origin">Access-Control-Allow-Origin</a></code>
+  header, as well as user-agents conformant to this specification, will be able
+  to access such resources regardless of origin.</p></li>
+
+  <li><p>A resource that is only accessible to authorized requestors should
+  check for <a href="#permission">permission tokens</a> in the explicitly
+  provided content of the request.  If the resource might be useful to other
+  sites, it should return <a href="#uniform-response">uniform responses</a>.</p>
+  <p>Again, legacy user-agents remain limited by the Same Origin Policy from
+  accessing such resources cross-origin. Currently deployed user-agents that
+  understand the <code><a
+  href="#access-control-allow-origin">Access-Control-Allow-Origin</a></code>
+  header, as well as user-agents conformant to this specification, will be able
+  to access such resources regardless of origin.</p></li>
+
+  <li><p>A <code>GET</code> response whose body happens to parse as <a
+  href="#ref-ECMAScript">[ECMAScript]</a> should be a <a
+  href="#uniform-response">uniform response</a>. This category includes <a
+  href="#ref-JSON">[JSON]</a> content. These responses have already effectively
+  opted-out of Same Origin Policy protection, since the content can be accessed
+  cross-origin using an HTML <code>&lt;script&gt;</code> tag. If needed, such
+  resources should implement access control in the same way as resources in
+  category 3.</p></li>
+</ol>
+
+<p>A <dfn id="permission">permission token</dfn> represents a resource owner's
+consent to the use of that resource. In contrast to a credential, a permission
+is specific to a particular resource; whereas a credential may be used in
+requests to many resources. An unguessable token is commonly used to implement a
+permission token. Only agents that have been given the unguessable token have
+the resource owner's consent to use the resource. For example, in the common
+CSRF defense noted in category 1 above, an unguessable token is only provided to
+content from the same origin as the resource. This unguessable token represents
+permission to submit a request. A request without the unguessable token is
+rejected. A resource in category 3 above should use this technique to implement
+access control; providing an unguessable token only to agents who may use the
+resource.</p>
+
+<p>When placing a permission token in a request, plausible places are within the
+<a href="#request-url">request URL</a> (e.g., as a query parameter) or in the <a
+  href="#request-entity-body">entity body</a>.  Before choosing to place a
+permission token in the URL, the application author should examine whether the
+URL is likely to be used where it might leak via a <code>Referer</code> header.
+This specification does not recommend any particular scheme for including
+permission tokens in a request.</p>
+
+<p>Application authors should design protocols that transmit only those
+permissions justified by the purpose of each request. These permissions should
+not be context sensitive, such as "apply delete permission to any identifier in
+this request". Such a permission creates the danger of a CSRF-like attack in
+which an attacker causes an unexpected identifier to be in the request. Instead,
+a permission should be specific, such as "apply delete permission to resource
+foo".</p>
+
+<p>The <code><a
+href="#access-control-allow-origin">Access-Control-Allow-Origin</a></code>
+response header provides another reason for HTTP server implementers to fix <a
+href="#ref-response-splitting">[response splitting]</a> vulnerabilities. Such
+vulnerabilities currently make a site vulnerable to Cross-Site-Scripting (XSS),
+but could also be used to inject an <code><a
+href="#access-control-allow-origin">Access-Control-Allow-Origin</a></code>
+response header.</p>
+
+<h2 class="no-num" id="requirements">Requirements</h2>
+<p><em>This appendix is non-normative.</em>
+
+<p class="note">Note: These requirements are taken from the CORS specification.
+A note indicates those requirements that could not be fully satisfied.</p>
+
+<p>This appendix outlines the various requirements that influenced the design of
+the Uniform Messaging Policy specification.</p>
+<ol>
+  <li><p>Must not introduce attack vectors to servers that are only protected
+  by a firewall.</p></li>
+
+  <li><p>The solution should not introduce additional attack vectors against
+  services that are protected only by way of firewalls. This requirement
+  addresses "intranet" style services that authorize any requests that can be
+  sent to the service.</p></li>
+
+  <li><p>It should not be possible to perform cross-origin operations that are
+  not already enabled by deployed user-agents, without an authorization check
+  being performed. For example, a <code>PUT</code> operation.</p></li>
+
+  <li><p>Should try to prevent dictionary-based, distributed, brute-force
+  attacks that try to get login accounts to 3<sup>rd</sup> party servers, to the
+  extent possible.</p></li>
+
+  <li><p>Should properly enforce security policy in the face of commonly
+  deployed proxy servers sitting between the user-agent and any of servers with
+  whom the user-agent is communicating.</p></li>
+
+  <li><p>Should not allow loading and exposing of resources from 3<sup>rd</sup>
+  party servers without explicit consent of these servers as such resources can
+  contain sensitive information.</p></li>
+
+  <li><p>Must not require content authors or site maintainers to implement new
+  or additional security protections to preserve their existing level of
+  security protection.</p></li>
+
+  <li><p>Must be deployable to IIS and Apache without requiring actions by the
+  server administrator in a configuration where the user can upload static
+  files, run server-side scripts (such as PHP, ASP, and CGI), control headers,
+  and control authorization, but only do this for URLs under a given set of
+  sub-directories on the server.</p></li>
+
+  <li><p>Must be able to deploy support for cross-origin <code>GET</code>
+  requests without having to use server-side scripting (such as PHP, ASP, or
+  CGI) on IIS and Apache.</p></li>
+
+  <li><p>The solution must be applicable to arbitrary media types. It must be
+  deployable without requiring special packaging of resources, or changes to
+  resources' content.</p>
+  <p class="note">Note: To retain compatibility with deployed implementations,
+  support for POSTs of arbitrary media types is deferred to a future Uniform
+  Messaging Policy, Level Two specification.</p></li>
+
+  <li><p>It should be possible to configure distinct cross-origin authorization
+  policies for different target resources that reside within the
+  same-origin.</p></li>
+
+  <li><p>It should be possible to distribute content of any type. Likewise, it
+  should be possible to transmit content of any type to the server if the API in
+  use allows such functionality.</p>
+  <p class="note">Note: To retain compatibility with deployed implementations,
+  support for POSTs of arbitrary media types is deferred to a future Uniform
+  Messaging Policy, Level Two specification.</p></li>
+
+  <li><p>It should be possible to allow only specific servers, or sets of
+  servers to fetch the resource.</p></li>
+
+  <li><p>Must not require the server to filter the entity body of the resource
+  in order to deny cross-origin access to all resources on the server.</p></li>
+
+  <li><p>Cross-origin requests should not require API changes other than
+  allowing cross-origin requests. This means that the following examples should
+  work for resources residing on <code>customer.example.org</code> (modulo
+  changes to the respective specifications to allow cross-origin requests):</p>
+  <ul>
+    <li><pre><code>&lt;?xml-stylesheet type="application/xslt+xml"
+    href="https://service.example.com/annotate.xslt"?&gt;</code></pre></li>
+
+    <li><pre><code>&lt;?xbl href="https://service.example.com/globe.xml"?&gt;</code></pre></li>
+
+    <li><pre><code>xhr = new UniformRequest();
+xhr.open("GET", "https://service.example.com/hello");
+xhr.send();</code></pre></li>
+  </ul>
+
+  <li><p>It should be possible to issue methods other than <code>GET</code> to
+  the server, such as <code>POST</code> and <code>DELETE</code>.</p>
+  <p class="note">Note: To retain compatibility with deployed implementations,
+  support for methods other than the <a href="#allowed-methods">allowed
+  methods</a> is deferred to a future Uniform Messaging Policy, Level Two
+  specification.</p></li>
+
+  <li><p>Should be compatible with commonly used HTTP authentication and session
+  management mechanisms. I.e. on an IIS server where authentication and session
+  management is generally done by the server before ASP pages execute this
+  should be doable also for requests coming from cross-origin requests. Same
+  thing applies to PHP on Apache.</p>
+  <p class="note">Note: These common uses of HTTP cookies and HTTP auth are not
+  safe when used cross-origin, so this requirement is in conflict with the
+  following one.</p></li>
+
+  <li><p>Should reduce the risk of inadvertently allowing access when it is not
+  intended. This is, it should be clear to the content provider when access is
+  granted and when it is not.</p></li>
+</ol>
+
+<h2 class="no-num" id="use-cases">Use Cases</h2>
+<p><em>This appendix is non-normative.</em>
+
+<p class="note">Note: These use-cases are taken from the CORS specification.</p>
+
+<p>A primary motivation behind Uniform Messaging Policy was to remove the same
+origin restriction from various APIs so that resources can be shared among
+different origins.</p>
+
+<p>Here are various APIs that might make use of the Uniform Messaging
+Policy:</p>
+<ul>
+  <li><p>A <code>XMLHttpRequest</code>-like network API might make use of the
+  uniform messaging policy to enable client-side access to a database on a
+  separate HTTP server. <a href="#ref-xhr">[XHR]</a></p>
+
+  <p>A server <code>foo.example.org</code> might implement an HTTP API to allow
+  authorized users to edit resources on that server.  Users of a client-side
+  editing application on server <code>editing.example</code> that are authorized
+  to edit resources on <code>foo.example.org</code> can do so directly without
+  any workarounds or intermediaries. (The application uses a
+  <code>XMLHttpRequest</code>-like API for network traffic.)</p>
+
+  <p>A server <code>calendar.example</code> could expose a simple HTTP API that
+  allows incoming requests using the <code>POST</code> method when the user has
+  the required authority.  Every time an authorized server issues such a request
+  using a <code>XMLHttpRequest</code>-like API, a new calendar entry is
+  queued.</p>
+
+  <li><p>The Server-Sent Events specifications defines an
+  <code>EventSource</code> object that is expected to make use of the uniform
+  messaging policy so that the server streaming the events can be separate from
+  the server hosting the page or application. <a href="#ref-sse">[SSE]</a></p>
+
+  <p>E.g. a service such as a news or stock ticker can be on a central server
+  and shared with many other servers.</p></li>
+
+  <li><p>To prevent data theft, most browsers do not allow cross-origin loading
+  of XSLT resources by the <code>xml-stylesheet</code> processing instruction.
+  By applying the Uniform Messaging Policy, several servers can share a single
+  XSLT resource. <a href="#ref-xmlsspi">[XMLSSPI]</a></p></li>
+
+  <li><p>An XBL binding allows the document to which it is bound to have full
+  access to the document in which it is defined. To prevent data theft
+  cross-origin XBL usage is therefore prohibited.  The uniform messaging policy
+  enables cross-origin XBL bindings. If the user is authorized to use the XBL
+  widget, it is possible to have user-specific cross-origin bindings. <a
+    href="#ref-xbl">[XBL]</a></p></li>
+</ul>
+
+<h2 class="no-num" id="design-decision-faq">Design Decision FAQ</h2>
+<p><em>This appendix is non-normative.</em>
+<p>This appendix documents several frequently asked questions and their
+corresponding response.</p>
+
+<dl>
+  <dt>Why is <code>POST</code> treated similarly to <code>GET</code>?</dt>
+  <dd><p>Cross-origin <code>POST</code> requests have long been possible using
+  the HTML <code>form</code> element. However, this is only the case when
+  <code>Content-Type</code> is set to one of the media types allowed by an HTML
+  <code>&lt;form&gt;</code>.</p></dd>
+
+  <dt>What about the <code>JSONRequest</code> proposal?</dt>
+  <dd><p>The Uniform Messaging Policy supports more use-cases than does
+  <code>JSONRequest</code>. A <code>JSONRequest</code>-like API can be
+  implemented on top of an <a href="#ump-api">UMP API</a>.</p></dd>
+
+  <dt>Since the content of a uniform request could have been sent from anywhere
+  on the Internet, why does the <code><a
+  href="#access-control-allow-origin">Access-Control-Allow-Origin</a></code>
+  response header need to be sent?</dt>
+  <dd><p>If the resource is behind a firewall, the request could only have been
+  sent by a client behind the same firewall. User agents that enforce the Same
+  Origin Policy do not allow these responses to be delivered across origins.
+  Some firewalled resources depend entirely on this protection. The safety of
+  these resources must be preserved.</p>
+  </dd>
+
+  <dt>Since the content of a uniform request could have been sent from anywhere
+  on the Internet, why can't <code>PUT</code> and <code>DELETE</code> requests
+  be sent?</dt>
+  <dd><p>If the resource is behind a firewall, the request could only have been
+  sent by a client behind the same firewall. User agents that enforce the Same
+  Origin Policy do not allow these requests to be sent across origins. Some
+  firewalled resources depend entirely on this protection. The safety of these
+  resources must be preserved.</p>
+  </dd>
+</dl>
+
+<h2 class="no-num" id="references">References</h2>
+<h3 class="no-num" id="normative-references">Normative References</h3>
+<dl>
+
+  <dt id="ref-http">[HTTP]</dt>
+  <dd><cite><a href="http://www.ietf.org/rfc/rfc2616.txt">Hypertext Transfer
+  Protocol -- HTTP/1.1</a></cite>, R. Fielding, J. Gettys, J. Mogul, H.
+  Frystyk, L. Masinter, P. Leach, T. Berners-Lee. IETF, June 1999.</dd>
+
+  <dt id="ref-ct">[RFC2119]</dt>
+  <dd><cite><a href="http://tools.ietf.org/html/rfc2119">Key words for use in
+      RFCs to Indicate Requirement Levels</a></cite>, S. Bradner. IETF, March
+  1997.</dd>
+
+  <dt id="ref-uri">[RFC3986]</dt>
+  <dd><cite><a href="http://tools.ietf.org/html/rfc3986">Uniform Resource
+      Identifier (URI): Generic Syntax</a></cite>, T. Berners-Lee, R. Fielding,
+  L. Masinter, editors. IETF, January 2005.</dd>
+</dl>
+
+<h3 class="no-num" id="non-normative-references">Non-normative References</h3>
+<dl>
+  <dt id="ref-clickjacking">[clickjacking]</dt>
+  <dd><cite><a
+      href="http://www.sectheory.com/clickjacking.htm">Clickjacking</a></cite>,
+  R. Hansen, J. Grossman. SecTheory 12 September 2008.</dd>
+
+  <dt id="ref-csrf">[CSRF]</dt>
+  <dd><cite><a
+      href="http://marc.info/?l=bugtraq&amp;m=99263135911884&amp;w=2">Cross-Site
+      Request Forgeries</a></cite>, P. Watkins. Bugtraq, 15 June 2001.</dd>
+
+  <dt id="ref-ECMAScript">[ECMAScript]</dt>
+  <dd><cite><a
+  href="http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-262.pdf">ECMA-262:
+  ECMAScript Language Specification</a>, third edition</cite>, ECMA. December
+  1999.</dd>
+
+  <dt id="ref-JSON">[JSON]</dt>
+  <dd><cite><a href="http://www.ietf.org/rfc/rfc4627.txt">The application/json
+  Media Type for JavaScript Object Notation (JSON)</a></cite>, D. Crockford.
+  IETF, July 2006.</dd>
+
+  <dt id="ref-html4">[HTML4]</dt>
+  <dd><cite><a href="http://www.w3.org/TR/html401/">HTML 4.01
+      Specification</a></cite>, D. Ragget, A. Le Hors, I. Jacobs. W3C, 24
+  December 1999.</dd>
+
+  <dt id="ref-response-splitting">[response splitting]</dt>
+  <dd><cite><a
+  href="http://marc.info/?l=bugtraq&amp;m=102088154213630&amp;w=2">CRLF
+  Injection</a></cite>, U. Harnhammar. Bugtraq, 6 May 2002.</dd>
+
+  <dt id="ref-sse">[SSE]</dt>
+  <dd><cite><a href="http://www.w3.org/TR/eventsource/">Server-Sent
+      Events</a></cite> (wok in progress), I. Hickson, editor. W3C, 2009.</dd>
+
+  <dt id="ref-xbl">[XBL]</dt>
+  <dd><cite><a href="http://www.w3.org/TR/xbl/">XML Binding Language (XBL)
+      2.0</a></cite> (work in progress), I. Hickson, editor. W3C, March
+  2007.</dd>
+
+  <dt id="ref-xhr">[XHR]</dt>
+  <dd><cite><a
+      href="http://www.w3.org/TR/XMLHttpRequest/">XMLHttpRequest</a></cite>
+  (work in progress), A. van Kesteren. W3C, 2009.</dd>
+
+  <dt id="ref-xmlsspi">[XMLSSPI]</dt>
+  <dd><cite><a href="http://www.w3.org/TR/xml-stylesheet/">Associating Style
+      Sheets with XML documents</a></cite>, J. Clark. W3C, June 1999.</dd>
+</dl>
+
+<h2 class="no-num" id="acknowledgments">Acknowledgments</h2>
+<p><em>This appendix is non-normative.</em>
+
+<p>The editors thank Adam Barth, Alexey Proskuryakov, Arthur Barstow, Benjamin
+Hawkes-Lewis, Bert Bos, Bj&ouml;rn H&ouml;hrmann, Cameron McCormack, Collin
+Jackson, Dan Connolly, David H&aring;s&auml;ther, David Orchard, Dean Jackson,
+Eric Lawrence, Frank Ellerman, Frederick Hirsch, Graham Klyne, Hal Lockhart,
+Henri Sivonen, Ian Hickson, Ihab Awad, Jesse M. Heines, Jonas Sicking, Jonathan
+Rees, Lachlan Hunt, Maciej Stachowiak, Marc Silbey, Marcos Caceres, Mark
+Nottingham, Martin D&uuml;rst, Matt Womer, Michael Smith, Mike Samuel, Mike
+Stay, Mohamed Zergaoui, Nikunj Mehta, Sharath Udupa, Sunava Dutta, Surya Ismail,
+Thomas Roessler, and Zhenbin Xu for their contributions to this
+specification.</p>
+
+<p>Special thanks to Anne van Kesteren, Brad Porter, Matt Oshry and R. Auburn,
+who all helped editing earlier versions of this document.</p>
+
+</body>
+</html>

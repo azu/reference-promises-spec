@@ -1,0 +1,867 @@
+<!-- http://www.w3.org/TR/WD-DSIG-label-arch -->
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+<title> Digital Signature Label Architecture </title>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h3 align="right"><a href="http://www.w3.org/"><img src="../Icons/WWW/w3c_home" alt="W3C"
+align="left" border="0" hspace="0"></a> WD-DSIG-label-arch-970610 </h3>
+
+<h1 align="center">Digital Signature Label Architecture </h1>
+
+<h3 align="center">W3C Working Draft 10-June-97 </h3>
+
+<dl>
+  <dt>This version: </dt>
+  <dd><a href="WD-DSIG-label-arch-970610.html">http://www.w3.org/pub/WWW/TR/WD-DSIG-label-arch-970610.html</a>
+  </dd>
+  <dt>Latest version: </dt>
+  <dd><a href="http://www.w3.org/pub/WWW/TR/WD-DSIG-label-arch.html">http://www.w3.org/pub/WWW/TR/WD-DSIG-label-arch.html</a>
+  </dd>
+  <dt>Previous version: </dt>
+  <dd><a href="http://www.w3.org/pub/WWW/TR/WD-DSIG-label-arch-970110.html">http://www.w3.org/pub/WWW/TR/WD-DSIG-label-arch-970110.html</a>
+  </dd>
+  <dt>Editor: </dt>
+  <dd>Philip DesAutels <a href="mailto:philipd@w3.org">&lt;philipd@w3.org&gt;</a></dd>
+  <dt>Authors: </dt>
+  <dd>Rohit Khare <a href="mailto:khare@w3.org">&lt;khare@w3.org&gt;</a> </dd>
+</dl>
+
+<hr>
+
+<h2>Status of this memo </h2>
+
+<p><strong>Editor's Note:</strong> <em>This document represents the general DSig
+architecture as envisioned by the DSig Design team. Work in implementing this architecture
+along with interaction with other groups working on metadata related efforts (PICS-NG,
+XML, DSig Collections, etc. ) has led to substantial changes in the way we now envision
+the DSig architecture. The document presented below is incongruous with the current DSig
+1.0 Digital Signature specification and the planned direction for DSig 2.0 and thus is
+obsolete. A major revision of the DSig Architecture will be available by 1 December, 1997
+at <a href="http://www.w3.org/pub/WWW/TR/WD-DSIG-label-arch.html">http://www.w3.org/pub/WWW/TR/WD-DSIG-label-arch.html</a>.
+</em></p>
+
+<p>This is a W3C Working Draft for review by W3C members and other interested parties. It
+is a draft document and may be updated, replaced or obsoleted by other documents at any
+time. It is inappropriate to use W3C Working Drafts as reference material or to cite them
+as other than &quot;work in progress&quot;. A list of current W3C working drafts can be
+found at: <a href="http://www.w3.org/pub/WWW/TR">http://www.w3.org/pub/WWW/TR</a>. </p>
+
+<p><b>Note:</b> since working drafts are subject to frequent change, you are advised to
+reference the above URL, rather than the URLs for working drafts themselves. </p>
+
+<hr>
+
+<h2>Table of Contents </h2>
+
+<ol>
+  <li>Introduction </li>
+  <li>Mission Statement </li>
+  <li>Signatures </li>
+  <li>Assertions </li>
+  <li>Manifests </li>
+  <li>Putting It All Together </li>
+  <li>Conclusions </li>
+  <li>Acknowledgements </li>
+</ol>
+
+<hr>
+
+<h2>Abstract </h2>
+
+<p>This document presents the architecture and design rationale behind DSig's Digital
+Signature Label specifications. The overall goal is to use digitally signed labels to make
+authenticatable assertions about standalone documents or about manifests of aggregate
+objects. The three basic elements, digital signatures, assertions, and manifests, are each
+analyzed in terms of its design, operation, data format, and distribution strategy. These
+elements can be assembled today within a PICS label to make a signed assertion about an
+information resource, or by signing a manifest, making assertions about several resources.
+</p>
+
+<h2>1. Introduction </h2>
+
+<p>The Digital Signature Label team is chartered with the design of a signed assertion
+format which states 'the <i>keyholder</i> believes <i>assertion(s)</i> about <i>information
+resource(s)</i>.' This statement format satisfies the twin goals of the DSig project: to <i>identify</i>
+and <i>endorse</i> information resources. This team, in turn, has decomposed its goal into
+three subtasks: 
+
+<ol>
+  <li><b>&quot;The <i>Keyholder</i> believes&#133;&quot;</b> is a cryptographically
+    authenticated statement encapsulated into a signature block (SigBlock). The functionality
+    and design requirements for the digital signature cryptography are explained in Section 3,
+    &quot; Signatures.&quot; </li>
+  <li><b>&quot;&#133; <i>assertion(s)</i>&#133;&quot;</b> is a systematic, machine-readable
+    description which allows for automatable trust decisions. In particular, we propose using
+    signed PICS ratings in Section 4, &quot;Assertions.&quot; </li>
+  <li><b>&quot;&#133; about <i>information resource(s)</i>&quot;</b> is a mapping of the
+    assertions to several related information resources. Each reference to a resources should
+    also should include integrity checks that make a secure link from the signed assertion to
+    the final data stream(s). These requirements are discussed in Section 5,
+    &quot;Manifests.&quot; </li>
+</ol>
+
+<p>Each of these subtasks will result in interlocking technical specifications: 
+
+<ol>
+  <li><b>Signature Block </b>describes the syntax of a generic signature syntax and a series
+    of cryptosystem-specific formats. The result is a standalone data-signature block. <i>Editor</i>:
+    Peter Lipp. </li>
+  <li><b>Signature Label</b> describes the technical steps for encoding a signature block
+    within a PICS-1.1 label and its applicability. The latter part describes when signed
+    PICS-1.1 assertions are appropriate and some inherent risks. <i>Editor</i>: Brian
+    LaMacchia (how), Paul Lambert (why). </li>
+  <li><b>DSig Common Manifest Format (DCMF)</b> describes how manifests can be constructed to
+    make joint assertions about a package of interrelated referents, as well as a particular
+    manifest format. <i>Editor</i>: Hemma Prafullchandra </li>
+</ol>
+
+<p>(Please consult the DSig Team pages for detailed updates on the timeline and status of
+these specifications.) </p>
+
+<p>Each of these components can be combined in several ways; this document provides
+context on how they fit together: 
+
+<dl compact>
+  <dt><b>Design</b> </dt>
+  <dd>Each component supports DSig's top-level design goals, such as international
+    cryptography support, flexible assertion semantics, and so on. Each component has a role
+    to play in proving the flexibility, portability, and integrity of the DSig system. </dd>
+  <dt><b>Operation</b> </dt>
+  <dd>Each component's expected uses and supported deployment scenarios are explained
+    operationally and diagrammed. </dd>
+  <dt><b>Format</b> </dt>
+  <dd>Each component has existing competitors; one of DSig's competitive advantages is its
+    technological simplicity weighed against the alternatives. Though there are competitors
+    for each (PKCS-7', freeform assertions, Cryptolopes, etc), each DSig specification
+    promotes a single format in the end. </dd>
+  <dt><b>Distribution</b> </dt>
+  <dd>Each component can be distributed across the Web in several ways. This document explains
+    which are usable with or without other components; which transmission modes are expected;
+    and concrete deployment recommendations (Section 6). </dd>
+</dl>
+
+<p>For example, a typical DSig scenario combines the three components in a tree. Here is
+how an author might first package up an applet in a manifest declaring his ownership, then
+additional certify that the package, taken as a whole, is a safe and useful applet when
+used correctly. 
+
+<ol>
+  <li>Author creates several related resources (the applet, its documentation, and sample
+    files) </li>
+  <li>Author creates a manifest that points at each resource, with the assertion &quot;I
+    created this&quot; for each. </li>
+  <li>Author creates a separate label pointing to the manifest saying it describes a
+    &quot;safe applet&quot;. </li>
+  <li>Author signs the label and embeds the resulting signature block into the label produced
+    in #3 </li>
+</ol>
+
+<p>The recipient can reverse the process, verifying the author's signature and
+constructing a pathway of three hash values and two assertions between the label and the
+eventual applet data proving the author's own <i>identity</i> and <i>endorsement</i> of
+that applet. DSig's real power, though, is that a third party can come along and replace
+steps 3 and 4 above: 
+
+<ol>
+  <li>Reviewer comes along and rates the applet for usability and coolness, creating a new
+    label of the manifest from step #2 above. </li>
+  <li>Reviewer signs the new &quot;This is cool&quot; label and distributes it separately. </li>
+</ol>
+
+<p>In this scenario, the end-user's trust manager can go seek out a reviewer's endorsement
+and make a similar induction chain from the reviewer to the &quot;cool&quot; applet. With
+DSig in place, the end-user's trust policy can automate the decision process. </p>
+
+<h2>2. Mission Statement </h2>
+
+<p>As part of its deliberations, the SigLabel team crafted a mission statement to define
+its design envelope. </p>
+
+<blockquote>
+  <p>A Digital Signature Label is a <i>standalone</i>, <i>cryptographically-protected</i>
+  statement that '<i>keyholder</i> believes <i>assertion</i> about <i>information
+  resource(s)</i>'. </p>
+</blockquote>
+
+<p>Expanding some of the key terms defines the scope of our effort: 
+
+<dl>
+  <dt><i>Standalone</i> </dt>
+  <dd>Unlike traditional security approaches which wrap signed content, SigLabels will be
+    complete statements separate from the resource itself. This will allow us to leverage the
+    PICS label-distribution methodology: embedded within content, alongside it (in online
+    protocols), and from external sources. </dd>
+  <dt><i>Cryptographically-protected</i> </dt>
+  <dd>SigLabels will include digital signatures to prove the authenticity and integrity of the
+    keyholder's statements. SigBlocks will support many different combinations of
+    cryptographic processes without prejudice. </dd>
+  <dt><i>Keyholder</i> </dt>
+  <dd>Mathematically, a digital signature only expresses that at some point, some process had
+    access to both a secret and the unmodified message text. SigLabels will separate out
+    mechanisms to deduce principals (keyholders) from those keys -- whether in a certification
+    system where principals <i>are</i> keys (like SDSI or PGP) through to identity-based
+    systems (X.509). The central insight is to disintermediate the binding between the
+    cryptographic calculations and the certification infrastructure. </dd>
+  <dt><i>Assertion</i> </dt>
+  <dd>An assertion defines the meaning of the act of signature, in this case by describing the
+    content of the information resource. A SigLabel includes assertions according to
+    machine-readable schema so they are <i>automatable</i>: they can assist users in making
+    trust decisions. One kind of machine-readability is already provided in PICS-1.1:
+    numeric-vector rating. Another style of machine-readable encoding is text assertions from
+    a fixed grammar. These two examples are separate from non-automatable,
+    non-machine-readable free-form comments or extensions, which can also fit into current
+    PICS content ratings. </dd>
+  <dt><i>Information Resource</i> </dt>
+  <dd>In web usage, any information resource can be indirected through a Universal Resource
+    Identifier (URI) -- including aggregate objects. Many applications of SigLabels will in
+    fact be assertions about such sets of resources. A <i>manifest</i> groups several <i>referents</i>
+    together, including assertions about each of them. Since URI technology can also
+    incorporate other naming schemes, standalone SigLabels can be applied to any named data. </dd>
+</dl>
+
+<p>In this document, we illustrate several of the concepts referred to above with the
+following icons: </p>
+<div align="center"><center>
+
+<table border="0" cellpadding="5" cellspacing="5" width="150">
+  <tr>
+    <td align="center"><img src="key_info.gif" alt="Key Information" width="150" height="130">
+    <br>
+    Key Information </td>
+    <td align="center"><img src="info_resource.gif" alt="Information Resource" width="150"
+    height="158"> <br>
+    Information Resource </td>
+  </tr>
+  <tr>
+    <td align="center"><img src="id_cert.gif" alt="Identity Certificate" width="150"
+    height="156"> <br>
+    Identity Certificate </td>
+    <td align="center"><img src="res_info.gif" alt="Resource Reference Information"
+    width="150" height="137"> <br>
+    Resource Reference Information </td>
+  </tr>
+  <tr>
+    <td align="center"><img src="ciphomatic.gif" alt="Ciphersuite" width="150" height="203"> <br>
+    Ciphersuite </td>
+    <td align="center"><img src="assertion.gif" alt="Assertion" width="150" height="134"> <br>
+    Assertion </td>
+  </tr>
+  <tr>
+    <td align="center"><img src="d_sig.gif" alt="Digital Signature" width="150" height="137"> <br>
+    Digital Signature </td>
+    <td align="center"><img src="sig_lab.gif" alt="Signature Label" width="150" height="102"> <br>
+    Signature Label </td>
+  </tr>
+  <tr>
+    <td align="center"><img src="sig_block.gif" alt="Signature Block" width="150" height="78">
+    <br>
+    Signature Block </td>
+    <td align="center"><img src="manifest.gif" alt="Manifest" width="100" height="179"> <br>
+    Manifest </td>
+  </tr>
+</table>
+</center></div>
+
+<h2>3. Signatures </h2>
+
+<p>This section describes the design, operation, format, and transmission of the DSig
+signature block. Our SigBlock is a general-purpose, simply encoded,
+cryptographically-neutral standalone signature -- and it does not rely on any particular
+certification/identification scheme, either. It does not have any inherent semantics: the
+SigBlock only establishes that the some process had access to the data and a secret (we
+will argue later that its semantics are strengthened when it is embedded in a particular
+application). </p>
+
+<h3>3.1 SigBlock Design </h3>
+
+<p>The SigBlock was identified as a separate design task very early on in the project.
+Signature systems such as PKCS-7', PGP, etc. traditionally build upon a core data
+structure which represents the actual cryptography, and DSig is no exception. On the other
+hand, every signature system goes on to add idiosyncratic information to this structure:
+crytographic protection (padding, protection of algorithm identifiers),
+certification-authority dependence (naming, key serial #s), content-dependent modification
+(how is whitespace hashed in?), and mini-assertions (time of signature, whether signed in
+hardware/software). The result is then encoded in a particular format (ASN.1, ASCII armor)
+and often used to wrap the whole signed data stream. The design goals for the DSig
+SigBlock differentiate it from such approaches: 
+
+<dl>
+  <dt>General Purpose </dt>
+  <dd>SigBlocks default to signing a fixed data stream. This means any document or label can
+    be signed; conversely, a SigBlock can be used anywhere messages need to be signed (email,
+    applets, etc). No SigBlock-dependent data modifes the document-signing process. This means
+    that the <i>only</i> data being signed is the document -- no SigBlock fields go into the
+    computation by default. The document data is also separate from the SigBlock -- we don't
+    wrap protected data. </dd>
+  <dt>Simple Encoding </dt>
+  <dd>SigBlocks are encoded as ASCII text type-value S-expressions. This allows designers of
+    new ciphersuites to use clean self-describing data structure but does not preclude reuse
+    of proprietary binary data with an appropriate type identifier. Using S-expressions
+    sidesteps the complexity potentially affecting low-level type-length-value encoding
+    problems. This makes it possible to use much simpler tools than traditionally associated
+    with ASN.1, for example. </dd>
+  <dt>Cryptographically-neutral </dt>
+  <dd>SigBlocks must be able to incorporate new cryptosystems without prejudice. This includes
+    'black-box' tools that do not reveal internal steps like hashing. SigBlocks reuse the
+    well-known concept of 'ciphersuites' to refer to validated combinations of ciphers or
+    hardware tokens. </dd>
+  <dt>Self-contained </dt>
+  <dd>The SigBlock can contain all the data it needs to be verified. This implies it needs to
+    be able to carry associated certificates as needed. It also follows that international
+    deployment considerations require multiple, parallel signatures so that a standalone
+    signed assertion can be evaluated against several ciphersuites -- the end-user just
+    chooses a locally-acceptable variant. </dd>
+  <dt>Certification-neutral </dt>
+  <dd>Carrying certificates doesn't imply normative dependence, though. There is nothing
+    inherent in the cryptography of digital signature that requires certification chains, so
+    SigBlocks, too, should be able to operate with opaque certificates. After all,
+    certificates and other credentials are only there to establish trust in a key -- which is
+    a trust management problem, not a digital signature problem. Finally, since the first goal
+    in the list implies that credentials are not &quot;hashed into&quot; any signatures,
+    intermediaries can add and subtract credentials from the SigBlock as needed. </dd>
+</dl>
+
+<h3>3.2 SigBlock Operation </h3>
+
+<p>To understand the SigBlock design, consider this picture of the signing process: </p>
+
+<p align="center"><img src="3_2a.gif"
+alt="Document and key go through a ciphersuite to produce a digital signature" width="200"
+height="434"> </p>
+
+<p>[Diagram of document being signed by a ciphersuite and a key to produce a bright, shiny
+digital signature.] </p>
+
+<p align="center"><img src="3_2b.gif"
+alt="Picture of a SigBlock containing attrib-info and sig-crypto" width="300" height="157">
+</p>
+
+<p>[Diagram of the SigBlock itself with its pile of keyholder information, certificates
+and digital signature cryptography bits.] </p>
+
+<p>There are three central pieces of data in the diagrams above: 
+
+<dl compact>
+  <dt>Document </dt>
+  <dd>The data to be signed must be fixed to be signable. Typically, <i>a document must
+    resolve to a unique hash through a computable function.</i> (Though the signature
+    algorithm need not expose an explicit hash: A hardware token, for example, might not ever
+    transmit the hash, just the signature. RSAREF software has the same effect through
+    licensing restrictions.) For the purpose of discussing SigBlock, the Document can be any
+    data, though DSig overall is only concerned with signed labels and manifests. </dd>
+  <dt>Certificate </dt>
+  <dd>The credential(s) associated with a signing key are used by a trust management system to
+    establish the authenticity and validity of the signature. As far as the SigBlock is
+    concerned, <i>a key must resolve to a keyholder though a certificate.</i> The SigBlock
+    itself does <i>not</i> rely on this mapping, so it only acts as a carrier for
+    certificates, not as a user. The <tt>attribution-info</tt> section of the SigBlock can a
+    set of certificates; the <tt>signature-crypto</tt> section may include some <tt>keyholder-info</tt>
+    excepted from a certificate to establish the connection from signature block back up to
+    the keyholder. </dd>
+  <dt>Signature </dt>
+  <dd>The digital signature cryptography itself binds (the hash of) the document and the
+    signer's private key together. Thus, <i>a SigBlock resolves to a document through a keyed
+    function.</i> For the user to find the right key, the SigBlock also needs some way to
+    resolve which public key was used for the signature. Such <tt>keyholder-info</tt> is used
+    to1) find the actual signature verification key and 2) to find the keyholder and role so
+    that the trust policy can evaluate the validity of the signature. </dd>
+</dl>
+
+<p>With these concepts in mind, here's the story: </p>
+
+<p>A <i>user</i> controls her own <i>signing key</i> and <i>certificate</i>. Her software
+and hardware tokens implements a few <i>ciphersuites</i>. With a <i>document</i> and
+choice of <i>ciphersuite</i> in hand, the signature process runs through to completion and
+produce a bright, shiny chunk of <tt>signature-crypto</tt>. Along the way, the <i>signing
+key</i>, <i>date</i>, and <i>hash function name</i> may have all been inputs to the
+signing process and show up inside the <tt>signature-crypto</tt>. To make a complete,
+formatted SigBlock, though, a few more pieces of information have to be pieced together as
+discussed in Section 3.3. </p>
+
+<p>There are a few more operations available to our user. She can proceed to attach
+additional parallel signatures of the same document. She may do this herself using several
+different algorithms so her recipients in other jurisdictions or in the future can verify
+her signatures against whichever ciphersuites they (still) trust. Other like-minded
+colleagues can also attach their signatures to the same statement to support policies that
+require K-of-N signatories to agree. She can't cascade another signature to her own,
+though. The DSIG design team has decided to support SigBlocks with parallel signatures,
+but not cascaded statements about a signature. Successive endorsements are still possible,
+though, by giving a SigLabel a name a producing another SigLabel about the first (See
+Section 4.4). </p>
+
+<h3>3.3 SigBlock Format </h3>
+
+<p>The SigBlock Format is a concrete representation of the various data elements required
+for a standalone signature. Broadly speaking, there are two levels at which we discuss the
+SigBlock format: the generic arrangement of attribution-information and signature data,
+and the specific level of encoding choices for particular ciphersuites. </p>
+
+<p>[@@ diagram of SigBlock data structure with examples of <tt>http://w3.org/dsig/rsa/md5</tt>
+and <tt>http://rsalabs.com/PKCS-7/</tt> --a structured set of bits vs. an opaque ASN.1
+blob] </p>
+
+<p>At the generic level, a SigBlock needs to flesh out the <i>signature-crypto</i> with
+information about the signer. The first step is to pair the signature with <tt>attribution-info</tt>,
+a passive container for certificates and other credentials. This allows the trust
+management system to evaluate whether a certain keyholder is trusted and whether the key
+is valid. The second step is to make a link from the signature to the keyholder, by adding
+some <tt>keyholder-info</tt> to the signature itself. </p>
+
+<p>There are several kinds of <tt>keyholder-info</tt> envisioned by DSig: the key itself,
+a digested fingerprint of the key, a Distinguished Name, a certifying authority and serial
+number, a role, etc. Each type serves to establish a path from the key to a credential
+(keyholder). Remember, the whole <tt>attribution-info</tt> section is optional material;
+the <tt>keyholder-info</tt> is the only normative link from a signature to a certification
+system. It's a critical disintermediating step, because it allows the user to separately
+choose a CA infrastructure without changing the signature block format. </p>
+
+<p>That's it for the generic level. By treating the cryptography as opaque, the only
+additional information required is keyholder identification. Within the cryptographic
+details, though, are a great number of critical, specific formatting decisions. </p>
+
+<p>The <tt>ciphersuite</tt> is what defines the information found below it. For an
+existing format, say PKCS-7' (for RSA), all that's possible is to say &quot;coming up, one
+blob of PKCS-7' data&quot;. DSig's preferred modes, though, encourage more trasnparency.
+The DSig ciphersuite for RSA, for example, is inspired by SDSI, with separate entries for
+the exponent, ciphertext, hash algorithm, signature time, etc burst out into an
+S-expression. </p>
+
+<p>Note well the location of the signature-timestamp: per the first goal listed in Section
+3.1, the only cryptographically protected data is found within the customizable <tt>signature-crypto</tt>.
+If an implementation of RSA needs to sign its hash algorithm id, it can do so on its own
+-- rather than predicating that all DSig-usable ciphersuites must. For example, the US
+Government's Digital Signature Algorithm need not, since it is only defined in conjunction
+with SHA. </p>
+
+<p>Of course, all this flexibility empowers any organization to issue a new ciphersuite --
+how can users trust that they are cryptographically safe combinations? Indeed, how will
+the DSig project validate its own recommendations? In the end, users and organizations
+will have to choose what makes sense for themselves. DSig will produce a small set of the
+most popular ciphersuites and work closely with leading cryptographers and organizations
+to vet its work. In particular, the Signature Label Implementation Team will include a
+user-driven review team that will cooperate with RSA Labs (holder of the PKCS
+specifications), the IETF, and IEEE 1363 in establishing its core set of DSig
+ciphersuites. </p>
+
+<h3>3.4 SigBlock Distribution </h3>
+
+<p>It is worth reiterating that the SigBlock is only a stepping-stone in our work. It is
+not deployable on its own for two reasons: 1) technologically, because it does not have
+any pointer or connection to the data being signed -- not even a document hash (since some
+signature ciphersuites do not expose an intermediate hash value) and 2) philosophically,
+because it does not include any assertions about the data being signed. Deploying 'naked'
+SigBlocks without associated assertions drags us back to circular question &quot;yes, but
+what does this signature <i>mean</i>?&quot;. In short, the DSig project only supports
+signed assertions, which translates into SigBlocks embedded in PICS labels or in a
+manifest. SigBlocks may later be embedded in other formats, which is why we have made the
+effort to separate out its definition -- but even then, not without clear, automatable
+semantics in the new embedding. </p>
+
+<p>The first implementation target is an embedding of SigBlocks into PICS 1.x labels, as
+discussed in Section 4.4. In this case, signing PICS ratings imbues SigBlocks with
+stronger semantics particular to this context: 'keyholder believes ratings are correct'. </p>
+
+<h2>4. Assertions </h2>
+
+<p>While many signature projects have succeeded at proving the identity or provenance of
+an information resource, the DSig project breaks new ground because of its emphasis on <i>endorsement</i>,
+in the form of signed assertions which users can rely upon to make trust decisions
+automatable. The bedrock of this work is reducing generic &quot;assertions&quot; to
+concrete rating labels so we can have clear, machine-readable semantics to sign. In this
+section, we discuss the design of a assertion format, inspired largely by PICS-1.x. </p>
+
+<p>Though there are several reasons motivating out adoption of PICS -- its distribution
+mechanisms, established user base, rating organizations -- but this section only discusses
+the rating part of a label; ensuring the integrity of the binding to the eventual
+information resource is a critical function presented in Section 5. </p>
+
+<h3>4.1 Assertion Design </h3>
+
+<p>DSig needs an assertion system designed to convey a clear meaning applied to almost any
+kind of content. This drives two sets of design criteria, one about the semantics of
+'assertable' statements and another about what can be labeled. 
+
+<dl>
+  <dt>Clear Semantics </dt>
+  <dd>The ultimate test of an assertion is explaining it to the end user. DSig assertions must
+    be explained clearly to users. One kind of clear explanation is a <i>value judgement</i>,
+    a policy statement like &quot;This movie is not for unaccompanied minors&quot;. It may be
+    subject to interpretation, but it is clear. A more flexible platform is a <i>content
+    description</i>: a statement that characterizes the content at hand with respect to an
+    objective scale: &quot;This movie contains adult language and graphic violence&quot; --
+    giving the end user facts to make a local judgement. <br>
+    <br>
+    Ratings along well-known axes are a clearly explicable concepts. PICS explicitly adopts
+    this model for its ratings, and initial deployment reinforces the idea that parents can
+    set policies in this idiom. The ratings need not be '<i>x</i> out of <i>y</i>' continuous
+    values, either: the PICS spec describes how to encode multivalue sets and other variants </dd>
+  <dt>Automatable Semantics </dt>
+  <dd>Trust management systems can make life easier for users and administrators by acting
+    upon clearly stated assertions. Automatability requires assertions which are clear and
+    mechanically interpretable. In another context, automatability requires access to the
+    rating <i>schema</i>: the system behind the labels. PICS goes above and beyond this
+    requirement by not only requiring fixed rating systems, but also requiring
+    machine-readable schema descriptions. <br>
+    <br>
+    Rating systems will be developed by many organizations for many purposes (Democrats for
+    political press releases, ISVs for trustworthiness, and so on). The key to broad
+    acceptance is clearly stated, objective scales, and community support. Clarity is also a
+    requirement for signable assertions: even more than for PICS rating, digitally signed,
+    legally enforceable signed assertions need to be very defensible. </dd>
+  <dt>Extensible Semantics </dt>
+  <dd>At the same time, there are many descriptions that won't fit into any fixed set of axes,
+    numeric or otherwise. DSig assertions must support extensible, even arbitrary semantics.
+    PICS' optional and mandatory extensions are a credible escape mechanism for this purpose
+    -- allowing both signed and unsigned extensions. </dd>
+</dl>
+
+<p>DSig needs to apply assertions with those qualities to several different kinds of
+documents: 
+
+<dl>
+  <dt>Static Documents </dt>
+  <dd>Labeling static documents is trivial using hash functions to prove the integrity of the
+    link. A document fingerprint in the label can prove that the label and labelled document
+    are in sync. To support DSig's cryptosystem neutrality, labels must be able to include
+    several hashes according to different algorithms. Other fields, like a last-modified date
+    and properties of a document like color, type, size, etc. can be used for the same purpose
+    (see Section 5) </dd>
+  <dt>Dynamic Documents </dt>
+  <dd>Many information resources are inherently dynamic: the current temperature in Oslo, chat
+    rooms, live video cameras. This does not preclude making assertions about them, though. A
+    service provider may ensure that a chat room is chaperoned and sign an accompanying
+    &quot;no graphic violence&quot; assertion. In this case, the link from the label to the
+    resource is the name (URI) itself, perhaps along with some document properties as above. </dd>
+  <dt>Novel Documents </dt>
+  <dd>New kinds of documents and naming systems are always cropping up. What about an
+    assertion regarding slides 3-7 of a presentation? How about assertions about geographic
+    areas? Here, we appeal to the universality of URIs and fragment identifiers which allow
+    any motivated principal to 1) define new namespaces and 2) new identifiers for subparts of
+    a document. As a reminder, URIs, unlike URLs, don't have to include hostnames and are
+    useful for on- and off-line document identification. </dd>
+</dl>
+
+<p>Finally, there is a new consideration about the <i>heritability</i> of signed
+assertions. While it is technically correct to insist that ratings only apply to the
+particular information resource specified, typical Web client usage may trigger a whole
+series of actions when visiting a single 'location': loading inline images, embedded
+applets, etc. So at one level, assertions need to precisely delineate what they apply to.
+Secondly, there is a mathematical question of how far to extend a network of linked
+objects. A SigBlock protects a label directly; the label points indirectly to a manifest;
+the manifest points indirectly to the target information resource; and so on. Even if each
+step of the way is verified by a document hash, how large can the tree grow with
+confidence that all of the links allow the top-level assertion to be inherited? DSig
+design guidelines are clear on this point as well. The conservative rule is that
+assertions only apply one level removed by default. </p>
+
+<p>There are a number of additional considerations about working with collections of
+different resources, which are discussed at length in Section 5. </p>
+
+<h3>4.2 Assertion Operation </h3>
+
+<p align="center"><img src="4_2.gif" alt="A SigLabel" width="400" height="174"> </p>
+
+<p>[Diagram: An signature label which combines an assertion, information about the
+referenced resource, and a digital signature block. If we zoomed in on the SigLabel, a
+PICS 1.x label, it would contain a pointer-to-schema (URL), pointer-to-document (URI),
+machine-readable rating, extended non-machine-readable rating comments, info-about-rating
+(on, by, generic flag), info-about-document (resinfo), and embedded SigBlock.] </p>
+
+<p>A rating assertion is a passive data structure which can be used to answer a series of
+questions, whether in the context of a simple content-filtering UI or a full-blown trust
+management system: 
+
+<dl>
+  <dt>What language is this rating written in? </dt>
+  <dd>To understand the rating, you need to understand its schema, the rating system. The name
+    of the rating systems is a URL -- the location of the machine-readable rating system
+    description file(s). A PICS rating system description, for example, identifies the
+    sponsoring organization, the axes, icons and descriptions of points along each scale, the
+    kind of scale it is, and so on. This file can be used to construct a user interface on the
+    fly that presents the whole system to an adminstrator to set limits on acceptable ratings,
+    for example. Several versions in different languages may be available at the same URL. </dd>
+  <dt>What's the rating? </dt>
+  <dd>The actual assertion is a rating vector according to some schema plus some optional
+    extension information. Its meaning can be imputed back from the rating system description
+    (schema) by presenting the comments, icons, and description of each point on each scale.
+    The label can include additional metainformation about the rating itself: who made the
+    rating and when; whether the rating applies only to the named resources or generically to
+    any resources with a matching name. </dd>
+  <dt>What document does this rating apply to? </dt>
+  <dd>Within the label structure, we can extract fields for the name (URI) and optional fields
+    like the hash, type, etc. Each piece of information about the resource can increase a
+    user's confidence in the connection: name equivalence, the hash value, file type and
+    length, and so on. </dd>
+</dl>
+
+<p>Of course, an assertion label alone cannot prove that a recipient should <i>believe</i>
+that assertion. A Trust Management systems has to investigate several aspects of a signed
+label before making that decision. For example, the TM would have to establish the
+integrity of the connection of the label to the resource it's labeling. Particular pieces
+of resource information can be attacked, but taken together they can prove the integrity
+of the association between assertion and the resource. For example, providing the name
+alone is vulnerable to attacks on the Domain Name System; a cryptographic hash could be
+reverse-engineered or 'birthday-attacked'; and a file length can be tampered with, but a
+TM system can check each of these. </p>
+
+<p>All of this additional information, or <i>resinfo</i>, has its roots in PICS-1.1 usage,
+but expands the range of possible additional data and provides for its own extension
+mechanism. More details can be found in the specification for signing PICS 1.x labels by
+Brian LaMacchia. Paul Resnick, one of the original designers of PICS, commented that: </p>
+
+<blockquote>
+  <p>I admit that the PICS-1.1 label format does not syntactically separate the components
+  that describe the information resource (e.g., the URL, hash, and ratings) from those
+  components that describe the label (e.g., expiration date, signature, by). The PICS
+  designers' understanding of this separation idea evolved as we wrote the specs: in our
+  text description of the fields in the spec, we divide them into those that describe the
+  document and those that describe the label, but we didn't get so far as to make a
+  syntactic distinction, in the labels themselves. It remains to be seen whether we can
+  remedy this in PICS-1.2 or 2.0, but it is certainly an important design goal. </p>
+</blockquote>
+
+<h3>4.3 Assertion Format </h3>
+
+<p>We are proposing using the PICS rating label format with some expected modifications.
+Some are minor, like allowing full S-expressions as the value of an extension field
+(instead of only allowing strings). Others are more substantial, but already in discussion
+for PICS-1.2, such as string-valued ratings. As DSig implementation continues, we expect a
+dialogue with the PICS Working Group which will influence the evolution of both projects. </p>
+
+<p>With respect to signing PICS rating labels, there is a concern about which PICS
+extension fields are included under the protection of the SigBlock. For now, we propose
+that the entire PICS label and all extension data must be signed together without
+exceptions. </p>
+
+<p>Finally, it makes sense to provide default rating systems for basic signature
+applications, along the lines of 'This is True' and 'This is Mine'. Just as the SigBlock
+is used to prove the identity and integrity of an assertion, these rating systems can be
+used to make signed testaments of the provenance and veracity of information resources
+themselves. </p>
+
+<h3>4.4 Assertion Distribution </h3>
+
+<p>One of the primary reasons DSig builds upon PICS for its label syntax is to reuse
+PICS's three label distribution mechanisms. Since SigLabels are just PICS labels with
+embedded SigBlocks, they can be sent: 
+
+<ol>
+  <li><b>Embedded</b> in the information resource itself (e.g. using the HTML META tag) </li>
+  <li><b>Attached</b> to the information resource (e.g. using HTTP entity headers) </li>
+  <li><b>Detached</b>, possibly from third parties (e.g. using a 'label bureau') </li>
+</ol>
+
+<p>The first mode could be popular for many other trust management applications, such as
+embedding SigLabels into applets, fonts, and other protected resources. Especially for the
+latter two modes, though, there must be a reliable link to the actual information
+resource. As discussed in Section 4.2, labels must accommodate a range of additional
+resource information to vouch for the connection. Document hashes are a particularly
+effective way of proving the link even when the label and content are separated, but only
+for static documents. For dynamic data, such as a chat room or live video camera feed,
+other properties might be used. </p>
+
+<p>Note that this assertion distribution strategy also fixes a SigBlock distribution
+strategy: embedded in rating labels. SigBlocks are only found embedded in PICS labels in
+this scenario. This makes the association of a SigBlock to its signed data extremely
+clear. </p>
+
+<p>Finally, there is another implicit resource that must be distributed reliably with the
+assertions: the rating schema. Since a rating systems can legitimately exist in several
+languages and compatible versions, it is not a simple task to protect the integrity of the
+reference to the rating system. DSig recommends that applications which are sensitive to
+this need should use manifests and include the exact rating system(s). In this case, a
+rating system is just one more information resource the overall package depends on, like a
+font or a configuration file. </p>
+
+<h2>5. Manifests </h2>
+
+<p>Many applications which call for the added security and integrity of digital signatures
+actually address sets of interrelated content rather than a single information resource.
+Several of the organizations participating in the DSig design phase arrived with proposals
+including proprietary manifest formats. This section presents common design considerations
+for using standalone manifest files and proposes a new intermediate, the DSig Common
+Manifest Format (DCMF). </p>
+
+<h3>5.1 Manifest Design </h3>
+
+<p>The critical difference between a set of singular signed assertions and as collected
+into a manifest and signed jointly is the interrelationships between the elements.
+Manifests establish relationships by the mere act of selection and grouping; by rating
+components on the same scales; and through additional resource information. Each entry in
+the manifest also needs to provide enough information about the target resource to
+unambiguously identify it. Finally, there can be additional goals for particular manifest
+formats, such as optimized data layout, real-time manifest generation, and user interface
+support. </p>
+
+<p>The relationships between components can dramatically shade their meaning. A picture
+and a caption, for example, are strongly connected, and a different choice among
+alternative captions can shade the meaning of the picture dramatically. First, the act of
+preparing a manifest alone allows us to make statements about the aggregate as a whole.
+Different manifests can associate a picture with different captions. In a legal context,
+it can be essential to demonstrate that all parties are referring to the complete
+agreement (e.g. a Will and its codicils). Second, the assertions about each entry in the
+manifest establish another kind of relationship, specific to the rating system at hand. A
+user could select components by label ('please show all the Impressionist pictures').
+Third, additional resource information can clarify relationships like
+'32-bit-color-version-of' or 'full-screen-sized'. </p>
+
+<p>Beyond clarifying the semantics of a package, a manifest file must unambiguously
+identify its components to legitimately stand in for signing each individual part.
+Operationally, manifests allow us to seal N resources at once, which is more efficient
+than having to execute N potentially expensive and time-consuming signature operations. To
+mathematically verify this aggregation, each referent must include verifiable information
+about the target resource, like its hash fingerprints. In fact, the entire resinfo
+mechanism presented in Section 4.2 actually emerged from manifest discussions. The
+PICS-1.1 resinfo extension was created to emphasize the isomorphism between an individual
+label and an individual manifest referent. </p>
+
+<p>Finally, there can be more specific design goals for particular manifest formats. Some
+applications may integrate the 'user interface' of a package with the manifest itself. An
+HTML WebMap file can represent manifest referents <i>and</i> a visual hierarchy,
+multimedia descriptions, and more. Another example is signing streaming or dynamic data.
+For a real-time video stream, it may be essential to provide a new kind of hash tree for
+each video segment rather than a single hash value at the end. A dynamically generated web
+page may have several components and use a manifest that sends its table-of-contents
+first, then its hash values. Such data layout considerations are discussed in Section 5.3
+and in the DCMF specification. </p>
+
+<h3>5.2 Manifest Operation </h3>
+
+<p align="center"><img src="5_2.gif" alt="A Manifest pointing to several items"
+width="400" height="309"> </p>
+
+<p>[Diagram: a SigLabel pointing at an aggregate-object-manifest instead of a single
+document (and the target resources, in turn, which can also be manifests).] </p>
+
+<p>As far as the signature label is concerned, a manifest is just another type of
+information resource. In turn, the manifest is just the collection of resource references;
+the cryptographic protection is inherited from the SigLabel and doesn't appear directly
+within the manifest. The induction chain from the SigBlock to the target resource is
+mediated by two assertions, one from the SigLabel that applies to the entire manifest and
+an optional assertion from the referent in the manifest. </p>
+
+<p>The manifest itself provides several pieces of data for each referent: name, hash
+information, additional resource information, and a rating assertion. This is the same
+information provided for a reference in a singular PICS SigLabel, too. The hash
+information, in particular, is the crux of the chaining argument that allows the top-level
+SigBlock to 'sign' the target data. In fact, the chain can extend further if the target is
+another aggregate subcomponent represented by a manifest. </p>
+
+<p>There is a new operational concern about signing several assertions jointly. To protect
+the cryptographic hygiene of a signing key, it may be necessary to restrict which kinds of
+assertions it can speak for. For example, it could be risky to use the same key to protect
+high-value assertions about indemification and low-value assertions about the color
+scheme. </p>
+
+<h3>5.3 Manifest Format </h3>
+
+<p>The data format for the manifest should be compact and allow efficient access to data
+about each referent. In DCMF, 'fixed' information like the selection of hash algorithms
+used and the rating schemas are declared once, in a preamble. Then, for each referent
+several columns of data are available: the name (URI), ratings, several hash values (if
+applicable), and additional resinfo. </p>
+
+<p>This abstract model of a manifest describes many formats: Java JARchives, IBM's
+Cryptolope, a PICS labellist, an HTML Web collection (Sitemap). Though a file in any of
+these formats could be signed with a SigLabel, and a Trust Management engine could parse
+all of them to establish links back to the target resources, DCMF's alleviates
+compatiblity problems. DCMF's data layout is designed to be compact, streamable, easily
+decoded, extensible, and scalable -- an evolutionary successor to many of these
+contenders. </p>
+
+<h3>5.4 Manifest Distribution </h3>
+
+<p>Since manifests are useful indexes quite separately from SigLabels, several
+distribution strategies should be supported. Standalone manifest files can be made
+available with the data, from third parties, or embedded directly into a package (e.g. a
+ZIP or TAR archive). The complexity is compounded by the additional options for
+distributing SigLabels. The SigLabel providing the integrity of a manifest might be
+embedded within it, sent with it over HTTP, or come from yet another third party. </p>
+
+<p>As long as a manifest file is static (i.e. can be hashed itself) and can provide
+verifiable information about which resources it refers to, any of these distribution
+strategies will work. The mathematics can support an induction chain from any SigLabel
+through any manifest to any target resource -- even through a cascaded chain of nested
+manifests. </p>
+
+<h2>6. Putting It All Together </h2>
+
+<p>Though we have separated the tasks into understanding how each of these three pieces
+work on their own, they are intended to work together. This section explains how the DSig
+project implementation will assemble these components to solve users' trust problems. </p>
+
+<p>In general, the user starts with a single object or aggregate object to make an
+assertion about. The assertion is prepared as a PICS 1.x rating about the object or
+aggregate, then the label is signed with a SigBlock. Indeed, several signatures can be
+included in parallel, from multiple endorsers using multiple ciphersuites. In the case of
+an aggregate object, the components are listed out in a manifest, optionally including
+assertions describing the role of each. </p>
+
+<p>There are many combinations of distributions strategies to reach the end user. A simple
+on-line scenario is a signed press release with a SigLabel in its HTTP entity headers. For
+an aggregate object distributed over the Web, a user could fetch the manifest over HTTP
+and receive the author's SigLabel with it before proceeding to fetch any of its
+components. A CD-ROM might include a manifest with an embedded SigLabel. Before running an
+applet found on the Internet, a user's trust engine could try to fetch a SigLabel from a
+third-party label bureau. Scenarios can be generated for every combination of information
+resource, speaker, format, and distribution technique. </p>
+
+<h2>7. Conclusions </h2>
+
+<p>Digital signature labels are assembled from three interlocking components. Signature
+blocks, assertions, and manifests have each been described in terms of their design,
+operation, format, and distribution. The initial deployment target is signed PICS rating
+labels applied to single information resources; manifests are a particular kind of
+information resource which can be used to point in turn at several more resources while
+maintaining cryptographic integrity of the signature label. </p>
+
+<p>This architecture document serves as the context for several subsidiary technical
+documents specifying the exact syntax and semantics of the SigBlock, SigBlock embedding in
+PICS 1.x, and DSig Common Manifest Format (DCMF). Comments on this document should be
+directed to the author or any of the specification editors. The SigLabel design team has
+its own (closed) mailing list for discussing these issues at <tt>w3c-dsig-label@w3.org</tt>;
+W3C member organizations can send comments there directly. Members are also encouraged to
+join the DSig implementation phase to continue developing these specifications in
+products, or through our user-organization review teams. </p>
+
+<h2>8. Acknowledgments </h2>
+
+<p>This document reflects a hard-won consensus among all the various players of the
+SigLabel team. Many of the ideas here came from different participants; my role is
+primarily to wrap it all together here in this architecture document. Kudos to all! 
+
+<ul>
+  <li>John Carbajal <tt>&lt;carbajal@ibeam.intel.com&gt;</tt> </li>
+  <li>Philip DesAutels <tt>&lt;philipd@w3.org&gt;</tt> </li>
+  <li>Rosario Gennaro <tt>&lt;rosario@watson.ibm.com&gt;</tt> </li>
+  <li>Jack Haverty <tt>&lt;jhaverty@oracle1.xo.com&gt;</tt> </li>
+  <li>Brian LaMacchia <tt>&lt;bal@research.att.com&gt;</tt> </li>
+  <li>Paul Lambert <tt>&lt;palamber@us.oracle.com&gt;</tt> </li>
+  <li>Peter Lipp <tt>&lt;plipp@iaik.tu-graz.ac.at&gt;</tt> </li>
+  <li>Jim Miller <tt>&lt;jmiller@w3.org&gt;</tt> </li>
+  <li>Hemma Prafullchandra <tt>&lt;hemma@eng.sun.com&gt;</tt> </li>
+  <li>Rob Price <tt>&lt;robp@microsoft.com&gt;</tt> </li>
+  <li>Paul Resnick <tt>&lt;presnick@research.att.com&gt;</tt> </li>
+  <li>Pankaj Rohatgi <tt>&lt;rohatgi@watson.ibm.com&gt;</tt> </li>
+</ul>
+<p>
+<A href="http://www.w3.org/Consortium/Legal/ipr-notice.html#Copyright">
+Copyright</A> &nbsp;&copy;&nbsp; 1997 <A href="http://www.w3.org">W3C</A>
+(<A href="http://www.lcs.mit.edu">MIT</A>,
+<A href="http://www.inria.fr/">INRIA</A>,
+<A href="http://www.keio.ac.jp/">Keio</A> ), All Rights Reserved. W3C
+<A href="http://www.w3.org/Consortium/Legal/ipr-notice.html#Legal Disclaimer">liability,</A>
+<A href="http://www.w3.org/Consortium/Legal/ipr-notice.html#W3C Trademarks">trademark</A>,
+<A href="http://www.w3.org/Consortium/Legal/copyright-documents.html">document
+use </A>and
+<A href="http://www.w3.org/Consortium/Legal/copyright-software.html">software
+licensing </A>rules apply.
+</body>
+</html>

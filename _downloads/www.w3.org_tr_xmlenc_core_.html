@@ -1,0 +1,3153 @@
+<!-- http://www.w3.org/TR/xmlenc-core/ -->
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>XML Encryption Syntax and Processing</title>
+  <style type="text/css">
+<!--
+/*<![CDATA[*/
+    em {font-weight: normal; font-style: italic;}
+    u,ins,.ins  { background: white; color: red;}
+    del,strike,.strike   { background: white; color: silver; text-decoration: line-through;}
+    code     {font-weight: normal; }
+    .def        { background: #FFFFFF; font-weight: bold}
+    .link-sec   { font-style: italic;}
+    .link-def   { background: #FFFFFF; color: teal;  font-style: italic;}
+    .comment    { background: #FFFFF5; color: black; padding: .7em; border:
+                  navy thin solid;}
+    .discuss    { color: blue; background: yellow; }
+    .xml-example,.xml-dtd { margin-left: -1em; padding: .5em; white-space:
+                            pre; border: none;}
+    .xml-dtd    { background: #efeff8; color: black;}
+/*]]>*/
+-->
+
+
+
+
+
+
+  </style>
+  <link rel="stylesheet" type="text/css"
+  href="http://www.w3.org/StyleSheets/TR/W3C-REC.css" />
+</head>
+
+<body xml:lang="en" lang="en">
+
+<div class="head">
+<p><a href="http://www.w3.org/"><img height="48" width="72" alt="W3C"
+src="http://www.w3.org/Icons/w3c_home" /></a></p>
+
+<h1 class="notoc">XML Encryption Syntax and Processing</h1>
+
+<h2 class="notoc">W3C Recommendation 10 December 2002</h2>
+<dl>
+  <dt>This version:</dt>
+    <dd><a
+      href="http://www.w3.org/TR/2002/REC-xmlenc-core-20021210/">http://www.w3.org/TR/2002/REC-xmlenc-core-20021210/</a></dd>
+  <dt>Latest version:</dt>
+    <dd><a
+      href="http://www.w3.org/TR/xmlenc-core/">http://www.w3.org/TR/xmlenc-core/</a></dd>
+  <dt>Previous version:</dt>
+    <dd><a
+      href="http://www.w3.org/TR/2002/PR-xmlenc-core-20021003/">http://www.w3.org/TR/2002/PR-xmlenc-core-20021003/</a></dd>
+  <dt><a
+  href="http://www.w3.org/Encryption/2001/Contributor.html#Editor">Editors</a></dt>
+    <dd>Donald Eastlake &lt;dee3@torque.pothole.com&gt;</dd>
+    <dd>Joseph Reagle &lt;reagle@w3.org&gt;</dd>
+  <dt><a
+  href="http://www.w3.org/Encryption/2001/Contributor.html#Author">Authors</a></dt>
+    <dd>Takeshi Imamura &lt;IMAMU@jp.ibm.com&gt;</dd>
+    <dd>Blair Dillaway &lt;blaird@microsoft.com&gt;</dd>
+    <dd>Ed Simon &lt;edsimon@xmlsec.com&gt;</dd>
+  <dt><a
+  href="http://www.w3.org/Encryption/2001/Contributor.html#Contributor">Contributors</a></dt>
+    <dd>See <a
+      href="http://www.w3.org/Encryption/2001/Participants.html">participants</a>.</dd>
+</dl>
+
+<p>Please see the <a
+href="http://www.w3.org/Encryption/2002/12-xmlenc-errata"><strong>errata</strong></a>
+for this document, which may include some normative corrections. See also <a
+href="http://www.w3.org/Encryption/2002/12-xmlenc-translations"><strong>translations</strong></a>.</p>
+
+<p class="copyright"><a
+href="http://www.w3.org/Consortium/Legal/ipr-notice-20000612#Copyright">Copyright</a>
+� 2002 <a href="http://www.w3.org/"><abbr
+title="World Wide Web Consortium">W3C</abbr></a><sup>�</sup> (<a
+href="http://www.lcs.mit.edu/"><abbr
+title="Massachusetts Institute of Technology">MIT</abbr></a>, <a
+href="http://www.inria.fr/"><abbr xml:lang="fr" lang="fr"
+title="Institut National de Recherche en Informatique et Automatique">INRIA</abbr></a>,
+<a href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C <a
+href="http://www.w3.org/Consortium/Legal/ipr-notice-20000612#Legal_Disclaimer">liability</a>,
+<a
+href="http://www.w3.org/Consortium/Legal/ipr-notice-20000612#W3C_Trademarks">trademark</a>,
+<a
+href="http://www.w3.org/Consortium/Legal/copyright-documents-19990405">document
+use</a> and <a
+href="http://www.w3.org/Consortium/Legal/copyright-software-19980720">software
+licensing</a> rules apply.</p>
+<hr title="Separator from Header" />
+</div>
+
+<h2 class="notoc"><a name="sec-Abstract" id="sec-Abstract">Abstract</a></h2>
+
+<p class="notoc">This document specifies a process for encrypting data and
+representing the result in XML. The data may be arbitrary data (including an
+XML document), an XML element, or XML element content. The result of
+encrypting data is an XML Encryption element which contains or references the
+cipher data.</p>
+
+<h2 class="notoc">Status of this document</h2>
+
+<div class="">
+<p>This document is the W3C XML Encryption <a
+href="http://www.w3.org/Consortium/Process-20010719/process.html#RecsW3C">Recommendation
+(REC)</a>. This document has been reviewed by W3C Members and other
+interested parties and has been endorsed by the Director as a W3C
+Recommendation. It is a stable document and may be used as reference material
+or cited as a normative reference from another document. W3C's role in making
+the Recommendation is to draw attention to the specification and to promote
+its widespread deployment. This enhances the functionality and
+interoperability of the Web.</p>
+
+<p>This specification was produced by the W3C <a
+href="http://www.w3.org/Encryption/2001/Overview.html">XML Encryption Working
+Group</a> (<a
+href="http://www.w3.org/Encryption/2001/Activity.html">Activity</a>) which
+believes the specification is sufficient for the creation of independent
+interoperable implementations as demonstrated in the <a
+href="http://www.w3.org/Encryption/2002/02-xenc-interop.html">Interoperability
+Report.</a></p>
+
+<p>Patent disclosures relevant to this specification may be found on the
+Working Group's <a
+href="http://www.w3.org/Encryption/2001/Disclosures.html">patent disclosure
+page</a> in conformance with W3C policy.</p>
+
+<p>Please report errors in this document to <a
+href="mailto:xml-encryption@w3.org">xml-encryption@w3.org</a> (<a
+href="http://lists.w3.org/Archives/Public/xml-encryption/">public
+archive</a>).</p>
+
+<p>The list of known errors in this specification is available at <a
+href="http://www.w3.org/Encryption/2002/12-xmlenc-errata">http://www.w3.org/Encryption/2002/12-xmlenc-errata</a>.</p>
+
+<p>The English version of this specification is the only normative version.
+Information about translations of this document (if any) is available <a
+href="http://www.w3.org/Encryption/2002/12-xmlenc-translations">http://www.w3.org/Encryption/2002/12-xmlenc-translations</a>.</p>
+
+<p>A list of current W3C Recommendations and other technical documents can be
+found at <a href="http://www.w3.org/TR/">http://www.w3.org/TR/</a>.</p>
+</div>
+
+<h2><a name="sec-ToC" id="sec-ToC">Table of Contents</a></h2>
+<ol>
+  <li><a href="#sec-Introduction">Introduction</a> 
+    <ol>
+      <li><a href="#sec-Editorial">Editorial and Conformance
+      Conventions</a></li>
+      <li><a href="#sec-Design">Design Philosophy</a></li>
+      <li><a href="#sec-Versions">Versions, Namespaces URIs, and
+        Identifiers</a></li>
+      <li><a href="#sec-Acknowledgements">Acknowledgements</a></li>
+    </ol>
+  </li>
+  <li><a href="#sec-Overview">Encryption Overview and Examples</a> 
+    <ol>
+      <li><a href="#sec-eg-Granularity">Encryption Granularity</a> 
+        <ol>
+          <li><a href="#sec-eg-Element">Encrypting an XML Element</a></li>
+          <li><a href="#sec-eg-Element-Content">Encrypting XML Element
+            Content (Elements)</a></li>
+          <li><a href="#sec-eg-Element-Content-Character">Encrypting XML
+            Element Content (Character Data)</a></li>
+          <li><a href="#sec-eg-Arbitrary-Data">Encrypting Arbitrary Data and
+            XML Documents</a></li>
+          <li><a href="#sec-eg-Super-Encryption">Super-Encryption: Encrypting
+            <code>EncryptedData</code></a></li>
+        </ol>
+      </li>
+      <li><a href="#sec-Usage"><code>EncryptedData</code> and
+        <code>EncryptedKey</code> Usage</a> 
+        <ol>
+          <li><a href="#sec-eg-Symmetric-Key"><code>EncryptedData</code> with
+            Symmetric Key&nbsp; (<code>KeyName</code>)</a></li>
+          <li><a href="#sec-eg-EncryptedKey"><code>EncryptedKey</code>
+            (<code>ReferenceList</code>,
+            <code>ds:RetrievalMethod</code>,<code>CarriedKeyName</code>)</a></li>
+        </ol>
+      </li>
+    </ol>
+  </li>
+  <li><a href="#sec-Encryption-Syntax">Encryption Syntax</a> 
+    <ol>
+      <li><a href="#sec-EncryptedType">The <code>EncryptedType</code>
+        Element</a></li>
+      <li><a href="#sec-EncryptionMethod">The <code>EncryptionMethod</code>
+        Element</a></li>
+      <li><a href="#sec-CipherData">The <code>CipherData</code> Element</a> 
+        <ol>
+          <li><a href="#sec-CipherReference">The <code>CipherReference</code>
+            Element</a></li>
+        </ol>
+      </li>
+      <li><a href="#sec-EncryptedData">The <code>EncryptedData</code>
+        Element</a></li>
+      <li><a href="#sec-Extensions-to-KeyInfo">Extensions to
+        <code>ds:KeyInfo</code> Element</a> 
+        <ol>
+          <li><a href="#sec-EncryptedKey">The <code>EncryptedKey</code>
+            Element</a></li>
+          <li><a href="#sec-ds-RetrievalMethod">The
+            <code>ds:RetrievalMethod</code> Element</a></li>
+        </ol>
+      </li>
+      <li><a href="#sec-ReferenceList">The <code>ReferenceList</code>
+        Element</a></li>
+      <li><a href="#sec-EncryptionProperties">The
+        <code>EncryptionProperties</code> Element</a></li>
+    </ol>
+  </li>
+  <li><a href="#sec-Processing">Processing Rules</a> 
+    <ol>
+      <li><a href="#sec-Processing-Encryption">Encryption</a></li>
+      <li><a href="#sec-Processing-Decryption">Decryption</a></li>
+      <li><a href="#sec-Processing-XML">Encrypting XML</a> 
+        <ol>
+          <li><a href="#sec-Decrypt-Imp">A Decrypt Implementation
+            (Non-normative)</a></li>
+          <li><a href="#sec-Decrypt-Replace-Imp">A Decrypt and Replace
+            Implementation (Non-normative)</a></li>
+          <li><a href="#sec-Serializing-XML">Serializing XML
+            (Non-normative)</a></li>
+          <li><a href="#sec-Text-Wrapping">Text Wrapping
+          (Non-normative)</a></li>
+        </ol>
+      </li>
+    </ol>
+  </li>
+  <li><a href="#sec-Algorithms">Algorithms</a> 
+    <ol>
+      <li><a href="#sec-AlgID">Algorithm Identifiers and Implementation
+        Requirements</a></li>
+      <li><a href="#sec-Alg-Block">Block Encryption Algorithms</a></li>
+      <li><a href="#sec-Alg-Stream">Stream Encryption Algorithms</a></li>
+      <li><a href="#sec-Alg-KeyTransport">Key Transport</a></li>
+      <li><a href="#sec-Alg-KeyAgreement">Key Agreement</a></li>
+      <li><a href="#sec-Alg-SymmetricKeyWrap">Symmetric Key Wrap</a></li>
+      <li><a href="#sec-Alg-MessageDigest">Message Digest</a></li>
+      <li><a href="#sec-Alg-MessageAuthentication">Message
+      Authentication</a></li>
+      <li><a href="#sec-Alg-Canonicalition">Canonicalization</a></li>
+    </ol>
+  </li>
+  <li><a href="#sec-Security">Security Considerations</a> 
+    <ol>
+      <li><a href="#sec-Sign-with-Encrypt">Relationship to XML Digital
+        Signatures</a></li>
+      <li><a href="#sec-InformationRevealed">Information Revealed</a></li>
+      <li><a href="#sec-Nonce">Nonce and IV (Initialization Value or
+        Vector)</a></li>
+      <li><a href="#sec-Denial">Denial of Service</a></li>
+      <li><a href="#sec-Unsafe-Content">Unsafe Content</a></li>
+    </ol>
+  </li>
+  <li><a href="#sec-Conformance">Conformance</a></li>
+  <li><a href="#sec-MediaType">XML Encryption Media Type</a> 
+    <ol>
+      <li><a href="#sec-MediaType-Introduction">Introduction</a></li>
+      <li><a href="#sec-MediaType-Registration">application/xenc+xml
+        Registration</a></li>
+    </ol>
+  </li>
+  <li><a href="#sec-Schema">Schema and Valid Examples</a></li>
+  <li><a href="#sec-References">References</a></li>
+</ol>
+<hr />
+
+<h2>1 <a id="sec-Introduction" name="sec-Introduction">Introduction</a></h2>
+
+<p>This document specifies a process for encrypting data and representing the
+result in XML. The data may be arbitrary data (including an XML document), an
+XML element, or XML element content. The result of encrypting data is an XML
+Encryption <code>EncryptedData</code> element which contains (via one of its
+children's content) or identifies (via a URI reference) the cipher data.</p>
+
+<p>When encrypting an XML element or element content the
+<code>EncryptedData</code> element replaces the element or content
+(respectively) in the encrypted version of the XML document.</p>
+
+<p>When encrypting arbitrary data (including entire XML documents), the
+<code>EncryptedData</code> element may become the root of a new XML document
+or become a child element in an application-chosen XML document.</p>
+
+<h3>1.1 <a id="sec-Editorial" name="sec-Editorial">Editorial</a> and
+Conformance Conventions</h3>
+
+<p>This specification uses XML schemas [<a
+href="#ref-XML-Schema">XML-schema</a>] to describe the content model.</p>
+
+<p>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+specification are to be interpreted as described in <a
+href="http://www.ietf.org/rfc/rfc2119.txt">RFC2119</a> [<a
+href="#ref-KEYWORDS">KEYWORDS</a>]:</p>
+
+<blockquote>
+  <p>"they MUST only be used where it is actually required for interoperation
+  or to limit behavior which has potential for causing harm (e.g., limiting
+  retransmissions)"</p>
+</blockquote>
+
+<p>Consequently, we use these capitalized keywords to unambiguously specify
+requirements over protocol and application features and behavior that affect
+the interoperability and security of implementations. These key words are not
+used (capitalized) to describe XML grammar; schema definitions unambiguously
+describe such requirements and we wish to reserve the prominence of these
+terms for the natural language descriptions of protocols and features. For
+instance, an XML attribute might be described as being "optional." Compliance
+with the XML-namespace specification [<a href="#ref-XML-NS">XML-NS</a>] is
+described as "REQUIRED."</p>
+
+<h3>1.2 <a id="sec-Design" name="sec-Design">Design</a> Philosophy</h3>
+
+<p>The design philosophy and requirements of this specification (including
+the limitations related to instance validity) are addressed in the <a
+href="http://www.w3.org/TR/xml-encryption-req">XML Encryption
+Requirements</a> [<a href="#ref-EncReq">EncReq</a>].</p>
+
+<h3>1.3 <a id="sec-Versions" name="sec-Versions">Versions</a>, Namespaces,
+URIs, and Identifiers</h3>
+
+<p>No provision is made for an explicit version number in this syntax. If a
+future version is needed, it will use a different namespace. The experimental
+XML namespace [<a href="#ref-XML-NS">XML-NS</a>] URI that MUST be used by
+implementations of this (dated) specification is:</p>
+<pre class="xml-example">   xmlns:xenc='http://www.w3.org/2001/04/xmlenc#'</pre>
+
+<p class="">This namespace is also used as the prefix for algorithm
+identifiers used by this specification. While applications MUST support XML
+and XML namespaces, the use of <a
+href="http://www.w3.org/TR/REC-xml#sec-internal-ent">internal entities</a>
+[<a href="#ref-XML">XML</a>, section 4.2.1], the "<code>xenc</code>" XML <a
+href="http://www.w3.org/TR/1999/REC-xml-names-19990114/#dt-prefix">namespace
+prefix</a> [<a href="#ref-XML-NS">XML-NS</a>, section 2] and
+defaulting/scoping conventions are OPTIONAL; we use these facilities to
+provide compact and readable examples. Additionally, the entity
+<code>&amp;xenc;</code> is defined so as to provide short-hand identifiers
+for URIs defined in this specification. For example
+"<code>&amp;xenc;Element"</code> corresponds to
+"http://www.w3.org/2001/04/xmlenc#Element".</p>
+
+<p>This specification makes use of the XML Signature [<a
+href="#ref-XML-DSIG">XML-DSIG</a>] namespace and schema definitions</p>
+<pre class="xml-example">   xmlns:ds='http://www.w3.org/2000/09/xmldsig#'</pre>
+
+<p>URIs [<a href="#ref-URI">URI</a>] MUST abide by the [<a
+href="#ref-XML-Schema">XML-Schema</a>] <code>anyURI</code> type definition
+and the [<a href="#ref-XML-DSIG">XML-DSIG</a>, <a
+href="http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/#sec-URI">4.3.3.1
+The URI Attribute</a>] specification (i.e., permitted characters, character
+escaping, scheme support, etc.).</p>
+
+<h3>1.4&nbsp; <a id="sec-Acknowledgements"
+name="sec-Acknowledgements">Acknowledgements</a></h3>
+
+<p>The contributions of the following Working Group members to this
+specification are gratefully acknowledged in accordance with the <a
+href="http://www.w3.org/Encryption/2001/Contributor.html">contributor
+policies</a> and the active <a
+href="http://www.w3.org/Encryption/2001/Participants.html">WG roster</a>.</p>
+<ul>
+  <li>Joseph Ashwood</li>
+  <li>Simon Blake-Wilson, Certicom</li>
+  <li>Frank D. Cavallito, BEA Systems</li>
+  <li>Eric Cohen, PricewaterhouseCoopers</li>
+  <li>Blair Dillaway, Microsoft (Author)</li>
+  <li>Blake Dournaee, RSA Security</li>
+  <li>Donald Eastlake, Motorola (Editor)</li>
+  <li>Barb Fox, Microsoft</li>
+  <li>Christian Geuer-Pollmann, University of Siegen</li>
+  <li>Tom Gindin, IBM</li>
+  <li>Jiandong Guo, Phaos</li>
+  <li>Phillip Hallam-Baker, Verisign</li>
+  <li>Amir Herzberg, NewGenPay</li>
+  <li>Merlin Hughes, Baltimore</li>
+  <li>Frederick Hirsch</li>
+  <li>Maryann Hondo, IBM</li>
+  <li>Takeshi Imamura, IBM (Author)</li>
+  <li>Mike Just, Entrust, Inc.</li>
+  <li>Brian LaMacchia, Microsoft</li>
+  <li>Hiroshi Maruyama, IBM</li>
+  <li>John Messing, Law-on-Line</li>
+  <li>Shivaram Mysore, Sun Microsystems</li>
+  <li>Thane Plambeck, Verisign</li>
+  <li>Joseph Reagle, W3C (Chair, Editor)</li>
+  <li>Aleksey Sanin</li>
+  <li>Jim Schaad, Soaring Hawk Consulting</li>
+  <li>Ed Simon, XMLsec (Author)</li>
+  <li>Daniel Toth, Ford</li>
+  <li>Yongge Wang, Certicom</li>
+  <li>Steve Wiley, myProof</li>
+</ul>
+
+<p>Additionally, we thank the following for their comments during and
+subsequent to Last Call:</p>
+<ul>
+  <li>Martin D�rst, W3C</li>
+  <li>Dan Lanz, Zolera</li>
+  <li>Susan Lesch, W3C</li>
+  <li>David Orchard, BEA Systems</li>
+  <li>Ronald Rivest, MIT</li>
+</ul>
+
+<h2>2 <a id="sec-Overview" name="sec-Overview">Encryption Overview</a> and
+Examples (Non-normative)</h2>
+
+<p>This section provides an overview and examples of XML Encryption syntax.
+The formal syntax is found in <a class="link-sec"
+href="#sec-Encryption-Syntax">Encryption Syntax</a> (section 3); the specific
+processing is given in <a class="link-sec"
+href="http://www.w3.org/TR/2000/WD-xmldsig-core-20000104/#sec-Processing">Processing
+Rules</a> (section 4).</p>
+
+<p>Expressed in shorthand form, the <code><a
+href="#sec-EncryptedData">EncryptedData</a></code> element has the following
+structure (where "?" denotes zero or one occurrence; "+" denotes one or more
+occurrences; "*" denotes zero or more occurrences; and the empty element tag
+means the element must be empty ):</p>
+<pre class="xml-example">  &lt;EncryptedData Id? Type? MimeType? Encoding?&gt;
+    &lt;EncryptionMethod/&gt;?
+    &lt;ds:KeyInfo&gt;
+      &lt;EncryptedKey&gt;?
+      &lt;AgreementMethod&gt;?
+      &lt;ds:KeyName&gt;?
+      &lt;ds:RetrievalMethod&gt;?
+      &lt;ds:*&gt;?
+    &lt;/ds:KeyInfo&gt;?
+    &lt;CipherData&gt;
+      &lt;CipherValue&gt;?
+      &lt;CipherReference URI?&gt;?
+    &lt;/CipherData&gt;
+    &lt;EncryptionProperties&gt;?
+  &lt;/EncryptedData&gt;</pre>
+
+<p>The <code>CipherData</code> element envelopes or references the raw
+encrypted data. If enveloping, the raw encrypted data is the
+<code>CipherValue</code> element's content; if referencing, the
+<code>CipherReference</code> element's <code>URI</code> attribute points to
+the location of the raw encrypted data</p>
+
+<h3>2.1 Encryption <a name="sec-eg-Granularity"
+id="sec-eg-Granularity">Granularity</a></h3>
+
+<p>Consider the following fictitious payment information, which includes
+identification information and information appropriate to a payment method
+(e.g., credit card, money transfer, or electronic check):</p>
+<pre class="xml-example">  &lt;?xml version='1.0'?&gt;
+  &lt;PaymentInfo xmlns='http://example.org/paymentv2'&gt;
+    &lt;Name&gt;John Smith&lt;/Name&gt;
+    &lt;CreditCard Limit='5,000' Currency='USD'&gt;
+      &lt;Number&gt;4019 2445 0277 5567&lt;/Number&gt;
+      &lt;Issuer&gt;Example Bank&lt;/Issuer&gt;
+      &lt;Expiration&gt;04/02&lt;/Expiration&gt;
+    &lt;/CreditCard&gt;
+  &lt;/PaymentInfo&gt;</pre>
+
+<p>This markup represents that John Smith is using his credit card with a
+limit of $5,000USD.</p>
+
+<h4>2.1.1 Encrypting an XML <a name="sec-eg-Element"
+id="sec-eg-Element">Element</a></h4>
+
+<p>Smith's credit card number is sensitive information! If the application
+wishes to keep that information confidential, it can encrypt the
+<code>CreditCard</code> element:</p>
+<pre class="xml-example">  &lt;?xml version='1.0'?&gt;
+  &lt;PaymentInfo xmlns='http://example.org/paymentv2'&gt;
+    &lt;Name&gt;John Smith&lt;/Name&gt;
+    &lt;EncryptedData Type='http://www.w3.org/2001/04/xmlenc#Element'
+     xmlns='http://www.w3.org/2001/04/xmlenc#'&gt;
+      &lt;CipherData&gt;
+        &lt;CipherValue&gt;A23B45C56&lt;/CipherValue&gt;
+      &lt;/CipherData&gt;
+    &lt;/EncryptedData&gt;
+  &lt;/PaymentInfo&gt;</pre>
+
+<p>By encrypting the entire <code>CreditCard</code> element from its start to
+end tags, the identity of the element itself is hidden. (An eavesdropper
+doesn't know whether he used a credit card or money transfer.) The
+<code>CipherData</code> element contains the encrypted serialization of the
+<code>CreditCard</code> element.</p>
+
+<h4>2.1.2 Encrypting XML <a name="sec-eg-Element-Content"
+id="sec-eg-Element-Content">Element Content</a> (Elements)</h4>
+
+<p>As an alternative scenario, it may be useful for intermediate agents to
+know that John used a credit card with a particular limit, but not the card's
+number, issuer, and expiration date. In this case, the content (character
+data or children elements) of the <code>CreditCard</code> element is
+encrypted:</p>
+<pre class="xml-example">  &lt;?xml version='1.0'?&gt; 
+  &lt;PaymentInfo xmlns='http://example.org/paymentv2'&gt;
+    &lt;Name&gt;John Smith&lt;/Name&gt;
+    &lt;CreditCard Limit='5,000' Currency='USD'&gt;
+      &lt;EncryptedData xmlns='http://www.w3.org/2001/04/xmlenc#'
+       Type='http://www.w3.org/2001/04/xmlenc#Content'&gt;
+        &lt;CipherData&gt;
+          &lt;CipherValue&gt;A23B45C56&lt;/CipherValue&gt;
+        &lt;/CipherData&gt;
+      &lt;/EncryptedData&gt;
+    &lt;/CreditCard&gt;
+  &lt;/PaymentInfo&gt;</pre>
+
+<h4>2.1.3 Encrypting XML <a name="sec-eg-Element-Content-Character"
+id="sec-eg-Element-Content-Character">Element Content</a> (Character
+Data)</h4>
+
+<p>Or, consider the scenario in which all the information <em>except</em> the
+actual credit card number can be in the clear, including the fact that the
+Number element exists:</p>
+<pre class="xml-example">  &lt;?xml version='1.0'?&gt; 
+  &lt;PaymentInfo xmlns='http://example.org/paymentv2'&gt;
+    &lt;Name&gt;John Smith&lt;/Name&gt;
+    &lt;CreditCard Limit='5,000' Currency='USD'&gt;
+      &lt;Number&gt;
+        &lt;EncryptedData xmlns='http://www.w3.org/2001/04/xmlenc#'
+         Type='http://www.w3.org/2001/04/xmlenc#Content'&gt;
+          &lt;CipherData&gt;
+            &lt;CipherValue&gt;A23B45C56&lt;/CipherValue&gt;
+          &lt;/<code>CipherDat</code>a&gt;
+        &lt;/<code>EncryptedDat</code>a&gt;
+      &lt;/Number&gt;
+      &lt;Issuer&gt;Example Bank&lt;/Issuer&gt;
+      &lt;Expiration&gt;04/02&lt;/Expiration&gt;
+    &lt;/CreditCard&gt;
+  &lt;/PaymentInfo&gt;</pre>
+
+<p>Both <code>CreditCard</code> and <code>Number</code> are in the clear, but
+the character data content of <code>Number</code> is encrypted.</p>
+
+<h4>2.1.4 Encrypting <a name="sec-eg-Arbitrary-Data"
+id="sec-eg-Arbitrary-Data">Arbitrary Data</a> and XML Documents</h4>
+
+<p>If the application scenario requires all of the information to be
+encrypted, the whole document is encrypted as an octet sequence. This applies
+to arbitrary data including XML documents.</p>
+<pre class="xml-example">  &lt;?xml version='1.0'?&gt; 
+  &lt;EncryptedData xmlns='http://www.w3.org/2001/04/xmlenc#'
+   MimeType='text/xml'&gt;
+    &lt;CipherData&gt;
+      &lt;CipherValue&gt;A23B45C56&lt;/CipherValue&gt;
+    &lt;/<code>CipherDat</code>a&gt;
+  &lt;/<code>EncryptedDat</code>a&gt;</pre>
+
+<h4>2.1.5 <a name="sec-eg-Super-Encryption"
+id="sec-eg-Super-Encryption">Super-Encryption</a>: Encrypting
+EncryptedData</h4>
+
+<p>An XML document may contain zero or more <code>EncryptedData</code>
+elements. <code>EncryptedData</code> cannot be the parent or child of another
+<code>EncryptedData</code> element. However, the actual data encrypted can be
+anything, including <code>EncryptedData</code> and <code>EncryptedKey</code>
+elements (i.e., super-encryption). During super-encryption of an
+<code>EncryptedData</code> or <code>EncryptedKey</code> element, one must
+encrypt the entire element. Encrypting only the content of these elements, or
+encrypting selected child elements is an invalid instance under the provided
+schema.<br />
+For example, consider the following:</p>
+<pre class="xml-example">  &lt;p<code>ay:PaymentInfo</code> xmlns:pay='http://example.org/paymentv2'&gt;
+    &lt;EncryptedData Id='ED1' xmlns='http://www.w3.org/2001/04/xmlenc#'
+     Type='<a href="http://www.w3.org/2001/04/xmlenc#Element">http://www.w3.org/2001/04/xmlenc#Element</a>'&gt;
+      &lt;CipherData&gt;
+        &lt;CipherValue&gt;<code>original</code>EncryptedData&lt;/CipherValue&gt;
+      &lt;/CipherData&gt;
+    &lt;/EncryptedData&gt;
+  &lt;/pay:PaymentInfo&gt;</pre>
+
+<p>A valid super-encryption of "<code>//xenc:EncryptedData[@Id='ED1']</code>"
+would be:</p>
+<pre class="xml-example">  &lt;p<code>ay:PaymentInfo</code> xmlns:pay='http://example.org/paymentv2'&gt;
+    &lt;EncryptedData Id='ED2' xmlns='http://www.w3.org/2001/04/xmlenc#'
+     Type='<a href="http://www.w3.org/2001/04/xmlenc#Element">http://www.w3.org/2001/04/xmlenc#Element</a>'&gt;
+      &lt;CipherData&gt;
+        &lt;CipherValue&gt;<code>new</code>EncryptedData&lt;/CipherValue&gt;
+      &lt;/<code>CipherDat</code>a&gt;
+    &lt;/<code>EncryptedDat</code>a&gt;
+  &lt;/<code>pay:PaymentInf</code>o&gt;</pre>
+
+<p>where the <code>CipherValue</code> content of
+'<code>newEncryptedData</code>' is the base64 encoding of the encrypted octet
+sequence resulting from encrypting the <code>EncryptedData</code> element
+with <code>Id='ED1'</code>.</p>
+
+<h3>2.2 <code>EncryptedData</code> and <code>EncryptedKey</code> <a
+name="sec-Usage" id="sec-Usage">Usage</a></h3>
+
+<h4>2.2.1 <code>EncryptedData</code> with <a name="sec-eg-Symmetric-Key"
+id="sec-eg-Symmetric-Key">Symmetric Key</a>&nbsp; (<code>KeyName</code>)</h4>
+<pre class="xml-example">  [s1] &lt;EncryptedData xmlns='http://www.w3.org/2001/04/xmlenc#'
+        Type='<a href="http://www.w3.org/2001/04/xmlenc#Element">http://www.w3.org/2001/04/xmlenc#Element</a>'/&gt;
+  [s2]   &lt;EncryptionMethod
+          Algorithm='http://www.w3.org/2001/04/xmlenc#tripledes-cbc'/&gt;
+  [s3]   &lt;ds:KeyInfo xmlns:ds='http://www.w3.org/2000/09/xmldsig#'&gt;
+  [s4]     &lt;ds:KeyName&gt;John Smith&lt;/<code>ds:KeyNam</code>e&gt;
+  [s5]   &lt;/ds:KeyInfo&gt;
+  [s6]   &lt;CipherData&gt;&lt;CipherValue&gt;DEADBEEF&lt;/CipherValue&gt;&lt;/CipherData&gt;
+  [s7] &lt;/EncryptedData&gt;</pre>
+
+<p><code>[s1]</code> The type of data encrypted may be represented as an
+attribute value to aid in decryption and subsequent processing. In this case,
+the data encrypted was an 'element'. Other alternatives include 'content' of
+an element, or an external octet sequence which can also be identified via
+the <code>MimeType</code> and <code>Encoding</code> attributes.</p>
+
+<p><code>[s2]</code> This (3DES CBC) is a symmetric key cipher.</p>
+
+<p><code>[s4]</code> The symmetric key has an associated name "John
+Smith".</p>
+
+<p><code>[s6]</code> <code>CipherData</code> contains a
+<code>CipherValue</code>, which is a base64 encoded octet sequence.
+Alternately, it could contain a <code>CipherReference</code>, which is a URI
+reference along with transforms necessary to obtain the encrypted data as an
+octet sequence</p>
+
+<h4>2.2.2 <a name="sec-eg-EncryptedKey"
+id="sec-eg-EncryptedKey"><code>EncryptedKey</code></a>
+(<code>ReferenceList</code>, <code>ds:RetrievalMethod</code>,
+<code>CarriedKeyName</code>)</h4>
+
+<p>The following <code>EncryptedData</code> structure is very similar to the
+one above, except this time the key is referenced using a
+<code>ds:RetrievalMethod</code>:</p>
+<pre class="xml-example">  [t01] &lt;EncryptedData Id='ED' 
+         xmlns='http://www.w3.org/2001/04/xmlenc#'&gt;
+  [t02]   &lt;EncryptionMethod 
+           Algorithm='http://www.w3.org/2001/04/xmlenc#aes128-cbc'/&gt;
+  [t03]   &lt;d<code>s:KeyInfo</code> xmlns:ds='http://www.w3.org/2000/09/xmldsig#'&gt;
+  [t04]     &lt;ds:<code>RetrievalMethod</code> URI='#EK'
+             Type="http://www.w3.org/2001/04/xmlenc#EncryptedKey"/&gt;
+  [t05]     &lt;ds:KeyName&gt;Sally Doe&lt;/ds:KeyName&gt;
+  [t06]   &lt;/ds:KeyInfo&gt;
+  [t07]   &lt;CipherData&gt;&lt;CipherValue&gt;DEADBEEF&lt;/CipherValue&gt;&lt;/CipherData&gt;
+  [t08] &lt;/EncryptedData&gt;</pre>
+
+<p><code>[t02]</code> This (AES-128-CBC) is a symmetric key cipher.</p>
+
+<p><code>[t04]</code> <code>ds:RetrievalMethod</code> is used to indicate the
+location of a key with type <code>&amp;xenc;EncryptedKey</code>. The (AES)
+key is located at '#EK'.</p>
+
+<p><code>[t05]</code> <code>ds:KeyName</code> provides an alternative method
+of identifying the key needed to decrypt the <code>CipherData</code>. Either
+or both the <code>ds:KeyName</code> and <code>ds:KeyRetrievalMethod</code>
+could be used to identify the same key.</p>
+
+<p>Within the same XML document, there existed an <code>EncryptedKey</code>
+structure that was referenced within <code>[t04]</code>:</p>
+<pre class="xml-example">  [t09] &lt;EncryptedKey Id='EK' xmlns='http://www.w3.org/2001/04/xmlenc#'&gt;
+  [t10]   &lt;EncryptionMethod 
+           Algorithm="http://www.w3.org/2001/04/xmlenc#rsa-1_5"/&gt;
+  [t11]   &lt;ds:KeyInfo xmlns:ds='http://www.w3.org/2000/09/xmldsig#'&gt;
+  [t12]     &lt;ds:KeyName&gt;John Smith&lt;/<code>ds:KeyNam</code>e&gt;
+  [t13]   &lt;/ds:KeyInfo&gt;
+  [t14]   &lt;CipherData&gt;&lt;CipherValue&gt;xyzabc&lt;/CipherValue&gt;&lt;/CipherData&gt;
+  [t15]   &lt;ReferenceList&gt;
+  [t16]     &lt;DataReference URI='#ED'/&gt;
+  [t17]   &lt;/ReferenceList&gt;
+  [t18]   &lt;CarriedKeyName&gt;Sally Doe&lt;/CarriedKeyName&gt;
+  [t19] &lt;/EncryptedKey&gt;</pre>
+
+<p><code>[t09]</code> The <code>EncryptedKey</code> element is similar to the
+<code>EncryptedData</code> element except that the data encrypted is always a
+key value.</p>
+
+<p><code>[t10]</code> The <code>EncryptionMethod</code> is the RSA public key
+algorithm.</p>
+
+<p><code>[t12]</code> <code>ds:KeyName</code> of "John Smith" is a property
+of the key necessary for decrypting (using RSA) the
+<code>CipherData</code>.</p>
+
+<p><code>[t14]</code> The <code>CipherData</code>'s <code>CipherValue</code>
+is an octet sequence that is processed (serialized, encrypted, and encoded)
+by a referring encrypted object's <code>EncryptionMethod</code>. (Note, an
+EncryptedKey's <code>EncryptionMethod</code> is the algorithm used to encrypt
+these octets and does not speak about what type of octets they are.)</p>
+
+<p><code>[t15-17]</code> A <code>ReferenceList</code> identifies the
+encrypted objects (<code>DataReference</code> and <code>KeyReference</code>)
+encrypted with this key. The <code>ReferenceList</code> contains a list of
+references to data encrypted by the symmetric key carried within this
+structure.</p>
+
+<p><code>[t18]</code> The <code>CarriedKeyName</code> element is used to
+identify the encrypted key value which may be referenced by the
+<code>KeyName</code> element in <code>ds:KeyInfo</code>. (Since ID attribute
+values must be unique to a document,<code>CarriedKeyName</code> can indicate
+that several <code>EncryptedKey</code> structures contain the same key value
+encrypted for different recipients.)</p>
+
+<h1>3 <a name="sec-Encryption-Syntax" id="sec-Encryption-Syntax">Encryption
+Syntax</a></h1>
+
+<p>This section provides a detailed description of the syntax and features
+for XML Encryption. Features described in this section MUST be implemented
+unless otherwise noted. The syntax is defined via [<a
+href="#ref-XML-Schema">XML-Schema</a>] with the following XML preamble,
+declaration, internal entity, and import:</p>
+<pre class="xml-dtd">  Schema Definition:
+
+  &lt;?xml version="1.0" encoding="utf-8"?&gt;
+  &lt;!DOCTYPE schema  PUBLIC "-//W3C//DTD XMLSchema 200102//EN"
+   "http://www.w3.org/2001/XMLSchema.dtd"
+   [
+     &lt;!ATTLIST schema
+       xmlns:xenc CDATA #FIXED 'http://www.w3.org/2001/04/xmlenc#'
+       xmlns:ds CDATA #FIXED 'http://www.w3.org/2000/09/xmldsig#'&gt;
+     &lt;!ENTITY xenc 'http://www.w3.org/2001/04/xmlenc#'&gt;
+     &lt;!ENTITY % p ''&gt;
+     &lt;!ENTITY % s ''&gt;
+    ]&gt;
+  
+  &lt;schema xmlns='http://www.w3.org/2001/XMLSchema' version='1.0'
+          xmlns:ds='http://www.w3.org/2000/09/xmldsig#'
+          xmlns:xenc='http://www.w3.org/2001/04/xmlenc#'
+          targetNamespace='http://www.w3.org/2001/04/xmlenc#'
+          element<code>FormDefault</code>='qualified'&gt;
+
+    &lt;import namespace='http://www.w3.org/2000/09/xmldsig#'
+            schemaLocation='http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd'/&gt;</pre>
+
+<h2>3.1 The <a name="sec-EncryptedType"
+id="sec-EncryptedType"><code>EncryptedType</code> Element</a></h2>
+
+<p><code>EncryptedType</code> is the abstract type from which
+<code>EncryptedData</code> and <code>EncryptedKey</code> are derived. While
+these two latter element types are very similar with respect to their content
+models, a syntactical distinction is useful to processing. Implementation
+MUST generate laxly schema valid [<a href="#ref-XML-Schema">XML-schema</a>]
+<code>EncryptedData</code> or <code>EncryptedKey</code> as specified by the
+subsequent schema declarations. (Note the laxly schema valid generation means
+that the content permitted by <code>xsd:ANY</code> need not be valid.)
+Implementations SHOULD create these XML structures
+(<code>EncryptedType</code> elements and their descendents/content) in
+Normalization Form C [<a href="#ref-NFC">NFC</a>, <a
+href="#ref-NFC-Corrigendum">NFC-Corrigendum</a>].</p>
+<pre class="xml-dtd">  Schema Definition:
+
+  &lt;complexType name='<code>EncryptedType</code>' abstract='true'&gt;
+    &lt;sequence&gt;
+      &lt;element name='<code>EncryptionMethod</code>' type='<code>xenc:EncryptionMethodType</code>' 
+               minOccurs='0'/&gt;
+      &lt;element ref='<code>ds:KeyInfo</code>' minOccurs='0'/&gt;
+      &lt;element ref='<code>xenc:CipherData</code>'/&gt;
+      &lt;element ref='xenc:EncryptionProperties' minOccurs='0'/&gt;
+    &lt;/sequence&gt;
+    &lt;attribute name='Id' type='ID' use='optional'/&gt;
+    &lt;attribute name='Type' type='anyURI' use='optional'/&gt;
+    &lt;attribute name='MimeType' type='string' use='optional'/&gt;
+    &lt;attribute name='Encoding' type='anyURI' use='optional'/&gt; 
+   &lt;/complexType&gt;</pre>
+
+<p><code>EncryptionMethod</code> is an optional element that describes the
+encryption algorithm applied to the cipher data. If the element is absent,
+the encryption algorithm must be known by the recipient or the decryption
+will fail.</p>
+
+<p><code>ds:KeyInfo</code> is an optional element, defined by [<a
+href="#ref-XML-DSIG">XML-DSIG</a>], that carries information about the key
+used to encrypt the data. Subsequent sections of this specification define
+new elements that may appear as children of <code>ds:KeyInfo</code>.</p>
+
+<p><code>CipherData</code> is a mandatory element that contains the
+<code>CipherValue</code> or <code>CipherReference</code> with the encrypted
+data.</p>
+
+<p><code>EncryptionProperties</code> can contain additional information
+concerning the generation of the <code>EncryptedType</code> (e.g., date/time
+stamp).</p>
+
+<p><code>Id</code> is an optional attribute providing for the standard method
+of assigning a string id to the element within the document context.</p>
+
+<p><code>Type</code> is an optional attribute identifying type information
+about the plaintext form of the encrypted content. While optional, this
+specification takes advantage of it for mandatory processing described in <a
+class="link-sec" href="#sec-Processing-Decryption">Processing Rules:
+Decryption</a> (section 4.2). If the <code>EncryptedData</code> element
+contains data of <code>Type</code> 'element' or element 'content', and
+replaces that data in an XML document context, it is strongly recommended the
+<code>Type</code> attribute be provided. Without this information, the
+decryptor will be unable to automatically restore the XML document to its
+original cleartext form.</p>
+
+<p><code>MimeType</code> is an optional (advisory) attribute which describes
+the media type of the data which has been encrypted. The value of this
+attribute is a string with values defined by [<a href="#ref-MIME">MIME</a>].
+For example, if the data that is encrypted is a base64 encoded PNG, the
+transfer <code>Encoding</code> may be specified as '<a
+href="http://www.w3.org/2000/09/xmldsig#base64">http://www.w3.org/2000/09/xmldsig#base64</a>'
+and the <code>MimeType</code> as 'image/png'. This attribute is purely
+advisory; no validation of the <code>MimeType</code> information is required
+and it does not indicate the encryption application must do any additional
+processing. Note, this information may not be necessary if it is already
+bound to the identifier in the <code>Type</code> attribute. For example, the
+Element and Content types defined in this specification are always UTF-8
+encoded text.</p>
+
+<h2>3.2 The <a name="sec-EncryptionMethod"
+id="sec-EncryptionMethod">EncryptionMethod</a> Element</h2>
+
+<p>EncryptionMethod is an optional element that describes the encryption
+algorithm applied to the cipher data. If the element is absent, the
+encryption algorithm must be known by the recipient or the decryption will
+fail.</p>
+<pre class="xml-dtd">  Schema Definition:
+
+  &lt;complexType name='EncryptionMethodType' mixed='true'&gt;
+    &lt;sequence&gt;
+      &lt;element name='KeySize' minOccurs='0' type='xenc:KeySizeType'/&gt;
+      &lt;element name='OAEPparams' minOccurs='0' type='base64Binary'/&gt;
+      &lt;any namespace='##other' minOccurs='0' maxOccurs='unbounded'/&gt;
+    &lt;/sequence&gt;
+    &lt;attribute name='Algorithm' type='anyURI' use='required'/&gt;
+  &lt;/complexType&gt;</pre>
+
+<p>The permitted child elements of the <code>EncryptionMethod</code> are
+determined by the specific value of the <code>Algorithm</code> attribute URI,
+and the <code>KeySize</code> child element is always permitted. For example,
+the <a href="#sec-RSA-OAEP">RSA-OAEP algorithm</a> (section 5.4.2) uses the
+<code>ds:DigestMethod</code> and <code>OAEPparams</code> elements. (We rely
+upon the <code>ANY</code> schema construct because it is not possible to
+specify element content based on the value of an attribute.)</p>
+
+<p>The presence of any child element under <code>EncryptionMethod</code>
+which is not permitted by the algorithm or the presence of a
+<code>KeySize</code> child inconsistent with the algorithm MUST be treated as
+an error. (All algorithm URIs specified in this document imply a key size but
+this is not true in general. Most popular stream cipher algorithms take
+variable size keys.)</p>
+
+<h2>3.3 The <a name="sec-CipherData"
+id="sec-CipherData"><code>CipherData</code></a> Element</h2>
+
+<p>The <code>CipherData</code> is a mandatory element that provides the
+encrypted data. It must either contain the encrypted octet sequence as base64
+encoded text of the <code>CipherValue</code> element, or provide a reference
+to an external location containing the encrypted octet sequence via the
+<code>CipherReference</code> element.</p>
+<pre class="xml-dtd">  Schema Definition:
+
+  &lt;element name='<code>CipherData</code>' type='<code>xenc:CipherDataType</code>'/&gt;
+  &lt;complexType name='<code>CipherDataType</code>'&gt;
+     &lt;choice&gt;
+       &lt;element name='<code>CipherValue</code>' type='base64Binary'/&gt;
+       &lt;element ref='<code>xenc:CipherReference</code>'/&gt;
+     &lt;/choice&gt;
+   &lt;/complexType&gt;</pre>
+
+<h3>3.3.1 The <a name="sec-CipherReference"
+id="sec-CipherReference"><code>CipherReference</code></a> Element</h3>
+
+<p>If <code>CipherValue</code> is not supplied directly, the
+<code>CipherReference</code> identifies a source which, when processed,
+yields the encrypted octet sequence.</p>
+
+<p>The actual value is obtained as follows. The <code>CipherReference</code>
+<code>URI</code> contains an identifier that is dereferenced. Should the
+<code>CipherReference</code> element contain an OPTIONAL sequence of
+<code>Transform</code>s, the data resulting from dereferencing the URI is
+transformed as specified so as to yield the intended cipher value. For
+example, if the value is base64 encoded within an XML document; the
+transforms could specify an XPath expression followed by a base64 decoding so
+as to extract the octets.</p>
+
+<p>The syntax of the <code>URI</code> and <code>Transforms</code> is similar
+to that of [<a href="#ref-XML-DSIG">XML-DSIG</a>]. However, there is a
+difference between signature and encryption processing. In [<a
+href="#ref-XML-DSIG">XML-DSIG</a>] both generation and validation processing
+start with the same source data and perform that transform in the same order.
+In encryption, the decryptor has only the cipher data and the specified
+transforms are enumerated for the decryptor, in the order necessary to obtain
+the octets. Consequently, because it has different semantics
+<code>Transforms</code> is in the <code>&amp;xenc;</code> namespace.</p>
+
+<p>For example, if the relevant cipher value is captured within a
+<code>CipherValue</code> element within a different XML document, the
+<code>CipherReference</code> might look as follows:</p>
+<pre class="xml-example">  &lt;CipherReference URI="http://www.example.com/CipherValues.xml"&gt;
+    &lt;Transforms&gt;
+      &lt;ds:Transform 
+       Algorithm="http://www.w3.org/TR/1999/REC-xpath-19991116"&gt;
+          &lt;ds:XPath xmlns:rep="http://www.example.org/repository"&gt;
+            self::text()[parent::rep:CipherValue[@Id="example1"]]
+          &lt;/ds:XPath&gt;
+      &lt;/ds:Transform&gt;
+      &lt;ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#base64"/&gt;
+    &lt;/Transforms&gt;
+  &lt;/CipherReference&gt;</pre>
+
+<p>Implementations MUST support the <code>CipherReference</code> feature and
+the same URI encoding, dereferencing, scheme, and HTTP response codes as that
+of [<a href="#ref-XML-DSIG">XML-DSIG</a>]. The <code>Transform</code> feature
+and particular transform algorithms are OPTIONAL.</p>
+<pre class="xml-dtd">  Schema Definition:
+
+  &lt;element name='<code>CipherReference</code>' type='<code>xenc:CipherReferenceType</code>'/&gt;
+   &lt;complexType name='<code>CipherReferenceType</code>'&gt;
+       &lt;sequence&gt;
+         &lt;element name='Transforms' type='xenc:TransformsType' minOccurs='0'/&gt;
+       &lt;/sequence&gt;
+       &lt;attribute name='URI' type='anyURI' use='required'/&gt;
+   &lt;/complexType&gt;
+
+    &lt;complexType name='TransformsType'&gt;
+       &lt;sequence&gt;
+         &lt;element ref='ds:Transform' maxOccurs='unbounded'/&gt; 
+       &lt;/sequence&gt;
+     &lt;/complexType&gt;</pre>
+
+<h2>3.4 The <a name="sec-EncryptedData"
+id="sec-EncryptedData"><code>EncryptedData</code></a> Element</h2>
+
+<p>The <code>EncryptedData</code> element is the core element in the syntax.
+Not only does its <code>CipherData</code> child contain the encrypted data,
+but it's also the element that replaces the encrypted element, or serves as
+the new document root.</p>
+<pre class="xml-dtd">  Schema Definition:
+
+  &lt;element name='<code>EncryptedData</code>' type='<code>xenc:EncryptedDataType</code>'/&gt;
+  &lt;complexType name='<code>EncryptedDataType</code>'&gt;
+    &lt;complexContent&gt;
+     &lt;extension base='<code>xenc:EncryptedType</code>'&gt;
+     &lt;/extension&gt;
+    &lt;/complexContent&gt;
+  &lt;/complexType&gt;</pre>
+
+<h2>3.5 <a name="sec-Extensions-to-KeyInfo"
+id="sec-Extensions-to-KeyInfo">Extensions to <code>ds:KeyInfo</code></a>
+Element</h2>
+
+<p>There are three ways that the keying material needed to decrypt
+<code>CipherData</code> can be provided:</p>
+<ol>
+  <li>The <code>EncryptedData</code> or <code>EncryptedKey</code> element
+    specify the associated keying material via a child of
+    <code>ds:KeyInfo</code>. All of the child elements of
+    ds:<code>KeyInfo</code> specified in [<a
+    href="#ref-XML-DSIG">XML-DSIG</a>] MAY be used as qualified: 
+    <ol>
+      <li class="">Support for <code>ds:KeyValue</code> is OPTIONAL and may
+        be used to transport public keys, such as <a
+        href="#sec-DHKeyValue">Diffie-Hellman Key Values</a> (section 5.5.1).
+        (Including the plaintext decryption key, whether a private key or a
+        secret key, is obviously NOT RECOMMENDED.)</li>
+      <li>Support of <code>ds:KeyName</code> to refer to an
+        <code>EncryptedKey</code> <code>CarriedKeyName</code> is
+      RECOMMENDED.</li>
+      <li>Support for same document <code>ds:RetrievalMethod</code> is
+        REQUIRED.</li>
+    </ol>
+    <p>In addition, we provide two additional child elements: applications
+    MUST support <code><a href="#sec-EncryptedKey">EncryptedKey</a></code>
+    (section 3.5.1) and MAY support <code><a
+    href="#sec-Alg-KeyAgreement">AgreementMethod</a></code> (section 5.5).</p>
+  </li>
+  <li>A detached (not inside <code>ds:KeyInfo</code>)
+    <code>EncryptedKey</code> element can specify the
+    <code>EncryptedData</code> or <code>EncryptedKey</code> to which its
+    decrypted key will apply via a <code><a
+    href="#sec-ReferenceList">DataReference</a></code> or <a
+    href="#sec-ReferenceList"><code>KeyReference</code></a> (section
+  3.6).</li>
+  <li>The keying material can be determined by the recipient by application
+    context and thus need not be explicitly mentioned in the transmitted
+  XML.</li>
+</ol>
+
+<h3>3.5.1 The <a name="sec-EncryptedKey"
+id="sec-EncryptedKey"><code>EncryptedKey</code></a> Element</h3>
+<dl>
+  <dt>Identifer</dt>
+    <dd><code><a name="EncryptedKey"
+      id="EncryptedKey">Type="http://www.w3.org/2001/04/xmlenc#EncryptedKey"</a></code> 
+      <p>(This can be used within a <code>ds:RetrievalMethod</code> element
+      to identify the referent's type.)</p>
+    </dd>
+</dl>
+
+<p>The <code>EncryptedKey</code> element is used to transport encryption keys
+from the originator to a known recipient(s). It may be used as a stand-alone
+XML document, be placed within an application document, or appear inside an
+<code>EncryptedData</code> element as a child of a <code>ds:KeyInfo</code>
+element. The key value is always encrypted to the recipient(s). When
+<code>EncryptedKey</code> is decrypted the resulting octets are made
+available to the <code>EncryptionMethod</code> algorithm without any
+additional processing.</p>
+<pre class="xml-dtd">  Schema Definition:
+
+  &lt;element name='<code>EncryptedKey</code>' type='<code>xenc:EncryptedKeyType</code>'/&gt;
+  &lt;complexType name='<code>EncryptedKeyType</code>'&gt;
+    &lt;complexContent&gt;
+      &lt;extension base='<code>xenc:EncryptedType</code>'&gt;
+        &lt;sequence&gt;
+          &lt;element ref='<code>xenc:ReferenceList</code>' minOccurs='0'/&gt;
+          &lt;element name='<code>CarriedKeyName</code>' type='string' minOccurs='0'/&gt;
+        &lt;/sequence&gt;
+        &lt;attribute name='Recipient' type='string' use='optional'/&gt;
+      &lt;/extension&gt;
+    &lt;/complexContent&gt;   
+  &lt;/complexType&gt;</pre>
+
+<p><code>ReferenceList</code> is an optional element containing pointers to
+data and keys encrypted using this key. The reference list may contain
+multiple references to <code>EncryptedKey</code> and
+<code>EncryptedData</code> elements. This is done using
+<code>KeyReference</code> and <code>DataReference</code> elements
+respectively. These are defined below.</p>
+
+<p><code>CarriedKeyName</code> is an optional element for associating a user
+readable name with the key value. This may then be used to reference the key
+using the <code>ds:KeyName</code> element within <code>ds:KeyInfo</code>. The
+same <code>CarriedKeyName</code> label, unlike an ID type, may occur multiple
+times within a single document. The value of the key is to be the same in all
+<code>EncryptedKey</code> elements identified with the same
+<code>CarriedKeyName</code> label within a single XML document. Note that
+because whitespace is significant in the value of the <code>ds:KeyName</code>
+element, whitespace is also significant in the value of the
+<code>CarriedKeyName</code> element.</p>
+
+<p><code>Recipient</code> is an optional attribute that contains a hint as to
+which recipient this encrypted key value is intended for. Its contents are
+application dependent.</p>
+
+<p>The <code>Type</code> attribute inheritted from <code>EncryptedType</code>
+can be used to further specify the type of the encrypted key if the
+<code>EncryptionMethod</code> <code>Algorithm</code> does not define a
+unambiguous encoding/representation. (Note, all the algorithms in this
+specification have an unambigous representation for their associated key
+structures.)</p>
+
+<h3>3.5.2 The <a name="sec-ds-RetrievalMethod"
+id="sec-ds-RetrievalMethod"><code>ds:RetrievalMethod</code></a> Element</h3>
+
+<p>The <code>ds:RetrievalMethod</code> <code>[<a
+href="#ref-XML-DSIG">XML-DSIG</a>]</code>with a <code>Type</code> of
+'<code>http://www.w3.org/2001/04/xmlenc#EncryptedKey</code>' provides a way
+to express a link to an <code>EncryptedKey</code> element containing the key
+needed to decrypt the <code>CipherData</code> associated with an
+<code>EncryptedData</code> or <code>EncryptedKey</code> element. The
+<code>ds:RetrievalMethod</code> with this type is always a child of the
+<code>ds:KeyInfo</code> element and may appear multiple times. If there is
+more than one instance of a <code>ds:RetrievalMethod</code> in a
+<code>ds:KeyInfo</code> of this type, then the <code>EncryptedKey</code>
+objects referred to must contain the same key value, possibly encrypted in
+different ways or for different recipients.</p>
+<pre class="xml-dtd">  Schema Definition:
+
+  &lt;!--
+      &lt;attribute name='Type' type='anyURI' use='optional'
+      fixed='http://www.w3.org/2001/04/xmlenc#<code>EncryptedKey</code>' /&gt;
+  --&gt;</pre>
+
+<h3>3.6 The <a name="sec-ReferenceList"
+id="sec-ReferenceList"><code>ReferenceList</code></a> Element</h3>
+
+<p><code>ReferenceList</code> is an element that contains pointers from a key
+value of an <code>EncryptedKey</code> to items encrypted by that key value
+(<code>EncryptedData</code> or <code>EncryptedKey</code> elements).</p>
+<pre class="xml-dtd">  Schema Definition:
+
+  &lt;element name='ReferenceList'&gt;
+    &lt;complexType&gt;
+      &lt;choice minOccurs='1' maxOccurs='unbounded'&gt;
+        &lt;element name='DataReference' type='xenc:ReferenceType'/&gt;
+        &lt;element name='KeyReference' type='xenc:ReferenceType'/&gt;
+      &lt;/choice&gt;
+    &lt;/complexType&gt;
+  &lt;/element&gt;
+
+  &lt;complexType name='<code>ReferenceType</code>'&gt;
+    &lt;sequence&gt;
+      &lt;any namespace='##other' minOccurs='0' maxOccurs='unbounded'/&gt;
+    &lt;/sequence&gt;
+    &lt;attribute name='URI' type='anyURI' use='required'/&gt;
+  &lt;/complexType&gt;</pre>
+
+<p><code>DataReference</code> elements are used to refer to
+<code>EncryptedData</code> elements that were encrypted using the key defined
+in the enclosing <code>EncryptedKey</code> element. Multiple
+<code>DataReference</code> elements can occur if multiple
+<code>EncryptedData</code> elements exist that are encrypted by the same
+key.</p>
+
+<p><code>KeyReference</code> elements are used to refer to
+<code>EncryptedKey</code> elements that were encrypted using the key defined
+in the enclosing <code>EncryptedKey</code> element. Multiple
+<code>KeyReference</code> elements can occur if multiple
+<code>EncryptedKey</code> elements exist that are encrypted by the same
+key.</p>
+
+<p>For both types of references one may optionally specify child elements to
+aid the recipient in retrieving the <code>EncryptedKey</code> and/or
+<code>EncryptedData</code> elements. These could include information such as
+XPath transforms, decompression transforms, or information on how to retrieve
+the elements from a document storage facility. For example:</p>
+<pre class="xml-example">  &lt;ReferenceList&gt;
+    &lt;DataReference URI="#invoice34"&gt;
+      &lt;ds:Transforms&gt;
+        &lt;ds:Transform Algorithm="http://www.w3.org/TR/1999/REC-xpath-19991116"&gt;
+          &lt;ds:XPath xmlns:xenc="http://www.w3.org/2001/04/xmlenc#"&gt;
+              self::xenc:EncryptedData[@Id="example1"]
+          &lt;/ds:XPath&gt;
+        &lt;/ds:Transform&gt;
+      &lt;/ds:Transforms&gt;
+    &lt;/DataReference&gt;
+  &lt;/ReferenceList&gt;</pre>
+
+<h3>3.7 The <a name="sec-EncryptionProperties"
+id="sec-EncryptionProperties"><code>EncryptionProperties</code></a>
+Element</h3>
+<dl>
+  <dt>Identifier</dt>
+    <dd><code><a name="EncryptionProperties"
+      id="EncryptionProperties">Type="http://www.w3.org/2001/04/xmlenc#EncryptionProperties"</a></code> 
+      <p>(This can be used within a <code>ds:Reference</code> element to
+      identify the referent's type.)</p>
+    </dd>
+</dl>
+
+<p>Additional information items concerning the generation of the
+<code>EncryptedData</code> or <code>EncryptedKey</code> can be placed in an
+<code>EncryptionProperty</code> element (e.g., date/time stamp or the serial
+number of cryptographic hardware used during encryption). The
+<code>Target</code> attribute identifies the <code>EncryptedType</code>
+structure being described. <code>anyAttribute</code> permits the inclusion of
+attributes from the XML namespace to be included (i.e.,
+<code>xml:space</code>, <code>xml:lang</code>, and <code>xml:base</code>).</p>
+<pre class="xml-dtd">  Schema Definition:
+
+  &lt;element name='EncryptionProperties' type='xenc:EncryptionPropertiesType'/&gt; 
+  &lt;complexType name='EncryptionPropertiesType'&gt;
+    &lt;sequence&gt;
+      &lt;element ref='xenc:EncryptionProperty' maxOccurs='unbounded'/&gt; 
+    &lt;/sequence&gt;
+    &lt;attribute name='Id' type='ID' use='optional'/&gt; 
+  &lt;/complexType&gt;
+
+    &lt;element name='EncryptionProperty' type='xenc:EncryptionPropertyType'/&gt; 
+    &lt;complexType name='EncryptionPropertyType' mixed='true'&gt;
+      &lt;choice maxOccurs='unbounded'&gt;
+        &lt;any namespace='##other' processContents='lax'/&gt;
+      &lt;/choice&gt;
+      &lt;attribute name='Target' type='anyURI' use='optional'/&gt; 
+      &lt;attribute name='Id' type='ID' use='optional'/&gt; 
+      &lt;anyAttribute namespace="http://www.w3.org/XML/1998/namespace"/&gt;
+    &lt;/complexType&gt;</pre>
+
+<h2><a name="sec-Processing" id="sec-Processing">4 Processing Rules</a></h2>
+
+<p>This section describes the operations to be performed as part of
+encryption and decryption processing by implementations of this
+specification. The conformance requirements are specified over the following
+roles:</p>
+<dl>
+  <dt><a name="def-Application" id="def-Application">Application</a></dt>
+    <dd>The application which makes request of an XML Encryption
+      implementation via the provision of data and parameters necessary for
+      its processing.</dd>
+  <dt><a name="def-Encryptor" id="def-Encryptor">Encryptor</a></dt>
+    <dd>An XML Encryption implementation with the role of encrypting
+    data.</dd>
+  <dt><a name="def-Decryptor" id="def-Decryptor">Decryptor</a></dt>
+    <dd>An XML Encryption implementation with the role of decrypting
+    data.</dd>
+</dl>
+
+<h3><a name="sec-Processing-Encryption" id="sec-Processing-Encryption">4.1
+Encryption</a></h3>
+
+<p>For each data item to be encrypted as an <code>EncryptedData</code> or
+<code>EncryptedKey</code> (elements derived from <code>EncryptedType</code>),
+the <strong>encryptor</strong> must:</p>
+<ol>
+  <li>Select the algorithm (and parameters) to be used in encrypting this
+    data.</li>
+  <li>Obtain and (optionally) represent the key. 
+    <ol>
+      <li>If the key is to be identified (via naming, URI, or included in a
+        child element), construct the <code>ds:KeyInfo</code> as approriate
+        (e.g., <code>ds:KeyName</code>, <code>ds:KeyValue</code>,
+        <code>ds:RetrievalMethod</code>, etc.)</li>
+      <li>If the key itself is to be encrypted, construct an
+        <code>EncryptedKey</code> element by recursively applying this
+        encryption process. The result may then be a child of
+        <code>ds:KeyInfo</code>, or it may exist elsewhere and may be
+        identified in the preceding step.</li>
+    </ol>
+  </li>
+  <li>&nbsp;Encrypt the data 
+    <ol>
+      <li>If the data is an '<a
+        href="http://www.w3.org/TR/2000/REC-xml-20001006#NT-element">element</a>'
+        [<a href="#ref-XML">XML</a>, section 3] or element '<a
+        href="http://www.w3.org/TR/2000/REC-xml-20001006#NT-content">content</a>'
+        [<a href="#ref-XML">XML</a>, section 3.1], obtain the octets by
+        serializing the data in UTF-8 as specified in [<a
+        href="#ref-XML">XML</a>]. <span class="">(The application MUST
+        provide XML data in [<a href="#ref-NFC"></a><a
+        href="#ref-NFC">NFC</a>].)</span> Serialization MAY be done by the
+        <strong>encryptor</strong>. If the <strong>encryptor</strong> does
+        not serialize, then the <strong>application</strong> MUST perform the
+        serialization.</li>
+      <li>If the data is of any other type that is not already octets, the
+        <strong>application</strong> MUST serialize it as octets.</li>
+      <li>Encrypt the octets using the algorithm and key from steps 1 and
+      2.</li>
+      <li>Unless the <strong>decryptor</strong> will implicitly know the type
+        of the encrypted data, the <strong>encryptor</strong> SHOULD provide
+        the type for representation. 
+        <p>The definition of this type as bound to an identifier specifies
+        how to obtain and interpret the plaintext octets after decryption.
+        For example, the idenifier could indicate that the data is an
+        instance of another application (e.g., some XML compression
+        application) that must be further processed. Or, if the data is a
+        simple octet sequence it MAY be described with the
+        <code>MimeType</code> and <code>Encoding</code> attributes. For
+        example, the data might be an XML document
+        (<code>MimeType="text/xml"</code>), sequence of characters
+        (<code>MimeType="text/plain"</code>), or binary image data
+        (<code>MimeType="image/png</code>").</p>
+      </li>
+    </ol>
+  </li>
+  <li>Build the <code>EncryptedType</code> (<code>EncryptedData</code> or
+    <code>EncryptedKey</code>) structure: 
+    <p>An <code>EncryptedType</code> structure represents all of the
+    information previously discussed including the type of the encrypted
+    data, encryption algorithm, parameters, key, type of the encrypted data,
+    etc.</p>
+    <ol>
+      <li>If the encrypted octet sequence obtained in step 3 is to be stored
+        in the <code>CipherData</code> element within the
+        <code>EncryptedType</code>, then the encrypted octet sequence is
+        base64 encoded and inserted as the content of a
+        <code>CipherValue</code> element.</li>
+      <li>If the encrypted octet sequence is to be stored externally to the
+        <code>EncryptedType</code> structure, then store or return the
+        encrypted octet sequence, and represent the URI and transforms (if
+        any) required for the decryptor to retrieve the encrypted octet
+        sequence within a <code>CipherReference</code> element.</li>
+    </ol>
+  </li>
+  <li>Process EncryptedData 
+    <ol>
+      <li>If the <code>Type</code> of the encrypted data is '<a
+        href="http://www.w3.org/TR/2000/REC-xml-20001006#NT-element">element</a>'
+        or element '<a
+        href="http://www.w3.org/TR/2000/REC-xml-20001006#NT-content">content</a>',
+        then the <strong>encryptor</strong> MUST be able to return the
+        <code>EncryptedData</code> element to the
+        <strong>application</strong>. The <strong>application</strong> MAY
+        use this as the top-level element in a new XML document or insert it
+        into another XML document, which may require a re-encoding. 
+        <p>The <strong>encryptor</strong> SHOULD be able to replace the
+        unencrypted 'element' or 'content' with the EncryptedData element.
+        When an <strong>application</strong> requires an XML element or
+        content to be replaced, it supplies the XML document context in
+        addition to identifying the element or content to be replaced. The
+        <strong>encryptor</strong> removes the identified element or content
+        and inserts the <code>EncryptedData</code> element in its place.</p>
+        <p>(Note: If the <code>Type</code> is "content" the document
+        resulting from decryption will not be well-formed if (a) the original
+        plaintext was not well-formed (e.g., PCDATA by itself is not
+        well-formed) and (b) the <code>EncryptedData</code> element was
+        previously the root element of the document)</p>
+      </li>
+      <li>If the <code>Type</code> of the encrypted data <em>is not</em> '<a
+        href="http://www.w3.org/TR/2000/REC-xml-20001006#NT-element">element</a>'
+        or element '<a
+        href="http://www.w3.org/TR/2000/REC-xml-20001006#NT-content">content</a>',
+        then the <strong>encryptor</strong> MUST always return the
+        <code>EncryptedData</code> element to the
+        <strong>application</strong>. The <strong>application</strong> MAY
+        use this as the top-level element in a new XML document or insert it
+        into another XML document, which may require a re-encoding.</li>
+    </ol>
+  </li>
+</ol>
+
+<h3><a name="sec-Processing-Decryption" id="sec-Processing-Decryption">4.2
+Decryption</a></h3>
+
+<p>For each <code>EncryptedType</code> derived element, (i.e.,
+<code>EncryptedData</code> or <code>EncryptedKey</code>), to be decrypted,
+the <strong>decryptor</strong> must:</p>
+<ol>
+  <li>Process the element to determine the algorithm, parameters and
+    <code>ds:KeyInfo</code> element to be used. If some information is
+    omitted, the <strong>application</strong> MUST supply it.</li>
+  <li>Locate the data encryption key according to the <code>ds:KeyInfo</code>
+    element, which may contain one or more children elements. These children
+    have no implied processing order. If the data encryption key is
+    encrypted, locate the corresponding key to decrypt it. (This may be a
+    recursive step as the key-encryption key may itself be encrypted.) Or,
+    one might retrieve the data encryption key from a local store using the
+    provided attributes or implicit binding.</li>
+  <li>Decrypt the data contained in the <code>CipherData</code> element. 
+    <ol>
+      <li>If a <code>CipherValue</code> child element is present, then the
+        associated text value is retrieved and base64 decoded so as to obtain
+        the encrypted octet sequence.</li>
+      <li>If a <code>CipherReference</code> child element is present, the URI
+        and transforms (if any) are used to retrieve the encrypted octet
+        sequence.</li>
+      <li>The encrypted octet sequence is decrypted using the
+        algorithm/parameters and key value already determined from steps 1
+        and 2.</li>
+    </ol>
+  </li>
+  <li>Process decrypted data of <code>Type</code> '<a
+    href="http://www.w3.org/TR/2000/REC-xml-20001006#NT-element">element</a>'
+    or element '<a
+    href="http://www.w3.org/TR/2000/REC-xml-20001006#NT-content">content</a>'. 
+    <ol>
+      <li>The cleartext octet sequence obtained in step 3 is interpreted as
+        UTF-8 encoded character data.</li>
+      <li>The <strong>decryptor</strong> MUST be able to return the value of
+        <code>Type</code> and the UTF-8 encoded XML character data. The
+        <strong>decryptor</strong> is NOT REQUIRED to perform validation on
+        the serialized XML.</li>
+      <li>The <strong>decryptor</strong> SHOULD support the ability to
+        replace the <code>EncryptedData</code> element with the decrypted '<a
+        href="http://www.w3.org/TR/2000/REC-xml-20001006#NT-element">element</a>'
+        or element '<a
+        href="http://www.w3.org/TR/2000/REC-xml-20001006#NT-content">content</a>'
+        represented by the UTF-8 encoded characters. The
+        <strong>decryptor</strong> is NOT REQUIRED to perform validation on
+        the result of this replacement operation. 
+        <p>The application supplies the XML document context and identifies
+        the <code>EncryptedData</code> element being replaced. If the
+        document into which the replacement is occurring is not UTF-8, the
+        <strong>decryptor</strong> MUST transcode the UTF-8 encoded
+        characters into the target encoding.</p>
+      </li>
+    </ol>
+  </li>
+  <li>Process decrypted data if <code>Type</code> is unspecified or is
+    <em>not</em> '<a
+    href="http://www.w3.org/TR/2000/REC-xml-20001006#NT-element">element</a>'
+    or element '<a
+    href="http://www.w3.org/TR/2000/REC-xml-20001006#NT-content">content</a>'. 
+    <ol>
+      <li>The cleartext octet sequence obtained in <strong>Step 3</strong>
+        MUST be returned to the <strong>application</strong> for further
+        processing along with the <code>Type</code>, <code>MimeType</code>,
+        and <code>Encoding</code> attribute values when specified.
+        <code>MimeType</code> and <code>Encoding</code> are advisory. The
+        <code>Type</code> value is normative as it may contain information
+        necessary for the processing or interpration of the data by the
+        application.</li>
+      <li>Note, this step includes processing data decrypted from an
+        <code>EncryptedKey</code>. The cleartext octet sequence represents a
+        key value and is used by the application in decrypting other
+        <code>EncryptedType</code> element(s).</li>
+    </ol>
+  </li>
+</ol>
+
+<h3>4.3 <a name="sec-Processing-XML" id="sec-Processing-XML">XML
+Encryption</a></h3>
+
+<p>Encryption and decryption operations are transforms on octets. The
+<strong>application</strong> is responsible for the marshalling XML such that
+it can be serialized into an octet sequence, encrypted, decrypted, and be of
+use to the recipient.</p>
+
+<p>For example, if the application wishes to canonicalize its data or
+encode/compress the data in an XML packaging format, the application needs to
+marshal the XML accordingly and identify the resulting type via the
+<code>EncryptedData</code> <code>Type</code> attribute. The likelihood of
+successful decryption and subsequent processing will be dependent on the
+recipient's support for the given type. Also, if the data is intended to be
+processed both before encryption and after decryption (e.g., XML Signature
+[<a href="#ref-XML-DSIG">XML-DSIG</a>] validation or an XSLT transform) the
+encrypting application must be careful to preserve information necessary for
+that process's success.</p>
+
+<p>For interoperability purposes, the following types MUST be implemented
+such that an implementation will be able to take as input and yield as output
+data matching the production rules 39 and 43 from [<a
+href="#ref-XML">XML</a>]:</p>
+<dl>
+  <dt><a id="Element" name="Element">element</a> '<a
+  href="http://www.w3.org/2001/04/xmlenc#Element">http://www.w3.org/2001/04/xmlenc#Element</a>'</dt>
+    <dd>"[39]&nbsp; <a
+      href="http://www.w3.org/TR/2000/REC-xml-20001006#NT-element">element</a>
+      ::= <a
+      href="http://www.w3.org/TR/2000/REC-xml-20001006#NT-EmptyElemTag"><code>EmptyElemTag</code></a>
+      | <a href="http://www.w3.org/TR/2000/REC-xml-20001006#NT-STag">STag</a>
+      <a
+      href="http://www.w3.org/TR/2000/REC-xml-20001006#NT-content">content</a>
+      <a
+    href="http://www.w3.org/TR/2000/REC-xml-20001006#NT-ETag">ETag</a>"</dd>
+  <dt><a id="Content" name="Content">content</a>&nbsp;'<a
+  href="http://www.w3.org/2001/04/xmlenc#Content">http://www.w3.org/2001/04/xmlenc#Content</a>'</dt>
+    <dd>"[43] <a
+      href="http://www.w3.org/TR/2000/REC-xml-20001006#NT-content">content</a>
+      ::= <a
+      href="http://www.w3.org/TR/2000/REC-xml-20001006#NT-CharData"><code>CharData</code></a>?
+      ((<a
+      href="http://www.w3.org/TR/2000/REC-xml-20001006#NT-element">element</a>
+      | <a
+      href="http://www.w3.org/TR/2000/REC-xml-20001006#NT-Reference">Reference</a>
+      | <a
+      href="http://www.w3.org/TR/2000/REC-xml-20001006#NT-CDSect">CDSect</a>
+      | <a href="http://www.w3.org/TR/2000/REC-xml-20001006#NT-PI">PI</a> |
+      <a
+      href="http://www.w3.org/TR/2000/REC-xml-20001006#NT-Comment">Comment</a>)
+      <a
+      href="http://www.w3.org/TR/2000/REC-xml-20001006#NT-CharData"><code>CharData</code></a>?)*"</dd>
+</dl>
+
+<p>The following sections contain specifications for decrypting, replacing,
+and serializing XML content (i.e., <code>Type</code> '<a
+href="http://www.w3.org/TR/2000/REC-xml-20001006#NT-element">element</a>' or
+element '<a
+href="http://www.w3.org/TR/2000/REC-xml-20001006#NT-content">content</a>')
+using the [<a href="#ref-XPath">XPath</a>] data model. These sections are
+non-normative and OPTIONAL to implementors of this specification, but they
+may be normatively referenced by and MANDATORY to other specifications that
+require a consistent processing for applications, such as [<a
+href="#ref-XML-DSIG-Decrypt">XML-DSIG-Decrypt</a>].</p>
+
+<h4>4.3.1 A <a name="sec-Decrypt-Imp" id="sec-Decrypt-Imp">Decrypt
+Implementation</a> (Non-normative)</h4>
+
+<p>Where <em>P</em> is the context in which the serialized XML should be
+parsed (a document node or element node) and <em>O</em> is the octet sequence
+representing UTF-8 encoded characters resulting from step 4.3 in the <a
+class="link-sec" href="#sec-Processing-Decryption">Decryption Processing</a>
+(section 4.2). <em>Y</em> is node-set representing the decrypted content
+obtained by the following steps:</p>
+<ol>
+  <li class="">Let <em>C</em> be the <a class="def"
+    name="def-parsing-context" id="def-parsing-context">parsing context</a>
+    of a child of <em>P</em>, which consists of the following items: 
+    <ul>
+      <li>Prefix and namespace name of each namespace that is in scope for
+        <em>P</em>.</li>
+      <li>Name and value of each general entity that is effective for the XML
+        document causing <em>P</em>.</li>
+    </ul>
+  </li>
+  <li>Wrap the decrypted octet stream <em>O</em> in the context <em>C</em> as
+    specified in <a class="link-sec" href="#sec-Text-Wrapping">Text
+    Wrapping</a>.</li>
+  <li>Parse the wrapped octet stream as described in <a class="link-sec"
+    href="http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/#sec-ReferenceProcessingModel">The
+    Reference Processing Model</a> (section 4.3.3.2) of [<a
+    href="#ref-XML-DSIG">XML-Signature</a>], resulting in a node-set.</li>
+  <li><em>Y</em> is the node-set obtained by removing the root node, the
+    wrapping element node, and its associated set of attribute and namespace
+    nodes from the node-set obtained in Step 3.</li>
+</ol>
+
+<h4>4.3.2 A <a name="sec-Decrypt-Replace-Imp"
+id="sec-Decrypt-Replace-Imp">Decrypt and Replace Implementation</a>
+(Non-normative)</h4>
+
+<p>Where <em>X</em> is the [<a href="#ref-XPath">XPath</a>] node set
+corresponding to an XML document and <em>e</em> is an
+<code>EncryptedData</code> element node in <em>X</em>.</p>
+<ol>
+  <li><em>Z</em> is an [<a href="#ref-XPath">XPath</a>] node-set that
+    identical to X except where the element node <em>e</em> is an
+    <code>EncryptedData</code> element type. In which case: 
+    <ol>
+      <li>Decrypt <em>e</em> in the context of its parent node as specified
+        in the <a class="link-sec" href="#sec-Decrypt-Imp">Decryption
+        Implementation</a> (section 4.3.1) yielding <em>Y</em>, an [<a
+        href="#ref-XPath">XPath</a>] node set.</li>
+      <li>Include <em>Y</em> in place of <em>e</em> and its descendants in
+        <em>X</em>. Since [<a href="#ref-XPath">XPath</a>] does not define
+        methods of replacing node-sets from different documents, the result
+        MUST be equivalent to replacing e with the octet stream resulting
+        from its decryption in the serialized form of <em>X</em> and
+        reparsing the document. However, the actual method of performing this
+        operation is left to the implementor.</li>
+    </ol>
+  </li>
+</ol>
+
+<h4>4.3.3 <a name="sec-Serializing-XML" id="sec-Serializing-XML">Serializing
+XML</a> (Non-normative)</h4>
+
+<h5><a name="sec-Default-Namespace-Considerations"
+id="sec-Default-Namespace-Considerations">Default Namespace
+Considerations</a></h5>
+
+<p>In <a class="link-sec" href="#sec-Processing-Encryption">Encrypting
+XML</a> (section 4.1, step 3.1), when serializing an XML fragment special
+care SHOULD be taken with respect to default namespaces. If the data will be
+subsequently decrypted in the context of a parent XML document then
+serialization can produce elements in the wrong namespace. Consider the
+following fragment of XML:</p>
+<pre class="xml-example">  &lt;Document xmlns="http://example.org/"&gt;
+    &lt;ToBeEncrypted xmlns="" /&gt;
+  &lt;/Document&gt;</pre>
+
+<p>Serialization of the element <code>ToBeEncrypted</code> fragment via [<a
+href="#ref-XML-C14N">XML-C14N</a>] would result in the characters
+"<code>&lt;ToBeEncrypted&gt;&lt;/ToBeEncrypted&gt;</code>" as an octet
+stream. The resulting encrypted document would be:</p>
+<pre class="xml-example">  &lt;Document xmlns="http://example.org/"&gt;
+    &lt;EncryptedData xmlns="..."&gt;
+      &lt;!-- Containing the encrypted 
+           "&lt;ToBeEncrypted&gt;&lt;/ToBeEncrypted&gt;" --&gt;
+    &lt;/EncryptedData&gt;
+  &lt;/Document&gt;</pre>
+
+<p>Decrypting and replacing the <code>EncryptedData</code> within this
+document would produce the following incorrect result:</p>
+<pre class="xml-example">  &lt;Document xmlns="http://example.org/"&gt;
+    &lt;ToBeEncrypted/&gt;
+  &lt;/Document&gt; </pre>
+
+<p>This problem arises because most XML serializations assume that the
+serialized data will be parsed directly in a context where there is no
+default namespace declaration. Consequently, they do not redundantly declare
+the empty default namespace with an <code>xmlns=""</code>. If, however, the
+serialized data is parsed in a context where a default namespace declaration
+is in scope (e.g., the parsing context of a <a class="link-def"
+href="#sec-Decrypt-Imp">A Decrypt Implementation</a> (section 4.3.1)), then
+it may affect the interpretation of the serialized data.</p>
+
+<p>To solve this problem, a canonicalization algorithm MAY be augmented as
+follows for use as an XML encryption serializer:</p>
+<ul>
+  <li>A default namespace declaration with an empty value (i.e.,
+    <code>xmlns=""</code>) SHOULD be emitted where it would normally be
+    suppressed by the canonicalization algorithm.</li>
+</ul>
+
+<p>While the result may not be in proper canonical form, this is harmless as
+the resulting octet stream will not be used directly in a [<a
+href="#ref-XML-DSIG">XML-Signature</a>] signature value computation.
+Returning to the preceding example with our new augmentation, the
+<code>ToBeEncrypted</code> element would be serialized as follows:</p>
+<pre>&lt;ToBeEncrypted xmlns=""&gt;&lt;/ToBeEncrypted&gt;</pre>
+
+<p>When processed in the context of the parent document, this serialized
+fragment will be parsed and interpreted correctly.</p>
+
+<p>This augmentation can be retroactively applied to an existing
+canonicalization implementation by canonicalizing each apex node and its
+descendants from the node set, inserting <code>xmlns=""</code> at the
+appropriate points, and concatenating the resulting octet streams.</p>
+
+<h5><a name="sec-XML-Attribute-Considerations"
+id="sec-XML-Attribute-Considerations">XML Attribute Considerations</a></h5>
+
+<p>Similar attention between the relationship of a fragment and the context
+into which it is being inserted should be given to the <code>xml:base</code>,
+<code>xml:lang</code>, and <code>xml:space</code> attributes as mentioned in
+the <a class="link-sec"
+href="http://www.w3.org/TR/xml-exc-c14n/#sec-Considerations">Security
+Considerations</a> of [<a href="#ref-XML-exc-C14N">XML-exc-C14N</a>]. For
+example, if the element:</p>
+<pre class="xml-example">  &lt;Bongo href="example.xml"/&gt;</pre>
+
+<p>is taken from a context and serialized with no <code>xml:base</code> [<a
+href="#ref-XML-Base">XML-Base</a>] attribute and parsed in the context of the
+element:</p>
+<pre class="xml-example">  &lt;Baz xml:base="http://example.org/"/&gt;</pre>
+
+<p>the result will be:</p>
+<pre class="xml-example">  &lt;Baz xml:base="http://example.org/"&gt;&lt;Bongo href="example.xml"/&gt;&lt;/Baz&gt;</pre>
+
+<p><code>Bongo</code>'s <code>href</code> is subsequently interpreted as
+"<code>http://example.org/example.xml</code>". If this is not the correct
+URI, <code>Bongo</code> should have been serialized with its own
+<code>xml:base</code> attribute.</p>
+
+<p>Unfortunately, the recommendation that an empty value be emitted to
+divorce the default namespace of the fragment from the context into which it
+is being inserted can not be made for <span class="">the attributes
+<code>xml:base</code>, and <code>xml:space</code>. (<a class="link-sec"
+href="http://www.w3.org/XML/xml-V10-2e-errata#E41">Error 41</a> of the <a
+href="http://www.w3.org/XML/xml-V10-2e-errata">XML 1.0 Second Edition
+Specification Errata</a> clarifies that an empty string value of the
+attribute <code>xml:lang</code> <em>is</em> considered as if, "there is no
+language information available, just as if <code>xml:lang</code> had not been
+specified".)</span>The interpretation of an empty value for the
+<code>xml:base</code> or <code>xml:space</code> attributes is undefined or
+maintains the contextual value. Consequently, applications SHOULD ensure (1)
+fragments that are to be encrypted are not dependent on XML attributes, or
+(2) if they are dependent and the resulting document is intended to be <a
+class="link-def"
+href="http://www.w3.org/TR/2000/REC-xml-20001006#dt-valid">valid</a> [<a
+href="#ref-XML">XML</a>], the fragment's definition permits the presence of
+the attributes and that the attributes have non-empty values.</p>
+
+<h4>4.3.4 <a name="sec-Text-Wrapping" id="sec-Text-Wrapping">Text Wrapping
+(Non-normative)</a></h4>
+
+<p>This section specifies the process for wrapping text in a given parsing
+context. The process is based on the proposal by Richard Tobin [<a
+href="#ref-Tobin">Tobin</a>] for constructing the infoset [<a
+href="#ref-XML-Infoset">XML-Infoset</a>] of an external entity.</p>
+
+<p>The process consists of the following steps:</p>
+<ol>
+  <li>If the parsing context contains any general entities, then emit a
+    document type declaration that provides entity declarations.</li>
+  <li>Emit a <code>dummy</code> element start-tag with namespace declaration
+    attributes declaring all the namespaces in the parsing context.</li>
+  <li>Emit the text.</li>
+  <li>Emit a <code>dummy</code> element end-tag.</li>
+</ol>
+
+<p>In the above steps, the document type declaration and <code>dummy</code>
+element tags MUST be encoded in UTF-8.</p>
+
+<p>Consider the following document containing an <code>EncryptedData</code>
+element:</p>
+<pre class="xml-example">&lt;!DOCTYPE Document [
+  &lt;!ENTITY dsig "http://www.w3.org/2000/09/xmldsig#"&gt;
+]&gt;
+&lt;Document xmlns="http://example.org/"&gt;
+  &lt;foo:Body xmlns:foo="http://example.org/foo"&gt;
+    &lt;EncryptedData xmlns="http://www.w3.org/2001/04/xmlenc#"
+                   Type="<a href="http://www.w3.org/2001/04/xmlenc#Element">http://www.w3.org/2001/04/xmlenc#Element</a>"&gt;
+      ...
+    &lt;/EncryptedData&gt; 
+  &lt;/foo:Body&gt;
+&lt;/Document&gt;</pre>
+
+<p class="">If the <code>EncryptedData</code> element is fed is decrypted to
+the text "<code>&lt;One&gt;&lt;foo:Two/&gt;&lt;/One&gt;</code>", then the
+wrapped form is as follows:</p>
+<pre>&lt;!DOCTYPE dummy [
+  &lt;!ENTITY dsig "http://www.w3.org/2000/09/xmldsig#"&gt;
+]&gt;
+&lt;dummy xmlns="http://example.org/"
+       xmlns:foo="http://example.org/foo"&gt;&lt;One&gt;&lt;foo:Two/&gt;&lt;/One&gt;&lt;/dummy&gt;</pre>
+
+<h2>5. <a id="sec-Algorithms" name="sec-Algorithms">Algorithms</a></h2>
+
+<p>This section discusses algorithms used with the XML Encryption
+specification. Entries contain the identifier to be used as the value of the
+<code>Algorithm</code> attribute of the <code>EncryptionMethod</code> element
+or other element representing the role of the algorithm, a reference to the
+formal specification, definitions for the representation of keys and the
+results of cryptographic operations where applicable, and general
+applicability comments.</p>
+
+<h3>5.1 <a id="sec-AlgID" name="sec-AlgID">Algorithm Identifiers and
+Implementation Requirements</a></h3>
+
+<p>All algorithms listed below have implicit parameters depending on their
+role. For example, the data to be encrypted or decrypted, keying material,
+and direction of operation (encrypting or decrypting) for encryption
+algorithms. Any explicit additional parameters to an algorithm appear as
+content elements within the element. Such parameter child elements have
+descriptive element names, which are frequently algorithm specific, and
+SHOULD be in the same namespace as this XML Encryption specification, the XML
+Signature specification, or in an algorithm specific namespace. An example of
+such an explicit parameter could be a nonce (unique quantity) provided to a
+key agreement algorithm.</p>
+
+<p>This specification defines a set of algorithms, their URIs, and
+requirements for implementation. Levels of requirement specified, such as
+"REQUIRED" or "OPTIONAL", refere to implementation, not use. Furthermore, the
+mechanism is extensible, and alternative algorithms may be used.</p>
+
+<h4><a id="sec-Table-of-Algorithms" name="sec-Table-of-Algorithms">Table of
+Algorithms</a></h4>
+
+<p>The table below lists the categories of algorithms. Within each category,
+a brief name, the level of implementation requirement, and an identifying URI
+are given for each algorithm.</p>
+<dl>
+  <dt>Block Encryption</dt>
+    <dd><ol>
+        <li>REQUIRED TRIPLEDES<br />
+          <a
+          href="http://www.w3.org/2001/04/xmlenc#tripledes-cbc">http://www.w3.org/2001/04/xmlenc#tripledes-cbc</a></li>
+        <li>REQUIRED AES-128<br />
+          <a
+          href="http://www.w3.org/2001/04/xmlenc#aes128-cbc">http://www.w3.org/2001/04/xmlenc#aes128-cbc</a></li>
+        <li>REQUIRED AES-256<br />
+          <a
+          href="http://www.w3.org/2001/04/xmlenc#aes256-cbc">http://www.w3.org/2001/04/xmlenc#aes256-cbc</a></li>
+        <li>OPTIONAL AES-192<br />
+          <a
+          href="http://www.w3.org/2001/04/xmlenc#aes192-cbc">http://www.w3.org/2001/04/xmlenc#aes192-cbc</a></li>
+      </ol>
+    </dd>
+  <dt>Stream Encryption</dt>
+    <dd><ol>
+        <li>none<br />
+          Syntax and recommendations are given below to support user
+          specified algorithms.</li>
+      </ol>
+    </dd>
+  <dt>Key Transport</dt>
+    <dd><ol>
+        <li>REQUIRED RSA-v1.5<br />
+          <a
+          href="http://www.w3.org/2001/04/xmlenc#rsa-1_5">http://www.w3.org/2001/04/xmlenc#rsa-1_5</a></li>
+        <li>REQUIRED RSA-OAEP<br />
+          <a
+          href="http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p">http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p</a></li>
+      </ol>
+    </dd>
+  <dt>Key Agreement</dt>
+    <dd><ol>
+        <li>OPTIONAL Diffie-Hellman<br />
+          <a
+          href="http://www.w3.org/2001/04/xmlenc#dh">http://www.w3.org/2001/04/xmlenc#dh</a></li>
+      </ol>
+    </dd>
+  <dt>Symmetric Key Wrap</dt>
+    <dd><ol>
+        <li>REQUIRED TRIPLEDES KeyWrap<br />
+          <a
+          href="http://www.w3.org/2001/04/xmlenc#kw-tripledes">http://www.w3.org/2001/04/xmlenc#kw-tripledes</a></li>
+        <li>REQUIRED AES-128 KeyWrap<br />
+          <a
+          href="http://www.w3.org/2001/04/xmlenc#kw-aes128">http://www.w3.org/2001/04/xmlenc#kw-aes128</a></li>
+        <li>REQUIRED AES-256 KeyWrap<br />
+          <a
+          href="http://www.w3.org/2001/04/xmlenc#kw-aes256">http://www.w3.org/2001/04/xmlenc#kw-aes256</a></li>
+        <li>OPTIONAL AES-192 KeyWrap<br />
+          <a
+          href="http://www.w3.org/2001/04/xmlenc#kw-aes192">http://www.w3.org/2001/04/xmlenc#kw-aes192</a></li>
+      </ol>
+    </dd>
+  <dt>Message Digest</dt>
+    <dd><ol>
+        <li>REQUIRED SHA1<br />
+          <a
+          href="http://www.w3.org/2000/09/xmldsig#sha1">http://www.w3.org/2000/09/xmldsig#sha1</a></li>
+        <li>RECOMMENDED SHA256<br />
+          <a
+          href="http://www.w3.org/2001/04/xmlenc#sha256">http://www.w3.org/2001/04/xmlenc#sha256</a></li>
+        <li>OPTIONAL SHA512<br />
+          <a>http://www.w3.org/2001/04/xmlenc#sha512</a></li>
+        <li>OPTIONAL RIPEMD-160<br />
+          <a
+          href="http://www.w3.org/2001/04/xmlenc#ripemd160">http://www.w3.org/2001/04/xmlenc#ripemd160</a></li>
+      </ol>
+    </dd>
+  <dt>Message Authentication</dt>
+    <dd><ol>
+        <li>RECOMMENDED XML Digital Signature<br />
+          <a
+          href="http://www.w3.org/2000/09/xmldsig#">http://www.w3.org/2000/09/xmldsig#</a></li>
+      </ol>
+    </dd>
+  <dt>Canonicalization</dt>
+    <dd><ol>
+        <li>OPTIONAL Canonical XML (omits comments)<br />
+          <a
+          href="http://www.w3.org/TR/2001/REC-xml-c14n-20010315">http://www.w3.org/TR/2001/REC-xml-c14n-20010315</a></li>
+        <li>OPTIONAL Canonical XML with Comments<br />
+          <a
+          href="http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments">http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments</a></li>
+        <li>OPTIONAL Exclusive XML Canonicalization (omits comments)<br />
+          <a
+          href="http://www.w3.org/2001/10/xml-exc-c14n#">http://www.w3.org/2001/10/xml-exc-c14n#</a></li>
+        <li>OPTIONAL Exclusive XML Canonicalization with Comments<br />
+          <a
+          href="http://www.w3.org/2001/10/xml-exc-c14n#WithComments">http://www.w3.org/2001/10/xml-exc-c14n#WithComments</a></li>
+      </ol>
+    </dd>
+  <dt>Encoding</dt>
+    <dd><ol>
+        <li>REQUIRED base64<br />
+          <a
+          href="http://www.w3.org/2000/09/xmldsig#base64">http://www.w3.org/2000/09/xmldsig#base64</a></li>
+      </ol>
+    </dd>
+</dl>
+
+<h3>5.2 <a name="sec-Alg-Block" id="sec-Alg-Block">Block Encryption
+Algorithms</a></h3>
+
+<p>Block encryption algorithms are designed for encrypting and decrypting
+data in fixed size, multiple octet blocks. Their identifiers appear as the
+value of the <code>Algorithm</code> attributes of
+<code>EncryptionMethod</code> elements that are children of
+<code>EncryptedData</code>.</p>
+
+<p>Block encryption algorithms take, as implicit arguments, the data to be
+encrypted or decrypted, the keying material, and their direction of
+operation. For all of these algorithms specified below, an initialization
+vector (IV) is required that is encoded with the cipher text. For user
+specified block encryption algorithms, the IV, if any, could be specified as
+being with the cipher data, as an algorithm content element, or elsewhere.</p>
+
+<p>The IV is encoded with and before the cipher text for the algorithms below
+for ease of availability to the decryption code and to emphasize its
+association with the cipher text. Good cryptographic practice requires that a
+different IV be used for every encryption.</p>
+
+<h4><a id="sec-Padding" name="sec-Padding">Padding</a></h4>
+
+<p>Since the data being encrypted is an arbitrary number of octets, it may
+not be a multiple of the block size. This is solved by padding the plain text
+up to the block size before encryption and unpadding after decryption. The
+padding algorithm is to calculate the smallest non-zero number of octets, say
+<code>N</code>, that must be suffixed to the plain text to bring it up to a
+multiple of the block size. We will assume the block size is <code>B</code>
+octets so <code>N</code> is in the range of 1 to <code>B</code>. Pad by
+suffixing the plain text with <code>N-1</code> arbitrary pad bytes and a
+final byte whose value is <code>N</code>. On decryption, just take the last
+byte and, after sanity checking it, strip that many bytes from the end of the
+decrypted cipher text.</p>
+
+<p>For example, assume an 8 byte block size and plain text of
+<code>0x616263</code>. The padded plain text would then be
+<code>0x616263????????05</code> where the "??" bytes can be any value.
+Similarly, plain text of <code>0x2122232425262728</code> would be padded to
+<code>0x2122232425262728??????????????08</code>.</p>
+
+<h4>5.2.1 <a name="sec-tripledes-cbc" id="sec-tripledes-cbc">Triple
+DES</a></h4>
+<dl>
+  <dt>Identifier:</dt>
+    <dd><a id="tripledes-cbc" name="tripledes-cbc"
+      href="http://www.w3.org/2001/04/xmlenc#tripledes-cbc">http://www.w3.org/2001/04/xmlenc#tripledes-cbc</a>
+      (REQUIRED)</dd>
+</dl>
+
+<p>ANSI X9.52 [<a href="#ref-TRIPLEDES">TRIPLEDES</a>] specifies three
+sequential FIPS 46-3 [<a href="#ref-DES">DES</a>] operations. The XML
+Encryption TRIPLEDES consists of a DES encrypt, a DES decrypt, and a DES
+encrypt used in the Cipher Block Chaining (CBC) mode with 192 bits of key and
+a 64 bit Initialization Vector (IV). Of the key bits, the first 64 are used
+in the first DES operation, the second 64 bits in the middle DES operation,
+and the third 64 bits in the last DES operation.</p>
+
+<p>Note: Each of these 64 bits of key contain 56 effective bits and 8 parity
+bits. Thus there are only 168 operational bits out of the 192 being
+transported for a TRIPLEDES key. (Depending on the criterion used for
+analysis, the effective strength of the key may be thought to be 112 bits
+(due to meet in the middle attacks) or even less.)</p>
+
+<p>The resulting cipher text is prefixed by the IV. If included in XML
+output, it is then base64 encoded. An example TRIPLEDES EncryptionMethod is
+as follows:</p>
+<pre class="xml-example">  &lt;EncryptionMethod
+   Algorithm="http://www.w3.org/2001/04/xmlenc#tripledes-cbc"/&gt;</pre>
+
+<h4>5.2.2 <a name="sec-AES" id="sec-AES">AES</a></h4>
+<dl>
+  <dt>Identifier:</dt>
+    <dd><a id="aes128-cbc" href="http://www.w3.org/2001/04/xmlenc#aes128-cbc"
+      name="aes128-cbc">http://www.w3.org/2001/04/xmlenc#aes128-cbc</a>
+      (REQUIRED)</dd>
+    <dd><a id="aes192-cbc" href="http://www.w3.org/2001/04/xmlenc#aes192-cbc"
+      name="aes192-cbc">http://www.w3.org/2001/04/xmlenc#aes192-cbc</a>
+      (OPTIONAL)</dd>
+    <dd><a id="aes256-cbc" href="http://www.w3.org/2001/04/xmlenc#aes256-cbc"
+      name="aes256-cbc">http://www.w3.org/2001/04/xmlenc#aes256-cbc</a>
+      (REQUIRED)</dd>
+</dl>
+
+<p>[<a href="#ref-AES">AES</a>] is used in the Cipher Block Chaining (CBC)
+mode with a 128 bit initialization vector (IV). The resulting cipher text is
+prefixed by the IV. If included in XML output, it is then base64 encoded. An
+example AES EncryptionMethod is as follows:</p>
+<pre class="xml-example">  &lt;EncryptionMethod
+   Algorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc"/&gt;</pre>
+
+<h3>5.3 <a name="sec-Alg-Stream" id="sec-Alg-Stream">Stream Encryption
+Algorithms</a></h3>
+
+<p>Simple stream encryption algorithms generate, based on the key, a stream
+of bytes which are XORed with the plain text data bytes to produce the cipher
+text on encryption and with the cipher text bytes to produce plain text on
+decryption. They are normally used for the encryption of data and are
+specified by the value of the <code>Algorithm</code> attribute of the
+<code>EncryptionMethod</code> child of an <code>EncryptedData</code>
+element.</p>
+
+<p>NOTE: It is critical that each simple stream encryption key (or key and
+initialization vector (IV) if an IV is also used) be used once only. If the
+same key (or key and IV) is ever used on two messages then, by XORing the two
+cipher texts, you can obtain the XOR of the two plain texts. This is usually
+very compromising.</p>
+
+<p>No specific stream encryption algorithms are specified herein but this
+section is included to provide general guidelines.</p>
+
+<p>Stream algorithms typically use the optional <code>KeySize</code> explicit
+parameter. In cases where the key size is not apparent from the algorithm URI
+or key source, as in the use of key agreement methods, this parameter sets
+the key size. If the size of the key to be used is apparent and disagrees
+with the <code>KeySize</code> parameter, an error MUST be returned.
+Implementation of any stream algorithms is optional. The schema for the
+KeySize parameter is as follows:</p>
+<pre class="xml-dtd">  Schema Definition:
+
+  &lt;simpleType name='KeySizeType'&gt;
+    &lt;restriction base="integer"/&gt;
+  &lt;/simpleType&gt;</pre>
+
+<h3>5.4 <a name="sec-Alg-KeyTransport" id="sec-Alg-KeyTransport">Key
+Transport</a></h3>
+
+<p>Key Transport algorithms are public key encryption algorithms especially
+specified for encrypting and decrypting keys. Their identifiers appear as
+<code>Algorithm</code> attributes to <code>EncryptionMethod</code> elements
+that are children of <code>EncryptedKey</code>. <code>EncryptedKey</code> is
+in turn the child of a <code>ds:KeyInfo</code> element. The type of key being
+transported, that is to say the algorithm in which it is planned to use the
+transported key, is given by the <code>Algorithm</code> attribute of the
+<code>EncryptionMethod</code> child of the <code>EncryptedData</code> or
+<code>EncryptedKey</code> parent of this <code>ds:KeyInfo</code> element.</p>
+
+<p>(Key Transport algorithms may optionally be used to encrypt data in which
+case they appear directly as the <code>Algorithm</code> attribute of an
+<code>EncryptionMethod</code> child of an <code>EncryptedData</code> element.
+Because they use public key algorithms directly, Key Transport algorithms are
+not efficient for the transport of any amounts of data significantly larger
+than symmetric keys.)</p>
+
+<p class="">The RSA v1.5 Key Transport algorithm given below are those used
+in conjunction with TRIPLEDES and the Cryptographic Message Syntax (CMS) of
+S/MIME [<a href="#ref-CMS-Algorithms">CMS-Algorithms</a>]. The RSA v2 Key
+Transport algorithm given below is that used in conjunction with AES and CMS
+[<a href="#ref-AES-WRAP">AES-WRAP</a>].</p>
+
+<h4>5.4.1 <a name="sec-RSA-1_5" id="sec-RSA-1_5">RSA Version 1.5</a></h4>
+<dl>
+  <dt>Identifier:</dt>
+    <dd><a id="rsa-1_5" href="http://www.w3.org/2001/04/xmlenc#rsa-1_5"
+      name="rsa-1_5">http://www.w3.org/2001/04/xmlenc#rsa-1_5</a>
+    (REQUIRED)</dd>
+</dl>
+
+<p>The RSAES-PKCS1-v1_5 algorithm, specified in RFC 2437 [<a
+href="#ref-PKCS1">PKCS1</a>], takes no explicit parameters. An example of an
+RSA Version 1.5 <code>EncryptionMethod</code> element is:</p>
+<pre class="xml-example">  &lt;EncryptionMethod
+   Algorithm="http://www.w3.org/2001/04/xmlenc#rsa-1_5"/&gt;</pre>
+
+<p>The <code>CipherValue</code> for such an encrypted key is the base64 [<a
+href="#ref-MIME">MIME</a>] encoding of the octet string computed as per RFC
+2437 [<a href="#ref-PKCS1">PKCS1</a>, section 7.2.1: Encryption operation].
+As specified in the EME-PKCS1-v1_5 function RFC 2437 [<a
+href="#ref-PKCS1">PKCS1</a>, section 9.1.2.1], the value input to the key
+transport function is as follows:</p>
+<pre class="xml-example">   CRYPT ( PAD ( KEY ))</pre>
+
+<p>where the padding is of the following special form:</p>
+<pre class="xml-example">   02 | PS* | 00 | key</pre>
+
+<p>where "|" is concatenation, "02" and "00" are fixed octets of the
+corresponding hexadecimal value, PS is a string of strong pseudo-random
+octets [<a href="#ref-RANDOM">RANDOM</a>] at least eight octets long,
+containing no zero octets, and long enough that the value of the quantity
+being CRYPTed is one octet shorter than the RSA modulus, and "key" is the key
+being transported. The key is 192 bits for TRIPLEDES and 128, 192, or 256
+bits for AES. Support of this key transport algorithm for transporting 192
+bit keys is MANDATORY to implement. Support of this algorithm for
+transporting other keys is OPTIONAL. RSA-OAEP is RECOMMENDED for the
+transport of AES keys.</p>
+
+<p>The resulting base64 [<a href="#ref-MIME">MIME</a>] string is the value of
+the child text node of the <code>CipherData</code> element, e.g.</p>
+<pre class="xml-example">  &lt;CipherData&gt; IWijxQjUrcXBYoCei4QxjWo9Kg8D3p9tlWoT4
+     t0/gyTE96639In0FZFY2/rvP+/bMJ01EArmKZsR5VW3rwoPxw=
+  &lt;/CipherData&gt;</pre>
+
+<h4>5.4.2 <a name="sec-RSA-OAEP" id="sec-RSA-OAEP">RSA-OAEP</a></h4>
+<dl>
+  <dt>Identifier:</dt>
+    <dd><a id="rsa-oaep-mgf1p"
+      href="http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p"
+      name="rsa-oaep-mgf1p">http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p</a>
+      (REQUIRED)</dd>
+</dl>
+
+<p class="">The RSAES-OAEP-ENCRYPT algorithm, as specified in RFC 2437 [<a
+href="#ref-PKCS1">PKCS1</a>], takes three parameters. The two user specified
+parameters are a MANDATORY message digest function and an OPTIONAL encoding
+octet string <code>OAEPparams</code>. The message digest function is
+indicated by the <code>Algorithm</code> attribute of a child
+<code>ds:DigestMethod</code> element and the mask generation function, the
+third parameter, is always MGF1 with SHA1 (mgf1SHA1Identifier). Both the
+message digest and mask generation functions are used in the EME-OAEP-ENCODE
+operation as part of RSAES-OAEP-ENCRYPT. The encoding octet string is the
+base64 decoding of the content of an optional <code>OAEPparams</code> child
+element . If no <code>OAEPparams</code> child is provided, a null string is
+used.</p>
+<pre class="xml-dtd">Schema Definition:
+     &lt;!-- use these element types as children of EncryptionMethod
+          when used with RSA-OAEP --&gt;
+     &lt;element name='OAEPparams' minOccurs='0' type='base64Binary'/&gt;
+     &lt;element ref='ds:DigestMethod' minOccurs='0'/&gt;</pre>
+
+<p>An example of an RSA-OAEP element is:</p>
+<pre class="xml-example">  &lt;EncryptionMethod
+     Algorithm="http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p"&gt;
+    &lt;OAEPparams&gt; 9lWu3Q== &lt;/OAEPparams&gt;
+    &lt;ds:DigestMethod
+        Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/&gt;
+  &lt;EncryptionMethod&gt;</pre>
+
+<p>The <code>CipherValue</code> for an RSA-OAEP encrypted key is the base64
+[<a href="#ref-MIME">MIME</a>] encoding of the octet string computed as per
+RFC 2437 [<a href="#ref-PKCS1">PKCS1</a>, section 7.1.1: Encryption
+operation]. As described in the EME-OAEP-ENCODE function RFC 2437 [<a
+href="#ref-PKCS1">PKCS1</a>, section 9.1.1.1], the value input to the key
+transport function is calculated using the message digest function and string
+specified in the <code>DigestMethod</code> and <code>OAEPparams</code>
+elements and using the mask generator function MGF1 (with SHA1) specified in
+RFC 2437. The desired output length for EME-OAEP-ENCODE is one byte shorter
+than the RSA modulus.</p>
+
+<p>The transported key size is 192 bits for TRIPLEDES and 128, 192, or 256
+bits for AES. Implementations MUST implement RSA-OAEP for the transport of
+128 and 256 bit keys. They MAY implement RSA-OAEP for the transport of other
+keys.</p>
+
+<h3>5.5 <a name="sec-Alg-KeyAgreement" id="sec-Alg-KeyAgreement">Key
+Agreement</a></h3>
+
+<p>A Key Agreement algorithm provides for the derivation of a shared secret
+key based on a shared secret computed from certain types of compatible public
+keys from both the sender and the recipient. Information from the originator
+to determine the secret is indicated by an optional
+<code>OriginatorKeyInfo</code> parameter child of an
+<code>AgreementMethod</code> element while that associated with the recipient
+is indicated by an optional <code>RecipientKeyInfo</code>. A shared key is
+derived from this shared secret by a method determined by the Key Agreement
+algorithm.</p>
+
+<p>Note: XML Encryption does not provide an on-line key agreement negotiation
+protocol. The <code>AgreementMethod</code> element can be used by the
+originator to identify the keys and computational procedure that were used to
+obtain a shared encryption key. The method used to obtain or select the keys
+or algorithm used for the agreement computation is beyond the scope of this
+specification.</p>
+
+<p>The <code>AgreementMethod</code> element appears as the content of a
+<code>ds:KeyInfo</code> since, like other <code>ds:KeyInfo</code> children,
+it yields a key. This <code>ds:KeyInfo</code> is in turn a child of an
+<code>EncryptedData</code> or <code>EncryptedKey</code> element. The
+<code>Algorithm</code> attribute and <code>KeySize</code> child of the
+<code>EncryptionMethod</code> element under this <code>EncryptedData</code>
+or <code>EncryptedKey</code> element are implicit parameters to the key
+agreement computation. In cases where this <code>EncryptionMethod</code>
+algorithm URI is insufficient to determine the key length, a
+<code>KeySize</code> MUST have been included. In addition, the sender may
+place a <code>KA-Nonce</code> element under <code>AgreementMethod</code> to
+assure that different keying material is generated even for repeated
+agreements using the same sender and recipient public keys. For example:</p>
+<pre class="xml-example"> &lt;EncryptedData&gt;
+   &lt;EncryptionMethod Algorithm="Example:Block/Alg"
+     &lt;KeySize&gt;80&lt;/KeySize&gt;
+   &lt;/EncryptionMethod&gt;
+   &lt;ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#"&gt;
+     &lt;AgreementMethod Algorithm="example:Agreement/Algorithm"&gt;
+       &lt;KA-Nonce&gt;Zm9v&lt;/KA-Nonce&gt;
+       &lt;ds:DigestMethod
+       Algorithm="http://www.w3.org/2001/04/xmlenc#sha1"/&gt;
+      &lt;OriginatorKeyInfo&gt;
+         &lt;ds:KeyValue&gt;....&lt;/ds:KeyValue&gt;
+       &lt;/OriginatorKeyInfo&gt;
+       &lt;RecipientKeyInfo&gt;
+         &lt;ds:KeyValue&gt;....&lt;/ds:KeyValue&gt;
+       &lt;/RecipientKeyInfo&gt; 
+     &lt;/AgreementMethod&gt;
+   &lt;/ds:KeyInfo&gt;
+   &lt;CipherData&gt;...&lt;/CipherData&gt;
+&lt;/EncryptedData&gt;</pre>
+
+<p>If the agreed key is being used to wrap a key, rather than data as above,
+then <code>AgreementMethod</code> would appear inside a
+<code>ds:KeyInfo</code> inside an <code>EncryptedKey</code> element.</p>
+
+<p>The Schema for <code>AgreementMethod</code> is as follows:</p>
+<pre class="xml-dtd">  Schema Definition:
+
+  &lt;element name="AgreementMethod" type="xenc:AgreementMethodType"/&gt;
+  &lt;complexType name="AgreementMethodType" mixed="true"&gt;
+    &lt;sequence&gt;
+      &lt;element name="KA-Nonce" minOccurs="0" type="base64Binary"/&gt;
+      &lt;!-- &lt;element ref="ds:DigestMethod" minOccurs="0"/&gt; --&gt;
+      &lt;any namespace="##other" minOccurs="0" maxOccurs="unbounded"/&gt;
+      &lt;element name="OriginatorKeyInfo" minOccurs="0" 
+               type="ds:KeyInfoType"/&gt;
+      &lt;element name="RecipientKeyInfo" minOccurs="0" 
+               type="ds:KeyInfoType"/&gt;
+    &lt;/sequence&gt;
+    &lt;attribute name="Algorithm" type="anyURI" use="required"/&gt;
+  &lt;/complexType&gt;</pre>
+
+<h4>5.5.1 <a name="sec-DHKeyValue" id="sec-DHKeyValue">Diffie-Hellman Key
+Values</a></h4>
+<dl>
+  <dt>Identifier:</dt>
+    <dd><a id="DHKeyValue" href="http://www.w3.org/2001/04/xmlenc#DHKeyValue"
+      name="DHKeyValue">http://www.w3.org/2001/04/xmlenc#DHKeyValue</a>
+      (OPTIONAL)</dd>
+</dl>
+
+<p>Diffie-Hellman keys can appear directly within <code>KeyValue</code>
+elements or be obtained by <code>ds:RetrievalMethod</code> fetches as well as
+appearing in certificates and the like. The above identifier can be used as
+the value of the <code>Type</code> attribute of <code>Reference</code> or
+<code>ds:RetrievalMethod</code> elements.</p>
+
+<p>As specified in [<a href="#ref-ESDH">ESDH</a>], a DH public key consists
+of up to six quantities, two large primes p and q, a "generator" g, the
+public key, and validation parameters "seed" and "pgenCounter". These relate
+as follows: The public key = ( g**x mod p ) where x is the corresponding
+private key; p = j*q + 1 where j &gt;= 2. "seed" and "pgenCounter" are
+optional and can be used to determine if the Diffie-Hellman key has been
+generated in conformance with the algorithm specified in [<a
+href="#ref-ESDH">ESDH</a>]. Because the primes and generator can be safely
+shared over many DH keys, they may be known from the application environment
+and are optional. The schema for a <code>DHKeyValue</code> is as follows:</p>
+<pre class="xml-dtd">   <code>Schema:
+
+  &lt;element name="DHKeyValue" type="xenc:DHKeyValueType"/&gt;
+  &lt;complexType name="DHKeyValueType"&gt;
+     &lt;sequence&gt;
+        &lt;sequence minOccurs="0"&gt;
+           &lt;element name="P" type="ds:CryptoBinary"/&gt;
+           &lt;element name="Q" type="ds:CryptoBinary"/&gt;
+           &lt;element name="Generator"type="ds:CryptoBinary"/&gt;
+        &lt;/sequence&gt;
+        &lt;element name="Public" type="ds:CryptoBinary"/&gt;
+        &lt;sequence minOccurs="0"&gt;
+           &lt;element name="seed" type="ds:CryptoBinary"/&gt;
+           &lt;element name="pgenCounter" type="ds:CryptoBinary"/&gt;
+        &lt;/sequence&gt;
+     &lt;/sequence&gt;
+  &lt;/complexType&gt;</code></pre>
+
+<h4>5.5.2 <a name="sec-DHKeyAgreement" id="sec-DHKeyAgreement">Diffie-Hellman
+Key Agreement</a></h4>
+<dl>
+  <dt>Identifier:</dt>
+    <dd><a name="dh" id="dh"
+      href="http://www.w3.org/2001/04/xmlenc#dh">http://www.w3.org/2001/04/xmlenc#dh</a>
+      (OPTIONAL)</dd>
+</dl>
+
+<p>The Diffie-Hellman (DH) key agreement protocol [<a
+href="#ref-ESDH">ESDH</a>] involves the derivation of shared secret
+information based on compatible DH keys from the sender and recipient. Two DH
+public keys are compatible if they have the same prime and generator. If, for
+the second one, <code>Y = g**y mod p</code>, then the two parties can
+calculate the shared secret <code>ZZ = ( g**(x*y) mod p )</code> even though
+each knows only their own private key and the other party's public key.
+Leading zero bytes MUST be maintained in <code>ZZ</code> so it will be the
+same length, in bytes, as <code>p</code>. The size of <code>p</code> MUST be
+at least 512 bits and <code>g</code> at least 160 bits. There are numerous
+other complex security considerations in the selection of <code>g</code>,
+<code>p</code>, and a random <code>x</code> as described in [<a
+href="#ref-ESDH">ESDH</a>].</p>
+
+<p>Diffie-Hellman key agreement is optional to implement. An example of a DH
+<code>AgreementMethod</code> element is as follows:</p>
+<pre class="xml-example">  &lt;AgreementMethod
+      Algorithm="http://www.w3.org/2001/04/xmlenc#dh"
+      ds:xmlns="http://www.w3.org/2000/09/xmldsig#"&gt;
+    &lt;KA-Nonce&gt;Zm9v&lt;/KA-Nonce&gt;
+    &lt;ds:DigestMethod
+     Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/&gt;
+    &lt;OriginatorKeyInfo&gt;
+      &lt;ds:X509Data&gt;&lt;ds:X509Certificate&gt;
+        ...
+      &lt;/ds:X509Certificate&gt;&lt;/ds:X509Data&gt;
+    &lt;/OriginatorKeyInfo&gt;
+    &lt;RecipientKeyInfo&gt;&lt;ds:KeyValue&gt;
+      ...
+    &lt;/ds:KeyValue&gt;&lt;/RecipientKeyInfo&gt;
+  &lt;/AgreementMethod&gt;</pre>
+
+<p>Assume the Diffie-Hellman shared secret is the octet sequence
+<code>ZZ</code>. The shared keying material needed will then be calculated as
+follows:</p>
+<pre class="xml-example">  Keying Material = KM(1) | KM(2) | ...</pre>
+
+<p>where "|" is byte stream concatenation and</p>
+<pre class="xml-example">  KM(counter) = DigestAlg ( ZZ | counter | EncryptionAlg |
+                KA-Nonce | KeySize )</pre>
+<dl>
+  <dt><code>DigestAlg</code></dt>
+    <dd>The message digest algorithm specified by the
+      <code>DigestMethod</code> child of <code>AgreementMethod</code>.</dd>
+  <dt><code>EncryptionAlg</code></dt>
+    <dd>The URI of the encryption algorithm, including possible key wrap
+      algorithms, in which the derived keying material is to be used
+      ("Example:Block/Alg" in the example above), not the URI of the
+      agreement algorithm. This is the value of the <code>Algorithm</code>
+      attribute of the <code>EncryptionMethod</code> child of the
+      <code>EncryptedData</code> or <code>EncryptedKey</code> grandparent of
+      <code>AgreementMethod</code>.</dd>
+  <dt><code>KA-Nonce</code></dt>
+    <dd>The base64 decoding the content of the <code>KA-Nonce</code> child of
+      <code>AgreementMethod</code>, if present. If the <code>KA-Nonce</code>
+      element is absent, it is null.</dd>
+  <dt><code>Counter</code></dt>
+    <dd>A one byte counter starting at one and incrementing by one. It is
+      expressed as two hex digits where letters A through F are in upper
+    case.</dd>
+  <dt><code>KeySize</code></dt>
+    <dd>The size in bits of the key to be derived from the shared secret as
+      the UTF-8 string for the corresponding decimal integer with only digits
+      in the string and no leading zeros. For some algorithms the key size is
+      inherent in the URI. For others, such as most stream ciphers, it must
+      be explicitly provided.</dd>
+</dl>
+
+<p>For example, the initial <code>(KM(1))</code> calculation for the
+<code>EncryptionMethod</code> of the <a href="#sec-Alg-KeyAgreement">Key
+Agreement</a> example (section 5.5) would be as follows, where the binary one
+byte counter value of 1 is represented by the two character UTF-8 sequence
+<code>01</code>, <code>ZZ</code> is the shared secret, and "<code>foo</code>"
+is the base64 decoding of "<code>Zm9v</code>".</p>
+<pre class="xml-example">  SHA-1 ( ZZ01Example:Block/Algfoo80 )</pre>
+
+<p>Assuming that <code>ZZ</code> is <code>0xDEADBEEF</code>, that would be</p>
+<pre class="xml-example">  SHA-1( 0xDEADBEEF30314578616D706C653A426C6F636B2F416C67666F6F3830 )</pre>
+
+<p>whose value is</p>
+<pre class="xml-example">  0x534C9B8C4ABDCB50038B42015A181711068B08C1</pre>
+
+<p>Each application of <code>DigestAlg</code> for successive values of
+<code>Counter</code> will produce some additional number of bytes of keying
+material. From the concatenated string of one or more <code>KM</code>'s,
+enough leading bytes are taken to meet the need for an actual key and the
+remainder discarded. For example, if <code>DigestAlg</code> is SHA-1 which
+produces 20 octets of hash, then for 128 bit AES the first 16 bytes from
+<code>KM(1)</code> would be taken and the remaining 4 bytes discarded. For
+256 bit AES, all of <code>KM(1)</code> suffixed with the first 12 bytes of
+KM(2) would be taken and the remaining 8 bytes of <code>KM(2)</code>
+discarded.</p>
+
+<h3>5.6 <a name="sec-Alg-SymmetricKeyWrap"
+id="sec-Alg-SymmetricKeyWrap">Symmetric Key Wrap</a></h3>
+
+<p>Symmetric Key Wrap algorithms are shared secret key encryption algorithms
+especially specified for encrypting and decrypting symmetric keys. Their
+identifiers appear as <code>Algorithm</code> attribute values to
+<code>EncryptionMethod</code> elements that are children of
+<code>EncryptedKey</code> which is in turn a child of <code>ds:KeyInfo</code>
+which is in turn a child of <code>EncryptedData</code> or another
+<code>EncryptedKey</code>. The type of the key being wrapped is indicated by
+the <code>Algorithm</code> attribute of <code>EncryptionMethod</code> child
+of the parent of the <code>ds:KeyInfo</code> grandparent of the
+<code>EncryptionMethod</code> specifying the symmetric key wrap algorithm.</p>
+
+<h4>5.6.1 <a name="sec-CMSKeyChecksum" id="sec-CMSKeyChecksum">CMS Key
+Checksum</a></h4>
+
+<p>Some key wrap algorithms make use of a key checksum as defined in CMS [<a
+href="#ref-CMS-Wrap">CMS-Wrap</a>]. The algorithm that provides an integrity
+check value for the key being wrapped is:</p>
+<ol>
+  <li>Compute the 20 octet SHA-1 hash on the key being wrapped.</li>
+  <li>Use the first 8 octets of this hash as the checksum value.</li>
+</ol>
+
+<h4>5.6.2 <a name="sec-kw-tripledes" id="sec-kw-tripledes">CMS Triple DES Key
+Wrap</a></h4>
+<dl>
+  <dt>Identifiers and Requirements:</dt>
+    <dd><a id="kw-tripledes" name="kw-tripledes"
+      href="http://www.w3.org/2001/04/xmlenc#kw-tripledes">http://www.w3.org/2001/04/xmlenc#kw-tripledes</a>
+      (REQUIRED)</dd>
+</dl>
+
+<p>XML Encryption implementations MUST support TRIPLEDES wrapping of 168 bit
+keys and may optionally support TRIPLEDES wrapping of other keys.</p>
+
+<p>An example of a TRIPLEDES Key Wrap <code>EncryptionMethod</code> element
+is as follows:</p>
+<pre class="xml-example">  <code>&lt;EncryptionMethod
+   Algorithm="http://www.w3.org/2001/04/xmlenc#kw-tripledes"/&gt;</code></pre>
+
+<p>The following algorithm wraps (encrypts) a key (the wrapped key, WK) under
+a TRIPLEDES key-encryption-key (KEK) as adopted from [<a
+href="#ref-CMS-Algorithms">CMS-Algorithms</a>]:</p>
+<ol>
+  <li>Represent the key being wrapped as an octet sequence. If it is a
+    TRIPLEDES key, this is 24 octets (192 bits) with odd parity bit as the
+    bottom bit of each octet.</li>
+  <li>Compute the <a href="#sec-CMSKeyChecksum">CMS key checksum</a> (section
+    5.6.1) call this CKS.</li>
+  <li>Let <code>WKCKS = WK || CKS</code>, where || is concatenation.</li>
+  <li>Generate 8 random octets [<a href="#ref-RANDOM">RANDOM</a>] and call
+    this IV.</li>
+  <li>Encrypt WKCKS in CBC mode using KEK as the key and IV as the
+    initialization vector. Call the results TEMP1.</li>
+  <li>Let <code>TEMP2 = IV || TEMP1</code>.</li>
+  <li>Reverse the order of the octets in <code>TEMP2</code> and call the
+    result <code>TEMP3</code>.</li>
+  <li>Encrypt <code>TEMP3</code> in CBC mode using the <code>KEK</code> and
+    an initialization vector of <code>0x4adda22c79e82105</code>. The
+    resulting cipher text is the desired result. It is 40 octets long if a
+    168 bit key is being wrapped.</li>
+</ol>
+
+<p>The following algorithm unwraps (decrypts) a key as adopted from [<a
+href="#ref-CMS-Algorithms">CMS-Algorithms</a>]:</p>
+<ol>
+  <li>Check if the length of the cipher text is reasonable given the key
+    type. It must be 40 bytes for a 168 bit key and either 32, 40, or 48
+    bytes for a 128, 192, or 256 bit key. If the length is not supported or
+    inconsistent with the algorithm for which the key is intended, return
+    error.</li>
+  <li>Decrypt the cipher text with TRIPLEDES in CBC mode using the
+    <code>KEK</code> and an initialization vector (IV) of
+    <code>0x4adda22c79e82105</code>. Call the output <code>TEMP3</code>.</li>
+  <li>Reverse the order of the octets in TEMP3 and call the result
+    <code>TEMP2</code>.</li>
+  <li>Decompose TEMP2 into IV, the first 8 octets, and <code>TEMP1</code>,
+    the remaining octets.</li>
+  <li>Decrypt TEMP1 using TRIPLEDES in CBC mode using the <code>KEK</code>
+    and the IV found in the previous step. Call the result
+  <code>WKCKS</code>.</li>
+  <li>Decompose <code>WKCKS</code>. <code>CKS</code> is the last 8 octets and
+    <code>WK</code>, the wrapped key, are those octets before the
+    <code>CKS</code>.</li>
+  <li>Calculate a <a href="#sec-CMSKeyChecksum">CMS key checksum</a> (section
+    5.6.1) over the <code>WK</code> and compare with the <code>CKS</code>
+    extracted in the above step. If they are not equal, return error.</li>
+  <li><code>WK</code> is the wrapped key, now extracted for use in data
+    decryption.</li>
+</ol>
+
+<h4>5.6.3 <a name="sec-kw-aes" id="sec-kw-aes">AES KeyWrap</a></h4>
+<dl>
+  <dt>Identifiers and Requirements:</dt>
+    <dd><a id="kw-aes128" href="http://www.w3.org/2001/04/xmlenc#kw-aes128"
+      name="kw-aes128">http://www.w3.org/2001/04/xmlenc#kw-aes128</a>
+      (REQUIRED)</dd>
+    <dd><a id="kw-aes192" href="http://www.w3.org/2001/04/xmlenc#kw-aes192"
+      name="kw-aes192">http://www.w3.org/2001/04/xmlenc#kw-aes192</a>
+      (OPTIONAL)</dd>
+    <dd><a id="kw-aes256" href="http://www.w3.org/2001/04/xmlenc#kw-aes256"
+      name="kw-aes256">http://www.w3.org/2001/04/xmlenc#kw-aes256</a>
+      (REQUIRED)</dd>
+</dl>
+
+<p>Implementation of AES key wrap is described below, as suggested by NIST.
+It provides for confidentiality and integrity. This algorithm is defined only
+for inputs which are a multiple of 64 bits. The information wrapped need not
+actually be a key. The algorithm is the same whatever the size of the AES key
+used in wrapping, called the key encrypting key or <code>KEK</code>. The
+implementation requirements are indicated below.</p>
+<dl>
+  <dt>128 bit AES Key Encrypting Key</dt>
+    <dd>Implementation of wrapping 128 bit keys REQUIRED.<br />
+      Wrapping of other key sizes OPTIONAL.</dd>
+  <dt>192 bit AES Key Encrypting Key</dt>
+    <dd>All support OPTIONAL.</dd>
+  <dt>256 bit AES Key Encrypting Key</dt>
+    <dd>Implementation of wrapping 256 bit keys REQUIRED.<br />
+      Wrapping of other key sizes OPTIONAL.</dd>
+</dl>
+
+<p>Assume that the data to be wrapped consists of <code>N</code> 64-bit data
+blocks denoted <code>P(1)</code>, <code>P(2)</code>, <code>P(3)</code> ...
+<code>P(N)</code>. The result of wrapping will be <code>N+1</code> 64-bit
+blocks denoted <code>C(0)</code>, <code>C(1)</code>, <code>C(2)</code>, ...
+<code>C(N)</code>. The key encrypting key is represented by <code>K</code>.
+Assume integers <code>i</code>, <code>j</code>, and <code>t</code> and
+intermediate 64-bit register <code>A</code>, 128-bit register <code>B</code>,
+and array of 64-bit quantities <code>R(1)</code> through
+<code>R(N)</code>.</p>
+
+<p>"|" represents concatentation so <code>x|y</code>, where <code>x</code>
+and <code>y</code> and 64-bit quantities, is the 128-bit quantity with
+<code>x</code> in the most significant bits and <code>y</code> in the least
+significant bits. <code>AES(K)enc(x)</code> is the operation of AES
+encrypting the 128-bit quantity <code>x</code> under the key <code>K</code>.
+<code>AES(K)dec(x)</code> is the corresponding decryption opteration.
+<code>XOR(x,y)</code> is the bitwise exclusive or of <code>x</code> and
+<code>y</code>. <code>MSB(x)</code> and <code>LSB(y)</code> are the most
+significant 64 bits and least significant 64 bits of x and y respectively.</p>
+
+<p>If <code>N</code> is 1, a single AES operation is performed for wrap or
+unwrap. If <code>N&gt;1</code>, then <code>6*N</code> AES operations are
+performed for wrap or unwrap.</p>
+
+<p>The key wrap algorithm is as follows:</p>
+<ol>
+  <li>If <code>N</code> is <code>1</code>: 
+    <ul>
+      <li><code>B=AES(K)enc(0xA6A6A6A6A6A6A6A6|P(1)</code>)</li>
+      <li><code>C(0)=MSB(B)</code></li>
+      <li><code>C(1)=LSB(B)</code></li>
+    </ul>
+    If <code>N&gt;1</code>, perform the following steps:</li>
+  <li>Initialize variables: 
+    <ul>
+      <li>Set <code>A</code> to <code>0xA6A6A6A6A6A6A6A6</code></li>
+      <li>For<code>i=1</code> to <code>N</code>,<br />
+        <code>R(i)=P(i)</code></li>
+    </ul>
+  </li>
+  <li>Calculate intermediate values: 
+    <ul>
+      <li>For<code>j=0</code> to <code>5</code>, 
+        <ul>
+          <li>For <code>i=1</code> to <code>N</code>,<br />
+            <code>t= i + j*N</code><br />
+            <code>B=AES(K)enc(A|R(i))</code><br />
+            <code>A=XOR(t,MSB(B))</code><br />
+            <code>R(i)=LSB(B)</code></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Output the results: 
+    <ul>
+      <li>Set <code>C(0)=A</code></li>
+      <li>For <code>i=1</code> to <code>N</code>,<br />
+        <code>C(i)=R(i)</code></li>
+    </ul>
+  </li>
+</ol>
+
+<p>The key unwrap algorithm is as follows:</p>
+<ol>
+  <li>If <code>N</code> is <code>1</code>: 
+    <ul>
+      <li><code>B=AES(K)dec(C(0)|C(1))</code></li>
+      <li><code>P(1)=LSB(B)</code></li>
+      <li>If <code>MSB(B)</code> is <code>0xA6A6A6A6A6A6A6A6</code>, return
+        success. Otherwise, return an integrity check failure error.</li>
+    </ul>
+    If <code>N</code>&gt;1, perform the following steps:</li>
+  <li>Initialize the variables: 
+    <ul>
+      <li><code>A=C(0)</code></li>
+      <li>For <code>i=1</code> to <code>N</code>,<br />
+        <code>R(i)=C(i)</code></li>
+    </ul>
+  </li>
+  <li>Calculate intermediate values: 
+    <ul>
+      <li>For <code>j=5</code> to <code>0</code>, 
+        <ul>
+          <li>For <code>i=N</code> to <code>1</code>,<br />
+            <code>t= i + j*N</code><br />
+            <code>B=AES(K)dec(XOR(t,A)|R(i))</code><br />
+            <code>A=MSB(B)</code><br />
+            <code>R(i)=LSB(B)</code></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Output the results: 
+    <ul>
+      <li>For <code>i=1</code> to <code>N</code>,<br />
+        <code>P(i)=R(i)</code></li>
+      <li>If <code>A</code> is <code>0xA6A6A6A6A6A6A6A6</code>, return
+        success. Otherwise, return an integrity check failure error.</li>
+    </ul>
+  </li>
+</ol>
+
+<p>For example, wrapping the data
+<code>0x00112233445566778899AABBCCDDEEFF</code> with the <code>KEK
+0x000102030405060708090A0B0C0D0E0F</code> produces the ciphertext of
+<code>0x1FA68B0A8112B447</code>, <code>0xAEF34BD8FB5A7B82</code>,
+<code>0x9D3E862371D2CFE5</code>.</p>
+
+<h3>5.7 <a name="sec-Alg-MessageDigest" id="sec-Alg-MessageDigest">Message
+Digest</a></h3>
+
+<p>Message digest algorithms can be used in <code>AgreementMethod</code> as
+part of the key derivation, within RSA-OAEP encryption as a hash function,
+and in connection with the HMAC message authentication code method as
+described in [<a href="#ref-XML-DSIG">XML-DSIG</a>].)</p>
+
+<h4>5.7.1 <a name="sec-SHA1" id="sec-SHA1">SHA1</a></h4>
+<dl>
+  <dt>Identifier:</dt>
+    <dd><a
+      href="http://www.w3.org/2000/09/xmldsig#sha1">http://www.w3.org/2000/09/xmldsig#sha1</a>
+      (REQUIRED)</dd>
+</dl>
+
+<p>The SHA-1 algorithm [<a href="#ref-SHA">SHA</a>] takes no explicit
+parameters. An example of an SHA-1 <code>DigestMethod</code> element is:</p>
+<pre class="xml-example">   &lt;DigestMethod
+    Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/&gt;</pre>
+
+<p>A SHA-1 digest is a 160-bit string. The content of the
+<code>DigestValue</code> element shall be the base64 encoding of this bit
+string viewed as a 20-octet octet stream. For example, the
+<code>DigestValue</code> element for the message digest:</p>
+<pre class="xml-example">   <code>A9993E36 4706816A BA3E2571 7850C26C 9CD0D89D</code></pre>
+
+<p>from Appendix A of the SHA-1 standard would be:</p>
+<pre class="xml-example">   <code>&lt;DigestValue&gt;qZk+NkcGgWq6PiVxeFDCbJzQ2J0=&lt;/DigestValue&gt;</code></pre>
+
+<h4>5.7.2 <a name="sec-SHA256" id="sec-SHA256">SHA256</a></h4>
+<dl>
+  <dt>Identifier:</dt>
+    <dd><a id="sha256" href="http://www.w3.org/2001/04/xmlenc#sha256"
+      name="sha256">http://www.w3.org/2001/04/xmlenc#sha256</a>
+    (RECOMMENDED)</dd>
+</dl>
+
+<p>The SHA-256 algorithm [<a href="#ref-SHA">SHA</a>] takes no explicit
+parameters. An example of an SHA-256 <code>DigestMethod</code> element is:</p>
+<pre class="xml-example">   <code>&lt;DigestMethod
+    Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/&gt;</code></pre>
+
+<p>A SHA-256 digest is a 256-bit string. The content of the
+<code>DigestValue</code> element shall be the base64 encoding of this bit
+string viewed as a 32-octet octet stream.</p>
+
+<h4>5.7.3 <a name="sec-SHA512" id="sec-SHA512">SHA512</a></h4>
+<dl>
+  <dt>Identifier:</dt>
+    <dd><a id="sha512" href="http://www.w3.org/2001/04/xmlenc#sha512"
+      name="sha512">http://www.w3.org/2001/04/xmlenc#sha512</a>
+    (OPTIONAL)</dd>
+</dl>
+
+<p>The SHA-512 algorithm [<a href="#ref-SHA">SHA</a>] takes no explicit
+parameters. An example of an SHA-512 <code>DigestMethod</code> element is:</p>
+<pre class="xml-example">   &lt;DigestMethod
+    Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"/&gt;</pre>
+
+<p>A SHA-512 digest is a 512-bit string. The content of the
+<code>DigestValue</code> element shall be the base64 encoding of this bit
+string viewed as a 64-octet octet stream.</p>
+
+<h4>5.7.4 <a name="sec-RIPEMD-160" id="sec-RIPEMD-160">RIPEMD-160</a></h4>
+<dl>
+  <dt>Identifier:</dt>
+    <dd><a id="ripemd160" href="http://www.w3.org/2001/04/xmlenc#ripemd160"
+      name="ripemd160">http://www.w3.org/2001/04/xmlenc#ripemd160</a>
+      (OPTIONAL)</dd>
+</dl>
+
+<p>The RIPEMD-160 algorithm [<a href="#ref-RIPEMD-160">RIPEMD-160</a>] takes
+no explicit parameters. An example of an RIPEMD-160 <code>DigestMethod</code>
+element is:</p>
+<pre class="xml-example">   &lt;DigestMethod
+    Algorithm="http://www.w3.org/2001/04/xmlenc#ripemd160"/&gt;</pre>
+
+<p>A RIPEMD-160 digest is a 160-bit string. The content of the
+<code>DigestValue</code> element shall be the base64 encoding of this bit
+string viewed as a 20-octet octet stream.</p>
+
+<h3>5.8 <a name="sec-Alg-MessageAuthentication"
+id="sec-Alg-MessageAuthentication">Message Authentication</a></h3>
+<dl>
+  <dt>Identifier:</dt>
+    <dd><a
+      href="http://www.w3.org/2000/09/xmldsig#">http://www.w3.org/2000/09/xmldsig#</a>
+      (RECOMMENDED)</dd>
+</dl>
+
+<p>XML Signature [<a href="#ref-XML-DSIG">XML-DSIG</a>] is OPTIONAL to
+implement for XML encryption applications. It is the recommended way to
+provide key based authentication.</p>
+
+<h3>5.9 <a name="sec-Alg-Canonicalition"
+id="sec-Alg-Canonicalition">Canonicalization</a></h3>
+
+<p>A Canonicalization of XML is a method of consistently serializing XML into
+an octet stream as is necessary prior to encrypting XML.</p>
+
+<h4><a id="sec-Inclusive-Canonicalization"
+name="sec-Inclusive-Canonicalization">5.9.1 Inclusive
+Canonicalization</a></h4>
+<dl>
+  <dt>Identifiers:</dt>
+    <dd><a
+      href="http://www.w3.org/TR/2001/REC-xml-c14n-20010315">http://www.w3.org/TR/2001/REC-xml-c14n-20010315</a>
+      (OPTIONAL)</dd>
+    <dd><a
+      href="http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments">http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments</a>
+      (OPTIONAL)</dd>
+</dl>
+
+<p>Canonical XML [<a href="#ref-XML-C14N">Canon</a>] is a method of
+serializing XML which includes the in scope namespace and xml namespace
+attribute context from ancestors of the XML being serialized.</p>
+
+<p>If XML is to be encrypted and then later decrypted into a different
+environment and it is desired to preserve namespace prefix bindings and the
+value of attributes in the "xml" namespace of its original environment, then
+the canonical XML with comments version of the XML should be the
+serialization that is encrypted.</p>
+
+<h4><a id="sec-Exclusive-Canonicalization"
+name="sec-Exclusive-Canonicalization">5.9.2 Exclusive
+Canonicalization</a></h4>
+<dl>
+  <dt>Identifiers:</dt>
+    <dd><a
+      href="http://www.w3.org/2001/10/xml-exc-c14n#">http://www.w3.org/2001/10/xml-exc-c14n#</a>
+      (OPTIONAL)</dd>
+    <dd><a
+      href="http://www.w3.org/2001/10/xml-exc-c14n#WithComments">http://www.w3.org/2001/10/xml-exc-c14n#WithComments</a>
+      (OPTIONAL)</dd>
+</dl>
+
+<p>Exclusive XML Canonicalization [<a href="#ref-XML-exc-C14N">Exclusive</a>]
+serializes XML in such a way as to include to the minimum extent practical
+the namespace prefix binding and xml namespace attribute context inherited
+from ancestor elements.</p>
+
+<p>It is the recommended method where the outer context of a fragment which
+was signed and then encrypted may be changed. Otherwise the validation of the
+signature over the fragment may fail because the canonicalization by
+signature validation may include unnecessary namespaces into the fragment.</p>
+
+<h2>6 <a name="sec-Security" id="sec-Security">Security
+Considerations</a></h2>
+
+<h3>6.1 <a name="sec-Sign-with-Encrypt"
+id="sec-Sign-with-Encrypt">Relationship to XML Digital Signatures</a></h3>
+
+<p>The application of both encryption and digital signatures over portions of
+an XML document can make subsequent decryption and signature verification
+difficult. In particular, when verifying a signature one must know whether
+the signature was computed over the encrypted or unencrypted form of
+elements.</p>
+
+<p>A separate, but important, issue is introducing cryptographic
+vulnerabilities when combining digital signatures and encryption over a
+common XML element. Hal Finney has suggested that encrypting digitally signed
+data, while leaving the digital signature in the clear, may allow plaintext
+guessing attacks. This vulnerability can be mitigated by using secure hashes
+and the nonces in the text being processed.</p>
+
+<p>In accordance with the requirements document [<a
+href="#ref-EncReq">EncReq</a>] the interaction of encryption and signing is
+an application issue and out of scope of the specification. However, we make
+the following recommendations:</p>
+<ol type="1">
+  <li>When data is encrypted, any digest or signature over that data should
+    be encrypted. This satisfies the first issue in that only those
+    signatures that can be seen can be validated. It also addresses the
+    possibility of a plaintext guessing vulnerability, though it may not be
+    possible to identify (or even know of) all the signatures over a given
+    piece of data.</li>
+  <li>Employ the "decrypt-except" signature transform [<a
+    href="#ref-XML-DSIG-Decrypt">XML-DSIG-Decrypt]</a>. It works as follows:
+    during signature transform processing, if you encounter a decrypt
+    transform, decrypt all encrypted content in the document except for those
+    excepted by an enumerated set of references.</li>
+</ol>
+
+<p>Additionally, while the following warnings pertain to incorrect inferences
+by the user about the authenticity of information encrypted, applications
+should discourage user misapprehension by communicating clearly which
+information has integrity, or is authenticated, confidential, or
+non-repudiable when multiple processes (e.g., signature and encryption) and
+algorithms (e.g., symmetric and asymmetric) are used:</p>
+<ol>
+  <li>When an encrypted envelope contains a signature, the signature does not
+    necessarily protect the authenticity or integrity of the ciphertext [<a
+    href="#ref-Davis">Davis</a>] .</li>
+  <li>While the signature secures plaintext it only covers that which is
+    signed, recipients of encrypted messages must not infer integrity or
+    authenticity of other unsigned information (e.g., headers) within the
+    encrypted envelope, see [<a href="#ref-XML-DSIG">XML-DSIG</a>, <a
+    href="http://www.w3.org/TR/xmldsig-core/#sec-Secure">8.1.1 Only What is
+    Signed is Secure</a>].</li>
+</ol>
+
+<h3>6.2 <a name="sec-InformationRevealed"
+id="sec-InformationRevealed">Information Revealed</a></h3>
+
+<p>Where a symmetric key is shared amongst multiple recipients, that
+symmetric key should <em>only</em> be used for the data intended for
+<em>all</em> recipients; even if one recipient is not directed to information
+intended (exclusively) for another in the same symmetric key, the information
+might be discovered and decrypted.</p>
+
+<p>Additionally, application designers should be careful not to reveal any
+information in parameters or algorithm identifiers (e.g., information in a
+URI) that weakens the encryption.</p>
+
+<h3>6.3 <a name="sec-Nonce" id="sec-Nonce">Nonce</a> and IV (Initialization
+Value or Vector)</h3>
+
+<p>An undesirable characteristic of many encryption algorithms and/or their
+modes is that the same plaintext when encrypted with the same key has the
+same resulting ciphertext. While this is unsurprising, it invites various
+attacks which are mitigated by including an arbitrary and non-repeating
+(under a given key) data with the plaintext prior to encryption. In
+encryption chaining modes this data is the first to be encrypted and is
+consequently called the IV (initalization value or vector).</p>
+
+<p>Different algorithms and modes have further requirements on the
+characteristic of this information (e.g., randomness and secrecy) that affect
+the features (e.g., confidentiality and integrity) and their resistence to
+attack.</p>
+
+<p>Given that XML data is redundant (e.g., Unicode encodings and repeated
+tags ) and that attackers may know the data's structure (e.g., DTDs and
+schemas) encryption algorithms must be carefully implemented and used in this
+regard.</p>
+
+<p>For the Cipher Block Chaining (CBC) mode used by this specification, the
+IV must not be reused for any key and should be random, but it need not be
+secret. Additionally, under this mode an adversary modifying the IV can make
+a known change in the plain text after decryption. This attack can be avoided
+by securing the integrity of the plain text data, for example by signing
+it.</p>
+
+<h3>6.4 <a name="sec-Denial" id="sec-Denial">Denial of Service</a></h3>
+
+<p>This specification permits recursive processing. For example, the
+following scenario is possible: <code>EncryptedKey</code> <strong>A</strong>
+requires <code>EncryptedKey</code> <strong>B</strong> to be decrypted, which
+itself requires <code>EncryptedKey</code> <strong>A</strong>! Or, an attacker
+might submit an <code>EncryptedData</code> for decryption that references
+network resources that are very large or continually redirected.
+Consequently, implementations should be able to restrict arbitrary recursion
+and the total amount of processing and networking resources a request can
+consume.</p>
+
+<h3 class="">6.5 <a name="sec-Unsafe-Content" id="sec-Unsafe-Content">Unsafe
+Content</a></h3>
+
+<p class="">XML Encryption can be used to obscure, via encryption, content
+that applications (e.g., firewalls, virus detectors, etc.) consider unsafe
+(e.g., executable code, viruses, etc.). Consequently, such applications must
+consider encrypted content to be as unsafe as the unsafest content
+transported in its application context. Consequently, such applications may
+choose to (1) disallow such content, (2) require access to the decrypted form
+for inspection, or (3) ensure that arbitrary content can be safely processed
+by receiving applications.</p>
+
+<h2>7 <a name="sec-Conformance" id="sec-Conformance">Conformance</a></h2>
+
+<p>An implementation is conformant to this specification if it successfully
+generates syntax according to the schema definitions and satisfies all
+MUST/REQUIRED/SHALL requirements, including <a
+href="#sec-AlgID">algorithm</a> support and <a
+href="#sec-Processing">processing</a>. Processing requirements are specified
+over the roles of <a class="link-def"
+href="#def-Decryptor"><strong>decryptor</strong>,</a> <a class="link-def"
+href="#def-Encryptor"><strong>encryptor</strong>,</a> and their calling <a
+class="link-def" href="#def-Application"><strong>application</strong></a>.</p>
+
+<h2>8 <a name="sec-MediaType" id="sec-MediaType">XML Encryption Media
+Type</a></h2>
+
+<h3>8.1 <a name="sec-MediaType-Introduction"
+id="sec-MediaType-Introduction">Introduction</a></h3>
+
+<p>XML Encryption Syntax and Processing [<a
+href="#XML-Encryption">XML-Encryption</a>] specifies a process for encrypting
+data and representing the result in XML. The data may be arbitrary data
+(including an XML document), an XML element, or XML element content. The
+result of encrypting data is an XML Encryption element which contains or
+references the cipher data.</p>
+
+<p>The <code>application/xenc+xml</code> media type allows XML Encryption
+applications to identify encrypted documents. Additionally it allows
+applications cognizant of this media-type (even if they are not XML
+Encryption implementations) to note that the media type of the decrypted
+(original) object might be a type other than XML.</p>
+
+<h3>8.2 <a name="sec-MediaType-Registration"
+id="sec-MediaType-Registration">application/xenc+xml Registration</a></h3>
+
+<p>This is a media type registration as defined in Multipurpose Internet Mail
+Extensions (MIME) Part Four: Registration Procedures [<a
+href="#ref-MIME-REG">MIME-REG</a>]</p>
+
+<p>MIME media type name: application</p>
+
+<p>MIME subtype name: xenc+xml</p>
+
+<p>Required parameters: none</p>
+
+<p>Optional parameters: charset</p>
+
+<blockquote class="">
+  <p>The allowable and recommended values for, and interpretation of the
+  charset parameter are identical to those given for 'application/xml' in
+  section 3.2 of RFC 3023 [<a href="#ref-XML-MT">XML-MT</a>].</p>
+</blockquote>
+
+<p>Encoding considerations:</p>
+
+<blockquote class="">
+  <p>The encoding considerations are identical to those given for
+  'application/xml' in section 3.2 of RFC 3023 [<a
+  href="#ref-XML-MT">XML-MT</a>].</p>
+</blockquote>
+
+<p>Security considerations:</p>
+
+<blockquote>
+  See the [<a href="#XML-Encryption">XML-Encryption</a>] <a
+  href="#sec-Security">Security Considerations</a> section.</blockquote>
+
+<p>Interoperability considerations: none</p>
+
+<p class="">Published specification: [<a
+href="#XML-Encryption">XML-Encryption</a>]</p>
+
+<p>Applications which use this media type:</p>
+
+<blockquote>
+  XML Encryption is device-, platform-, and vendor-neutral and is supported
+  by a range of Web applications.</blockquote>
+
+<p>Additional Information:</p>
+
+<blockquote>
+  <p>Magic number(s): none</p>
+
+  <blockquote>
+    Although no byte sequences can be counted on to consistently identify XML
+    Encryption documents, they will be XML documents in which the root
+    element's <code>QName</code>'s <code>LocalPart</code> is
+    <code>'EncryptedData'</code> or '<code>EncryptedKey</code>' with an
+    associated namespace name of '<a
+    href="http://www.w3.org/2001/04/xmlenc#">http://www.w3.org/2001/04/xmlenc#</a>'.
+    The <code>application/xenc+xml</code> type name MUST only be used for
+    data objects in which the root element is from the XML Encryption
+    namespace. XML documents which contain these element types in places
+    other than the root element can be described using facilities such as [<a
+    href="#ref-XML-Schema">XML-schema</a>].</blockquote>
+
+  <p>File extension(s): .xml</p>
+
+  <p>Macintosh File Type Code(s): "TEXT"</p>
+</blockquote>
+
+<p>Person &amp; email address to contact for further information:</p>
+
+<blockquote>
+  <p>Joseph Reagle &lt;reagle@w3.org&gt;</p>
+
+  <p>XENC Working Group &lt;xml-encryption@w3.org&gt;</p>
+</blockquote>
+
+<p>Intended usage: COMMON</p>
+
+<p>Author/Change controller:</p>
+
+<p>The XML Encryption specification is a work product of the World Wide Web
+Consortium (W3C) which has change control over the specification.</p>
+
+<h2>9 <a name="sec-Schema" id="sec-Schema">Schema</a> and Valid Examples</h2>
+<dl>
+  <dt>Schema</dt>
+    <dd><a href="xenc-schema.xsd">xenc-schema.xsd</a></dd>
+  <dt>Example</dt>
+    <dd><a href="enc-example.xml">enc-example.xml</a> (not cryptographically
+      valid but excercises much of the schema)</dd>
+</dl>
+
+<h2>10 <a id="sec-References" name="sec-References">References</a></h2>
+<dl>
+  <dt><a name="ref-TRIPLEDES" id="ref-TRIPLEDES">TRIPLEDES</a></dt>
+    <dd>ANSI X9.52: Triple Data Encryption Algorithm Modes of Operation.
+    1998.</dd>
+  <dt><a name="ref-AES" id="ref-AES">AES</a></dt>
+    <dd><a
+      href="http://csrc.nist.gov/publications/fips/fips197/fips-197.pdf">NIST
+      FIPS 197: Advanced Encryption Standard (AES)</a>. November 2001.</dd>
+    <dd><a
+      href="http://csrc.nist.gov/publications/fips/fips197/fips-197.pdf">http://csrc.nist.gov/publications/fips/fips197/fips-197.pdf</a></dd>
+  <dt class=""><a name="ref-AES-WRAP" id="ref-AES-WRAP">AES-WRAP</a></dt>
+    <dd><a href="http://www.ietf.org/rfc/rfc3394.txt">RFC3394: Advanced
+      Encryption Standard (AES) Key Wrap Algorithm</a>. J. Schaad and R.
+      Housley. Informational, September 2002.</dd>
+  <dt><a name="ref-CMS-Algorithms"
+  id="ref-CMS-Algorithms">CMS-Algorithms</a></dt>
+    <dd><a href="http://www.ietf.org/rfc/rfc3370.txt">RFC3370: Cryptographic
+      Message Syntax (CMS) Algorithms</a>. R. Housley. Informational,
+      February 2002.</dd>
+    <dd><a
+      href="http://www.ietf.org/rfc/rfc3370.txt">http://www.ietf.org/rfc/rfc3370.txt</a></dd>
+  <dt><a name="ref-CMS-Wrap" id="ref-CMS-Wrap">CMS-Wrap</a></dt>
+    <dd><a href="http://www.ietf.org/rfc/rfc3217.txt">RFC3217: Triple-DES and
+      RC2 Key Wrapping</a>. R. Housley. Informational, December 2001.</dd>
+    <dd><a
+      href="http://www.ietf.org/rfc/rfc3217.txt">http://www.ietf.org/rfc/rfc3217.txt</a></dd>
+  <dt><a name="ref-Davis" id="ref-Davis">Davis</a></dt>
+    <dd><a
+      href="http://www.usenix.org/publications/library/proceedings/usenix01/davis.html">Defective
+      Sign &amp; Encrypt in S/MIME, PKCS#7, MOSS, PEM, PGP, and XML.</a> D.
+      Davis. USENIX Annual Technical Conference. 2001.</dd>
+    <dd><a
+      href="http://www.usenix.org/publications/library/proceedings/usenix01/davis.html">http://www.usenix.org/publications/library/proceedings/usenix01/davis.html</a></dd>
+  <dt><a name="ref-DES" id="ref-DES">DES</a></dt>
+    <dd><a
+      href="http://csrc.nist.gov/publications/fips/fips46-3/fips46-3.pdf">NIST
+      FIPS 46-3: Data Encryption Standard</a> (DES). October 1999.</dd>
+    <dd><a
+      href="http://csrc.nist.gov/publications/fips/fips46-3/fips46-3.pdf">http://csrc.nist.gov/publications/fips/fips46-3/fips46-3.pdf</a></dd>
+  <dt><a name="ref-EncReq" id="ref-EncReq">EncReq</a></dt>
+    <dd><a
+      href="http://www.w3.org/TR/2001/WD-xml-encryption-req-20010420">XML
+      Encryption Requirements</a>. J. Reagle. W3C Note, March 2002.</dd>
+    <dd><a
+      href="http://www.w3.org/TR/2002/NOTE-xml-encryption-req-20020304">http://www.w3.org/TR/2002/NOTE-xml-encryption-req-20020304</a></dd>
+  <dt><a name="ref-ESDH" id="ref-ESDH">ESDH</a></dt>
+    <dd><a href="http://www.ietf.org/rfc/rfc2631.txt">RFC 2631:
+      Diffie-Hellman Key Agreement Method.</a> E. Rescorla. Standards Track,
+      1999.</dd>
+    <dd><a
+      href="http://www.ietf.org/rfc/rfc2631.txt">http://www.ietf.org/rfc/rfc2631.txt</a></dd>
+    <dd><a
+      href="http://www.w3.org/TR/2002/CR-xml-exc-c14n-20020212">http://www.w3.org/TR/2002/CR-xml-exc-c14n-20020212</a></dd>
+  <dt><a name="ref-Glossary" id="ref-Glossary">Glossary</a></dt>
+    <dd><a href="http://www.ietf.org/rfc/rfc2828.txt">RFC 2828: Internet
+      Security Glossary</a>. R Shirey. Informational, May 2000.</dd>
+    <dd><a
+      href="http://www.ietf.org/rfc/rfc2828.txt">http://www.ietf.org/rfc/rfc2828.txt</a></dd>
+  <dt><a id="ref-HMAC" name="ref-HMAC">HMAC</a></dt>
+    <dd><a href="http://www.ietf.org/rfc/rfc2104.txt">RFC 2104: HMAC:
+      Keyed-Hashing for Message Authentication</a>. H. Krawczyk, M. Bellare,
+      and R. Canetti. Informational, February 1997.</dd>
+    <dd><a
+      href="http://www.ietf.org/rfc/rfc2104.txt">http://www.ietf.org/rfc/rfc2104.txt</a></dd>
+  <dt><a id="ref-HTTP" name="ref-HTTP">HTTP</a></dt>
+    <dd><a href="http://www.w3.org/Protocols/rfc2616/rfc2616.html">RFC 2616:
+      Hypertext Transfer Protocol -- HTTP/1.1.</a> J. Gettys, J. Mogul, H.
+      Frystyk, L. Masinter, P. Leach, and T. Berners-Lee. Standards Track,
+      June 1999.</dd>
+    <dd><a
+      href="http://www.ietf.org/rfc/rfc2616.txt">http://www.ietf.org/rfc/rfc2616.txt</a></dd>
+  <dt><a id="ref-KEYWORDS" name="ref-KEYWORDS">KEYWORDS</a></dt>
+    <dd><a href="http://www.ietf.org/rfc/rfc2119.txt">RFC 2119: Key words for
+      use in RFCs to Indicate Requirement Levels.</a> S. Bradner. Best
+      Current Practice, March 1997.</dd>
+    <dd><a
+      href="http://www.ietf.org/rfc/rfc2119.txt">http://www.ietf.org/rfc/rfc2119.txt</a></dd>
+  <dt><a id="ref-MD5" name="ref-MD5">MD5</a></dt>
+    <dd><a href="http://www.ietf.org/rfc/rfc1321.txt">RFC 1321: The MD5
+      Message-Digest Algorithm.</a> R. Rivest. Informational, April 1992.</dd>
+    <dd><a
+      href="http://www.ietf.org/rfc/rfc1321.txt">http://www.ietf.org/rfc/rfc1321.txt</a></dd>
+  <dt><a id="ref-MIME" name="ref-MIME">MIME</a></dt>
+    <dd><a href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045: Multipurpose
+      Internet Mail Extensions (MIME) Part One: Format of Internet Message
+      Bodies</a>. N. Freed and N. Borenstein. Standards Track, November
+    1996.</dd>
+    <dd><a
+      href="http://www.ietf.org/rfc/rfc2045.txt">http://www.ietf.org/rfc/rfc2045.txt</a></dd>
+  <dt><a name="ref-MIME-REG" id="ref-MIME-REG">MIME-REG</a></dt>
+    <dd><a href="http://www.ietf.org/rfc/rfc2048.txt">RFC 2048: Multipurpose
+      Internet Mail Extensions (MIME) Part Four: Registration Procedures</a>.
+      N. Freed, J. Klensin, and J. Postel. Best Current Practice, November
+      1996.</dd>
+    <dd><a
+      href="http://www.ietf.org/rfc/rfc2048.txt">http://www.ietf.org/rfc/rfc2048.txt</a></dd>
+  <dt><a id="ref-NFC" name="ref-NFC">NFC</a></dt>
+    <dd>TR15, Unicode Normalization Forms<em>.</em> M. Davis and M. D�rst.
+      Revision 18: November 1999.</dd>
+    <dd><a
+      href="http://www.unicode.org/unicode/reports/tr15/tr15-18.html">http://www.unicode.org/unicode/reports/tr15/tr15-18.html</a>.</dd>
+  <dt><a id="ref-NFC-Corrigendum"
+  name="ref-NFC-Corrigendum">NFC-Corrigendum</a></dt>
+    <dd><a
+      href="http://www.unicode.org/versions/corrigendum2.html">Corrigendum
+      #2: Yod with Hiriq Normalization</a>.</dd>
+    <dd><a
+      href="http://www.unicode.org/versions/corrigendum2.html">http://www.unicode.org/versions/corrigendum2.html</a>.</dd>
+  <dt><a name="ref-prop1" id="ref-prop1">prop1</a></dt>
+    <dd><a
+      href="http://lists.w3.org/Archives/Public/xml-encryption/2000Aug/0001.html">XML
+      Encryption strawman proposal</a>.&nbsp;E. Simon and B. LaMacchia. Aug
+      2000.</dd>
+    <dd><a
+      href="http://lists.w3.org/Archives/Public/xml-encryption/2000Aug/0001.html">http://lists.w3.org/Archives/Public/xml-encryption/2000Aug/0001.html</a></dd>
+  <dt><a name="ref-prop2" id="ref-prop2">prop2</a></dt>
+    <dd><a
+      href="http://lists.w3.org/Archives/Public/xml-encryption/2000Aug/0005.html">Another
+      proposal of XML Encryption</a>. T. Imamura. Aug 2000.</dd>
+    <dd><a
+      href="http://lists.w3.org/Archives/Public/xml-encryption/2000Aug/0005.html">http://lists.w3.org/Archives/Public/xml-encryption/2000Aug/0005.html</a></dd>
+  <dt><a name="ref-prop3" id="ref-prop3">prop3</a></dt>
+    <dd><a
+      href="http://lists.w3.org/Archives/Public/xml-encryption/2000Dec/att-0024/01-XMLEncryption_v01.html">XML
+      Encryption Syntax and Processing</a>. B. Dillaway, B. Fox, T. Imamura,
+      B. LaMacchia, H. Maruyama, J. Schaad, and E. Simon. December 2000.</dd>
+    <dd><a
+      href="http://lists.w3.org/Archives/Public/xml-encryption/2000Dec/att-0024/01-XMLEncryption_v01.html">http://lists.w3.org/Archives/Public/xml-encryption/2000Dec/att-0024/01-XMLEncryption_v01.html</a></dd>
+  <dt><a id="ref-PKCS1" name="ref-PKCS1">PKCS1</a></dt>
+    <dd><a href="http://www.ietf.org/rfc/rfc2437.txt">RFC 2437: PKCS #1: RSA
+      Cryptography Specifications Version 2.0.</a> B. Kaliski and J. Staddon.
+      Informational, October 1998.</dd>
+    <dd><a
+      href="http://www.ietf.org/rfc/rfc2437.txt">http://www.ietf.org/rfc/rfc2437.txt</a></dd>
+  <dt><a name="ref-RANDOM" id="ref-RANDOM">RANDOM</a></dt>
+    <dd><a href="http://www.ietf.org/rfc/rfc1750.txt">RFC 1750: Randomness
+      Recommendations for Security</a>. D. Eastlake, S. Crocker, and J.
+      Schiller. Informational, December 1994.</dd>
+    <dd><a
+      href="http://www.ietf.org/rfc/rfc1750.txt">http://www.ietf.org/rfc/rfc1750.txt</a></dd>
+  <dt><a name="ref-RIPEMD-160" id="ref-RIPEMD-160">RIPEMD-160</a></dt>
+    <dd>CryptoBytes, Volume 3, Number 2. <a
+      href="ftp://ftp.rsasecurity.com/pub/cryptobytes/crypto3n2.pdf">The
+      Cryptographic Hash Function RIPEMD-160</a>. RSA Laboratories. Autumn
+      1997.</dd>
+    <dd><a
+      href="ftp://ftp.rsasecurity.com/pub/cryptobytes/crypto3n2.pdf">ftp://ftp.rsasecurity.com/pub/cryptobytes/crypto3n2.pdf</a></dd>
+    <dd><a
+      href="http://www.esat.kuleuven.ac.be/~cosicart/pdf/AB-9601/AB-9601.pdf">http://www.esat.kuleuven.ac.be/~cosicart/pdf/AB-9601/AB-9601.pdf</a></dd>
+  <dt><a name="ref-SHA" id="ref-SHA">SHA</a></dt>
+    <dd>Secure Hash Standard<a
+      href="http://www.itl.nist.gov/fipspubs/fip180-1.htm">.</a> NIST <a
+      href="http://www.itl.nist.gov/fipspubs/fip180-1.htm">FIPS 180-1.</a>
+      (<a href="http://www.ietf.org/rfc/rfc3174.txt">RFC 3174</a>). April
+      1995.</dd>
+    <dd><a
+      href="http://www.itl.nist.gov/fipspubs/fip180-1.htm">http://www.itl.nist.gov/fipspubs/fip180-1.htm</a></dd>
+    <dd>Secure Hash Standard. NIST <a
+      href="http://csrc.nist.gov/encryption/shs/dfips-180-2.pdf">Draft FIPS
+      180-2</a>. 2001. (Extended to include SHA-384, SHA-256, and
+    SHA-512)</dd>
+    <dd><a
+      href="http://csrc.nist.gov/encryption/shs/dfips-180-2.pdf">http://csrc.nist.gov/encryption/shs/dfips-180-2.pdf</a></dd>
+  <dt class=""><a id="ref-Tobin" name="ref-Tobin">Tobin</a></dt>
+    <dd>R. Tobin. <a
+      href="http://lists.w3.org/Archives/Member/w3c-xml-core-wg/2000OctDec/0054">Infoset
+      for external entities</a>, XML Core mailing list, 2000 [<a
+      href="http://cgi.w3.org/MemberAccess/AccessRequest">W3C Member
+      Only</a>].</dd>
+    <dd><a
+      href="http://lists.w3.org/Archives/Member/w3c-xml-core-wg/2000OctDec/0054">http://lists.w3.org/Archives/Member/w3c-xml-core-wg/2000OctDec/0054</a></dd>
+  <dt><a name="ref-UTF-16" id="ref-UTF-16">UTF-16</a></dt>
+    <dd><a href="http://www.ietf.org/rfc/rfc2781.txt">RFC 2781: UTF-16, an
+      encoding of ISO 10646.</a> P. Hoffman and F. Yergeau. Informational,
+      February 2000.</dd>
+    <dd><a
+      href="http://www.ietf.org/rfc/rfc2781.txt">http://www.ietf.org/rfc/rfc2781.txt</a></dd>
+  <dt><a id="ref-UTF-8" name="ref-UTF-8">UTF-8</a></dt>
+    <dd><a href="http://www.ietf.org/rfc/rfc2279.txt">RFC 2279: UTF-8, a
+      transformation format of ISO 10646F.</a> F. Yergeau. Standards Track,
+      January 1998.</dd>
+    <dd><a
+      href="http://www.ietf.org/rfc/rfc2279.txt">http://www.ietf.org/rfc/rfc2279.txt</a></dd>
+  <dt><a id="ref-URI" name="ref-URI">URI</a></dt>
+    <dd><a href="http://www.ietf.org/rfc/rfc2396.txt">RFC 2396: Uniform
+      Resource Identifiers (URI): Generic Syntax</a>. T. Berners-Lee, R.
+      Fielding, and L. Masinter. Standards Track, August 1998.</dd>
+    <dd><a
+      href="http://www.ietf.org/rfc/rfc2396.txt">http://www.ietf.org/rfc/rfc2396.txt</a></dd>
+    <dd><a
+      href="http://www.ietf.org/rfc/rfc1738.txt">http://www.ietf.org/rfc/rfc1738.txt</a></dd>
+    <dd><a
+      href="http://www.ietf.org/rfc/rfc2141.txt">http://www.ietf.org/rfc/rfc2141.txt</a></dd>
+    <dd><a href="http://www.ietf.org/rfc/rfc2611.txt">RFC 2611: URN Namespace
+      Definition Mechanisms.</a> Best Current Practices. Daigle, D. van
+      Gulik, R. Iannella, P. Falstrom. June 1999.</dd>
+    <dd><a
+      href="http://www.ietf.org/rfc/rfc2611.txt">http://www.ietf.org/rfc/rfc2611.txt</a></dd>
+  <dt><a name="ref-X509v3" id="ref-X509v3">X509v3</a></dt>
+    <dd>ITU-T Recommendation X.509 version 3 (1997). "Information Technology
+      - Open Systems Interconnection - The Directory Authentication
+      Framework"&nbsp; ISO/IEC 9594-8:1997.</dd>
+  <dt><a id="ref-XML" name="ref-XML">XML</a></dt>
+    <dd><a href="http://www.w3.org/TR/2000/REC-xml-20001006">Extensible
+      Markup Language (XML) 1.0 (Second Edition)</a>. T. Bray, J. Paoli, C.
+      M. Sperberg-McQueen, and E. Maler. W3C Recommendation, October
+    2000.</dd>
+  <dt class=""><a name="ref-XML-Base" id="ref-XML-Base">XML-Base</a></dt>
+    <dd><a href="http://www.w3.org/TR/xmlbase/">XML Base</a>. J. Marsh. W3C
+      Recommendation, June 2001.</dd>
+    <dd><a
+      href="http://www.w3.org/TR/2001/REC-xmlbase-20010627/">http://www.w3.org/TR/2001/REC-xmlbase-20010627/</a></dd>
+  <dt><a id="ref-XML-C14N" name="ref-XML-C14N">XML-C14N</a></dt>
+    <dd><a href="http://www.w3.org/TR/2001/REC-xml-c14n-20010315">Canonical
+      XML.</a> J. Boyer. W3C Recommendation, March 2001.</dd>
+    <dd><a
+      href="http://www.w3.org/TR/2001/REC-xml-c14n-20010315">http://www.w3.org/TR/2001/REC-xml-c14n-20010315</a></dd>
+    <dd><a
+      href="http://www.ietf.org/rfc/rfc3076.txt">http://www.ietf.org/rfc/rfc3076.txt</a></dd>
+  <dt><a name="ref-XML-exc-C14N" id="ref-XML-exc-C14N">XML-exc-C14N</a></dt>
+    <dd><a
+      href="http://www.w3.org/TR/2002/REC-xml-exc-c14n-20020718/">Exclusive
+      XML Canonicalization</a>. J. Boyer, D. Eastlake, and J. Reagle. W3C
+      Recommendation, July 2002.</dd>
+    <dd><a
+      href="http://www.w3.org/TR/2002/REC-xml-exc-c14n-20020718/">http://www.w3.org/TR/2002/REC-xml-exc-c14n-20020718/</a></dd>
+  <dt><a name="ref-XML-DSIG" id="ref-XML-DSIG">XML-DSIG</a></dt>
+    <dd><a
+      href="http://www.w3.org/TR/2001/PR-xmldsig-core-20010820/">XML-Signature
+      Syntax and Processing</a>. D. Eastlake, J. Reagle, and D. Solo. W3C
+      Recommendation, February 2002.</dd>
+    <dd><a
+      href="http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/">http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/</a></dd>
+  <dt><a name="ref-XML-DSIG-Decrypt"
+  id="ref-XML-DSIG-Decrypt">XML-DSIG-Decrypt</a></dt>
+    <dd><a
+      href="http://www.w3.org/TR/2002/REC-xmlenc-decrypt-20021210">Decryption
+      Transform for XML Signature</a>. M. Hughes, T. Imamura and H. Maruyama.
+      W3C Recommendation, December 2002.</dd>
+    <dd><a
+      href="http://www.w3.org/TR/2002/REC-xmlenc-decrypt-20021210">http://www.w3.org/TR/2002/REC-xmlenc-decrypt-20021210</a></dd>
+  <dt><a name="XML-Encryption" id="XML-Encryption"></a>XML-Encryption</dt>
+    <dd><a href="http://www.w3.org/TR/2002/CR-xmlenc-core-20020802/">XML
+      Encryption Syntax and Processing</a>. D. Eastlake and J. Reagle. W3C
+      Candidate Recommendation, December 2002.</dd>
+    <dd><a>http://www.w3.org/TR/2002/CR-xmlenc-core-20020802/</a></dd>
+  <dt class=""><a id="ref-XML-Infoset"
+  name="ref-XML-Infoset">XML-Infoset</a></dt>
+    <dd><a href="http://www.w3.org/TR/2001/REC-xml-infoset-20011024/">XML
+      Information Set</a>. J. Cowan and R. Tobin. W3C Recommendation, October
+      2001</dd>
+    <dd><a
+      href="http://www.w3.org/TR/2001/REC-xml-infoset-20011024/">http://www.w3.org/TR/2001/REC-xml-infoset-20011024/</a></dd>
+  <dt><a id="ref-XML-MT">XML-MT</a></dt>
+    <dd><a href="http://www.ietf.org/rfc/rfc3023.txt">RFC 3023: XML Media
+      Types.</a> M. Murata, S. St. Laurent, and D. Kohn. Informational,
+      January 2001.</dd>
+    <dd><a
+      href="http://www.ietf.org/rfc/rfc2376.txt">http://www.ietf.org/rfc/rfc2376.txt</a></dd>
+  <dt><a id="ref-XML-NS" name="ref-XML-NS">XML-NS</a></dt>
+    <dd><a
+      href="http://www.w3.org/TR/1999/REC-xml-names-19990114/">Namespaces in
+      XML</a>. T. Bray, D. Hollander, and A. Layman. W3C Recommendation,
+      January 1999.</dd>
+    <dd><a
+      href="http://www.w3.org/TR/1999/REC-xml-names-19990114/">http://www.w3.org/TR/1999/REC-xml-names-19990114</a></dd>
+  <dt><a id="ref-XML-Schema" name="ref-XML-Schema">XML-schema</a></dt>
+    <dd><a href="http://www.w3.org/TR/2001/REC-xmlschema-1-20010502/">XML
+      Schema Part 1: Structures</a> D. Beech, M. Maloney, and N. Mendelsohn.
+      W3C Recommendation, May 2001.</dd>
+    <dd><a
+      href="http://www.w3.org/TR/2001/REC-xmlschema-1-20010502/">http://www.w3.org/TR/2001/REC-xmlschema-1-20010502/</a></dd>
+    <dd><a href="http://www.w3.org/TR/2000/CR-xmlschema-2-20001024/">XML
+      Schema Part 2: Datatypes</a>. P. Biron and A. Malhotra. W3C
+      Recommendation, May 2001.</dd>
+    <dd><a
+      href="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/">http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/</a></dd>
+  <dt><a id="ref-XPath" name="ref-XPath">XPath</a></dt>
+    <dd><a href="http://www.w3.org/TR/1999/REC-xpath-19991116">XML Path
+      Language (XPath) Version 1.0</a>. J. Clark and S. DeRose. W3C
+      Recommendation, October 1999.<br />
+      <a
+      href="http://www.w3.org/TR/1999/REC-xpath-19991116">http://www.w3.org/TR/1999/REC-xpath-19991116</a></dd>
+</dl>
+</body>
+</html>

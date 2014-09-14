@@ -1,0 +1,356 @@
+<!-- http://dev.w3.org/2009/dap/docs/privacy-license.html -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>License-based Privacy: Technical Aspects</title>
+    <meta http-equiv='Content-Type' content='text/html;charset=utf-8'/>
+    <script src='../ReSpec.js/js/respec.js' class='remove'></script>
+    <script class='remove'>
+      var respecConfig = {
+          specStatus:           "base",
+          shortName:            "privacy-license",
+          edDraftURI:           "http://dev.w3.org/2009/dap/docs/privacy-license.html",
+          editors: [
+                {   name:       "Robin Berjon",
+                    url:        "http://berjon.com/",
+                    company:    "Vodafone",
+                    companyURL: "http://vodafone.com/" },
+          ],
+      };
+    </script>
+    <script src='../common/config.js' class='remove'></script>
+  </head>
+  <body>
+    <section id='abstract'>
+      <p>
+        This document explores a way of making privacy work better on the web, in a way that is 
+        understandable to users and that imposes constraints as minimal as possible on authors
+        and implementers.
+      </p>
+    </section>
+
+    <section>
+      <h2>Background</h2>
+      <p>
+        Privacy has been a hot topic in the <a href='http://www.w3.org/2009/dap/'>Device APIs and Policy WG</a>
+        due to the sensitive nature of the information that our work intends to expose. Notably, we discussed
+        it rather extensively during the 
+        <a href='http://lists.w3.org/Archives/Public/public-device-apis/2010Mar/0154.html'>first day of our March 2010 meeting in Prague</a>.
+      </p>
+      <p>
+        The approach we've decided to take is to break the problem down into smaller, hopefully more manageable
+        pieces:
+      </p>
+      <dl>
+        <dt>How to define APIs in such a way that they are “naturally” privacy-friendly</dt>
+        <dd>
+          This is similar to writing APIs in such a way that they are security-friendly; you can't
+          keep people from being stupid if they insist on it, but you can at least make it so that
+          they can only be stupid on purpose. For instance, if you're designing an API to access the
+          user's address book, don't just give blanket access to all the contacts database but rather
+          make it so that only information that is strictly required for the requestor to operate is
+          provided, and that the user gets to choose this information in an understandable manner.
+        </dd>
+        <dt>Only require from user-agents what, if anything, they can realistically enforce</dt>
+        <dd>
+          While sitting around a table in a committee meeting it is very easy to implement pretty much
+          anything. You want ice cream from your browser? Trivial: “A <a>user-agent</a> MUST provide the
+          user with ice cream upon request.” While it is disingenuous to pretend that browsers are not
+          part of the solution to the privacy problem (they are, after all, <em>user</em> agents) it is
+          all too easy to just dump the problem on them. And given how slow browser churn is, any 
+          UA-based solution means a good decade will pass before the solution works.
+        </dd>
+        <dt>Education &amp; Outreach, similar to the accessibility efforts</dt>
+        <dd>
+          WAI and the Web community at large have done a great job raising awareness about accessibility
+          issues, and while we certainly do not live in a perfect world their effort has had a very
+          measurable impact. There is therefore experience to be tapped in such an approach for the parts
+          of the problem that depend on convincing people to do the right thing (which in some cases can
+          be wide-ranging such as making script libraries support the solution directly, or various organisations
+          enforce it internally).
+        </dd>
+        <dt>A License Approach to Privacy</dt>
+        <dd>
+          <p>
+            This is the part that is explored in this document. During the F2F, I floated the idea that privacy
+            could be (at least in part) treated as a licensing issue. When you get content from someone, you
+            get it under a license; so when you give your data to someone, couldn't it be provided under
+            similar terms?
+          </p>
+          <p>
+            Starting from there, the next step is pretty obvious: could we have a simple, limited, easily
+            explained vocabulary in a vein similar to <a href='http://creativecommons.org/'>Creative Commons</a>?
+            What's great with throwing ideas against the wall early in the morning without knowing
+            whether they might be good or if they are alcohol induced, is that one often finds out that
+            <a href='http://www.azarask.in/blog/post/is-a-creative-commons-for-privacy-possible/'>other people 
+            have had that idea before</a>. This is very reassuring because it entails that either you've
+            had a good idea, which is cause for celebration, or you've found new drinking buddies.
+            The devil is, of course, in the details. 
+          </p>
+        </dd>
+      </dl>
+    </section>
+
+    <section>
+      <h2>Licensing Information</h2>
+      <p>
+        There are <a href='http://www.azarask.in/blog/post/what-should-matter-in-privacy/'>many aspects</a> that 
+        can be listed when it comes to what actions one may consider acceptable or not with given personal
+        information. My goal is not to get into this discussion here; I will limit myself to noting that all
+        proposals that I have seen so far still seem too complex to be comprehended.
+      </p>
+      <p>
+        For the purpose of having concrete content to use in the examples below I devised a rather simple
+        privacy licensing scheme intended primarily to be readable. Most notably I completely gloss over
+        legal issues that vary across locales (e.g. in French law it's illegal not to make it possible for
+        someone to update data concerning them). There are two actions that a service may
+        take with one's data — retention and redistribution — and a modifier on both which is whether it will
+        be in aggregate or not.
+      </p>
+      <dl>
+        <dt>retention</dt>
+        <dd>
+          Whether the service will keep your data around. This has three values: <strong>no</strong> (<code>nr</code>) which
+          means that the data gets thrown away when your interaction session stops, <strong>short term</strong> 
+          (<code>sr</code>) which means that the service keeps the data for a limited time, and <strong>permanent</strong>
+          (<code>pr</code>) which means that it will never forget it (or perhaps only in specific cases, such
+          as account deletion).
+        </dd>
+        <dt>redistribution</dt>
+        <dd>
+          A simple boolean (<code>red</code>) indicating whether the information may be provided to third-parties
+          whoever they are. Cases in which a service is forced to redistribute information (being held-up at gunpoint,
+          being forced by a legal search, etc.) do not count as redistribution.
+        </dd>
+        <dt>aggregate</dt>
+        <dd>
+          Describes cases in which data is used but only in an aggregate manner. Your information is there but it
+          cannot be traced back to you. An <code>a</code> is added to either of the previous tokens.
+        </dd>
+      </dl>
+      <p>
+        This yields a small set of simple codes. If you keep my data for three months, and show the anonymous countries
+        from which your users come from on a publicly accessible map: <code>sr-reda</code>. If you want my name to
+        generate anagrams but don't keep it: <code>nr</code>. If you're keeping my birthdate permanently but only
+        using it to wish me a happy birthday: <code>pr</code>. If you're gathering my email address to sell it to
+        spammers at every occasion: <code>pr-red</code>. If you're keeping a permanent, internal track of your users'
+        first names: <code>pra</code>.
+      </p>
+    </section>
+
+    <section>
+      <h2>Implementation Options</h2>
+      <p>
+        This section lists all the various implementations options that can be thought of. This is just
+        a first draft containing the ideas that I can think of off the top of my head. It is not
+        complete. I have deliberately not filtered out anything.
+      </p>
+      <p>
+        Some of the solutions are service-initiated while some are user-initiated — it is not clear at this
+        point where to best place the weight here. There may be room for more or less negotiated options, but
+        those are likely to be more complex. Some options for how to handle this at the UI level are included
+        as well.
+      </p>
+      <p>
+        Last update: 2010-04-01
+      </p>
+      <section>
+        <h2>Service-Initiated Options</h2>
+        <p>
+          
+        </p>
+        <section>
+          <h2>Site policy in response headers</h2>
+          <p>
+            A site indicates its policy in its response headers, like P3P. For instance:
+            <code>Privacy: pr-red</code>.
+          </p>
+          <dl>
+            <dt>Pros</dt>
+            <dd>
+              Metadata is made available.
+            </dd>
+            <dt>Cons</dt>
+            <dd>
+              Headers can be hard to configure for some users, and may not have the required
+              granularity (e.g. two forms on the same page).
+            </dd>
+          </dl>
+        </section>
+
+        <section>
+          <h2>Just using images in content</h2>
+          <p>
+            Services simply add a set of well-known icons to their content, just like CC.
+          </p>
+          <dl>
+            <dt>Pros</dt>
+            <dd>
+              Simple, easily deployed, easily advocated. Can be extended to mitigate the cons.
+            </dd>
+            <dt>Cons</dt>
+            <dd>
+              Not easily machine-readable.
+            </dd>
+          </dl>
+        </section>
+
+        <section>
+          <h2>A <code>rel</code> value</h2>
+          <p>
+            A new <code>rel</code> value of "privacy" is introduced:
+          </p>
+          <pre class='example sh_html'>&lt;link rel='privacy' href='http://w3.org/plic/sr-reda'/>
+&lt;a rel='privacy' href='http://w3.org/plic/sr-reda'>&lt;img .../>&lt;/a></pre>
+          <dl>
+            <dt>Pros</dt>
+            <dd>
+              Can provide multiple levels of granularity (document, or if contained in a form applies just to that);
+              works well with snippets that can be pasted.
+            </dd>
+            <dt>Cons</dt>
+            <dd>
+              ?
+            </dd>
+          </dl>
+        </section>
+      </section>
+
+
+      <section>
+        <h2>User-Initiated Options</h2>
+        <p>
+          
+        </p>
+        <section>
+          <h2>HTTP header indicating preferences in all requests</h2>
+          <p>
+            An HTTP header is sent with ever HTTP request indicating the user's stated privacy preferences,
+            e.g. <code>Accept-Privacy: sr-reda</code>. Such preferences are presumably configured in the UA.
+            Services must either comply, or refuse the request.
+          </p>
+          <dl>
+            <dt>Pros</dt>
+            <dd>
+              None that I can think of.
+            </dd>
+            <dt>Cons</dt>
+            <dd>
+              Bloats headers; leaves no room for negotiation; will lead users to blanket approve everything;
+              won't work.
+            </dd>
+          </dl>
+        </section>
+
+        <section>
+          <h2>Auto-fill User's Preferred Policy</h2>
+          <p>
+            ...
+          </p>
+          <!-- 
+          <input type='hidden' name='-w3c-privacy-license'/> // get user's preference, could use rel
+          -->
+          <dl>
+            <dt>Pros</dt>
+            <dd>
+              ...
+            </dd>
+            <dt>Cons</dt>
+            <dd>
+              ...
+            </dd>
+          </dl>
+        </section>
+
+        <section>
+          <h2>API Preference</h2>
+          <p>
+            An service may wish to conform to the user's preferred licensing terms. An API such as
+            <code>window.navigator.privacyLicense</code> could return that.
+          </p>
+          <dl>
+            <dt>Pros</dt>
+            <dd>
+              ...
+            </dd>
+            <dt>Cons</dt>
+            <dd>
+              ...
+            </dd>
+          </dl>
+        </section>
+      </section>
+
+      <section>
+        <h2>UI Options</h2>
+        <p>
+          
+        </p>
+        <section>
+          <h2>Metadata is extracted and shown in the browser chrome</h2>
+          <p>
+            The browser acquires the privacy licensing metadata and displays it in the chrome.
+          </p>
+          <dl>
+            <dt>Pros</dt>
+            <dd>
+              The chrome is trusted.
+            </dd>
+            <dt>Cons</dt>
+            <dd>
+              The chrome is already crammed full of stuff. Unlike the other big trust icon for SSL, this
+              is not information that the browser can verify and it is dangerous to give the impression 
+              that it is.
+            </dd>
+          </dl>
+        </section>
+
+        <section>
+          <h2>Non-modal content-invasive indications</h2>
+          <p>
+            The browser acquires the privacy licensing metadata and displays it contextually with the
+            interaction that the user is making. For instance, if the user is filling out a form, the browser
+            provides an indication of whether it matches the user's intended preference. In that case,
+            a large, red tooltip could appear next to the field that the user is filling out stating
+            “This service does not comply with your preferred privacy.” By being in the content it is
+            very user-visible, but does not have chrome-level “trust”; since it is non-modal it doesn't
+            get killed.
+          </p>
+          <dl>
+            <dt>Pros</dt>
+            <dd>
+              Makes the information very available, but without the trust issues implied in chrome.
+            </dd>
+            <dt>Cons</dt>
+            <dd>
+              Designers might hate it. Would need some serious lab testing.
+            </dd>
+          </dl>
+        </section>
+      </section>
+
+      <!-- 
+      <section>
+        <h2>XXX</h2>
+        <p>
+          ...
+        </p>
+        <dl>
+          <dt>Pros</dt>
+          <dd>
+            ...
+          </dd>
+          <dt>Cons</dt>
+          <dd>
+            ...
+          </dd>
+        </dl>
+      </section>
+      -->
+        
+
+
+    </section>
+
+  </body>
+</html>

@@ -1,0 +1,1857 @@
+<!-- http://www.w3.org/TR/swbp-vocab-pub/ -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>Best Practice Recipes for Publishing RDF Vocabularies</title>
+<style type="text/css" media="all">
+.inlineCode {
+	background-color: #ddf;
+	font-family: "courier new";
+}
+pre.code {
+	padding: 0.5em;
+	background-color: #EEF;
+	border-style:solid;
+	border-width:1pt;
+	border-color:#999999;
+	font-family: "courier new";
+	white-space:pre;
+}
+pre.code2 {
+	padding: 0.5em;
+	background-color: #ffa;
+	border-style:solid;
+	border-width:1pt;
+	border-color:#999999;
+	font-family: "courier new";
+	white-space:pre;
+}
+.ednote {
+	font-style: italic
+}
+pre.clientmsg {
+	border: 1px solid #999;
+	background: white;
+	padding: 2px;
+	margin: 0;
+	background-color: #eee;
+}
+pre.servermsg {
+	border: 1px solid #999;
+	background: white;
+	padding: 2px;
+	text-align: left;
+	margin: 5px 0 0 0;
+	background-color: #eee;
+}
+p.msg {
+	text-align: center;
+	padding: 0;
+	margin: 0;
+}
+div.interaction {
+	border: 1px solid #999;
+	padding: 5px;
+}
+div.interaction h4 {
+	margin: 0 0 10px 0;
+}
+div.interaction p {
+	margin: 0 0 0 0;
+}
+div.test {
+	border: 1px solid #999;
+	padding: 5px;
+}
+div.test h4 {
+	margin: 0 0 10px 0;
+}
+.style1 {
+	border-width: 0px;
+}
+.style2 {
+	border-style: solid;
+	border-width: 1px;
+}
+</style>
+
+<link rel="stylesheet" type="text/css" href="http://www.w3.org/StyleSheets/TR/W3C-WG-NOTE" />
+</head>
+<body xml:lang="en" lang="en">
+<!--
+**********
+* HEADER *
+**********
+-->
+<div class="head"> <a href="http://www.w3.org/"> <img src="http://www.w3.org/Icons/w3c_home" alt="W3C" height="48" width="72" /> </a>
+  <h1 id="title">Best Practice Recipes for Publishing RDF Vocabularies</h1>
+  <h2 id="w3c-doctype">W3C Working Group Note 28 August 2008</h2>
+  <dl>
+    <dt>This version:</dt>
+    <dd> <a href="http://www.w3.org/TR/2008/NOTE-swbp-vocab-pub-20080828/"
+            >http://www.w3.org/TR/2008/NOTE-swbp-vocab-pub-20080828/</a> </dd>
+    <dt>Latest version:</dt>
+    <dd> <a href="http://www.w3.org/TR/swbp-vocab-pub/">http://www.w3.org/TR/swbp-vocab-pub/</a> </dd>
+    <dt>Previous version:</dt>
+    <dd> <a href="http://www.w3.org/TR/2008/WD-swbp-vocab-pub-20080123/"
+            >http://www.w3.org/TR/2008/WD-swbp-vocab-pub-20080123/</a> </dd>
+    <dt>Editors:</dt>
+    <dd>Diego Berrueta, Fundación CTIC</dd>
+    <dd>Jon Phipps, Cornell University Library</dd>
+    <dt>Previous Editors:</dt>
+    <dd><a href="http://purl.org/net/aliman">Alistair Miles</a>, STFC
+      Rutherford Appleton Laboratory</dd>
+    <dd>Thomas Baker, Goettingen State and University Library</dd>
+    <dd>Ralph Swick, W3C</dd>
+  </dl>
+
+<p class="copyright"><a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> &copy; 2008 <a href="http://www.w3.org/"><acronym title="World Wide Web Consortium">W3C</acronym></a><sup>&reg;</sup> (<a href="http://www.csail.mit.edu/"><acronym title="Massachusetts Institute of Technology">MIT</acronym></a>, <a href="http://www.ercim.org/"><acronym title="European Research Consortium for Informatics and Mathematics">ERCIM</acronym></a>, <a href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply.</p>
+
+  <hr />
+</div>
+<h2 class="notoc"> <a id="abstract" name="abstract">Abstract</a> </h2>
+<p>This document describes best practice recipes for publishing vocabularies or ontologies on
+  the Web (in <acronym title="Resource Description Framework">RDF</acronym> Schema or <acronym
+        title="Web Ontology Language">OWL</acronym>). The features of each recipe are described in
+  detail, so that vocabulary designers may choose the recipe best suited to their needs. Each
+  recipe introduces general principles and an example configuration for use with an Apache HTTP
+  server (which may be adapted to other environments). The recipes are all designed to be
+  consistent with the architecture of the Web as currently specified, although the
+  associated example configurations have been kept intentionally simple.</p>
+
+<!--
+********
+* SOTD *
+********
+-->
+<h2 id="Status">Status of this Document</h2>
+<p> <em>This section describes the status of this document at the time of its publication. Other
+  documents may supersede this document. A list of current W3C publications and the latest
+  revision of this technical report can be found in the <a href="http://www.w3.org/TR/">W3C
+  technical reports index</a> at http://www.w3.org/TR/.</em> </p>
+<p>This document was prepared by the <a href="http://www.w3.org/2006/07/SWD/">Semantic Web
+  Deployment Working Group</a> (SWD), based on previous work by the <a
+        href="http://www.w3.org/2001/sw/BestPractices/">Semantic Web Best Practices and Deployment
+  Working Group</a> (SWBPD). This work is part of the <a
+        href="http://www.w3.org/2001/sw/Activity.html">W3C Semantic Web Activity</a>.</p>
+<p>This document is a Note documenting some best practices.  At the time
+  of publication the Semantic Web Deployment Working Group has no
+  plans for further work on this document.
+  This version addresses several comments made on the previous version.
+  It does not, however, attempt to address the
+<a href="http://www.w3.org/2006/07/SWD/track/issues/58">known issue</a> related 
+to <a href="#q_values">'q' values in content negotiation</a> nor does it
+  provide recipes  for publishing vocabularies using RDFa [RDFA] and GRDDL [GRDDL], both of which are recognized as useful techniques for some vocabularies. </p>
+<p>Comments are welcome and may be sent to <a href="mailto:public-swd-wg@w3.org"
+        >public-swd-wg@w3.org</a>; please include the text "comment" in the subject line. All
+  messages received at this address are viewable in a <a
+        href="http://lists.w3.org/Archives/Public/public-swd-wg/"
+     >public archive</a>.  The Working Group may respond to comments as
+     time is available.  We encourage the community to discuss aspects
+     of this Note in the Semantic Web Interest Group mailing list
+     <a href="mailto:semantic-web@w3.org"></a>
+     (<a href="http://lists.w3.org/Archives/Public/semantic-web/"
+     >public archive</a>).</p>
+
+<p> This document was produced by a group operating under the <a
+        href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 W3C Patent
+  Policy</a>. W3C maintains a <a rel="disclosure" href="http://www.w3.org/2004/01/pp-impl/39408/status"
+        >public list of any patent disclosures</a> made in connection with the deliverables of the
+  group; that page also includes instructions for disclosing a patent. An individual who has
+  actual knowledge of a patent which the individual believes contains <a
+        href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential
+  Claim(s)</a> must disclose the information in accordance with <a
+        href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section 6 of the
+  W3C Patent Policy</a>. </p>
+<p>Publication as a Working Group Note does not imply endorsement by the W3C Membership. This is a
+  draft document and may be updated, replaced or obsoleted by other documents at any time. It is
+  inappropriate to cite this document as other than work in progress.</p>
+
+<!--
+************
+* CONTENTS *
+************
+-->
+<h2 id="Contents">Table of Contents</h2>
+<ul>
+  <li> <a href="#secintro">Introduction</a> </li>
+  <li> <a href="#choosing">Choosing a recipe</a> </li>
+  <li> <a href="#negotiation">Content negotiation</a> </li>
+  <li> <a href="#recipe1">Recipe 1. Minimal configuration for a 'hash namespace'</a> </li>
+  <li> <a href="#recipe2">Recipe 2. Minimal configuration for a 'slash namespace'</a> </li>
+  <li> <a href="#recipe3">Recipe 3. Extended configuration for a 'hash namespace'</a> </li>
+  <li> <a href="#recipe4">Recipe 4. Extended configuration for a 'slash namespace', using a single
+    HTML document</a> </li>
+  <li> <a href="#recipe5">Recipe 5. Extended configuration for a 'slash namespace', using multiple
+    HTML documents</a> </li>
+  <li> <a href="#recipe6">Recipe 6. Extended configuration for a 'slash namespace', using multiple HTML
+    documents and a query service</a> </li>
+  <li> <a href="#requirements">Requirements</a> </li>
+</ul>
+<ul>
+  <li> <a href="#ack">Acknowledgements</a> </li>
+  <li> <a href="#references">References</a> </li>
+  <li> <a href="#purls">Appendix A. Vocabularies that use PURLs for naming</a>
+    <ul>
+      <li>PURL adapted recipes: <a href="#recipe1a">Recipe 1a.</a> | <a href="#recipe2a">Recipe
+        2a.</a> | <a href="#recipe3a">Recipe 3a.</a> | <a href="#recipe4a">Recipe 4a.</a> | <a
+              href="#recipe5a">Recipe 5a.</a></li>
+    </ul>
+  </li>
+  <li> <a href="#naming">Appendix B: URI namespaces</a> </li>
+  <li> <a href="#redirect">Appendix C. Vocabulary URIs based on a 303-redirect service</a> </li>
+  <li> <a href="#apache">Appendix D: Apache configuration</a> </li>
+</ul>
+<hr />
+<!--
+****************
+* INTRODUCTION *
+****************
+-->
+<h2 id="secintro">Introduction</h2>
+<p>This document is intended for the creators and maintainers of vocabularies in RDFS and OWL
+  (vocabulary and ontology are used interchangeably in the context of this specification). It
+  provides step-by-step instructions for publishing vocabularies on the Web, giving example
+  configurations designed to cover the most common cases. For more information about RDFS and
+  OWL see [<a href="#ref-RDFS">RDFS</a>, <a href="#ref-RDFPrimer">RDFPrimer</a>, <a
+        href="#ref-OWLGuide">OWLGuide</a>, <a href="#ref-OWLFeatures">OWLFeatures</a>].</p>
+<p>This “cookbook” gives “recipes” describing the steps needed to publish a vocabulary on a Web
+  server, and to configure the Web server to support Semantic Web applications. The section “<a
+        href="#choosing">Choosing a recipe</a>” provides guidance for choosing the most appropriate
+  recipe depending on the situation and requirements. Once the recipe has been chosen, the
+  reader can follow the steps, adapting the examples for a particular vocabulary. </p>
+<p>All of the recipes give example configurations for the Apache HTTP server [<a
+        href="#ref-APACHE20">APACHE20</a>]. For those not already familiar with Apache
+  configuration, the appendix on <a href="#apache">Apache configuration</a> provides a short
+  introduction to the Apache configuration mechanisms used in the examples and basic information
+  on troubleshooting. </p>
+<p>While the provided configuration examples are specific to an Apache HTTP server, the general principles
+  apply to non-Apache environments as well. The Working Group invites contributions of additional bindings for non-Apache servers.
+  The W3C has provided a wiki page to collect these <a href="http://esw.w3.org/topic/VocabPublishingRecipes">non-Apache
+  bindings and recommendations</a>.</p>
+<p>This document is primarily intended for creators and maintainers of existing vocabularies who
+  are looking for guidance on how their vocabularies should best be published on the Web. It is <strong>not</strong> intended to provide detailed and exhaustive guidance on choosing an
+  appropriate URI namespace for naming a new vocabulary and its constituent terms. However, some
+  basic technical information about URI namespaces, including some considerations relevant to
+  choosing a URI namespace for a vocabulary, is given in the section on <a href="#naming">URI
+  namespaces</a>.</p>
+<p>The recipes have all been designed to be consistent with the architectural principles of the
+  World Wide Web as currently specified in the document "Architecture of the World Wide Web" [<a
+        href="#ref-AWWW04">AWWW04</a>]. In order to verify that they are in fact so, a set of <a
+        href="#minimumrequirements">minimum requirements</a> is described at the end of this
+  document. These minimum requirements are intended to articulate the fundamental requirements
+  of Semantic Web applications. All of the recipes when correctly implemented should satisfy the
+  minimum requirements. A set of <a href="#extendedrequirements">extended requirements</a> is
+  also given. The extended requirements are intended to articulate further practical needs of
+  Semantic Web application developers, such as providing documentation about a vocabulary on Web
+  pages in HTML. Recipes 3, 4, 5 and 6, when correctly implemented, should satisfy the extended
+  requirements.</p>
+<p>In order to satisfy the extended requirements, the recipes 3, 4, 5, and 6 configure a server
+  to perform <a href="#negotiation">content negotiation</a>. A brief explanation of this process
+  is given in the section on <a href="#negotiation">content negotiation</a>, along with a
+  description of some options for coping with variability in deployed client behavior.</p>
+<p><a href="#purls">Appendix A</a> describes how to adapt the six recipes given in the main body
+  of the document for the special case of vocabularies identified using "persistent URLs", or
+  PURLs, which are resolved using PURL services such as <span class="inlineCode"
+        >http://purl.org/</span> [<a href="#ref-PURL">PURL</a>].</p>
+<p>For brevity, the rationale behind each of the recipes is not described in this document.
+  Readers wishing to go deeper should consult <a
+        href="http://www.w3.org/TR/2004/REC-webarch-20041215/#id-resources">URI/Resource
+  Relationships</a> in &quot;Architecture of the World Wide Web&quot; [<a href="#ref-AWWW04">AWWW04</a>], <a
+        href="http://gbiv.com/protocols/uri/rfc/rfc3986.html#fragment">fragment identifiers</a> in HTTP URIs [<a href="#ref-RFC3986">RFC3986</a>] [<a href="#ref-RFC2616">RFC2616</a>], the W3C Interest Group Note: &quot;Cool URIs for the Semantic Web&quot; [<a href="#ref-COOLURI">COOLURI</a>], and
+  the W3C Technical Architecture Group's resolution on the
+  range of HTTP dereferencing (aka "httpRange-14"). <a href="#ref-HTTPRANGE14">[HTTPRANGE14]</a> </p>
+<p>Finally, it should be noted that the Recipes described in this Cookbook are not the only way
+  to publish a vocabulary or ontology for use by Semantic Web applications. <a
+        href="http://www.w3.org/TR/xhtml-rdfa-primer/">RDFa</a> and its cousin <a
+        href="http://www.w3.org/TR/grddl-primer/">GRDDL</a> may in the near future provide an
+  effective method for publishing documents for use by both people and machines. But a useful
+  discussion of RDFa and GRDDL is well beyond the scope of this document.</p>
+<hr />
+<h2 id="choosing">Choosing a recipe</h2>
+<p>The choice of recipe depends primarily on what types of content you wish to provide from your
+  vocabulary URI and the URIs of the classes and properties defined by your vocabulary. URI
+  namespaces are described in more detail in <a href="#naming">Appendix B</a>; throughout this
+  document, the expression &quot;vocabulary URI&quot; can be interpreted as &quot;vocabulary namespace URI&quot;.</p>
+<h3 id="recipe_table">Quick Selection Table</h3>
+<table style="width: 100%" cellpadding="5" cellspacing="0" class="style1">
+  <tr>
+    <td class="style2"><strong>Configuration</strong> </td>
+    <td valign="top" class="style2"><strong>hash namespace</strong> </td>
+    <td valign="top" class="style2"><strong>slash namespace</strong> </td>
+  </tr>
+  <tr>
+    <td valign="top" class="style2">Machine processable RDF </td>
+    <td valign="top" class="style2"><a href="#recipe1">Recipe 1</a> </td>
+    <td valign="top" class="style2"><a href="#recipe2">Recipe 2</a> </td>
+  </tr>
+  <tr>
+    <td valign="top" class="style2">Machine processable RDF (using PURLs)</td>
+    <td valign="top" class="style2"><a href="#recipe1a">Recipe 1a</a> </td>
+    <td valign="top" class="style2"><a href="#recipe2a">Recipe 2a</a> </td>
+  </tr>
+  <tr>
+    <td valign="top" class="style2">RDF and Single HTML document</td>
+    <td valign="top" class="style2"><a href="#recipe3">Recipe 3</a> </td>
+    <td valign="top" class="style2"><a href="#recipe4">Recipe 4</a> </td>
+  </tr>
+  <tr>
+    <td valign="top" class="style2">RDF and Single HTML document&nbsp;(using PURLs)</td>
+    <td valign="top" class="style2"><a href="#recipe3a">Recipe 3a</a> </td>
+    <td valign="top" class="style2"><a href="#recipe4a">Recipe 4a</a> </td>
+  </tr>
+  <tr>
+    <td valign="top" class="style2">RDF and Multiple HTML documents</td>
+    <td valign="top" class="style2">&nbsp;</td>
+    <td valign="top" class="style2"><a href="#recipe5">Recipe 5</a> or <a href="#recipe6">Recipe 6</a></td>
+  </tr>
+  <tr>
+    <td valign="top" class="style2">RDF and Multiple HTML documents(using PURLs)</td>
+    <td valign="top" class="style2">&nbsp;</td>
+    <td valign="top" class="style2"><a href="#recipe5a">Recipe 5a</a> </td>
+  </tr>
+</table>
+<p>&nbsp; </p>
+<h3 id="simplechoices">Simple configuration</h3>
+<p>The simplest recipes configure your server to provide only machine-processable (RDF) content
+  from the vocabulary URI.</p>
+<p>If you are using a <a href="#hash">hash namespace</a> see <a href="#recipe1">Recipe 1</a> or,
+  if using PURLs, <a href="#recipe1a">Recipe 1a</a>.</p>
+<p>If you are using a <a href="#slash">slash namespace</a> see <a href="#recipe2">Recipe 2</a> or, if using PURLs, <a href="#recipe2a">Recipe 2a</a>.</p>
+<h3 id="extendedchoices">Extended configuration</h3>
+<p>The extended recipes configure your server to provide both machine-processable (RDF) and
+  human-readable (HTML) content (see also the section <a href="#negotiation">content
+  negotiation</a> below). These recipes are easily extended to serve additional content types.</p>
+<p>If you are using a <a href="#hash">hash namespace</a> and want to provide both RDF and HTML
+  content, see <a href="#recipe3">Recipe 3</a> or, if using PURLs, <a href="#recipe3a">Recipe
+  3a</a>.</p>
+<p>If you are using a <a href="#slash">slash namespace</a> and want to provide both RDF and HTML
+  content, where the HTML content is contained in a single document, see <a href="#recipe4"
+        >Recipe 4</a> or, if using PURLs, <a href="#recipe4a">Recipe 4a</a>.</p>
+<p>If you are using a <a href="#slash">slash namespace</a> and want to provide both RDF and HTML
+  content, where the HTML content is served as individual hyperlinked documents for each class
+  or property, with an overview (e.g. a table of contents or an index) at the vocabulary URI,
+  see <a href="#recipe5">Recipe 5</a> or, if using PURLs, <a href="#recipe5a">Recipe 5a</a>.</p>
+<p>If you are using a <a href="#slash">slash namespace</a> and want to provide both RDF and HTML
+  content, where the HTML content is served as individual hyperlinked documents for each class
+  or property, and where the RDF is served as bounded descriptions of each class or property,
+  see <a href="#recipe6">Recipe 6</a>.</p>
+<hr />
+<h2 id="negotiation">Content negotiation</h2>
+<p>When an HTTP client attempts to dereference a URI, it can specify which type (or types) of
+  content it would prefer to receive in response. It does this by including an 'Accept:' field
+  in the header of the request message, the value of which gives MIME types corresponding to
+  preferred content types. For example, an HTTP client that prefers RDF/XML content might
+  include the following field in the header of each request:</p>
+<pre class="code2">Accept: application/rdf+xml</pre>
+<p>Similarly, an HTTP client that prefers HTML content, such as a Web browser, might include
+  something like the following field in the header of each request:</p>
+<pre class="code2">Accept: application/xhtml+xml,text/html</pre>
+<p>It is accepted as a principle of good practice that HTTP clients SHOULD include an 'Accept:'
+  field in a request header, explicitly specifying those content types that may be handled.</p>
+<p>When the server receives a request, it can use the value(s) of the 'Accept:' field to select
+  the most appropriate response from those available, attempting to meet the preference of the
+  client as closely as possible. This process is an example of <a
+        href="http://www.w3.org/TR/webarch/#def-coneg">content negotiation</a> [<a
+        href="#ref-AWWW04">AWWW04</a>].</p>
+<p>Recipes <a href="#recipe1">1</a> and <a href="#recipe2">2</a> below <strong>do not</strong> configure the server to perform any content negotiation. RDF/XML is the only representation
+  type available, and is provided irrespective of the value of the 'Accept:' header sent by the
+  client.</p>
+<p id="q_values">Recipes <a href="#recipe3">3</a>, <a href="#recipe4">4</a>, <a href="#recipe5">5</a> and <a
+        href="#recipe6">6</a> below <strong>do</strong> configure the server to perform content
+  negotiation based on the value of the 'Accept:' header field sent by the client. However,
+  the proposed configuration examples do not handle the full HTTP specification with respect
+  to content negotiation. Actually, although the examples accommodate some client ordering
+  preferences in content negotiation, they do not handle the 'q' metrics. Therefore, HTTP
+  clients which use q-values in the 'Accept' header may obtain unexpected results.</p>
+<p class="editorial"><strong>Editor's note</strong>: The Working Group is considering
+  alternatives to be fully compliant with the HTTP specification, while keeping the
+  recipes as simple as possible.
+  This is recorded as <a href="http://www.w3.org/2006/07/SWD/track/issues/58">ISSUE-58</a>
+  in the Working Group's issue process. Comments on this issue are invited, and should
+   be sent in an <a href="mailto:public-swd-wg@w3.org?subject=Comment:%20ISSUE-58">email to
+   the SWD Working Group</a>, starting the subject line with "Comment: ISSUE-58". </p>
+<h3 id="default">Default behavior</h3>
+<p>When the server is configured to perform content negotiation, a 'default behavior' must be
+  specified -- the server must be able to determine which response should be sent in the cases
+  where:</p>
+<ol>
+  <li>the client does not include an 'Accept:' field in the request message header (i.e. the
+    client doesn't specify a preference) </li>
+  <li>the values of the 'Accept:' field do not match any of the available content types (i.e.
+    the client asks for something other than RDF/XML or HTML). </li>
+</ol>
+<p>In recipes 3, 4, 5, and 6 below, RDF/XML is configured as the default response. This is
+  chosen to minimize the impact on deployed Semantic Web applications that do not currently send
+  appropriate 'Accept:' header field values for RDF content. Bear in mind that if HTML is
+  configured as the default response, some existing Semantic Web applications expecting to
+  receive RDF content will receive HTML content instead, and will break. </p>
+<h3 id="accept_header">Providing an 'Accept:' header</h3>
+<p>Developers and maintainers of Semantic Web applications that expect to process RDF content,
+  and that do not <em>currently</em> provide an 'Accept:' header field in HTTP requests, should
+  plan to provide such a header in the future. </p>
+<p>A suitable value of the &#39;Accept:&#39; field is as follows:</p>
+<pre class="code2">Accept: application/rdf+xml,application/xml;q=0.5</pre>
+<p>The &#39;q=0.5&#39; value in the above example indicates a relative quality value as
+specified by <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html">
+Section 14</a> the HTTP 1.1 protocol [<a href="#ref-RFC2616">RFC2616</a>]. The default &#39;q&#39; value if none is specified is 1.0. This example
+can be read as &quot;I prefer &#39;application/rdf+xml, giving it the default
+relative quality value of
+1.0, but will still accept application/xml, although I consider it to be only
+50% of the value of application/rdf+xml&quot;.</p>
+<h3 id="defaultIE">Special Default Behavior for Internet Explorer</h3>
+<p>Unlike most other browsers, Internet Explorer sends &#39;Accept:&#39; headers containing a catch-all <span class="inlineCode">*/*</span> without a mediating 'q' value. In contrast, both Firefox and Safari accept <span class="inlineCode">*/*;q=0.5</span>, and Opera accepts <span class="inlineCode">*/*;q=0.1</span>. Establishing a
+  default behavior that takes this into account requires the insertion of a rewrite condition
+  based on the value of the &#39;User-agent:&#39; header field:</p>
+<pre class="code2">RewriteCond %{HTTP_USER_AGENT} ^Mozilla/.*</pre>
+<p>Additionally, if you also want to retain 'clickable' URIs in IE, you must set HTML as the
+  default response (see comments in examples for instructions on how to do this). </p>
+<h3 id="server_test">Server configuration testing</h3>
+<p>Effectively testing the results of content negotiation can become fairly complex for some of
+  the Recipes. In order to facilitate the testing of the results of content negotiation on a
+  single URI a <a href="http://idi.fundacionctic.org/vapour">content negotiation testing
+  service</a> has been established.</p>
+<p>This service will request a provided URI from a server, run a test suite specifically
+  designed to test the response of the server against the Recipe specifications, and display a
+  pass/fail report on each set of tests as well as a detailed explanation of its findings.</p>
+<p>The <a href="http://sourceforge.net/projects/vapour/">source code for the testing service</a> is also available. </p>
+<hr />
+<!--
+************
+* RECIPE 1 *
+************
+-->
+<h2 id="recipe1">Recipe 1. Minimal configuration for a 'hash namespace'</h2>
+<p>Jump straight to: <a href="#recipe1example">Example configuration</a> | <a
+        href="#recipe1testing">Testing the configuration</a></p>
+<p>This recipe gives an example of the <strong>simplest possible configuration</strong> for a
+  vocabulary that uses a <a href="#hash">hash namespace</a>. The recipe configures the server to
+  provide machine-processable (RDF) content from the vocabulary URI, thereby satisfying the <a
+        href="#minimumrequirements">minimum requirements</a>. This is illustrated by the following
+  diagram:</p>
+<div class="interaction">
+  <h4 id="recipe1deref">Dereference the vocabulary URI</h4>
+  <p class="msg"> <img src="img/deref-ont-uri-min.png"
+          alt="client-server interaction" /> </p>
+  <p>(Serve the RDF description of the vocabulary, encoded as RDF/XML.)</p>
+</div>
+<h3 id="recipe1example">Example Configuration</h3>
+<p>For a vocabulary &#8230;</p>
+<pre><a href="http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example1">http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example1</a></pre>
+<p>defining classes &#8230;</p>
+<pre><a href="http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example1#ClassA">http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example1#ClassA</a>
+<a href="http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example1#ClassB">http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example1#ClassB</a></pre>
+<p>and properties &#8230;</p>
+<pre><a href="http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example1#propA">http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example1#propA</a>
+<a href="http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example1#propB">http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example1#propB</a></pre>
+<h4 id="recipe1s1">Step 1</h4>
+<p>Create a file called <span class="inlineCode">example1.rdf</span> that contains a <em> <strong>complete</strong> </em> RDF/XML serialization of the vocabulary. I.e. <em> <strong>all</strong> </em> resources defined by the vocabulary are described in this file.</p>
+<h4 id="recipe1s2">Step 2</h4>
+<p>Copy the <span class="inlineCode">example1.rdf</span> file to the <span class="inlineCode"
+        >/apachedocumentroot/examples/</span> directory on the server.</p>
+<h4 id="recipe1s3">Step 3</h4>
+<p>Add the following directives to the <span class="inlineCode">.htaccess</span> file in the <span class="inlineCode">
+/apachedocumentroot/examples/</span> directory on the
+  server:</p>
+<pre class="code2"># Directive to ensure *.rdf files served as appropriate content type,
+# if not present in main apache config
+AddType application/rdf+xml .rdf
+
+# Rewrite engine setup
+RewriteEngine On
+RewriteBase /examples
+
+# Rewrite rule to serve RDF/XML content from the vocabulary URI
+RewriteRule ^example1$ example1.rdf</pre>
+<p>(N.B. If a <span class="inlineCode">.htaccess</span> file does not exist, create one.)</p>
+<h3 id="recipe1testing">Testing the Configuration</h3>
+<p>If this configuration is working, it should support the following interactions:</p>
+<div class="test">
+  <h4 id="recipe1testderef">Dereference the vocabulary URI</h4>
+  <p>Test message (substitute correct path and host for your vocabulary URI):</p>
+  <pre class="clientmsg">GET /examples/example1 HTTP/1.1
+Host: example.com</pre>
+  <p>Response header should contain the following fields:</p>
+  <pre class="servermsg">HTTP/1.x 200 OK
+Content-Type: application/rdf+xml</pre>
+</div>
+<hr />
+<!--
+************
+* RECIPE 2 *
+************
+-->
+<h2 id="recipe2">Recipe 2. Minimal configuration for a 'slash namespace'</h2>
+<p>Jump straight to: <a href="#recipe2example">Example configuration</a> | <a
+        href="#recipe2testing">Testing the configuration</a></p>
+<p>This recipe gives an example of the <strong>simplest possible configuration</strong> for a
+  vocabulary that uses a <a href="#slash">slash namespace</a>. The recipe configures the server
+  to provide machine-processable (RDF) content from the vocabulary URI, and to redirect the
+  client to the vocabulary URI from class and property URIs, thereby satisfying the <a
+        href="#minimumrequirements">minimum requirements</a>. This is illustrated by the following
+  diagrams:</p>
+<div class="interaction">
+  <h4 id="recipe2deref">Dereference the vocabulary URI</h4>
+  <p class="msg"> <img src="img/deref-ont-uri-min.png"
+          alt="Example 2 client-server interaction." /> </p>
+  <p>(Serve the RDF description of the vocabulary, encoded as RDF/XML.)</p>
+</div>
+<div class="interaction">
+  <h4 id="recipe2propderef">Dereference the URI of a class or property</h4>
+  <p class="msg"> <img src="img/deref-cp-uri-min.png"
+          alt="Example 2 client-server interaction." /> </p>
+  <p>(Redirect the client to the vocabulary URI.)</p>
+</div>
+<h3 id="recipe2example">Example Configuration</h3>
+<p>For vocabulary &#8230;</p>
+<pre><a href="http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example2/">http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example2/</a></pre>
+<p>defining classes &#8230;</p>
+<pre><a href="http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example2/ClassA">http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example2/ClassA</a>
+<a href="http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example2/ClassB">http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example2/ClassB</a></pre>
+<p>and properties &#8230;</p>
+<pre><a href="http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example2/propA">http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example2/propA</a>
+<a href="http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example2/propB">http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example2/propB</a></pre>
+<h4 id="recipe2s1">Step 1</h4>
+<p>Create a file called <span class="inlineCode">example2.rdf</span> that contains a <em> <strong>complete</strong> </em> RDF/XML serialization of the vocabulary. I.e. <em> <strong>all</strong> </em> resources defined by the vocabulary are described in this file.</p>
+<h4 id="recipe2s2">Step 2</h4>
+<p>Copy the <span class="inlineCode">example2.rdf</span> file to the <span class="inlineCode"
+        >/apachedocumentroot/examples/</span> directory on the server.</p>
+<h4 id="recipe2s3">Step 3</h4>
+<p>Add the following directives to the <span class="inlineCode">.htaccess</span> file in the <span class="inlineCode">
+/apachedocumentroot/examples/</span> directory on the
+  server:</p>
+<pre class="code2"># Turn off MultiViews
+Options -MultiViews
+
+# Directive to ensure *.rdf files served as appropriate content type,
+# if not present in main apache config
+AddType application/rdf+xml .rdf
+
+# Rewrite engine setup
+RewriteEngine On
+RewriteBase /examples
+
+# Rewrite rule to redirect 303 from any class or prop URI
+RewriteRule ^example2/.+ example2/ [R=303]
+
+# Rewrite rule to serve RDF/XML content from the vocabulary URI
+RewriteRule ^example2/$ example2.rdf</pre>
+<p>(N.B. If a <span class="inlineCode">.htaccess</span> file does not exist, create one.)</p>
+<p>The directory option 'MultiViews' must be disabled for this configuration to work, and a
+  directory called <span class="inlineCode">/apachedocumentroot/examples/example2/</span> must <em> <strong>not</strong> </em> actually exist on the server's file system.</p>
+<h3 id="recipe2testing">Testing the Configuration</h3>
+<p>If this configuration is working, it should support the following interactions:</p>
+<div class="test">
+  <h4 id="recipe2testderef">Dereference the vocabulary URI</h4>
+  <p>Test message (substitute correct path and host for your vocabulary URI):</p>
+  <pre class="clientmsg">GET /examples/example2/ HTTP/1.1
+Host: example.com</pre>
+  <p>Response header should contain the following fields:</p>
+  <pre class="servermsg">HTTP/1.x 200 OK
+Content-Type: application/rdf+xml</pre>
+</div>
+<div class="test">
+  <h4 id="recipe2testpropderef">Dereference the URI of a class or property</h4>
+  <p>Test message (substitute correct path and host for your class or property URI):</p>
+  <pre class="clientmsg">GET /examples/example2/ClassA HTTP/1.1
+Host: example.com</pre>
+  <p>Response header should contain the following fields, with your vocabulary URI as the value
+    of the 'Location' field:</p>
+  <pre class="servermsg">HTTP/1.x 303 See Other
+Location: http://example.com/examples/example2/</pre>
+</div>
+<hr />
+<!--
+************
+* RECIPE 3 *
+************
+-->
+<h2 id="recipe3">Recipe 3. Extended configuration for a 'hash namespace'</h2>
+<p>Jump straight to: <a href="#recipe3example">Example configuration</a> | <a
+        href="#recipe3testing">Testing the configuration</a> | <a href="#recipe3notes">Notes</a></p>
+<p>This recipe gives an example of an <strong>extended configuration</strong> for a vocabulary
+  with a <a href="#hash">hash namespace</a>. The recipe configures the server to provide either
+  human-readable (HTML) or machine-processable (RDF) content from the vocabulary URI, depending
+  on what is requested, thereby satisfying the <a href="#extendedrequirements">extended
+  requirements</a>. This is illustrated by the following diagrams:</p>
+<div class="interaction">
+  <h4 id="recipe3htmlderef">Dereference the vocabulary URI, requesting HTML content</h4>
+  <p class="msg"> <img src="img/deref-ont-uri-html.png"
+          alt="client-server interaction" /> </p>
+  <p>(Redirect the client to current HTML documentation for the vocabulary.)</p>
+</div>
+<div class="interaction">
+  <h4 id="recipe3rdfderef">Dereference the vocabulary URI, requesting RDF content</h4>
+  <p class="msg"> <img src="img/deref-ont-uri-rdf.png"
+          alt="client-server interaction" /> </p>
+  <p>(Redirect the client to the current RDF description of the vocabulary.)</p>
+</div>
+<h3 id="recipe3example">Example Configuration</h3>
+<p>For vocabulary &#8230;</p>
+<pre><a href="http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example3">http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example3</a></pre>
+<p>defining classes &#8230;</p>
+<pre><a href="http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example3#ClassA">http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example3#ClassA</a>
+<a href="http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example3#ClassB">http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example3#ClassB</a></pre>
+<p>and properties &#8230;</p>
+<pre><a href="http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example3#propA">http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example3#propA</a>
+<a href="http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example3#propB">http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example3#propB</a></pre>
+<h4 id="recipe3s1">Step 1</h4>
+<p>Create a file called <span class="inlineCode">2005-10-31.rdf</span> that contains a <em> <strong>complete</strong> </em> RDF/XML serialization of the vocabulary, as at 2005-10-31 (or whatever the current date
+  is). I.e. <em> <strong>all</strong> </em> resources defined by the vocabulary are described in this file, and this file represents
+  a 'snapshot' or 'version' of the vocabulary.</p>
+<h4 id="recipe3s2">Step 2</h4>
+<p>Create a file called <span class="inlineCode">2005-10-31.html</span> that contains HTML
+  content documentation about all classes and properties defined by the vocabulary as at
+  2005-10-31 (or whatever the current date is). This document may include sections for each of
+  the classes/properties documented, each section being headed by an HTML anchor whose name is
+  identical to the fragment identifier of the documented class or property.</p>
+<h4 id="recipe3s3">Step 3</h4>
+<p>Copy <span class="inlineCode">2005-10-31.rdf</span> and <span class="inlineCode"
+        >2005-10-31.html</span> to the directory <span class="inlineCode"
+        >/apachedocumentroot/examples/example3-content/</span> on the server.</p>
+<h4 id="recipe3s4">Step 4</h4>
+<p>Add the following directives to the <span class="inlineCode">.htaccess</span> file in the <span class="inlineCode">
+/apachedocumentroot/examples/</span> directory:</p>
+<pre class="code2"># Turn off MultiViews
+Options -MultiViews
+
+# Directive to ensure *.rdf files served as appropriate content type,
+# if not present in main apache config
+AddType application/rdf+xml .rdf
+
+# Rewrite engine setup
+RewriteEngine On
+RewriteBase /examples
+
+# Rewrite rule to serve HTML content from the vocabulary URI if requested
+RewriteCond %{HTTP_ACCEPT} !application/rdf\+xml.*(text/html|application/xhtml\+xml)
+RewriteCond %{HTTP_ACCEPT} text/html [OR]
+RewriteCond %{HTTP_ACCEPT} application/xhtml\+xml [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Mozilla/.*
+RewriteRule ^example3$ example3-content/2005-10-31.html [R=303]
+
+# Rewrite rule to serve RDF/XML content from the vocabulary URI if requested
+RewriteCond %{HTTP_ACCEPT} application/rdf\+xml
+RewriteRule ^example3$ example3-content/2005-10-31.rdf [R=303]
+
+# Choose the default response
+# ---------------------------
+
+# Rewrite rule to serve the RDF/XML content from the vocabulary URI by default
+RewriteRule ^example3$ example3-content/2005-10-31.rdf [R=303]
+
+# Rewrite rule to serve HTML content from the vocabulary URI by default (disabled)
+# (To enable this option, uncomment the rewrite rule below, and comment
+# out the rewrite rule directly above)
+# RewriteRule ^example3$ example3-content/2005-10-31.html [R=303]</pre>
+<p>(N.B. If a <span class="inlineCode">.htaccess</span> file does not exist, create one.)</p>
+<h3 id="recipe3testing">Testing the Configuration</h3>
+<p>If this configuration is working, it should support the following interactions:</p>
+<div class="test">
+  <h4 id="recipe3testhtmlderef">Dereference the vocabulary URI, requesting HTML content</h4>
+  <p>Test message (substitute correct path and host for your vocabulary URI):</p>
+  <pre class="clientmsg">GET /examples/example3 HTTP/1.1
+Host: example.com
+Accept: text/html</pre>
+  <p>Response header should contain the following fields, with your HTML content location as the
+    value of the 'Location' field:</p>
+  <pre class="servermsg">HTTP/1.x 303 See Other
+Location: http://example.com/examples/example3-content/2005-10-31.html</pre>
+</div>
+<div class="test">
+  <h4 id="recipe3testrdfderef">Dereference the vocabulary URI, requesting RDF content</h4>
+  <p>Test message (substitute correct path and host for your vocabulary URI):</p>
+  <pre class="clientmsg">GET /examples/example3 HTTP/1.1
+Host: example.com
+Accept: application/rdf+xml</pre>
+  <p>Response header should contain the following fields, with your current RDF content location
+    as the value of the 'Location' field:</p>
+  <pre class="servermsg">HTTP/1.x 303 See Other
+Location: http://example.com/examples/example3-content/2005-10-31.rdf</pre>
+</div>
+<div class="test">
+  <h4 id="recipe3defaultderef">Dereference the vocabulary URI, default case</h4>
+  <p>Test message (substitute correct path and host for your vocabulary URI):</p>
+  <pre class="clientmsg">GET /examples/example3 HTTP/1.1
+Host: example.com</pre>
+  <p>Response header should contain the following fields, with your current RDF content location
+    as the value of the 'Location' field:</p>
+  <pre class="servermsg">HTTP/1.x 303 See Other
+Location: http://example.com/examples/example3-content/2005-10-31.rdf</pre>
+</div>
+<h3 id="recipe3notes">Notes</h3>
+<p>This example uses the modification date of the vocabulary version to create file names. It
+  would also be possible to use version numbers (e.g. '1.01') instead of dates for this purpose,
+  or indeed any convention that makes it possible to differentiate between vocabulary versions,
+  and helps to keep track of version history.</p>
+<p>See also the section on <a href="#negotiation">content negotiation</a>.</p>
+<hr />
+<!--
+************
+* RECIPE 4 *
+************
+-->
+<h2 id="recipe4">Recipe 4. Extended configuration for a 'slash namespace', using a single HTML
+  document</h2>
+<p>Jump straight to: <a href="#recipe4example">Example configuration</a> | <a
+        href="#recipe4testing">Testing the configuration</a> | <a href="#recipe4notes">Notes</a></p>
+<p>This recipe gives an example of an <strong>extended configuration</strong> for a vocabulary
+  with a <a href="#slash">slash namespace</a>. The recipe configures the server to provide
+  either human-readable (HTML) or machine-processable (RDF) content from the vocabulary URI,
+  depending on what is requested, and to redirect the client from class and property URIs to the
+  appropriate content locations, again depending on what is requested, thereby satisfying the <a
+        href="#extendedrequirements">extended requirements</a>. The HTML documentation is served as
+  a single file. This behavior is illustrated by the following diagrams:</p>
+<div class="interaction">
+  <h4 id="recipe4htmlderef">Dereference the vocabulary URI, requesting HTML content</h4>
+  <p class="msg"> <img src="img/deref-ont-uri-html.png"
+          alt="client-server interaction" /> </p>
+  <p>(As per <a href="#recipe3">Recipe 3</a>, redirect the client to current HTML documentation
+    for the vocabulary.)</p>
+</div>
+<div class="interaction">
+  <h4 id="recipe4rdfderef">Dereference the vocabulary URI, requesting RDF content</h4>
+  <p class="msg"> <img src="img/deref-ont-uri-rdf.png"
+          alt="client-server interaction" /> </p>
+  <p>(As per <a href="#recipe3">Recipe 3</a>, redirect the client to the current RDF description
+    of the vocabulary.)</p>
+</div>
+<div class="interaction">
+  <h4 id="recipe4prophtmlderef">Dereference the URI of a class or property, requesting HTML
+    content</h4>
+  <p class="msg"> <img src="img/deref-cp-uri-html.png"
+          alt="client-server interaction" /> </p>
+  <p>(Redirect the client to the fragment of current HTML documentation for the vocabulary
+    relevant to the class or property.)</p>
+</div>
+<div class="interaction">
+  <h4 id="recipe4proprdfderef">Dereference the URI of a class or property, requesting RDF
+    content</h4>
+  <p class="msg"> <img src="img/deref-cp-uri-rdf.png"
+          alt="client-server interaction" /> </p>
+  <p>(Redirect the client to the current RDF description of the vocabulary.)</p>
+</div>
+<h3 id="recipe4example">Example Configuration</h3>
+<p>For vocabulary &#8230;</p>
+<pre><a href="http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example4/">http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example4/</a></pre>
+<p>defining classes &#8230;</p>
+<pre><a href="http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example4/ClassA">http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example4/ClassA</a>
+<a href="http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example4/ClassB">http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example4/ClassB</a></pre>
+<p>and properties &#8230;</p>
+<pre><a href="http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example4/propA">http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example4/propA</a>
+<a href="http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example4/propB">http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example4/propB</a></pre>
+<h4 id="recipe4s1">Step 1</h4>
+<p>Create a file called <span class="inlineCode">2005-10-31.rdf</span> that contains a <em> <strong>complete</strong> </em> RDF/XML serialization of the vocabulary, as at 2005-10-31 (or whatever the current date
+  is). I.e. <em> <strong>all</strong> </em> resources defined by the vocabulary are described in this file, and this file represents
+  a 'snapshot' or 'version' of the vocabulary.</p>
+<h4 id="recipe4s2">Step 2</h4>
+<p>Create a file called <span class="inlineCode">2005-10-31.html</span> that contains HTML
+  content documentation about all classes and properties defined by the vocabulary as at
+  2005-10-31 (or whatever the current date is). This document may include sections for each of
+  the classes/properties documented, each section being headed by an HTML anchor whose name is
+  identical to the fragment identifier of the documented class or property.</p>
+<h4 id="recipe4s3">Step 3</h4>
+<p>Copy <span class="inlineCode">2005-10-31.rdf</span> and <span class="inlineCode"
+        >2005-10-31.html</span> to the directory <span class="inlineCode"
+        >/apachedocumentroot/examples/example4-content/</span> on the server.</p>
+<h4 id="recipe4s4">Step 4</h4>
+<p>Add the following directives to the <span class="inlineCode">.htaccess</span> file in the <span class="inlineCode">
+/apachedocumentroot/examples/</span> directory:</p>
+<pre class="code2"># Turn off MultiViews
+Options -MultiViews
+
+# Directive to ensure *.rdf files served as appropriate content type,
+# if not present in main apache config
+AddType application/rdf+xml .rdf
+
+# Rewrite engine setup
+RewriteEngine On
+RewriteBase /examples
+
+# Rewrite rule to serve HTML content from the vocabulary URI if requested
+RewriteCond %{HTTP_ACCEPT} !application/rdf\+xml.*(text/html|application/xhtml\+xml)
+RewriteCond %{HTTP_ACCEPT} text/html [OR]
+RewriteCond %{HTTP_ACCEPT} application/xhtml\+xml [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Mozilla/.*
+RewriteRule ^example4/$ example4-content/2005-10-31.html [R=303]
+
+# Rewrite rule to serve directed HTML content from class/prop URIs
+RewriteCond %{HTTP_ACCEPT} !application/rdf\+xml.*(text/html|application/xhtml\+xml)
+RewriteCond %{HTTP_ACCEPT} text/html [OR]
+RewriteCond %{HTTP_ACCEPT} application/xhtml\+xml [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Mozilla/.*
+RewriteRule ^example4/(.+) example4-content/2005-10-31.html#$1 [R=303,NE]
+
+# Rewrite rule to serve RDF/XML content if requested
+RewriteCond %{HTTP_ACCEPT} application/rdf\+xml
+RewriteRule ^example4/ example4-content/2005-10-31.rdf [R=303]
+
+# Choose the default response
+# ---------------------------
+
+# Rewrite rule to serve RDF/XML content by default
+RewriteRule ^example4/ example4-content/2005-10-31.rdf [R=303]
+
+# Rewrite rules to serve HTML content by default (disabled)
+# (To enable this option, uncomment the two rewrite rules below,
+# and comment out the rewrite rule directly above)
+# RewriteRule ^example4/$ example4-content/2005-10-31.html [R=303]
+# RewriteRule ^example4/(.+) example4-content/2005-10-31.html#$1 [R=303,NE]
+ </pre>
+<p>(N.B. If a <span class="inlineCode">.htaccess</span> file does not exist, create one.)</p>
+<p>For this configuration to work, the directory option 'MultiViews' must be disabled, and a
+  directory called <span class="inlineCode">/apachedocumentroot/examples/example4/</span> must <em> <strong>not</strong> </em> actually exist on the server's file system.</p>
+<h3 id="recipe4testing">Testing the Configuration</h3>
+<p>If this configuration is working, it should support the following interactions:</p>
+<div class="test">
+  <h4 id="recipe4testhtmlderef">Dereference the vocabulary URI, requesting HTML content</h4>
+  <p>Test message (substitute correct path and host for your vocabulary URI):</p>
+  <pre class="clientmsg">GET /examples/example4/ HTTP/1.1
+Host: example.com
+Accept: text/html</pre>
+  <p>Response header should contain the following fields, with your HTML content location as the
+    value of the 'Location' field:</p>
+  <pre class="servermsg">HTTP/1.x 303 See Other
+Location: http://example.com/examples/example4-content/2005-10-31.html</pre>
+</div>
+<div class="test">
+  <h4 id="recipe4testrdfderef">Dereference the vocabulary URI, requesting RDF content</h4>
+  <p>Test message (substitute correct path and host for your vocabulary URI):</p>
+  <pre class="clientmsg">GET /examples/example4/ HTTP/1.1
+Host: example.com
+Accept: application/rdf+xml</pre>
+  <p>Response header should contain the following fields, with your RDF content location as the
+    value of the 'Location' field:</p>
+  <pre class="servermsg">HTTP/1.x 303 See Other
+Location: http://example.com/examples/example4-content/2005-10-31.rdf</pre>
+</div>
+<div class="test">
+  <h4 id="recipe4testdefaultderef">Dereference the vocabulary URI, default case</h4>
+  <p>Test message (substitute correct path and host for your vocabulary URI):</p>
+  <pre class="clientmsg">GET /examples/example4/ HTTP/1.1
+Host: example.com</pre>
+  <p>Response header should contain the following fields, with your RDF content location as the
+    value of the 'Location' field:</p>
+  <pre class="servermsg">HTTP/1.x 303 See Other
+Location: http://example.com/examples/example4-content/2005-10-31.rdf</pre>
+</div>
+<div class="test">
+  <h4 id="recipe4testprophtmlderef">Dereference the URI of a class or property, requesting HTML
+    content</h4>
+  <p>Test message (substitute correct path and host for your class or property URI):</p>
+  <pre class="clientmsg">GET /examples/example4/ClassA HTTP/1.1
+Host: example.com
+Accept: text/html</pre>
+  <p>Response header should contain the following fields, with your HTML content location (plus
+    appropriate fragment identifier) as the value of the 'Location' field:</p>
+  <pre class="servermsg">HTTP/1.x 303 See Other
+Location: http://example.com/examples/example4-content/2005-10-31.html#ClassA</pre>
+</div>
+<div class="test">
+  <h4 id="recipe4testproprdfderef">Dereference the URI of a class or property, requesting RDF
+    content</h4>
+  <p>Test message (substitute correct path and host for your class or property URI):</p>
+  <pre class="clientmsg">GET /examples/example4/ClassA HTTP/1.1
+Host: example.com
+Accept: application/rdf+xml</pre>
+  <p>Response header should contain the following fields, with your RDF content location as the
+    value of the 'Location' field:</p>
+  <pre class="servermsg">HTTP/1.x 303 See Other
+Location: http://example.com/examples/example4-content/2005-10-31.rdf</pre>
+</div>
+<div class="test">
+  <h4 id="recipe4testpropdefaultderef">Dereference the URI of a class or property, default case</h4>
+  <p>Test message (substitute correct path and host for your class or property URI):</p>
+  <pre class="clientmsg">GET /examples/example4/ClassA HTTP/1.1
+Host: example.com</pre>
+  <p>Response header should contain the following fields, with your RDF content location as the
+    value of the 'Location' field:</p>
+  <pre class="servermsg">HTTP/1.x 303 See Other
+Location: http://example.com/examples/example4-content/2005-10-31.rdf</pre>
+</div>
+<h3 id="recipe4notes">Notes</h3>
+<p>As with <a href="#recipe3">Recipe 3</a>, this example uses the modification date of the
+  vocabulary version to create file names. It would also be possible to use version numbers
+  (e.g. '1.01') instead of dates for this purpose, or indeed any convention that makes it
+  possible to differentiate between vocabulary versions, and helps to keep track of version
+  history.</p>
+<p>See also the section on <a href="#negotiation">content negotiation</a>.</p>
+<hr />
+<!--
+************
+* RECIPE 5 *
+************
+-->
+<h2 id="recipe5">Recipe 5. Extended configuration for a 'slash namespace', using multiple HTML
+  documents</h2>
+<p>Jump straight to: <a href="#recipe5example">Example configuration</a> | <a
+        href="#recipe5testing">Testing the configuration</a> | <a href="#recipe5notes">Notes</a></p>
+<p>This recipe gives an example of an <strong>extended configuration</strong> for a vocabulary
+  with a <a href="#slash">slash namespace</a>. The recipe configures the server to provide both
+  machine-processable (RDF) and human-readable (HTML) content, depending on what is requested,
+  with the HTML documentation being given as multiple hyperlinked HTML documents plus an
+  overview document. This behavior is illustrated by the following diagrams:</p>
+<div class="interaction">
+  <h4 id="recipe5htmlderef">Dereference the vocabulary URI, requesting HTML content</h4>
+  <p class="msg"> <img src="img/deref-ont-uri-html-multi.png"
+          alt="client-server interaction" /> </p>
+  <p>(Redirect the client to current HTML overview documentation for the vocabulary.)</p>
+</div>
+<div class="interaction">
+  <h4 id="recipe5rdfderef">Dereference the vocabulary URI, requesting RDF content</h4>
+  <p class="msg"> <img src="img/deref-ont-uri-rdf.png"
+          alt="client-server interaction" /> </p>
+  <p>(As per <a href="#recipe3">Recipe 3</a> and <a href="#recipe4">Recipe 4</a>, redirect the
+    client to the current RDF description of the vocabulary.)</p>
+</div>
+<div class="interaction">
+  <h4 id="recipe5prophtmlderef">Dereference the URI of a class or property, requesting HTML
+    content</h4>
+  <p class="msg"> <img src="img/deref-cp-uri-html-multi.png"
+          alt="client-server interaction" /> </p>
+  <p>(Redirect the client to current HTML documentation for the class or property.)</p>
+</div>
+<div class="interaction">
+  <h4 id="recipe5proprdfderef">Dereference the URI of a class or property, requesting RDF
+    content</h4>
+  <p class="msg"> <img src="img/deref-cp-uri-rdf.png"
+          alt="client-server interaction" /> </p>
+  <p>(As per <a href="#recipe4">Recipe 4</a>, redirect the client to the current RDF description
+    of the vocabulary.)</p>
+</div>
+<h3 id="recipe5example">Example Configuration</h3>
+<p>For vocabulary &#8230;</p>
+<pre><a href="http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example5/">http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example5/</a></pre>
+<p>defining classes &#8230;</p>
+<pre><a href="http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example5/ClassA">http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example5/ClassA</a>
+<a href="http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example5/ClassB">http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example5/ClassB</a></pre>
+<p>and properties &#8230;</p>
+<pre><a href="http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example5/propA">http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example5/propA</a>
+<a href="http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example5/propB">http://www.w3.org/2006/07/SWD/recipes/examples-20080421/example5/propB</a></pre>
+<h4 id="recipe5s1">Step 1</h4>
+<p>Create a file called <span class="inlineCode">2005-10-31.rdf</span> that contains a <em> <strong>complete</strong> </em> RDF/XML serialization of the vocabulary, as at 2005-10-31 (or whatever the current date
+  is). I.e. <em> <strong>all</strong> </em> resources defined by the vocabulary are described in this file, and this file represents
+  a 'snapshot' or 'version' of the vocabulary.</p>
+<h4 id="recipe5s2">Step 2</h4>
+<p>Copy <span class="inlineCode">2005-10-31.rdf</span> to the directory <span class="inlineCode"
+        >/apachedocumentroot/examples/example5-content/</span> on the server.</p>
+<h4 id="recipe5s3">Step 3</h4>
+<p>Create files <span class="inlineCode">ClassA.html</span> <span class="inlineCode">ClassB.html</span> <span class="inlineCode">propA.html</span> <span class="inlineCode">propB.html</span> each of which contains HTML content documentation
+  relevant to the class or property with the corresponding local name, as at 2005-10-31 (or
+  whatever the current date is). Create a file <span class="inlineCode">index.html</span> that
+  contains HTML content documentation about the vocabulary itself, with hyperlinks to all class
+  or property documentation.</p>
+<h4 id="recipe5s4">Step 4</h4>
+<p>Copy <span class="inlineCode">ClassA.html</span> <span class="inlineCode">ClassB.html</span> <span class="inlineCode">propA.html</span> <span class="inlineCode">propB.html</span> and <span class="inlineCode">index.html</span> to
+  the directory <span class="inlineCode"
+        >/apachedocumentroot/examples/example5-content/2005-10-31-docs/</span> on the
+  server.</p>
+<h4 id="recipe5s5">Step 5</h4>
+<p>Add the following directives to the <span class="inlineCode">.htaccess</span> file in the <span class="inlineCode">
+/apachedocumentroot/examples/</span> directory:</p>
+<pre class="code2"># Turn off MultiViews
+Options -MultiViews
+
+# Directive to ensure *.rdf files served as appropriate content type,
+# if not present in main apache config
+AddType application/rdf+xml .rdf
+
+# Rewrite engine setup
+RewriteEngine On
+RewriteBase /examples
+
+# Rewrite rule 1: to serve HTML content from the namespace URI if requested
+RewriteCond %{HTTP_ACCEPT} !application/rdf\+xml.*(text/html|application/xhtml\+xml)
+RewriteCond %{HTTP_ACCEPT} text/html [OR]
+RewriteCond %{HTTP_ACCEPT} application/xhtml\+xml [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Mozilla/.*
+RewriteRule ^example5/$ example5-content/2005-10-31-docs/index.html [R=303]
+
+# Rewrite rule 2: to serve HTML content from class or prop URIs if requested
+RewriteCond %{HTTP_ACCEPT} !application/rdf\+xml.*(text/html|application/xhtml\+xml)
+RewriteCond %{HTTP_ACCEPT} text/html [OR]
+RewriteCond %{HTTP_ACCEPT} application/xhtml\+xml [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Mozilla/.*
+RewriteRule ^example5/(.+) example5-content/2005-10-31-docs/$1.html [R=303]
+
+# Rewrite rule 3: to serve RDF content is requested
+RewriteCond %{HTTP_ACCEPT} application/rdf\+xml
+RewriteRule ^example5/ example5-content/2005-10-31.rdf [R=303]
+
+# Choose the default response
+# ---------------------------
+
+# Rewrite rule 4: to serve RDF/XML content by default
+RewriteRule ^example5/ example5-content/2005-10-31.rdf [R=303]
+
+# Rewrite rules to serve HTML content by default (disabled)
+# (To enable this option, uncomment the two rewrite rules below,
+# and comment out the rewrite rule directly above)
+# RewriteRule ^example5/$ example5-content/2005-10-31-docs/index.html [R=303]
+# RewriteRule ^example5/(.+) example5-content/2005-10-31-docs/$1.html [R=303]</pre>
+<p>(N.B. If a <span class="inlineCode">.htaccess</span> file does not exist, create one.)</p>
+<h3 id="recipe5testing">Testing the Configuration</h3>
+<p>If this configuration is working, it should support the following interactions:</p>
+<div class="test">
+  <h4 id="recipe5testhtmlderef">Dereference the vocabulary URI, requesting HTML content</h4>
+  <p>Test message (substitute correct path and host for your vocabulary URI):</p>
+  <pre class="clientmsg">GET /examples/example5/ HTTP/1.1
+Host: example.com
+Accept: text/html</pre>
+  <p>Response header should contain the following fields, with your HTML overview content
+    location as the value of the 'Location' field:</p>
+  <pre class="servermsg">HTTP/1.x 303 See Other
+Location: http://example.com/examples/example5-content/2005-10-31-docs/index.html</pre>
+</div>
+<div class="test">
+  <h4 id="recipe5testrdfderef">Dereference the vocabulary URI, requesting RDF content</h4>
+  <p>Same as <a href="#recipe4">Recipe 4</a>.</p>
+</div>
+<div class="test">
+  <h4 id="recipe5testdefaultderef">Dereference the vocabulary URI, default case</h4>
+  <p>Same as <a href="#recipe4">Recipe 4</a>.</p>
+</div>
+<div class="test">
+  <h4 id="recipe5testprophtmlderef">Dereference the URI of a class or property, requesting HTML
+    content</h4>
+  <p>Test message (substitute correct path and host for your class or property URI):</p>
+  <pre class="clientmsg">GET /examples/example5/ClassA HTTP/1.1
+Host: example.com
+Accept: text/html</pre>
+  <p>Response header should contain the following fields, with the HTML content location for the
+    given class or property as the value of the 'Location' field:</p>
+  <pre class="servermsg">HTTP/1.x 303 See Other
+Location: http://example.com/examples/example5-content/2005-10-31-docs/ClassA.html</pre>
+</div>
+<div class="test">
+  <h4 id="recipe5testproprdfderef">Dereference the URI of a class or property, requesting RDF
+    content</h4>
+  <p>Same as <a href="#recipe4">Recipe 4</a>.</p>
+</div>
+<div class="test">
+  <h4 id="recipe5testpropdefaultderef">Dereference the URI of a class or property, default case</h4>
+  <p>Same as <a href="#recipe4">Recipe 4</a>.</p>
+</div>
+<h3 id="recipe5notes">Notes</h3>
+<p>See also the section on <a href="#negotiation">content negotiation</a>.</p>
+<p>As with <a href="#recipe3">Recipe 3</a>, this example uses the modification date of the
+  vocabulary version to create file names. It would also be possible to use version numbers
+  (e.g. '1.01') instead of dates for this purpose, or indeed any convention that makes it
+  possible to differentiate between vocabulary versions, and helps to keep track of version
+  history.</p>
+<p>If you have the directory options Indexes and MultiViews enabled for the directory <span
+        class="inlineCode"
+      >/apachedocumentroot/examples/example5-content/2005-10-31-docs/</span> then you can
+  replace the rewrite rules 1 and 2 with one single rewrite rule:</p>
+<pre class="code2">RewriteCond %{HTTP_ACCEPT} text/html [OR]
+RewriteCond %{HTTP_ACCEPT} application/xhtml\+xml [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Mozilla/.*
+RewriteRule ^example5/(.*) example5-content/2005-10-31-docs/$1 [R=303]</pre>
+<p>This configuration is particularly suited to the use of documentation generated by the OWLDoc
+  plugin for Protege.</p>
+<hr />
+<!--
+****************
+* REQUIREMENTS *
+****************
+-->
+<h2 id="recipe6">Recipe 6. Extended configuration for a 'slash namespace', using multiple HTML
+    documents and a query service</h2>
+<p>This recipe gives an example of an <strong>extended configuration</strong> for a vocabulary
+  with a <a href="#slash">slash namespace</a>. The recipe configures the server to provide both
+  machine-processable (RDF) and human-readable (HTML) content, depending on what is requested,
+  with the HTML documentation being given as multiple hyperlinked HTML documents plus an
+  overview document, and the RDF content being made available via a query service such that
+  clients can obtain a partial RDF description of the vocabulary as appropriate. </p>
+<p>Despite the fact that this recipe shares nearly all of the features of <a href="#recipe5"
+        >Recipe 5</a>, the use of a query service or script to retrieve RDF content makes it
+  arguably the most complex of the extended configurations and presents the greatest challenge
+  to providing a directly usable recipe. So we have decided to present this recipe as a set of
+  suggested implementation patterns rather than a &#39;just follow the numbers&#39;
+  recipe. Moreover, we do not describe a particular implementation pattern in the same level of
+  detail employed in the other recipes. Consequently, some web programming knowledge is required
+  to implement this recipe. </p>
+<h3 id="pattern1">Pattern 1: Using application logic</h3>
+<p>This pattern relies on some application logic deployed in the web server. This logic can be a
+  thin layer that simply redirects the requests (or acts as a proxy) to a third-party web server
+  (see the DBPedia example below), or a thick layer that loads an RDF datasource and translates the
+  HTTP requests into API calls to execute the queries.</p>
+<p>There are two alternatives to introducing server-side logic:</p>
+<ol>
+  <li>Script on the server-side. <br />
+    Common server-side script languages (PHP, Python, Perl,
+    Ruby) have RDF APIs and bindings with RDF stores, and can be used to write a simple script
+    that queries an RDF file or RDF triple store and returns the relevant portion.
+    <ul>
+      <li>Pros: ease of deployment (many web hosting servers have support for one of these
+        languages)</li>
+      <li>Cons: webmasters are expected to write a (probably ad-hoc) script</li>
+    </ul>
+  </li>
+  <li>Java Servlet (or equivalent).
+    <ul>
+      <li>Pros: Java provides fairly good support for RDF, SPARQL and RDF triple stores</li>
+      <li>Cons: heavyweight solution, difficult to deploy (requires a servlet container)</li>
+    </ul>
+  </li>
+</ol>
+<p> <strong>Sample implementation</strong> (valid for both alternatives 1 and 2). </p>
+<p> The DBPedia server is used in the following example as
+  the content provider:</p>
+<pre class="code2">RewriteCond %{HTTP_ACCEPT} text/html [OR]
+RewriteCond %{HTTP_ACCEPT} application/xhtml\+xml
+RewriteRule ^example6/(.+) http://dbpedia.org/page/$1 [R=303]
+
+RewriteCond %{HTTP_ACCEPT} application/rdf\+xml
+RewriteRule ^example6/(.+) http://dbpedia.org/data/$1 [R=303]
+
+RewriteRule ^example6/(.+) http://dbpedia.org/data/$1 [R=303]</pre>
+<p>This is an example of a &#39;thin&#39; implementation layer and the rewrite rules are
+  straightforward:</p>
+<ol>
+  <li>Requests for HTML data are forwarded to the URL of the HTML version exported by the
+    DBPedia servlet; </li>
+  <li>Requests for RDF data (or without an &#39;Acccept:&#39; header since returning RDF
+    is the default behavior) are forwarded to the URL of the RDF data. </li>
+</ol>
+<p> The trickiest part of implementing Recipe 6 using application logic is to correctly
+  implement HTTP content-negotiation from scratch. While most web scripting languages (PHP,
+  Python, etc.) and frameworks provide access to the value of the HTTP headers and thus, to the
+  &#39;Accept:&#39; header, choosing the appropriate return type is far from trivial.
+  The &#39;Accept:&#39; header may contain wildcards and q-values, so regular
+  expressions or simple string comparison functions are not enough. There is a wiki
+  page with pointers to <a href="http://esw.w3.org/topic/ContentNegotiation">content
+  negotiation libraries for different programming languages</a>.
+  The Working Group invites contributions of additional libraries and frameworks
+  that support content negotiation. </p>
+<h3 id="pattern2"> Pattern 2: Redirecting to a SPARQL endpoint using Apache</h3>
+<p> This pattern does not involve writing any application logic. Instead, requests are
+  HTTP-redirected using Apache mod_rewrite. This technique is particularly well-suited to wrap an
+  existing SPARQL endpoint. We exploit the fact that many SPARQL endpoints export HTTP bindings.</p>
+<ul>
+  <li>Pros: lightweight, requires no programming</li>
+  <li>Cons: a SPARQL endpoint for the vocabulary must be available somewhere</li>
+</ul>
+<p> <strong>Sample implementation</strong>: </p>
+<pre class="code2">RewriteCond %{HTTP_ACCEPT} text/html [OR]
+RewriteCond %{HTTP_ACCEPT} application/xhtml\+xml
+RewriteRule ^example6/(.+) http://dbpedia.org/$1 [R=303]
+
+RewriteCond %{HTTP_ACCEPT} application/rdf\+xml
+RewriteRule ^example6/(.+) http://dbpedia.org/sparql?query=DESCRIBE+&lt;http://dbpedia.org/$1&gt; [R=303]
+
+RewriteRule ^example6/(.+) http://dbpedia.org/sparql?query=DESCRIBE+&lt;http://dbpedia.org/$1&gt; [R=303]
+</pre>
+<p> In this example, when the client asks for HTML content, the request is forwarded to an
+  external web server. However, RDF requests are handled differently. A request for a URI such
+  as <a href="http://dbpedia.org/page/property/birthplace"
+        >http://example.org/example6/property/birthplace</a> is redirected to the result of executing a <span
+        class="inlineCode">DESCRIBE </span><span class="inlineCode"
+        >&lt;http://dbpedia.org/property/birthplace&gt;</span> sentence
+  against the DBPedia SPARQL endpoint. The result is an RDF graph which describes the resource (in
+  this particular case, the property that links people to the place where they were born).</p>
+	       <h3 id="case_studies"> Case studies</h3>
+<ul>
+  <li>Joshua Tauberer <a
+          href="http://simile.mit.edu/mail/ReadMsg?listName=Linking%20Open%20Data&amp;msgId=19957"
+          >announced</a> that he has exposed a large RDF dataset from the US Census. There is a
+    SPARQL endpoint available, and the URIs are dereferencable by means of URL rewriting (see,
+    for instance, <a href="http://www.rdfabout.com/rdf/usgov/geo/us"
+          >http://www.rdfabout.com/rdf/usgov/geo/us</a>).</li>
+  <li>D2R Server wraps a relational database and provides SPARQL and linked data
+    interfaces to it.
+    The latter is an example of 303 redirects and content negotiation to serve both
+    HTML and RDF descriptions of the resources. On the other hand, Pubby provides
+    a linked data interface to an existing SPARQL endpoint. More information
+    in <a href="http://www.w3.org/TR/cooluris/#examples">section 5</a> of
+    &#39;Cool URIs for the Semantic Web&#39; [<a href="#ref-COOLURI">COOLURI</a>].</li>
+</ul>
+<hr />
+<h2 id="requirements">Requirements</h2>
+<p>This section attempts to articulate the requirements and expectations of Semantic Web
+  applications and application developers with respect to the HTTP behavior of vocabularies,
+  classes, and properties denoted by HTTP URIs (i.e., URIs from the <span class="inlineCode"
+        >http:</span> URI space). It is intended as a benchmark against which the example
+  configurations given in the recipes above may be verified.</p>
+<h3 id="minimumrequirements">Minimum Requirements</h3>
+<h4 id="recipe6r1">M1. The 'authoritative' RDF description of a vocabulary, class, or property
+  denoted by an HTTP URI can be obtained by dereferencing the URI of that vocabulary, class, or
+  property.</h4>
+<p>An HTTP client can obtain the 'authoritative' RDF description of a vocabulary, class, or
+  property by performing an HTTP GET request against the URI of that vocabulary, class or
+  property. The RDF description is returned as an HTTP response whose content type is a
+  registered MIME type for RDF content (currently only 'application/rdf+xml').</p>
+<p>This is the default behavior in the case that some form of content negotiation has been
+  implemented for these URIs. I.e. an HTTP GET request <em>without</em> an 'Accept:' header
+  field will result in a response with content type 'application/rdf+xml', which is a
+  serialization of a set of RDF statements, including those statements that constitute the
+  'authoritative' RDF description of the denoted resource.</p>
+<p>N.B. it is reasonable for an attempt to dereference the URI of an RDF property or class to
+  result in an RDF description of more than just that property or class.</p>
+<h4 id="recipe6r2">M2. The behavior of an HTTP URI denoting an RDFS/OWL vocabulary, class or
+  property, does not lead to inconsistency in the interpretation of the nature of the denoted
+  resource.</h4>
+<p>Currently the architecture of the Web allows applications to draw inferences about the nature
+  of a resource denoted by an HTTP URI, based on the following:</p>
+<p>(i) The HTTP response code obtained when dereferencing the URI (see the resolution of TAG issue
+  'httpRange-14' <a href="#ref-HTTPRANGE14">[HTTPRANGE14]</a> ), </p>
+<p>and &#8230;</p>
+<p>(ii) Where the URI contains a fragment identifier, the content type(s) of the available
+  representations [<a href="#ref-AWWW04">AWWW04</a>].</p>
+<p>Given these constraints, for each HTTP URI denoting an RDFS/OWL vocabulary, class or
+  property, the range of possible responses to HTTP requests against that URI will not lead
+  applications to draw any inconsistent conclusions.</p>
+<h3 id="extendedrequirements">Extended Requirements</h3>
+<p>These requirements are an extension of the <a href="#minimumrequirements">minimum
+  requirements</a>.</p>
+<h4 id="recipe6e1">E1. 'Human-readable' documentation about an RDF vocabulary, class or
+  property, denoted by an HTTP URI, can be obtained by dereferencing the URI of that vocabulary,
+  class or property.</h4>
+<p>An HTTP client such as a Web browser can obtain 'human-readable' documentation relating to an
+  RDFS/OWL vocabulary, class or property, by performing an HTTP GET request against the URI of
+  that vocabulary, class or property, specifying 'Accept:' headers appropriate to the desired
+  content type in the request.</p>
+<h4 id="recipe6e2">E2. Applications are able to differentiate between 'versions' of a
+  vocabulary.</h4>
+<p>Vocabularies change over time as properties or classes are added or their descriptions are
+  editorially changed. Applications need a way to differentiate between successive 'snapshots'
+  of the vocabularies over time. To be precise, what is "versioned" is the <em>description</em> of a property -- i.e., a set of RDF statements about the property -- rather than the property
+  itself, the URI of which does not change.</p>
+<p>Conventions in common use for distinguishing successive descriptions include the use of
+  version-number strings or date strings in filenames (e.g., <span class="inlineCode"
+      >1.01.rdf</span> or <span class="inlineCode">2005-10-31.rdf</span>) or in pathnames (e.g., <span class="inlineCode">http://dublincore.org/2008/01/14/dcelements.rdf#title</span>). It should be
+  noted that, at present, there are no generally accepted conventions for using date or
+  version-number strings in this way.</p>
+<hr />
+<!--
+********************
+* ACKNOWLEDGEMENTS *
+********************
+-->
+<h2 id="ack">Acknowledgments</h2>
+<p>The examples attempt to distill elements of good practice from currently deployed Semantic
+  Web vocabularies, especially the Dublin Core Metadata Terms, the Friend of a Friend Ontology,
+  and the SKOS Core Vocabulary. All those who contributed to the development of these practices
+  are gratefully acknowledged.</p>
+<hr />
+<!--
+**************
+* REFERENCES *
+**************
+-->
+<h2 id="references">References</h2>
+<p>This bibliography as: <a href="references.bib">BibTex</a> | <a href="references.xml"
+      >BibTeXML</a> | <a href="references.rdf">RDF</a> </p>
+<dl>
+  <dt> <a name="ref-APACHE20" id="ref-APACHE20">APACHE20</a> </dt>
+  <dd><em> <a href="http://httpd.apache.org/docs/2.0/"> <cite>Apache HTTP Server Version 2.0 Documentation</cite> </a> </em>, The Apache Software Foundation.<br />
+    Available at <a href="http://httpd.apache.org/docs/2.0/">http://httpd.apache.org/docs/2.0/</a></dd>
+  <dt> <a name="ref-AWWW04" id="ref-AWWW04">AWWW04</a> </dt>
+  <dd><em> <a href="http://www.w3.org/TR/2004/REC-webarch-20041215/"> <cite>Architecture of the World Wide Web, Volume One</cite> </a> </em>, Ian Jacobs and Norman Walsh, World Wide Web Consortium, W3C Recommendation, December
+    2004.<br />
+    Available at <a href="http://www.w3.org/TR/2004/REC-webarch-20041215/">http://www.w3.org/TR/2004/REC-webarch-20041215/</a></dd>
+  <dt> <a name="ref-COOLURI" id="ref-COOLURI">COOLURI</a> </dt>
+  <dd><em> <a href="http://www.w3.org/TR/cooluris/"> <cite>Cool URIs for the Semantic Web</cite> </a> </em>, Leo Sauermann, DFKI GmbH; Richard Cyganiak, Freie Universität
+	Berlin. W3C Interest Group Note March 2008<br />
+    Available at <a href="http://www.w3.org/TR/cooluris/">http://www.w3.org/TR/cooluris/</a></dd>
+  <dt> <a name="ref-FOAF" id="ref-FOAF">FOAF</a> </dt>
+  <dd><em> <a href="http://xmlns.com/foaf/0.1/"> <cite>FOAF Vocabulary Specification</cite> </a> </em>, Dan Brickley and Libby Miller.<br />
+    Available at <a href="http://xmlns.com/foaf/0.1/">http://xmlns.com/foaf/0.1/</a></dd>
+  <dt> <a name="ref-GRDDL" id="GRDDL">GRDDL</a> </dt>
+  <dd><em> <a href="http://www.w3.org/TR/grddl/"> <cite>Gleaning Resource Descriptions from Dialects of Languages (GRDDL)</cite> </a> </em>, Dan Connolly, World Wide Web Consortium, W3C Recommendation September 
+    2007<br />
+    Available at <a href="http://www.w3.org/TR/grddl/">http://www.w3.org/TR/grddl/</a></dd>
+  <dt> <a name="ref-HTTPRANGE14" id="ref-HTTPRANGE14">HTTPRANGE14</a> </dt>
+  <dd><em> <a href="http://www.w3.org/2001/tag/doc/httpRange-14/2007-10-04/HttpRange-14.html"> <cite>Dereferencing HTTP URIs</cite> </a> </em>, Rhys Lewis, Volantis Systems Ltd.<br />
+    Available at <a href="http://www.w3.org/2001/tag/doc/httpRange-14/2007-10-04/HttpRange-14.html">http://www.w3.org/2001/tag/doc/httpRange-14/2007-10-04/HttpRange-14.html</a></dd>
+  <dd style="padding-top:3px"><a
+        href="http://lists.w3.org/Archives/Public/www-tag/2005Jun/0039.html">W3C Technical Architecture Group's resolution</a> on the
+    range of HTTP dereferencing (aka &quot;<a
+        href="http://www.w3.org/2001/tag/issues.html#httpRange-14">httpRange-14</a>&quot;). <br />
+    Available at <a
+        href="http://lists.w3.org/Archives/Public/www-tag/2005Jun/0039.html">http://lists.w3.org/Archives/Public/www-tag/2005Jun/0039.html</a> </dd>
+  <dt> <a name="ref-OWLFeatures" id="ref-OWLFeatures">OWLFeatures</a> </dt>
+  <dd><em> <a href="http://www.w3.org/TR/2004/REC-owl-features-20040210/"> <cite>OWL Web Ontology Language Overview</cite> </a> </em>, Deborah L. McGuinness and Frank van Harmelen, World Wide Web Consortium, W3C
+    Recommendation, February 2004.<br />
+    Available at <a href="http://www.w3.org/TR/2004/REC-owl-features-20040210/">http://www.w3.org/TR/2004/REC-owl-features-20040210/</a></dd>
+  <dt> <a name="ref-OWLGuide" id="ref-OWLGuide">OWLGuide</a> </dt>
+  <dd><em> <a href="http://www.w3.org/TR/2004/REC-owl-guide-20040210/"> <cite>OWL Web Ontology Language Guide</cite> </a> </em>, Michael K. Smith, Chris Welty and Deborah L. McGuinness, World Wide Web Consortium,
+    W3C Recommendation, February 2004.<br />
+    Available at <a href="http://www.w3.org/TR/2004/REC-owl-guide-20040210/">http://www.w3.org/TR/2004/REC-owl-guide-20040210/</a></dd>
+  <dt> <a name="ref-PURL" id="ref-PURL">PURL</a> </dt>
+  <dd><em> <a href="http://purl.oclc.org/docs/inet96.html"> <cite>Introduction to Persistent Uniform Resource Locators</cite> </a> </em>, Keith Shafer, Stuart Weibel, Erik Jul and Jon Fausey, 6565 Frantz Road, Dublin, Ohio
+    43017-3395: OCLC Online Computer Library Center, Inc., 1996.<br />
+    Available at <a href="http://purl.oclc.org/docs/inet96.html">http://purl.oclc.org/docs/inet96.html</a></dd>
+  <dt> <a name="ref-RDFa" id="ref-RDFa">RDFa</a> </dt>
+  <dd><em> <a href="http://www.w3.org/TR/2008/CR-rdfa-syntax-20080620/"> <cite>RDFa in XHTML: Syntax and Processing</cite> </a> </em>, B. Adida, M. Birbeck, S. McCarron, S. Pemberton, World Wide Web Consortium, W3C Candidate Recommendation June 2008<br />
+    Available at <a href="http://www.w3.org/TR/2008/CR-rdfa-syntax-20080620/">http://www.w3.org/TR/2008/CR-rdfa-syntax-20080620/</a></dd>
+  <dt> <a name="ref-RDFPrimer" id="ref-RDFPrimer">RDFPrimer</a> </dt>
+  <dd><em> <a href="http://www.w3.org/TR/2004/REC-rdf-primer-20040210/"> <cite>RDF Primer</cite> </a> </em>, Frank Manola and Eric Miller, World Wide Web Consortium, W3C Recommendation, February
+    2004.<br />
+    Available at <a href="http://www.w3.org/TR/2004/REC-rdf-primer-20040210/">http://www.w3.org/TR/2004/REC-rdf-primer-20040210/</a></dd>
+  <dt> <a name="ref-RDFS" id="ref-RDFS">RDFS</a> </dt>
+  <dd><em> <a href="http://www.w3.org/TR/2004/REC-rdf-schema-20040210/"> <cite>RDF Vocabulary Description Language 1.0: RDF Schema</cite> </a> </em>, Dan Brickley and R. V. Guha, World Wide Web Consortium, W3C Recommendation, February
+    2004.<br />
+    Available at <a href="http://www.w3.org/TR/2004/REC-rdf-schema-20040210/">http://www.w3.org/TR/2004/REC-rdf-schema-20040210/</a></dd>
+  <dt> <a name="ref-RFC2616" id="ref-RFC2616">RFC2616</a> </dt>
+  <dd><em> <a href="http://www.ietf.org/rfc/rfc2616.txt"> <cite>Hypertext Transfer Protocol - HTTP/1.1</cite> </a> </em>, R. Fielding, J. Gettys, J. Mogul, H. Frystyk, L. Masinter, P. Leach and T.
+    Berners-Lee, Internet Engineering Task Force, RFC (2616), June 1999.<br />
+    Available at <a href="http://www.ietf.org/rfc/rfc2616.txt">http://www.ietf.org/rfc/rfc2616.txt</a></dd>
+  <dt> <a name="ref-RFC3986" id="ref-RFC3986">RFC3986</a> </dt>
+  <dd><em> <a href="http://www.ietf.org/rfc/rfc3986.txt"> <cite>Uniform Resource Identifier (URI): Generic Syntax</cite> </a> </em>, T. Berners-Lee, R. Fielding and L. Masinter, Internet Engineering Task Force, RFC
+    (3986), January 2005.<br />
+    Available at <a href="http://www.ietf.org/rfc/rfc3986.txt">http://www.ietf.org/rfc/rfc3986.txt</a></dd>
+  <dt> <a name="ref-SKOS" id="ref-SKOS">SKOS</a> </dt>
+  <dd><em> <a href="http://www.w3.org/TR/2005/WD-swbp-skos-core-spec-20051102/"> <cite>SKOS Core Vocabulary Specification</cite> </a> </em>, Alistair Miles and Dan Brickley, World Wide Web Consortium, W3C Working Draft,
+    November 2005.<br />
+    Available at <a href="http://www.w3.org/TR/2005/WD-swbp-skos-core-spec-20051102/">http://www.w3.org/TR/2005/WD-swbp-skos-core-spec-20051102/</a></dd>
+  <dt> <a name="ref-XMLNames" id="ref-XMLNames">XMLNames</a> </dt>
+  <dd><em> <a href="http://www.w3.org/TR/1999/REC-xml-names-19990114/"> <cite>Namespaces in XML</cite> </a> </em>, Tim Bray, Dave Hollander and Andrew Layman, World Wide Web Consortium, W3C
+    Recommendation, January 1999.<br />
+    Available at <a href="http://www.w3.org/TR/1999/REC-xml-names-19990114/">http://www.w3.org/TR/1999/REC-xml-names-19990114/</a></dd>
+</dl>
+<hr />
+<!--
+*********
+* PURLS *
+*********
+-->
+<h2 id="purls">Appendix A. Vocabularies that use PURLs for naming</h2>
+<p>PURLs ('Persistent URLs') are URIs from the <span class="inlineCode"> <a href="http://purl.org/">http://purl.org/</a> </span> URI space. PURLs are supported by a PURL resolution service, which allows the
+  registered owners of a PURL domain to redirect HTTP requests against a PURL to an arbitrary
+  resource URL. Registered owners of PURLs may not configure the central PURL server other than
+  to specify the redirect URL for each PURL.</p>
+<p>When the central PURL server was originally developed in the 1990s, the standard response of
+  an HTTP server to a request against a PURL was to return a response code of 302 ("temporarily
+  moved"). Web architecture has evolved since then, and the Technical Architecture Group (TAG)
+  of W3C has resolved that, for the purpose of such redirects for RDF <em>Class and Property names</em>, the response code 303 ("see
+  other") should be returned (see the TAG resolution on
+  httpRange-14 <a href="#ref-HTTPRANGE14">[HTTPRANGE14]</a>).</p>
+<p>As PURL servers use a 302 response code and there is currently no way to configure them to
+  use 303 response codes, existing vocabularies with <span class="inlineCode"
+      >http://purl.org</span> slash namespaces servers do not strictly conform to the current TAG
+  recommendations. These cases are treated in the following recipes.</p>
+<p>Note: At the time this Working Draft is being written (January 2008), an update to the PURL service is in progress.  We anticipate this update will address the TAG finding on httpRange-14 and 303 redirects. (see <a href="http://www.oclc.org/news/releases/200669.htm">http://www.oclc.org/news/releases/200669.htm</a> ).</p>
+<p><a href="#recipe1a">Recipe 1a.</a> | <a href="#recipe2a">Recipe 2a.</a> | <a href="#recipe3a"
+        >Recipe 3a.</a> | <a href="#recipe4a">Recipe 4a.</a> | <a href="#recipe5a">Recipe 5a.</a></p>
+<hr />
+<!--
+*************
+* RECIPE 1A *
+*************
+-->
+<h2 id="recipe1a">Recipe 1a. Minimal configuration for a PURL 'hash namespace'</h2>
+<p>This recipe gives an example configuration that satisfies the <a href="#minimumrequirements"
+        >minimum requirements</a> for a vocabulary with a <a href="#hash">hash namespace</a> within
+  the <span class="inlineCode"> <a href="http://purl.org/">http://purl.org/</a> </span> URI space. Only machine-processable (RDF) content is served at the namespace URI.</p>
+<p>For vocabulary &#8230;</p>
+<pre><a href="http://purl.oclc.org/NET/SWD/recipes/examples-A/example1a">http://purl.oclc.org/NET/SWD/recipes/examples-A/example1a</a></pre>
+<p>defining classes &#8230;</p>
+<pre><a href="http://purl.oclc.org/NET/SWD/recipes/examples-A/example1a#ClassA">http://purl.oclc.org/NET/SWD/recipes/examples-A/example1a#ClassA</a>
+<a href="http://purl.oclc.org/NET/SWD/recipes/examples-A/example1a#ClassB">http://purl.oclc.org/NET/SWD/recipes/examples-A/example1a#ClassB</a></pre>
+<p>and properties &#8230;</p>
+<pre><a href="http://purl.oclc.org/NET/SWD/recipes/examples-A/example1a#propA">http://purl.oclc.org/NET/SWD/recipes/examples-A/example1a#propA</a>
+<a href="http://purl.oclc.org/NET/SWD/recipes/examples-A/example1a#propB">http://purl.oclc.org/NET/SWD/recipes/examples-A/example1a#propB</a></pre>
+<h3 id="recipe1as1">Step 1</h3>
+<p>Create a file called <span class="inlineCode">example1a.rdf</span> that contains a <em> <strong>complete</strong> </em> RDF/XML serialization of the vocabulary. I.e. <em> <strong>all</strong> </em> resources defined by the vocabulary are described in this file.</p>
+<h3 id="recipe1as2">Step 2</h3>
+<p>Copy <span class="inlineCode">example1a.rdf</span> to the directory <span class="inlineCode"
+        >/apachedocumentroot/examples/</span> on the server from which you wish to serve the
+  content (in this example the server is <span class="inlineCode">www.w3.org</span>).</p>
+<h3 id="recipe1as3">Step 3</h3>
+<p>Set up the following PURL:</p>
+<pre>PURL: http://purl.org/NET/SWD/recipes/examples-A/example1a
+URL:  http://www.w3.org/2006/07/SWD/recipes/examples/example1a.rdf </pre>
+<h3 id="recipe1anotes">Notes</h3>
+<p>If the server is already configured to serve files with the <span class="inlineCode"
+      >.rdf</span> extension as content type <span class="inlineCode">application/rdf+xml</span> then you don't have to do anything further. If this is not the case, you will need to add the
+  following directive:</p>
+<pre class="code2">AddType application/rdf+xml .rdf</pre>
+<p>either to the main apache configuration files, or if you don't have access to these, to the
+  per-directory configuration file (<span class="inlineCode">.htaccess</span>) for the directory <span class="inlineCode">
+/apachedocumentroot/examples/</span> on the server.</p>
+<hr />
+<!--
+*************
+* RECIPE 2A *
+*************
+-->
+<h2 id="recipe2a">Recipe 2a. Minimal configuration for a PURL 'slash namespace'</h2>
+<p>This recipe gives an example configuration that satisfies the <a href="#minimumrequirements"
+        >minimum requirements</a> for a vocabulary with a <a href="#slash">slash namespace</a> within the <span class="inlineCode"> <a href="http://purl.org/">http://purl.org/</a></span> URI space. Only machine-processable (RDF) content is served at the namespace URI.</p>
+<p>N.B. As of the date of this Working Draft, this example does not strictly conform with the TAG resolution on httpRange-14 <a href="#ref-HTTPRANGE14">[HTTPRANGE14]</a> because the purl.org servers use a 302 redirect code, and not a 303.</p>
+<p>For vocabulary &#8230;</p>
+<pre><a href="http://purl.oclc.org/NET/SWD/recipes/examples-A/example2a/">http://purl.oclc.org/NET/SWD/recipes/examples-A/example2a/</a></pre>
+<p>defining classes &#8230;</p>
+<pre><a href="http://purl.oclc.org/NET/SWD/recipes/examples-A/example2a/ClassA">http://purl.oclc.org/NET/SWD/recipes/examples-A/example2a/ClassA</a>
+<a href="http://purl.oclc.org/NET/SWD/recipes/examples-A/example2a/ClassB">http://purl.oclc.org/NET/SWD/recipes/examples-A/example2a/ClassB</a></pre>
+<p>and properties &#8230;</p>
+<pre><a href="http://purl.oclc.org/NET/SWD/recipes/examples-A/example2a/propA">http://purl.oclc.org/NET/SWD/recipes/examples-A/example2a/propA</a>
+<a href="http://purl.oclc.org/NET/SWD/recipes/examples-A/example2a/propB">http://purl.oclc.org/NET/SWD/recipes/examples-A/example2a/propB</a></pre>
+<h3 id="recipe2as1">Step 1</h3>
+<p>Create a file called <span class="inlineCode">example2a.rdf</span> that contains a <em> <strong>complete</strong> </em> RDF/XML serialization of the vocabulary. I.e. <em> <strong>all</strong> </em> resources defined by the vocabulary are described in this file.</p>
+<h3 id="recipe2as2">Step 2</h3>
+<p>Copy <span class="inlineCode">example2a.rdf</span> to the directory <span class="inlineCode"
+        >/apachedocumentroot/examples/</span> on the server from which you wish to serve the
+  content (in this example the server is <span class="inlineCode">www.w3.org</span>).</p>
+<h3 id="recipe2as3">Step 3</h3>
+<p>Set up the following Partial Redirect PURL:</p>
+<pre>PR PURL: http://purl.oclc.org/NET/SWD/recipes/examples-A/example2a/
+Root URL:  http://www.w3.org/2006/07/SWD/recipes/examples/example2a/ </pre>
+<h3 id="recipe2as4">Step 4</h3>
+<p>Add the following directives to the <span class="inlineCode">.htaccess</span> file in the <span class="inlineCode">
+/apachedocumentroot/examples/</span> directory on the
+  server:</p>
+<pre class="code2"># Turn off MultiViews
+Options -MultiViews
+
+# Directive to ensure *.rdf files served as appropriate content type,
+# if not present in main apache config
+AddType application/rdf+xml .rdf
+
+# Rewrite engine setup
+RewriteEngine On
+RewriteBase /examples
+
+# Rewrite rule to serve RDF/XML content from all partially redirected URIs
+RewriteRule ^example2a/ example2a.rdf</pre>
+<p>(N.B. If a <span class="inlineCode">.htaccess</span> file does not exist, create one.)</p>
+<h3 id="recipe2anotes">Notes</h3>
+<p>In the above recipe the single rewrite rule is an <em>internal</em> redirect. This minimizes
+  the number of <em>external</em> (i.e. HTTP) redirects involved in the dereference action.
+  However, you could also implement this rewrite rule as an external redirect, by replacing the
+  above rule with the following:</p>
+<pre class="code2"># Rewrite rule to serve RDF/XML content from all partially redirected URIs
+RewriteRule ^example2a/ example2a.rdf [R=303]</pre>
+<p>This creates an additional HTTP redirect in the dereference action, but possibly makes it
+  clearer to the client that attempts to dereference Vocabulary, Class or Property URIs all end
+  up at the same place and it <em>does</em> make the current PURL implementation conformant with the TAG httpRange-14 resolution [<a href="#ref-HTTPRANGE14">HTTPRANGE14</a>].</p>
+<p>It is also possible to avoid any server configuration by creating individual PURLs for each
+  class and property of the vocabulary, all referencing the same URL (rather than a Partial
+  Redirect PURL). However, if the content were subsequently to be moved, each PURL would need to
+  be updated -- a cumbersome and impractical task for medium- to large-size ontologies.</p>
+<hr />
+<!--
+*************
+* RECIPE 3A *
+*************
+-->
+<h2 id="recipe3a">Recipe 3a. Extended configuration for a PURL 'hash namespace'</h2>
+<p>This recipe gives an example configuration that satisfies the <em> <a href="#extendedrequirements">extended requirements</a> </em> for a vocabulary with a <em> <a href="#hash">hash namespace</a> </em> within the <span class="inlineCode"> <a href="http://purl.org/">http://purl.org/</a> </span> URI space. Both machine-processable (RDF) and human-readable (HTML) content is served
+  at the namespace URI.</p>
+<p>For vocabulary &#8230;</p>
+<pre><a href="http://purl.oclc.org/NET/SWD/recipes/examples-A/example3a">http://purl.oclc.org/NET/SWD/recipes/examples-A/example3a</a></pre>
+<p>defining classes &#8230;</p>
+<pre><a href="http://purl.oclc.org/NET/SWD/recipes/examples-A/example3a#ClassA">http://purl.oclc.org/NET/SWD/recipes/examples-A/example3a#ClassA</a>
+<a href="http://purl.oclc.org/NET/SWD/recipes/examples-A/example3a#ClassB">http://purl.oclc.org/NET/SWD/recipes/examples-A/example3a#ClassB</a></pre>
+<p>and properties &#8230;</p>
+<pre><a href="http://purl.oclc.org/NET/SWD/recipes/examples-A/example3a#propA">http://purl.oclc.org/NET/SWD/recipes/examples-A/example3a#propA</a>
+<a href="http://purl.oclc.org/NET/SWD/recipes/examples-A/example3a#propB">http://purl.oclc.org/NET/SWD/recipes/examples-A/example3a#propB</a></pre>
+<h3 id="recipe3as1">Step 1</h3>
+<p>Create a file called <span class="inlineCode">2005-10-31.rdf</span> that contains a <em> <strong>complete</strong> </em> RDF/XML serialization of the vocabulary, as at 2005-10-31 (or whatever the current date
+  is). I.e. <em> <strong>all</strong> </em> resources defined by the vocabulary are described in this file, and this file represents
+  a 'snapshot' or 'version' of the vocabulary.</p>
+<h3 id="recipe3as2">Step 2</h3>
+<p>Create a file called <span class="inlineCode">2005-10-31.html</span> that contains HTML
+  content documentation about all classes and properties defined by the vocabulary as at
+  2005-10-31 (or whatever the current date is). This document may include sections for each of
+  the classes/properties documented, each section being headed by an HTML anchor whose name is
+  identical to the fragment identifier of the documented class or property.</p>
+<h3 id="recipe3as3">Step 3</h3>
+<p>Copy <span class="inlineCode">2005-10-31.rdf</span> and <span class="inlineCode"
+        >2005-10-31.html</span> to the directory <span class="inlineCode"
+        >/apachedocumentroot/examples/example3a-content/</span> on the server from which you
+  wish to serve the content (in this example the server is <span class="inlineCode"
+        >www.w3.org</span>).</p>
+<h3 id="recipe3as4">Step 4</h3>
+<p>Add the following directives to the <span class="inlineCode">.htaccess</span> file in the <span class="inlineCode">
+/apachedocumentroot/examples/</span> directory:</p>
+<pre class="code2"># Turn off MultiViews
+Options -MultiViews
+
+# Directive to ensure *.rdf files served as appropriate content type,
+# if not present in main apache config
+AddType application/rdf+xml .rdf
+
+# Rewrite engine setup
+RewriteEngine On
+RewriteBase /examples
+
+# Rewrite rule to make sure we serve HTML content from the namespace URI if requested
+RewriteCond %{HTTP_ACCEPT} !application/rdf\+xml.*(text/html|application/xhtml\+xml)
+RewriteCond %{HTTP_ACCEPT} text/html [OR]
+RewriteCond %{HTTP_ACCEPT} application/xhtml\+xml [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Mozilla/.*
+RewriteRule ^example3a$ example3a-content/2005-10-31.html [R=303]
+
+# Rewrite rule to make sure we serve the RDF/XML content from the namespace URI by default
+RewriteRule ^example3a$ example3a-content/2005-10-31.rdf [R=303]</pre>
+<p />
+<h3 id="recipe3as5">Step 5</h3>
+<p>Setup the following PURL:</p>
+<pre>PURL: http://purl.oclc.org/NET/SWD/recipes/examples-A/example3a
+URL:  http://www.w3.org/2006/07/SWD/recipes/examples/example3a</pre>
+<h3 id="recipe3anotes">Notes</h3>
+<p>Because we can't configure the PURL server for content negotiation, this example configures
+  the content server to perform negotiation <em>after</em> the 302 redirect from the PURL
+  server.</p>
+<hr />
+<!--
+*************
+* RECIPE 4A *
+*************
+-->
+<h2 id="recipe4a">Recipe 4a. Extended configuration for a PURL 'slash namespace', single HTML
+  document</h2>
+<p>This recipe gives an example configuration that satisfies the <a href="#extendedrequirements"
+        >extended requirements</a> for a vocabulary with a <a href="#slash">slash namespace</a> within the <span class="inlineCode"> <a href="http://purl.org/">http://purl.org/</a> </span> URI space. Both machine-processable (RDF) and human-readable (HTML) content is served
+  at the namespace URI. The HTML documentation is served as a single file.</p>
+<p>N.B. this example does not strictly conform with the TAG resolution on httpRange-14 <a href="#ref-HTTPRANGE14">[HTTPRANGE14]</a> because the purl.org servers use a 302 redirect code, and not a 303.</p>
+<p>For vocabulary &#8230;</p>
+<pre><a href="http://purl.oclc.org/NET/SWD/recipes/examples-A/example4a/">http://purl.oclc.org/NET/SWD/recipes/examples-A/example4a/</a></pre>
+<p>defining classes &#8230;</p>
+<pre><a href="http://purl.oclc.org/NET/SWD/recipes/examples-A/example4a/ClassA">http://purl.oclc.org/NET/SWD/recipes/examples-A/example4a/ClassA</a>
+<a href="http://purl.oclc.org/NET/SWD/recipes/examples-A/example4a/ClassB">http://purl.oclc.org/NET/SWD/recipes/examples-A/example4a/ClassB</a></pre>
+<p>and properties &#8230;</p>
+<pre><a href="http://purl.oclc.org/NET/SWD/recipes/examples-A/example4a/propA">http://purl.oclc.org/NET/SWD/recipes/examples-A/example4a/propA</a>
+<a href="http://purl.oclc.org/NET/SWD/recipes/examples-A/example4a/propB">http://purl.oclc.org/NET/SWD/recipes/examples-A/example4a/propB</a></pre>
+<h3 id="recipe4as1">Step 1</h3>
+<p>Create a file called <span class="inlineCode">2005-10-31.rdf</span> that contains a <em> <strong>complete</strong> </em> RDF/XML serialization of the vocabulary, as at 2005-10-31 (or whatever the current date
+  is). I.e. <em> <strong>all</strong> </em> resources defined by the vocabulary are described in this file, and this file represents
+  a 'snapshot' or 'version' of the vocabulary.</p>
+<h3 id="recipe4as2">Step 2</h3>
+<p>Create a file called <span class="inlineCode">2005-10-31.html</span> that contains HTML
+  content documentation about all classes and properties defined by the vocabulary as at
+  2005-10-31 (or whatever the current date is). This document may include sections for each of
+  the classes/properties documented, each section being headed by an HTML anchor whose name is
+  identical to the fragment identifier of the documented class or property.</p>
+<h3 id="recipe4as3">Step 3</h3>
+<p>Copy <span class="inlineCode">2005-10-31.rdf</span> and <span class="inlineCode"
+        >2005-10-31.html</span> to the directory <span class="inlineCode"
+        >/apachedocumentroot/examples/example4a-content/</span> on the server from which you wish
+  to serve the content (in this example the server is <span class="inlineCode"
+        >www.w3.org</span>)..</p>
+<h3 id="recipe4as4">Step 4</h3>
+<p>Add the following directives to the <span class="inlineCode">.htaccess</span> file in the <span class="inlineCode">
+/apachedocumentroot/examples/</span> directory:</p>
+<pre class="code2"># Turn off MultiViews
+Options -MultiViews
+
+# Directive to ensure *.rdf files served as appropriate content type,
+# if not present in main apache config
+AddType application/rdf+xml .rdf
+
+# Rewrite engine setup
+RewriteEngine On
+RewriteBase /examples
+
+# Rewrite rule to serve HTML content from the namespace URI if requested
+RewriteCond %{HTTP_ACCEPT} !application/rdf\+xml.*(text/html|application/xhtml\+xml)
+RewriteCond %{HTTP_ACCEPT} text/html [OR]
+RewriteCond %{HTTP_ACCEPT} application/xhtml\+xml [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Mozilla/.*
+RewriteRule ^example4a/$ example4a-content/2005-10-31.html [R=303]
+
+# Rewrite rule to serve directed HTML content from class/prop URIs
+RewriteCond %{HTTP_ACCEPT} !application/rdf\+xml.*(text/html|application/xhtml\+xml)
+RewriteCond %{HTTP_ACCEPT} text/html [OR]
+RewriteCond %{HTTP_ACCEPT} application/xhtml\+xml [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Mozilla/.*
+RewriteRule ^example4a/(.+) example4a-content/2005-10-31.html#$1 [R=303,NE]
+
+# Rewrite rule to serve RDF/XML content from the namespace URI by default
+RewriteRule ^example4a/ example4a-content/2005-10-31.rdf [R=303]</pre>
+<p>(N.B. If a <span class="inlineCode">.htaccess</span> file does not exist, create one.)</p>
+<h3 id="recipe4as5">Step 5</h3>
+<p>Set up the following Partial Redirect PURL:</p>
+<pre>PR PURL: http://purl.oclc.org/NET/SWD/recipes/examples-A/example4a/
+URL Root:  http://www.w3.org/2006/07/SWD/recipes/examples/example4a/</pre>
+<h3 id="recipe4anotes">Notes</h3>
+<p>This configuration would be the most appropriate for Dublin Core Metadata Terms.</p>
+<hr />
+<!--
+*************
+* RECIPE 5A *
+*************
+-->
+<h2 id="recipe5a">Recipe 5a. Extended configuration for a PURL 'slash namespace', using multiple
+  HTML documents</h2>
+<p>This recipe gives an example configuration that satisfies the <a href="#extendedrequirements"
+        >extended requirements</a> for a vocabulary with a <a href="#slash">slash namespace</a> within the <span class="inlineCode"> <a href="http://purl.org/">http://purl.org/</a> </span> URI space. Both machine-processable (RDF) and human-readable (HTML) content is served
+  at the namespace URI with the HTML documentation being given as multiple hyperlinked HTML
+  documents plus an overview document.</p>
+<p>N.B. this example does not strictly conform with the TAG resolution on httpRange-14 <a href="#ref-HTTPRANGE14">[HTTPRANGE14]</a> because the purl.org servers use a 302 redirect code, and not a 303.</p>
+<p>For vocabulary &#8230;</p>
+<pre><a href="http://purl.oclc.org/NET/SWD/recipes/examples-A/example5a/">http://purl.oclc.org/NET/SWD/recipes/examples-A/example5a/</a></pre>
+<p>defining classes &#8230;</p>
+<pre><a href="http://purl.oclc.org/NET/SWD/recipes/examples-A/example5a/ClassA">http://purl.oclc.org/NET/SWD/recipes/examples-A/example5a/ClassA</a>
+<a href="http://purl.oclc.org/NET/SWD/recipes/examples-A/example5a/ClassB">http://purl.oclc.org/NET/SWD/recipes/examples-A/example5a/ClassB</a></pre>
+<p>and properties &#8230;</p>
+<pre><a href="http://purl.oclc.org/NET/SWD/recipes/examples-A/example5a/propA">http://purl.oclc.org/NET/SWD/recipes/examples-A/example5a/propA</a>
+<a href="http://purl.oclc.org/NET/SWD/recipes/examples-A/example5a/propB">http://purl.oclc.org/NET/SWD/recipes/examples-A/example5a/propB</a></pre>
+<h3 id="recipe5as1">Step 1</h3>
+<p>Create a file called <span class="inlineCode">2005-10-31.rdf</span> that contains a <em> <strong>complete</strong> </em> RDF/XML serialization of the vocabulary, as at 2005-10-31 (or whatever the current date
+  is). I.e. <em> <strong>all</strong> </em> resources defined by the vocabulary are described in this file, and this file represents
+  a 'snapshot' or 'version' of the vocabulary.</p>
+<h3 id="recipe5as2">Step 2</h3>
+<p>Copy <span class="inlineCode">2005-10-31.rdf</span> to the directory <span class="inlineCode"
+        >/apachedocumentroot/examples/example5a-content/</span> on the server from which you wish
+  to serve the content (in this example the server is <span class="inlineCode"
+        >www.w3.org</span>).</p>
+<h3 id="recipe5as3">Step 3</h3>
+<p>Create files <span class="inlineCode">ClassA.html</span> <span class="inlineCode">ClassB.html</span> <span class="inlineCode">propA.html</span> <span class="inlineCode">propB.html</span> each of which contains HTML content documentation
+  relevant to the class or property with the corresponding local name, as at 2005-10-31 (or
+  whatever the current date is). Create a file <span class="inlineCode">index.html</span> that
+  contains HTML content documentation about the vocabulary itself, with hyperlinks to all class
+  or property documentation.</p>
+<h3 id="recipe5as4">Step 4</h3>
+<p>Copy <span class="inlineCode">ClassA.html</span> <span class="inlineCode">ClassB.html</span> <span class="inlineCode">propA.html</span> <span class="inlineCode">propB.html</span> and <span class="inlineCode">index.html</span> to
+  the directory <span class="inlineCode"
+        >/apachedocumentroot/examples/example5a-content/2005-10-31-docs/</span> on the server
+  from which you wish to serve the content (in this example the server is <span
+        class="inlineCode">www.w3.org</span>).</p>
+<h3 id="recipe5as5">Step 5</h3>
+<p>Add the following directives to the <span class="inlineCode">.htaccess</span> file in the <span class="inlineCode">
+/apachedocumentroot/examples/</span> directory:</p>
+<pre class="code2"># Turn off MultiViews
+Options -MultiViews
+
+# Directive to ensure *.rdf files served as appropriate content type,
+# if not present in main apache config
+AddType application/rdf+xml .rdf
+
+# Rewrite engine setup
+RewriteEngine On
+RewriteBase /examples
+
+# Rewrite rule to serve HTML content from the namespace URI if requested
+RewriteCond %{HTTP_ACCEPT} !application/rdf\+xml.*(text/html|application/xhtml\+xml)
+RewriteCond %{HTTP_ACCEPT} text/html [OR]
+RewriteCond %{HTTP_ACCEPT} application/xhtml\+xml [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Mozilla/.*
+RewriteRule ^example5a/$ example5a-content/2005-10-31-docs/index.html [R=303]
+
+# Rewrite rule to serve HTML content from class or prop URIs if requested
+RewriteCond %{HTTP_ACCEPT} !application/rdf\+xml.*(text/html|application/xhtml\+xml)
+RewriteCond %{HTTP_ACCEPT} text/html [OR]
+RewriteCond %{HTTP_ACCEPT} application/xhtml\+xml [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Mozilla/.*
+RewriteRule ^example5a/(.+) example5a-content/2005-10-31-docs/$1.html [R=303]
+
+# Rewrite rule to serve RDF/XML content from the namespace URI by default
+RewriteRule ^example5a/ example5a-content/2005-10-31.rdf [R=303]</pre>
+<p>(N.B. If a <span class="inlineCode">.htaccess</span> file does not exist, create one.)</p>
+<h3 id="recipe5as6">Step 6</h3>
+<p>Set up the following Partial Redirect PURLs:</p>
+<pre>PR PURL: http://purl.oclc.org/NET/SWD/recipes/examples-A/example5a/
+Root URL:  http://www.w3.org/2006/07/SWD/recipes/examples/example5a/</pre>
+<hr />
+<!--
+******************
+* URI NAMESPACES *
+******************
+-->
+<h2 id="naming">Appendix B: URI namespaces</h2>
+<p>The URI that identifies your vocabulary is referred to here as the <em>vocabulary namespace URI</em>
+  or just <em>vocabulary URI</em> (or <em>ontology URI</em> as <em>vocabulary</em> and <em>ontology</em> are used here
+  interchangeably). For example, the following URI identifies the SKOS Core Vocabulary:</p>
+<pre><a href="http://www.w3.org/2004/02/skos/core">http://www.w3.org/2004/02/skos/core</a></pre>
+<p>&#8230; and the following URI identifies the FOAF ontology:</p>
+<pre><a href="http://xmlns.com/foaf/0.1/">http://xmlns.com/foaf/0.1/</a></pre>
+<h3 id="hash">Vocabularies that use a 'hash namespace'</h3>
+<p>SKOS Core [<a href="#ref-SKOS">SKOS</a>] is an example of a vocabulary that uses a <em>hash
+  namespace</em>. This is an informal expression which refers to how the URIs for the classes
+  and properties in the vocabulary are constructed. In this case, the URIs for the classes and
+  properties are constructed by appending first a hash character ('#') and then a 'local name'
+  to the vocabulary URI. The 'local name' is a string of characters that uniquely identifies
+  that class or property within the scope of the vocabulary, also known as a 'fragment
+  identifier' [<a href="#ref-AWWW04">AWWW04</a>] (the local name must be a legal [<a href=""
+        >XML-NS</a>] token <a href="http://www.w3.org/TR/REC-xml-names/#NT-NCName">NCName</a>).</p>
+<p>For example, the following URIs identify a class and a property from the SKOS Core
+  vocabulary:</p>
+<pre><a href="http://www.w3.org/2004/02/skos/core#Concept">http://www.w3.org/2004/02/skos/core#Concept</a>
+<a href="http://www.w3.org/2004/02/skos/core#prefLabel">http://www.w3.org/2004/02/skos/core#prefLabel</a></pre>
+<h3 id="slash">Vocabularies that use a 'slash namespace'</h3>
+<p>FOAF [<a href="#ref-FOAF">FOAF</a>] is an example of a vocabulary that uses a <em>slash
+  namespace</em>. Again, this is an informal expression which refers to the way in which the
+  URIs for the classes and properties defined by the vocabulary are constructed. In this case,
+  the vocabulary URI ends with a forward slash character ('/'), and the URIs of classes and
+  properties are constructed by appending the 'local name' of the class or property directly to
+  the vocabulary URI. Again, the 'local name' is a string of characters that uniquely identifies
+  that class or property within the scope of the vocabulary, and must be a legal [<a href=""
+        >XML-NS</a>] token <a href="http://www.w3.org/TR/REC-xml-names/#NT-NCName">NCName</a>.</p>
+<p>For example, the following URIs identify a class and a property from the FOAF vocabulary:</p>
+<pre><a href="http://xmlns.com/foaf/0.1/Person">http://xmlns.com/foaf/0.1/Person</a>
+<a href="http://xmlns.com/foaf/0.1/maker">http://xmlns.com/foaf/0.1/maker</a></pre>
+<p>Note that a vocabulary whose URI ends with a forward slash character <em>doesn't necessarily
+  use a slash namespace</em>. It could use a hash namespace, for example the vocabulary <span
+        class="inlineCode">http://example.org/myvocabulary/</span> could define classes <span
+        class="inlineCode">http://example.org/myvocabulary/#Foo</span> and <span class="inlineCode"
+        >http://example.org/myvocabulary/#Bar</span>.</p>
+<p>Both <a href="#hash">hash namespaces</a> and <a href="#slash">slash namespaces</a> are
+  supported within the architecture of the Web. However, certain behaviors are required of the
+  Web server that differ between these two choices. Because both the requests received by the
+  server and the responses returned by the server are different in each case, the mechanics of
+  setting up an HTTP server to satisfy some or all of the <a href="#requirements"
+      >requirements</a> given below also differ, and hence these two cases are treated separately.</p>
+<h3 id="other">Vocabularies that use other types of namespace</h3>
+<p>Readers should be aware of a third type of vocabulary URI under discussion at the time of
+  writing: URIs based on a 303-redirect service such as <a href="http://thing-described-by.org"
+        >http://thing-described-by.org</a>. Though simpler to implement than approaches described in
+  this document, the 303-redirect approach has not yet been implemented for stable, published
+  RDF vocabularies and is not used in any of the following recipes. <a href="#redirect">Appendix
+  C</a> describes this approach in more detail.</p>
+<h3 id="choosingURI">Some considerations when choosing a URI namespace</h3>
+<p>This document is intended for creators and maintainers of <em>existing</em> vocabularies.
+  Proper guidance on choosing the best <a href="#naming">URI namespace</a> for any given
+  situation is beyond the scope of this document. However, the recipes given here make
+  assumptions and involve trade-offs with respect to functionality, so <em>some</em> considerations relevant to choosing a URI namespace are described in this section. If you have
+  already chosen a URI namespace, skip to the section <a href="#choosing">choosing a recipe</a>.</p>
+<p>The URI namespace you choose for your vocabulary should be a Web address (a URI) to which you
+  have write access. Others who use your vocabulary will expect to be able to dereference both
+  the vocabulary URI itself as well as the URIs of properties and classes defined by your
+  vocabulary. The choice of URI namespace is a fundamental decision you make early in the design
+  of your vocabulary.</p>
+<p>While RDF permits a namespace name to start with any valid URI scheme, best practice for the
+  Semantic Web is to use a URI scheme that can be resolved by any client without requiring the
+  use of additional plug-ins or client setup configuration. The <span style="font-style: italic"
+        >http</span> URI scheme is the best known of these and is recognized by all Web clients.
+  This document focuses exclusively on vocabularies whose namespace name begins with <span
+        class="inlineCode">http:</span>.</p>
+<p>Best practice dictates that all RDF vocabularies use either a <a href="#hash">hash
+  namespace</a> or a <a href="#slash">slash namespace</a> (see above). Which you choose depends
+  in part on how big you expect your vocabulary to become, how often you expect to add new terms
+  (i.e., properties or classes), and how you expect users to access information about individual
+  terms in your vocabulary.</p>
+<p>For small vocabularies, it may be most convenient to serve the entire vocabulary in a single
+  Web access. Such a vocabulary would typically use a <a href="#hash">hash namespace</a>, and a
+  Web access (i.e., an HTTP GET request) for any term in the vocabulary would return a single <a
+        href="http://www.w3.org/TR/2004/REC-webarch-20041215/#def-information-resource">information
+  resource</a> describing all of the terms in the vocabulary.</p>
+<p>A vocabulary that is large, to which additions are anticipated frequently, or that defines
+  more data than a typical user application will want to access at one time, should be arranged
+  so that progressively greater detail about the terms in the vocabulary may be retrieved
+  through multiple Web accesses. The full description of all of the terms may be divided among
+  many information resources, or may be managed via a query service (e.g. [SPARQL] -- see <a
+        href="#recipe6">Recipe 6</a>). Such a vocabulary would typically use a <a href="#slash"
+        >slash namespace</a>, which allows for the possibility that a Web access for any term in the
+  vocabulary may return information principally about just that one term. (Such a configuration
+  is not possible for a vocabulary that uses a <a href="#hash">hash namespace</a>, because of
+  the mechanics of the HTTP protocol.)</p>
+<p>A more detailed discussion of issues related to URI design for the Semantic Web can be found
+  in these documents:</p>
+<ul>
+  <li>&quot;Cool URIs for
+    the Semantic Web&quot; [<a href="#ref-COOLURI">COOLURI</a>]</li>
+  <li>TAG finding: &quot;<a href="http://www.w3.org/2001/tag/doc/nsDocuments/">Associating
+    Resources with Namespaces</a>&quot;</li>
+</ul>
+<hr />
+<h2 id="redirect">Appendix C. Vocabulary URIs based on a 303-redirect service</h2>
+<p>URIs of this type are formed by appending the URI of a descriptive resource as a query string
+  to the base URI of a 303-redirect service such as <a href="http://thing-described-by.org"
+        >http://thing-described-by.org</a>. The domain thing-described-by.org delegates authority
+  for defining the meaning of such a query URI to the domain cited in the query string (i.e.,
+  the part following a question mark).</p>
+<p>In principle, then, one might coin the URI <a
+        href="http://thing-described-by.org?http://example.org/foo"> http://thing-described-by.org?http://example.org/foo</a> as an identifier for the Foo
+  vocabulary. An HTTP GET request against the URI for the Foo vocabulary, or against a property
+  or class in the Foo vocabulary, would result in a response code of 303, thus conforming to the
+  second of the two <a href="#minimumrequirements">minimum requirements</a> articulated in this
+  document for the publication of RDF vocabularies. If, in addition, the URI
+  http://example.org/foo were to identify an authoritative RDF description for the vocabulary,
+  and the server providing that description were to return a MIME type properly identifying it
+  as such, then the use of <a href="http://thing-described-by.org?http://example.org/foo"> http://thing-described-by.org?http://example.org/foo</a> could be said to conform to first
+  of the minimum requirements as well.</p>
+<hr />
+<!--
+************************
+* APACHE CONFIGURATION *
+************************
+-->
+<h2 id="apache">Appendix D: Apache configuration</h2>
+<p>An Apache HTTP server [<a href="#ref-APACHE20">APACHE20</a>] is configured by <em>directives</em> written either inside the main Apache configuration files (usually
+  'httpd.conf' etc.) or inside per-directory configuration files (usually '.htaccess'). The
+  recipes given here assume that you <em>do not</em> have access to the main Apache
+  configuration files and that you therefore have to use a per-directory configuration using
+  .htaccess files to supply the configuration directives. You may find more specific information
+  about the use of .htaccess files in the <a
+        href="http://httpd.apache.org/docs/2.0/howto/htaccess.html">Apache Tutorial: .htaccess
+  files</a>. </p>
+<p>If you <em>do</em> have write access to the main Apache configuration files, you might
+  consider writing the configuration directives directly there, as using per-directory
+  configuration can negatively affect server performance and requires more careful configuration
+  of directory-level security, see the <a
+        href="http://httpd.apache.org/docs/2.0/howto/htaccess.html#when">Apache Tutorial: When (not)
+  to use .htaccess files</a>. It should be noted that <span class="inlineCode"
+      >AllowOverride</span> is a directory-level directive and its performance and security
+  side-effects don&#39;t usually extend beyond the directory trees in which it&#39;s
+  enabled. </p>
+<p>Note: The configurations given here have been tested on an Apache HTTP server version 2.0.46
+  only.</p>
+<h3 id="server_config">Server configuration</h3>
+<p>In order to support this use of per-directory configuration files, the server must be
+  configured to allow certain <em>overrides</em> for the directories you are using. The required
+  overrides are:</p>
+<pre class="code2">AllowOverride FileInfo Options</pre>
+<p>In addition, make sure that your version of Apache has been compiled with the mod_rewrite
+  module, or that the mod_rewrite Dynamic Shared Object (DSO) has been installed and the
+  following lines are in the Apache configuration file:</p>
+<pre class="code2">AddModule mod_rewrite.c<br />LoadModule rewrite_module modules/mod_rewrite.so</pre>
+<p>If you are having problems getting the recipes to work, it may be because the required
+  override directives are not specified in the main Apache configuration files or mod_rewrite is
+  not available.</p>
+<h3 id="testing_parsing">Testing .htaccess parsing</h3>
+<p>To test whether your server will correctly parse a .htaccess file in a given directory, load
+  a URL that accesses a file in the directory you wish to test into a web browser and verify
+  that the file is served correctly. Next create (or edit) a .htaccess file in that directory
+  that contains the line:</p>
+<pre class="code2">InvalidDirective Here</pre>
+<p>Reload the URL in your web browser. If the server is parsing the .htaccess files in that
+  directory, the server should return an &quot;Internal Server Error&quot; page
+  generated by the unparsable <span class="inlineCode">InvalidDirective</span>. If the page
+  redisplays normally, then you need to ask your sysadmin to enable .htaccess files in the
+  directories that you'll be using with the Recipes. When you have confirmed that the server is
+  parsing your .htaccess files, don't forget to remove the <span class="inlineCode"
+        >InvalidDirective</span> line from the .htaccess file in that directory.</p>
+<h3 id="testing_rewrite">Testing mod_rewrite installed</h3>
+<p>To test whether mod_rewrite is installed, replace the <span class="inlineCode"
+        >InvalidDirective</span> line from the first test with this:</p>
+<pre class="code2">RewriteEngine On</pre>
+<p>Reload the URL in your web browser. If mod_rewrite is not installed, <em>or</em> you don't
+  have sufficient override permissions to enable it in .htaccess in that directory, then the
+  server should return an &quot;Internal Server Error&quot; page. The <span
+        class="inlineCode">AllowOverride</span> directive must be set to <span class="inlineCode"
+        >FileInfo</span> (or <span class="inlineCode">All</span>) to allow you to enable mod_rewrite
+  in a .htaccess file.</p>
+<h3 id="setting_type">Setting the RDF/XML content type</h3>
+<p>The appropriate content type for serving RDF/XML content is 'application/rdf+xml', as defined
+  in <a href="http://www.ietf.org/rfc/rfc3870.txt">RFC3870</a>. An Apache server can be
+  configured to recognize files with the '.rdf' extension and serve them with the appropriate
+  content type, by adding the following directive to the .htaccess file:</p>
+<pre class="code2">AddType application/rdf+xml .rdf</pre>
+<p>This directive may also be applied globally at the server level in the server configuration
+  file. In which case it can be safely removed from the recipes.</p>
+<h3 id="alternative_configurations">Alternatives to rewrite rules</h3>
+<p>The example configurations described in this document implement content negotiation by means
+  of rewrite rules (mod_rewrite) to redirect the requests to the most suitable representation.
+  This mechanism is simple and allows great flexibility with respect to the location of the
+  HTML and RDF/XML documents, which may even reside in different servers.</p>
+<p>There are some cases in which the provided example configuration does not properly handle
+  content negotiation. In particular, requests with an 'Accept:' header that contains
+  q-values cannot be parsed with rewrite rules, and the server may respond with a
+  representation different from the preferred one. While it is certainly possible to configure an Apache server to handle such requests, this configuration can't be performed within the limitations of .htaccess files. It is beyond the scope of
+  this document to provide a complete server configuration example to handle these
+  requests. Interested readers may wish to refer to
+  <a href="http://httpd.apache.org/docs/2.0/content-negotiation.html">content
+  negotiation with type-maps in Apache</a>.</p>
+<hr />
+<!-- FOOTER -->
+<p> <a href="http://validator.w3.org/check?uri=referer">
+    <img src="http://www.w3.org/Icons/valid-xhtml10"
+         alt="Valid XHTML 1.0 Strict" height="31" width="88" /></a> <a href="http://jigsaw.w3.org/css-validator/"> <img style="border:0;width:88px;height:31px"
+          src="http://jigsaw.w3.org/css-validator/images/vcss" alt="Valid CSS!" /> </a> </p>
+</body>
+</html>

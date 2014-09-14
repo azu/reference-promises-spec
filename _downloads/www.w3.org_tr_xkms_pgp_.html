@@ -1,0 +1,1896 @@
+<!-- http://www.w3.org/TR/xkms-pgp/ -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><title>Using XKMS with PGP</title><style type="text/css">
+code           { font-family: monospace; }
+
+div.constraint,
+div.issue,
+div.note,
+div.notice     { margin-left: 2em; }
+
+dt.label       { display: run-in; }
+
+li, p           { margin-top: 0.3em;
+                 margin-bottom: 0.3em; }
+
+
+div.assertion { border: 4px double gray; padding: 0.5em; margin-bottom: 0.2em; }
+blockquote { background-color: #eeeeee; }
+spectext { background-color: #eeeeee; }
+.message { background-color: #d5dee3; }
+
+
+pre { margin-left: 4em}
+
+p.diff-chg,
+li.diff-chg,
+h1.diff-chg,
+h2.diff-chg,
+h3.diff-chg,
+h4.diff-chg,
+h5.diff-chg,
+h6.diff-chg,
+td.diff-chg,
+tr.diff-chg     { background-color: #E47833; }
+p.diff-del,
+li.diff-del,
+h1.diff-del,
+h2.diff-del,
+h3.diff-del,
+h4.diff-del,
+h5.diff-del,
+h6.diff-del,
+td.diff-del,
+tr.diff-del     { background-color: red; text-decoration: line-through;}
+p.diff-add,
+p.diff-add,
+h1.diff-add,
+h2.diff-add,
+h3.diff-add,
+h4.diff-add,
+h5.diff-add,
+h6.diff-add,
+td.diff-add,
+tr.diff-add    { background-color: lime; }
+table          { empty-cells: show; }
+
+
+div.exampleInner pre { margin-left: 1em;
+                       margin-top: 0em; margin-bottom: 0em}
+div.exampleOuter {border: 4px double gray;
+                  margin: 0em; padding: 0em}
+div.exampleInner { background-color: #d5dee3;
+                   border-top-width: 4px;
+                   border-top-style: double;
+                   border-top-color: #d3d3d3;
+                   border-bottom-width: 4px;
+                   border-bottom-style: double;
+                   border-bottom-color: #d3d3d3;
+                   padding: 4px; margin: 0em }
+div.exampleWrapper { margin: 4px }
+div.exampleHeader { font-weight: bold;
+                    margin: 4px}
+div.table,
+div.figure	 {margin-top: 2em; 
+		  margin-bottom: 2em;
+		  text-align: center; }
+</style><link rel="stylesheet" type="text/css" href="http://www.w3.org/StyleSheets/TR/W3C-WG-NOTE.css"></head><body>
+
+
+  <div class="head"><p><a href="http://www.w3.org/"><img src="http://www.w3.org/Icons/w3c_home" alt="W3C" height="48" width="72"></a></p>
+<h1>Using XKMS with PGP</h1>
+<h2>W3C Working Group Note 19 December 2005</h2><dl><dt>This version:</dt><dd><a href="http://www.w3.org/TR/2005/NOTE-xkms-pgp-20051219/">http://www.w3.org/TR/2005/NOTE-xkms-pgp-20051219/</a></dd><dt>Latest version:</dt><dd><a href="http://www.w3.org/TR/xkms-pgp/">http://www.w3.org/TR/xkms-pgp/</a></dd><dt>Authors:</dt>   
+      <dd>Tommy Lindberg, Markup Security</dd>
+      <dd>José Kahan, W3C</dd>       
+    </dl><p class="copyright"><a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> ©2005 <a href="http://www.w3.org/"><acronym title="World Wide Web Consortium">W3C</acronym></a><sup>®</sup>(<a href="http://www.csail.mit.edu/"><acronym title="Massachusetts Institute of Technology">MIT</acronym></a>, <a href="http://www.ercim.org/"><acronym title="European Research Consortium for Informatics and Mathematics">ERCIM</acronym></a>, <a href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply.</p></div><hr><div>
+<h2><a name="abstract">Abstract</a></h2>
+
+
+
+<p>
+The XML Key Management Specification (XKMS 2.0) [<a href="#XKMS">XKMS</a>] aims at providing a PKI independent interface
+to key management. XKMS services comprise discovery and validation of
+keys as well as support for certain aspects of the key life cycle
+management, including registration, reissuance and revocation.</p>
+
+<p>XKMS employs XML Signature [<a href="#XMLSIG">XMLSIG</a>] for the
+purpose of providing message security in the form of authentication
+and integrity. In addition, XKMS is based on the use of
+the <code>&lt;ds:KeyInfo&gt;</code> element as a means of transporting key
+information used as templates for the various operations it
+specifies.</p>
+
+<p>This technical note addresses some of the issues related to the use of XKMS in
+conjunction with PGP [<a href="#PGP">PGP</a>].</p>
+
+</div><div>
+<h2><a name="status">Status of this Document</a></h2>
+
+
+<p><em>This section describes the status of this document at the time of its
+publication. Other documents may supersede this document. A list of current
+W3C publications and the latest revision of this technical report can be
+found in the <a href="http://www.w3.org/TR/" shape="rect">W3C technical
+reports index</a> at http://www.w3.org/TR/.</em></p>
+
+<p>This is the 19 December 2005 Working Group
+Note for "Using XKMS with PGP". This document was developed by the <a href="http://www.w3.org/2001/XKMS/" shape="rect">XML Key Management
+Working Group</a>.  It is being published as the XKMS Working Group
+concludes, and has no normative status.
+</p>
+
+<p>This document is a Working Group Note made available by W3C for
+discussion only. Publication of this Note by W3C does not imply
+endorsement by W3C, including the Team and Membership. No W3C
+resources were, are, or will be allocated to the issues addressed by
+this W3C Working Group Note.</p>
+
+<p>While the XKMS Working Group has completed its chartered work
+items, we expect that the mailing list will remain active for some
+time.  Please send comments about this document to <a href="mailto:www-xkms@w3.org" shape="rect">www-xkms@w3.org</a> (with
+<a href="http://lists.w3.org/Archives/Public/www-xkms/" shape="rect">public archive</a>).</p>
+
+<p>As of this publication, the Working Group does not expect this document to
+become a W3C Recommendation, and therefore it has no associated <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/" shape="rect">W3C
+Patent Policy</a> licensing obligations. If this expectation changes, the
+Working Group will have an opportunity to fulfill the associated patent
+policy requirements with respect to a future draft.</p>
+
+<p>This document was developed under no patent policy.</p>
+
+<p><em>Publication as a Working Group Note does not imply endorsement by
+the W3C Membership. This is a draft document and may be updated,
+replaced or obsoleted by other documents at any time. It is
+inappropriate to cite this document as other than work in
+progress.</em></p>
+
+</div>
+
+
+
+<hr><div class="toc">
+<h2><a name="shortcontents">Short Table of Contents</a></h2><p class="toc">1. <a href="#intro">Introduction</a><br>2. <a href="#S2">PGP Packet types for &lt;ds:PGPKeyPacket&gt;</a><br>3. <a href="#S2_3">Issues related to using ElGamal with XMLSIG and XKMS</a><br>4. <a href="#S4">XKMS with PGP usage scenarios</a><br>5. <a href="#S5">XKMS and implications of the PGP Design</a><br>6. <a href="#Ref">References</a><br>7. <a href="#Ack">Acknowledgments</a><br></p></div><hr><div class="toc">
+<h2><a name="contents">Table of Contents</a></h2><p class="toc">1. <a href="#intro">Introduction</a><br>2. <a href="#S2">PGP Packet types for &lt;ds:PGPKeyPacket&gt;</a><br>3. <a href="#S2_3">Issues related to using ElGamal with XMLSIG and XKMS</a><br>    3.1 <a href="#S2_3_1">ElGamal syntax for &lt;ds:KeyValue&gt;</a><br>    3.2 <a href="#S2_3_2">ElGamal syntax for &lt;xkms:PrivateKey&gt;</a><br>4. <a href="#S4">XKMS with PGP usage scenarios</a><br>    4.1 <a href="#S4_1">Scenario 1: Locate Request, single PGPKeyPacket</a><br>    4.2 <a href="#S4_2">Scenario 2: Locate Request, multiple PGPKeyPackets</a><br>    4.3 <a href="#S4_3">Scenario 3: Locate Request, PGPData from PGPKeyID</a><br>    4.4 <a href="#S4_4">Scenario 4: Locate Request, KeyValue from PGPKeyPacket</a><br>    4.5 <a href="#S4_5">Scenario 5: Locate Request, KeyValue's from PGPKeyPacket with multiple sub-keys</a><br>    4.6 <a href="#S4_6">Scenario 6: Validate Request, single PGPKeyPacket</a><br>    4.7 <a href="#S4_7">Scenario 7: Validate Request, valid key</a><br>    4.8 <a href="#S4_8">Scenario 8: Validate Request, expired key</a><br>    4.9 <a href="#S4_9">Scenario 9: Validate Request, revoked key</a><br>    4.10 <a href="#S4_10">Scenario 10: Register Request</a><br>    4.11 <a href="#S4_11">Scenario 11: Reissue Request</a><br>    4.12 <a href="#S4_12">Scenario 12: Revoke Request</a><br>5. <a href="#S5">XKMS and implications of the PGP Design</a><br>    5.1 <a href="#S5_1">Trust model</a><br>    5.2 <a href="#S5_2">Registration of PGP Subkeys</a><br>    5.3 <a href="#S5_3">PGP Version 4 Signature Subpackets</a><br>6. <a href="#Ref">References</a><br>7. <a href="#Ack">Acknowledgments</a><br></p>
+</div><hr><div class="body">
+    <div class="div1">
+      
+<h2><a name="intro"></a>1. Introduction</h2>
+
+<p>One of XKMS main objectives is to facilitate the use of XML
+Signature [<a href="#XMLSIG">XMLSIG</a>] and XML Encryption [<a href="#XMLENC">XMLENC</a>] without mandating the use of any one
+specific public key infrastructure (PKI). While PKI independent, XKMS
+relies on vocabulary defined in XMLSIG for marking up artifacts
+pertaining to PKIX/X.509, PGP and SPKI. This W3C technical note is
+concerned with PGP artifacts and their usage in XKMS. </p>
+
+<p>Section 4.4.5 of the XML Digital Signature [<a href="#XMLSIG">XMLSIG</a>] Specification defines the
+<code>&lt;ds:PGPData&gt;</code> element for conveying information related to PGP
+public key pairs and signatures on such keys. This Section has several
+deficiencies that were clearly noticed during the XKMS
+Interoperability tests [<a href="#XKMSCRIR">XKMSCRIR</a>, Issue 332-tl2]. Specifically, Section 4.4.5:</p>
+
+ <ul>
+
+<li>lacks specifics required for unambiguous interpretation of PGP
+   packet types that are used in
+   <code>ds:KeyInfo/ds:PGPData/ds:PGPKeyPacket</code>;</li>
+
+<li>excludes packet types that are useful in the establishment of
+trust in a key; and</li>
+
+<li>does not provide PGP specific XMLSIG samples indicating the valid
+content of a <code>&lt;ds:PGPKeyPacket&gt;</code>.</li> </ul>
+
+<p>The objectives of this document are to:</p>
+
+<ul>
+
+<li>recommend exactly what packet types should be used in
+<code>ds:KeyInfo/ds:PGPData/ds:PGPKeyPacket</code>;</li>
+
+<li>recommend behavior in relation to the treatment of public
+   keys pertaining to algorithms not supported by the XMLSIG
+   vocabulary, specifically ElGamal;</li>
+
+<li>provide XMLSIG samples and XKMS sample message exchanges that
+include PGP artifacts; and</li>
+
+<li>provide some usage scenarios involving XKMS and PGP to help
+   understand the support for primitives and mechanisms provided by
+   XKMS and its underpinning technologies.</li>
+
+</ul>
+
+<p>It is not our intention to speculate over, or try to determine how
+   meaningful or suitable certain scenarios are for PGP - this note
+   simply discusses the support of primititves and mechanisms provided
+   by XKMS and its underpinning technologies.</p>
+
+<p>We will only make reference to and distinguish between the
+different versions of PGP documented in [<a href="#PGP">PGP</a>] when
+required by the context.</p>
+
+</div>
+
+<div class="div1">
+
+<h2><a name="S2"></a>2. PGP Packet types for <code>&lt;ds:PGPKeyPacket&gt;</code></h2>
+
+[<a href="#XMLSIG">XMLSIG</a>, Section 4.4.5] states that a <code>&lt;ds:PGPKeyPacket&gt;</code>
+element contains a Key Material Packet as defined in [<a href="#PGP">PGP</a>, Section 5.5]. However,
+the text does not constrain the valid Key Material Packet types to those suitable for use within
+a <code>&lt;ds:KeyInfo&gt;</code> element.  Specifically, among the packet types defined in
+[<a href="#PGP">PGP</a>, Section 5.5] only Public Key Packets and Public Subkey Packets must be
+used in a <code>&lt;ds:PGPKeyPacket&gt;</code> element.
+
+<p>
+Moreover, in order to be able to establish trust in a key, additional packet types are typically
+required. These additional packet types are UserID packets
+[<a href="#PGP">PGP</a>, 5.11 User ID Packet], Signature packets [<a href="#PGP">PGP</a>, 5.2.1.
+Signature Types] and, for PGP version 4,
+Signature Subpackets [<a href="#PGP">PGP</a>, 5.2.3.1 Signature Subpacket Specification].</p>
+
+<p>Signature packet types are further constrained to:</p>
+
+<ul>
+<li>Generic certification of a User ID and Public Key packet (0x10).</li>
+<li>Persona certification of a User ID and Public Key packet (0x11).</li>
+<li>Casual certification of a User ID and Public Key packet (0x12).</li>
+<li>Positive certification of a User ID and Public Key packet (0x13).</li>
+<li>Subkey Binding Signature (0x18).</li>
+<li>Signature directly on a key (0x1F).</li>
+<li>Key revocation signature (0x20).</li>
+<li>Subkey revocation signature (0x28).</li>
+<li>Certification revocation signature (0x30).</li>
+</ul>
+
+<p>Consequently, we find that [<a href="#PGP">PGP</a>, Sections 10.1], entitled
+Transferable Public Keys, gives better recommendations
+than [<a href="#PGP">PGP</a>, Sections 5.5] on how to compose the
+content of a <code>&lt;ds:PGPKeyPacket&gt;</code> element. All of these recommendations
+can be applied straightforward, with the exception of the last Section
+of  [<a href="#PGP">PGP</a>, Sections 10.1] which states that:</p>
+
+<blockquote>
+   "Transferable public key packet sequences may be concatenated to allow
+    transferring multiple public keys in one operation."
+</blockquote>
+
+<p>This conflicts with the requirement stated in [<a href="#XMLSIG">XMLSIG</a>, Section 4.4] that multiple declarations
+within <code>&lt;ds:KeyInfo&gt;</code> must refer to the same key and should therefore not be
+followed.</p>
+
+<p><em>N.B.: While we don't find the element name
+<code>&lt;ds:PGPKeyPacket&gt;</code> optimally descriptive for its
+intended purpose, it is not our intention to propose an alternative
+name, nor is it our intention to introduce additional PGP specific
+markup intended to carry additional PGP artifacts.</em></p>
+
+<p>The following XML signature illustrates the use of a single
+<code>&lt;ds:PGPKeyPacket&gt;</code> element carrying the signature
+verification key:</p>
+
+<blockquote>
+<pre>
+
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#"&gt;
+  &lt;ds:SignedInfo&gt;
+    &lt;ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /&gt;
+    &lt;ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" /&gt;
+    &lt;ds:Reference URI="#object"&gt;
+      &lt;ds:Transforms&gt;
+        &lt;ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /&gt;
+      &lt;/ds:Transforms&gt;
+      &lt;ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" /&gt;
+      &lt;ds:DigestValue&gt;i4ZUxPo3KaS0HVln/lSVjphFwp4=&lt;/ds:DigestValue&gt;
+    &lt;/ds:Reference&gt;
+  &lt;/ds:SignedInfo&gt;
+  &lt;ds:SignatureValue&gt;
+    w0PGjKuTmwaIosNQL3mrzETp+EcM8CKWJAByhLuXf6P9kfOx2JjHLP6rGXKiEfpA
+    kdgsFvWAVUUcae2aqSLlpRdj+pQGjKykujslBhdqhO7CsOkCzOKo3gkALjaZi70/
+    WwStUiYLwufmlbsvY9cF/4g59BSbFu1yvWhwtASPFKU=
+  &lt;/ds:SignatureValue&gt;
+  &lt;ds:KeyInfo&gt;
+    &lt;ds:PGPData&gt;
+      &lt;ds:PGPKeyID&gt;
+        O3owQUSlko4=
+      &lt;/ds:PGPKeyID&gt;
+      &lt;ds:PGPKeyPacket&gt;
+	mI0EQx27fQMEAM3Hfx3yjzYol3SoE8PVl+CErHVPxDZJXtamrX52V7iVZQkvhoE0
+	uW5T7VObmKtIbzBQxOQ9oCjhoEN8QG9p0jX25xyDEZH8MRJPZ5+GFb/mEhRoLp91
+	MfP4cah7v6P8bXvk7UXcgKMh8zJlPxmOXkqaw+a7sGGxEDS4Q7nse0ZHABEBAAG0
+	EWFsaWNlQGV4YW1wbGUuY29tiK4EEAMCACIFAkMi228JEDt6MEFEpZKOAhsDAhYC
+	AhUCAgsCAhkBAgcBAAD5BwP+MFhUsd43DS1t2/iUZKURua34nrv0erZFn5fMyu0z
+	WN+HemA7XOouJKwme5qAKAX36cXjHgqAALu7O5bT7I0/9n0Omv5x6O3FcvtFtbv5
+	igO+Y3wxKEAuR45zmhhIIQgkWCtfDlFm0wc+yaWXgsEMRn9q1/ua6e8VS7/7S4QM
+	qVaInAQQAwIAEAUCQyScTgkQAfTyJlFel/UAAONKA/0b/euhEaUw+eeVYcyrQa1d
+	HTmWc8U53LqbuPMLZ59PkP1FiHcu5N5KD3xk/Xc14o8sP8BHd91TJnaM6sKxVEs1
+	580RR81Wol5sjISV89uuXm09NVNqDBNqi+vemjB66NJGLjoviZVGDzgi5vV7wF5q
+	rdbtSp38HtJte1FMQHeScriNBEMdu4ACBACu1wQ0llewBTewtZJvo4I8RZsvXjTO
+	6wzotWhK+W10a/khxG7vBWymhMU5hXne/9O7vE7J7qT9j1tkdzNUQXGPOUb6b6kG
+	GeicAXJ17qL0ActcSlnDWwA0P94PGBIpFowJUu0txOBdQHX3h/hOk+4PtWLXob6q
+	hjlR+uS+a2AuaQARAQABiJwEGAMCABAFAkMi228JEDt6MEFEpZKOAAAN0gQAlgws
+	XkSm2dBwCFaXMnHxdnCTLqZKCfCBd332w6G6S4tCoVlFW6MKxhwn2IyF8VgIyVl6
+	bTjnrT0E78FlWW9JX3JZje6a4nhus1TqEx12LfIYyX//T/2gnbiic+FqigE3N91N
+	0Hyixc2aGtAT7hCrMS+DTgvPHb2kLoR1+PMP/Fg=     
+      &lt;/ds:PGPKeyPacket&gt;
+    &lt;/ds:PGPData&gt;
+  &lt;/ds:KeyInfo&gt;
+  &lt;ds:Object Id="object"&gt;this is some text&lt;/ds:Object&gt;
+&lt;/ds:Signature&gt;
+</pre>
+</blockquote>
+
+<p>The following XML signature illustrates the use of two
+<code>&lt;ds:PGPKeyPacket&gt;</code> elements. The first one carries the
+signature verification key, while the second one holds the key that
+certifies the signature verification key:</p>
+
+<blockquote>
+<pre>
+
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;env:Envelope xmlns:env="http://example.com/envelope" Id="envelope"&gt;
+  &lt;ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#"&gt;
+    &lt;ds:SignedInfo&gt;
+      &lt;ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /&gt;
+      &lt;ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" /&gt;
+      &lt;ds:Reference URI="#envelope"&gt;
+        &lt;ds:Transforms&gt;
+          &lt;ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /&gt;
+          &lt;ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /&gt;
+        &lt;/ds:Transforms&gt;
+        &lt;ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" /&gt;
+        &lt;ds:DigestValue&gt;kszkAzzcRdmyOj9CF+rBzNCW2rk=&lt;/ds:DigestValue&gt;
+      &lt;/ds:Reference&gt;
+    &lt;/ds:SignedInfo&gt;
+    &lt;ds:SignatureValue&gt;
+      VpiEj708CwkWrq6OOka5NbdI6NJalkM/k9DlyNq6tox11wEkDR3pjyqenO+IC93e
+      VSg5o8PjGBwEOyY/GyzeGle8kRECcs1ZL8IPGVltQJQV3xkCGSOANcMSAhGCei/m
+      lMWEa7PUI47CUk6Hz+0t0UHzOYaedXVXsimAj8lyqDg=
+    &lt;/ds:SignatureValue&gt;
+    &lt;ds:KeyInfo&gt;
+      &lt;ds:PGPData&gt;
+        &lt;ds:PGPKeyID&gt;
+          O3owQUSlko4=
+        &lt;/ds:PGPKeyID&gt;
+        &lt;ds:PGPKeyPacket&gt;
+	  mI0EQx27fQMEAM3Hfx3yjzYol3SoE8PVl+CErHVPxDZJXtamrX52V7iVZQkvhoE0
+	  uW5T7VObmKtIbzBQxOQ9oCjhoEN8QG9p0jX25xyDEZH8MRJPZ5+GFb/mEhRoLp91
+	  WN+HemA7XOouJKwme5qAKAX36cXjHgqAALu7O5bT7I0/9n0Omv5x6O3FcvtFtbv5
+	  igO+Y3wxKEAuR45zmhhIIQgkWCtfDlFm0wc+yaWXgsEMRn9q1/ua6e8VS7/7S4QM
+	  qVaInAQQAwIAEAUCQyScTgkQAfTyJlFel/UAAONKA/0b/euhEaUw+eeVYcyrQa1d
+	  HTmWc8U53LqbuPMLZ59PkP1FiHcu5N5KD3xk/Xc14o8sP8BHd91TJnaM6sKxVEs1
+	  MfP4cah7v6P8bXvk7UXcgKMh8zJlPxmOXkqaw+a7sGGxEDS4Q7nse0ZHABEBAAG0
+	  EWFsaWNlQGV4YW1wbGUuY29tiK4EEAMCACIFAkMi228JEDt6MEFEpZKOAhsDAhYC
+	  AhUCAgsCAhkBAgcBAAD5BwP+MFhUsd43DS1t2/iUZKURua34nrv0erZFn5fMyu0z
+	  580RR81Wol5sjISV89uuXm09NVNqDBNqi+vemjB66NJGLjoviZVGDzgi5vV7wF5q
+	  rdbtSp38HtJte1FMQHeScriNBEMdu4ACBACu1wQ0llewBTewtZJvo4I8RZsvXjTO
+	  6wzotWhK+W10a/khxG7vBWymhMU5hXne/9O7vE7J7qT9j1tkdzNUQXGPOUb6b6kG
+	  GeicAXJ17qL0ActcSlnDWwA0P94PGBIpFowJUu0txOBdQHX3h/hOk+4PtWLXob6q
+	  hjlR+uS+a2AuaQARAQABiJwEGAMCABAFAkMi228JEDt6MEFEpZKOAAAN0gQAlgws
+	  XkSm2dBwCFaXMnHxdnCTLqZKCfCBd332w6G6S4tCoVlFW6MKxhwn2IyF8VgIyVl6
+	  bTjnrT0E78FlWW9JX3JZje6a4nhus1TqEx12LfIYyX//T/2gnbiic+FqigE3N91N
+	  0Hyixc2aGtAT7hCrMS+DTgvPHb2kLoR1+PMP/Fg=      
+        &lt;/ds:PGPKeyPacket&gt;
+      &lt;/ds:PGPData&gt;
+      &lt;ds:PGPData&gt;
+        &lt;ds:PGPKeyID&gt;
+          AfTyJlFel/U=
+        &lt;/ds:PGPKeyID&gt;
+        &lt;ds:PGPKeyPacket&gt;
+	  mI0EQx276AMEAObgi9iTkPANSS8Ntw/WwloeAlHsEsxMrNOFAp1QuX3Y320G/BIC
+	  gKki1WMKcBuRkfz6TPIET396V8GZwLHQ8xUJlVn2lcq1lN9vfy24UwqC/rQuQAL+
+	  KaCR5vakUNSt92sjZDuG+q5T6OfHMm5n+jBVBuVBcMDpnFPANaG/9ClvABEBAAG0
+	  D2JvYkBleGFtcGxlLmNvbYiuBBADAgAiBQJDIttwCRAB9PImUV6X9QIbAwIWAgIV
+	  AgILAgIZAQIHAQAAndUD/Am0fO3cnKf66IgPtRxar2jQ2hLy9u9kdHAQ+nlaMx8H
+	  icnW56Xn5liMyPLkV47FEOQTUTiG1E0oNQRhpQGo2NWbBVSJPWXN0kkHGmtzV93M
+	  W4tabN2mV7VIQTA6s7EHiM9+XQtS07b5vsHyv446CyjSrnlnA26+DsdZDR1e/n7L
+	  iJwEEAMCABAFAkMknE4JEDt6MEFEpZKOAABhVAQAkLC6oGwFPWlIk0gJaTRgP+5k
+	  VHYKC6pwu7NtfjArWn6xEpP0v3nkglMaK7PJWFc0R8tMpgqDuIs4Iry/dyQVoeg0
+	  uxgASPL3T+mPAGHLOnVS75lrXeIPex/u6g2W/iwKJxFlRFxvMwO0THY+SVBNVzt8
+	  Md9Ve6xcMhRWFaiAvBK4jQRDHbvrAgQAiI0YiXGT3QeItzuEXUWnU8t884mnRvbK
+	  Wv8DWEI8qWxrByWTXk0YOyVJ65R7JEm+6oP1+sovPW1AP9mBUmdgT3L1sx3/fmIE
+	  bmrFxV+fhhl20InEDFOiCFDsQw/grUcZ/nhOeZ0GIfwOODpNJXANwqcKNE47MvGq
+	  0JxAgg/oxqEAEQEAAYicBBgDAgAQBQJDIttwCRAB9PImUV6X9QAA1PID/RaKylKM
+	  3ypFVRBOY3SxEiuUhpN+5N8qnSl3k4n0+I5RsOS8JSrWgPElu7hx2zjRHJCtN1y6
+	  /BUtcr5VHKjw8VUdlRDrpPsSdoFKjQoh4RidOwKRELAcT4RpITYp7EdPGSB6IQ1d
+	  Uuxgw291wiJcIGwoxteo+MZuLH/jOb90zQCM
+        &lt;/ds:PGPKeyPacket&gt;
+      &lt;/ds:PGPData&gt;
+    &lt;/ds:KeyInfo&gt;
+  &lt;/ds:Signature&gt;
+&lt;/env:Envelope&gt;
+
+</pre>
+</blockquote>
+
+</div>
+
+<div class="div1">
+
+<h2><a name="S2_3"></a>3. Issues related to using ElGamal with XMLSIG and XKMS</h2>
+
+<p>RFC2440 [<a href="#PGP">PGP</a>] supports the asymmetric ciphers
+RSA, DSA, and ElGamal. XML Signature, on the other hand, only defines
+markup for carrying key values pertaining to the RSA and DSA algorithms.
+</p>
+
+<p>An XKMS service exposed to this incompatibility has little choice but to return
+a general result code pair such as <code>ResultMajor</code>
+<code>http://www.w3.org/2002/03/xkms#{Sender,Receiver}</code> and
+<code>ResultMinor</code>
+<code>http://www.w3.org/2002/03/xkms#Failure</code>.</p>
+
+<p><em>N.B: Note that the inability to act on a request involving
+an unsupported algorithm should ideally be backed up by the existence
+of an XKMS <code>ResultMinorEnum</code> enumeration value such as
+<code>http://www.w3.org/2002/03/xkms#UnsupportedAlgorithm</code>, however
+such a code is not specified in the current XKMS 2.0 Specification.</em></p>
+
+<p>While some usage scenarios may be satisfied by the XKMS service simply tunneling the
+<code>&lt;ds:PGPKeyPacket&gt;</code>
+elements containing an ElGamal key, this does not provide a complete solution.
+In the following sub sections we suggest how full ElGamal support could be added to XMLSIG and XKMS
+respectively. Note that the schema fragments deliberatly omit the definition of the namespaces for the
+prefixes NS1 and NS2.</p>
+
+<div class="div2">
+
+<h3><a name="S2_3_1"></a>3.1 ElGamal syntax for <code>&lt;ds:KeyValue&gt;</code></h3>
+
+<p>XMLSIG, and therefore XKMS, are limited to representing key values for RSA and DSA only.
+As a result, an XKMS service cannot return a key value for a request involving a
+<code>&lt;ds:PGPKeyPacket&gt;</code> that contains an ElGamal public key.</p>
+
+<p>As an ElGamal public key (when in transit between PGP aware
+entities) is defined by the values P(rime), G(enerator) and Y (Public), a
+suitable definition of an ElGamal key value may be:</p>
+
+<blockquote>
+<pre>
+
+  &lt;element name="ElGamalKeyValue" type="NS1:ElGamalKeyValueType"/&gt;
+  &lt;complexType name="ElGamalKeyValueType"&gt;
+     &lt;sequence&gt;
+        &lt;element name="P" type="ds:CryptoBinary"/&gt;
+        &lt;element name="Generator" type="ds:CryptoBinary"/&gt;
+        &lt;element name="Public" type="ds:CryptoBinary"/&gt;
+     &lt;/sequence&gt;
+  &lt;/complexType&gt;
+
+</pre>
+</blockquote>
+
+</div>
+
+<div class="div2">
+
+<h3><a name="S2_3_2"></a>3.2 ElGamal syntax for <code>&lt;xkms:PrivateKey&gt;</code></h3>
+
+<p>XKMS supports service generation of key pairs pertaining to public key encryption algorithms. When
+a service generates such a key pair, the private key parameters are returned to the client as encrypted
+data in an <code>&lt;xkms:PrivateKey&gt;</code> element.</p>
+
+<p>The only key pair syntax currently defined by the XKMS 2.0
+specification is that for an <code>&lt;xkms:RSAKeyPair&gt;</code>.  We
+propose the following definition for an ElGamal key pair:</p>
+
+<blockquote>
+<pre>
+
+  &lt;element name="ElGamalKeyPair" type="NS2:ElGamalKeyPairType"/&gt;
+  &lt;complexType name="ElGamalKeyPairType"&gt;
+     &lt;sequence&gt;
+        &lt;element name="P" type="ds:CryptoBinary"/&gt;
+        &lt;element name="Generator" type="ds:CryptoBinary"/&gt;
+        &lt;element name="Public" type="ds:CryptoBinary"/&gt;
+        &lt;element name="X" type="ds:CryptoBinary"/&gt;        
+     &lt;/sequence&gt;
+  &lt;/complexType&gt;
+  
+</pre>
+</blockquote>
+
+<p>In the precedent definition, <code>P</code>,
+<code>Generator</code>, and <code>Public</code> are as defined in Section
+3.1; <code>X</code> is the private key.</p>
+
+</div>
+</div>
+
+
+<div class="div1">
+
+<h2><a name="S4"></a>4. XKMS with PGP usage scenarios</h2>
+
+<p>This section provides selected usage scenarios involving XKMS and
+PGP, accompanied by sample request/result messages.  The messages are
+based on interactions between an XKMS Client, an XKMS Service, and a
+PGP Key Server (see Figure 1).</p>
+
+
+<div class="figure" id="Fig-1">
+
+<p><img src="pgp.jpg" alt="Figure illustrating an XKMS Client, an XKMS Service and a PGP Key Server"></p>
+
+<p>Figure 1: Interactions between an XKMS client, an XKMS service and a PGP Key Server</p>
+
+</div>
+
+<p>In order to conserve space, the messages are not signed unless
+required by the XKMS specification.  A zip archive containing the
+complete messages and related PGP keys is available for <a href="xkms-pgp-samples.zip">download</a>. The content of this
+archive is also available online in a dedicated
+<a href="samples/">samples directory</a></p>
+
+<p>All messages pertain to synchronous exchanges. The keyholders, in
+the scenarios, use keys pertaining to the RSA algorithm. The following
+sub-sections describe the individual usage scenarios.</p>
+
+<div class="div2">
+
+<h3><a name="S4_1"></a>4.1 Scenario 1: Locate Request, single PGPKeyPacket</h3>
+
+<p>Alice, who has PGP aware software, requests a PGP artifact for Carol expressing specific
+interest in her signature key. By including the <code>&lt;xkms:RespondWith&gt;</code> value
+<code>http://www.w3.org/2002/03/xkms#PGP</code>, Alice indicates that the XKMS service should return a single PGP
+artifact.</p>
+
+<blockquote>
+<pre>
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;km:LocateRequest Id="I37cee20869ede2b91ef6d0fe8b408d48"
+      Service="http://markupsecurity.com:4080/xkms/service/soap12"
+      xmlns:km="http://www.w3.org/2002/03/xkms#"
+      xmlns:ds="http://www.w3.org/2000/09/xmldsig#"&gt;
+  &lt;km:RespondWith&gt;http://www.w3.org/2002/03/xkms#PGP&lt;/km:RespondWith&gt;
+  &lt;km:QueryKeyBinding&gt;
+    &lt;km:KeyUsage&gt;http://www.w3.org/2002/03/xkms#Signature&lt;/km:KeyUsage&gt;
+    &lt;km:UseKeyWith Application="urn:ietf:rfc:2440" Identifier="carol@example.com" /&gt;
+  &lt;/km:QueryKeyBinding&gt;
+&lt;/km:LocateRequest&gt;
+
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;km:LocateResult Id="I243e8726eb46dc62d01467efa7da7792"
+      Service="http://markupsecurity.com:4080/xkms/service/soap12"
+      ResultMajor="http://www.w3.org/2002/03/xkms#Success"
+      RequestId="I37cee20869ede2b91ef6d0fe8b408d48"
+      xmlns:km="http://www.w3.org/2002/03/xkms#"
+      xmlns:ds="http://www.w3.org/2000/09/xmldsig#"&gt;
+  &lt;km:UnverifiedKeyBinding Id="I9175b3513f9a7baabcf87ed48ea63b93"&gt;
+    &lt;ds:KeyInfo&gt;
+      &lt;ds:PGPData&gt;
+        &lt;ds:PGPKeyID&gt;
+          CE0HiNZPXl8=
+        &lt;/ds:PGPKeyID&gt;
+        &lt;ds:PGPKeyPacket&gt;
+          mI0EQx3hFQMEAKMt018bl9evtYd+xCgKfdbeXqiOSLQcLBA//gp3otW9AZVC0Tdq
+          py9S46fPtRuasGFaKhqnXwBtbnrdvCR3YWjkimqk32FuKtxnSBXi2yssp5yycRye
+          iRPC8CBEyJeLDHxjIrpltQ2oJ6toQ5nIh9D7x9xr+BltIZ+5nVAgoWCLABEBAAG0
+          EWNhcm9sQGV4YW1wbGUuY29tiK4EEAMCACIFAkMi23AJEAhNB4jWT15fAhsDAhYC
+          AhUCAgsCAhkBAgcBAABp7AP/QoL/WVEpuxxSD/LJA3QjERnRjuYKS4L0/Ulb8gVa
+          odMl3xsl100fpqF5ISUWaQZrUFPFSyG0781FZvmvcFlbomutCnNR2ugRg0rIjjib
+          araXuxbdWDluNfNbwDkdQy9fhRz7/r7AudjpwFcoGfVjdPZ8graZ1kXZXvkZuPs8
+          +RmInAQQAwIAEAUCQyScTgkQAfTyJlFel/UAAHyPBACwAYWGqzO8N/+zhJjEsdnu
+          PoGRbiaS6v7IynAqAlUMz/c7+Z5qsLPFjHUaxvAc9QtTNfte3ql9THBpxDRxB3/v
+          Y21E6kIK9qHIUW6+4AfKVNPcwqj/p1U8W5s0z92IQZarbYQC7hJExwvk1ig7ZQ6Y
+          /AN7/VctgdqMPEFcVNwUFbiNBEMd4RgCBACTwYI/1LNewEamlSzmi29v5XLBjXHV
+          erc++BHiS+LZG+SY4BIKISA8Qa9lWaOub+66EuVx6IAupdJCpyEBDcXccmnVnflH
+          aweOQxTHHGpfD4ndEbR9KN8uS9wT5MIPBHCxTb9eR03qVZuYxABwLfXqehvOnzSZ
+          H4IDI62beGcf3wARAQABiJwEGAMCABAFAkMi23AJEAhNB4jWT15fAAC5lgP+LKWX
+          uBE2cpJPRY28aBPHlcIfe9nkDWWH1FYHsHoa2yi4aoqmXvWC2By2aVUE5CXFLTbP
+          7grwpfqZ6OnpnRvPrzMXfsupi40UJ/EIbkpUKxiZ7jZjgdnKCBlIFBf2W1fYl3/K
+          S9TN303faMJeljwTBpGUcqUoZSmAnNuGnTxYc5Y=
+        &lt;/ds:PGPKeyPacket&gt;
+      &lt;/ds:PGPData&gt;
+    &lt;/ds:KeyInfo&gt;
+    &lt;km:KeyUsage&gt;http://www.w3.org/2002/03/xkms#Signature&lt;/km:KeyUsage&gt;
+    &lt;km:UseKeyWith Application="urn:ietf:rfc:2440" Identifier="carol@example.com" /&gt;
+  &lt;/km:UnverifiedKeyBinding&gt;
+&lt;/km:LocateResult&gt;
+
+</pre>
+</blockquote>
+</div>
+
+<div class="div2">
+
+<h3><a name="S4_2"></a>4.2 Scenario 2: Locate Request, multiple PGPKeyPackets</h3>
+
+<p>Alice, who has PGP aware software, requests a PGP artifact for Carol expressing specific
+interest in her signature key. By including the <code>&lt;xkms:RespondWith&gt;</code> value
+<code>http://www.w3.org/2002/03/xkms#PGPWeb</code>, Alice indicates that she is prepared to receive
+multiple <code>&lt;ds:PGPKeyPacket&gt;</code> elements in the response. As a result the XKMS service locates the artifacts pertaining
+not only to Carol but also to each signer encountered.</p>
+
+<blockquote>
+<pre>
+
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;km:LocateRequest Id="I036c2399c5c14e2b64900a0213910220"
+      Service="http://markupsecurity.com:4080/xkms/service/soap12"
+      xmlns:km="http://www.w3.org/2002/03/xkms#"
+      xmlns:ds="http://www.w3.org/2000/09/xmldsig#"&gt;
+  &lt;km:RespondWith&gt;http://www.w3.org/2002/03/xkms#PGPWeb&lt;/km:RespondWith&gt;
+  &lt;km:QueryKeyBinding&gt;
+    &lt;km:KeyUsage&gt;http://www.w3.org/2002/03/xkms#Signature&lt;/km:KeyUsage&gt;
+    &lt;km:UseKeyWith Application="urn:ietf:rfc:2440" Identifier="carol@example.com" /&gt;
+  &lt;/km:QueryKeyBinding&gt;
+&lt;/km:LocateRequest&gt;
+
+
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;km:LocateResult Id="Ie51da438aa33361663d71d7e3072378d"
+      Service="http://markupsecurity.com:4080/xkms/service/soap12"
+      ResultMajor="http://www.w3.org/2002/03/xkms#Success"
+      RequestId="I036c2399c5c14e2b64900a0213910220"
+      xmlns:km="http://www.w3.org/2002/03/xkms#"
+      xmlns:ds="http://www.w3.org/2000/09/xmldsig#"&gt;
+  &lt;km:UnverifiedKeyBinding Id="I991d0862d0069079499d3d6a62cfdfb5"&gt;
+    &lt;ds:KeyInfo&gt;
+      &lt;ds:PGPData&gt;
+        &lt;ds:PGPKeyID&gt;
+          CE0HiNZPXl8=
+        &lt;/ds:PGPKeyID&gt;
+        &lt;ds:PGPKeyPacket&gt;
+          mI0EQx3hFQMEAKMt018bl9evtYd+xCgKfdbeXqiOSLQcLBA//gp3otW9AZVC0Tdq
+          py9S46fPtRuasGFaKhqnXwBtbnrdvCR3YWjkimqk32FuKtxnSBXi2yssp5yycRye
+          iRPC8CBEyJeLDHxjIrpltQ2oJ6toQ5nIh9D7x9xr+BltIZ+5nVAgoWCLABEBAAG0
+          EWNhcm9sQGV4YW1wbGUuY29tiK4EEAMCACIFAkMi23AJEAhNB4jWT15fAhsDAhYC
+          AhUCAgsCAhkBAgcBAABp7AP/QoL/WVEpuxxSD/LJA3QjERnRjuYKS4L0/Ulb8gVa
+          odMl3xsl100fpqF5ISUWaQZrUFPFSyG0781FZvmvcFlbomutCnNR2ugRg0rIjjib
+          araXuxbdWDluNfNbwDkdQy9fhRz7/r7AudjpwFcoGfVjdPZ8graZ1kXZXvkZuPs8
+          +RmInAQQAwIAEAUCQyScTgkQAfTyJlFel/UAAHyPBACwAYWGqzO8N/+zhJjEsdnu
+          PoGRbiaS6v7IynAqAlUMz/c7+Z5qsLPFjHUaxvAc9QtTNfte3ql9THBpxDRxB3/v
+          Y21E6kIK9qHIUW6+4AfKVNPcwqj/p1U8W5s0z92IQZarbYQC7hJExwvk1ig7ZQ6Y
+          /AN7/VctgdqMPEFcVNwUFbiNBEMd4RgCBACTwYI/1LNewEamlSzmi29v5XLBjXHV
+          erc++BHiS+LZG+SY4BIKISA8Qa9lWaOub+66EuVx6IAupdJCpyEBDcXccmnVnflH
+          aweOQxTHHGpfD4ndEbR9KN8uS9wT5MIPBHCxTb9eR03qVZuYxABwLfXqehvOnzSZ
+          H4IDI62beGcf3wARAQABiJwEGAMCABAFAkMi23AJEAhNB4jWT15fAAC5lgP+LKWX
+          uBE2cpJPRY28aBPHlcIfe9nkDWWH1FYHsHoa2yi4aoqmXvWC2By2aVUE5CXFLTbP
+          7grwpfqZ6OnpnRvPrzMXfsupi40UJ/EIbkpUKxiZ7jZjgdnKCBlIFBf2W1fYl3/K
+          S9TN303faMJeljwTBpGUcqUoZSmAnNuGnTxYc5Y=
+        &lt;/ds:PGPKeyPacket&gt;
+      &lt;/ds:PGPData&gt;
+      &lt;ds:PGPData&gt;
+        &lt;ds:PGPKeyID&gt;
+          AfTyJlFel/U=
+        &lt;/ds:PGPKeyID&gt;
+        &lt;ds:PGPKeyPacket&gt;
+          mI0EQx276AMEAObgi9iTkPANSS8Ntw/WwloeAlHsEsxMrNOFAp1QuX3Y320G/BIC
+          gKki1WMKcBuRkfz6TPIET396V8GZwLHQ8xUJlVn2lcq1lN9vfy24UwqC/rQuQAL+
+          KaCR5vakUNSt92sjZDuG+q5T6OfHMm5n+jBVBuVBcMDpnFPANaG/9ClvABEBAAG0
+          D2JvYkBleGFtcGxlLmNvbYiuBBADAgAiBQJDIttwCRAB9PImUV6X9QIbAwIWAgIV
+          AgILAgIZAQIHAQAAndUD/Am0fO3cnKf66IgPtRxar2jQ2hLy9u9kdHAQ+nlaMx8H
+          icnW56Xn5liMyPLkV47FEOQTUTiG1E0oNQRhpQGo2NWbBVSJPWXN0kkHGmtzV93M
+          W4tabN2mV7VIQTA6s7EHiM9+XQtS07b5vsHyv446CyjSrnlnA26+DsdZDR1e/n7L
+          iJwEEAMCABAFAkMknE4JEDt6MEFEpZKOAABhVAQAkLC6oGwFPWlIk0gJaTRgP+5k
+          VHYKC6pwu7NtfjArWn6xEpP0v3nkglMaK7PJWFc0R8tMpgqDuIs4Iry/dyQVoeg0
+          uxgASPL3T+mPAGHLOnVS75lrXeIPex/u6g2W/iwKJxFlRFxvMwO0THY+SVBNVzt8
+          Md9Ve6xcMhRWFaiAvBK4jQRDHbvrAgQAiI0YiXGT3QeItzuEXUWnU8t884mnRvbK
+          Wv8DWEI8qWxrByWTXk0YOyVJ65R7JEm+6oP1+sovPW1AP9mBUmdgT3L1sx3/fmIE
+          bmrFxV+fhhl20InEDFOiCFDsQw/grUcZ/nhOeZ0GIfwOODpNJXANwqcKNE47MvGq
+          0JxAgg/oxqEAEQEAAYicBBgDAgAQBQJDIttwCRAB9PImUV6X9QAA1PID/RaKylKM
+          3ypFVRBOY3SxEiuUhpN+5N8qnSl3k4n0+I5RsOS8JSrWgPElu7hx2zjRHJCtN1y6
+          /BUtcr5VHKjw8VUdlRDrpPsSdoFKjQoh4RidOwKRELAcT4RpITYp7EdPGSB6IQ1d
+          Uuxgw291wiJcIGwoxteo+MZuLH/jOb90zQCM
+        &lt;/ds:PGPKeyPacket&gt;
+      &lt;/ds:PGPData&gt;
+      &lt;ds:PGPData&gt;
+        &lt;ds:PGPKeyID&gt;
+          O3owQUSlko4=
+        &lt;/ds:PGPKeyID&gt;
+        &lt;ds:PGPKeyPacket&gt;
+          mI0EQx27fQMEAM3Hfx3yjzYol3SoE8PVl+CErHVPxDZJXtamrX52V7iVZQkvhoE0
+          uW5T7VObmKtIbzBQxOQ9oCjhoEN8QG9p0jX25xyDEZH8MRJPZ5+GFb/mEhRoLp91
+          MfP4cah7v6P8bXvk7UXcgKMh8zJlPxmOXkqaw+a7sGGxEDS4Q7nse0ZHABEBAAG0
+          EWFsaWNlQGV4YW1wbGUuY29tiK4EEAMCACIFAkMi228JEDt6MEFEpZKOAhsDAhYC
+          AhUCAgsCAhkBAgcBAAD5BwP+MFhUsd43DS1t2/iUZKURua34nrv0erZFn5fMyu0z
+          WN+HemA7XOouJKwme5qAKAX36cXjHgqAALu7O5bT7I0/9n0Omv5x6O3FcvtFtbv5
+          igO+Y3wxKEAuR45zmhhIIQgkWCtfDlFm0wc+yaWXgsEMRn9q1/ua6e8VS7/7S4QM
+          qVaInAQQAwIAEAUCQyScTgkQAfTyJlFel/UAAONKA/0b/euhEaUw+eeVYcyrQa1d
+          HTmWc8U53LqbuPMLZ59PkP1FiHcu5N5KD3xk/Xc14o8sP8BHd91TJnaM6sKxVEs1
+          580RR81Wol5sjISV89uuXm09NVNqDBNqi+vemjB66NJGLjoviZVGDzgi5vV7wF5q
+          rdbtSp38HtJte1FMQHeScriNBEMdu4ACBACu1wQ0llewBTewtZJvo4I8RZsvXjTO
+          6wzotWhK+W10a/khxG7vBWymhMU5hXne/9O7vE7J7qT9j1tkdzNUQXGPOUb6b6kG
+          GeicAXJ17qL0ActcSlnDWwA0P94PGBIpFowJUu0txOBdQHX3h/hOk+4PtWLXob6q
+          hjlR+uS+a2AuaQARAQABiJwEGAMCABAFAkMi228JEDt6MEFEpZKOAAAN0gQAlgws
+          XkSm2dBwCFaXMnHxdnCTLqZKCfCBd332w6G6S4tCoVlFW6MKxhwn2IyF8VgIyVl6
+          bTjnrT0E78FlWW9JX3JZje6a4nhus1TqEx12LfIYyX//T/2gnbiic+FqigE3N91N
+          0Hyixc2aGtAT7hCrMS+DTgvPHb2kLoR1+PMP/Fg=
+        &lt;/ds:PGPKeyPacket&gt;
+      &lt;/ds:PGPData&gt;
+    &lt;/ds:KeyInfo&gt;
+    &lt;km:KeyUsage&gt;http://www.w3.org/2002/03/xkms#Signature&lt;/km:KeyUsage&gt;
+    &lt;km:UseKeyWith Application="urn:ietf:rfc:2440" Identifier="carol@example.com" /&gt;
+  &lt;/km:UnverifiedKeyBinding&gt;
+&lt;/km:LocateResult&gt;
+
+</pre>
+</blockquote>
+</div>
+
+<div class="div2">
+
+<h3><a name="S4_3"></a>4.3 Scenario 3: Locate Request, PGPData from PGPKeyID</h3>
+
+<p>Carol, who has PGP aware software, requests a PGP artifact corresponding to the supplied
+<code>&lt;ds:PGPKeyID&gt;</code>.</p>
+
+<blockquote>
+<pre>
+
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;km:LocateRequest Id="If1793cf45fc363c26d808441fc1e5ccf"
+      Service="http://markupsecurity.com:4080/xkms/service/soap12"
+      xmlns:km="http://www.w3.org/2002/03/xkms#"
+      xmlns:ds="http://www.w3.org/2000/09/xmldsig#"&gt;
+  &lt;km:RespondWith&gt;http://www.w3.org/2002/03/xkms#PGP&lt;/km:RespondWith&gt;
+  &lt;km:QueryKeyBinding&gt;
+    &lt;ds:KeyInfo&gt;
+      &lt;ds:PGPData&gt;
+        &lt;ds:PGPKeyID&gt;O3owQUSlko4==&lt;/ds:PGPKeyID&gt;
+      &lt;/ds:PGPData&gt;
+    &lt;/ds:KeyInfo&gt;
+    &lt;km:KeyUsage&gt;http://www.w3.org/2002/03/xkms#Signature&lt;/km:KeyUsage&gt;
+    &lt;km:UseKeyWith Application="urn:ietf:rfc:2440" Identifier="alice@example.com" /&gt;
+  &lt;/km:QueryKeyBinding&gt;
+&lt;/km:LocateRequest&gt;
+
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;km:LocateResult Id="I3cd58da0459a37079316d0dc5aa23cf7"
+      Service="http://markupsecurity.com:4080/xkms/service/soap12"
+      ResultMajor="http://www.w3.org/2002/03/xkms#Success"
+      RequestId="If1793cf45fc363c26d808441fc1e5ccf"
+      xmlns:km="http://www.w3.org/2002/03/xkms#"
+      xmlns:ds="http://www.w3.org/2000/09/xmldsig#"&gt;
+  &lt;km:UnverifiedKeyBinding Id="Ie2a1b8d382e12dcd3a6dd3baa75dc7d6"&gt;
+    &lt;ds:KeyInfo&gt;
+      &lt;ds:PGPData&gt;
+        &lt;ds:PGPKeyID&gt;
+          O3owQUSlko4==
+        &lt;/ds:PGPKeyID&gt;
+        &lt;ds:PGPKeyPacket&gt;
+          mI0EQx27fQMEAM3Hfx3yjzYol3SoE8PVl+CErHVPxDZJXtamrX52V7iVZQkvhoE0
+          uW5T7VObmKtIbzBQxOQ9oCjhoEN8QG9p0jX25xyDEZH8MRJPZ5+GFb/mEhRoLp91
+          MfP4cah7v6P8bXvk7UXcgKMh8zJlPxmOXkqaw+a7sGGxEDS4Q7nse0ZHABEBAAG0
+          EWFsaWNlQGV4YW1wbGUuY29tiK4EEAMCACIFAkMi228JEDt6MEFEpZKOAhsDAhYC
+          AhUCAgsCAhkBAgcBAAD5BwP+MFhUsd43DS1t2/iUZKURua34nrv0erZFn5fMyu0z
+          WN+HemA7XOouJKwme5qAKAX36cXjHgqAALu7O5bT7I0/9n0Omv5x6O3FcvtFtbv5
+          igO+Y3wxKEAuR45zmhhIIQgkWCtfDlFm0wc+yaWXgsEMRn9q1/ua6e8VS7/7S4QM
+          qVa4jQRDHbuAAgQArtcENJZXsAU3sLWSb6OCPEWbL140zusM6LVoSvltdGv5IcRu
+          7wVspoTFOYV53v/Tu7xOye6k/Y9bZHczVEFxjzlG+m+pBhnonAFyde6i9AHLXEpZ
+          w1sAND/eDxgSKRaMCVLtLcTgXUB194f4TpPuD7Vi16G+qoY5UfrkvmtgLmkAEQEA
+          AYicBBgDAgAQBQJDIttvCRA7ejBBRKWSjgAADdIEAJYMLF5EptnQcAhWlzJx8XZw
+          ky6mSgnwgXd99sOhukuLQqFZRVujCsYcJ9iMhfFYCMlZem045609BO/BZVlvSV9y
+          WY3umuJ4brNU6hMddi3yGMl//0/9oJ24onPhaooBNzfdTdB8osXNmhrQE+4QqzEv
+          g04Lzx29pC6EdfjzD/xY
+        &lt;/ds:PGPKeyPacket&gt;
+      &lt;/ds:PGPData&gt;
+    &lt;/ds:KeyInfo&gt;
+    &lt;km:KeyUsage&gt;http://www.w3.org/2002/03/xkms#Signature&lt;/km:KeyUsage&gt;
+    &lt;km:UseKeyWith Application="urn:ietf:rfc:2440" Identifier="alice@example.com" /&gt;
+  &lt;/km:UnverifiedKeyBinding&gt;
+&lt;/km:LocateResult&gt;
+
+</pre>
+</blockquote>
+</div>
+
+<div class="div2">
+
+<h3><a name="S4_4"></a>4.4 Scenario 4: Locate Request, KeyValue from PGPKeyPacket</h3>
+
+<p>Bob, who does not have PGP aware software, is in possession of a PGP artifact 
+containing a signature verification key purportedly belonging to Carol. In order to verify
+a signature, Bob requests the XKMS service to extract and return the key value from the supplied
+<code>&lt;ds:PGPKeyPacket&gt;</code>.
+</p>
+
+<blockquote>
+<pre>
+
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;km:LocateRequest Id="I5ce64e4142923e31a48d15ca4117f276"
+      Service="http://markupsecurity.com:4080/xkms/service/soap12"
+      xmlns:km="http://www.w3.org/2002/03/xkms#"
+      xmlns:ds="http://www.w3.org/2000/09/xmldsig#"&gt;
+  &lt;km:RespondWith&gt;http://www.w3.org/2002/03/xkms#KeyValue&lt;/km:RespondWith&gt;
+  &lt;km:QueryKeyBinding&gt;
+    &lt;ds:KeyInfo&gt;
+      &lt;ds:PGPData&gt;
+        &lt;ds:PGPKeyPacket&gt;
+          mI0EQx3hFQMEAKMt018bl9evtYd+xCgKfdbeXqiOSLQcLBA//gp3otW9AZVC0Tdq
+          py9S46fPtRuasGFaKhqnXwBtbnrdvCR3YWjkimqk32FuKtxnSBXi2yssp5yycRye
+          iRPC8CBEyJeLDHxjIrpltQ2oJ6toQ5nIh9D7x9xr+BltIZ+5nVAgoWCLABEBAAG0
+          EWNhcm9sQGV4YW1wbGUuY29tiK4EEAMCACIFAkMi23AJEAhNB4jWT15fAhsDAhYC
+          AhUCAgsCAhkBAgcBAABp7AP/QoL/WVEpuxxSD/LJA3QjERnRjuYKS4L0/Ulb8gVa
+          odMl3xsl100fpqF5ISUWaQZrUFPFSyG0781FZvmvcFlbomutCnNR2ugRg0rIjjib
+          araXuxbdWDluNfNbwDkdQy9fhRz7/r7AudjpwFcoGfVjdPZ8graZ1kXZXvkZuPs8
+          +RmInAQQAwIAEAUCQyScTgkQAfTyJlFel/UAAHyPBACwAYWGqzO8N/+zhJjEsdnu
+          PoGRbiaS6v7IynAqAlUMz/c7+Z5qsLPFjHUaxvAc9QtTNfte3ql9THBpxDRxB3/v
+          Y21E6kIK9qHIUW6+4AfKVNPcwqj/p1U8W5s0z92IQZarbYQC7hJExwvk1ig7ZQ6Y
+          /AN7/VctgdqMPEFcVNwUFbiNBEMd4RgCBACTwYI/1LNewEamlSzmi29v5XLBjXHV
+          erc++BHiS+LZG+SY4BIKISA8Qa9lWaOub+66EuVx6IAupdJCpyEBDcXccmnVnflH
+          aweOQxTHHGpfD4ndEbR9KN8uS9wT5MIPBHCxTb9eR03qVZuYxABwLfXqehvOnzSZ
+          H4IDI62beGcf3wARAQABiJwEGAMCABAFAkMi23AJEAhNB4jWT15fAAC5lgP+LKWX
+          uBE2cpJPRY28aBPHlcIfe9nkDWWH1FYHsHoa2yi4aoqmXvWC2By2aVUE5CXFLTbP
+          7grwpfqZ6OnpnRvPrzMXfsupi40UJ/EIbkpUKxiZ7jZjgdnKCBlIFBf2W1fYl3/K
+          S9TN303faMJeljwTBpGUcqUoZSmAnNuGnTxYc5Y=
+        &lt;/ds:PGPKeyPacket&gt;
+      &lt;/ds:PGPData&gt;
+    &lt;/ds:KeyInfo&gt;
+    &lt;km:KeyUsage&gt;http://www.w3.org/2002/03/xkms#Signature&lt;/km:KeyUsage&gt;
+    &lt;km:UseKeyWith Application="urn:ietf:rfc:2440" Identifier="carol@example.com"/&gt;
+  &lt;/km:QueryKeyBinding&gt;
+&lt;/km:LocateRequest&gt;
+
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;km:LocateResult Id="Ie12609974d0971bb8b4196fb7e2b5ed4"
+      Service="http://markupsecurity.com:4080/xkms/service/soap12"
+      ResultMajor="http://www.w3.org/2002/03/xkms#Success"
+      RequestId="I5ce64e4142923e31a48d15ca4117f276"
+      xmlns:km="http://www.w3.org/2002/03/xkms#"
+      xmlns:ds="http://www.w3.org/2000/09/xmldsig#"&gt;
+  &lt;km:UnverifiedKeyBinding Id="I7ba183f0962ce70464ff942a4f1611a0"&gt;
+    &lt;ds:KeyInfo&gt;
+      &lt;ds:KeyValue&gt;
+        &lt;ds:RSAKeyValue&gt;
+          &lt;ds:Modulus&gt;
+            oy3TXxuX16+1h37EKAp91t5eqI5ItBwsED/+Cnei1b0BlULRN2qnL1Ljp8+1G5qw
+            YVoqGqdfAG1uet28JHdhaOSKaqTfYW4q3GdIFeLbKyynnLJxHJ6JE8LwIETIl4sM
+            fGMiumW1Dagnq2hDmciH0PvH3Gv4GW0hn7mdUCChYIs=
+          &lt;/ds:Modulus&gt;
+          &lt;ds:Exponent&gt;AQAB&lt;/ds:Exponent&gt;
+        &lt;/ds:RSAKeyValue&gt;
+      &lt;/ds:KeyValue&gt;
+    &lt;/ds:KeyInfo&gt;
+    &lt;km:KeyUsage&gt;http://www.w3.org/2002/03/xkms#Signature&lt;/km:KeyUsage&gt;
+    &lt;km:UseKeyWith Application="urn:ietf:rfc:2440" Identifier="carol@example.com" /&gt;
+  &lt;/km:UnverifiedKeyBinding&gt;
+&lt;/km:LocateResult&gt;
+
+</pre>
+</blockquote>
+</div>
+
+<div class="div2">
+
+<h3><a name="S4_5"></a>4.5 Scenario 5: Locate Request, KeyValue's from PGPKeyPacket with multiple sub-keys</h3>
+
+<p>Bob, who does not have PGP aware software, wants to encrypt a
+message for Mary. He sends a request to the XKMS service specifying
+that he is only interested in the encryption keys. The XKMS service
+extracts all encryption keys found in the supplied
+<code>&lt;ds:PGPKeyPacket&gt;</code> and returns them to Bob.
+</p>
+
+<blockquote>
+<pre>
+
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;km:LocateRequest Id="I685ffbf8e3fc626a9bcfe212a23dcffb"
+      Service="http://markupsecurity.com:4080/xkms/service/soap12"
+      xmlns:km="http://www.w3.org/2002/03/xkms#"
+      xmlns:ds="http://www.w3.org/2000/09/xmldsig#"&gt;
+  &lt;km:RespondWith&gt;http://www.w3.org/2002/03/xkms#KeyValue&lt;/km:RespondWith&gt;
+  &lt;km:QueryKeyBinding&gt;
+    &lt;ds:KeyInfo&gt;
+      &lt;ds:PGPData&gt;
+        &lt;ds:PGPKeyPacket&gt;
+          mI0EQ2y6ewMEAMaP1BruldV2fU3ko3/mi5lH0qKGkrWgks+vB3ix3f+DRFynEOWs
+          3AcR2G5XL26oGdnLbTPyjwsm2GinMN/ewMk1Xzrc1g9+UVTJsKDnu6/FftqHZXF9
+          Gxlqmrhz2eB8VvCb+S9p5UXT+wWORqk0TByG1KPlYqlmV7gFY/TAyEYRABEBAAG0
+          EG1hcnlAZXhhbXBsZS5jb22ItAQQAwIAKAUCQ2y6ewkQKfPVUfJrwL4FCQHhM4AC
+          GwMCFgICFQICCwICGQECBwEAAAljA/9vVYhk7vc3NZEoVpFbG68+VeF2Gc5dyI4e
+          Jw4F5grK0QKZgxgvjLQrg0QpY4jV3k5568cqMy7e2FSyvUGH6I6t6QWwp57UtlAg
+          fCw3gWxErdzKWBLZlbUoc6fANR1iwKIXpaP/XtDkSIER8o62UenozPzynfh67b/Y
+          trBzuyifrriNBENsunsCBADH5WZWP4aEApC5eXs09fFQpzpdXZAdvV9lZ6Qi7boB
+          VUy1cxGWpX6UokAmIExzC0vNfBJtw2XLQl/9GmORvdrCiMVfd2Qp7NHIkCXldmLh
+          PoVTMF5HgG3miVhfnNxL8n8ucxnmR1x3rvqVpx8BxwdDKfS60RoYWca8CRgbnf6p
+          +wARAQABiJwEGAMCABAFAkNsunsJECnz1VHya8C+AAC4gAQAwdFvoW8skqyp9HhK
+          2iWqkrJGMLZVo2Vy1yboDrsuhCQR7GqrovWxeI8S1luQhcxovzpPJ/8Jy8t+8Sge
+          QMQFYt6O6evAC+7t0MXl5ELV1vxGwj0Pmp+rUpW5HUkWnjs60nfb5xvDCEeD23wN
+          6ALzg+WxcEjcgi0H1emjFZhLFAy4jQRDbLp7AgQAutPKzojkAQSaP2FF4YrAmu9e
+          +GtTf9/Xi3c8z9kj29ZvgpPSI3TBUaMgoSUff9tAW7zE74zkFFqR/676HqJlm0Lx
+          qH54Gdr5ZGeHgGaZiKJzzYn8rEzkIzR+FQxY/p4pAgDd86gMfxPKQEWDcTN01x8F
+          UiyRaCUgcmMIh4mQ/O0AEQEAAYicBBgDAgAQBQJDbLp7CRAp89VR8mvAvgAA+KQD
+          /iLdcN6fhaHiLgzkhaK6AAB8nL5aqfKTIJ0RWy52GHHZNcT4n/VbpVQPlCZsZrIG
+          Li7HmtFKZ4O+zMC6tqFi2kAlB6TBCX31xibKVzXLwW1aiLYIpX3sA9g7lae37JzE
+          T0wbzgvYo+usOI4Its1fEbxusaOorndSzYl1foQuDIn0
+        &lt;/ds:PGPKeyPacket&gt;
+      &lt;/ds:PGPData&gt;
+    &lt;/ds:KeyInfo&gt;
+    &lt;km:KeyUsage&gt;http://www.w3.org/2002/03/xkms#Encryption&lt;/km:KeyUsage&gt;
+    &lt;km:UseKeyWith Application="urn:ietf:rfc:2440" Identifier="mary@example.com"/&gt;
+  &lt;/km:QueryKeyBinding&gt;
+&lt;/km:LocateRequest&gt;
+
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;km:LocateResult Id="Ic605bddad3af8a0fb356eaef7544d2b4"
+      Service="http://markupsecurity.com:4080/xkms/service/soap12"
+      ResultMajor="http://www.w3.org/2002/03/xkms#Success"
+      RequestId="I685ffbf8e3fc626a9bcfe212a23dcffb"
+      xmlns:km="http://www.w3.org/2002/03/xkms#"
+      xmlns:ds="http://www.w3.org/2000/09/xmldsig#"&gt;
+  &lt;km:UnverifiedKeyBinding Id="I7d4884c87d224a72baa4700b5659bea8"&gt;
+    &lt;ds:KeyInfo&gt;
+      &lt;ds:KeyValue&gt;
+        &lt;ds:RSAKeyValue&gt;
+          &lt;ds:Modulus&gt;
+            x+VmVj+GhAKQuXl7NPXxUKc6XV2QHb1fZWekIu26AVVMtXMRlqV+lKJAJiBMcwtL
+            zXwSbcNly0Jf/Rpjkb3awojFX3dkKezRyJAl5XZi4T6FUzBeR4Bt5olYX5zcS/J/
+            LnMZ5kdcd676lacfAccHQyn0utEaGFnGvAkYG53+qfs=
+          &lt;/ds:Modulus&gt;
+          &lt;ds:Exponent&gt;AQAB&lt;/ds:Exponent&gt;
+        &lt;/ds:RSAKeyValue&gt;
+      &lt;/ds:KeyValue&gt;
+    &lt;/ds:KeyInfo&gt;
+    &lt;km:KeyUsage&gt;http://www.w3.org/2002/03/xkms#Encryption&lt;/km:KeyUsage&gt;
+    &lt;km:UseKeyWith Application="urn:ietf:rfc:2440" Identifier="mary@example.com" /&gt;
+  &lt;/km:UnverifiedKeyBinding&gt;
+  &lt;km:UnverifiedKeyBinding Id="I9ebc2caa29cc89f26bde29ca25b7cfdc"&gt;
+    &lt;ds:KeyInfo&gt;
+      &lt;ds:KeyValue&gt;
+        &lt;ds:RSAKeyValue&gt;
+          &lt;ds:Modulus&gt;
+            utPKzojkAQSaP2FF4YrAmu9e+GtTf9/Xi3c8z9kj29ZvgpPSI3TBUaMgoSUff9tA
+            W7zE74zkFFqR/676HqJlm0LxqH54Gdr5ZGeHgGaZiKJzzYn8rEzkIzR+FQxY/p4p
+            AgDd86gMfxPKQEWDcTN01x8FUiyRaCUgcmMIh4mQ/O0=
+          &lt;/ds:Modulus&gt;
+          &lt;ds:Exponent&gt;AQAB&lt;/ds:Exponent&gt;
+        &lt;/ds:RSAKeyValue&gt;
+      &lt;/ds:KeyValue&gt;
+    &lt;/ds:KeyInfo&gt;
+    &lt;km:KeyUsage&gt;http://www.w3.org/2002/03/xkms#Encryption&lt;/km:KeyUsage&gt;
+    &lt;km:UseKeyWith Application="urn:ietf:rfc:2440" Identifier="mary@example.com" /&gt;
+  &lt;/km:UnverifiedKeyBinding&gt;
+&lt;/km:LocateResult&gt;
+
+</pre>
+</blockquote>
+</div>
+
+<div class="div2">
+
+<h3><a name="S4_6"></a>4.6 Scenario 6: Validate Request, single PGPKeyPacket</h3>
+
+<p>As Scenario 1 but using a validation service.</p>
+
+<blockquote>
+<pre>
+
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;km:ValidateRequest Id="Ic2b052b9447fe334dc8699de849cf654"
+      Service="http://markupsecurity.com:4080/xkms/service/soap12"
+      xmlns:km="http://www.w3.org/2002/03/xkms#"
+      xmlns:ds="http://www.w3.org/2000/09/xmldsig#"&gt;
+  &lt;km:RespondWith&gt;http://www.w3.org/2002/03/xkms#PGP&lt;/km:RespondWith&gt;
+  &lt;km:QueryKeyBinding&gt;
+    &lt;km:KeyUsage&gt;http://www.w3.org/2002/03/xkms#Signature&lt;/km:KeyUsage&gt;
+    &lt;km:UseKeyWith Application="urn:ietf:rfc:2440" Identifier="carol@example.com" /&gt;
+  &lt;/km:QueryKeyBinding&gt;
+&lt;/km:ValidateRequest&gt;
+
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;km:ValidateResult Id="Ie5958e8537bc970d9725d0ac7e54a7ed"
+      Service="http://markupsecurity.com:4080/xkms/service/soap12"
+      ResultMajor="http://www.w3.org/2002/03/xkms#Success"
+      RequestId="Ic2b052b9447fe334dc8699de849cf654"
+      xmlns:km="http://www.w3.org/2002/03/xkms#"
+      xmlns:ds="http://www.w3.org/2000/09/xmldsig#"&gt;
+  &lt;km:KeyBinding Id="I6d21f0cc0075eba86876a1d0886e8013"&gt;
+    &lt;ds:KeyInfo&gt;
+      &lt;ds:PGPData&gt;
+        &lt;ds:PGPKeyID&gt;
+          CE0HiNZPXl8=
+        &lt;/ds:PGPKeyID&gt;
+        &lt;ds:PGPKeyPacket&gt;
+          mI0EQx3hFQMEAKMt018bl9evtYd+xCgKfdbeXqiOSLQcLBA//gp3otW9AZVC0Tdq
+          py9S46fPtRuasGFaKhqnXwBtbnrdvCR3YWjkimqk32FuKtxnSBXi2yssp5yycRye
+          iRPC8CBEyJeLDHxjIrpltQ2oJ6toQ5nIh9D7x9xr+BltIZ+5nVAgoWCLABEBAAG0
+          EWNhcm9sQGV4YW1wbGUuY29tiK4EEAMCACIFAkMi23AJEAhNB4jWT15fAhsDAhYC
+          AhUCAgsCAhkBAgcBAABp7AP/QoL/WVEpuxxSD/LJA3QjERnRjuYKS4L0/Ulb8gVa
+          odMl3xsl100fpqF5ISUWaQZrUFPFSyG0781FZvmvcFlbomutCnNR2ugRg0rIjjib
+          araXuxbdWDluNfNbwDkdQy9fhRz7/r7AudjpwFcoGfVjdPZ8graZ1kXZXvkZuPs8
+          +RmInAQQAwIAEAUCQyScTgkQAfTyJlFel/UAAHyPBACwAYWGqzO8N/+zhJjEsdnu
+          PoGRbiaS6v7IynAqAlUMz/c7+Z5qsLPFjHUaxvAc9QtTNfte3ql9THBpxDRxB3/v
+          Y21E6kIK9qHIUW6+4AfKVNPcwqj/p1U8W5s0z92IQZarbYQC7hJExwvk1ig7ZQ6Y
+          /AN7/VctgdqMPEFcVNwUFbiNBEMd4RgCBACTwYI/1LNewEamlSzmi29v5XLBjXHV
+          erc++BHiS+LZG+SY4BIKISA8Qa9lWaOub+66EuVx6IAupdJCpyEBDcXccmnVnflH
+          aweOQxTHHGpfD4ndEbR9KN8uS9wT5MIPBHCxTb9eR03qVZuYxABwLfXqehvOnzSZ
+          H4IDI62beGcf3wARAQABiJwEGAMCABAFAkMi23AJEAhNB4jWT15fAAC5lgP+LKWX
+          uBE2cpJPRY28aBPHlcIfe9nkDWWH1FYHsHoa2yi4aoqmXvWC2By2aVUE5CXFLTbP
+          7grwpfqZ6OnpnRvPrzMXfsupi40UJ/EIbkpUKxiZ7jZjgdnKCBlIFBf2W1fYl3/K
+          S9TN303faMJeljwTBpGUcqUoZSmAnNuGnTxYc5Y=
+        &lt;/ds:PGPKeyPacket&gt;
+      &lt;/ds:PGPData&gt;
+    &lt;/ds:KeyInfo&gt;
+    &lt;km:KeyUsage&gt;http://www.w3.org/2002/03/xkms#Signature&lt;/km:KeyUsage&gt;
+    &lt;km:UseKeyWith Application="urn:ietf:rfc:2440" Identifier="carol@example.com" /&gt;
+    &lt;km:ValidityInterval NotBefore="2005-09-06T18:33:57Z" /&gt;
+    &lt;km:Status StatusValue="http://www.w3.org/2002/03/xkms#Valid"&gt;
+      &lt;km:ValidReason&gt;http://www.w3.org/2002/03/xkms#Signature&lt;/km:ValidReason&gt;
+      &lt;km:ValidReason&gt;http://www.w3.org/2002/03/xkms#ValidityInterval&lt;/km:ValidReason&gt;
+      &lt;km:ValidReason&gt;http://www.w3.org/2002/03/xkms#RevocationStatus&lt;/km:ValidReason&gt;
+    &lt;/km:Status&gt;
+  &lt;/km:KeyBinding&gt;
+&lt;/km:ValidateResult&gt;
+
+</pre>
+</blockquote>
+</div>
+
+<div class="div2">
+
+<h3><a name="S4_7"></a>4.7 Scenario 7: Validate Request, valid key</h3>
+
+<p>Bob, who cannot parse PGP artifacts, wants to verify the signature over data he has received
+from Alice and requests validation of an attached <code>&lt;ds:PGPKeyPacket&gt;</code> containing the
+verification key. The service finds the key to be valid but leaves the establishment of trust to Bob.</p>
+
+<blockquote>
+<pre>
+
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;km:ValidateRequest Id="I1e3a8142f0fd3a3acd6f9c0c29337b92"
+      Service="http://markupsecurity.com:4080/xkms/service/soap12"
+      xmlns:km="http://www.w3.org/2002/03/xkms#"
+      xmlns:ds="http://www.w3.org/2000/09/xmldsig#"&gt;
+  &lt;km:RespondWith&gt;http://www.w3.org/2002/03/xkms#KeyValue&lt;/km:RespondWith&gt;
+  &lt;km:QueryKeyBinding&gt;
+    &lt;ds:KeyInfo&gt;
+      &lt;ds:PGPData&gt;
+        &lt;ds:PGPKeyPacket&gt;
+          mI0EQx27fQMEAM3Hfx3yjzYol3SoE8PVl+CErHVPxDZJXtamrX52V7iVZQkvhoE0
+          uW5T7VObmKtIbzBQxOQ9oCjhoEN8QG9p0jX25xyDEZH8MRJPZ5+GFb/mEhRoLp91
+          MfP4cah7v6P8bXvk7UXcgKMh8zJlPxmOXkqaw+a7sGGxEDS4Q7nse0ZHABEBAAG0
+          EWFsaWNlQGV4YW1wbGUuY29tiK4EEAMCACIFAkMi228JEDt6MEFEpZKOAhsDAhYC
+          AhUCAgsCAhkBAgcBAAD5BwP+MFhUsd43DS1t2/iUZKURua34nrv0erZFn5fMyu0z
+          WN+HemA7XOouJKwme5qAKAX36cXjHgqAALu7O5bT7I0/9n0Omv5x6O3FcvtFtbv5
+          igO+Y3wxKEAuR45zmhhIIQgkWCtfDlFm0wc+yaWXgsEMRn9q1/ua6e8VS7/7S4QM
+          qVaInAQQAwIAEAUCQyScTgkQAfTyJlFel/UAAONKA/0b/euhEaUw+eeVYcyrQa1d
+          HTmWc8U53LqbuPMLZ59PkP1FiHcu5N5KD3xk/Xc14o8sP8BHd91TJnaM6sKxVEs1
+          580RR81Wol5sjISV89uuXm09NVNqDBNqi+vemjB66NJGLjoviZVGDzgi5vV7wF5q
+          rdbtSp38HtJte1FMQHeScriNBEMdu4ACBACu1wQ0llewBTewtZJvo4I8RZsvXjTO
+          6wzotWhK+W10a/khxG7vBWymhMU5hXne/9O7vE7J7qT9j1tkdzNUQXGPOUb6b6kG
+          GeicAXJ17qL0ActcSlnDWwA0P94PGBIpFowJUu0txOBdQHX3h/hOk+4PtWLXob6q
+          hjlR+uS+a2AuaQARAQABiJwEGAMCABAFAkMi228JEDt6MEFEpZKOAAAN0gQAlgws
+          XkSm2dBwCFaXMnHxdnCTLqZKCfCBd332w6G6S4tCoVlFW6MKxhwn2IyF8VgIyVl6
+          bTjnrT0E78FlWW9JX3JZje6a4nhus1TqEx12LfIYyX//T/2gnbiic+FqigE3N91N
+          0Hyixc2aGtAT7hCrMS+DTgvPHb2kLoR1+PMP/Fg=
+        &lt;/ds:PGPKeyPacket&gt;
+      &lt;/ds:PGPData&gt;
+    &lt;/ds:KeyInfo&gt;
+    &lt;km:KeyUsage&gt;http://www.w3.org/2002/03/xkms#Signature&lt;/km:KeyUsage&gt;
+    &lt;km:UseKeyWith Application="urn:ietf:rfc:2440" Identifier="alice@example.com"/&gt;
+  &lt;/km:QueryKeyBinding&gt;
+&lt;/km:ValidateRequest&gt;
+
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;km:ValidateResult Id="I42706750705eedc4de8e3ec3a0f14fe2"
+      Service="http://markupsecurity.com:4080/xkms/service/soap12"
+      ResultMajor="http://www.w3.org/2002/03/xkms#Success"
+      RequestId="I1e3a8142f0fd3a3acd6f9c0c29337b92"
+      xmlns:km="http://www.w3.org/2002/03/xkms#"
+      xmlns:ds="http://www.w3.org/2000/09/xmldsig#"&gt;
+  &lt;km:KeyBinding Id="I72407105ecdfe20078e2f8ad8ca7c2a7"&gt;
+    &lt;ds:KeyInfo&gt;
+      &lt;ds:KeyValue&gt;
+        &lt;ds:RSAKeyValue&gt;
+          &lt;ds:Modulus&gt;
+            zcd/HfKPNiiXdKgTw9WX4ISsdU/ENkle1qatfnZXuJVlCS+GgTS5blPtU5uYq0hvMFDE5D2g
+            KOGgQ3xAb2nSNfbnHIMRkfwxEk9nn4YVv+YSFGgun3Ux8/hxqHu/o/xte+TtRdyAoyHzMmU/
+            GY5eSprD5ruwYbEQNLhDuex7Rkc=
+          &lt;/ds:Modulus&gt;
+          &lt;ds:Exponent&gt;AQAB&lt;/ds:Exponent&gt;
+        &lt;/ds:RSAKeyValue&gt;
+      &lt;/ds:KeyValue&gt;
+    &lt;/ds:KeyInfo&gt;
+    &lt;km:KeyUsage&gt;http://www.w3.org/2002/03/xkms#Signature&lt;/km:KeyUsage&gt;
+    &lt;km:UseKeyWith Application="urn:ietf:rfc:2440" Identifier="alice@example.com" /&gt;
+    &lt;km:ValidityInterval NotBefore="2005-09-10T13:11:11Z" /&gt;
+    &lt;km:Status StatusValue="http://www.w3.org/2002/03/xkms#Valid"&gt;
+      &lt;km:ValidReason&gt;http://www.w3.org/2002/03/xkms#Signature&lt;/km:ValidReason&gt;
+      &lt;km:ValidReason&gt;http://www.w3.org/2002/03/xkms#ValidityInterval&lt;/km:ValidReason&gt;
+      &lt;km:ValidReason&gt;http://www.w3.org/2002/03/xkms#RevocationStatus&lt;/km:ValidReason&gt;
+    &lt;/km:Status&gt;
+  &lt;/km:KeyBinding&gt;
+&lt;/km:ValidateResult&gt;
+
+</pre>
+</blockquote>
+</div>
+
+<div class="div2">
+
+<h3><a name="S4_8"></a>4.8 Scenario 8: Validate Request, expired key</h3>
+
+<p>Bob, who cannot parse PGP artifacts, wants to verify the signature over data he has received
+from Eric and requests validation of an attached <code>&lt;ds:PGPKeyPacket&gt;</code> containing the verification key.  The
+service detects that the key in the <code>&lt;ds:PGPKeyPacket&gt;</code> has expired and returns an invalid status.</p>
+
+<blockquote>
+<pre>
+
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;km:ValidateRequest Id="If57f175826e53e60dc3b056c05f063f0"
+      Service="http://markupsecurity.com:4080/xkms/service/soap12"
+      xmlns:km="http://www.w3.org/2002/03/xkms#"
+      xmlns:ds="http://www.w3.org/2000/09/xmldsig#"&gt;
+  &lt;km:RespondWith&gt;http://www.w3.org/2002/03/xkms#KeyValue&lt;/km:RespondWith&gt;
+  &lt;km:QueryKeyBinding&gt;
+    &lt;ds:KeyInfo&gt;
+      &lt;ds:PGPData&gt;
+        &lt;ds:PGPKeyPacket&gt;
+          mI0EQx3iSgMEAN45SS8CxySV3ODsAylz+o+/PR3zG59lIl1qnli92SuNAamfgg+K
+          pGTr90su+FMi7nLGK0mJcHkx0umtL6uLtqHLQFOasixS70FXcGA6kyzFXmkOjRhI
+          8pYlQQHZifZEAGxk0XD+O93vqjoTA7aF4D1HnS0gG5c+fEFCuMfacvhFABEBAAG0
+          EGVyaWNAZXhhbXBsZS5jb22ItAQQAwIAKAUCQyKiqAkQE4Od9xugLMAFCQAnjQAC
+          GwMCFgICFQICCwICGQECBwEAAMqVA/9asnYizHnouI1GlKtYKAJ7Q1O7W+CmQB8v
+          oKfglT1hk/MrCqMNVa3v8nfCFTD5ElrYCuAs3ZERT8crfgwg3ltHYTQfWmzkKHzV
+          MzV0MgHkRHfWwcEVOMzYTazHv8UD8aC3cpfOPJJr8D64T5gCLbIOdimjJZO+UKTe
+          vbvs/7IjeLiNBEMd4k0CBADK+f1DzRnKAsHtGXSO6POBOM9jYT1ujboPk/cKFN9Z
+          OjQ24TTuVKE1i24N905WZRpKqCy3En6wElOI7Ssii+Fcat0xbW8XuNQcu9IUsHdz
+          aoLFNEc0nmNcW3eos/VrF9yKfMV6pty0ppAYIZkdNji6fETQbSZy3Ew/YpTlm0B8
+          9wARAQABiJwEGAMCABAFAkMioqgJEBODnfcboCzAAADezQP9H5o2xmlbDuPHo20K
+          O4TWYVLEeqg2GEDSOINKeaYd2pwW6Aq9PUzJsVzq2sQ7+fjlD52Gf05P//EwhT9E
+          aKoxQFHA5mthySOiIcHK2EufJbRi8piRd78CJXOgeArPMTUjITTCY1Ho9+v9uW4S
+          ONqM5UGEcXQrIz07bjgp0DjiFBQ=
+        &lt;/ds:PGPKeyPacket&gt;
+      &lt;/ds:PGPData&gt;
+    &lt;/ds:KeyInfo&gt;
+    &lt;km:KeyUsage&gt;http://www.w3.org/2002/03/xkms#Signature&lt;/km:KeyUsage&gt;
+    &lt;km:UseKeyWith Application="urn:ietf:rfc:2440" Identifier="eric@example.com"/&gt;
+  &lt;/km:QueryKeyBinding&gt;
+&lt;/km:ValidateRequest&gt;
+
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;km:ValidateResult Id="I875f9f33c6f4043b17ee5a1536e4dcb3"
+      Service="http://markupsecurity.com:4080/xkms/service/soap12"
+      ResultMajor="http://www.w3.org/2002/03/xkms#Success"
+      RequestId="If57f175826e53e60dc3b056c05f063f0"
+      xmlns:km="http://www.w3.org/2002/03/xkms#"
+      xmlns:ds="http://www.w3.org/2000/09/xmldsig#"&gt;
+  &lt;km:KeyBinding Id="I550b1c7e35dda183a9484755c60b7060"&gt;
+    &lt;ds:KeyInfo&gt;
+      &lt;ds:KeyValue&gt;
+        &lt;ds:RSAKeyValue&gt;
+          &lt;ds:Modulus&gt;
+            3jlJLwLHJJXc4OwDKXP6j789HfMbn2UiXWqeWL3ZK40BqZ+CD4qkZOv3Sy74UyLucsYrSYlw
+            eTHS6a0vq4u2octAU5qyLFLvQVdwYDqTLMVeaQ6NGEjyliVBAdmJ9kQAbGTRcP473e+qOhMD
+            toXgPUedLSAblz58QUK4x9py+EU=
+          &lt;/ds:Modulus&gt;
+          &lt;ds:Exponent&gt;AQAB&lt;/ds:Exponent&gt;
+        &lt;/ds:RSAKeyValue&gt;
+      &lt;/ds:KeyValue&gt;
+    &lt;/ds:KeyInfo&gt;
+    &lt;km:KeyUsage&gt;http://www.w3.org/2002/03/xkms#Signature&lt;/km:KeyUsage&gt;
+    &lt;km:UseKeyWith Application="urn:ietf:rfc:2440" Identifier="eric@example.com" /&gt;
+    &lt;km:ValidityInterval NotBefore="2005-09-10T09:08:56Z" NotOnOrAfter="2005-10-06T18:39:06Z"/&gt;
+    &lt;km:Status StatusValue="http://www.w3.org/2002/03/xkms#Invalid"&gt;
+      &lt;km:InvalidReason&gt;http://www.w3.org/2002/03/xkms#ValidityInterval&lt;/km:InvalidReason&gt;
+    &lt;/km:Status&gt;
+  &lt;/km:KeyBinding&gt;
+&lt;/km:ValidateResult&gt;
+
+</pre>
+</blockquote>
+</div>
+
+<div class="div2">
+
+<h3><a name="S4_9"></a>4.9 Scenario 9: Validate Request, revoked key</h3>
+
+<p>Prior to verifying a signature on data that he has received from Ralph, Bob, who cannot parse PGP
+artifacts, requests validation of an attached <code>&lt;ds:PGPKeyPacket&gt;</code>, containing the verification key.  The
+service detects a PGP revocation signature in the <code>&lt;ds:PGPKeyPacket&gt;</code> and returns an invalid status.</p>
+
+<blockquote>
+<pre>
+
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;km:ValidateRequest Id="If26885c2515dd40c47cb339c437f4444"
+      Service="http://markupsecurity.com:4080/xkms/service/soap12"
+      xmlns:km="http://www.w3.org/2002/03/xkms#"
+      xmlns:ds="http://www.w3.org/2000/09/xmldsig#"&gt;
+  &lt;km:RespondWith&gt;http://www.w3.org/2002/03/xkms#KeyValue&lt;/km:RespondWith&gt;
+  &lt;km:QueryKeyBinding&gt;
+    &lt;ds:KeyInfo&gt;
+      &lt;ds:PGPData&gt;
+        &lt;ds:PGPKeyPacket&gt;
+          mI0EQx3mGQMEANzTnHv+1yclF86wt6TH+M+gu/X6c6krqZ8IVBVlANbaCM9fidm+
+          vH7V2bRtBT0YvyLmPGjtnHXuf6oe8MyB/0nGJF2bJjKijGb6QYeqGrfnC0bG/CP9
+          tBl5SL/44LqzVeHOv61kd75Fk3uPXFWgSM1es08JZCw7nW+A9K7O9UoZABEBAAGI
+          nAQgAwIAEAUCQ0VL+QkQwPAnINkyJCIAAMlhBACRk6FTUDgtlst18PfmdSMqh4i4
+          pGnVM6cZbCJ3DlQ5uYn7JPm88W+Gh8tpsTXOs2bdpAJeqW5EfP0X80L6LUhn9oJo
+          IVhH6Qoupfd5iaA/CeHsL5t9K/1Q0HhCKb2nSiTbU36Quy5Idv2VjtvZl1GzcGCs
+          s2XQgJlg5FgyTG3qn7QRcmFscGhAZXhhbXBsZS5jb22IrgQQAwIAIgUCQyLbcQkQ
+          wPAnINkyJCICGwMCFgICFQICCwICGQECBwEAALw7A/9jEfJMax396YdbP1uycRgy
+          0bPUq9uBBWY6JC6vCIe3jwwSO1VWD4hNJa1Nnkx41HtDTS9OC0+7Kfl/QPSMCj1k
+          DpMPCKpGZCIQAIX5gRrdYugo5AbJan4AFkLfI4i/04bp7fUBD9U5/L+8sjeRettW
+          SNlBdkEZG01MTKniZT6JZriNBEMd5hwCBACSmpGmRuChmcNeBP6n8fm3vaPTOCPB
+          cZEJ9EyxAW0DkKmfbg9T1/PwQjR1em3u2MHGfwKwLE0S/h4nW5UOhtupmiZSI5T2
+          /kS02wHyRZpiWp2ML4MumrR+EFOUbfLgtz7Df2T69HnzX0obf1FYo2RzVV7kgn5m
+          ReRlPN1bxZYyjwARAQABiJwEGAMCABAFAkMi23EJEMDwJyDZMiQiAAB+hgP7BK7o
+          Zp7K0Mi1rEx48lyQBSgecjVwVFhTP7zjaR24bhYZUj2UsDKsvKLTG0prv9F2SsIe
+          O/oh62HM5NJvrx8fsOAoClv1ZgPD5HQMCBgh3dQSZAys7kPV3C5voTFB9/4GOt2q
+          ERFwgZvb+mrf5GnB9VzoPAFwYpKWW2eD9anCyg4=
+        &lt;/ds:PGPKeyPacket&gt;
+      &lt;/ds:PGPData&gt;
+    &lt;/ds:KeyInfo&gt;
+    &lt;km:KeyUsage&gt;http://www.w3.org/2002/03/xkms#Signature&lt;/km:KeyUsage&gt;
+    &lt;km:UseKeyWith Application="urn:ietf:rfc:2440" Identifier="ralph@example.com"/&gt;
+  &lt;/km:QueryKeyBinding&gt;
+&lt;/km:ValidateRequest&gt;
+
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;km:ValidateResult Id="I18a313fff5bc23205175af9b3cfda8d1"
+      Service="http://markupsecurity.com:4080/xkms/service/soap12"
+      ResultMajor="http://www.w3.org/2002/03/xkms#Success"
+      RequestId="If26885c2515dd40c47cb339c437f4444"
+      xmlns:km="http://www.w3.org/2002/03/xkms#"
+      xmlns:ds="http://www.w3.org/2000/09/xmldsig#"&gt;
+  &lt;km:KeyBinding Id="I4370ce8fdac2808863c2e04ba62d90ff"&gt;
+    &lt;ds:KeyInfo&gt;
+      &lt;ds:KeyValue&gt;
+        &lt;ds:RSAKeyValue&gt;
+          &lt;ds:Modulus&gt;
+            3NOce/7XJyUXzrC3pMf4z6C79fpzqSupnwhUFWUA1toIz1+J2b68ftXZtG0FPRi/IuY8aO2c
+            de5/qh7wzIH/ScYkXZsmMqKMZvpBh6oat+cLRsb8I/20GXlIv/jgurNV4c6/rWR3vkWTe49c
+            VaBIzV6zTwlkLDudb4D0rs71Shk=
+          &lt;/ds:Modulus&gt;
+          &lt;ds:Exponent&gt;AQAB&lt;/ds:Exponent&gt;
+        &lt;/ds:RSAKeyValue&gt;
+      &lt;/ds:KeyValue&gt;
+    &lt;/ds:KeyInfo&gt;
+    &lt;km:KeyUsage&gt;http://www.w3.org/2002/03/xkms#Signature&lt;/km:KeyUsage&gt;
+    &lt;km:UseKeyWith Application="urn:ietf:rfc:2440" Identifier="ralph@example.com" /&gt;
+    &lt;km:ValidityInterval NotBefore="2005-09-10T13:10:13Z" /&gt;
+    &lt;km:Status StatusValue="http://www.w3.org/2002/03/xkms#Invalid"&gt;
+      &lt;km:ValidReason&gt;http://www.w3.org/2002/03/xkms#Signature&lt;/km:ValidReason&gt;
+      &lt;km:ValidReason&gt;http://www.w3.org/2002/03/xkms#ValidityInterval&lt;/km:ValidReason&gt;
+      &lt;km:InvalidReason&gt;http://www.w3.org/2002/03/xkms#RevocationStatus&lt;/km:InvalidReason&gt;
+    &lt;/km:Status&gt;
+  &lt;/km:KeyBinding&gt;
+&lt;/km:ValidateResult&gt;
+
+</pre>
+</blockquote>
+</div>
+
+<div class="div2">
+
+<h3><a name="S4_10"></a>4.10 Scenario 10: Register Request</h3>
+
+<p>Fred registers a service generated key pair and binds it to a PGP artifact. He authenticates the
+request with a key derived from a shared secret ("secret") established out of band with the service
+and mapped to the <code>&lt;ds:KeyName&gt;</code> Fred. As the service generates the key pair, it can produce
+the self-signed PGP artfifact.</p>
+
+<blockquote>
+<pre>
+
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;km:RegisterRequest Id="I67897b275c03c80c5c151a53a8eee3a2"
+      Service="http://markupsecurity.com:4080/xkms/service/soap12"
+      xmlns:km="http://www.w3.org/2002/03/xkms#"
+      xmlns:ds="http://www.w3.org/2000/09/xmldsig#"&gt;
+  &lt;km:RespondWith&gt;http://www.w3.org/2002/03/xkms#PGP&lt;/km:RespondWith&gt;
+  &lt;km:PrototypeKeyBinding Id="Ie7e32519839a45e597b6f3646ead1ceb"&gt;
+    &lt;km:KeyUsage&gt;http://www.w3.org/2002/03/xkms#Signature&lt;/km:KeyUsage&gt;
+    &lt;km:UseKeyWith Application="urn:ietf:rfc:2440" Identifier="fred@example.com" /&gt;
+    &lt;km:RevocationCodeIdentifier&gt;TD4zyGKCIHCJgKk4i+BUN1HFXWE=&lt;/km:RevocationCodeIdentifier&gt;
+  &lt;/km:PrototypeKeyBinding&gt;
+  &lt;km:Authentication&gt;
+    &lt;km:KeyBindingAuthentication&gt;
+      &lt;ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#"&gt;
+        &lt;ds:SignedInfo&gt;
+          &lt;ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/&gt;
+          &lt;ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#hmac-sha1"/&gt;
+          &lt;ds:Reference URI="#Ie7e32519839a45e597b6f3646ead1ceb"&gt;
+            &lt;ds:Transforms&gt;
+              &lt;ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/&gt;
+            &lt;/ds:Transforms&gt;
+            &lt;ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/&gt;
+            &lt;ds:DigestValue&gt;+Ncjqg7RCB2TFL81x1ZDWKjV0ho=&lt;/ds:DigestValue&gt;
+          &lt;/ds:Reference&gt;
+        &lt;/ds:SignedInfo&gt;
+        &lt;ds:SignatureValue&gt;zBevtq27XnPrKGi5oTUGgYBADU4=&lt;/ds:SignatureValue&gt;
+        &lt;ds:KeyInfo&gt;
+          &lt;ds:KeyName&gt;Fred&lt;/ds:KeyName&gt;
+        &lt;/ds:KeyInfo&gt;          
+      &lt;/ds:Signature&gt;
+    &lt;/km:KeyBindingAuthentication&gt;
+  &lt;/km:Authentication&gt;
+&lt;/km:RegisterRequest&gt;
+
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;km:RegisterResult Id="Ic5371b5883be851299d8fd866522332a"
+      Service="http://markupsecurity.com:4080/xkms/service/soap12"
+      ResultMajor="http://www.w3.org/2002/03/xkms#Success"
+      RequestId="I67897b275c03c80c5c151a53a8eee3a2"
+      xmlns:km="http://www.w3.org/2002/03/xkms#"
+      xmlns:ds="http://www.w3.org/2000/09/xmldsig#"&gt;
+  &lt;km:KeyBinding Id="Iba2c84b82f8c657beac108bc9fa4babd"&gt;
+    &lt;ds:KeyInfo&gt;
+      &lt;ds:PGPData&gt;
+        &lt;ds:PGPKeyID&gt;4GblxTJDnUM=&lt;/ds:PGPKeyID&gt;
+        &lt;ds:PGPKeyPacket&gt;
+          mI0EQ2kkDwMEAKlCG2jQa/nnO9CZEqXsc9l1OcmSjR4SvvJ0PjbZiAzy5Ur3+X27
+          Fus+mzW9IGfV8zRAcMRv3bx415kodr1zPAFeg/HRwazMjpthUTcTeWogplRyhZBt
+          jHaGhgjIBPtSzf9Lfa/RQ/xnduehFM/3Vffj/3nqQEOzGngLBAWZy8n9ABEBAAG0
+          EGZyZWRAZXhhbXBsZS5jb22ItAQQAwIAKAUCQ2kkEQkQ4GblxTJDnUMFCQHhM4AC
+          GwMCFgICFQICCwICGQECBwEAAMaOBAChYHFVA0m1iKwRo/S+JOfwggC/klfeCktU
+          LeG0L/066xJyU/zSUI9eXIPjfGNDBEtJpxP86Mp1f0Ur/LpypkVLZGuqEx+vZxIo
+          tYZEsZvaGZtukzfNOhsAvXbpnygv8fdx7QvnPvqWIWWkgI0gDPb2LP+dxbeKiUzW
+          UFMX14dbJw==
+        &lt;/ds:PGPKeyPacket&gt;
+      &lt;/ds:PGPData&gt;
+    &lt;/ds:KeyInfo&gt;
+    &lt;km:KeyUsage&gt;http://www.w3.org/2002/03/xkms#Signature&lt;/km:KeyUsage&gt;
+    &lt;km:UseKeyWith Application="urn:ietf:rfc:2440" Identifier="fred@example.com" /&gt;
+    &lt;km:Status StatusValue="http://www.w3.org/2002/03/xkms#Valid"&gt;
+      &lt;km:ValidReason&gt;http://www.w3.org/2002/03/xkms#Signature&lt;/km:ValidReason&gt;
+      &lt;km:ValidReason&gt;http://www.w3.org/2002/03/xkms#RevocationStatus&lt;/km:ValidReason&gt;
+      &lt;km:ValidReason&gt;http://www.w3.org/2002/03/xkms#ValidityInterval&lt;/km:ValidReason&gt;
+    &lt;/km:Status&gt;
+  &lt;/km:KeyBinding&gt;
+  &lt;km:PrivateKey&gt;
+    &lt;enc:EncryptedData Type="http://www.w3.org/2001/04/xmlenc#Content" MimeType="text/xml"
+        xmlns:enc="http://www.w3.org/2001/04/xmlenc#"&gt;
+      &lt;enc:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#tripledes-cbc"/&gt;
+      &lt;enc:CipherData&gt;
+        &lt;enc:CipherValue&gt;
+          WnG2zcwN4R05y/vzbwRMmQ3olF6IYdjq7elzHtd9aeRaXXdycHhz8HQAN+l9doYv
+          v45eUU+5YdERMubv3xBkdGTCAIeoPHfz69qF9UHZ0sDOAMX3Q6niIPZ4YS0yyw1w
+          CwyjMXldi1+dDfNBHXw+0Nu68ucuJg1XOoWAaGpqO4svMA1ALB76A+tLUrSQh+ov
+          fZrMqg6gE5x5dOo7/cPqObhLxgtLhLl0xaMy6Utst7xY6xibrQlp0i13B2o9YeIJ
+          bOp3zbtjTjN9CGVgYSPXtEDqREJwzHyN6EzAU2qbKdVlMiWFN1BsptJOqXVRtjnp
+          zFx+aZLi8GML2iUxHGFSg/6mvDy3w9PKyNiXtCkP9sreJ2ClBSMmlXjUgxNry8aB
+          77WuNSi+XdHzMzFc57UmZH4skneVZexG0IEVw83/o2tcjWT7OMMIWnGC+ibvFM8x
+          Dua0BYS3cwVrF3lXm7ShEY5U0uRxZg11nHb3NHCSkhO2/53yFC08jEzoHjIh5R1k
+          5GprbFfcpZJcfAqvzCzfTFp53vj/FsuIfmb+RIpy2i66JnOA/GZssLlkT6PcsbDS
+          k6S9tJF/nxRarMyzlTEN2WKrOU9F1sm3+jj2eq81AjwyCDSyYzMke+pVNQwPH79y
+          8VAXiEoohuKiP5DN2PWvgTz7rRDz0sFo+z9odClr6jBsOsUVAorJ7PEDGJB4eIR+
+          YTKGa6DyhECFm1Z0RT/frQylosATcrKZAjI7LzKgrNOKFFqcRfm3FO4lmHMYD2Ni
+          G0dYwrETI3npwjvQ0lubU2ALFfOeiWMku7uGo9nKoY57gK0BHa+MaGc79VAHeZNi
+          2DPsdjCsdmgeSi23DFwU8fBJf5KRB6BoUrelHiJq3YeHWMmImU/SL/+qLlHfmvTF
+          nKhUeLAxsxkeZXSwpMLX7CbHDfdfPHM+2KlBW5A05Ljb/ngj9hLnXKWayERigx4h
+          FyIu/WJTfqBYOdDS86GcxDozHXeGX9aQAHuV0Nu1XJnGpIC/G5Bnjk4is3Keb6bu
+          WsPtVm/OonShjhCUKD/cIMoUH23sYZ4bb+Lihd6TeuXH3jePze7wmA7LG80ujpDq
+          4bqMUv287VXIGUeu6yo4E1wkQl3nrnjY0Qi0FKU2LiYqhkLaj372ukUNEMb+rL40
+          99aNF8bjkBPuqiPMdNep+RtB80dKNgoc8/gegg/B9Cb367ySuXB1zrmQ8XSH72b8
+          k5LpgE17e9m1A4FdTfzdMcXOryzeGn54DgPViC+Ql2lk/U1sDhXm6jOHa612Npqn
+          EZhogUkXtrcZl/ftbmvp5YDucTUpnLSRS/LAmRsGB/TIt8Bpd0It0w4b2IB288dR
+          ZEHXRDmL74HOx4OrDd3SOpOmpoLjD6c1nYD0JnED5o2l/XAHd+zfMQ952A/1CLOj
+          lnwLUdAO4jFkh32m0BfcVXmvqz1TPS2qec79QyxkvOPENAQPW68k7zV6trcGQ+f3
+          qfmjlKNumYpR0jd/D2ZIC8wT6UX9p56neO8Co3sL8Zr3gOpJ3mRDOxIi5RpBrpxR
+          NZWxeOMPUzEIZZw0lShCwHUfHzvbvMylVigG6JQ+Pm0MTZyUH/Nj2CBFswqpG6tn
+          3Th9ROdp/NWSeHr3eehKI6tTBPwj+4o0PdwyLBk9PVyVAiI1ksgrCA==
+        &lt;/enc:CipherValue&gt;
+      &lt;/enc:CipherData&gt;
+    &lt;/enc:EncryptedData&gt;
+  &lt;/km:PrivateKey&gt;
+&lt;/km:RegisterResult&gt;
+
+</pre>
+</blockquote>
+</div>
+
+<div class="div2">
+
+<h3><a name="S4_11"></a>4.11 Scenario 11: Reissue Request</h3>
+
+<p>Harriet has previously registered a service generated key pair and
+bound the public-key to an X.509 certificate.  She later elects to become a PGP
+user and decides to create a PGP binding for the same public-key. She
+includes the original X.509 certificate in the key binding
+specification and provides proof of possession in the usual way.  She
+authenticates the request with a key derived from a shared secret ("secret")
+established out of band with the service and mapped to the
+<code>&lt;ds:KeyName&gt;</code> Harriet.  The service returns the self
+signed PGP artifact and its key id.
+</p>
+
+<blockquote>
+<pre>
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;km:ReissueRequest Id="I69fe4f812ae299fa05f6e87ae1d9077a"
+      Service="http://markupsecurity.com:4080/xkms/service/soap12"
+      xmlns:km="http://www.w3.org/2002/03/xkms#"
+      xmlns:ds="http://www.w3.org/2000/09/xmldsig#"&gt;
+  &lt;km:RespondWith&gt;http://www.w3.org/2002/03/xkms#PGP&lt;/km:RespondWith&gt;
+  &lt;km:ReissueKeyBinding Id="I5fa9baf8285f0b15bdb1eaa171fa806c"&gt;
+    &lt;ds:KeyInfo&gt;
+      &lt;ds:X509Data&gt;
+        &lt;ds:X509Certificate&gt;
+          MIICmTCCAgKgAwIBAgICAM8wDQYJKoZIhvcNAQEFBQAwQzELMAkGA1UEBhMCSUUx
+          DzANBgNVBAgTBkR1YmxpbjEjMCEGA1UEAxMaUlNBIFRlc3QgQ0EgLSBObyBMaWFi
+          aWxpdHkwHhcNMDUxMTAzMjIyMjA3WhcNMDYxMTAzMjIyMjA3WjBCMQswCQYDVQQG
+          EwJJRTEVMBMGA1UEChMMRXhhbXBsZSBDb3JwMRwwGgYDVQQDFBNoYXJyaWV0QGV4
+          YW1wbGUuY29tMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQClo6apLQBcPLgP
+          llH/85pFshxzbBVA/JzDo1pNNOp1RYwDsoN2g82JphcU5ASh+U9uz+SJsqAilyp1
+          OoDIx4pn6opykZjqC3vUBbSaSh03kgmcc11aTu9/hyI7MgAiB8w1r1UaOcNgjB/q
+          pYdXKJoz5JsGx/xnjgW+urk6V3VvUQIDAQABo4GcMIGZMB0GA1UdDgQWBBSIh1DA
+          VFzNxDq6RpGjwgL15cTr2TBrBgNVHSMEZDBigBTW+VLknCxzznGFMlyAZlR8KIKh
+          WqFHpEUwQzELMAkGA1UEBhMCSUUxDzANBgNVBAgTBkR1YmxpbjEjMCEGA1UEAxMa
+          UlNBIFRlc3QgQ0EgLSBObyBMaWFiaWxpdHmCAWQwCwYDVR0PBAQDAgSwMA0GCSqG
+          SIb3DQEBBQUAA4GBAB8m/FPlRPnb6CSHHDlW8dVfDefHjDhBpI4BBPEpAgG197mz
+          Yui8P8UUzE03HH99mh2en31FnQlbkUOZ0I46CmmkGGH/O8vRCjrTjrHe39d3pCpk
+          EYUmB1Ss3MWl1uJMn27OW7MR2MR1+z0vDXzaR9SniuThs8TgxL3rDmK1MH7k
+        &lt;/ds:X509Certificate&gt;
+      &lt;/ds:X509Data&gt;
+    &lt;/ds:KeyInfo&gt;
+    &lt;km:KeyUsage&gt;http://www.w3.org/2002/03/xkms#Signature&lt;/km:KeyUsage&gt;
+    &lt;km:KeyUsage&gt;http://www.w3.org/2002/03/xkms#Encryption&lt;/km:KeyUsage&gt;
+    &lt;km:UseKeyWith Application="urn:ietf:rfc:2440" Identifier="harriet@example.com" /&gt;
+    &lt;km:ValidityInterval NotOnOrAfter="2006-11-03T22:22:07Z"/&gt;
+    &lt;km:Status StatusValue="http://www.w3.org/2002/03/xkms#Valid"/&gt;
+  &lt;/km:ReissueKeyBinding&gt;
+  &lt;km:Authentication&gt;
+    &lt;km:KeyBindingAuthentication&gt;
+      &lt;ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#"&gt;
+        &lt;ds:SignedInfo&gt;
+          &lt;ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/&gt;
+          &lt;ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#hmac-sha1"/&gt;
+          &lt;ds:Reference URI="#I5fa9baf8285f0b15bdb1eaa171fa806c"&gt;
+            &lt;ds:Transforms&gt;
+              &lt;ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/&gt;
+            &lt;/ds:Transforms&gt;
+            &lt;ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/&gt;
+            &lt;ds:DigestValue&gt;TWpEy32jjPbFv804v/7ton10Iew=&lt;/ds:DigestValue&gt;
+          &lt;/ds:Reference&gt;
+        &lt;/ds:SignedInfo&gt;
+        &lt;ds:SignatureValue&gt;XY2JJ4aGbVMqI+ZM4JM4ytrCB3k=&lt;/ds:SignatureValue&gt;
+        &lt;ds:KeyInfo&gt;
+          &lt;ds:KeyName&gt;Harriet&lt;/ds:KeyName&gt;
+        &lt;/ds:KeyInfo&gt;
+      &lt;/ds:Signature&gt;
+    &lt;/km:KeyBindingAuthentication&gt;
+  &lt;/km:Authentication&gt;
+  &lt;km:ProofOfPossession&gt;
+    &lt;ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#"&gt;
+      &lt;ds:SignedInfo&gt;
+        &lt;ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/&gt;
+        &lt;ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/&gt;
+        &lt;ds:Reference URI="#I5fa9baf8285f0b15bdb1eaa171fa806c"&gt;
+          &lt;ds:Transforms&gt;
+            &lt;ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/&gt;
+          &lt;/ds:Transforms&gt;
+          &lt;ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/&gt;
+          &lt;ds:DigestValue&gt;TWpEy32jjPbFv804v/7ton10Iew=&lt;/ds:DigestValue&gt;
+        &lt;/ds:Reference&gt;
+      &lt;/ds:SignedInfo&gt;
+      &lt;ds:SignatureValue&gt;
+        gF74WHXnuAQGpeRWkI/V6gPqPRp/DAq4sDzHyrPuuUIxnUZonAmGoqYLaNWJmWoB
+        P9454V/6V31CFOBG/lhJovnyjR8o4Y2uJN3IylVf2OZ3wpYvE2hQwz+3UzcOMR8g
+        eQrCMLlhYsWCTfRxkuOxK4IxZ5rq8q/51NlLXo17/aI=
+      &lt;/ds:SignatureValue&gt;
+    &lt;/ds:Signature&gt;
+  &lt;/km:ProofOfPossession&gt;
+&lt;/km:ReissueRequest&gt;
+
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;km:ReissueResult Id="Iabd8ad7a072661f7e2b785a5b7fb08fe"
+      Service="http://markupsecurity.com:4080/xkms/service/soap12"
+      ResultMajor="http://www.w3.org/2002/03/xkms#Success"
+      RequestId="I69fe4f812ae299fa05f6e87ae1d9077a"
+      xmlns:km="http://www.w3.org/2002/03/xkms#"
+      xmlns:ds="http://www.w3.org/2000/09/xmldsig#"&gt;
+  &lt;km:KeyBinding Id="Ie3d0af3ee5a502447dacf4d760ad4f06"&gt;
+    &lt;ds:KeyInfo&gt;
+      &lt;ds:PGPData&gt;
+        &lt;ds:PGPKeyID&gt;KW0ZZuAeGHU=&lt;/ds:PGPKeyID&gt;
+        &lt;ds:PGPKeyPacket&gt;
+          mI0EQ2qNjwEEAKWjpqktAFw8uA+WUf/zmkWyHHNsFUD8nMOjWk006nVFjAOyg3aD
+          zYmmFxTkBKH5T27P5ImyoCKXKnU6gMjHimfqinKRmOoLe9QFtJpKHTeSCZxzXVpO
+          73+HIjsyACIHzDWvVRo5w2CMH+qlh1comjPkmwbH/GeOBb66uTpXdW9RABEBAAG0
+          E2hhcnJpZXRAZXhhbXBsZS5jb22ItAQQAQIAKAUCQ2qY3gkQKW0ZZuAeGHUFCQHh
+          M4ACGwMCFgICFQICCwICGQECBwEAABuLA/wIwdkl1K58crsycBpUmLbTjPRTq2LB
+          8XJV/BqLE2SKNs+aGOxOh2aMRTtY5X3LUO/GH+AR0cKZCqLgCnZhd5fUyWo7VmWa
+          bfXgoroCG4NNzcrif9a5XQr9RNgVggqvwndC15A0pw063/GorlZ6bmc9WZpu2s/w
+          sOKH+MpqfgOG4Q==
+        &lt;/ds:PGPKeyPacket&gt;
+      &lt;/ds:PGPData&gt;
+    &lt;/ds:KeyInfo&gt;
+    &lt;km:KeyUsage&gt;http://www.w3.org/2002/03/xkms#Signature&lt;/km:KeyUsage&gt;
+    &lt;km:KeyUsage&gt;http://www.w3.org/2002/03/xkms#Encryption&lt;/km:KeyUsage&gt;
+    &lt;km:UseKeyWith Application="urn:ietf:rfc:2440" Identifier="harriet@example.com" /&gt;
+    &lt;km:Status StatusValue="http://www.w3.org/2002/03/xkms#Valid"&gt;
+      &lt;km:ValidReason&gt;http://www.w3.org/2002/03/xkms#Signature&lt;/km:ValidReason&gt;
+      &lt;km:ValidReason&gt;http://www.w3.org/2002/03/xkms#RevocationStatus&lt;/km:ValidReason&gt;
+      &lt;km:ValidReason&gt;http://www.w3.org/2002/03/xkms#ValidityInterval&lt;/km:ValidReason&gt;
+    &lt;/km:Status&gt;
+  &lt;/km:KeyBinding&gt;
+&lt;/km:ReissueResult&gt;
+
+</pre>
+</blockquote>
+</div>
+
+<div class="div2">
+
+<h3><a name="S4_12"></a>4.12 Scenario 12: Revoke Request</h3>
+
+<p>Ralph suspects that his key has been compromised and decides to
+revoke it. He specifies the key to be revoked in a
+<code>&lt;ds:PGPKeyPacket&gt;</code> element and authenticates the
+request with his private key.  The key pair was originally generated
+by the service, so the service has access to the key required to
+create a PGP revocation signature and attach it to the returned
+<code>&lt;ds:PGPKeyPacket&gt;</code>.  Subsequent requests for Ralph's key will return a
+<code>&lt;ds:PGPKeyPacket&gt;</code> containing the revocation signature.</p>
+
+<blockquote>
+<pre>
+
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;km:RevokeRequest Id="If9e8a8edaffd88f33baedc731ed6b685"
+      Service="http://markupsecurity.com:4080/xkms/service/soap12"
+      xmlns:km="http://www.w3.org/2002/03/xkms#"
+      xmlns:ds="http://www.w3.org/2000/09/xmldsig#"&gt;
+  &lt;km:RespondWith&gt;http://www.w3.org/2002/03/xkms#PGP&lt;/km:RespondWith&gt;
+  &lt;km:RevokeKeyBinding Id="Ic233ba888219078bc6b6dd787236bca0"&gt;
+    &lt;ds:KeyInfo&gt;
+      &lt;ds:PGPData&gt;
+        &lt;ds:PGPKeyPacket&gt;
+          mI0EQx3mGQMEANzTnHv+1yclF86wt6TH+M+gu/X6c6krqZ8IVBVlANbaCM9fidm+
+          vH7V2bRtBT0YvyLmPGjtnHXuf6oe8MyB/0nGJF2bJjKijGb6QYeqGrfnC0bG/CP9
+          tBl5SL/44LqzVeHOv61kd75Fk3uPXFWgSM1es08JZCw7nW+A9K7O9UoZABEBAAG0
+          EXJhbHBoQGV4YW1wbGUuY29tiK4EEAMCACIFAkMi23EJEMDwJyDZMiQiAhsDAhYC
+          AhUCAgsCAhkBAgcBAAC8OwP/YxHyTGsd/emHWz9bsnEYMtGz1KvbgQVmOiQurwiH
+          t48MEjtVVg+ITSWtTZ5MeNR7Q00vTgtPuyn5f0D0jAo9ZA6TDwiqRmQiEACF+YEa
+          3WLoKOQGyWp+ABZC3yOIv9OG6e31AQ/VOfy/vLI3kXrbVkjZQXZBGRtNTEyp4mU+
+          iWa4jQRDHeYcAgQAkpqRpkbgoZnDXgT+p/H5t72j0zgjwXGRCfRMsQFtA5Cpn24P
+          U9fz8EI0dXpt7tjBxn8CsCxNEv4eJ1uVDobbqZomUiOU9v5EtNsB8kWaYlqdjC+D
+          Lpq0fhBTlG3y4Lc+w39k+vR5819KG39RWKNkc1Ve5IJ+ZkXkZTzdW8WWMo8AEQEA
+          AYicBBgDAgAQBQJDIttxCRDA8Ccg2TIkIgAAfoYD+wSu6GaeytDItaxMePJckAUo
+          HnI1cFRYUz+842kduG4WGVI9lLAyrLyi0xtKa7/RdkrCHjv6IethzOTSb68fH7Dg
+          KApb9WYDw+R0DAgYId3UEmQMrO5D1dwub6ExQff+BjrdqhERcIGb2/pq3+RpwfVc
+          6DwBcGKSlltng/WpwsoO
+        &lt;/ds:PGPKeyPacket&gt;
+      &lt;/ds:PGPData&gt;
+    &lt;/ds:KeyInfo&gt;
+    &lt;km:Status StatusValue="http://www.w3.org/2002/03/xkms#Invalid"/&gt;
+  &lt;/km:RevokeKeyBinding&gt;
+  &lt;km:Authentication&gt;
+    &lt;km:KeyBindingAuthentication&gt;
+      &lt;ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#"&gt;
+        &lt;ds:SignedInfo&gt;
+          &lt;ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/&gt;
+          &lt;ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/&gt;
+          &lt;ds:Reference URI="#Ic233ba888219078bc6b6dd787236bca0"&gt;
+            &lt;ds:Transforms&gt;
+              &lt;ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/&gt;
+            &lt;/ds:Transforms&gt;
+            &lt;ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/&gt;
+            &lt;ds:DigestValue&gt;6kp+yCsOOlFYM9xHw7dA43FOMck=&lt;/ds:DigestValue&gt;
+          &lt;/ds:Reference&gt;
+        &lt;/ds:SignedInfo&gt;
+        &lt;ds:SignatureValue&gt;
+          CrSwO9Mg1aFB1bXkYbZlrVABjzC6NP0RydVWY8LdO4Kb7wGEuDtb8SO1SSPb0q0k
+          oxJZIqMtLdPEH/mBKPKe1RTBRSo1ymL0TNb0If8k5U4FixMXM18a3NHV/ceocSyM
+          3qWOVcurL5axME+oitFs31ZRkOiAJ8krTwt/mCotojE=
+        &lt;/ds:SignatureValue&gt;
+      &lt;/ds:Signature&gt;
+    &lt;/km:KeyBindingAuthentication&gt;
+  &lt;/km:Authentication&gt;
+&lt;/km:RevokeRequest&gt;
+
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;km:RevokeResult Id="I20aa98d2cdcf457afaf748fc32afd1ff"
+      Service="http://markupsecurity.com:4080/xkms/service/soap12"
+      ResultMajor="http://www.w3.org/2002/03/xkms#Success"
+      RequestId="If9e8a8edaffd88f33baedc731ed6b685"
+      xmlns:km="http://www.w3.org/2002/03/xkms#"
+      xmlns:ds="http://www.w3.org/2000/09/xmldsig#"&gt;
+  &lt;km:KeyBinding Id="Id949cafdb5da0d9c10ce3492babd0af0"&gt;
+    &lt;ds:KeyInfo&gt;
+      &lt;ds:PGPData&gt;
+        &lt;ds:PGPKeyPacket&gt;
+          mI0EQx3mGQMEANzTnHv+1yclF86wt6TH+M+gu/X6c6krqZ8IVBVlANbaCM9fidm+
+          vH7V2bRtBT0YvyLmPGjtnHXuf6oe8MyB/0nGJF2bJjKijGb6QYeqGrfnC0bG/CP9
+          tBl5SL/44LqzVeHOv61kd75Fk3uPXFWgSM1es08JZCw7nW+A9K7O9UoZABEBAAGI
+          nAQgAwIAEAUCQ0VL+QkQwPAnINkyJCIAAMlhBACRk6FTUDgtlst18PfmdSMqh4i4
+          pGnVM6cZbCJ3DlQ5uYn7JPm88W+Gh8tpsTXOs2bdpAJeqW5EfP0X80L6LUhn9oJo
+          IVhH6Qoupfd5iaA/CeHsL5t9K/1Q0HhCKb2nSiTbU36Quy5Idv2VjtvZl1GzcGCs
+          s2XQgJlg5FgyTG3qn7QRcmFscGhAZXhhbXBsZS5jb22IrgQQAwIAIgUCQyLbcQkQ
+          wPAnINkyJCICGwMCFgICFQICCwICGQECBwEAALw7A/9jEfJMax396YdbP1uycRgy
+          0bPUq9uBBWY6JC6vCIe3jwwSO1VWD4hNJa1Nnkx41HtDTS9OC0+7Kfl/QPSMCj1k
+          DpMPCKpGZCIQAIX5gRrdYugo5AbJan4AFkLfI4i/04bp7fUBD9U5/L+8sjeRettW
+          SNlBdkEZG01MTKniZT6JZriNBEMd5hwCBACSmpGmRuChmcNeBP6n8fm3vaPTOCPB
+          cZEJ9EyxAW0DkKmfbg9T1/PwQjR1em3u2MHGfwKwLE0S/h4nW5UOhtupmiZSI5T2
+          /kS02wHyRZpiWp2ML4MumrR+EFOUbfLgtz7Df2T69HnzX0obf1FYo2RzVV7kgn5m
+          ReRlPN1bxZYyjwARAQABiJwEGAMCABAFAkMi23EJEMDwJyDZMiQiAAB+hgP7BK7o
+          Zp7K0Mi1rEx48lyQBSgecjVwVFhTP7zjaR24bhYZUj2UsDKsvKLTG0prv9F2SsIe
+          O/oh62HM5NJvrx8fsOAoClv1ZgPD5HQMCBgh3dQSZAys7kPV3C5voTFB9/4GOt2q
+          ERFwgZvb+mrf5GnB9VzoPAFwYpKWW2eD9anCyg4=
+        &lt;/ds:PGPKeyPacket&gt;
+      &lt;/ds:PGPData&gt;
+    &lt;/ds:KeyInfo&gt;
+    &lt;km:KeyUsage&gt;http://www.w3.org/2002/03/xkms#Signature&lt;/km:KeyUsage&gt;
+    &lt;km:UseKeyWith Application="urn:ietf:rfc:2440" Identifier="ralph@example.com" /&gt;
+    &lt;km:Status StatusValue="http://www.w3.org/2002/03/xkms#Invalid"&gt;
+      &lt;km:InvalidReason&gt;http://www.w3.org/2002/03/xkms#RevocationStatus&lt;/km:InvalidReason&gt;
+    &lt;/km:Status&gt;
+  &lt;/km:KeyBinding&gt;
+&lt;/km:RevokeResult&gt;
+
+</pre>
+</blockquote>
+</div>
+
+</div>
+
+
+<div class="div1">
+
+<h2><a name="S5"></a>5. XKMS and implications of the PGP Design</h2>
+
+<p>This section discusses some properties of the PGP design that has implications on its use with XKMS.
+We cover issues pertaining to trust model, registration of PGP Subkeys and PGP Version 4 Signature
+Subpackets.</p>
+
+<p>An interoperable solution to the problems described in this section
+is left open to future version of the XKMS Specification. Our
+intention is to describe the limitations we have found while using
+XKMS with PGP and give some ideas towards possible solutions.</p>
+
+<div class="div2">
+
+<h3><a name="S5_1"></a>5.1 Trust model</h3>
+
+<p>XKMS defines a <code>StatusType</code> schema type for the purpose
+of expressing a key's binding status and reasons for which a key has a
+particular status.  XKMS distinguishes between three values for
+binding status, namely:</p>
+
+<ul>
+<li><code>http://www.w3.org/2002/03/xkms#Valid</code></li>
+<li><code>http://www.w3.org/2002/03/xkms#Invalid</code></li>
+<li><code>http://www.w3.org/2002/03/xkms#Indeterminate</code></li>
+</ul>
+
+<p>Reason codes are defined for:</p>
+
+<ul>
+<li><code>http://www.w3.org/2002/03/xkms#IssuerTrust</code></li>
+<li><code>http://www.w3.org/2002/03/xkms#RevocationStatus</code></li>
+<li><code>http://www.w3.org/2002/03/xkms#ValidityInterval</code></li>
+<li><code>http://www.w3.org/2002/03/xkms#Signature</code></li>
+</ul>
+
+<p>Section 5.1.8 of the XKMS specification provides a table that shows how these values relate to a
+hierarchical trust model.  The following table illustrates the same relationships for PGP:</p>
+
+<div class="figure" id="Table-1">
+
+<table cellspacing="0" cellpadding="4" border="1">
+  <tbody>
+    <tr>
+      <th valign="top" rowspan="2" colspan="1">Reason 
+        <code>anyURI</code> Type (prefixed with
+        http://www.w3.org/2002/03/xkms#)</th>
+
+      <th valign="top" rowspan="2" colspan="1">Description</th>
+      <th valign="top" colspan="2" rowspan="1">PGP Equivalent</th>
+    </tr>
+    <tr>
+      <th valign="top" class="ID" rowspan="1" colspan="1">Valid</th>
+      <th valign="top" class="ID" rowspan="1" colspan="1">Invalid</th>
+    </tr>
+
+    <tr>
+      <td valign="top" align="left" rowspan="1" colspan="1">IssuerTrust</td>
+      <td valign="top" align="left" rowspan="1" colspan="1">The issuer of the information on which
+        the key binding is based is considered to be trustworthy by the XKMS
+        service</td>
+      <td valign="top" align="left" rowspan="1" colspan="1">See below</td>
+      <td valign="top" align="left" rowspan="1" colspan="1">See below</td>
+    </tr>
+    <tr>
+
+      <td valign="top" align="left" rowspan="1" colspan="1">RevocationStatus</td>
+      <td valign="top" align="left" rowspan="1" colspan="1">The XKMS service has affirmatively
+        verified the status of the key binding with an authoritative
+      source</td>
+      <td valign="top" align="left" rowspan="1" colspan="1">The key is not revoked</td>
+      <td valign="top" align="left" rowspan="1" colspan="1">The key is revoked</td>
+    </tr>
+    <tr>
+
+      <td valign="top" align="left" rowspan="1" colspan="1">ValidityInterval</td>
+      <td valign="top" align="left" rowspan="1" colspan="1">The requested time instant was within the validity interval of the key binding</td>
+      <td valign="top" align="left" rowspan="1" colspan="1">The key was valid at the
+        requested time instant</td>
+      <td valign="top" align="left" rowspan="1" colspan="1">The requested time instant was before or
+        after the key validity interval</td>
+    </tr>
+    <tr>
+      <td valign="top" align="left" rowspan="1" colspan="1">Signature</td>
+
+      <td valign="top" align="left" rowspan="1" colspan="1">Signature on signed data provided by the
+        client in the &lt;Keyinfo&gt; element was
+        successfully verified.</td>
+      <td valign="top" align="left" rowspan="1" colspan="1">Self Signature verified</td>
+      <td valign="top" align="left" rowspan="1" colspan="1">Self Signature verification failed</td>
+    </tr>
+  </tbody>
+</table>
+
+</div>
+
+
+<p>In the case of PGP, which uses a non-hierarchical model, the
+<code>http://www.w3.org/2002/03/xkms#IssuerTrust</code> reason code
+implies that the service has knowledge about a client's trust
+relationships. A service that does not have knowledge about a client's
+trust relationships SHOULD NOT give reason code
+<code>http://www.w3.org/2002/03/xkms#IssuerTrust</code> for status
+values <code>http://www.w3.org/2002/03/xkms#Valid</code>, or
+<code>http://www.w3.org/2002/03/xkms#Invalid</code>.  While XKMS does
+not directly support communication of this trust information from the
+client to the service, it could be achieved out of band or through an
+XKMS message extension. The design of such an XKMS message extension
+is beyond the scope of this note.</p>
+
+</div>
+
+<div class="div2">
+
+<h3><a name="S5_2"></a>5.2 Registration of PGP Subkeys</h3>
+
+<p>
+In PGP, it is not uncommon to bind a single user id to one master key
+and multiple subkeys.  The master key is typically a signature key
+while the subkeys can be either signature, encryption or, algorithm
+allowing, mixed purpose keys. However, as the XKMS schema allows only
+a single <code>&lt;xkms:PrototypeKeyBinding&gt;</code> element, XKMS is
+limited to registration of a single key pair per request.  It cannot
+therefore support the simultaneous registration of one master key and
+one or more subkeys.</p>
+
+<p>
+For both client and service generated key pairs, this could be
+mitigated through a service agreement or service policy that would
+specify the number of subkeys to generate along with their purpose. In
+the case of a service generated key pair, a masterkey-subkey(s)
+collection could be returned as encrypted data in an <code>&lt;xkms:PrivateKey&gt;</code>
+element.
+</p>
+
+</div>
+
+<div class="div2">
+
+<h3><a name="S5_3"></a>5.3 PGP Version 4 Signature Subpackets</h3>
+
+<p>PGP defines a Version 4 Signature Packet Format [<a href="#PGP">PGP</a>, Section 5.2.3. Version 4 Signature Packet Format]
+that provides for the inclusion of Signature Subpackets [<a href="#PGP">PGP</a>, Section 5.2.3.1. Signature Subpacket
+Specification].  A Signature Subpacket is intended to communicate
+additional information about a keyholder and her key pair and MAY be
+cryptographically bound to the keyholders key pair.  Additionally, a
+Signature Subpacket has a criticality indicator (bit 7 of the
+Signature Subpacket Type) which affects the PGP end entity software.
+The complete set of Signature Subpackets are:</p>
+
+<ul>
+<li>signature creation time (2)</li>
+<li>signature expiration time (3)</li>
+<li>exportable certification (4)</li>
+<li>trust signature (5)</li>
+<li>regular expression (6)</li>
+<li>revocable (7)</li>
+<li>key expiration time (9)</li>
+<li>placeholder for backward compatibility (10)</li>
+<li>preferred symmetric algorithms (11)</li>
+<li>revocation key (12)</li>
+<li>issuer key ID (16)</li>
+<li>notation data (20)</li>
+<li>preferred hash algorithms (21)</li>
+<li>preferred compression algorithms (22)</li>
+<li>key server preferences (23)</li>
+<li>preferred key server (24)</li>
+<li>primary user id (25)</li>
+<li>policy URL (26)</li>
+<li>key flags (27)</li>
+<li>signer's user id (28)</li>
+<li>reason for revocation (29)</li>
+<li>internal or user-defined (100 - 110)</li>
+</ul>
+
+<p>
+While the value of certain Signature Subpackets are implied
+(e.g. signature creation time), others are typically specified by the
+keyholder at key creation time. However, XKMS 2.0 does not provide
+enough standard elements and attributes that would let a user specify
+the values for the above subpackets. Support for this could be added
+through the definition of one or more XKMS message extensions. The
+values could also be inferred through a service agreement or a service
+policy.
+</p>
+
+<p>
+At a minimum, a PGP user should be able to affect the value and criticality
+indicator of the following
+Signature SubPackets:</p>
+
+<ul>
+<li>exportable certification (4)</li>
+<li>revocable (7)</li>
+<li>preferred symmetric algorithms (11)</li>
+<li>revocation key (12)</li>
+<li>preferred hash algorithms (21)</li>
+<li>preferred compression algorithms (22)</li>
+<li>key server preferences (23)</li>
+<li>preferred key server (24)</li>
+<li>primary user id (25)</li>
+<li>key flags (27)</li>
+<li>reason for revocation (29)</li>
+</ul>
+
+<p>Note that revocation reason is a feature that is not specific to
+PGP and should therefore be addressed in the more general XKMS
+context. We included it in the above list for completeness.</p>
+
+</div>
+
+</div>
+
+<div class="div1">
+
+<h2><a name="Ref"></a>6. References</h2>
+
+<dl>
+
+<dt class="label"><a name="PGP"></a>[PGP] </dt><dd>
+<a href="http://www.ietf.org/rfc/rfc2440.txt"><cite>OpenPGP Message Format</cite></a>, J. Callas, L. Donnerhacke, H. Finney, R. Thayer. IETF RFC, November 1998, <a href="http://www.ietf.org/rfc/rfc2440.txt">http://www.ietf.org/rfc/rfc2440.txt</a>.
+</dd>
+
+
+<dt class="label"><a name="XMLENC"></a>[XMLENC] </dt><dd>
+<a href="http://www.w3.org/TR/xmlenc-core/"><cite>XML Encryption
+Syntax and Processing</cite></a>, D. Eastlake, J. Reagle, T. Imamura,
+B. Dillaway, E. Simon, Editors. W3C Recommendation, 10 December 2002,
+<a href="http://www.w3.org/TR/xmlenc-core/">http://www.w3.org/TR/xmlenc-core/</a>.
+</dd>
+
+<dt class="label"><a name="XKMS"></a>[XKMS] </dt><dd>
+<a href="http://www.w3.org/TR/2005/REC-xkms2-20050628/"><cite>XML Key
+Management Specification (XKMS 2.0)</cite></a>, P. Hallam-Baker and
+S. Mysore, Editors. W3C Recommendation, 28 June 2005, <a href="http://www.w3.org/TR/2005/REC-xkms2-20050628/">http://www.w3.org/TR/2005/REC-xkms2-20050628/</a>.
+</dd>
+
+<dt class="label"><a name="XKMSCRIR"></a>[XKMSCRIR] </dt><dd>
+<a href="http://www.w3.org/2001/XKMS/Drafts/test-suite/CR-XKMS-Summary.html#Section_3_1"><cite>XKMS Candidate Recommendation Implementation Report</cite></a>, J. Kahan, 13 April 2005, 
+<a href="http://www.w3.org/2001/XKMS/Drafts/test-suite/CR-XKMS-Summary.html#Section_3_1">http://www.w3.org/2001/XKMS/Drafts/test-suite/CR-XKMS-Summary.html#Section_3_1</a>.
+</dd>
+
+<dt class="label"><a name="XMLSIG"></a>[XMLSIG] </dt><dd><a href="http://www.w3.org/TR/xmldsig-core/"><cite>XML-Signature Syntax and
+Processing</cite></a>, D. Eastlake, J. R., D. Solo, M. Bartel,
+J. Boyer , B. Fox , E. Simon. W3C Recommendation, 12 February
+2002, <a href="http://www.w3.org/TR/xmldsig-core/">http://www.w3.org/TR/xmldsig-core/</a>.
+</dd>
+
+</dl>
+</div>
+
+<div class="div1">
+
+<h2><a name="Ack"></a>7. Acknowledgments</h2>
+
+<p>The authors wish to thank Stephen Farrell (Trinity College Dublin),
+Shivaram Mysore (Microsoft), and Thomas Roessler (W3C) for their useful
+feedback on early drafts of this note.
+</p>
+</div>
+
+</div>
+
+<div class="back">
+
+</div>
+</body></html>

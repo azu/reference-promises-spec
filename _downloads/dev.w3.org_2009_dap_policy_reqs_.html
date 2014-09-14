@@ -1,0 +1,511 @@
+<!-- http://dev.w3.org/2009/dap/policy-reqs/ -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Device API Access Control Use Cases and Requirements</title>
+    <meta http-equiv='Content-Type' content='text/html;charset=utf-8' />
+<style type="text/css">
+.story {
+    margin: 1em 0em 0em;
+    padding:    1em;
+    border: 2px solid #cfd9f6;
+    background: #e2f0ff;
+}
+
+.story::before {
+    content:    "Story";
+    display:    block;
+    width:  150px;
+    margin: -1.5em 0 0.5em 0;
+    font-weight:    bold;
+    border: 1px solid #cfd9f6;
+    background: #fff;
+    padding:    3px 1em;
+}
+</style>
+        <script src='http://dev.w3.org/2009/dap/ReSpec.js/js/respec.js' class='remove'></script>
+<!--     <script src='../ReSpec.js/js/respec.js' class='remove'></script> -->
+    <script class='remove'>
+      var respecConfig = {
+      specStatus: "WG-NOTE",
+      shortName:            "dap-policy-reqs",
+      editors: [
+        {
+          name:       "Laura Arribas",
+          company:    "Vodafone",
+          companyURL: "http://vodafone.com/" },
+        {
+          name:       "Frederick Hirsch",
+          company:    "Nokia",
+          companyURL: "http://www.nokia.com/" },
+        {
+           name: "Dominique Hazaël-Massieux", 
+           company: "W3C"
+        }
+      ],
+      publishDate:  "2011-03-17",
+      previousPublishDate:  "2011-01-18",
+      previousMaturity: "NOTE",
+      edDraftURI:           "http://dev.w3.org/2009/dap/policy-reqs/",
+      // lcEnd: "2009-08-05",
+      noRecTrack:   true, 
+      };
+    </script>
+    <script src='../common/config.js' class='remove'></script>
+  </head>
+  <body>
+    <section id='abstract'>
+      With the emergence of numerous new APIs in Web browsers and
+      runtime engines, the need to control which Web sites and
+      applications can make use of these APIs increases. This document
+      describes use cases and requirements for controlling access to
+      these APIs.    
+    </section> <!-- abstract -->
+
+    <section id='sotd'>
+      This document is not normative.  The Working Group expects to evolve
+      this document further and will eventually publish a stable
+      version as a Working Group Note. This version is an update of
+      the previous version of his note, modified to present the material
+      using  "user
+      stories" and associating requirements with those use cases. This
+      version also adds informative references and is revised to not
+      assume a specific mechanism to meet the requirements.
+    </section>
+
+    <section id='introduction' class='informative'>
+      <h2>Introduction</h2>
+      <p>
+        Various groups have been defining APIs designed to enable
+        Web sites and applications access to device resources, including geolocation [[GEOLOCATION-API]], personal information such as calendar and contacts [[CONTACTS-API]],
+        system information [[SYSINFOAPI]] such as network information, etc. Much of this information is sensitive and can be misused.</p>
+
+      <p>This document outlines "user story" use cases 
+      for security and access 
+      control for device APIs and derives requirements from these
+      cases. Although security and access control is related to
+      privacy, this document does not discuss privacy specifically as
+      there is another document specific to privacy [[DAP-PRIVACY-REQS]].
+      </p> 
+
+      <section id="defs">
+	<h2>Definition</h2>
+        <p>A <dfn>non-safe API</dfn> is an API that shares sensitive
+        user information or makes a commitment for the user to a
+        third-party (e.g. paying a fee).</p> 
+      </section>
+    </section>  <!-- introduction -->
+    <section id="interactions" class="informative">
+      <h2>Access Control Interactions</h2>
+      <p>Three main types of interactions have been identified for
+      controlling access to non-safe APIS:</p> 
+      <ul>
+        <li>based on granular user consent, for every first call of a sensitive API,</li>
+        <li>based on user consent for a set of APIs at once, packaged into a single interaction (e.g. at “installation” time),</li>
+        <li>or delegated by the user to a third party that sets new default interactions for APIs based on the requesting script.</li>
+      </ul>
+
+      <p>These interactions can be relevant both for a Web site accessed through a browser, or an installable Web application (e.g. a widget [[WIDGETS]]) accessed through a dedicated runtime engine.</p>
+
+    <section id='userconsent'>
+      <h3>Granular User Consent</h3>
+      <section id='userconsent-story-1'>
+        <h4>User Story: Unknown restaurant Web site</h4>
+	<div class="story">
+	<p>Alice uses her browser to get more information on a restaurant her friends have told her about. The Web site of the restaurant offers to give her indications on how to come from where she stands to their location, as well as to send automatically a SMS to reserve a table for lunch.</p>
+	<p>Alice follows a link to the direction page, and her browser
+	asks her unintrusively to confirm she wants to share her current
+	location with the map service provider embedded in the Web
+	restaurant site. After considering issues related to sharing this
+	information, she decides to share her current location. Upon consenting to sharing her location through the browser, she gets detailed directions to the restaurant.</p>
+	<p>Her browser then displays a non-modal prompt asking if she wants to send an SMS to make a reservation at the restaurant. She is not interested and simply ignores the prompt.</p>
+	</div>
+	<h4>Analysis</h4>
+
+	<p>Access to non-safe APIs from web pages or applications with
+	which the user has no pre-established relationship must only be
+	granted after explicit user consent, and that consent needs to be
+	granted for each non-safe API separately. Note that it isn't
+	obvious whether this consent is truly informed, or that the user
+	understands all the issues involved. This is discussed further
+	elsewhere [[DAP-PRIVACY-REQS]].</p> 
+
+	<p>The user may need to gather more information before making a decision on granting access to a given API: e.g. reading the site privacy policy or getting more information on what the collected data will be used for. To make it possible for the user to make an informed decision, the user consent interactions need to be non-blocking.</p>
+
+	</section>
+      <section id="userconsent-story-2">
+	<h4>User Story: Widget of unknown source using the camera</h4>
+	<div class="story">
+	<p>Bob receives from Alice a mobile widget that she says is used to create a crowd-sourced view of their city. While Bob trusts Alice, he is not sure how trustable that particular widget is.</p>
+	<p>He runs it in his widget runtime engine in untrusted mode; the widget is only able to take pictures when Bob explicitly press the shutter button of the phone; the geolocation of the pictures is only sent along with the pictures when Bob agrees to it.</p>
+	</div>
+	<h4>Analysis</h4>
+
+        <p>
+          An un-trusted widget (e.g.. unsigned widget or widget signed by an
+          unknown or untrusted authority) should be treated in the
+          same manner as an unknown web site, since the risks
+          are the same.</p>
+
+
+	<p>To make it easier for the user to understand what he is
+    granting access to, the access control interactions need to be as
+    integrated as possible as a part of the task specific workflow,
+    thus not necessarily appearing as a permission dialog. Relying on
+    the user pressing the shutter button to take a picture is more
+    effective than asking him if he agrees with sharing a picture.</p> 
+
+        <p>Prompts should be eliminated whenever possible. Many prompts do not provide  any meaningful security because:</p> 
+          <ul>
+            <li>they don't provide the user with the information
+            needed to make an 
+            informed security decision;</li>
+            <li>with modal prompts, the user is inclined simply to
+            dismiss the prompt and permit the operation 
+            just because that's what's needed for the application to
+            continue.</li>
+          </ul>
+
+        <p>
+          If prompts are shown and dismissed as a matter of routine,
+          then the user is 
+          less inclined to take any security decision seriously, which further
+          undermines the effectiveness of a user-driven access control system.
+          </p>
+
+</section>
+      <section id='userconsent-rqmts'>
+        <h4>Requirements</h4>
+          <ul>
+	    <li>Non-safe APIs MUST NOT require the usage of blocking user consent interactions (e.g. modal dialogs) while the application is running (although modal dialogs may be required for security prompts provided during application
+            installation or invocation).</li>
+	    <li>As a result, non-safe APIs MUST use asynchronous calls for operations that require user consent.</li>
+	    <li>Non-safe APIs SHOULD permit to get user consent in interactions that are well-integrated in the workflow of the underlying operation.</li>
+	    <li>In an untrusted context, user consent for a given non-safe
+	    API SHOULD NOT imply consent for another non-safe API.</li> 
+	    <li>when a non-safe API expose multiple non-safe operations, the API MUST describe the granularity of user consent if that granularity is not part of the user workflow; the parameters to which this granularity can be applied include:<ul>
+		<li>separate consent for each operation, or grouped for the whole API,</li>
+		<li>persistent for each call in a given session,</li>
+		<li>persistent for each call over a period of time spanning
+		multiple sessions.</li>
+		</ul>
+	      </li>
+	    </ul>
+      </section>
+    </section> <!-- userconsent -->
+    <section id='grouped-permissions'>
+      <h3>Grouped permissions</h3>
+      <section id='grouped-permissions-story1'>
+        <h4>User Story: Web application for email</h4>
+	<div class="story">
+	<p>Alice uses a Web application as her email client, and considers it trustable.</p>
+	<p>Her service provider offers to use a set of advanced features that requires access to off-line storage, addressbook integration, access to a dedicated storage space on her device, and interactions through the microphone.</p>
+	<p>Rather than being prompted every so often to grant permission to use these features, Alice is offered to approve all these accesses in a batch, as part of an installation procedure that identifies these extra-permissions.</p>
+	<p>Alice follows that procedure and is no longer prompted for these permissions for this application; she still gets prompted when her email client asks for her geolocation since that permission was not part of the batch approval.</p>
+	</div>
+
+	<h4>Analysis</h4>
+
+	<p>Once a user has established a certain level of trust with a service provider, she is more likely to want to approve permissions as a batch rather than having to respond to prompt every so often that might slow down her work, or might make her miss an additional feature of the application.</p>
+
+	<p>Similarly, the user can be offered to validate a set of permissions in a batch when installing a widget, where the permissions can be identified through the <code>feature</code> element [[WIDGETS]].</p>
+
+	<p>To that end, the various permissions that are bound to APIs need to identified.</p>
+
+	<p>To establish trust, a few basic parameters may be used, among which:</p>
+	<ul>
+	  <li><dfn>identity</dfn> — ensuring that the privileges are granted to the application from the trusted provider itself, to avoid phishing attacks;</li>
+	  <li><dfn>reputation</dfn> — if others have reviewed positively an application, the user is more likely to trust it; reputation is itself linked to identity, either as a way to identify the source of the recommandation (e.g. approval from a network operator), or as a way to identify the aggregator of recommendations;</li>
+	  <li><dfn>context</dfn> — a user is more likely to trust an application that requests permissions that make sense to her use of the said application.</li>
+	</ul>
+
+        <p>
+          Identity and reputation may be established in different ways; one of the most common being
+          through a validated signature on the widget or application package,
+          with a corresponding verification of the trust chain to a trusted root.
+        </p>
+
+
+      </section>
+      <section id='grouped-permissions-rqmts'>
+        <h4>Requirements</h4>
+	<ul>
+	  <li>Non-safe APIs SHOULD define an identifier for the various permissions they require.</li>
+	  <li>The security framework SHOULD refer to these API permissions identifiers to allow grouping them in a single user consent operation.</li>
+          <li>when identity is checked through the use of signature in
+          conjunction with PKI mechanisms, the security framework MUST
+          require the verification of the signature, and MUST require
+          validation of the certificate chain to a known trust
+          root. Certificate revocation SHOULD be considered.</li> 
+
+	</ul>
+      </section>
+    </section>
+    <section id='delegated-authority-case'>
+      <h3>Delegated Authority</h3>
+        <p>Delegated authority use case refers to the use of
+        explicit and interoperable policy definitions to control the use of
+        an extensive set of APIs, safe and unsafe.  Such rules may be used
+        in the context of a trusted widget or of well-identified web site, with clients that  support it.</p>
+      <section id='delegated-authority-story1'>
+        <h4>User Story: Enterprise-level ban on geolocation</h4>
+	<div class="story">
+	  <p>Bob manages the fleet of phones and laptops for ACMEcash, a cash transportation company: all the drivers have been equipped with a phone and a laptop they can use to interact with their intranet.</p>
+	  <p>To keep the whereabouts of their employees as hidden as possible for security reasons, Bob wants to restrict all the devices distributed to employees so that they cannot use the geolocation API, except when connecting to the company intranet.</p>
+	  <p>Bob creates a policy matching these rules, and deploys it to the phones and laptops.</p>
+	  <p>When ACMEcash gets renamed ACMEbucks, Bob updates this policy to reflect the new domain name of the intranet.</p>
+
+	</div>
+	<h4>Analysis</h4>
+	<p>In many professional contexts, allowing access to private or sensors data available through connected devices creates an unacceptable risk.</p>
+	<p>In these contexts, being able to enforce and update a policy that determines who can make use of these data across devices and platforms can be a decisive aspect of the adoption of a given technology.</p>
+	<p>To that end, it should be possible to describe
+	platform-independent and declarative policies that determine which
+	APIs can be used from what Web site or application.</p> 
+      <section id='delgated-authority-story1-rqmts'>
+        <h4>Requirements</h4>
+	<ul>
+      <li>The access control policy language MUST be device-independent.</li>
+      <li>The access control policy language MUST be declarative.</li>
+    </ul>
+      </section>
+    </section>
+    <section id='delegated-authority-story2'>
+        <h4>User Story: Third-party protection against malware</h4>
+	<div class="story">
+	  <p>Alice keeps a lot of her private and sensitive data on her phone. Having heard that her friend Charlie has had troubles with a phishing attempt recently, she would like to use a service to increase her safety.</p>
+	  <p>She subscribes to a service operated by ACMEsafe: they define and maintain a set of rules that block access to certain APIs from unknown sites, facilitate access to sites that she has identified as trustable and that can be reliably identified.</p>
+	  <p>Both Alice’s browser and widget runtime engine follow the rules expressed in the policy defined by ACMEsafe; these rules are updated on a regular basis on the device, after having verified their proper origin by checking their digital signature.</p>
+	</div>
+	<h4>Analysis</h4>
+        <p>The same way anti-virus and malware tools allow users to reduce their risk of being exposed to troubles on their computers, some users may want to choose to delegate authority for access control policy to an external service provider.</p>
+        <p>This external service provider determines the
+        trustworthiness of 
+        specific applications, and specifies an access control
+        policy that embodies 
+        that advice: blanket rejection for known malware sites, user consent requested for others, and transparent approval for sites that the user has configured as trusted.</p>
+	<p>The policy defined by the external
+        authority may be updated 
+        regularly in 
+        response to new information on known threats.
+        </p>
+
+	<p>This policy needs to be integrity-protected during various points in its life-cycle.</p>
+      <section id='delgated-authority-story2-rqmts'>
+        <h4>Requirements</h4>
+	<ul>
+      <li>Integrity protection and source authentication of the access
+      control policy MUST be 
+      supported, not only in transit but also storage.</li>
+    </ul>
+      </section>
+
+      </section>
+      <section id="delegated-authority-story2a">
+	<h4>User Story: Transfering remembered choices to another device</h4>
+	<div class="story">
+        <p>Dave has been using advanced features on the Web from his
+        phone for quite some time, and has thus accepted and rejected
+        permissions from a large number of Web sites on his
+        device.</p> 
+	<p>But Dave is now looking to the brand new phone released by
+	ACMEdev, and would like to migrate his settings to that new phone,
+	which also uses a different browser.</p> 
+	<p>Dave’s operator offers him to transfer seamlessly these
+	settings from one phone to other, and informs him that they can
+	also be used on his other connected devices.</p> 
+	</div>
+
+	<h4>Analysis</h4>
+        <p>
+Remembering earlier decisions and
+maintaining these choices when changing devices either across vendors or
+device versions has value to the user. This may also be the case when
+wishing to have the same choices on multple devices. It should be
+possible to transfer or share a 
+representation of user choices across devices at any time.
+        </p>
+      <section id='delgated-authority-story3-rqmts'>
+        <h4>Requirements</h4>
+	<ul>
+      <li>Access control policy MUST be able to record user decisions
+        regarding policy configuration at an appropriate level of
+        granularity.</li> 
+      <li>Access control policy MUST be portable across devices and
+        not bound to specific devices.</li>
+    </ul>
+      </section>
+
+      </section>
+      <section id='delegated-authority-story3'>
+        <h4>User Story: Operator-enforced usage limitations</h4>
+	<div class="story">
+	  <p>Dave has found a nice-looking widget for managing SMS and MMS messages, but is not sure if it is safe to install it.</p>
+	  <p>He contacts his operator ACMEcom; they indicate that on their devices, only widgets that have been verified by them will be able to send SMS.</p>
+	  <p>Dave checks the widget, sees that the only special permission it requires is access to messaging features, and feels confident that he can now install it.</p>
+	</div>
+	<h4>Analysis</h4>
+        <p>An initial  access control  configuration may be
+              provided by an external 
+              authority, together with any other associated device
+              configuration (such as 
+              root certificates). The configured  policy may
+              determine access control policy 
+              without reference to the user, or may refer certain
+              decisions to the user.</p>
+        <p>
+          In determining the policy, the policy authority has the
+          opportunity to define 
+          a policy that supports a specific objective - such as to
+          limit access to APIs 
+          to only those web applications that are themselves
+          distributed or verified by the policy 
+          authority (e.g. to control its exposure to the financial
+          risk of abuse of device 
+          APIs).
+        </p>
+
+      <section id='delegated-authority-case-rqmts'>
+        <h4>Requirements</h4>
+          <ul>
+            <li>It SHOULD be possible to update portions of policy independently.</li>
+            <li>Access control policies MAY be associated with
+            different authorities, including the user.</li> 
+          </ul>
+        <p class="note">The management of security policies and revocation mechanisms are out of scope of the Device APIs and Policy Working Group charter.</p>
+      </section>
+      </section>
+    </section>
+    </section>
+      <section id="threats" class='appendix'>
+        <h3>Security and Privacy Threats</h3>
+        <p>
+          The landscape that is being created 
+          is the enablement of
+          cross-platform, cross-device, easy to develop, highly functional
+          applications based on browser technology. Experience with
+          security attacks suggests that the increase of scope and
+          power of the Device APIs raises the potential for attacks of
+          increasing significance. This section outlines some known threats.
+        </p>
+        <p>
+          Up until now no major malware incident
+          has affected the mobile industry, but risks increase as
+          adoption and convergence increases. There have been attempts: the
+          MMS-spreading Commwarrior virus is probably the most infamous, along
+          with the Spyware tool, Flexispy. An additional factor in
+          avoiding mobile security issues to date has been the fact that
+          mobile platforms have been too fragmented and complex
+          to provide an attractive target. Existing modus
+          operandi from technology-related attacks can provide indicators
+          as to the types of attack and abuse that can be expected on
+          widgets and web applications as device APIs are opened up
+          and the size of the mobile market increases.
+        </p>
+        <section id="premium-rate-abuse">
+          <h2>Premium Rate Abuse</h2>
+          <p>A widget that seems benign but is actually spewing out
+          SMSs to premium rate numbers without the user’s
+          knowledge. This could be modified from an original safe
+          widget such as a game. For the malware author, the key
+          piece to solve is to dupe the user into thinking that the
+          SMS capability is something that is part of the original
+          application. Examples of this have been seen in the past,
+          created from games and this model could be used for
+          ‘dialers’ too (which plagued the desktop world in the
+          days of dial-up networking). There have been recent
+          warnings about this kind of abuse from security firms. 
+          </p>
+        </section> <!-- premium rate Abuse -->
+        <section id="privacy-breach">
+          <h3>Privacy Breach</h3>
+          <p>An application that gains access to locations, contacts
+          and gallery, silently uploading the data in the background
+          to a site owned by the attacker. This is something that
+          has been a clear goal for attackers already. There have
+          been numerous high-profile examples in the past in the
+          mobile world. Celebrities such as Paris Hilton, Miley
+          Cyrus and Lindsay Lohan have all had private pictures,
+          phone numbers and voicemails stolen from devices or
+          networks in clear breach of their privacy. There has been
+          embarrassment for teachers who had their pictures and
+          videos copied by the children in their class and spread
+          around school. The most high-profile case in the UK of a
+          mobile related privacy breach was that of the News of the
+          World's use of voicemail hacking to gain access to private
+          information about Royalty. The Royal editor, Clive Goodman
+          was jailed for four months and the editor, Andy Coulson
+          resigned over this blatant privacy breach. Given the
+          appetite for breaching privacy, users need to be safe in
+          the knowledge that their personal data will not leak in
+          any way. 
+          </p>
+<p>
+Another example is turning on the camera or audio remotely to obtain
+audio, video or photo information without permission.
+</p>
+        </section> <!-- privacy-breach -->
+        <section id="integrity-breach">
+          <h3>Integrity Breach</h3>
+          <p>A widget that replaces the voicemail number with a
+          premium rate number instead? There are number of reasons
+          why an attacker would want to breach the integrity of
+          the device. Simply changing the telephone number of the
+          voicemail that is stored on the device could be enough
+          to make an attacker a lot of money. Users usually have a
+          shortcut key to their voicemail and may not notice for a
+          long time that anything is wrong. A more sinister use
+          could be to plant evidence on a device. Pictures, files
+          and even criminal contacts could potentially be
+          anonymously planted all without the user's consent or
+          knowledge. Proving innocence could suddenly become very
+          difficult. 
+          There are also a number of reasons why somebody would want to steal
+          data. The contents of corporate e-mails would be very
+          interesting to a competitor, as would sabotaging data
+          stored in spreadsheets and presentations on the target
+          phone. 
+          </p>
+        </section> <!-- integrity-breach -->
+        <section id="phishing">
+          <h3>Phishing</h3>
+          <p>
+            Widgets contain web content making it is easy to duplicate
+            and masquerade as something legitimate… perhaps a bank? 
+          </p>
+          <p> 
+            In January 2010, Google removed a number of applications
+            from the Android Market which were supposed to be banking
+            applications for a number of different banks worldwide. It
+            is unclear whether these applications were intentional
+            phishing applications. The removal was based on a breach
+            of terms and conditions surrounding copyright. The episode
+            however highlighted the phishing potential. Widgets
+            contain web content, therefore it is very easy to
+            duplicate the look and feel of something that  the user
+            trusts and proceed to abuse that trust either by stealing
+            credentials or by manipulating money transfers. 
+          </p>
+          <p>
+            These are of course just examples to consider in relation to how we
+            would manage the policies for device APIs and are of course not
+            exhaustive. Alongside the device-API specific examples
+            above, we still 
+             need to consider traditional web threats which pose a
+            significant risk 
+and lots of other types of attack which should be considered in a 
+ formal threat model. 
+          </p>
+        </section> <!-- phishing -->
+      </section> <!-- threats -->
+
+      <section class='appendix'>
+        <h2>Acknowledgements</h2>
+        <p>
+          The editors would like to extend special thanks to Nokia, OMTP
+          BONDI, and PhoneGap for providing
+          the foundation of the working group's requirements discussion.
+        </p>
+      </section>
+    </body>
+  </html>

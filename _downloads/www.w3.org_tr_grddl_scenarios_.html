@@ -1,0 +1,996 @@
+<!-- http://www.w3.org/TR/grddl-scenarios/ -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head profile="http://www.w3.org/2003/g/data-view">
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <title>GRDDL Use Cases: Scenarios of extracting RDF data from XML documents</title>
+  <link rel="stylesheet" type="text/css" href="http://www.w3.org/StyleSheets/TR/W3C-WG-NOTE" />
+  <link rel="transformation" href="http://www.w3.org/2001/10/trdoc2rdf" />
+</head>
+
+<body>
+
+<div class="head">
+
+<a href="http://www.w3.org/"><img height="48" width="72" alt="W3C" src="http://www.w3.org/Icons/w3c_home"/></a>
+<h1 style="clear:both" id="title">GRDDL Use Cases: Scenarios of extracting RDF data from XML documents</h1>
+<h2 id="W3C-doctype">W3C Working Group Note 6 April 2007</h2>
+<dl>
+  <dt>This Version:</dt>
+  <dd><a href="http://www.w3.org/TR/2007/NOTE-grddl-scenarios-20070406/" shape="rect">http://www.w3.org/TR/2007/NOTE-grddl-scenarios-20070406/</a></dd>
+  <dt>Latest Version:</dt>
+  <dd><a href="http://www.w3.org/TR/grddl-scenarios/" shape="rect">http://www.w3.org/TR/grddl-scenarios/</a></dd>
+  <dt>Previous Version:</dt>
+  <dd><a href="http://www.w3.org/TR/2006/WD-grddl-scenarios-20061002/">http://www.w3.org/TR/2006/WD-grddl-scenarios-20061002/</a></dd>
+  <dt>Editors:</dt>
+    <dd><a href="http://www-sop.inria.fr/acacia/personnel/Fabien.Gandon/" shape="rect">Fabien Gandon</a>, 
+    	<a href="http://www.inria.fr/index.en.html" shape="rect"><acronym title="Institut National de Recherche en Informatique et Automatique">INRIA</acronym></a></dd>
+  <dt>Authors and Contributors:</dt>
+    <dd>see <a href="#acks">Acknowledgments</a></dd>
+</dl>
+</div>
+
+<p class="copyright"><a
+href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a>
+&#169; 2007 <a href="http://www.w3.org/"><acronym
+title="World Wide Web Consortium">W3C</acronym></a><sup>&#174;</sup> (<a
+href="http://www.csail.mit.edu/"><acronym
+title="Massachusetts Institute of Technology">MIT</acronym></a>, <a
+href="http://www.ercim.org/"><acronym
+title="European Research Consortium for Informatics and Mathematics">ERCIM</acronym></a>,
+<a href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C <a
+href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>,
+<a
+href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a>
+and <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document
+use</a> rules apply.</p>
+
+<hr /> 
+
+<h2 class="notoc" id="abstract">Abstract</h2>
+
+<p>GRDDL is a mechanism for <b>G</b>leaning <b>R</b>esource
+<b>D</b>escriptions from <b>D</b>ialects of <b>L</b>anguages. The
+GRDDL specification introduces markup for declaring that an XML
+document includes gleanable data and for linking to an algorithm, typically
+represented in XSLT, for gleaning the RDF data from the document.</p>
+
+<p>The markup includes a namespace-qualified attribute for use
+in general-purpose XML documents and a profile-qualified
+link relationship for use in valid XHTML documents. The GRDDL
+mechanism also allows an XML namespace document
+(or XHTML profile document) to declare that every document associated
+with that namespace (or profile) includes gleanable data and for
+linking to an algorithm for gleaning the data.</p>
+
+<p>A corresponding <a href="#GRDDL-Draft">GRDDL specification</a>
+provides complete technical details.  A <a 
+href="http://www.w3.org/TR/grddl-primer/">GRDDL Primer</a> demonstrates the
+mechanism on XHTML documents which include widely-deployed dialects,
+more recently known as microformats.
+</p>
+
+
+<!-- ____________________________________________ STATUS _________________________________________________ -->
+<div>
+<h2 id="Status">Status of this Document</h2>
+
+<p><em>This section describes the status of this document at the time
+of its publication. Other documents may supersede this document. A
+list of current W3C publications and the latest revision of this
+technical report can be found in the <a href="http://www.w3.org/TR/"
+shape="rect">W3C technical reports index</a> at
+http://www.w3.org/TR/.</em></p>
+
+<p>
+This document is a Working Group Note, developed by the <a
+href="http://www.w3.org/2001/sw/grddl-wg/">GRDDL Working Group</a>.
+</p>
+
+<p>As of the publication of this Working Group Note the <a
+href="http://www.w3.org/2001/sw/grddl-wg/">GRDDL Working Group</a> has completed work on
+this document. Changes from the previous Working Draft are indicated in
+a <a href="#changes">log of changes</a>. Comments on this document may be sent to
+<a href="mailto:public-grddl-comments@w3.org">public-grddl-comments@w3.org</a>
+(with <a href="http://lists.w3.org/Archives/Public/public-grddl-comments/">public archive</a>).
+Further discussion on this material may be sent to the Semantic Web Interest Group mailing list,
+<a href="mailto:semantic-web@w3.org">semantic-web@w3.org</a>
+(also with <a href="http://lists.w3.org/Archives/Public/semantic-web/">public archive</a>).
+</p>
+
+
+<p>Publication as a Working Group Note does not imply
+	endorsement by the W3C Membership. This is a draft document and may be
+	updated, replaced or obsoleted by other documents at any time.
+	It is inappropriate to cite this document as other than work in progress.</p>
+
+<p> This document was produced by a group operating under the
+	<a href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 W3C Patent Policy</a>.
+	W3C maintains a <a rel="disclosure" href="http://www.w3.org/2004/01/pp-impl/39407/status">
+		public list of any patent disclosures</a> made in connection with the deliverables of the group;
+		that page also includes instructions for disclosing a patent.
+		An individual who has actual knowledge of a patent which the individual believes contains
+		<a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential Claim(s)</a>
+		must disclose the information in accordance with
+		<a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section 6 of the W3C Patent Policy</a>.
+</p>
+
+</div> 
+
+<hr />
+
+
+
+
+<!-- ____________________________________________ CONTENTS _________________________________________________ -->
+<div>
+<h2 id="toc">Table of Contents</h2>
+<ul>
+  <li><a href="#introduction">Introduction.</a></li>
+  <li><a href="#scheduling_use_case">Use case #1 - Scheduling : Jane is trying to coordinate a meeting.</a></li>
+  <li><a href="#health_care_use_case">Use case #2 - Health Care: Kayode wants to query clinical data.</a></li>
+  <li><a href="#guitar_use_case">Use case #3 - Web Aggregation: Stephan wants a synthetic review before buying a guitar.</a></li>
+  <li><a href="#digital_libraries_use_case">Use case #4 - Querying sites and digital libraries: DC4Plus Corp. wants to automate the publication of its electronic documents.</a></li>
+  <li><a href="#wiki_use_case">Use case #5 - Wikis and e-learning: The Technical University of Marcilly decided to use wikis to foster knowledge exchanges between lecturers and students.</a></li>
+  <li><a href="#xform_use_case">Use case #6 - Web syndication : extracting form descriptions to push entries to Voltaire's blog.</a></li>
+  <li><a href="#xml_schema_use_case">Use case #7 - Validated Documents: the OAI would like to be able to specify document licenses in the schema they share.</a></li>
+  <li><a href="#html_tidy_use_case">Use case #8 - Pulling data from the Web: Steffen wants to build a directory of the people he works with.</a></li>
+  <li><a href="#header_use_case">Use case #9 - Pushing a transformation: Oceanic Consortium wants to provide transformations for their files without altering them or their schema.</a></li>
+  <li><a href="#glossary">Glossary</a></li>
+  <li><a href="#References">References</a></li>
+</ul>
+</div>
+
+
+<div class="Introduction">
+
+<h2 id="introduction">Introduction: Data and Documents</h2>
+
+<p>There are many dialects of XML in use by documents on the web.
+There are dialects of XHTML, XML and <a href="#RDF04">RDF</a> that are used to represent 
+everything from poetry to prose, purchase orders to invoices,
+spreadsheets to databases, schemas to scripts, and linked lists
+to ontologies. Some are formally defined and others allow
+for more freedom of interpretation.
+Recently, two progressive encoding techniques, RDFa and
+microformats, have emerged to overlay additional semantics onto
+valid XHTML documents. These techniques offer simple, open data
+formats built upon existing and widely adopted standards.</p>
+
+<p>While this breadth of expression is quite liberating, inspiring new 
+dialects to codify both common and customized meanings, it can prove to be 
+a barrier to understanding across different domains or fields. How, for
+example, does software discover the author of a poem, a
+spreadsheet, or an ontology? And how can software determine whether
+any two of these authors in fact refer to the same person?</p>
+
+<p>Any number of the XML documents on the web may contain data
+whose value would increase dramatically if they were accessible to systems
+which might not directly support such a wide variety of dialects but which
+do support RDF.</p>
+
+<p>The Resource Description Framework<a href="#RDFC04">[RDFC04]</a>
+provides a standard for making statements about resources in the form
+of a subject-predicate-object expression. One way to represent the
+fact "<cite>The Stand</cite>'s author is Stephen King" in RDF would be as a triple
+whose subject is "The Stand," whose predicate is "has the author," and
+whose object is "Stephen King". The predicate, "has the author"
+expresses a relationship between the subject (The Stand) and the object
+(Stephen King).  Using URIs to uniquely identify the book, the author and
+even the relationship would facilitate software design because not
+everyone knows Stephen King or even spells his name consistently.
+(see <a href="#RDF04">RDF primer</a>)
+</p>
+
+<p>RDF includes an <a href="http://www.w3.org/TR/rdf-concepts/#section-Graph-syntax">abstract syntax</a>
+	and an XML concrete syntax (RDF/XML). Software tools that use RDFS
+  can generally read data encoded as RDF/XML</p>
+
+<p>GRDDL is a mechanism for <b>G</b>leaning <b>R</b>esource
+<b>D</b>escriptions from <b>D</b>ialects of <b>L</b>anguages; that is,
+for extracting RDF data from XML documents by way of transformation
+algorithms, typically represented in XSLT.
+The results of the transformations will usually be RDF/XML documents,
+although other RDF syntaxes may be used. </p>
+
+<p>For example, Dublin Core metadata can be written in an HTML
+dialect<a href="#RFC2731">[RFC2731]</a> that has a clear
+correspondence to an encoding in RDF/XML<a
+href="#DCRDF">[DCRDF]</a>. The following HTML and RDF excerpts
+illustrate the correspondence.</p>
+<p><b>HTML :</b></p>
+<pre class="example">&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+   &lt;head&gt;
+     &lt;title&gt;Some Document&lt;/title&gt;
+     &lt;meta name="DC.Subject"
+        content="ADAM; Simple Search; Index+; prototype" /&gt;
+     ...
+   &lt;/head&gt;
+   ...
+&lt;/html&gt;</pre>
+
+<p><b>RDF/XML :</b></p>
+<pre class="example">&lt;rdf:RDF
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" &gt;
+   &lt;rdf:Description rdf:about=""&gt;
+     &lt;dc:subject&gt;ADAM; Simple Search; Index+; prototype&lt;/dc:subject&gt;
+   &lt;/rdf:Description&gt;
+&lt;/rdf:RDF&gt;</pre>
+
+<p>The transformation algorithm to convert between the different formats
+can be specified using XSLT, in this case <a
+href="http://www.w3.org/2000/06/dc-extract/dc-extract.xsl">dc-extract.xsl</a>.</p>
+
+<p>This document collects a number of motivating use cases together with their goals and
+requirements for extracting <a href="#RDFC04">RDF</a> data from XML documents.
+These use cases also illustrate how XML and XHTML documents can be decorated
+with <a href="#microformats">microformats</a>, <a href="#EmbeddedRDF">Embedded RDF</a>
+or <a href="#RDFa">RDFa</a> statements to support
+<a href="#GRDDLTransformation">GRDDL transformations</a> in charge of extracting
+ valuable data that can then be used to automate a variety of tasks.</p>
+
+<p>
+The companion <a href="#GRDDL-Draft">GRDDL Working Draft</a> is a concise technical specification of 
+the GRDDL
+mechanism and its XML syntax. It specifies the GRDDL syntax to use in
+valid XHTML and well-formed XML documents, as well as how to encode
+GRDDL into namespaces and HTML profiles.
+</p>
+<p>
+The companion document, the <a href="#GRDDL-Primer-Draft">GRDDL Primer Working Draft</a>, is a progressive
+tutorial on the GRDDL mechanism with illustrated examples taken from the
+GRDDL Use Cases Working Draft.
+</p>
+
+<p>The seven use cases detailed below could be summarized as:</p>
+<ul>
+  <li><a href="#scheduling_use_case">Use case #1</a>: Jane is trying to coordinate a meeting with friends.
+     She uses GRDDL to extract data from each of their calendar pages and combine it in a single model.
+     She then writes a query to filter the events down to those dates when all of them are in the same city.</li>
+  <li><a href="#health_care_use_case">Use case #2</a>: Kayode uses a single-purpose XML vocabulary as the
+     main representation format for a computer-based patient record. He uses GRDDL to be able to
+     query these records both in their XML vocabulary and as RDF, without managing a dual representation.</li>
+
+  <li><a href="#guitar_use_case">Use case #3</a>: Stephan wishes to buy a guitar and visits a site offering
+     a review service. He uses GRDDL to aggregate reviews and profiles of the reviewers in order to select
+     the reviews he can trust.</li>
+  <li><a href="#digital_libraries_use_case">Use case #4</a>: Adeline designs a system to allow her
+  	company to streamline the publication of Technical Reports. The system relies on shared templates
+    for publishing documents and a GRDDL transformation for building an up-to-date RDF index used
+    to create an authoritative repository.</li>
+  <li><a href="#wiki_use_case">Use case #5</a>: The Technical University of Marcilly decides to use a wiki
+     with metadata embedded in its pages to tag, structure, navigate and query the resources of the wiki.
+     GRDDL is used to extract these metadata as RDF to feed the different tools of the system.</li>
+  <li><a href="#xform_use_case">Use case #6</a>: Voltaire has setup a weblog engine that utilizes XForms for editing
+     entries. He also provides a GRDDL transformation that extracts an RDF description of the XForms that other
+     client applications can use to update existing entries using the identified service URIs, and perform other
+     such services.</li>
+  <li><a href="#xml_schema_use_case">Use case #7</a>: The Open Archives Initiative (OAI) publishes an XML schema
+     that universities can use to publish their archived documents. This schema also identifies a GRDDL transform to
+     apply to all its instance documents in order to extract their Creative Commons license.</li>
+  <li><a href="#html_tidy_use_case">Use case #8</a>: Whenever he gets in touch with someone, Steffen starts a simple
+  	 script that aims at gathering as much metadata about this person as possible. Because most of these web pages
+  	 are not even valid HTML, the script calls an HTML-tidying tool and if the tidying is complex some of
+  	 the metadata is likely to be no longer coherent.</li>
+  <li><a href="#header_use_case">Use case #9</a>: Oceanic wishes to also publish RDF descriptions of their parts
+  	reusing the AirPartML documents produced for an arrangement with a consortium of airlines. The AirPartML
+  	schemas are strict and therefore Oceanic cannot alter their XML documents to specify a transformation.
+  	Yet using the HTTP Headers, Oceanic can specify link and profiles for transformation when serving
+  	their AirPartML documents.</li>
+</ul>
+
+<p>This collection of use cases only considers cases where the initial sources are well-formed XML documents.
+Other kinds of sources are outside the scope of the GRDDL working group.</p>
+
+</div>
+
+
+
+
+<!-- ____________________________________________ USE CASE 1 _________________________________________________ -->
+
+<h2 style="clear: both;" id="scheduling_use_case">Use case <span id="use_case_1">#1</span> - Scheduling : Jane is
+trying to coordinate a meeting.</h2>
+<!-- proposed by ian.davis@talis.com see http://lists.w3.org/Archives/Public/public-grddl-wg/2006Aug/0015.html -->
+ 
+<p>Jane is trying to coordinate a meeting with her friends Robin, David and Kate.
+They each live in separate cities but often bump into each other at different
+conferences throughout the year. Jane wants to find a time when all of her friends are in the same city.</p>
+<ul>
+ <li>Robin publishes his schedule on his home page using the <a href="http://microformats.org/wiki/hcalendar">hCalendar</a>
+ <a href="#microformats">microformat</a>.</li>
+ <li>David publishes his in <a href="#EmbeddedRDF">Embedded RDF</a> using some RDF calendar properties.</li>
+ <li>Kate uses a blog engine that encodes her diary as <a href="#RDFa">RDFa</a>.</li>
+ <li>Jane uses an online calendaring service that publishes an <a href="http://purl.org/rss/1.0/spec">RSS 1.0</a>
+     feed of her schedule.</li>
+</ul>
+<p>Despite their different formats, the calendars of all four friends can be used as
+<a href="#SourceDocument">GRDDL source documents</a> and converted to RDF. Once
+expressed as RDF the data can be merged and queried using tools such
+as the <a href="#SPARQL">SPARQL</a> query language.</p>
+
+<p style="text-align: center;"><img src="Calendar.png" title="Using GRDDL for extracting calendar data" alt="Using GRDDL for extracting calendar data" /></p>
+
+<p>Jane uses a <a href="#GRDDLAwareAgent">GRDDL-aware agent</a> to automatically extract data from each page, load this data in an
+RDF store and combine it in a single model. She then writes a query to filter the events down to
+those dates when all four friends are in the same city.</p>
+<p>Jane is delighted to find that all four of them will be at conferences in LA at the beginning
+of September and she immediately starts looking for restaurants to book for their night out.</p>
+<p>Browsing the calendar of her friends, Jane noticed various conferences, talks, and
+other gatherings of social groups in her area. These groups publish their calendars in
+various HTML-based formats: microformats, eRDF, RDFa, or some home-grown ways of expressing
+calendar information.</p>
+<p>These calendars are source documents and thus Jane could easily add all of these
+events to her own calendar. However, Jane does not want to add all these events to her
+calendar. She wants to pick and choose which events to attend. She wants to browse this
+list of events and each time she finds an event she is interested in, she wants to be able
+to select it and copy-paste it to her calendar.</p>
+<p>To enable this copy-paste, Jane's browser includes a GRDDL-aware agent and supports a
+default RDF-in-HTML embedding scheme called RDFa. The GRDDL transformation specified in
+the page indicates how to transform this XHTML into XHTML+RDFa, while preserving the
+style and layout of the page.</p>
+<p style="text-align: center;"><img src="select_item.png" title="Using GRDDL for selecting an item" alt="Using GRDDL for selecting an item" /></p>
+<p>Thus, Jane's RDFa-aware browser can perform the transform even before rendering the XHTML.
+The rendered XHTML+RDFa provides a copy- paste functionality via, right-clicking on an
+event right in the rendered XHTML+RDFa.</p>
+
+<p><b>See also:</b> <a href="#microformats">microformat</a>, <a href="#EmbeddedRDF">Embedded RDF</a>,
+<a href="#RDFa">RDFa</a>, <a href="http://purl.org/rss/1.0/spec">RSS 1.0</a>.</p>
+
+
+
+
+<!-- _____________________________________________ USE CASE 2 _________________________________________________ -->
+
+<h2 id="health_care_use_case">Use case <span id="use_case_2">#2</span> - Health Care: Kayode wants to query clinical data.</h2>
+<!--Proposed by Chime after prompting from Harry for an XML use case-->
+
+<p><img src="clinical.png" style="float: right;"
+title="Using GRDDL for extracting clinical data" alt="Using GRDDL for extracting clinical data" />
+Kayode, a developer for a clinical research data management system,
+uses XML as the main representation format for their computer-based
+patient record. He currently edits the XML remotely via forms and submits
+the XML document to a unique URI for each such record over HTTP. But
+elsewhere Kayode has found RDF queries useful for investigative
+querying.</p>
+
+<p>He wants to use a content management system which
+includes a mechanism to automatically replicate an XML document into equivalent,
+named RDF graphs for persistence in synchrony with any changes to the document.</p>
+
+<p>The expense of dual representation as single-purpose XML vocabulary and RDF includes space and synchrony problems,
+but the primary value is being able to query both as XML and as RDF.
+The corresponding XML documents can be transformed into other non-RDF formats,
+evaluated by XPath and XPointer expressions, cross-linked by XLink or XInclude,
+and structurally validated by RELAX NG (or XML Schema). 
+With the RDF query facility Kayode can ask speculative questions using standard healthcare
+ontologies for patient records, such as the
+<a href="http://esw.w3.org/topic/HCLS/ACPPTaskForce?action=AttachFile&#38;do=get&#38;target=RIMV3OWL.zip">HL7 OWL ontology</a>.</p>
+
+<p>Kayode realizes a <a href="#GRDDL-Draft">GRDDL</a> approach can alleviate the expense of
+maintaining a dual representation by allowing
+a computer-based patient record or any XML-based collection of clinical
+research data to be queried semantically by associating a GRDDL profile to
+the specific XML vocabulary.</p>
+
+<p>Using RDF helps manage research projects assigned to residents. Kayode finds RDF
+especially helpful while trying to determine an initial search criteria for a patient population
+relevant to a particular study. Each study has a set of
+classifications specific to the study that they express in an ontology
+or using rules.</p>
+
+<p>Kayode designs a web-based user interface that works with a <a href="#GRDDLAwareAgent">GRDDL-aware agent</a>
+which picks computer-based patient records from a remote server. 
+Each is a <a href="#SourceDocument">source document</a> associated with transforms that extract
+clinical data as RDF expressed in a universally supported vocabulary for a
+computer-based patient record.</p>
+
+<p>The resident physicians then ask speculative questions of the resulting RDF
+graph or apply the study-specific rules on the resulting RDF to classify the
+data according to his domain of interest, such as specific diagnoses and
+pathological observations.</p>
+
+<p>For Kayode, having an RDF representation of the clinical data provides him
+advantages over just using a single-purpose XML vocabulary, in particular an additional level of
+interpretation and ability to integrate data from diverse sources. The inherent
+difficulties of using multiple XML vocabularies over domains such as clinical
+data make the mapping to a unified ontology even more valuable.</p>
+
+<p><b>See also:</b>
+<a href="http://www.opengalen.org/">GALEN / Open GALEN</a>,
+<a href="http://4suite.org">4Suite</a>,
+<a href="http://esw.w3.org/topic/HCLS/ACPPTaskForce?action=AttachFile&#38;do=get&#38;target=RIMV3OWL.zip">HCLSIG HL7 OWL Ontology</a></p>
+
+
+
+
+<!-- __________________________________________ USE CASE 3 _______________________________________________ -->
+
+
+<h2 style="clear: both;" id="guitar_use_case">Use case <span id="use_case_3">#3</span> - Web Aggregation: Stephan wants a synthetic review before buying a guitar.</h2>
+<!-- proposed by Danny Ayers <danny.ayers@gmail.com see http://lists.w3.org/Archives/Public/public-grddl-wg/2006Aug/0014.html -->
+
+<p><img src="review.png" style="float: left; margin: 12px;" title="Using GRDDL for hReview extraction" alt="Using GRDDL for hReview extraction" />
+Stephan wishes to buy a guitar, so he decides to check reviews.
+There are various special interest publications
+online which feature musical instrument reviews. There are also blogs which
+contain reviews by individuals. Among the reviewers there may be friends of
+Stephan, people whose opinion Stephan values (e.g. well-known musicians and
+people whose reviews Stephan has found useful in the past). There may also be
+reviews purposively planted by instrument manufacturers which offer very biased views.</p>
+
+<p>Stephan visits a site offering a review service and enters his preference
+for guitar reviews which gave a high rating for the instrument. This initial
+request is answered with a list of all the relevant review titles/summaries
+together with information about the reviewers.</p>
+
+<p>From this list Stephan chooses only the reviewers he trusts, and on
+submitting these preferences is finally presented with a set of full reviews
+which match his criteria.</p>
+
+<p>Reviews published using <a href="http://microformats.org/wiki/hreview">hReview</a>
+<a href="#microformats">microformats</a> can be discovered using
+existing search services. These <a href="#SourceDocument">source documents</a>
+can be consumed by a <a href="#GRDDLAwareAgent">GRDDL-aware agent</a> to extract
+the RDF which is then aggregated together in a store. Information about the reviewers can also be
+aggregated from various sources including hCard and XFN microformats and autodiscovered FOAF profiles possibly
+harvested through links in Stephan's own profile. The filtering may be achieved by running
+<a href="#SPARQL">SPARQL</a> queries against the aggregated data, presented to
+the user through regular HTML form interfaces.</p>
+
+<p><b>See also:</b> <a href="http://microformats.org/wiki/hreview">hReview</a>, 
+	<a href="http://microformats.org/wiki/hcard">hCard</a>,
+	<a href="http://gmpg.org/xfn/">XFN</a>.</p>
+
+
+
+
+<!-- _____________________________________________ USE CASE 4 __________________________________________ -->
+
+
+<h2 style="clear: both;" id="digital_libraries_use_case">Use case <span id="use_case_4">#4</span> -
+Querying sites and digital libraries: DC4Plus Corp. wants to automate the publication of its electronic
+documents.</h2>
+<!-- proposed by Dan Connely see http://lists.w3.org/Archives/Public/public-grddl-wg/2006Aug/0019.html -->
+
+<p>The Company DC4Plus uses its web site to publish its catalogue of products and
+services as well as a number of digital documents both on their public web site
+(white papers, user guides and technical manuals of products and brochures)
+and on their intranet (internal reports and administrative forms).
+Product after product, DC4Plus is growing a digital library as part of its web site.</p>
+<p>Adeline is an IT manager at DC4Plus. She is concerned by the tension between, on one
+hand, the natural heterogeneity and distribution of all these electronic documents and,
+on the other hand, the need to have an integrated and unified view of all these productions.
+She believes there is a need to automate the detection, indexing and search capabilities for these
+documents. Moreover several corporate documents follow a standard process before
+being published and there is a growing demand from users and managers to be able
+to automate this process and follow the status of each document.</p>
+
+<p><img src="w3clibrary.png" style="float: right;"
+title="Using GRDDL for digital libraries" alt="Using GRDDL for digital libraries" />
+Adeline first focuses on the Technical Reports published by the different divisions
+of DC4Plus. These reports are published following a well-defined process. She
+proposes a system that relies on Semantic Web technologies to allow her company
+to streamline the publication paper trail of Technical Reports, to maintain an
+RDF-formalized index of these specifications and to create a number of tools using
+this newly available data.</p>
+<p>Adeline's implementation of this vision at DC4Plus can be given in five steps:</p>
+<ol>
+ <li>XHTML templates including RDFa annotations are proposed for every type of document;
+     users edit these templates to create new documents without even noticing that some
+     parts are annotated in RDFa and thus they produce <a href="#SourceDocument">source documents</a>.</li>
+ <li>one or more <a href="#GRDDLTransformation">GRDDL transformations</a> are generated for these templates;
+     the embedded annotations are used to identify the elements to extract (title, author, editor,
+     status, related product, department) and make the extraction resistant to
+     changes of structure in the document.</li>
+ <li>the web site of DC4Plus is crawled on a regular basis and the <a href="#GRDDLTransformation">GRDDL transformations</a>
+     are used by a <a href="#GRDDLAwareAgent">GRDDL-aware agent</a> to feed an RDF store containing all the annotations
+     of the documents.</li>
+ <li>several new pages are added to the site to generate automatic indexes from the RDF
+     store showing different views of the documents (a catalogue in alphabetic order,
+     a list of documents by status, a list of publications of a given department)</li>
+ <li>more complex tools are developed to assist both internal processes (document
+     workflow monitoring tools, activity reporting tools, document review management
+     system) and external processes (a SPARQL web service for partners to query the
+     catalogue, an RSS feed to notify new publications)</li>
+</ol>
+<p>This system relies on shared templates for publishing documents and
+including RDFa annotations to mark important data. A <a href="#GRDDLAwareAgent">GRDDL-aware agent</a>
+extracts this metadata as RDF. By crawling the published
+reports and applying the associated <a href="#GRDDLTransformation">GRDDL transformations</a>
+to them, a complete and up-to-date RDF index is built from resources distributed
+over the organization's website. This RDF index is then used to create a central
+yet flexible authoritative repository.</p>
+<p>Adeline believes that this scenario can be generalized to any organization
+interested in maintaining a portal to a digital library with customized indexes,
+dedicated search forms, navigation widgets. In particular she appreciates that
+in such an architecture the simple fact that the XHTML documents put online
+following official templates allow <a href="#GRDDLAwareAgent">GRDDL-aware agents</a> to extract
+corresponding RDF annotations that can then be used to generate portals, feed
+workflow engines and run queries directly against the site.</p>
+
+
+<p><b>See also:</b> <a href="http://www.w3.org/2002/01/tr-automation/">Automating the publication of Technical Reports</a></p>
+
+
+
+
+<!-- ___________________________________________ USE CASE 5 __________________________________________ -->
+
+
+<h2 style="clear: both;" id="wiki_use_case">Use case <span id="use_case_5">#5</span> - Wikis and e-learning:
+The Technical University of Marcilly decided to use wikis to foster knowledge
+exchanges between lecturers and students.</h2>
+<!-- proposed by Fabien.Gandon@sophia.inria.fr see http://lists.w3.org/Archives/Public/public-grddl-wg/2006Aug/0014.html, revised by Harry Halpin based on Fabien's message http://lists.w3.org/Archives/Public/public-grddl-wg/2006Aug/0077.html -->
+<p>The Technical University of Marcilly (TMU) decided to use
+<a href="http://en.wikipedia.org/wiki/Wiki">wikis</a> to foster
+knowledge exchanges between lecturers and students. They tested several wikis
+over the years and they want to experiment with novel ways of structuring the
+wiki to improve navigation and retrieval and they also want to make it easier
+to reuse <a href="http://en.wikipedia.org/wiki/Learning_Object">learning objects</a>
+in different contexts. Ideally TMU wants the
+information structuring the wiki to be:</p>
+<ol>
+  <li>easy to add, edit and enrich. All this should be done at the same time a
+    user edits a page to avoid multiplying interfaces and manipulations.</li>
+  <li>explicit and understandable to machines so that the wiki engine can
+    rely on it to propose related pages, to perform precise search, to
+    generate browsing interfaces, to build dynamic indexes based on
+    customized queries and to provide customized sorting and filtering for
+    them.</li>
+  <li>accessible to other applications to allow integration with other
+    information systems, links or migration to other wiki engines, extension
+    of its functionalities.</li>
+</ol>
+<p>In this context TMU uses metadata embedded in the wikipages to:</p>
+<ul>
+  <li>store the results of social tagging on the pages: tags suggested by
+    users are inserted in the page itself and may reuse data from the page
+    (e.g. the authors name) or annotate specific portions of the page (e.g.
+    type a paragraph as a definition, categorize an image);</li>
+  <li>generate navigation widgets: lists of forward and back links to
+    navigate the wiki, lists of similar pages, list of all pages tagged with
+    a specific topic, view of the clusters of pages.</li>
+  <li>enrich them with schemata to restructure the wiki (declare equivalent
+    tags, broader/narrower tags, add synonymous labels to existing tags) and
+    enrich the navigation with these links;</li>
+  <li>include queries on the metadata in the wikipages to dynamically
+    generate tailored indexes for the different departments, the different
+    years, the different topics.</li>
+  <li>import learning objects edited in classical word processing application
+    by using the styles of the different sections to extract annotations for
+    each section and recompose new documents (e.g. transform a handout into a
+    web site for practical sessions).</li>
+</ul>
+<p>Let us consider the case of Michel, a lecturer in engines and thermodynamics.
+He used the wiki to publish the handouts of his course. He initially tagged
+each handout with the main concepts it introduces (e.g. "RenewableEnergies",
+"Ethanol", "Diesel"). In addition, Michel automatically typed each section of
+the document using predefined styles (e.g. definitions, formula, example.).
+The next practical session will involve knowledge on classical Diesel engines
+and Ethanol-based engines. In order to generate a mnemonic card for this session
+Michel runs a query to extract definitions and formulas of the courses tagged
+with "Diesel" or "Ethanol". He also uses these tags to generate dynamic "see also"
+sections at the end of his sections suggesting other sections to read.</p>
+<p>Students edit the online handouts, to add pointers, to insert comments on parts
+they found difficult to understand,and to recall pieces of previous courses useful
+for understanding a new course. Students also tagged the pages with their
+own tags to organize their reading and bookmark important parts for them; they
+use tags to create transversal thematic tracks (e.g. "LiquidFlow"), to give
+feedback on the content (e.g. "Difficult"), to prioritise reading
+(e.g. "NiceToKnow", "Vital"). These tags allow them to have transversal navigation
+and reorganize the content depending on the task they are doing (e.g. preparing an
+exam, writing a report, running an experiment). These tags are also used by Michel
+to evaluate the understanding and the shortcomings of his course.</p>
+<p>Finally the mass of the course material and tags is such that it needs to be reorganised.
+Using the tag editor Michel groups "Ethanol" and "Methanol" as sub tags of a new tag
+he calls "Alcohol". Doing so the pages tagged with "Ethanol" or "Methanol" are
+grouped and accessible through "Alcohol". He repeats this with other tags (e.g.
+"Alcohol" and "Hydrogen" becomes sub- tags of "NewEngineEnergy"). This reorganizes the
+wiki seamlessly e.g. suggestion of navigation in the pages automatically propose narrower,
+broader and brother tags thus when viewing a page tagged with "Ethanol", the system
+suggest other pages tagged with "Methanol". Later when a student posts his report on an
+engine using "CopraOil", his new tag can be placed under the existing one "NewEngineEnergy";
+he or anyone else can do it and the result will immediately benefit the whole community
+of the users. Using these tags and their organization, thematic indexes are dynamically
+generated for the materials of the course and automatically updated.</p>
+
+<p>From the technical stand point, TMU designed a wiki that stores
+its pages directly in XHTML and <a href="#RDFC04">RDF</a> annotations are used to represent the
+wiki structure and annotate the wikipages and the objects it contains
+(images, uploaded files.). The RDF structure allows refactoring the wiki
+structure by editing the RDF annotations and the <a href="#RDFS">RDFS</a> schemas they are based
+on. RDF annotations are embedded in the wiki pages themselves using the <a href="#RDFa">RDFa</a>
+and microformats. Some of the learning objects can be saved in XML formats
+and an XSLT stylesheet exploits the styles used for the session to tag the
+different parts (e.g. definition, exercise, example) and these annotation can
+then be used to generate new views on this resource (e.g. list of definition,
+hypertext support for practical sessions.).</p>
+
+<p style="text-align: center;"><img src="wiki.png"
+title="Using RDFa and GRDDL in wikis" alt="Using RDFa and GRDDL in wikis" /></p>
+<p>The embedded RDF is extracted by a <a href="#GRDDLAwareAgent">GRDDL-aware agent</a> using
+<a href="#GRDDLTransformation">GRDDL transformations</a> available online as
+<a href="http://www.w3.org/TR/xslt">XSLT</a> stylesheets to
+provide semantic annotations directly to the application that needs to extract the embedded metadata:</p>
+<ul>
+  <li>if someone sends a wiki page to someone else the annotations follow it
+    and can be processed by applications of the recipient;</li>
+  <li>if another application crawls (e.g. the crawler of a search engine) the
+    wiki site it can extract the metadata and reuse them just by applying the
+    same <a href="#GRDDLTransformation">GRDDL transformation</a>;</li>
+  <li>if a new community of practice of TMU (e.g. the accountants) wants a
+    dedicated index of its working document, it can be embedding the
+    corresponding SPARQL query in a wikipage: the search engine fed with the
+    result documents solves this query and the result is rendered by an XSLT
+    stylesheet and embedded in the page;</li>
+  <li>if the wiki engine is to be changed, the migration transformations can
+    exploit the embedded metadata;</li>
+  <li>if a division wants to setup access rules to some documents, they can
+    be based on these metadata merged with others (e.g. only lecturer can
+    access document tagged as "tests").</li>
+  <li>if some users are interested in being informed on any new information
+    on a topic (e.g. chemists want to be informed on any new norm for the
+    environment) they can use notification systems monitoring the wiki by
+    querying its metadata (e.g. recurrent SPARQL queries on pages tagged with
+    "environment")</li>
+</ul>
+
+<p><b>See also:</b> <a href="http://www-sop.inria.fr/acacia/soft/sweetwiki.html">Sweet Wiki</a>,
+<a href="http://www.semwiki.org/">Semantic Wikis</a></p>
+
+
+
+
+<!-- ______________________________________ USE CASE 6 ____________________________________________________ -->
+
+
+<h2 style="clear: both;" id="xform_use_case">Use case <span id="use_case_6">#6</span> - Web syndication :
+	extracting form descriptions to push entries to Voltaire's blog.</h2>
+<!-- proposed by Chimezie see http://lists.w3.org/Archives/Public/public-grddl-wg/2006Aug/0014.html -->
+
+<p>Voltaire's blog is pretty popular and encompasses many major areas of interest, one of which is bird watching.
+Voltaire has so many areas of interests and spends so much time watching birds that he doesn't want to surf
+the net and find each and every site he might want to syndicate. Rather than 'manually' subscribing to
+third-party blogs that are appropriate to the themes he covers, he wants to reverse the subscription model
+to be push-based i.e. people who want their blogs to be included can push the appropriate entries to his blog;
+his blog becomes somewhat of a magnet for similar entries of interest.</p>
+
+<p>Voltaire has setup a weblog engine that utilizes <a href="http://www.w3.org/TR/xforms/">XForms</a>
+for editing entries remotely using the
+<a href="http://www.ietf.org/html.charters/atompub-charter.html">Atom Publishing Protocol</a>.
+Voltaire has found the use of <a href="http://www.w3.org/TR/xforms/">XForms</a>
+for authoring fragments of Atom quite useful for a variety of reasons.
+In particular, the Atom Publishing Protocol uses HTTP and a single-purpose
+XML vocabulary as its primary remote messaging mechanism, which allows
+Voltaire to easily author various XForm documents that use XForm 
+<a href="http://www.w3.org/TR/xforms/slice3.html#structure-model-submission">submission</a>
+elements to dispatch operations on web resources.</p>
+
+<p>As a result, the XForms for dispatching these operations each contain a
+rather rich set of information about transport-level services in the form of
+service URIs, media-types and HTTP methods. These are completely encapsulated
+in an XForms submission element.  It so happens that there is an RDF
+vocabulary for expressing transport metadata called RDF Forms.</p>
+
+<p>Somewhere else on the planet, the professional ornithologist Johan Bos, who
+recently spotted a red kite (Milvus milvus) far from their breeding ground in
+central Wales, is planning to post blog entries about his observations. To make
+his results visible he wants his entries to be included in Voltaire's blog.</p>
+
+<p style="text-align: center;"><img src="xform.png" 
+title="Using GRDDL for XForm extraction and Atom clients" alt="Using GRDDL for XForm extraction and Atom clients"
+/></p>
+
+<p> Voltaire's site provides a general <a href="#GRDDLTransformation">GRDDL transformation</a>
+that extracts an RDF Form graph from the XForms submission elements employed in the various web forms
+for editing, deleting, and updating Atom entries on his weblog. Such a
+transformation can uniformly extract an RDF description of the transport mechanisms
+for a software agent to interpret. Johan's client can automatically
+retrieve an Introspection Document (via the Atom Publishing Protocol), update
+existing entries using the identified service URIs, and perform other such
+services.</p>
+
+<p>Thus Johan's client relies on a <a href="#GRDDLAwareAgent">GRDDL-aware agent</a> to periodically extract the service URIs,
+transform the content at these URIs to Atom/OWL and query the resulting RDF to determine
+if the topics match. Doing so, he will replicate his entries at the matching URIs by
+POSTing them there.</p>
+
+<p>Voltaire does not need to manage the subscriptions, all he might want to do
+is perhaps grant accounts for Johan for HTTP-level authentication (as a deterrent
+for spam - as you can imagine, reversing the subscription model in this way
+opens up Voltaire's system for lots of spam).</p>
+
+
+<p><b>See also:</b> 
+<a href="http://www.w3.org/TR/xforms/">XForms 1.1 specification</a>,
+<a href="http://www.ietf.org/html.charters/atompub-charter.html">Atom Publishing Format and Procotol (atompub)</a>.</p>
+
+ 
+
+
+<!-- ______________________________________ USE CASE 7 ____________________________________________________ -->
+
+
+<h2 style="clear: both;" id="xml_schema_use_case">Use case <span id="use_case_7">#7</span> - Validated Documents:
+	the OAI would like to be able to specify document licenses in the schema they share.</h2>
+<!-- proposed by Ben Adida in msg http://lists.w3.org/Archives/Public/public-grddl-wg/2006Sep/0063.html -->
+<p>The Open Archives Initiative (OAI) publishes an XML schema that universities
+can use to publish their archived documents. They include
+<a href="http://www.openarchives.org/OAI/2.0/guidelines-rights.htm">guidelines</a> for expressing
+the rights of these documents, including the possibility of referencing a license,
+like a <a href="http://creativecommons.org/">creative commons license</a>.</p>
+<p>More than 800 universities implement this schema. Creative Commons would like to
+deploy tools, like the
+<a href="http://wiki.creativecommons.org/MozCC">MozCC browser extension</a>
+which provides a convenient way to
+examine licenses embedded in web pages and interpret them.</p>
+<p>It is unreasonable to expect to interpret everyone's favorite XML schema,
+yet communities like the OAI would like to be able to include licensing information
+in their XML shema.</p>
+<p>On the other hand, Creative Commons would like to be able to make a generic
+recommendation to anyone with XML instance documents, allowing them to do what
+they want with their XML schemata, as long as they include a transformation of
+the instance documents to RDF.</p>
+<p style="text-align: center;"><img src="schema_oai.png" 
+title="Using GRDDL with an XML Schema to indicate the profile and transformations" alt="Using GRDDL with an XML Schema to indicate the profile and transformations"
+/></p>
+<p>Since the XML instance documents are often distributed, as in the OAI case, the XML schema itself could
+embed RDF descriptions identifying a transform to <a href="http://www.w3.org/2004/01/rdxh/spec#ns-bind">apply</a>
+to all its instance documents. So doing, for each source document, the transformation is
+indirectly referenced by the XML Schema it follows.</p>
+<p>The XML schema is served from the namespace location and is a source document
+which includes descriptions associating a GRDDL transform with its instances. 
+Thus it serves a dual purpose for its instances: (1) validation and (2) identifying transforms to glean meaning.</p> 
+
+<p><b>See also:</b> 
+<a href="http://www.openarchives.org/">Open Archives Initiative</a>,
+<a href="http://creativecommons.org/">Creative Commons</a>,
+<a href="http://wiki.creativecommons.org/MozCC">MozCC</a>.
+</p>
+
+
+
+<!-- ______________________________________ USE CASE 8 ____________________________________________________ -->
+
+
+<h2 style="clear: both;" id="html_tidy_use_case">Use case <span id="use_case_8">#8</span> - Pulling Data from the Web: Steffen
+	wants to build a directory of the people he works with.</h2>
+<!-- proposed by Fabien Gandon -->
+<p>Steffen is interested in maintaining a directory of people he works with. Whenever he gets in touch with someone,
+	he starts a simple script that aims at gathering as much metadata about this person as possible.
+The script first calls a search engine with keywords he has chosen e.g. "Jean-Paul Haton LORIA".
+The script receives a list of URL of web pages considered relevant by the search engine.</p>
+<p>Because most of these web pages are non-XHTML HTML and because most of the time they are not
+	even valid HTML, the script first checks if each page is a well-formed XML document.
+	If the page is indeed a well-formed XML document the script just calls a GRDDL-aware agent on this page
+	to extract metadata it may contain.</p>
+<p>If the page is not a well-formed XML document the script proceeds with calling an HTML-tidying tool
+	that retrieves the page, cleans the page the best it can, and so outputs an XHTML version. The script saves these
+	XHTML versions locally making sure that the base URI of each local copy is specified and if not the script
+	sets it to the URI of the initial HTML page. Finally the script calls a GRDDL agent on each local copy to
+	extract the metadata they may contain.</p>
+<p style="text-align: center;"><img src="tidy.png" 
+title="Using GRDDL with tidied HTML" alt="Using GRDDL with tidied HTML"
+/></p>
+<p>Using his script Steffen found that several cases occur:</p>
+<ul>
+ <li>If the tidying is simple (e.g. a &lt;BR&gt; is replaced by a &lt;BR/&gt;) then a page can be tidied in XHTML
+ 	and GRDDL successfully.</li>
+ <li>If the tidying is complex (e.g. the page was heavily restructured) some of the metadata is likely to be no longer
+ 	coherent because the transformation relied on specific positions of elements in the document that are not
+  the same after the tidying process converted HTML to XHTML. For example, the transformation could rely on absolute XPaths and a &lt;UL&gt; was added
+  around a list of &lt;LI&gt;. therefore rendering all the XPaths invalid and so making the transformation unable to convert information in the source document to RDF.</li>
+ <li>If a page used extensions of HTML that the tidying tool did not recognized (e.g. the "link" element used outside the "head" section in RDFa), these
+ 	extensions were removed during the cleaning-up and thus lost for the GRDDL transformation.</li>
+</ul>
+  <p>While one can use GRDDL to extract RDF from non-XHTML HTML source documents, unless there is good
+  	reason otherwise, the authors of content should deploy GRDDL with valid XML such as XHTML. Simply put,
+  	it is easier for authors to explicitly license a transformation from XML documents where there is no
+  	dependency on any other algorithms (such as a tidying algorithm). Although tidying of source documents can be part of a pragmatic
+    approach to gathering data, the consumer of the RDF can only trust
+    GRDDL transformations when they have been explicitly licensed by the
+    author of the documents.</p> 
+
+<p><b>See also:</b> 
+ <a href="http://jtidy.sourceforge.net/">JTidy</a>,
+ <a href="http://home.ccil.org/~cowan/XML/tagsoup/">TagSoup</a>.
+</p>
+
+<!-- ______________________________________ USE CASE 9 ____________________________________________________ -->
+
+<!-- proposed by IanD see http://lists.w3.org/Archives/Public/public-grddl-wg/2007Feb/0018.html  -->
+
+<h2 style="clear: both;" id="header_use_case">Use case <span id="use_case_9">#9</span> - Pushing a transformation: Oceanic Consortium wants to provide
+	transformations for their files without altering them or their schema.</h2>
+
+<p class="ed"><small>This use-case uses a feature that is not, and will not be, included in the GRDDL Working Draft.
+	It should be addressable in the future using the mechanims described in the 
+	<a href="http://www.mnot.net/drafts/draft-nottingham-http-link-header-00.txt">HTTP Header Linking Draft</a>
+	once that is accepted by the IETF as an RFC.</small></p>
+
+
+<p>Oceanic is part of a consortium of airlines that have a group
+arrangement for the shared supply and use of aircraft spares. The
+availability and nature of parts at any location are described by
+AirPartML, an internationally-agreed XML dialect constrained by a series
+of detailed XML Schema. Each member of the consortium publishes the
+availability of their spares on the web using  AirPartML. These
+descriptions can subsequently be searched and retrieved by other
+consortium members when seeking parts for maintenance. The protocol for
+use of the descriptions requires invalid documents to be rejected.
+Oceanic wishes to also publish RDF descriptions of their parts and would
+prefer to reuse the AirPartML documents which are produced by systems
+that have undergone exhaustive testing for correctness. There is no
+provision in the existing schemas for extension elements and changing
+the schemas to accommodate RDF would require an extended international
+standardisation effort, likely to take many years.
+This means they cannot alter their XML documents to use GRDDL.</p>
+<p style="text-align: center;"><img src="header.png" 
+title="Using GRDDL with profiles and transformations linked from the HTTP header." alt="Using GRDDL with profiles and transformations linked from the HTTP header."
+/></p>
+<p>Using the ability of <a href="http://www.mnot.net/drafts/draft-nottingham-http-link-header-00.txt">HTTP Header Linking Draft</a>
+	 to specify <i>Link</i> and <i>Profile</i>s for GRDDL transformation in HTTP Headers,
+	  Oceanic Consortium can serve RDF via GRDDL without altering their XML documents. </p>
+
+
+<p><b>See also:</b> 
+ <a href="http://www.mnot.net/drafts/draft-nottingham-http-link-header-00.txt">HTTP Header Linking</a>
+</p>
+
+<hr />
+
+<!-- ______________________________________ Glossary ____________________________________________________ -->
+
+
+<h2 style="clear: both;" id="glossary">Glossary</h2>
+<dl>
+  <dt>Embedded RDF</dt>
+    <dd>a subset of RDF that can be embedded into XHTML or HTML by using common idioms and attributes.</dd>
+  <dt><a id="GRDDLAwareAgent"></a>GRDDL-aware agent</dt>
+    <dd>a GRDDL-aware agent isa software agent able to identify the <a href="#GRDDLTransformation">GRDDL transformations</a> specified in
+        a <a href="#SourceDocument">source document</a> and run them to extract RDF.</dd>
+  <dt><a id="SourceDocument"></a>Source Document</dt>
+    <dd>an XML document which references at least one <a href="#GRDDLTransformation">GRDDL transformation</a>
+    for a <a href="#GRDDLAwareAgent">GRDDL-aware agent</a> to use to extract RDF from it.</dd>
+  <dt><a id="GRDDLTransformation"></a>GRDDL Transformation</dt>
+    <dd>a GRDDL transformation is an algorithm which, when applied to a compliant <a href="#SourceDocument">source document</a>,
+     allows a <a href="#GRDDLAwareAgent">GRDDL-aware agent</a> to extract RDF from this document.</dd>
+  <dt>Microformats</dt>
+    <dd>a set of simple, open data formats built upon existing and widely adopted standards.</dd>
+  <dt>RDFa</dt>
+    <dd>a syntax for expressing RDF metadata in XHTML.</dd>
+  <dt><a id="ResultDocument"></a>Result Document</dt>
+    <dd>a document obtained by applying a <a href="#GRDDLTransformation">GRDDL transformation</a> to a
+    source document.</dd>
+  <dt>SPARQL</dt>
+    <dd>the SPARQL Protocol And RDF Query Language for accessing RDF stores.</dd>     
+</dl>
+
+<hr />
+
+<div><h2 id="acks">Acknowledgements</h2>
+
+<p>The editor greatfully acknowledges the contributions of the
+following Working Group members:</p>
+
+<ul>
+    <li><a href="http://ben.adida.net/">Ben Adida</a>, Creative Commons</li>
+    <li><a href="http://dannyayers.com/">Danny Ayers</a>, Independent</li>
+    <li><a href="http://www.w3.org/People/Connolly/">Dan Connolly</a>, W3C</li>
+    <li><a href="http://purl.org/NET/iand">Ian Davis</a>, Talis</li>
+    <li><a href="http://www.ibiblio.org/hhalpin/">Harry Halpin</a>, University of Edinburgh</li>
+    <li><a href="http://www.muzmo.com/">Murray Maloney</a>, Muzmo Inc.</li>
+    <li><a href="http://copia.ogbuji.net/">Chimezie Ogbuji</a>, Cleveland Clinic Foundation</li>
+</ul>
+</div>
+
+<hr />
+
+<!-- _____________________________________________ References _______________________________________________ -->
+
+
+
+<h2><a id="References"></a>References</h2>
+<dl>
+  <dt><a id="AutomatingTR"></a>[Automating TR]</dt>
+    <dd><i><a href="http://www.w3.org/2002/01/tr-automation/">Automating the
+      publication of Technical Reports</a></i>, Dominique Hazaël-Massieux,
+      2006/01/05 20:34:13, http://www.w3.org/2002/01/tr-automation/.</dd>
+  <dt><a id="DCRDF"></a>[DCRDF]</dt>
+    <dd><i><a href="http://dublincore.org/documents/dcmes-xml/">Expressing Simple Dublin Core in RDF/XML</a></i>,
+    	Eric Miller, Dan Brickley, 2002-07-31, http://dublincore.org/documents/dcmes-xml/.</dd>
+  <dt><a id="EmbeddedRDF"></a>[Embedded RDF]</dt>
+    <dd><i><a href="http://research.talis.com/2005/erdf/">Embedded RDF
+      </a></i>, 27 August, 2006 at 03:19 PM, http://research.talis.com/2005/erdf/.</dd>     
+  <dt><a id="GRDDL-Draft"></a>[GRDDL Draft]</dt>
+    <dd><cite><a href="http://www.w3.org/TR/2006/WD-grddl-20061024/">Gleaning Resource
+      Descriptions from Dialects of Languages (GRDDL)</a></cite>,
+      Dan Connolly, W3C Working Draft 24 October 2006,
+       <a href="http://www.w3.org/TR/grddl/">Latest version</a> available at
+      http://www.w3.org/TR/grddl/.</dd>
+  <dt><a id="GRDDL-Primer-Draft"></a>[GRDDL Primer Draft]</dt>
+    <dd><cite><a href="http://www.w3.org/TR/2006/WD-grddl-primer-20061002/">GRDDL Primer</a></cite>,
+    	Ian Davis, W3C Working Draft 2 October 2006,
+       <a href="http://www.w3.org/TR/grddl-primer/">Latest version</a> available at
+      http://www.w3.org/TR/grddl-primer/.</dd>
+  <dt><a id="microformats"></a>[Microformats]</dt>
+    <dd><i><a href="http://microformats.org/">Microformat</a></i>, 2006/08/30 11:05:31,
+      http://microformats.org/ . </dd>
+  <dt><a id="ref-OWL-Overview"></a>[OWL Overview]</dt>
+    <dd><i><a href="http://www.w3.org/TR/2004/REC-owl-features-20040210/">OWL
+      Web Ontology Language Overview</a></i>, Deborah L. McGuinness and Frank
+      van Harmelen, Editors, W3C Recommendation, 10 February 2004,
+      http://www.w3.org/TR/2004/REC-owl-features-20040210/. <a
+      href="http://www.w3.org/TR/owl-features/">Latest version</a> available
+      at http://www.w3.org/TR/owl-features/.</dd>
+   <dt><a id="RDF04">[RDF04]</a></dt>
+    <dd><cite><a href="http://www.w3.org/TR/2004/REC-rdf-primer-20040210/">RDF Primer</a>
+     </cite>, Frank Manola, Eric Miller, Editors, W3C Recommendation, 10 February 2004, http://www.w3.org/TR/2004/REC-rdf-primer-20040210/.
+     <a href="http://www.w3.org/TR/rdf-primer/">Latest version</a> available at http://www.w3.org/TR/rdf-primer/ .</dd>
+   <dt><a id="RDFC04">[RDFC04]</a></dt>
+    <dd><cite><a href="http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/">Resource Description Framework (RDF): Concepts and Abstract Syntax</a>
+     </cite>, G. Klyne, J. J. Carroll,  Editors, W3C Recommendation, 10 February 2004, http://www.w3.org/TR/2004/REC-rdf-concepts-20040210/ . <a href="http://www.w3.org/TR/rdf-concepts/">Latest version</a> available at http://www.w3.org/TR/rdf-concepts/ .</dd>
+  <dt><a id="RDFa">[RDFa]</a></dt>
+    <dd>
+      <cite><a href="http://www.w3.org/TR/2006/WD-xhtml-rdfa-primer-20060516/">RDFa Primer 1.0</a></cite>
+      16 May 2006, Ben Adida, Mark Birbeck. <a href="http://www.w3.org/TR/xhtml-rdfa-primer/">Latest version</a> available at <tt>http://www.w3.org/TR/xhtml-rdfa-primer/</tt>
+    </dd>
+  <dt><a id="RDFS">[RDFS]</a></dt>
+    <dd><a
+      href="http://www.w3.org/TR/2004/REC-rdf-schema-20040210/"><cite>RDF
+      Vocabulary Description Language 1.0: RDF Schema</cite></a>, Dan
+      Brickley and R.V. Guha, Editors. W3C Recommendation, 10 February
+      2004,<br />
+      http://www.w3.org/TR/2004/REC-rdf-schema-20040210/ .<br />
+      <a href="http://www.w3.org/TR/rdf-schema/">Latest version</a> available
+      at http://www.w3.org/TR/rdf-schema/.</dd>
+  <dt><a id="RFC2731">[RFC2731]</a></dt>
+    <dd><a href="http://www.ietf.org/rfc/rfc2731.txt"><cite>RFC2731: Encoding Dublin Core Metadata in HTML</cite></a>, 
+      J. Kunze, December 1999, http://www.ietf.org/rfc/rfc2731.txt.</dd>
+  <dt><a id="SPARQL">[SPARQL]</a></dt>
+    <dd><a
+      href="http://www.w3.org/TR/2006/CR-rdf-sparql-query-20060406/"><cite>SPARQL
+      Query Language for RDF</cite></a>, Eric Prud'hommeaux and Andy
+      Seaborne, Editors. W3C Candidate Recommendation 6 April 2006,<br />
+      http://www.w3.org/TR/2006/CR-rdf-sparql-query-20060406/ .<br />
+      <a href="http://www.w3.org/TR/rdf-sparql-query/">Latest version</a>
+      available at http://www.w3.org/TR/rdf-sparql-query/.</dd>
+</dl>
+
+<hr />
+
+<div>
+<h3 id="changes">Change Log</h3>
+
+<p>Changes since the <a
+href="http://www.w3.org/TR/2006/WD-grddl-scenarios-20061002/ ">2 October 2006 Working Draft </a> include:</p>
+
+<ul>
+  <li>updated introduction</li>
+  <li>added scenarios for Pulling data from the web and HTTP Header </li>
+  <li>added schemas to OAI, Pulling data and Header use cases </li>
+</ul>
+
+</div>
+
+
+<hr />
+
+<p>This document is a product of the <a
+href="http://www.w3.org/2001/sw/grddl-wg/">GRDDL Working Group</a>.</p>
+
+
+<hr />
+
+<p><a href="http://validator.w3.org/check?uri=referer">
+	<img src="http://www.w3.org/Icons/valid-xhtml10"
+        alt="Valid XHTML 1.0 Transitional" height="31" width="88" /></a>
+<a href="http://jigsaw.w3.org/css-validator/">
+	<img style="border: 0pt none ; width: 88px; height: 31px;"
+src="http://jigsaw.w3.org/css-validator/images/vcss" alt="Valid CSS!" /></a>
+</p>
+</body>
+</html>

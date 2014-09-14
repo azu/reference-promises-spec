@@ -1,0 +1,4199 @@
+<!-- http://www.w3.org/TR/runtime/ -->
+<!DOCTYPE html>
+<!-- saved from url=(0027)http://runtime.sysapps.org/ -->
+
+<html lang="en" dir="ltr">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for HTML5 (experimental) for Linux https://github.com/w3c/tidy-html5/tree/8025154">
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=utf-8">
+
+  <title>Runtime and Security Model for Web Applications</title>
+  <style>
+  todo { display: none; }
+  </style>
+  <style>
+/*****************************************************************
+  * ReSpec 3 CSS
+  * Robin Berjon - http://berjon.com/
+  *****************************************************************/
+
+  /* --- INLINES --- */
+  em.rfc2119 { 
+    text-transform:     lowercase;
+    font-variant:       small-caps;
+    font-style:         normal;
+    color:              #900;
+  }
+
+  h1 acronym, h2 acronym, h3 acronym, h4 acronym, h5 acronym, h6 acronym, a acronym,
+  h1 abbr, h2 abbr, h3 abbr, h4 abbr, h5 abbr, h6 abbr, a abbr {
+    border: none;
+  }
+
+  dfn {
+    font-weight:    bold;
+  }
+
+  a.internalDFN {
+    color:  inherit;
+    border-bottom:  1px solid #99c;
+    text-decoration:    none;
+  }
+
+  a.externalDFN {
+    color:  inherit;
+    border-bottom:  1px dotted #ccc;
+    text-decoration:    none;
+  }
+
+  a.bibref {
+    text-decoration:    none;
+  }
+
+  cite .bibref {
+    font-style: normal;
+  }
+
+  code {
+    color:  #ff4500;
+  }
+
+
+  /* --- --- */
+  ol.algorithm { counter-reset:numsection; list-style-type: none; }
+  ol.algorithm li { margin: 0.5em 0; }
+  ol.algorithm li:before { font-weight: bold; counter-increment: numsection; content: counters(numsection, ".") ") "; }
+
+  /* --- TOC --- */
+  .toc a, .tof a {
+    text-decoration:    none;
+  }
+
+  a .secno, a .figno {
+    color:  #000;
+  }
+
+  ul.tof, ol.tof {
+    list-style: none outside none;
+  }
+
+  .caption {
+    margin-top: 0.5em;
+    font-style:   italic;
+  }
+
+  /* --- TABLE --- */
+  table.simple {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    border-bottom:  3px solid #005a9c;
+  }
+
+  .simple th {
+    background: #005a9c;
+    color:  #fff;
+    padding:    3px 5px;
+    text-align: left;
+  }
+
+  .simple th[scope="row"] {
+    background: inherit;
+    color:  inherit;
+    border-top: 1px solid #ddd;
+  }
+
+  .simple td {
+    padding:    3px 10px;
+    border-top: 1px solid #ddd;
+  }
+
+  .simple tr:nth-child(even) {
+    background: #f0f6ff;
+  }
+
+  /* --- DL --- */
+  .section dd > p:first-child {
+    margin-top: 0;
+  }
+
+  .section dd > p:last-child {
+    margin-bottom: 0;
+  }
+
+  .section dd {
+    margin-bottom:  1em;
+  }
+
+  .section dl.attrs dd, .section dl.eldef dd {
+    margin-bottom:  0;
+  }
+  .section dd.hide {
+    visibility: hidden;
+    display: none;
+  }
+  </style>
+  <style>
+/* --- EXAMPLES --- */
+  div.example-title {
+    min-width: 7.5em;
+    color: #b9ab2d;
+  }
+  div.example-title span {
+    text-transform: uppercase;   
+  }
+  aside.example, div.example, div.illegal-example {
+    padding: 0.5em;
+    margin: 1em 0;
+    position: relative;
+    clear: both;
+  }
+  div.illegal-example { color: red }
+  div.illegal-example p { color: black }
+  aside.example, div.example {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+    border-color: #e0cb52;
+    background: #fcfaee;    
+  }
+
+  aside.example div.example {
+    border-left-width: .1em;
+    border-color: #999;
+    background: #fff;
+  }
+  aside.example div.example div.example-title {
+    color: #999;
+  }
+  </style>
+  <style>
+/* --- ISSUES/NOTES --- */
+  div.issue-title, div.note-title {
+    padding-right:  1em;
+    min-width: 7.5em;
+    color: #b9ab2d;
+  }
+  div.issue-title { color: #e05252; }
+  div.note-title { color: #52e052; }
+  div.issue-title span, div.note-title span {
+    text-transform: uppercase;
+  }
+  div.note, div.issue {
+    margin-top: 1em;
+    margin-bottom: 1em;
+  }
+  .note > p:first-child, .issue > p:first-child { margin-top: 0 }
+  .issue, .note {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+  }
+  div.issue, div.note {
+    padding: 0.5em;
+    margin: 1em 0;
+    position: relative;
+    clear: both;
+  }
+  span.note, span.issue { padding: .1em .5em .15em; }
+
+  .issue {
+    border-color: #e05252;
+    background: #fbe9e9;
+  }
+  .note {
+    border-color: #52e052;
+    background: #e9fbe9;
+  }
+
+
+  </style>
+  <style>
+/* HIGHLIGHTS */
+  code.prettyprint {
+    color:  inherit;
+  }
+
+  /* this from google-code-prettify */
+  .pln{color:#000}@media screen{.str{color:#080}.kwd{color:#008}.com{color:#800}.typ{color:#606}.lit{color:#066}.pun,.opn,.clo{color:#660}.tag{color:#008}.atn{color:#606}.atv{color:#080}.dec,.var{color:#606}.fun{color:red}}@media print,projection{.str{color:#060}.kwd{color:#006;font-weight:bold}.com{color:#600;font-style:italic}.typ{color:#404;font-weight:bold}.lit{color:#044}.pun,.opn,.clo{color:#440}.tag{color:#006;font-weight:bold}.atn{color:#404}.atv{color:#060}}ol.linenums{margin-top:0;margin-bottom:0}li.L0,li.L1,li.L2,li.L3,li.L5,li.L6,li.L7,li.L8{list-style-type:none}li.L1,li.L3,li.L5,li.L7,li.L9{background:#eee}
+  </style>
+  <style>
+/* --- WEB IDL --- */
+  pre.idl {
+    border-top: 1px solid #90b8de;
+    border-bottom: 1px solid #90b8de;
+    padding:    1em;
+    line-height:    120%;
+  }
+
+  pre.idl::before {
+    content:    "WebIDL";
+    display:    block;
+    width:      150px;
+    background: #90b8de;
+    color:  #fff;
+    font-family:    initial;
+    padding:    3px;
+    font-weight:    bold;
+    margin: -1em 0 1em -1em;
+  }
+
+  .idlType {
+    color:  #ff4500;
+    font-weight:    bold;
+    text-decoration:    none;
+  }
+
+  /*.idlModule*/
+  /*.idlModuleID*/
+  /*.idlInterface*/
+  .idlInterfaceID, .idlDictionaryID, .idlCallbackID, .idlEnumID {
+    font-weight:    bold;
+    color:  #005a9c;
+  }
+  a.idlEnumItem {
+    color:  #000;
+    border-bottom:  1px dotted #ccc;
+    text-decoration: none;
+  }
+
+  .idlSuperclass {
+    font-style: italic;
+    color:  #005a9c;
+  }
+
+  /*.idlAttribute*/
+  .idlAttrType, .idlFieldType, .idlMemberType {
+    color:  #005a9c;
+  }
+  .idlAttrName, .idlFieldName, .idlMemberName {
+    color:  #ff4500;
+  }
+  .idlAttrName a, .idlFieldName a, .idlMemberName a {
+    color:  #ff4500;
+    border-bottom:  1px dotted #ff4500;
+    text-decoration: none;
+  }
+
+  /*.idlMethod*/
+  .idlMethType, .idlCallbackType {
+    color:  #005a9c;
+  }
+  .idlMethName {
+    color:  #ff4500;
+  }
+  .idlMethName a {
+    color:  #ff4500;
+    border-bottom:  1px dotted #ff4500;
+    text-decoration: none;
+  }
+
+  /*.idlCtor*/
+  .idlCtorName {
+    color:  #ff4500;
+  }
+  .idlCtorName a {
+    color:  #ff4500;
+    border-bottom:  1px dotted #ff4500;
+    text-decoration: none;
+  }
+
+  /*.idlParam*/
+  .idlParamType {
+    color:  #005a9c;
+  }
+  .idlParamName, .idlDefaultValue {
+    font-style: italic;
+  }
+
+  .extAttr {
+    color:  #666;
+  }
+
+  /*.idlSectionComment*/
+  .idlSectionComment {
+    color: gray;
+  }
+
+  /*.idlConst*/
+  .idlConstType {
+    color:  #005a9c;
+  }
+  .idlConstName {
+    color:  #ff4500;
+  }
+  .idlConstName a {
+    color:  #ff4500;
+    border-bottom:  1px dotted #ff4500;
+    text-decoration: none;
+  }
+
+  /*.idlException*/
+  .idlExceptionID {
+    font-weight:    bold;
+    color:  #c00;
+  }
+
+  .idlTypedefID, .idlTypedefType {
+    color:  #005a9c;
+  }
+
+  .idlRaises, .idlRaises a.idlType, .idlRaises a.idlType code, .excName a, .excName a code {
+    color:  #c00;
+    font-weight:    normal;
+  }
+
+  .excName a {
+    font-family:    monospace;
+  }
+
+  .idlRaises a.idlType, .excName a.idlType {
+    border-bottom:  1px dotted #c00;
+  }
+
+  .excGetSetTrue, .excGetSetFalse, .prmNullTrue, .prmNullFalse, .prmOptTrue, .prmOptFalse {
+    width:  45px;
+    text-align: center;
+  }
+  .excGetSetTrue, .prmNullTrue, .prmOptTrue { color:  #0c0; }
+  .excGetSetFalse, .prmNullFalse, .prmOptFalse { color:  #c00; }
+
+  .idlImplements a {
+    font-weight:    bold;
+  }
+
+  dl.attributes, dl.methods, dl.constants, dl.constructors, dl.fields, dl.dictionary-members {
+    margin-left:    2em;
+  }
+
+  .attributes dt, .methods dt, .constants dt, .constructors dt, .fields dt, .dictionary-members dt {
+    font-weight:    normal;
+  }
+
+  .attributes dt code, .methods dt code, .constants dt code, .constructors dt code, .fields dt code, .dictionary-members dt code {
+    font-weight:    bold;
+    color:  #000;
+    font-family:    monospace;
+  }
+
+  .attributes dt code, .fields dt code, .dictionary-members dt code {
+    background:  #ffffd2;
+  }
+
+  .attributes dt .idlAttrType code, .fields dt .idlFieldType code, .dictionary-members dt .idlMemberType code {
+    color:  #005a9c;
+    background:  transparent;
+    font-family:    inherit;
+    font-weight:    normal;
+    font-style: italic;
+  }
+
+  .methods dt code {
+    background:  #d9e6f8;
+  }
+
+  .constants dt code {
+    background:  #ddffd2;
+  }
+
+  .constructors dt code {
+    background:  #cfc;
+  }
+
+  .attributes dd, .methods dd, .constants dd, .constructors dd, .fields dd, .dictionary-members dd {
+    margin-bottom:  1em;
+  }
+
+  table.parameters, table.exceptions {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    margin: 0.5em 0;
+    width:  100%;
+  }
+  table.parameters { border-bottom:  1px solid #90b8de; }
+  table.exceptions { border-bottom:  1px solid #deb890; }
+
+  .parameters th, .exceptions th {
+    color:  #fff;
+    padding:    3px 5px;
+    text-align: left;
+    font-family:    initial;
+    font-weight:    normal;
+    text-shadow:    #666 1px 1px 0;
+  }
+  .parameters th { background: #90b8de; }
+  .exceptions th { background: #deb890; }
+
+  .parameters td, .exceptions td {
+    padding:    3px 10px;
+    border-top: 1px solid #ddd;
+    vertical-align: top;
+  }
+
+  .parameters tr:first-child td, .exceptions tr:first-child td {
+    border-top: none;
+  }
+
+  .parameters td.prmName, .exceptions td.excName, .exceptions td.excCodeName {
+    width:  100px;
+  }
+
+  .parameters td.prmType {
+    width:  120px;
+  }
+
+  table.exceptions table {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    width:  100%;
+  }
+  </style>
+  <link rel="stylesheet" href=
+  "http://www.w3.org/StyleSheets/TR/W3C-WD">
+</head>
+
+<body>
+  <div class="head">
+    <p><a href="http://www.w3.org/"><img alt="W3C" width="72"
+    height="48" src="http://www.w3.org/Icons/w3c_home"></a></p>
+
+    <h1 class="title" id="title">Runtime and Security Model for Web
+    Applications</h1>
+
+    <h2 id="date"><abbr title=
+    "World Wide Web Consortium">W3C</abbr> First Public Working Draft 21 March
+    2013</h2>
+
+    <dl>
+      <dt>This version:</dt>
+
+      <dd>
+        <a href=
+        "http://www.w3.org/TR/2013/WD-runtime-20130321/">http://www.w3.org/TR/2013/WD-runtime-20130321/</a>
+      </dd>
+
+      <dt>Latest published version:</dt>
+
+      <dd>
+        <a href=
+        "http://www.w3.org/TR/runtime/">http://www.w3.org/TR/runtime/</a>
+      </dd>
+
+      <dt>Latest editor's draft:</dt>
+
+      <dd>
+        <a href=
+        "http://runtime.sysapps.org/">http://runtime.sysapps.org/</a>
+      </dd>
+
+      <dt>Editors:</dt>
+
+      <dd>
+        <span>Mounir Lamouri</span>, <a href=
+        "http://mozilla.org/">Mozilla</a>
+      </dd>
+
+      <dd>
+        <span>金明 (Ming Jin)</span>, <a href=
+        "http://www.samsung.com/sec">Samsung Electronics, Co.,
+        Ltd</a>
+      </dd>
+    </dl>
+
+    <p class="copyright"><a href=
+    "http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a>
+    © 2013 <a href="http://www.w3.org/"><abbr title=
+    "World Wide Web Consortium">W3C</abbr></a><sup>®</sup>
+    (<a href="http://www.csail.mit.edu/"><abbr title=
+    "Massachusetts Institute of Technology">MIT</abbr></a>,
+    <a href="http://www.ercim.eu/"><abbr title=
+    "European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>,
+    <a href="http://www.keio.ac.jp/">Keio</a>, <a href=
+    "http://ev.buaa.edu.cn/">Beihang</a>), All Rights Reserved.
+    <abbr title="World Wide Web Consortium">W3C</abbr> <a href=
+    "http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">
+    liability</a>, <a href=
+    "http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a>
+    and <a href=
+    "http://www.w3.org/Consortium/Legal/copyright-documents">document
+    use</a> rules apply.</p>
+    <hr>
+  </div>
+
+  <section id="abstract" class="introductory">
+    <h2>Abstract</h2>
+
+    <p>This document specifies a runtime and security model for Web
+    Applications. It describes how an application is defined
+    through an application manifest, and how it can be installed,
+    updated and packaged. It also specifies how such an application
+    can be put into the background, be put back in the foreground or
+    woken up. Finally, the document describes the security model
+    for such applications. This includes the permission model and
+    the different security rules that would apply.</p>
+  </section>
+
+  <section id="sotd" class="introductory">
+    <h2>Status of This Document</h2>
+
+    <p><em>This section describes the status of this document at
+    the time of its publication. Other documents may supersede this
+    document. A list of current <abbr title=
+    "World Wide Web Consortium">W3C</abbr> publications and the
+    latest revision of this technical report can be found in the
+    <a href="http://www.w3.org/TR/"><abbr title=
+    "World Wide Web Consortium">W3C</abbr> technical reports
+    index</a> at http://www.w3.org/TR/.</em></p>
+
+    <p>This document defines a runtime and security model for Web
+    Applications, along with a manifest format and packaging
+    model. The current draft covers the use of CSP policies for
+    trusted packaged applications, and future drafts will extend
+    this to trusted hosted applications.</p>
+
+    <p>This document was published by the <a href=
+    "http://www.w3.org/2012/sysapps/">System Applications Working
+    Group</a> as a First Public Working Draft. If you wish to make
+    comments regarding this document, please send them to <a href=
+    "mailto:public-sysapps@w3.org">public-sysapps@w3.org</a>
+    (<a href=
+    "mailto:public-sysapps-request@w3.org?subject=subscribe">subscribe</a>,
+    <a href=
+    "http://lists.w3.org/Archives/Public/public-sysapps/">archives</a>).
+    All comments are welcome.</p>
+
+    <p>Publication as a First Public Working Draft does not imply
+    endorsement by the <abbr title="World Wide Web Consortium">W3C</abbr>
+    Membership. This is a draft document and may be updated,
+    replaced or obsoleted by other documents at any time. It is
+    inappropriate to cite this document as other than work in
+    progress.</p>
+
+    <p>This document was produced by a group operating under the
+    <a href=
+    "http://www.w3.org/Consortium/Patent-Policy-20040205/">5
+    February 2004 <abbr title=
+    "World Wide Web Consortium">W3C</abbr> Patent Policy</a>.
+    <abbr title="World Wide Web Consortium">W3C</abbr> maintains a
+    <a href="http://www.w3.org/2004/01/pp-impl/58119/status" rel=
+    "disclosure">public list of any patent disclosures</a> made in
+    connection with the deliverables of the group; that page also
+    includes instructions for disclosing a patent. An individual
+    who has actual knowledge of a patent which the individual
+    believes contains <a href=
+    "http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">
+    Essential Claim(s)</a> must disclose the information in
+    accordance with <a href=
+    "http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">
+    section 6 of the <abbr title=
+    "World Wide Web Consortium">W3C</abbr> Patent Policy</a>.</p>
+  </section>
+
+  <section id="toc">
+    <h2 class="introductory">Table of Contents</h2>
+
+    <ul class="toc">
+      <li class="tocline">
+        <a href="#terminology" class=
+        "tocxref"><span class="secno">1.</span> Terminology</a>
+      </li>
+
+      <li class="tocline">
+        <a href="#application-manifest"
+        class="tocxref"><span class="secno">2.</span> Application
+        Manifest</a>
+
+        <ul class="toc">
+          <li class="tocline">
+            <a href="#properties" class=
+            "tocxref"><span class="secno">2.1</span> Properties</a>
+
+            <ul class="toc">
+              <li class="tocline">
+                <a href=
+                "#adding-new-properties-to-the-manifest"
+                class="tocxref"><span class="secno">2.1.1</span>
+                Adding new properties to the manifest</a>
+              </li>
+
+              <li class="tocline">
+                <a href=
+                "#basic-properties"
+                class="tocxref"><span class="secno">2.1.2</span>
+                Basic properties</a>
+              </li>
+            </ul>
+          </li>
+
+          <li class="tocline">
+            <a href="#serving-manifests"
+            class="tocxref"><span class="secno">2.2</span> Serving
+            Manifests</a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="tocline">
+        <a href=
+        "#application-management" class=
+        "tocxref"><span class="secno">3.</span> Application
+        Management</a>
+
+        <ul class="toc">
+          <li class="tocline">
+            <a href=
+            "#application-interface"
+            class="tocxref"><span class="secno">3.1</span>
+            <span class=
+            "formerLink"><code>Application</code></span>
+            interface</a>
+
+            <ul class="toc"></ul>
+          </li>
+
+          <li class="tocline">
+            <a href=
+            "#downloadrequest-interface"
+            class="tocxref"><span class="secno">3.2</span>
+            <span class=
+            "formerLink"><code>DownloadRequest</code></span>
+            interface</a>
+
+            <ul class="toc"></ul>
+          </li>
+
+          <li class="tocline">
+            <a href=
+            "#extension-to-the-navigator-interface"
+            class="tocxref"><span class="secno">3.3</span>
+            Extension to the <span class=
+            "formerLink"><code>Navigator</code></span>
+            interface</a>
+
+            <ul class="toc"></ul>
+          </li>
+
+          <li class="tocline">
+            <a href=
+            "#applicationregistry-interface"
+            class="tocxref"><span class="secno">3.4</span>
+            <span class=
+            "formerLink"><code>ApplicationRegistry</code></span>
+            interface</a>
+
+            <ul class="toc"></ul>
+          </li>
+
+          <li class="tocline">
+            <a href=
+            "#applicationmanagement-interface"
+            class="tocxref"><span class="secno">3.5</span>
+            <span class=
+            "formerLink"><code>ApplicationManagement</code></span>
+            interface</a>
+
+            <ul class="toc">
+              <li class="tocline">
+                <a href="#events" class=
+                "tocxref"><span class="secno">3.5.1</span>
+                Events</a>
+              </li>
+            </ul>
+          </li>
+
+          <li class="tocline">
+            <a href=
+            "#application-event-types"
+            class="tocxref"><span class="secno">3.6</span>
+            Application Event Types</a>
+
+            <ul class="toc"></ul>
+          </li>
+        </ul>
+      </li>
+
+      <li class="tocline">
+        <a href="#packaged-applications"
+        class="tocxref"><span class="secno">4.</span> Packaged
+        applications</a>
+
+        <ul class="toc">
+          <li class="tocline">
+            <a href="#use-cases" class=
+            "tocxref"><span class="secno">4.1</span> Use cases</a>
+          </li>
+
+          <li class="tocline">
+            <a href="#package-format"
+            class="tocxref"><span class="secno">4.2</span> Package
+            format</a>
+          </li>
+
+          <li class="tocline">
+            <a href=
+            "#uri-of-a-packaged-file"
+            class="tocxref"><span class="secno">4.3</span> URI of a
+            packaged file</a>
+          </li>
+
+          <li class="tocline">
+            <a href="#manifest" class=
+            "tocxref"><span class="secno">4.4</span> Manifest</a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="tocline">
+        <a href="#updates" class=
+        "tocxref"><span class="secno">5.</span> Updates</a>
+      </li>
+
+      <li class="tocline">
+        <a href="#data-isolation" class=
+        "tocxref"><span class="secno">6.</span> Data isolation</a>
+      </li>
+
+      <li class="tocline">
+        <a href="#navigation" class=
+        "tocxref"><span class="secno">7.</span> Navigation</a>
+      </li>
+
+      <li class="tocline">
+        <a href="#system-messages"
+        class="tocxref"><span class="secno">8.</span> System
+        Messages</a>
+
+        <ul class="toc">
+          <li class="tocline">
+            <a href="#use-cases-1"
+            class="tocxref"><span class="secno">8.1</span> Use
+            cases</a>
+          </li>
+
+          <li class="tocline">
+            <a href=
+            "#extension-to-the-navigator-interface-1"
+            class="tocxref"><span class="secno">8.2</span>
+            Extension to the <span class=
+            "formerLink"><code>Navigator</code></span>
+            interface</a>
+
+            <ul class="toc"></ul>
+          </li>
+
+          <li class="tocline">
+            <a href="#definitions"
+            class="tocxref"><span class="secno">8.3</span>
+            Definitions</a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="tocline">
+        <a href="#permissions" class=
+        "tocxref"><span class="secno">9.</span> Permissions</a>
+
+        <ul class="toc">
+          <li class="tocline">
+            <a href="#use-cases-2"
+            class="tocxref"><span class="secno">9.1</span> Use
+            cases</a>
+          </li>
+
+          <li class="tocline">
+            <a href=
+            "#permission-declaration"
+            class="tocxref"><span class="secno">9.2</span>
+            Permission declaration</a>
+          </li>
+
+          <li class="tocline">
+            <a href="#basic-permissions"
+            class="tocxref"><span class="secno">9.3</span> Basic
+            Permissions</a>
+          </li>
+
+          <li class="tocline">
+            <a href=
+            "#trusted-applications"
+            class="tocxref"><span class="secno">9.4</span> Trusted
+            applications</a>
+
+            <ul class="toc">
+              <li class="tocline">
+                <a href="#use-cases-3"
+                class="tocxref"><span class="secno">9.4.1</span>
+                Use cases</a>
+              </li>
+
+              <li class="tocline">
+                <a href=
+                "#chain-of-trust" class=
+                "tocxref"><span class="secno">9.4.2</span> Chain of
+                trust</a>
+              </li>
+
+              <li class="tocline">
+                <a href=
+                "#marking-an-application-trusted"
+                class="tocxref"><span class="secno">9.4.3</span>
+                Marking an application trusted</a>
+              </li>
+
+              <li class="tocline">
+                <a href=
+                "#security-considerations"
+                class="tocxref"><span class="secno">9.4.4</span>
+                Security considerations</a>
+              </li>
+
+              <li class="tocline">
+                <a href="#csp-policy"
+                class="tocxref"><span class="secno">9.4.5</span>
+                CSP Policy</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+
+      <li class="tocline">
+        <a href=
+        "#application-life-cycle" class=
+        "tocxref"><span class="secno">10.</span> Application
+        life-cycle</a>
+
+        <ul class="toc">
+          <li class="tocline">
+            <a href=
+            "#application-states" class=
+            "tocxref"><span class="secno">10.1</span> Application
+            states</a>
+          </li>
+
+          <li class="tocline">
+            <a href=
+            "#consequences-of-visibility"
+            class="tocxref"><span class="secno">10.2</span>
+            Consequences of visibility</a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="tocline">
+        <a href="#domrequest-interface"
+        class="tocxref"><span class="secno">A.</span> <span class=
+        "formerLink"><code>DOMRequest</code></span> interface</a>
+
+        <ul class="toc">
+          <li class="tocline">
+            <a href="#use-cases-4"
+            class="tocxref"><span class="secno">A.1</span> Use
+            cases</a>
+          </li>
+
+          <li class="tocline">
+            <a href="#definition" class=
+            "tocxref"><span class="secno">A.2</span> Definition</a>
+
+            <ul class="toc">
+              <li class="tocline">
+                <a href="#events-1"
+                class="tocxref"><span class="secno">A.2.1</span>
+                Events</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+
+      <li class="tocline">
+        <a href="#acknowledgments"
+        class="tocxref"><span class="secno">B.</span>
+        Acknowledgments</a>
+      </li>
+
+      <li class="tocline">
+        <a href="#references" class=
+        "tocxref"><span class="secno">C.</span> References</a>
+
+        <ul class="toc">
+          <li class="tocline">
+            <a href=
+            "#normative-references"
+            class="tocxref"><span class="secno">C.1</span>
+            Normative references</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </section>
+
+  <section id="terminology">
+    <!--OddPage-->
+
+    <h2><span class="secno">1.</span> Terminology</h2>
+
+    <p>The <dfn id="dfn-eventhandler"><a href=
+    "http://dev.w3.org/html5/spec/webappapis.html#event-handlers">EventHandler</a></dfn>
+    interface represents a callback used for event handlers as
+    defined in [<cite><a class="bibref" href=
+    "#bib-HTML5">HTML5</a></cite>].</p>
+    <!--
+      <p>
+        The concepts <dfn><a href="http://dev.w3.org/html5/spec/webappapis.html#queue-a-task">
+        queue a task</a></dfn> and
+        <dfn><a href="http://dev.w3.org/html5/spec/webappapis.html#fire-a-simple-event">
+        fire a simple event</a></dfn> are defined in [[!HTML5]].
+      </p>
+      -->
+
+    <p>The concept of <dfn id="dfn-fire-a-simple-event"><a href=
+    "http://dev.w3.org/html5/spec/webappapis.html#fire-a-simple-event">
+    fire a simple event</a></dfn> is defined in [<cite><a class=
+    "bibref" href=
+    "#bib-HTML5">HTML5</a></cite>].</p>
+
+    <p>The terms <dfn id="dfn-event-handlers"><a href=
+    "http://dev.w3.org/html5/spec/webappapis.html#event-handlers">event
+    handlers</a></dfn> and <dfn id=
+    "dfn-event-handler-event-types"><a href=
+    "http://dev.w3.org/html5/spec/webappapis.html#event-handler-event-type">
+    event handler event types</a></dfn> are defined in
+    [<cite><a class="bibref" href=
+    "#bib-HTML5">HTML5</a></cite>].</p>
+
+    <p>The <dfn id="dfn-domerror"><a href=
+    "http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html/#interface-domerror">
+    DOMError</a></dfn> interface represents an error handling
+    object as defined in [<cite><a class="bibref" href=
+    "#bib-DOM4">DOM4</a></cite>].</p>
+  </section>
+
+  <section id="application-manifest">
+    <!--OddPage-->
+
+    <h2><span class="secno">2.</span> Application Manifest</h2>
+
+    <p>An <dfn id="dfn-application-manifest">application
+    manifest</dfn> is a JSON file describing an installable web
+    application. This JSON file consists of a top-level object and
+    several properties. The JSON grammar is described in
+    [<cite><a class="bibref" href=
+    "#bib-RFC4627">RFC4627</a></cite>].</p>
+
+    <div class="example">
+      <div class="example-title">
+        <span>Example 1</span>
+      </div>
+      <pre class="example highlight prettyprint">
+<span class="pun">{</span><span class="pln">
+  </span><span class="str">"name"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"str">"The Example App"</span><span class=
+"pun">,</span><span class="pln">
+  </span><span class="str">"description"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"str">"Exciting Open Web development action!"</span><span class=
+"pun">,</span><span class="pln">
+  </span><span class="str">"launch_path"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"str">"/"</span><span class="pun">,</span><span class="pln">
+  </span><span class="str">"version"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"str">"1.0"</span><span class="pun">,</span><span class="pln">
+  </span><span class="str">"icons"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"pun">{</span><span class="pln">
+    </span><span class="str">"16"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"str">"/img/icon_16.png"</span><span class=
+"pun">,</span><span class="pln">
+    </span><span class="str">"48"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"str">"/img/icon_48.png"</span><span class=
+"pun">,</span><span class="pln">
+    </span><span class="str">"128"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"str">"/img/icon_128.png"</span><span class="pln">
+  </span><span class="pun">},</span><span class="pln">
+  </span><span class="str">"developer"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"pun">{</span><span class="pln">
+    </span><span class="str">"name"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"str">"Foo Corp."</span><span class="pun">,</span><span class=
+"pln">
+    </span><span class="str">"url"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"str">"http://sysapps.org/example"</span><span class="pln">
+  </span><span class="pun">},</span><span class="pln">
+  </span><span class="str">"appcache_path"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"str">"/cache.manifest"</span><span class=
+"pun">,</span><span class="pln">
+  </span><span class="str">"locales"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"pun">{</span><span class="pln">
+    </span><span class="str">"es"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"pun">{</span><span class="pln">
+      </span><span class="str">"description"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"str">"¡Acción abierta emocionante del desarrollo del Web!"</span><span class="pun">,</span><span class="pln">
+      </span><span class="str">"developer"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"pun">{</span><span class="pln">
+        </span><span class="str">"url"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"str">"https://sysapps.org/example/es-ES"</span><span class="pln">
+      </span><span class="pun">}</span><span class="pln">
+    </span><span class="pun">}</span><span class="pln">
+  </span><span class="pun">},</span><span class="pln">
+  </span><span class="str">"default_locale"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"str">"en"</span><span class="pun">,</span><span class="pln">
+  </span><span class="str">"screen_size"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"pun">{</span><span class="pln">
+    </span><span class="str">"min_width"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"str">"600"</span><span class="pun">,</span><span class="pln">
+    </span><span class="str">"min_height"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"str">"300"</span><span class="pln">
+  </span><span class="pun">},</span><span class="pln">
+  </span><span class="str">"required_features"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"pun">[</span><span class="str">"touch"</span><span class=
+"pun">,</span><span class="pln"> </span><span class=
+"str">"geolocation"</span><span class="pun">,</span><span class=
+"pln"> </span><span class="str">"webgl"</span><span class=
+"pun">],</span><span class="pln">
+  </span><span class="str">"permissions"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"pun">{</span><span class="pln">
+    </span><span class="str">"contacts"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"pun">{</span><span class="pln">
+      </span><span class="str">"description"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"str">"Required for auto-completion in the share screen"</span><span class="pun">,</span><span class="pln">
+      </span><span class="str">"access"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"str">"read"</span><span class="pln">
+    </span><span class="pun">}</span><span class="pln">
+  </span><span class="pun">},</span><span class="pln">
+  </span><span class="str">"fullscreen"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"str">"true"</span><span class="pun">,</span><span class="pln">
+  </span><span class="str">"relNotes"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"pun">{</span><span class="pln">
+    </span><span class="str">"1.0"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"str">"Bugs fixed. New exciting effects. Ready for an official release!"</span><span class="pun">,</span><span class="pln">
+    </span><span class="str">"0.5"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"str">"First alpha version with still some bugs but already fun!"</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+</span><span class="pun">}</span>
+</pre>
+    </div>
+
+    <section id="properties">
+      <h3><span class="secno">2.1</span> Properties</h3>
+
+      <section id="adding-new-properties-to-the-manifest">
+        <h4><span class="secno">2.1.1</span> Adding new properties
+        to the manifest</h4>
+
+        <p>Any new specification can add new properties to the
+        <a href=
+        "#dfn-application-manifest"
+        class="internalDFN">application manifest</a>. Those
+        specifications <em class="rfc2119" title="MUST">MUST</em>
+        describe the new properties, the expected values and the
+        expected behaviour. Implementations <em class="rfc2119"
+        title="MUST">MUST</em> implement the basic properties as
+        describe below but <em class="rfc2119" title=
+        "SHOULD">SHOULD</em> only implement any extented feature if
+        they are implementing those specifications.</p>
+      </section>
+
+      <section id="basic-properties">
+        <h4><span class="secno">2.1.2</span> Basic properties</h4>
+
+        <p>All leaf properties <em class="rfc2119" title=
+        "MUST">MUST</em> contain a string value unless specified
+        otherwise.</p>
+
+        <p>The following properties <em class="rfc2119" title=
+        "MUST">MUST</em> be part of the <a href=
+        "#dfn-application-manifest"
+        class="internalDFN">application manifest</a>:
+        <code>name</code> and <code>description</code>. In
+        addition, if <code>locales</code> is part of the <a href=
+        "#dfn-application-manifest"
+        class="internalDFN">application manifest</a>,
+        <code>default_locale</code> <em class="rfc2119" title=
+        "MUST">MUST</em> be part of the <a href=
+        "#dfn-application-manifest"
+        class="internalDFN">application manifest</a>. The other
+        properties are optional.</p>
+
+        <ul class="properties">
+          <li><dfn id="propdef-name">name</dfn>: The name of the
+          web application in the default locale. The name
+          <em class="rfc2119" title="SHOULD">SHOULD</em> not be
+          longer than 128 characters.</li>
+
+          <li><dfn id="propdef-description">description</dfn>: A
+          short description of the web application. The description
+          <em class="rfc2119" title="MUST">MUST</em> be in the
+          default locale. The description <em class="rfc2119"
+          title="SHOULD">SHOULD</em> not be longer than 1024
+          characters.</li>
+
+          <li><dfn id=
+          "propdef-default_locale">default_locale</dfn>: The
+          property's value <em class="rfc2119" title=
+          "MUST">MUST</em> be the top-level name and description's
+          locale.</li>
+
+          <li>
+            <dfn id="propdef-launch_path">launch_path</dfn>: The
+            property's value <em class="rfc2119" title=
+            "MUST">MUST</em> be the path within the <a href=
+            "#dfn-application-s-origin"
+            class="internalDFN">application's origin</a> that is
+            loaded when the application is launched.
+          </li>
+
+          <li>
+            <dfn id="propdef-icons">icons</dfn>: A map of icon
+            sizes to URIs of the icons (which may be absolute,
+            relative or data URIs). Icons <em class="rfc2119"
+            title="MUST">MUST</em> be square. Relative URLs
+            <em class="rfc2119" title="MUST">MUST</em> use the
+            <a href=
+            "#dfn-application-manifest"
+            class="internalDFN">application manifest</a> URL as
+            base URL.
+          </li>
+
+          <li>
+            <dfn id="propdef-developer">developer</dfn>: This
+            property describe the developer of the application and
+            <em class="rfc2119" title="MUST">MUST</em> contain the
+            following properties:
+
+            <ul>
+              <li><dfn id="propdef-developer-name">name</dfn>: The
+              value <em class="rfc2119" title="MUST">MUST</em>
+              contain the name of the developer.</li>
+
+              <li><dfn id="propdef-url">url</dfn>: The value
+              <em class="rfc2119" title="MUST">MUST</em> contain an
+              URL pointing to the developer's website</li>
+            </ul>
+          </li>
+
+          <li>
+            <dfn id="propdef-locales">locales</dfn>: The property's
+            value <em class="rfc2119" title="MUST">MUST</em>
+            contain a map of locale specific overrides of strings
+            contained in the <a href=
+            "#dfn-application-manifest"
+            class="internalDFN">application manifest</a>. Each
+            locale key is keyed on a locale tag [<cite><a class=
+            "bibref" href=
+            "#bib-RFC4646">RFC4646</a></cite>],
+            and contains a sparse representation of the manifest.
+            Any field in the <a href=
+            "#propdef-locales" class=
+            "internalDFN">locales</a> property <em class="rfc2119"
+            title="SHOULD">SHOULD</em> override the corresponding
+            property in a localized user interface. The UA
+            <em class="rfc2119" title="MAY">MAY</em> ignore some
+            values if localizing the property doesn't appear to be
+            legit.<br>
+            If the <a href=
+            "#propdef-locales" class=
+            "internalDFN">locales</a> property is set, the <a href=
+            "#propdef-default_locale"
+            class="internalDFN">default_locale</a> <em class=
+            "rfc2119" title="MUST">MUST</em> also be set.
+          </li>
+          <!-- Commented because it is a controversial feature.
+          <li><dfn id=
+          "propdef-installs_allowed_from">installs_allowed_from</dfn>: An array
+          of origins that are allowed to trigger installation of this
+          application. This field allows the developer to restrict installation
+          of their application to specific sites. If the value is omitted,
+          installs are allowed from any site.</li>
+-->
+
+          <li><dfn id="propdef-appcache_path">appcache_path</dfn>:
+          The value <em class="rfc2119" title="MUST">MUST</em>
+          contain the absolute path to the application cache
+          manifest [<cite><a class="bibref" href=
+          "#bib-OFFLINE-WEBAPPS">OFFLINE-WEBAPPS</a></cite>].<br>
+
+          When an application is installed, the AppCache manifest
+          will be fetched and parsed, and its static assets under
+          the CACHE header <em class="rfc2119" title=
+          "MUST">MUST</em> be cached.</li>
+
+          <li><dfn id="propdef-version">version</dfn>: The value
+          <em class="rfc2119" title="MUST">MUST</em> be a string
+          that represents the version of the application. The UA
+          <em class="rfc2119" title="SHOULD NOT">SHOULD NOT</em>
+          interpret this value but <em class="rfc2119" title=
+          "MAY">MAY</em> show it to the user so the auther
+          <em class="rfc2119" title="SHOULD">SHOULD</em> use human
+          understandable versions.</li>
+
+          <li><dfn id="propdef-screen_size">screen_size</dfn>: This
+          object <em class="rfc2119" title="SHOULD">SHOULD</em>
+          contain the <code>min_height</code> and
+          <code>min_width</code> properties that describe the
+          minimum height and width (in pixels) the application
+          needs in order to render correctly. Those values are only
+          hint for the UA and should not be considered as mandatory
+          restrictions.</li>
+
+          <li><dfn id=
+          "propdef-required_features">required_features</dfn>: This
+          value <em class="rfc2119" title="MUST">MUST</em> be an
+          array containing the mandatory feature set the
+          application needs in order to run correctly. If the
+          property is missing or the value is an empty array or if
+          the value is invalid, the mandatory feature set
+          <em class="rfc2119" title="SHOULD">SHOULD</em> be
+          considered as the empty set.<br>
+          <span style="color: red;">TBD: add a list of
+          features.</span></li><!-- Commented because it might hopefully go to the Screen Orientation API spec.
+          <li>
+            <dfn id="propdef-orientation">orientation</dfn>: This value defines
+            the allowed orientations at which the application may be rendered. If
+            a value is provided, the runtime MUST ensure that the viewport
+            rendering the application will adhere to one of the specified values
+            and never orient the application in a direction not specified in this
+            property. The default behavior SHOULD be to rotate the viewport at an
+            angle that best fits the orientation of the device, and MUST change
+            as the user spatially rotates the device. The value MUST be an
+            array containing one or more of the following string values
+            (duplicates SHOULD be ignored):
+
+            <ul>
+              <li><dfn id=
+              "propdef-orientation-portrait-primary">portrait-primary</dfn>:
+              Locked to a single portrait direction. If the device has an obvious
+              primary orientation in portrait mode, this is that orientation. If
+              there is no obvious primary orientation due to landscape being the
+              primary orientation for the device, this is the orientation if
+              rotating the device 90 degrees clock-wise from the primary
+              landscape mode.</li>
+
+              <li><dfn id=
+              "propdef-orientation-landscape-primary">landscape-primary</dfn>:
+              Locked to a single landscape direction. If the device has an
+              obvious primary orientation in landscape mode, this is that
+              orientation. If there is no obvious landscape orientation due to
+              portrait being the primary orientation for the device, this is the
+              orientation if rotating the device 90 degrees clock-wise from the
+              primary portrait mode.</li>
+
+              <li>
+                <dfn id=
+                "propdef-orientation-portrait-secondary">portrait-secondary</dfn>:
+                The portrait mode opposite of <a>portrait-primary</a>.
+              </li>
+
+              <li>
+                <dfn id=
+                "propdef-orientation-landscape-secondary">landscape-secondary</dfn>:
+                The landscape mode opposite of <a>landscape-primary</a>.
+              </li>
+
+              <li><dfn id="propdef-orientation-portrait">portrait</dfn>:
+              Equivalent to
+              <code>["portrait-primary", "portrait-secondary"]</code>.</li>
+
+              <li><dfn id="propdef-orientation-landscape">landscape</dfn>:
+              Equivalent to
+              <code>["landscape-primary", "landscape-secondary"]</code>.</li>
+            </ul>
+          </li>
+-->
+
+          <li><dfn id="propdef-fullscreen">fullscreen</dfn>: This
+          value <em class="rfc2119" title="MUST">MUST</em> be set
+          to either <dfn id="dfn-true">true</dfn> or <dfn id=
+          "dfn-false">false</dfn> to describe whether the runtime
+          should launch the application in fullscreen mode.</li>
+
+          <li><dfn id="propdef-relnotes">relNotes</dfn>: This
+          property's value <em class="rfc2119" title=
+          "MUST">MUST</em> contain a map associating an
+          application's version with a string describing the
+          changes between that version and the previous one.</li>
+
+          <li>
+            <dfn id="propdef-permisssions">permissions</dfn>: This
+            value consists of a set of permissions that the
+            application needs. An application <em class="rfc2119"
+            title="SHOULD">SHOULD</em> list every API that is
+            considered to require user permission in this field.
+            Usage of an API without a corresponding entry in the
+            manifest <em class="rfc2119" title="SHOULD">SHOULD</em>
+            fail. The field is an object, with each property name
+            specifying a single permission, and object containing
+            the following fields:
+
+            <ul>
+              <li><dfn id=
+              "propdef-permissions-desc">description</dfn>:
+              Contains a human readable string specifying the
+              intent behind requesting use of this API. This
+              property is mandatory.</li>
+
+              <li><dfn id=
+              "propdef-permissions-access">access</dfn>: Contains a
+              a string specifying the type of access required for
+              this permission. This field is mandatory for a
+              certain subset of permissions, and <em class=
+              "rfc2119" title="MUST">MUST</em> be one of <dfn id=
+              "dfn-read">read</dfn>, <dfn id=
+              "dfn-readwrite">readwrite</dfn>, <dfn id=
+              "dfn-readcreate">readcreate</dfn>, or <dfn id=
+              "dfn-createonly">createonly</dfn>.</li>
+            </ul>
+
+            <p>Each specification <em class="rfc2119" title=
+            "MUST">MUST</em> specify the new permissions that would
+            be required to use the feature it is defining.</p>
+          </li>
+          <!-- Commented because it should go to the Web Intents/Web Activities spec.
+          <li><dfn id="propdef-activities">activities</dfn>: This value specifies
+          a set of
+          <a href="https://wiki.mozilla.org/WebAPI/WebActivities">WebActivities</a>
+          that this app supports. Each property in this value is a discrete
+          activity whose name matches the property name. Activity names are
+          free-form text, and each activity is represented by an object. This
+          object MUST contain the following property:
+
+          <ul>
+            <li><dfn id="propdef-activities-href">href</dfn>: When another app
+            or web page initiates an activity that is supported by this app, if
+            this app is chosen to perform the activity, this page will be opened
+            in the manner specified by the <dfn>disposition</dfn> property. The
+            manner in which a particular app is chosen to perform an activity is
+            out of scope for this specification.</li>
+          </ul>
+
+          An activity object MAY also contain the following properties:
+
+          <ul>
+            <li><dfn id="propdef-activites-disposition">disposition</dfn>: This
+            value specifies how the page specified in <dfn>href</dfn> is presented
+            when an activity is invoked. The value, if specified, MUST be one of
+            the following (if omitted, defaults to <dfn>window</dfn>):
+              <ul>
+                <li><dfn id="propdef-activities-disposition-window">window</dfn>:
+                The page handling the activity is opened in a new "window" (on a
+                mobile device, for example, this view will replace the original
+                app that requested the activity). The page MUST call
+                <code>navigator.setMessageHandler</code> for each activity it
+                supports and subsequently execute the activity for which it
+                receives a message. Further, if the activity requires a return
+                value, the page MUST call <code>activity.postResult</code> or
+                <code>activity.postError</code> (where <code>activity</code> is
+                the first argument provided to the function specified by
+                <code>setMessageHandler</code>) as appropriate. These functions
+                are specified in greater details in the WebActivities
+                document.</li>
+
+                <li><dfn id="propdef-activities-disposition-inline">inline</dfn>:
+                The page handling the activity will open in an overlay (on a
+                mobile device, for example, this will be rendered in a popup over
+                the original app that requested the activity). Subsequent behavior
+                is exactly the same as if the disposition were
+                <dfn>window</dfn>.</li>
+              </ul>
+
+            <li><dfn id="propdef-activities-filters">filters</dfn>:
+            <i>OPTIONAL</i>. This value is a dictionary, each property of which
+            specified a particular filter. These filters will be applied while
+            determining apps suitable for handling a given activity. Filter names
+            are free-form text, but their values MUST be either a string or an
+            array of strings (the exact type depends on the filter).</li>
+          </ul>
+-->
+        </ul>
+
+        <p>The <dfn id="dfn-application-s-origin">application's
+        origin</dfn> is the origin of the <a href=
+        "#dfn-application-manifest"
+        class="internalDFN">application manifest</a>.
+        [<cite><a class="bibref" href=
+        "#bib-ORIGIN">ORIGIN</a></cite>]</p>
+      </section>
+    </section>
+
+    <section id="serving-manifests">
+      <h3><span class="secno">2.2</span> Serving Manifests</h3>
+
+      <p>An <a href=
+      "#dfn-application-manifest" class=
+      "internalDFN">application manifest</a> <em class="rfc2119"
+      title="MUST">MUST</em> be served from the same origin as the
+      application.</p>
+
+      <p>When served as a static file, it is <em class="rfc2119"
+      title="RECOMMENDED">RECOMMENDED</em> that the manifest is
+      stored with the extension <code>.webapp</code>. The manifest
+      <em class="rfc2119" title="MUST">MUST</em> be served with a
+      <i>Content-Type</i> header of
+      <code>application/x-web-app-manifest+json</code>. It is
+      <em class="rfc2119" title="RECOMMENDED">RECOMMENDED</em> that
+      <a>application manifests</a> are served over SSL.</p>
+    </section>
+  </section>
+
+  <section id="application-management">
+    <!--OddPage-->
+
+    <h2><span class="secno">3.</span> Application Management</h2>
+
+    <section id="application-interface">
+      <h3><span class="secno">3.1</span> <a href=
+      "#idl-def-Application" class=
+      "idlType"><code>Application</code></a> interface</h3>
+
+      <section>
+        <p>Web Applications are represented by the <a href=
+        "#idl-def-Application" class=
+        "idlType"><code>Application</code></a> interface.</p>
+        <pre class="idl">
+<span class="idlInterface" id=
+"idl-def-Application">interface <span class=
+"idlInterfaceID">Application</span> {
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>DOMString</a></span>     <span class=
+"idlAttrName"><a href=
+"#widl-Application-origin">origin</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>Object</a></span>        <span class=
+"idlAttrName"><a href=
+"#widl-Application-manifest">manifest</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>DOMString</a></span>     <span class=
+"idlAttrName"><a href=
+"#widl-Application-installOrigin">installOrigin</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>unsigned long</a></span> <span class=
+"idlAttrName"><a href=
+"#widl-Application-installTime">installTime</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>Object</a></span>        <span class=
+"idlAttrName"><a href=
+"#widl-Application-parameters">parameters</a></span>;</span>
+<span class="idlMethod">    <span class="idlMethType"><a href=
+"#idl-def-DOMRequest" class=
+"idlType"><code>DOMRequest</code></a></span>      <span class=
+"idlMethName"><a href=
+"#widl-Application-launch-DOMRequest">launch</a></span> ();</span>
+<span class="idlMethod">    <span class="idlMethType"><a href=
+"#idl-def-DOMRequest" class=
+"idlType"><code>DOMRequest</code></a></span>      <span class=
+"idlMethName"><a href=
+"#widl-Application-uninstall-DOMRequest">uninstall</a></span> ();</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>DOMString</a></span>     <span class=
+"idlAttrName"><a href=
+"#widl-Application-updateState">updateState</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>unsigned long</a></span> <span class=
+"idlAttrName"><a href=
+"#widl-Application-downloadSize">downloadSize</a></span>;</span>
+<span class="idlMethod">    <span class="idlMethType"><a href=
+"#idl-def-DownloadRequest" class=
+"idlType"><code>DownloadRequest</code></a></span> <span class=
+"idlMethName"><a href=
+"#widl-Application-downloadUpdate-DownloadRequest">downloadUpdate</a></span> ();</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>DOMString</a></span>     <span class=
+"idlAttrName"><a href=
+"#widl-Application-state">state;</a></span>;</span>
+<span class="idlMethod">    <span class=
+"idlMethType"><a>void</a></span>            <span class=
+"idlMethName"><a href=
+"#widl-Application-hide-void">hide</a></span> ();</span>
+<span class="idlMethod">    <span class=
+"idlMethType"><a>void</a></span>            <span class=
+"idlMethName"><a href=
+"#widl-Application-exit-void">exit</a></span> ();</span>
+<span class="idlAttribute">                attribute <span class=
+"idlAttrType"><a>EventHandler</a></span>  <span class=
+"idlAttrName"><a href=
+"#widl-Application-onlaunch">onlaunch</a></span>;</span>
+<span class="idlAttribute">                attribute <span class=
+"idlAttrType"><a>EventHandler</a></span>  <span class=
+"idlAttrName"><a href=
+"#widl-Application-onpause">onpause</a></span>;</span>
+<span class="idlAttribute">                attribute <span class=
+"idlAttrType"><a>EventHandler</a></span>  <span class=
+"idlAttrName"><a href=
+"#widl-Application-onresume">onresume</a></span>;</span>
+<span class="idlAttribute">                attribute <span class=
+"idlAttrType"><a>EventHandler</a></span>  <span class=
+"idlAttrName"><a href=
+"#widl-Application-onterminate">onterminate</a></span>;</span>
+};</span>
+</pre>
+
+        <section>
+          <h5 id="attributes">Attributes</h5>
+
+          <dl class="attributes">
+            <dt id="widl-Application-downloadSize">
+            <code>downloadSize</code> of type <span class=
+            "idlAttrType"><a>unsigned long</a></span>,
+            readonly</dt>
+
+            <dd>The attribute <em class="rfc2119" title=
+            "SHOULD">SHOULD</em> return the size of the download
+            that would be required to update the application in
+            kilobytes, if any. If the application doesn't have have
+            an available update, if the download has already been
+            done or if the UA can't find out the size of the
+            download required for the update, the attribute
+            <em class="rfc2119" title="MUST">MUST</em> return
+            0.<br>
+            If the download is happening, the attribute <em class=
+            "rfc2119" title="MUST">MUST</em> return 0.<br>
+            If the download has been made but interupted and the UA
+            is able to continue it, the attribute <em class=
+            "rfc2119" title="SHOULD">SHOULD</em> return the
+            remaining size to download.</dd>
+
+            <dt id="widl-Application-installOrigin">
+            <code>installOrigin</code> of type <span class=
+            "idlAttrType"><a>DOMString</a></span>, readonly</dt>
+
+            <dd>The attribute <em class="rfc2119" title=
+            "MUST">MUST</em> return the origin of the page from
+            which the application was installed. [<cite><a class=
+            "bibref" href=
+            "#bib-ORIGIN">ORIGIN</a></cite>]</dd>
+
+            <dt id="widl-Application-installTime">
+            <code>installTime</code> of type <span class=
+            "idlAttrType"><a>unsigned long</a></span>,
+            readonly</dt>
+
+            <dd>The attribute <em class="rfc2119" title=
+            "MUST">MUST</em> return the time in milliseconds since
+            epoch at which the application was installed.</dd>
+
+            <dt id="widl-Application-manifest">
+            <code>manifest</code> of type <span class=
+            "idlAttrType"><a>Object</a></span>, readonly</dt>
+
+            <dd>
+              The attribute <em class="rfc2119" title=
+              "MUST">MUST</em> return an object representing the
+              parsed <a href=
+              "#dfn-application-manifest"
+              class="internalDFN">application manifest</a>.
+            </dd>
+
+            <dt id="widl-Application-onlaunch">
+            <code>onlaunch</code> of type <span class=
+            "idlAttrType"><a>EventHandler</a></span>,</dt>
+
+            <dt id="widl-Application-onpause"><code>onpause</code>
+            of type <span class=
+            "idlAttrType"><a>EventHandler</a></span>,</dt>
+
+            <dt id="widl-Application-onresume">
+            <code>onresume</code> of type <span class=
+            "idlAttrType"><a>EventHandler</a></span>,</dt>
+
+            <dt id="widl-Application-onterminate">
+            <code>onterminate</code> of type <span class=
+            "idlAttrType"><a>EventHandler</a></span>,</dt>
+
+            <dt id="widl-Application-origin"><code>origin</code> of
+            type <span class="idlAttrType"><a>DOMString</a></span>,
+            readonly</dt>
+
+            <dd>
+              The attribute <em class="rfc2119" title=
+              "MUST">MUST</em> return the <a href=
+              "#dfn-application-s-origin"
+              class="internalDFN">application's origin</a>.
+            </dd>
+
+            <dt id="widl-Application-parameters">
+            <code>parameters</code> of type <span class=
+            "idlAttrType"><a>Object</a></span>, readonly</dt>
+
+            <dd>
+              The attribute <em class="rfc2119" title=
+              "MUST">MUST</em> return the parameters that were
+              provided at install time. See <code>install()</code>
+              in <a href=
+              "#idl-def-ApplicationRegistry"
+              class="idlType"><code>ApplicationRegistry</code></a>.
+            </dd>
+
+            <dt id="widl-Application-state"><code>state;</code> of
+            type <span class="idlAttrType"><a>DOMString</a></span>,
+            readonly</dt>
+
+            <dd>
+              The attribute <em class="rfc2119" title=
+              "MUST">MUST</em> return <code>running</code> if the
+              current application state is <a href=
+              "#dfn-running" class=
+              "internalDFN">running</a>. Otherwise, if the current
+              application state is <a href=
+              "#dfn-paused" class=
+              "internalDFN">paused</a>, it <em class="rfc2119"
+              title="MUST">MUST</em> return <code>paused</code>.
+              Otherwise, it <em class="rfc2119" title=
+              "MUST">MUST</em> return <code>terminated</code>.
+            </dd>
+
+            <dt id="widl-Application-updateState">
+            <code>updateState</code> of type <span class=
+            "idlAttrType"><a>DOMString</a></span>, readonly</dt>
+
+            <dd>The attribute <em class="rfc2119" title=
+            "MUST">MUST</em> return the empty string,
+            <code>available</code>, <code>downloading</code>,
+            <code>downloaded</code> or <code>installing</code>,
+            depending on the state of the application.<br>
+            If the application is being updated, the attribute
+            <em class="rfc2119" title="MUST">MUST</em> return
+            <code>installing</code>.<br>
+            If the application is ready to be updated, with the
+            updtade fully downloaded or if there is no download to
+            proceed to the update, the attribute <em class=
+            "rfc2119" title="MUST">MUST</em> return
+            <code>downloaded</code>.<br>
+            If the application's update is being downloaded, the
+            attribute <em class="rfc2119" title="MUST">MUST</em>
+            return <code>downloading</code>.<br>
+            If there is an application update available, it is not
+            being installed, nor downloaded, nor downloading, the
+            attribute <em class="rfc2119" title="MUST">MUST</em>
+            return <code>available</code>. Otherwise, the attribute
+            <em class="rfc2119" title="MUST">MUST</em> return the
+            empty string.</dd>
+          </dl>
+        </section>
+
+        <section>
+          <h5 id="methods">Methods</h5>
+
+          <dl class="methods">
+            <dt id=
+            "widl-Application-downloadUpdate-DownloadRequest">
+            <code>downloadUpdate</code></dt>
+
+            <dd>
+              The method <em class="rfc2119" title="MUST">MUST</em>
+              return a <a href=
+              "#idl-def-DownloadRequest"
+              class="idlType"><code>DownloadRequest</code></a>
+              object and asynchronously run the following steps:
+
+              <ol>
+                <li>If the application doesn't have an available
+                update, the UA <em class="rfc2119" title=
+                "MUST">MUST</em> send an <a href=
+                "#dfn-error-message"
+                class="internalDFN">error message</a> to the
+                request object with the value
+                <code>InvalidState</code> and abort these steps.
+                </li>
+
+                <li>If the application doesn't require a download
+                to process the update, the UA <em class="rfc2119"
+                title="MUST">MUST</em> send a <a>succes message</a>
+                to the request object with no value and abort these
+                steps.
+                </li>
+
+                <li>If the application's update is currently being
+                downloaded, the request <em class="rfc2119"
+                  title="MUST">MUST</em> reflect the current state
+                  of the download. Otherwise, the request must
+                  <a href=
+                  "#dfn-start-the-download"
+                  class="internalDFN">start the download</a>.
+                </li>
+              </ol>
+
+              <div>
+                <em>No parameters.</em>
+              </div>
+
+              <div>
+                <em>Return type:</em> <code><a href=
+                "#idl-def-DownloadRequest"
+                class=
+                "idlType"><code>DownloadRequest</code></a></code>
+              </div>
+            </dd>
+
+            <dt id="widl-Application-exit-void">
+            <code>exit</code></dt>
+
+            <dd>
+              When this method is called, the UA <em class=
+              "rfc2119" title="MUST">MUST</em> put the application
+              state to <a href=
+              "#dfn-terminated" class=
+              "internalDFN">terminated</a> and fire the appropriate
+              events.<br>
+              If the application was already in the <a href=
+              "#dfn-terminated" class=
+              "internalDFN">terminated</a> state, this method
+              <em class="rfc2119" title="MUST">MUST</em> be a
+              no-op.
+
+              <div>
+                <em>No parameters.</em>
+              </div>
+
+              <div>
+                <em>Return type:</em> <code><a>void</a></code>
+              </div>
+            </dd>
+
+            <dt id="widl-Application-hide-void">
+            <code>hide</code></dt>
+
+            <dd>
+              When this method is called, the UA <em class=
+              "rfc2119" title="SHOULD">SHOULD</em> hide the
+              application from the user. Hiding the application
+              <em class="rfc2119" title="SHOULD">SHOULD</em> fire
+              visibility events as described in [<cite><a class=
+              "bibref" href=
+              "#bib-PAGE-VISIBILITY">PAGE-VISIBILITY</a></cite>].<br>
+
+              If the application was already not visible, this
+              method <em class="rfc2119" title="MUST">MUST</em> be
+              a no-op.
+
+              <div>
+                <em>No parameters.</em>
+              </div>
+
+              <div>
+                <em>Return type:</em> <code><a>void</a></code>
+              </div>
+            </dd>
+
+            <dt id="widl-Application-launch-DOMRequest">
+            <code>launch</code></dt>
+
+            <dd>
+              This method <em class="rfc2119" title=
+              "MUST">MUST</em> return a <a href=
+              "#idl-def-DOMRequest"
+              class="idlType"><code>DOMRequest</code></a> instance
+              and then run the following steps asynchronously:
+
+              <ol>
+                <li>If the caller isn't allowed by the UA to launch
+                the application, the UA <em class="rfc2119"
+                  title="MUST">MUST</em> fire an <code>error</code>
+                  event to the <a href=
+                  "#idl-def-DOMRequest"
+                  class="idlType"><code>DOMRequest</code></a>
+                  object with the <code>"NotAllowedError"</code>
+                  error code and exit those steps.
+                </li>
+
+                <li>If the caller is allowed to launch the
+                application, the UA <em class="rfc2119" title=
+                "SHOULD">SHOULD</em> launch the application.</li>
+
+                <li>If the application has been successfuly
+                launched, the UA <em class="rfc2119" title="MUST">
+                  MUST</em> fire a <code>success</code> event to
+                  the <a href=
+                  "#idl-def-DOMRequest"
+                  class="idlType"><code>DOMRequest</code></a>
+                  object and set <code>result</code> to null.<br>
+                  Otherwise, the UA <em class="rfc2119" title=
+                  "MUST">MUST</em> fire an <code>error</code> event
+                  to the <a href=
+                  "#idl-def-DOMRequest"
+                  class="idlType"><code>DOMRequest</code></a>
+                  object with an error code that describes the
+                  error.
+                </li>
+              </ol>
+
+              <div>
+                <em>No parameters.</em>
+              </div>
+
+              <div>
+                <em>Return type:</em> <code><a href=
+                "#idl-def-DOMRequest"
+                class="idlType"><code>DOMRequest</code></a></code>
+              </div>
+            </dd>
+
+            <dt id="widl-Application-uninstall-DOMRequest">
+            <code>uninstall</code></dt>
+
+            <dd>
+              This method <em class="rfc2119" title=
+              "MUST">MUST</em> return a <a href=
+              "#idl-def-DOMRequest"
+              class="idlType"><code>DOMRequest</code></a> instance
+              and then run the following steps asynchronously:
+
+              <ol>
+                <li>If the application isn't currently installed,
+                the UA <em class="rfc2119" title="MUST">MUST</em>
+                fire an <code>error</code> event to the <a href=
+                "#idl-def-DOMRequest"
+                class="idlType"><code>DOMRequest</code></a> object
+                with the <code>"NotInstalledError"</code> error
+                code and exit those steps.
+                </li>
+
+                <li>If the caller isn't allowed by the UA to
+                uninstall the application, the UA <em class=
+                "rfc2119" title="MUST">MUST</em> fire an
+                <code>error</code> event to the <a href=
+                "#idl-def-DOMRequest"
+                class="idlType"><code>DOMRequest</code></a> object
+                with the <code>"NotAllowedError"</code> error code
+                and exit those steps.
+                </li>
+
+                <li>If the caller is allowed to uninstall the
+                application, the UA <em class="rfc2119" title=
+                "SHOULD">SHOULD</em> uninstall the
+                application.</li>
+
+                <li>If the application has been successfuly
+                uninstalled, the UA <em class="rfc2119" title=
+                "MUST">MUST</em> fire a <code>success</code> event
+                to the <a href=
+                "#idl-def-DOMRequest"
+                class="idlType"><code>DOMRequest</code></a> object
+                and set <code>result</code> to null.<br>
+                  Otherwise, the UA <em class="rfc2119" title=
+                  "MUST">MUST</em> fire an <code>error</code> event
+                  to the <a href=
+                  "#idl-def-DOMRequest"
+                  class="idlType"><code>DOMRequest</code></a>
+                  object with an error code that describes the
+                  error.
+                </li>
+              </ol>
+
+              <div>
+                <em>No parameters.</em>
+              </div>
+
+              <div>
+                <em>Return type:</em> <code><a href=
+                "#idl-def-DOMRequest"
+                class="idlType"><code>DOMRequest</code></a></code>
+              </div>
+            </dd>
+          </dl>
+        </section>
+      </section>
+
+      <p>The following are the <a href=
+      "#dfn-event-handlers" class=
+      "internalDFN">event handlers</a> (and their corresponding
+      <a href=
+      "#dfn-event-handler-event-types"
+      class="internalDFN">event handler event types</a>) that
+      <em class="rfc2119" title="MUST">MUST</em> be supported as
+      attributes by the <code>Application</code> objects:</p>
+
+      <table class="simple">
+        <thead>
+          <tr>
+            <th>event handler</th>
+
+            <th>event handler event type</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td><strong><code>onlaunch</code></strong></td>
+
+            <td><code>launch</code></td>
+          </tr>
+
+          <tr>
+            <td><strong><code>onpause</code></strong></td>
+
+            <td><code>pause</code></td>
+          </tr>
+
+          <tr>
+            <td><strong><code>onresume</code></strong></td>
+
+            <td><code>resume</code></td>
+          </tr>
+
+          <tr>
+            <td><strong><code>onterminate</code></strong></td>
+
+            <td><code>terminate</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="downloadrequest-interface">
+      <h3><span class="secno">3.2</span> <a href=
+      "#idl-def-DownloadRequest" class=
+      "idlType"><code>DownloadRequest</code></a> interface</h3>
+
+      <section>
+        <pre class="idl">
+<span class="idlInterface" id=
+"idl-def-DownloadRequest">interface <span class=
+"idlInterfaceID">DownloadRequest</span> : <span class=
+"idlSuperclass"><a href=
+"#idl-def-DOMRequest" class=
+"idlType"><code>DOMRequest</code></a></span> {
+<span class="idlMethod">    <span class=
+"idlMethType"><a>void</a></span> <span class="idlMethName"><a href=
+"#widl-DownloadRequest-cancel-void">cancel</a></span> ();</span>
+<span class="idlAttribute">                attribute <span class=
+"idlAttrType"><a>double</a></span>       <span class=
+"idlAttrName"><a href=
+"#widl-DownloadRequest-progress">progress</a></span>;</span>
+<span class="idlAttribute">                attribute <span class=
+"idlAttrType"><a>EventHandler</a></span> <span class=
+"idlAttrName"><a href=
+"#widl-DownloadRequest-onprogress">onprogress</a></span>;</span>
+};</span>
+</pre>
+
+        <section>
+          <h5 id="attributes-1">Attributes</h5>
+
+          <dl class="attributes">
+            <dt id="widl-DownloadRequest-onprogress">
+            <code>onprogress</code> of type <span class=
+            "idlAttrType"><a>EventHandler</a></span>,</dt>
+
+            <dt id="widl-DownloadRequest-progress">
+            <code>progress</code> of type <span class=
+            "idlAttrType"><a>double</a></span>,</dt>
+
+            <dd>If the current state is <code>error</code> the
+            attribute <em class="rfc2119" title="MUST">MUST</em>
+            return 0.0. Otherwise, if the current state is
+            <code>success</code>, the attribute <em class="rfc2119"
+            title="MUST">MUST</em> return 1.0. Otherwise, the
+            attribute <em class="rfc2119" title=
+            "SHOULD">SHOULD</em> return the current progress of the
+            download expressed between 0.0 and 1.0.</dd>
+          </dl>
+        </section>
+
+        <section>
+          <h5 id="methods-1">Methods</h5>
+
+          <dl class="methods">
+            <dt id="widl-DownloadRequest-cancel-void">
+            <code>cancel</code></dt>
+
+            <dd>
+              This method <em class="rfc2119" title=
+              "MUST">MUST</em> stops the download and
+              asynchronously send an <a href=
+              "#dfn-error-message"
+              class="internalDFN">error message</a> to itself with
+              the value <code>UserCancel</code>.
+
+              <div>
+                <em>No parameters.</em>
+              </div>
+
+              <div>
+                <em>Return type:</em> <code><a>void</a></code>
+              </div>
+            </dd>
+          </dl>
+        </section>
+
+        <p>When the caller <dfn id="dfn-start-the-download">start
+        the download</dfn>, the <a href=
+        "#idl-def-DownloadRequest"
+        class="idlType"><code>DownloadRequest</code></a> <em class=
+        "rfc2119" title="SHOULD">SHOULD</em> start downloading the
+        resource.</p>
+
+        <p>If the resource fails to download, the UA <em class=
+        "rfc2119" title="MUST">MUST</em> send an <a href=
+        "#dfn-error-message" class=
+        "internalDFN">error message</a> to the request.<br></p>
+
+        <p>If the resource succeed to download, the UA <em class=
+        "rfc2119" title="MUST">MUST</em> send a <a href=
+        "#dfn-success-message" class=
+        "internalDFN">success message</a> to the request.</p>
+
+        <p>While the resource is downloading, which means as long
+        as <code>readyState</code> is <code>pending</code>, the UA
+        <em class="rfc2119" title="SHOULD">SHOULD</em> regularly
+        <a href=
+        "#dfn-fire-a-simple-event"
+        class="internalDFN">fire a simple event</a> named
+        <a>progress</a> on the object. The UA should note that
+        sending too much events might have an impact on performance
+        but sending too few of them might impact the user
+        experince.</p>
+
+        <p>The following are the <a href=
+        "#dfn-event-handlers" class=
+        "internalDFN">event handlers</a> (and their corresponding
+        <a href=
+        "#dfn-event-handler-event-types"
+        class="internalDFN">event handler event types</a>) that
+        <em class="rfc2119" title="MUST">MUST</em> be supported as
+        attributes by the <code>DOMRequest</code> objects:</p>
+
+        <table class="simple">
+          <thead>
+            <tr>
+              <th>event handler</th>
+
+              <th>event handler event type</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td><strong><code>onprogress</code></strong></td>
+
+              <td><code>progress</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </section>
+
+    <section id="extension-to-the-navigator-interface">
+      <h3><span class="secno">3.3</span> Extension to the <a href=
+      "#idl-def-Navigator" class=
+      "idlType"><code>Navigator</code></a> interface</h3>
+
+      <section>
+        <p>An <a href=
+        "#idl-def-ApplicationRegistry"
+        class="idlType"><code>ApplicationRegistry</code></a>
+        instance is exposed on the <code>Navigator</code> object
+        trough the an <code>app</code> attribute.</p>
+        <pre class="idl">
+<span class="idlInterface" id=
+"idl-def-Navigator">partial interface <span class=
+"idlInterfaceID">Navigator</span> {
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a href=
+"#idl-def-ApplicationRegistry" class=
+"idlType"><code>ApplicationRegistry</code></a></span> <span class=
+"idlAttrName"><a href=
+"#widl-Navigator-app">app</a></span>;</span>
+};</span>
+</pre>
+
+        <section>
+          <h5 id="attributes-2">Attributes</h5>
+
+          <dl class="attributes">
+            <dt id="widl-Navigator-app"><code>app</code> of type
+            <span class="idlAttrType"><a href=
+            "#idl-def-ApplicationRegistry"
+            class=
+            "idlType"><code>ApplicationRegistry</code></a></span>,
+            readonly</dt>
+
+            <dd>
+              The attribute <em class="rfc2119" title=
+              "MUST">MUST</em> return an <a href=
+              "#idl-def-ApplicationRegistry"
+              class="idlType"><code>ApplicationRegistry</code></a>
+              instance.
+            </dd>
+          </dl>
+        </section>
+      </section>
+    </section>
+
+    <section id="applicationregistry-interface">
+      <h3><span class="secno">3.4</span> <a href=
+      "#idl-def-ApplicationRegistry"
+      class="idlType"><code>ApplicationRegistry</code></a>
+      interface</h3>
+
+      <section>
+        <p>The <a href=
+        "#idl-def-ApplicationRegistry"
+        class="idlType"><code>ApplicationRegistry</code></a>
+        interface allows handling applications and query there
+        status.</p>
+        <pre class="idl">
+<span class="idlInterface" id=
+"idl-def-ApplicationRegistry">interface <span class=
+"idlInterfaceID">ApplicationRegistry</span> {
+<span class="idlMethod">    <span class="idlMethType"><a href=
+"#idl-def-DOMRequest" class=
+"idlType"><code>DOMRequest</code></a></span> <span class=
+"idlMethName"><a href=
+"#widl-ApplicationRegistry-install-DOMRequest-DOMString-manifestUrl-Object-parameters">install</a></span> (<span class="idlParam"><span class="idlParamType"><a>DOMString</a></span> <span class="idlParamName">manifestUrl</span></span>, <span class="idlParam">[<span class="extAttr">Optional</span>] <span class="idlParamType"><a>Object</a></span> <span class="idlParamName">parameters</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a href=
+"#idl-def-DOMRequest" class=
+"idlType"><code>DOMRequest</code></a></span> <span class=
+"idlMethName"><a href=
+"#widl-ApplicationRegistry-getSelf-DOMRequest">getSelf</a></span> ();</span>
+<span class="idlMethod">    <span class="idlMethType"><a href=
+"#idl-def-DOMRequest" class=
+"idlType"><code>DOMRequest</code></a></span> <span class=
+"idlMethName"><a href=
+"#widl-ApplicationRegistry-getInstalled-DOMRequest">getInstalled</a></span> ();</span>
+<span class="idlMethod">    <span class="idlMethType"><a href=
+"#idl-def-DOMRequest" class=
+"idlType"><code>DOMRequest</code></a></span> <span class=
+"idlMethName"><a href=
+"#widl-ApplicationRegistry-checkInstalled-DOMRequest-DOMString-manifestURL">checkInstalled</a></span> (<span class="idlParam"><span class="idlParamType"><a>DOMString</a></span> <span class="idlParamName">manifestURL</span></span>);</span>
+<span class="idlAttribute">                attribute <span class=
+"idlAttrType"><a href=
+"#idl-def-ApplicationManagement" class=
+"idlType"><code>ApplicationManagement</code></a></span> <span class="idlAttrName"><a href="#widl-ApplicationRegistry-management">management</a></span>;</span>
+};</span>
+</pre>
+
+        <section>
+          <h5 id="attributes-3">Attributes</h5>
+
+          <dl class="attributes">
+            <dt id="widl-ApplicationRegistry-management">
+            <code>management</code> of type <span class=
+            "idlAttrType"><a href=
+            "#idl-def-ApplicationManagement"
+            class=
+            "idlType"><code>ApplicationManagement</code></a></span>,</dt>
+
+            <dd>
+              If the caller isn't allowed to manage applications,
+              the UA <em class="rfc2119" title="MUST">MUST</em>
+              return null. Otherwise, it <em class="rfc2119" title=
+              "MUST">MUST</em> return an <a href=
+              "#idl-def-ApplicationManagement"
+              class=
+              "idlType"><code>ApplicationManagement</code></a>
+              object.
+            </dd>
+          </dl>
+        </section>
+
+        <section>
+          <h5 id="methods-2">Methods</h5>
+
+          <dl class="methods">
+            <dt id=
+            "widl-ApplicationRegistry-checkInstalled-DOMRequest-DOMString-manifestURL">
+            <code>checkInstalled</code></dt>
+
+            <dd>
+              The UA <em class="rfc2119" title="SHOULD">SHOULD</em>
+              return a <a href=
+              "#idl-def-DOMRequest"
+              class="idlType"><code>DOMRequest</code></a> object
+              and asynchronously check if there is an installed
+              application in the system with a manifest URL
+              matching <i>manifestURL</i>.<br>
+              After the asynchronous operation is done,, the IA
+              <em class="rfc2119" title="SHOULD">SHOULD</em> send a
+              <code>success</code> event to the <a href=
+              "#idl-def-DOMRequest"
+              class="idlType"><code>DOMRequest</code></a> object
+              and populate its <code>result</code> attribute with
+              the boolean value true if there is an installed
+              application fulfilling the condition, otherwise
+              <code>result</code> should be set to false.
+
+              <table class="parameters">
+                <tr>
+                  <th>Parameter</th>
+
+                  <th>Type</th>
+
+                  <th>Nullable</th>
+
+                  <th>Optional</th>
+
+                  <th>Description</th>
+                </tr>
+
+                <tr>
+                  <td class="prmName">manifestURL</td>
+
+                  <td class="prmType">
+                  <code><a>DOMString</a></code></td>
+
+                  <td class="prmNullFalse">✘</td>
+
+                  <td class="prmOptFalse">✘</td>
+
+                  <td class="prmDesc"></td>
+                </tr>
+              </table>
+
+              <div>
+                <em>Return type:</em> <code><a href=
+                "#idl-def-DOMRequest"
+                class="idlType"><code>DOMRequest</code></a></code>
+              </div>
+            </dd>
+
+            <dt id=
+            "widl-ApplicationRegistry-getInstalled-DOMRequest">
+            <code>getInstalled</code></dt>
+
+            <dd>
+              The UA <em class="rfc2119" title="SHOULD">SHOULD</em>
+              return a <a href=
+              "#idl-def-DOMRequest"
+              class="idlType"><code>DOMRequest</code></a> object
+              and asynchronously get all applications that have an
+              origin matching the caller's origin. [<cite><a class=
+              "bibref" href=
+              "#bib-ORIGIN">ORIGIN</a></cite>]<br>
+
+              When those applications are collected, the UA
+              <em class="rfc2119" title="SHOULD">SHOULD</em> send a
+              <code>success</code> event to the <a href=
+              "#idl-def-DOMRequest"
+              class="idlType"><code>DOMRequest</code></a> object
+              and populate its <code>request</code> attribute with
+              an array containing the applications.
+
+              <div>
+                <em>No parameters.</em>
+              </div>
+
+              <div>
+                <em>Return type:</em> <code><a href=
+                "#idl-def-DOMRequest"
+                class="idlType"><code>DOMRequest</code></a></code>
+              </div>
+            </dd>
+
+            <dt id="widl-ApplicationRegistry-getSelf-DOMRequest">
+            <code>getSelf</code></dt>
+
+            <dd>
+              The UA <em class="rfc2119" title="SHOULD">SHOULD</em>
+              return a <a href=
+              "#idl-def-DOMRequest"
+              class="idlType"><code>DOMRequest</code></a> object
+              and asynchronously get all applications that have an
+              origin matching the caller's origin. [<cite><a class=
+              "bibref" href=
+              "#bib-ORIGIN">ORIGIN</a></cite>]<br>
+
+              When those applications are collected, the UA
+              <em class="rfc2119" title="SHOULD">SHOULD</em> send a
+              <code>success</code> event to the <a href=
+              "#idl-def-DOMRequest"
+              class="idlType"><code>DOMRequest</code></a> object
+              and populate its <code>request</code> attribute with
+              an array containing the applications.
+
+              <div>
+                <em>No parameters.</em>
+              </div>
+
+              <div>
+                <em>Return type:</em> <code><a href=
+                "#idl-def-DOMRequest"
+                class="idlType"><code>DOMRequest</code></a></code>
+              </div>
+            </dd>
+
+            <dt id=
+            "widl-ApplicationRegistry-install-DOMRequest-DOMString-manifestUrl-Object-parameters">
+            <code>install</code></dt>
+
+            <dd>
+              This method <em class="rfc2119" title=
+              "MUST">MUST</em> return a <a href=
+              "#idl-def-DOMRequest"
+              class="idlType"><code>DOMRequest</code></a> instance
+              and then run the following steps asynchronously:
+
+              <ol>
+                <li>If the caller isn't allowed by the UA to
+                install the application, the UA <em class="rfc2119"
+                  title="MUST">MUST</em> fire an <code>error</code>
+                  event to the <a href=
+                  "#idl-def-DOMRequest"
+                  class="idlType"><code>DOMRequest</code></a>
+                  object with the <code>"NotAllowedError"</code>
+                  error code and exit those steps.
+                </li>
+
+                <li>If the caller is allowed to install the
+                application, the UA <em class="rfc2119" title=
+                "SHOULD">SHOULD</em> install the application as
+                described in the manifest at
+                <code>manifestUrl</code>.</li>
+
+                <li>If the application has been successfuly
+                installed, the UA <em class="rfc2119" title="MUST">
+                  MUST</em> fire a <code>success</code> event to
+                  the <a href=
+                  "#idl-def-DOMRequest"
+                  class="idlType"><code>DOMRequest</code></a>
+                  object and set <code>result</code> to null.<br>
+                  Otherwise, the UA <em class="rfc2119" title=
+                  "MUST">MUST</em> fire an <code>error</code> event
+                  to the <a href=
+                  "#idl-def-DOMRequest"
+                  class="idlType"><code>DOMRequest</code></a>
+                  object with an error code that describes the
+                  error.
+                </li>
+              </ol>
+
+              <p>The UA <em class="rfc2119" title=
+              "SHOULD">SHOULD</em> verify at any moment before
+              installing that <code>manifestUrl</code> points to a
+              valid manifest. If this is not the case, the UA
+              <em class="rfc2119" title="MUST">MUST</em> fire an
+              <code>error</code> event to the <a href=
+              "#idl-def-DOMRequest"
+              class="idlType"><code>DOMRequest</code></a> object
+              with the <code>"InvalidArgumentError"</code> and exit
+              the steps.</p>
+
+              <p>The UA <em class="rfc2119" title=
+              "SHOULD">SHOULD</em> save the <code>parameters</code>
+              if some are passed so they can later be retrieved by
+              the <code>parameters</code> attribute on the <a href=
+              "#idl-def-Application"
+              class="idlType"><code>Application</code></a>
+              interface.</p>
+
+              <table class="parameters">
+                <tr>
+                  <th>Parameter</th>
+
+                  <th>Type</th>
+
+                  <th>Nullable</th>
+
+                  <th>Optional</th>
+
+                  <th>Description</th>
+                </tr>
+
+                <tr>
+                  <td class="prmName">manifestUrl</td>
+
+                  <td class="prmType">
+                  <code><a>DOMString</a></code></td>
+
+                  <td class="prmNullFalse">✘</td>
+
+                  <td class="prmOptFalse">✘</td>
+
+                  <td class="prmDesc"></td>
+                </tr>
+
+                <tr>
+                  <td class="prmName">parameters</td>
+
+                  <td class="prmType">
+                  <code><a>Object</a></code></td>
+
+                  <td class="prmNullFalse">✘</td>
+
+                  <td class="prmOptFalse">✘</td>
+
+                  <td class="prmDesc"></td>
+                </tr>
+              </table>
+
+              <div>
+                <em>Return type:</em> <code><a href=
+                "#idl-def-DOMRequest"
+                class="idlType"><code>DOMRequest</code></a></code>
+              </div>
+            </dd>
+          </dl>
+        </section>
+      </section>
+    </section>
+
+    <section id="applicationmanagement-interface">
+      <h3><span class="secno">3.5</span> <a href=
+      "#idl-def-ApplicationManagement"
+      class="idlType"><code>ApplicationManagement</code></a>
+      interface</h3>
+
+      <section>
+        <p>The <a href=
+        "#idl-def-ApplicationManagement"
+        class="idlType"><code>ApplicationManagement</code></a>
+        interface allows access to all applications and is being
+        informed any time an application is being installed or
+        uninstalled. The intent of this interface is to be
+        restricted to privileged callers.</p>
+        <pre class="idl">
+<span class="idlInterface" id=
+"idl-def-ApplicationManagement">interface <span class=
+"idlInterfaceID">ApplicationManagement</span> {
+<span class="idlMethod">    <span class="idlMethType"><a href=
+"#idl-def-DOMRequest" class=
+"idlType"><code>DOMRequest</code></a></span> <span class=
+"idlMethName"><a href=
+"#widl-ApplicationManagement-getAll-DOMRequest">getAll</a></span> ();</span>
+<span class="idlAttribute">    [<span class=
+"extAttr">TreatNonCallableAsNull</span>]
+                attribute <span class=
+"idlAttrType"><a>EventHandler</a></span> <span class=
+"idlAttrName"><a href=
+"#widl-ApplicationManagement-oninstall">oninstall</a></span>;</span>
+<span class="idlAttribute">    [<span class=
+"extAttr">TreatNonCallableAsNull</span>]
+                attribute <span class=
+"idlAttrType"><a>EventHandler</a></span> <span class=
+"idlAttrName"><a href=
+"#widl-ApplicationManagement-onuninstall">onuninstall</a></span>;</span>
+<span class="idlMethod">    <span class="idlMethType"><a href=
+"#idl-def-DOMRequest" class=
+"idlType"><code>DOMRequest</code></a></span> <span class=
+"idlMethName"><a href=
+"#widl-ApplicationManagement-applyUpdate-DOMRequest-Application-application">applyUpdate</a></span> (<span class="idlParam"><span class="idlParamType"><a href="#idl-def-Application"
+class="idlType"><code>Application</code></a></span> <span class=
+"idlParamName">application</span></span>);</span>
+};</span>
+</pre>
+
+        <section>
+          <h5 id="attributes-4">Attributes</h5>
+
+          <dl class="attributes">
+            <dt id="widl-ApplicationManagement-oninstall">
+            <code>oninstall</code> of type <span class=
+            "idlAttrType"><a>EventHandler</a></span>,</dt>
+
+            <dd>This value may be set to a function that will be
+            invoked when an application is installed. The only
+            argument to this function will be the
+            <code>AppObject</code> of the application that was
+            installed.</dd>
+
+            <dt id="widl-ApplicationManagement-onuninstall">
+            <code>onuninstall</code> of type <span class=
+            "idlAttrType"><a>EventHandler</a></span>,</dt>
+
+            <dd>This value may be set to a function that will be
+            invoked when an application is uninstalled. The only
+            argument to this function be the <code>AppObject</code>
+            of the application that was uninstalled.</dd>
+          </dl>
+        </section>
+
+        <section>
+          <h5 id="methods-3">Methods</h5>
+
+          <dl class="methods">
+            <dt id=
+            "widl-ApplicationManagement-applyUpdate-DOMRequest-Application-application">
+            <code>applyUpdate</code></dt>
+
+            <dd>
+              The method <em class="rfc2119" title="MUST">MUST</em>
+              return a <a>DOMRequset</a> object and perform the
+              following steps asynchronously:
+
+              <ol>
+                <li>If the application doesn't have an updated or
+                the updated isn't fully downloaded, the UA
+                <em class="rfc2119" title="MUST">MUST</em> send an
+                <a href=
+                "#dfn-error-message"
+                class="internalDFN">error message</a> to the
+                request with the value <code>InvalidState</code>
+                and abort these steps.
+                </li>
+
+                <li>Stop <i>application</i> from running if it is
+                currently running.</li>
+
+                <li>Replace the previous version with the new
+                version of the application.</li>
+
+                <li>If an error has occured during the previous
+                steps, the UA <em class="rfc2119" title=
+                "MUST">MUST</em> send an <a href=
+                "#dfn-error-message"
+                class="internalDFN">error message</a> to the
+                request with any appropriate value. Otherwise, the
+                UA <em class="rfc2119" title="MUST">MUST</em> send
+                a <a href=
+                "#dfn-success-message"
+                class="internalDFN">success message</a> to the
+                request with an <a href=
+                "#idl-def-Application"
+                class="idlType"><code>Application</code></a> object
+                representing the updated application as a value.
+                </li>
+              </ol>
+
+              <table class="parameters">
+                <tr>
+                  <th>Parameter</th>
+
+                  <th>Type</th>
+
+                  <th>Nullable</th>
+
+                  <th>Optional</th>
+
+                  <th>Description</th>
+                </tr>
+
+                <tr>
+                  <td class="prmName">application</td>
+
+                  <td class="prmType"><code><a href=
+                  "#idl-def-Application"
+                  class=
+                  "idlType"><code>Application</code></a></code></td>
+
+                  <td class="prmNullFalse">✘</td>
+
+                  <td class="prmOptFalse">✘</td>
+
+                  <td class="prmDesc"></td>
+                </tr>
+              </table>
+
+              <div>
+                <em>Return type:</em> <code><a href=
+                "#idl-def-DOMRequest"
+                class="idlType"><code>DOMRequest</code></a></code>
+              </div>
+            </dd>
+
+            <dt id="widl-ApplicationManagement-getAll-DOMRequest">
+            <code>getAll</code></dt>
+
+            <dd>
+              The UA <em class="rfc2119" title="SHOULD">SHOULD</em>
+              return a <a href=
+              "#idl-def-DOMRequest"
+              class="idlType"><code>DOMRequest</code></a> object
+              and asynchronously get all applications currently in
+              the application registry.<br>
+              When those applications are collected, the UA
+              <em class="rfc2119" title="SHOULD">SHOULD</em> send a
+              <code>success</code> event to the <a href=
+              "#idl-def-DOMRequest"
+              class="idlType"><code>DOMRequest</code></a> object
+              and populate its <code>request</code> attribute with
+              an array containing the applications.
+
+              <div>
+                <em>No parameters.</em>
+              </div>
+
+              <div>
+                <em>Return type:</em> <code><a href=
+                "#idl-def-DOMRequest"
+                class="idlType"><code>DOMRequest</code></a></code>
+              </div>
+            </dd>
+          </dl>
+        </section>
+      </section>
+
+      <section id="events">
+        <h4><span class="secno">3.5.1</span> Events</h4>
+
+        <p>An <a href="#dfn-install"
+        class="internalDFN">install</a> event <em class="rfc2119"
+        title="MUST">MUST</em> be fired on all <a href=
+        "#idl-def-ApplicationManagement"
+        class="idlType"><code>ApplicationManagement</code></a>
+        instances as soon as an application is installed.</p>
+
+        <p>The <a href="#dfn-uninstall"
+        class="internalDFN">uninstall</a> event <em class="rfc2119"
+        title="MUST">MUST</em> be fired on all <a href=
+        "#idl-def-ApplicationManagement"
+        class="idlType"><code>ApplicationManagement</code></a>
+        instances as soon as an application is uninstalled.</p>
+
+        <p>The following are the <a href=
+        "#dfn-event-handlers" class=
+        "internalDFN">event handlers</a> (and their corresponding
+        <a href=
+        "#dfn-event-handler-event-types"
+        class="internalDFN">event handler event types</a>) that
+        <em class="rfc2119" title="MUST">MUST</em> be supported as
+        attributes by the <code>ApplicationManagement</code>
+        object:</p>
+
+        <table class="simple">
+          <thead>
+            <tr>
+              <th>event handler</th>
+
+              <th>event handler event type</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td><strong><code>oninstall</code></strong></td>
+
+              <td><code>install</code></td>
+            </tr>
+
+            <tr>
+              <td><strong><code>onuninstall</code></strong></td>
+
+              <td><code>uninstall</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </section>
+
+    <section id="application-event-types">
+      <h3><span class="secno">3.6</span> Application Event
+      Types</h3>
+
+      <p>Application Events are sent when an event happen on the
+      application level like an application being installed or
+      uninstalled.</p>
+
+      <section>
+        <pre class="idl">
+<span class="idlInterface" id=
+"idl-def-ApplicationEvent">[<span class=
+"extAttr">Constructor(DOMString type, Application eventInitDict)</span>]
+interface <span class=
+"idlInterfaceID">ApplicationEvent</span> : <span class=
+"idlSuperclass"><a>Event</a></span> {
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a href=
+"#idl-def-Application" class=
+"idlType"><code>Application</code></a></span> <span class=
+"idlAttrName"><a href=
+"#widl-ApplicationEvent-application">application</a></span>;</span>
+};</span>
+</pre>
+
+        <section>
+          <h5 id="attributes-5">Attributes</h5>
+
+          <dl class="attributes">
+            <dt id="widl-ApplicationEvent-application">
+            <code>application</code> of type <span class=
+            "idlAttrType"><a href=
+            "#idl-def-Application"
+            class="idlType"><code>Application</code></a></span>,
+            readonly</dt>
+            <dd class="hide"></dd>
+          </dl>
+        </section>
+        <pre class="idl">
+<span class="idlDictionary" id=
+"idl-def-ApplicationEventInit">dictionary <span class=
+"idlDictionaryID">ApplicationEventInit</span> : <span class=
+"idlSuperclass"><a>EventInit</a></span> {
+<span class="idlMember">    <span class="idlMemberType"><a href=
+"#idl-def-Application" class=
+"idlType"><code>Application</code></a></span> <span class=
+"idlMemberName"><a href=
+"#widl-ApplicationEventInit-application">application</a></span>;</span>
+};</span>
+</pre>
+
+        <section>
+          <h5 id="dictionary-applicationeventinit-members">
+          Dictionary <a class="idlType" href=
+          "#idl-def-ApplicationEventInit">
+          <code>ApplicationEventInit</code></a> Members</h5>
+
+          <dl class="dictionary-members">
+            <dt id="widl-ApplicationEventInit-application">
+            <code>application</code> of type <span class=
+            "idlMemberType"><a href=
+            "#idl-def-Application"
+            class="idlType"><code>Application</code></a></span></dt>
+            <dd class="hide"></dd>
+          </dl>
+        </section>
+      </section>
+
+      <p><a href=
+      "#idl-def-ApplicationEvent" class=
+      "idlType"><code>ApplicationEvent</code></a> objects
+      <em class="rfc2119" title="MUST">MUST</em> contain a non-null
+      <code>application</code> attribute representing the
+      application on each the action happened.<br>
+      The application events are always sent asynchronously, do not
+      buble and are not cancelable.</p>
+
+      <p>There are currently two types of Application Events:</p>
+
+      <ul>
+        <li><dfn id="dfn-install">install</dfn> is sent when an
+        application is installed. <code>application</code>
+        <em class="rfc2119" title="MUST">MUST</em> represent the
+        installed application.</li>
+
+        <li><dfn id="dfn-uninstall">uninstall</dfn> is sent when an
+        application is uninstalled. <code>application</code>
+        <em class="rfc2119" title="MUST">MUST</em> represent the
+        uninstalled application.</li>
+      </ul>
+    </section>
+  </section>
+
+  <section id="packaged-applications">
+    <!--OddPage-->
+
+    <h2><span class="secno">4.</span> Packaged applications</h2>
+
+    <p>A <dfn id="dfn-packaged-application">packaged
+    application</dfn> is an application that is self-contained in a
+    container. All resources that are commonly used by the
+    application <em class="rfc2119" title="SHOULD">SHOULD</em> be
+    available in the container.</p>
+
+    <p>A <dfn id="dfn-hosted-application">hosted application</dfn>
+    is an application that is not a <a href=
+    "#dfn-packaged-application" class=
+    "internalDFN">packaged application</a></p>
+
+    <section class="informative" id="use-cases">
+      <h3><span class="secno">4.1</span> Use cases</h3>
+
+      <p><em>This section is non-normative.</em></p>
+
+      <p>A <a href=
+      "#dfn-packaged-application" class=
+      "internalDFN">packaged application</a> would be useful in a
+      few situations, amongst them:</p>
+
+      <ul>
+        <li>If a marketplace wants to guarantee that an application
+        is safe, it allows it to review the application codes and
+        makes sure that all permissions granted can't be used
+        outside of the reviewed code. In addition, it forces, by
+        design, that any update will go trough the same review
+        process.</li>
+
+        <li>Some developers might want to develop for the Web
+        Platform without investing in a server infrastructure. Any
+        client-side only applications written on top of the Web
+        Platform will be able to be very easily distributed that
+        way.</li>
+      </ul>
+    </section>
+
+    <section id="package-format">
+      <h3><span class="secno">4.2</span> Package format</h3>
+
+      <p>An <a href=
+      "#dfn-application-manifest" class=
+      "internalDFN">application manifest</a> for the application
+      <em class="rfc2119" title="MUST">MUST</em> be present at the
+      root of the container.</p>
+
+      <p>The container of a <a href=
+      "#dfn-packaged-application" class=
+      "internalDFN">packaged application</a> <em class="rfc2119"
+      title="MUST">MUST</em> be a ZIP file.</p>
+    </section>
+
+    <section id="uri-of-a-packaged-file">
+      <h3><span class="secno">4.3</span> URI of a packaged
+      file</h3>
+
+      <p>A file contained in a <a href=
+      "#dfn-packaged-application" class=
+      "internalDFN">packaged application</a> <em class="rfc2119"
+      title="MUST">MUST</em> have an URI with the following
+      rules:</p>
+
+      <ul>
+        <li>The <code>scheme</code> of the URI <em class="rfc2119"
+        title="MUST">MUST</em> be <i>app</i>.</li>
+
+        <li>The <code>authority</code> of the URI <em class=
+        "rfc2119" title="MUST">MUST</em> be an identifier unique
+        for each applications. That means, two files from different
+        applications can't share the same <code>authority</code>
+        but two files from the same application will.</li>
+
+        <li>The <code>path</code> of the URI <em class="rfc2119"
+        title="MUST">MUST</em> be the file name.</li>
+
+        <li>Any other parts of the URI <em class="rfc2119" title=
+        "MUST">MUST</em> be empty.</li>
+      </ul>
+
+      <p>For more information about URI's, refer to
+      [<cite><a class="bibref" href=
+      "#bib-RFC3986">RFC3986</a></cite>].</p>
+
+      <p>For example, the URI of <i>index.html</i> from an
+      application can be:
+      <i>app://e35b8412-7451-46e7-ab29-0cee24fd486a/index.html</i>.</p>
+
+      <p>The URI of a packaged file is defined such as two files
+      from the same <a href=
+      "#dfn-packaged-application" class=
+      "internalDFN">packaged application</a> <em class="rfc2119"
+      title="MUST">MUST</em> share the same origin.<br>
+      A file from a <a href=
+      "#dfn-packaged-application" class=
+      "internalDFN">packaged application</a> and any other resource
+      outside of this application (an application or not, packaged
+      or not) <em class="rfc2119" title="MUST">MUST</em> not share
+      the same origin. [<cite><a class="bibref" href=
+      "#bib-ORIGIN">ORIGIN</a></cite>]</p>
+    </section>
+
+    <section id="manifest">
+      <h3><span class="secno">4.4</span> Manifest</h3>
+
+      <p>A <a href=
+      "#dfn-packaged-application" class=
+      "internalDFN">packaged application</a> <em class="rfc2119"
+      title="MUST">MUST</em> have a copy of its <a href=
+      "#dfn-application-manifest" class=
+      "internalDFN">application manifest</a> outside of the package
+      so it can be used for installation and updates purposes. As a
+      consequence, that copy of the <a href=
+      "#dfn-application-manifest" class=
+      "internalDFN">application manifest</a> can be reduced to only
+      a few properties: <a href=
+      "#propdef-developer-name" class=
+      "internalDFN">name</a>, <a href=
+      "#propdef-version" class=
+      "internalDFN">version</a> and <a href=
+      "#propdef-relnotes" class=
+      "internalDFN">relNotes</a>. In addition, a new property can
+      be used only in the content a packaged <a href=
+      "#dfn-application-manifest" class=
+      "internalDFN">application manifest</a><a>: <dfn id=
+      "prop-package">package</dfn> that <em class="rfc2119" title=
+      "SHOULD">SHOULD</em> contain an object with the following
+      properties:</a></p>
+
+      <ul>
+        <li>
+          <a><dfn id="prop-package-url">url</dfn>: this property
+          <em class="rfc2119" title="MUST">MUST</em> contain the
+          URL of the package related to that</a> <a href=
+          "#dfn-application-manifest"
+          class="internalDFN">application manifest</a>.<br>
+          When installing or updating a <a href=
+          "#dfn-packaged-application"
+          class="internalDFN">packaged application</a> from an
+          <a href=
+          "#dfn-application-manifest"
+          class="internalDFN">application manifest</a>, the UA
+          <em class="rfc2119" title="MUST">MUST</em> always use the
+          manifest inside the package as soon as the package is
+          found.
+        </li>
+
+        <li><dfn id="prop-package-size">size</dfn>: the property
+        <em class="rfc2119" title="SHOULD">SHOULD</em> contain the
+        size of the package in kylo bytes.</li>
+
+        <li><dfn id="prop-package-sha256">sha256</dfn>: this
+        property <em class="rfc2119" title="SHOULD">SHOULD</em>
+        contain the SHA256 checksum of the package and <em class=
+        "rfc2119" title="SHOULD">SHOULD</em> be used by the UA to
+        verify the integrity of the downloaded package.</li>
+      </ul>
+
+      <div class="example">
+        <div class="example-title">
+          <span>Example 2</span>
+        </div>
+        <pre class="example highlight prettyprint">
+<span class="pun">{</span><span class="pln">
+  </span><span class="str">"name"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"str">"My Packaged App"</span><span class=
+"pun">,</span><span class="pln">
+  </span><span class="str">"description"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"str">"This is my first packaged app!"</span><span class=
+"pun">,</span><span class="pln">
+  </span><span class="str">"launch_path"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"str">"/"</span><span class="pun">,</span><span class="pln">
+  </span><span class="str">"version"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"str">"1.0"</span><span class="pun">,</span><span class="pln">
+  </span><span class="str">"developer"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"pun">{</span><span class="pln">
+    </span><span class="str">"name"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"str">"Mozilla"</span><span class="pun">,</span><span class="pln">
+    </span><span class="str">"url"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"str">"https://mozilla.org/en-US"</span><span class="pln">
+  </span><span class="pun">},</span><span class="pln">
+  </span><span class="str">"package"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"pun">{</span><span class="pln">
+    </span><span class="str">"url"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"str">"http://example.org/mypackagedapp.zip"</span><span class=
+"pun">,</span><span class="pln">
+    </span><span class="str">"size"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"str">"1024"</span><span class="pun">,</span><span class="pln">
+    </span><span class="str">"sha256"</span><span class=
+"pun">:</span><span class="pln"> </span><span class=
+"str">"6df134b0cfd88d6d4f27a99e29b9923d50eb8b2c0d5289c60012de424c7a9d97"</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+</span><span class="pun">}</span>
+</pre>
+      </div>
+    </section>
+  </section>
+
+  <section id="updates">
+    <!--OddPage-->
+
+    <h2><span class="secno">5.</span> Updates</h2>
+
+    <p>An application <em class="rfc2119" title=
+    "SHOULD">SHOULD</em> advertise an update by updating its
+    <a href="#dfn-application-manifest"
+    class="internalDFN">application manifest</a>.</p>
+
+    <p>The UA <em class="rfc2119" title="SHOULD">SHOULD</em>
+    regularly check if the <a href=
+    "#dfn-application-manifest" class=
+    "internalDFN">application manifest</a> of installed
+    applications has not been updated. To know if the file has been
+    updated, HTTP semantics apply.</p>
+
+    <p>For <a>package applications</a>, both <a href=
+    "#dfn-application-manifest" class=
+    "internalDFN">application manifest</a>s (outside and inside the
+    package) <em class="rfc2119" title="SHOULD">SHOULD</em> be
+    updated. However, the <a href=
+    "#dfn-application-manifest" class=
+    "internalDFN">application manifest</a> inside the package
+    <em class="rfc2119" title="SHOULD">SHOULD</em> always be
+    checked to make sure the update (or the install) is
+    genuine.</p>
+  </section>
+
+  <section id="data-isolation">
+    <!--OddPage-->
+
+    <h2><span class="secno">6.</span> Data isolation</h2>
+
+    <p>In the context of a running application, all usual rules for
+    data isolation <em class="rfc2119" title="MUST">MUST</em>
+    apply: same-origin policy, same-domain policy, or whatever is
+    used. However, between two applications, those rules no longer
+    apply. Two applications <em class="rfc2119" title=
+    "MUST">MUST</em> be fully isolated from each other in the sense
+    that they <em class="rfc2119" title="SHOULD NOT">SHOULD
+    NOT</em> be able to access data from each other. For example,
+    if App1 accesses <i>http://example.org</i> and gets a cookie
+    from it, App2 should not be able to see that cookie when
+    accessing <i>http://example.org</i> even if the usual cookie
+    sharing policy should allow this to happen.</p>
+
+    <p>This isolation <em class="rfc2119" title=
+    "SHOULD">SHOULD</em> apply for all data storage like
+    <i>cookies</i>, <i>localStorage</i>, <i>IndexedDB</i>, <i>app
+    cache</i> and any other Web Platform mechanism that allows to
+    store data and doesn't explicitly opts out from the application
+    data isolation.<br>
+    The isolation <em class="rfc2119" title="SHOULD">SHOULD</em>
+    also apply to UA specifics data storage. For example, any
+    permission granted or denied to a host/origin/domain should be
+    isolated per-application or auto-fill and autocompletion
+    features for forms.</p>
+  </section>
+
+  <section id="navigation">
+    <!--OddPage-->
+
+    <h2><span class="secno">7.</span> Navigation</h2>
+
+    <p>Depending on the user interface around the application
+    context, navigating outside the <a href=
+    "#dfn-application-s-origin" class=
+    "internalDFN">application's origin</a> might lock the user out
+    of the application. To prevent that, the UA <em class="rfc2119"
+    title="SHOULD NOT">SHOULD NOT</em> allow navigation out of the
+    <a href="#dfn-application-s-origin"
+    class="internalDFN">application's origin</a>, unless the origin
+    is specified in the following <a href=
+    "#dfn-application-manifest" class=
+    "internalDFN">application manifest</a> property:</p>
+
+    <ul>
+      <li><dfn id="prop-allow-navigation">allow-navigation</dfn>:
+      the property <em class="rfc2119" title="SHOULD">SHOULD</em>
+      contain an array of origins that can be navigated to from the
+      application.</li>
+    </ul>
+
+    <p>If the application tries to navigate to an unauthorized
+    origin, the UA <em class="rfc2119" title="SHOULD">SHOULD</em>
+    open the link in a regular but distinct browsing context.</p>
+  </section>
+
+  <section id="system-messages">
+    <!--OddPage-->
+
+    <h2><span class="secno">8.</span> System Messages</h2>
+
+    <p><i>System Messages</i> are events sent by the system to an
+    application which has registered for it before. Those events
+    are different from DOM events in the sense that they are always
+    originated by the system and that if the targeted application
+    isn't currently running, it will be started.<br>
+    In addition, un-handled messages will stay in a queue.</p>
+
+    <section class="informative" id="use-cases-1">
+      <h3><span class="secno">8.1</span> Use cases</h3>
+
+      <p><em>This section is non-normative.</em></p>
+
+      <p>Some applications might be interested in getting some
+      events even if they are not running and want to be woken up
+      if such events is sent while they are asleep.<br>
+      In addition, when the application is being woken, it needs to
+      know as soon as possible why it has been disturbed to be able
+      to show the appropriate interface.<br>
+      Finally, the capability of being woken should be transparent
+      to the application.</p>
+    </section>
+
+    <section id="extension-to-the-navigator-interface-1">
+      <h3><span class="secno">8.2</span> Extension to the <a href=
+      "#idl-def-Navigator" class=
+      "idlType"><code>Navigator</code></a> interface</h3>
+
+      <section>
+        <pre class="idl">
+<span class="idlCallback" id=
+"idl-def-systemMessageCallback">callback <span class=
+"idlCallbackID">systemMessageCallback</span> = <span class=
+"idlCallbackType"><a>void</a></span> (<span class=
+"idlParam">optional <span class=
+"idlParamType"><a>Object</a></span> <span class=
+"idlParamName">message</span></span>);</span>
+</pre>
+
+        <section>
+          <h5 id="callback-systemmessagecallback-parameters">
+          Callback <a class="idlType" href=
+          "#idl-def-systemMessageCallback">
+          <code>systemMessageCallback</code></a> Parameters</h5>
+
+          <dl class="callback-members">
+            <dt id="widl-systemMessageCallback-message">
+            <code>message</code> of type <span class=
+            "idlMemberType"><a>Object</a></span></dt>
+
+            <dd>The parameter <i>message</i> <em class="rfc2119"
+            title="SHOULD">SHOULD</em> contain an object that would
+            be used by the handler and giving information about the
+            system message. For example, a system message about a
+            delivered pizza should give information about the
+            pizzas that have been delivered. If the system message
+            is already self-explanatory, <i>message</i> <em class=
+            "rfc2119" title="SHOULD">SHOULD</em> be null.</dd>
+          </dl>
+        </section>
+        <pre class="idl">
+<span class="idlInterface" id=
+"idl-def-Navigator-1">partial interface <span class=
+"idlInterfaceID">Navigator</span> {
+<span class="idlMethod">    <span class=
+"idlMethType"><a>void</a></span>    <span class=
+"idlMethName"><a href=
+"#widl-Navigator-setMessageHandler-void-DOMString-type-systemMessageCallback-callback">setMessageHandler</a></span> (<span class="idlParam"><span class="idlParamType"><a>DOMString</a></span> <span class="idlParamName">type</span></span>, <span class="idlParam"><span class="idlParamType"><a href="#idl-def-systemMessageCallback"
+class=
+"idlType"><code>systemMessageCallback</code></a>?</span> <span class="idlParamName">callback</span></span>);</span>
+<span class="idlMethod">    <span class=
+"idlMethType"><a>boolean</a></span> <span class=
+"idlMethName"><a href=
+"#widl-Navigator-hasPendingMessages-boolean-DOMString-type">hasPendingMessages</a></span> (<span class="idlParam"><span class="idlParamType"><a>DOMString</a></span> <span class="idlParamName">type</span></span>);</span>
+};</span>
+</pre>
+
+        <section>
+          <h5 id="methods-4">Methods</h5>
+
+          <dl class="methods">
+            <dt id=
+            "widl-Navigator-hasPendingMessages-boolean-DOMString-type">
+            <code>hasPendingMessages</code></dt>
+
+            <dd>
+              The method <em class="rfc2119" title="MUST">MUST</em>
+              returns true if there is at least one message in the
+              <a href=
+              "#dfn-pool-of-messages"
+              class="internalDFN">pool of messages</a> for the
+              given <i>type</i>. Otherwise, it <em class="rfc2119"
+              title="MUST">MUST</em> return false.
+
+              <table class="parameters">
+                <tr>
+                  <th>Parameter</th>
+
+                  <th>Type</th>
+
+                  <th>Nullable</th>
+
+                  <th>Optional</th>
+
+                  <th>Description</th>
+                </tr>
+
+                <tr>
+                  <td class="prmName">type</td>
+
+                  <td class="prmType">
+                  <code><a>DOMString</a></code></td>
+
+                  <td class="prmNullFalse">✘</td>
+
+                  <td class="prmOptFalse">✘</td>
+
+                  <td class="prmDesc"></td>
+                </tr>
+              </table>
+
+              <div>
+                <em>Return type:</em> <code><a>boolean</a></code>
+              </div>
+            </dd>
+
+            <dt id=
+            "widl-Navigator-setMessageHandler-void-DOMString-type-systemMessageCallback-callback">
+            <code>setMessageHandler</code></dt>
+
+            <dd>
+              The method <em class="rfc2119" title="MUST">MUST</em>
+              set <i>callback</i> as the new message handler for
+              the <a href=
+              "#dfn-type-of-system-message"
+              class="internalDFN">type of system message</a>
+              <i>type</i>.<br>
+              If <i>callback</i> is null, the current callback, if
+              any, for the <a>type of message</a> <i>type</i> must
+              be reset and no callback should no longer be set for
+              this type.<br>
+              If <i>callback</i> is not null and there was no
+              message handler for the given type and there are
+              messages in the <a href=
+              "#dfn-pool-of-messages"
+              class="internalDFN">pool of messages</a> for the
+              type, then the UA <em class="rfc2119" title=
+              "MUST">MUST</em> start an asynchronous task that
+              executes all the messages in the pool by the new
+              handler in a <abbr title=
+              "First In First Out">FIFO</abbr> basis and then
+              remove all those messages from the <a href=
+              "#dfn-pool-of-messages"
+              class="internalDFN">pool of messages</a>.<br>
+              If the <i>callback</i> is not null and there is a
+              message handler for the given type, that message
+              handler should be replaced by <i>callback</i>.
+
+              <table class="parameters">
+                <tr>
+                  <th>Parameter</th>
+
+                  <th>Type</th>
+
+                  <th>Nullable</th>
+
+                  <th>Optional</th>
+
+                  <th>Description</th>
+                </tr>
+
+                <tr>
+                  <td class="prmName">type</td>
+
+                  <td class="prmType">
+                  <code><a>DOMString</a></code></td>
+
+                  <td class="prmNullFalse">✘</td>
+
+                  <td class="prmOptFalse">✘</td>
+
+                  <td class="prmDesc"></td>
+                </tr>
+
+                <tr>
+                  <td class="prmName">callback</td>
+
+                  <td class="prmType"><code><a href=
+                  "#idl-def-systemMessageCallback"
+                  class=
+                  "idlType"><code>systemMessageCallback</code></a></code></td>
+
+                  <td class="prmNullTrue">✔</td>
+
+                  <td class="prmOptFalse">✘</td>
+
+                  <td class="prmDesc"></td>
+                </tr>
+              </table>
+
+              <div>
+                <em>Return type:</em> <code><a>void</a></code>
+              </div>
+            </dd>
+          </dl>
+        </section>
+      </section>
+    </section>
+
+    <section id="definitions">
+      <h3><span class="secno">8.3</span> Definitions</h3>
+
+      <p>The <dfn id="dfn-type-of-system-message">type of system
+      message</dfn> identifies a category of system messages.<br>
+      Application are be able to register and handle system
+      messages based on their types. There is no exhaustive list of
+      system messages type. Any specification can create a new type
+      of system message.</p>
+
+      <p>Each application has a <dfn id="dfn-pool-of-messages">pool
+      of messages</dfn> for each <a href=
+      "#dfn-type-of-system-message"
+      class="internalDFN">type of system message</a>. Everytime a
+      system message is sent to an application, if there is no
+      handler for that message's type, the UA <em class="rfc2119"
+      title="MUST">MUST</em> add the message to the pool of
+      messages used for that type.<br>
+      The UA <em class="rfc2119" title="MAY">MAY</em>, for memory
+      optimization, discard old messages if the pool becomes too
+      big or if the messages are too old.</p>
+
+      <p>When a UA is required to <dfn id=
+      "dfn-fire-a-system-message">fire a system message</dfn> of a
+      given type, it has to do one of these actions:</p>
+
+      <ul>
+        <li>If the application is running and a handler is defined,
+        the UA <em class="rfc2119" title="MUST">MUST</em> run the
+        handling method;</li>
+
+        <li>Otherwise, if the application is running and no handler
+        is defined, the UA <em class="rfc2119" title=
+        "MUST">MUST</em> add the message to the <a href=
+        "#dfn-pool-of-messages" class=
+        "internalDFN">pool of messages</a>;
+        </li>
+
+        <li>Otherwise, if the application is not running, the UA
+        <em class="rfc2119" title="MUST">MUST</em> add the message
+        to the <a href=
+        "#dfn-pool-of-messages" class=
+        "internalDFN">pool of messages</a> and start the
+        application.
+        </li>
+      </ul>
+    </section>
+  </section>
+
+  <section id="permissions">
+    <!--OddPage-->
+
+    <h2><span class="secno">9.</span> Permissions</h2>
+
+    <section class="informative" id="use-cases-2">
+      <h3><span class="secno">9.1</span> Use cases</h3>
+
+      <p><em>This section is non-normative.</em></p>
+
+      <p>Some API might allow the application to access sensitive
+      parts of the hardware or sensitive information. To prevent
+      applications to access them, some APIs might require one or
+      more permissions. For example, for an application to be
+      allowed to access your geolocation information, it has to be
+      granted the <i>geolocation</i> permission.</p>
+    </section>
+
+    <section id="permission-declaration">
+      <h3><span class="secno">9.2</span> Permission
+      declaration</h3>
+
+      <p>An application <em class="rfc2119" title=
+      "SHOULD">SHOULD</em> define all permissions it is going to
+      use in the <a href=
+      "#dfn-application-manifest" class=
+      "internalDFN">application manifest</a>. The UA <em class=
+      "rfc2119" title="MAY">MAY</em> automatically grant some
+      permissions at install-time or ask the user to grant some
+      applications. However, <em class="rfc2119" title=
+      "MAY">MAY</em>, in addition or alternatively, ask the user to
+      grant permissions at run-time.</p>
+
+      <p>The user <em class="rfc2119" title="MUST">MUST</em> be
+      able to revoke a granted permission or grant a denied
+      permission at any time.</p>
+    </section>
+
+    <section id="basic-permissions">
+      <h3><span class="secno">9.3</span> Basic Permissions</h3>
+
+      <p>Specifications are expected to declare the permissions
+      they will require for their feature to work. Altough, some
+      basic permissions can't really go into a specific
+      specification or a related to specifications that might be
+      harder to change.</p>
+
+      <p>Thus, this specification is defining the following
+      permissions:</p>
+
+      <table>
+        <tbody>
+          <tr>
+            <th>Permission Name</th>
+
+            <th>Permission Description</th>
+
+            <th>Access Type</th>
+          </tr>
+
+          <tr>
+            <td><code>desktop-notification</code></td>
+
+            <td>Allow the application to use the Desktop
+            Notification API.</td>
+
+            <td>N/A</td>
+          </tr>
+
+          <tr>
+            <td><code>geolocation</code></td>
+
+            <td>Allow the application to access the Geolocation
+            API.</td>
+
+            <td>N/A</td>
+          </tr>
+
+          <tr>
+            <td><code>storage</code></td>
+
+            <td>Allow localStorage and IndexedDB without size
+            limitations.</td>
+
+            <td>N/A</td>
+          </tr>
+
+          <tr>
+            <td><code>webapps-manage</code></td>
+
+            <td>Allow access to the
+            <code>navigator.apps.management</code> API to manage
+            installed webapps.</td>
+
+            <td>N/A</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="trusted-applications">
+      <h3><span class="secno">9.4</span> Trusted applications</h3>
+
+      <section class="informative" id="use-cases-3">
+        <h4><span class="secno">9.4.1</span> Use cases</h4>
+
+        <p><em>This section is non-normative.</em></p>
+
+        <p>Any application can be compromised. It just depends on
+        how much effort the attacker wants to provide and how much
+        efforts the author wants to dedicate making its application
+        more secure. With an interesting enough outcome, attackers
+        could easily double their efforts to beat the security in
+        place. For example, an API allowing to send SMS, if it can
+        be manipulated by the evil persons, could be used to send
+        premium SMS and steal money from the users.</p>
+
+        <p>With a simple permission system, users could be tricked
+        to install the application and accept to grant the
+        application the relevant permissions. These kind of attacks
+        are proven to be efficient.</p>
+      </section>
+
+      <section id="chain-of-trust">
+        <h4><span class="secno">9.4.2</span> Chain of trust</h4>
+
+        <p>An application is said to be a <dfn id=
+        "dfn-trusted-application">trusted application</dfn> if the
+        origin installing the application is trusted by the UA and
+        the origin installing the application consider the
+        application as trusty.</p>
+
+        <p>A UA <em class="rfc2119" title="SHOULD">SHOULD</em> have
+        the public key of all installation origin it is considering
+        trusted.</p>
+      </section>
+
+      <section id="marking-an-application-trusted">
+        <h4><span class="secno">9.4.3</span> Marking an application
+        trusted</h4>
+
+        <p>A <a href=
+        "#dfn-hosted-application" class=
+        "internalDFN">hosted application</a> <em class="rfc2119"
+        title="MUST">MUST</em> be recognized as marked trusted by
+        the installation origin if the <a href=
+        "#dfn-application-manifest"
+        class="internalDFN">application manifest</a> is signed by
+        the installation origin's private key.</p>
+
+        <p>A <a href=
+        "#dfn-packaged-application"
+        class="internalDFN">packaged application</a> <em class=
+        "rfc2119" title="MUST">MUST</em> be recognized as marked
+        trusted by the installation origin if the package is signed
+        by the installation origin's private key.</p>
+
+        <p>In both cases, the application <em class="rfc2119"
+        title="SHOULD">SHOULD</em> be considered as trusted by the
+        UA if the UA considers the installation origin as trusted,
+        following the chain of trust mentioned above.</p>
+      </section>
+
+      <section class="informative" id="security-considerations">
+        <h4><span class="secno">9.4.4</span> Security
+        considerations</h4>
+
+        <p><em>This section is non-normative.</em></p>
+
+        <p>UA should keep in mind that a signed package is way more
+        secure than a signed manifest. A correctly signed package
+        can only be compromised if the private key has been
+        compromised or the cryptographic algorithm. A UA should not
+        trust an installation origin if it does not trust its
+        ability to keep safe its private key.</p>
+
+        <p>On the other hands, a signed manifest only proves that
+        the application is genuinly trusted (if the private key was
+        not compromised nor the cryptographic algorithm). Anything
+        else can be compromised given that it lives in the
+        Internet. There is no need to list all possible
+        attacks.</p>
+
+        <p>An important difference between a <a href=
+        "#dfn-packaged-application"
+        class="internalDFN">packaged application</a> and a <a href=
+        "#dfn-hosted-application" class=
+        "internalDFN">hosted application</a> is the ability to
+        review the code. Any permission granted to a <a href=
+        "#dfn-packaged-application"
+        class="internalDFN">packaged application</a> will be
+        granted to the code inside the package only. That means
+        trusting such application is way easier after a code
+        review, for example.</p>
+
+        <p>However, code review for <a href=
+        "#dfn-packaged-application"
+        class="internalDFN">packaged application</a>s could be
+        avoided if the installation origin trusts enough an
+        application developer. Such developer could get all its
+        <a href=
+        "#dfn-packaged-application"
+        class="internalDFN">packaged application</a>s trusted
+        without too much risk for the users.<br>
+        The same thing colud be done for <a href=
+        "#dfn-hosted-application" class=
+        "internalDFN">hosted application</a> except that it would
+        be recommended to make sure that the developer has strong
+        server security or would not risk any security flaw on
+        their servers.</p>
+      </section>
+
+      <section id="csp-policy">
+        <h4><span class="secno">9.4.5</span> CSP Policy</h4>
+
+        <div class="note">
+          <div class="note-title">
+            <span>Note</span>
+          </div>
+
+          <section class="">
+            The following sub-section assumes that a <a href=
+            "#dfn-trusted-application"
+            class="internalDFN">trusted application</a> can only be
+            a <a href=
+            "#dfn-packaged-application"
+            class="internalDFN">packaged application</a>. This
+            needs to be updated.
+          </section>
+        </div>
+
+        <p>The following CSP policy <em class="rfc2119" title=
+        "MUST">MUST</em> apply to all <a href=
+        "#dfn-trusted-application"
+        class="internalDFN">trusted application</a>s
+        [<cite><a class="bibref" href=
+        "#bib-CSP">CSP</a></cite>]:<br></p>
+
+        <p><code>default-src *; script-src 'self'; object-src
+        'none'; style-src 'self'</code></p>
+
+        <p>This puts the following restrictions on web pages part
+        of a <a href=
+        "#dfn-trusted-application"
+        class="internalDFN">trusted application</a>:</p>
+
+        <ul>
+          <li>Scripts can only be loaded from the package;</li>
+
+          <li>Scripts can not use data:-URIs;</li>
+
+          <li>Inline scripts can not be used;</li>
+
+          <li>eval() can not be used. Neither can eval-like
+          functions like setTimeout or "new Function". setTimeout
+          can still be used as long as the first argument is a
+          Function object rather than a string;</li>
+
+          <li>onXXX attributes can't be used in the markup of
+          pages. However, using the associated <a href=
+          "#dfn-eventhandler" class=
+          "internalDFN">EventHandler</a> is doable. For example:
+          myElement.onXXX = someFunction;
+          </li>
+
+          <li>&lt;object&gt;, &lt;embed&gt; and &lt;applet&gt; are
+          fully disabled. In other words, plugins won't work at
+          all. Including flash.</li>
+
+          <li>CSS can only be loaded from the package. Inline CSS
+          is however allowed.</li>
+        </ul>
+
+        <p>This does not restrict any of the following:</p>
+
+        <ul>
+          <li>&lt;iframe&gt;s can still point to any URL;</li>
+
+          <li>Images can still be loaded from anywhere. Including
+          when loaded using an &lt;img&gt; element, when using CSS
+          background images or when using other types of CSS
+          images;</li>
+
+          <li>Media (audio and video) can still be loaded from
+          anywhere;</li>
+
+          <li>Network connections can still be opened anywhere
+          using data-centric APIs like XMLHttpRequest or
+          WebSocket.</li>
+        </ul>
+
+        <p>There is no way for <a href=
+        "#dfn-trusted-application"
+        class="internalDFN">trusted application</a>s to relax this
+        policy.</p>
+      </section>
+    </section>
+  </section>
+
+  <section id="application-life-cycle">
+    <!--OddPage-->
+
+    <h2><span class="secno">10.</span> Application life-cycle</h2>
+
+    <section id="application-states">
+      <h3><span class="secno">10.1</span> Application states</h3>
+
+      <p>At any time, an application <em class="rfc2119" title=
+      "MUST">MUST</em> be in one of the following states: <a href=
+      "#dfn-running" class=
+      "internalDFN">running</a>, <a href=
+      "#dfn-paused" class=
+      "internalDFN">paused</a>, <a href=
+      "#dfn-terminated" class=
+      "internalDFN">terminated</a>.</p>
+
+      <p>An application is <dfn id="dfn-running">running</dfn> when
+      it has been launched by the UA and has not been put in
+      <a href="#dfn-paused" class=
+      "internalDFN">paused</a>. A <a href=
+      "#dfn-running" class=
+      "internalDFN">running</a> application can transition to
+      <a href="#dfn-paused" class=
+      "internalDFN">paused</a> or <a href=
+      "#dfn-terminated" class=
+      "internalDFN">terminated</a> states.</p>
+
+      <p>If a <a href="#dfn-running"
+      class="internalDFN">running</a> application transitions to a
+      <a href="#dfn-paused" class=
+      "internalDFN">paused</a> state, the UA <em class="rfc2119"
+      title="MUST">MUST</em> <a href=
+      "#dfn-fire-a-simple-event" class=
+      "internalDFN">fire a simple event</a> named
+      <code>pause</code> on the <a href=
+      "#idl-def-Application" class=
+      "idlType"><code>Application</code></a> object before
+      switching its state.</p>
+
+      <p>If a <a href="#dfn-running"
+      class="internalDFN">running</a> application transitions to a
+      <a href="#dfn-terminated" class=
+      "internalDFN">terminated</a> state, the UA <em class=
+      "rfc2119" title="MUST">MUST</em> <a href=
+      "#dfn-fire-a-simple-event" class=
+      "internalDFN">fire a simple event</a> named
+      <code>terminate</code> on the <a href=
+      "#idl-def-Application" class=
+      "idlType"><code>Application</code></a> object before shutting
+      down the application.</p>
+
+      <p>An application is <dfn id="dfn-paused">paused</dfn> when
+      the UA stops the execution of an application without
+      terminating it. A <a href=
+      "#dfn-paused" class=
+      "internalDFN">paused</a> application <em class="rfc2119"
+      title="SHOULD">SHOULD</em> have all its scripts no longer
+      running, such as rendering, parsing, processing media files
+      and any action that requires CPU and memory or would distract
+      the user. A <a href="#dfn-paused"
+      class="internalDFN">paused</a> application can transition to
+      <a href="#dfn-running" class=
+      "internalDFN">running</a> or <a href=
+      "#dfn-terminated" class=
+      "internalDFN">terminated</a> states.</p>
+
+      <p>If a <a href="#dfn-paused"
+      class="internalDFN">paused</a> application transitions to a
+      <a href="#dfn-running" class=
+      "internalDFN">running</a> state, the UA <em class="rfc2119"
+      title="MUST">MUST</em> <a href=
+      "#dfn-fire-a-simple-event" class=
+      "internalDFN">fire a simple event</a> named
+      <code>resume</code> on the <a href=
+      "#idl-def-Application" class=
+      "idlType"><code>Application</code></a> object after changing
+      its state.</p>
+
+      <p>An application is <dfn id=
+      "dfn-terminated">terminated</dfn> when the application has
+      been stopped and is no longer loaded in the system. The state
+      of a <a href="#dfn-terminated"
+      class="internalDFN">terminated</a> application can only be
+      changed to <a href="#dfn-running"
+      class="internalDFN">running</a> if the application is
+      launched again.</p>
+
+      <p>If a <a href="#dfn-terminated"
+      class="internalDFN">terminated</a> application transitions to
+      a <a href="#dfn-running" class=
+      "internalDFN">running</a><a>state, the UA <em class="rfc2119"
+      title="MUST">MUST</em></a> <a href=
+      "#dfn-fire-a-simple-event" class=
+      "internalDFN">fire a simple event</a> named
+      <code>launch</code> on the <a href=
+      "#idl-def-Application" class=
+      "idlType"><code>Application</code></a> object after the main
+      browsing context is created but before the <code>load</code>
+      and <code>DOMContentLoaded</code> events are fired.</p>
+    </section>
+
+    <div class="issue">
+      <div class="issue-title">
+        <span>Issue 1</span>
+      </div>
+
+      <section class="">
+        <p>The specification currently assumes that one will save
+        important when paused so there is no terminate event when
+        transitionning from pause to terminate.</p>
+      </section>
+    </div>
+
+    <div class="issue">
+      <div class="issue-title">
+        <span>Issue 2</span>
+      </div>
+
+      <section class="">
+        <p>Do we have real use cases for <code>launch</code>?<br>
+        Is firing before <code>load</code> a hard thing to do?</p>
+      </section>
+    </div>
+
+    <section id="consequences-of-visibility">
+      <h3><span class="secno">10.2</span> Consequences of
+      visibility</h3>
+
+      <p>While an application is running, it can be part or fully
+      hidden. The visibility events described in [<cite><a class=
+      "bibref" href=
+      "#bib-PAGE-VISIBILITY">PAGE-VISIBILITY</a></cite>]
+      <em class="rfc2119" title="MUST">MUST</em> be sent when the
+      visibility status of the application changes.</p>
+
+      <p>In addition, when the application becomes fully hidden,
+      the UA <em class="rfc2119" title="MAY">MAY</em> put the
+      application in a <a href=
+      "#dfn-paused" class=
+      "internalDFN">paused</a> state.</p>
+    </section>
+  </section>
+
+  <section class="appendix" id="domrequest-interface">
+    <!--OddPage-->
+
+    <h2><span class="secno">A.</span> <a href=
+    "#idl-def-DOMRequest" class=
+    "idlType"><code>DOMRequest</code></a> interface</h2>
+
+    <div class="note">
+      <div class="note-title">
+        <span>Note</span>
+      </div>
+
+      <section class="">
+        <p>The <a href=
+        "#idl-def-DOMRequest" class=
+        "idlType"><code>DOMRequest</code></a> interface is
+        temporarily hosted by this specification. The <i>Runtime
+        and Security Model for Web Applications</i> specificaton
+        doesn't plan to keep that guest for ever, this is why it is
+        currently staying in an appendix.</p>
+      </section>
+    </div>
+
+    <section class="informative" id="use-cases-4">
+      <h3><span class="secno">A.1</span> Use cases</h3>
+
+      <p><em>This section is non-normative.</em></p>
+
+      <p>Some methods want to return a value or do an action but
+      can't do it synchronously, most of the time for performance
+      reasons. In that case, most of those methods will use a
+      callback mechanism to inform the caller of the success or the
+      failure of the action.<br>
+      However, this callback mechanism makes the code barely
+      readable and there is no common pattern used by all API in
+      the Web Platform.<br>
+      <a href="#idl-def-DOMRequest"
+      class="idlType"><code>DOMRequest</code></a> intend to be used
+      instead of those callbacks to make those APIs more
+      developer-friendly and help code readability.</p>
+    </section>
+
+    <section id="definition">
+      <h3><span class="secno">A.2</span> Definition</h3>
+
+      <p>The <a href=
+      "#idl-def-DOMRequest" class=
+      "idlType"><code>DOMRequest</code></a> interface is intented
+      to be used by asynchronous methods that want to return
+      something after performing an action or simply want to inform
+      the caller that the action is done.<br>
+      It returned request can also be used to inform that an error
+      happened during the operation.</p>
+
+      <p><a>A</a> <a href=
+      "#idl-def-DOMRequest" class=
+      "idlType"><code>DOMRequest</code></a> has three state. It is
+      whether <code>pending</code>, <code>success</code> or
+      <code>error</code>.<br>
+      The initial state of a <a href=
+      "#idl-def-DOMRequest" class=
+      "idlType"><code>DOMRequest</code></a> <em class="rfc2119"
+      title="MUST">MUST</em> be <code>pending</code>.<br>
+      If a <a href="#idl-def-DOMRequest"
+      class="idlType"><code>DOMRequest</code></a> receives a
+      <a href="#dfn-success-message"
+      class="internalDFN">success message</a> while in the
+      <code>pending</code> state, its state <em class="rfc2119"
+      title="MUST">MUST</em> change to <code>success</code> and
+      <em class="rfc2119" title="SHOULD NOT">SHOULD NOT</em> change
+      afterward.<br>
+      If a <a href="#idl-def-DOMRequest"
+      class="idlType"><code>DOMRequest</code></a> receives an
+      <a href="#dfn-error-message"
+      class="internalDFN">error message</a> while in the
+      <code>pending</code> state, its state <em class="rfc2119"
+      title="MUST">MUST</em> change to <code>error</code> and
+      <em class="rfc2119" title="SHOULD NOT">SHOULD NOT</em> change
+      afterward.<br>
+      If a <a href="#idl-def-DOMRequest"
+      class="idlType"><code>DOMRequest</code></a> receives a
+      <a href="#dfn-success-message"
+      class="internalDFN">success message</a> or an <a href=
+      "#dfn-error-message" class=
+      "internalDFN">error message</a> while not in the
+      <code>pending</code> state, the message <em class="rfc2119"
+      title="MUST">MUST</em> be ignored.</p>
+
+      <p>A <dfn id="dfn-success-message">success message</dfn>
+      <em class="rfc2119" title="SHOULD">SHOULD</em> be sent to the
+      <a href="#idl-def-DOMRequest"
+      class="idlType"><code>DOMRequest</code></a> when the
+      operation is successfuly terminated. The message <em class=
+      "rfc2119" title="MAY">MAY</em> contain a value which
+      <em class="rfc2119" title="MUST">MUST</em> be used by the
+      <code>result</code> attribute. If the message does not
+      contain a value, <i>null</i> <em class="rfc2119" title=
+      "MUST">MUST</em> be used instead.</p>
+
+      <p>As soon as a <a href=
+      "#dfn-success-message" class=
+      "internalDFN">success message</a> is received,
+      <code>readyState</code> <em class="rfc2119" title=
+      "MUST">MUST</em> return <code>done</code>,
+      <code>result</code> <em class="rfc2119" title=
+      "MUST">MUST</em> return the received value or <i>null</i> as
+      explained above and the object <em class="rfc2119" title=
+      "MUST NOT">MUST NOT</em> change its state and <em class=
+      "rfc2119" title="MUST">MUST</em>, therefore, ignore all
+      following <a href=
+      "#dfn-success-message" class=
+      "internalDFN">success message</a> and <a href=
+      "#dfn-error-message" class=
+      "internalDFN">error message</a>.<br>
+      Finally, the UA <em class="rfc2119" title="MUST">MUST</em>
+      <a href="#dfn-fire-a-simple-event"
+      class="internalDFN">fire a simple event</a> named
+      <code>success</code> on the object</p>
+
+      <p>An <dfn id="dfn-error-message">error message</dfn>
+      <em class="rfc2119" title="SHOULD">SHOULD</em> be sent to the
+      <a href="#idl-def-DOMRequest"
+      class="idlType"><code>DOMRequest</code></a> when the
+      operation has failed. The message <em class="rfc2119" title=
+      "MAY">MAY</em> contain a value which <em class="rfc2119"
+      title="MUST">MUST</em> be a <a href=
+      "#dfn-domerror" class=
+      "internalDFN">DOMError</a> object and <em class="rfc2119"
+      title="MUST">MUST</em> be used by the <code>error</code>
+      attribute. If the message does not contain a value, the UA
+      <em class="rfc2119" title="SHOULD">SHOULD</em> find the most
+      appropriate <a href=
+      "#dfn-domerror" class=
+      "internalDFN">DOMError</a> that represents the failure.</p>
+
+      <p>As soon as an <a href=
+      "#dfn-error-message" class=
+      "internalDFN">error message</a> is received,
+      <code>readyState</code> <em class="rfc2119" title=
+      "MUST">MUST</em> return <code>done</code>, <code>error</code>
+      <em class="rfc2119" title="MUST">MUST</em> return the
+      received value the most appropriate error value as explained
+      above and the object <em class="rfc2119" title=
+      "MUST NOT">MUST NOT</em> change its state and <em class=
+      "rfc2119" title="MUST">MUST</em>, therefore, ignore all
+      following <a href=
+      "#dfn-success-message" class=
+      "internalDFN">success message</a> and <a href=
+      "#dfn-error-message" class=
+      "internalDFN">error message</a>.<br>
+      Finally, the UA <em class="rfc2119" title="MUST">MUST</em>
+      <a href="#dfn-fire-a-simple-event"
+      class="internalDFN">fire a simple event</a> named
+      <code>error</code> on the object.</p>
+
+      <section>
+        <pre class="idl">
+<span class="idlInterface" id=
+"idl-def-DOMRequest">interface <span class=
+"idlInterfaceID">DOMRequest</span> : <span class=
+"idlSuperclass"><a>EventTarget</a></span> {
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>DOMString</a></span>    <span class=
+"idlAttrName"><a href=
+"#widl-DOMRequest-readyState">readyState</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>any</a></span>          <span class=
+"idlAttrName"><a href=
+"#widl-DOMRequest-result">result</a></span>;</span>
+<span class="idlAttribute">    readonly    attribute <span class=
+"idlAttrType"><a>DOMError</a>?</span>    <span class=
+"idlAttrName"><a href=
+"#widl-DOMRequest-error">error</a></span>;</span>
+<span class="idlAttribute">    [<span class=
+"extAttr">TreatNonCallableAsNull</span>]
+                attribute <span class=
+"idlAttrType"><a>EventHandler</a></span> <span class=
+"idlAttrName"><a href=
+"#widl-DOMRequest-onsuccess">onsuccess</a></span>;</span>
+<span class="idlAttribute">    [<span class=
+"extAttr">TreatNonCallableAsNull</span>]
+                attribute <span class=
+"idlAttrType"><a>EventHandler</a></span> <span class=
+"idlAttrName"><a href=
+"#widl-DOMRequest-onerror">onerror</a></span>;</span>
+};</span>
+</pre>
+
+        <section>
+          <h5 id="attributes-6">Attributes</h5>
+
+          <dl class="attributes">
+            <dt id="widl-DOMRequest-error"><code>error</code> of
+            type <span class="idlAttrType"><a>DOMError</a></span>,
+            readonly , nullable</dt>
+
+            <dd>
+              The attribute <em class="rfc2119" title=
+              "MUST">MUST</em> return <i>null</i> if the current
+              state is not <code>error</code>. Otherwise, it
+              <em class="rfc2119" title="MUST">MUST</em> return the
+              value provided by by the <a href=
+              "#dfn-error-message"
+              class="internalDFN">error message</a>. If there was
+              no provided value, it <em class="rfc2119" title=
+              "SHOULD">SHOULD</em> return the most appropriate
+              <a href="#dfn-domerror"
+              class="internalDFN">DOMError</a> that represents the
+              failure.
+            </dd>
+
+            <dt id="widl-DOMRequest-onerror"><code>onerror</code>
+            of type <span class=
+            "idlAttrType"><a>EventHandler</a></span>,</dt>
+
+            <dt id="widl-DOMRequest-onsuccess">
+            <code>onsuccess</code> of type <span class=
+            "idlAttrType"><a>EventHandler</a></span>,</dt>
+
+            <dt id="widl-DOMRequest-readyState">
+            <code>readyState</code> of type <span class=
+            "idlAttrType"><a>DOMString</a></span>, readonly</dt>
+
+            <dd>The attribute <em class="rfc2119" title=
+            "MUST">MUST</em> return <code>pending</code> if the
+            current state is <code>pending</code>. Otherwise, it
+            <em class="rfc2119" title="MUST">MUST</em> return
+            <code>done</code>.</dd>
+
+            <dt id="widl-DOMRequest-result"><code>result</code> of
+            type <span class="idlAttrType"><a>any</a></span>,
+            readonly</dt>
+
+            <dd>
+              The attribute <em class="rfc2119" title=
+              "MUST">MUST</em> return <code>undefined</code> if the
+              current state is not <code>success</code>. Otherwise,
+              it <em class="rfc2119" title="MUST">MUST</em> return
+              the value provided by the <a href=
+              "#dfn-success-message"
+              class="internalDFN">success message</a> or
+              <code>null</code> if no value was sent with the
+              message.
+            </dd>
+          </dl>
+        </section>
+      </section>
+
+      <section id="events-1">
+        <h4><span class="secno">A.2.1</span> Events</h4>
+
+        <p>The following are the <a href=
+        "#dfn-event-handlers" class=
+        "internalDFN">event handlers</a> (and their corresponding
+        <a href=
+        "#dfn-event-handler-event-types"
+        class="internalDFN">event handler event types</a>) that
+        <em class="rfc2119" title="MUST">MUST</em> be supported as
+        attributes by the <code>DOMRequest</code> objects:</p>
+
+        <table class="simple">
+          <thead>
+            <tr>
+              <th>event handler</th>
+
+              <th>event handler event type</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td><strong><code>onerror</code></strong></td>
+
+              <td><code>error</code></td>
+            </tr>
+
+            <tr>
+              <td><strong><code>onsuccess</code></strong></td>
+
+              <td><code>success</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </section>
+  </section>
+
+  <section class="appendix" id="acknowledgments">
+    <!--OddPage-->
+
+    <h2><span class="secno">B.</span> Acknowledgments</h2>
+
+    <p>Thanks to the Samsung team, especially 金明(Ming Jin), Janusz
+    Majnert and 송정기(Jungkee Song) for their work on the <i>System
+    Application Runtime: Execution and Security Model</i>
+    specification.</p>
+
+    <p>Special thanks to Anant Narayanan for his <i>Web Application
+    Manifest Format and Management APIs</i> that this specification
+    reuse shamlesly and to Jonas Sicking for being awesome, as
+    always.</p>
+  </section>
+
+  <section id="references" class="appendix">
+    <!--OddPage-->
+
+    <h2><span class="secno">C.</span> References</h2>
+
+    <section id="normative-references">
+      <h3><span class="secno">C.1</span> Normative references</h3>
+
+      <dl class="bibliography">
+        <dt id="bib-CSP">[CSP]</dt>
+
+        <dd>
+          Adam Barth; Brendon Sterne. <a href=
+          "http://www.w3.org/TR/CSP/"><cite>CSP.</cite></a> URL:
+          <a href=
+          "http://www.w3.org/TR/CSP/">http://www.w3.org/TR/CSP/</a>
+        </dd>
+
+        <dt id="bib-DOM4">[DOM4]</dt>
+
+        <dd>
+          Anne van Kesteren; Aryeh Gregor; Lachlan Hunt; Ms2ger.
+          <a href=
+          "http://www.w3.org/TR/2012/WD-dom-20121206"><cite>DOM4</cite></a>.
+          6 December 2012. W3C Working Draft. URL: <a href=
+          "http://www.w3.org/TR/2012/WD-dom-20121206">http://www.w3.org/TR/2012/WD-dom-20121206</a>
+        </dd>
+
+        <dt id="bib-HTML5">[HTML5]</dt>
+
+        <dd>
+          Robin Berjon et al. <a href=
+          "http://www.w3.org/TR/html5/"><cite>HTML5</cite></a>. 17
+          December 2012. W3C Candidate Recommendation. URL:
+          <a href="http://www.w3.org/TR/html5/">http://www.w3.org/TR/html5/</a>
+        </dd>
+
+        <dt id="bib-OFFLINE-WEBAPPS">[OFFLINE-WEBAPPS]</dt>
+
+        <dd>
+          Ian Hickson; Anne van Kesteren. <a href=
+          "http://www.w3.org/TR/2008/NOTE-offline-webapps-20080530">
+          <cite>Offline Web Applications</cite></a>. 30 May 2008.
+          W3C Note. URL: <a href=
+          "http://www.w3.org/TR/2008/NOTE-offline-webapps-20080530">
+          http://www.w3.org/TR/2008/NOTE-offline-webapps-20080530</a>
+        </dd>
+
+        <dt id="bib-ORIGIN">[ORIGIN]</dt>
+
+        <dd>
+          A. Barth. <a href=
+          "http://tools.ietf.org/html/rfc6454"><cite>The Web Origin
+          Concept</cite></a>. December 2011. RFC 6454. URL:
+          <a href="http://tools.ietf.org/html/rfc6454">http://tools.ietf.org/html/rfc6454</a>
+        </dd>
+
+        <dt id="bib-PAGE-VISIBILITY">[PAGE-VISIBILITY]</dt>
+
+        <dd>
+          J. Mann; A. Jain. <a href=
+          "http://dvcs.w3.org/hg/webperf/raw-file/tip/specs/PageVisibility/Overview.html">
+          <cite>Page Visibility</cite></a>. 26 September 2011. W3C
+          Editor's Draft. (Work in progress.) URL: <a href=
+          "http://dvcs.w3.org/hg/webperf/raw-file/tip/specs/PageVisibility/Overview.html">
+          http://dvcs.w3.org/hg/webperf/raw-file/tip/specs/PageVisibility/Overview.html</a>
+        </dd>
+
+        <dt id="bib-RFC3986">[RFC3986]</dt>
+
+        <dd>
+          T. Berners-Lee; R. Fielding; L. Masinter. <a href=
+          "http://www.ietf.org/rfc/rfc3986.txt"><cite>Uniform
+          Resource Identifier (URI): Generic Syntax</cite></a>.
+          January 2005. RFC 3986. URL: <a href=
+          "http://www.ietf.org/rfc/rfc3986.txt">http://www.ietf.org/rfc/rfc3986.txt</a>
+        </dd>
+
+        <dt id="bib-RFC4627">[RFC4627]</dt>
+
+        <dd>
+          D. Crockford. <a href=
+          "http://www.ietf.org/rfc/rfc4627.txt"><cite>The
+          application/json Media Type for JavaScript Object
+          Notation (JSON)</cite></a>. July 2006. RFC 4627. URL:
+          <a href=
+          "http://www.ietf.org/rfc/rfc4627.txt">http://www.ietf.org/rfc/rfc4627.txt</a>
+        </dd>
+
+        <dt id="bib-RFC4646">[RFC4646]</dt>
+
+        <dd>
+          A. Phillips; M. Davis. <a href=
+          "https://www.ietf.org/rfc/rfc4646.txt"><cite>Tags for
+          Identifying Languages</cite></a>. September 2006. RFC
+          4646. URL: <a href=
+          "https://www.ietf.org/rfc/rfc4646.txt">https://www.ietf.org/rfc/rfc4646.txt</a>
+        </dd>
+      </dl>
+    </section>
+  </section>
+</body>
+</html>

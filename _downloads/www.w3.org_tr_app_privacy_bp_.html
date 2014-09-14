@@ -1,0 +1,792 @@
+<!-- http://www.w3.org/TR/app-privacy-bp/ -->
+<!DOCTYPE html PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN' 'http://www.w3.org/TR/html4/loose.dtd'>
+<html lang="en" dir="ltr">
+<head>
+    <title>Web Application Privacy Best Practices</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+      
+    
+    
+
+  <style type="text/css">
+/*****************************************************************
+ * ReSpec CSS
+ * Robin Berjon (robin at berjon dot com)
+ * v0.05 - 2009-07-31
+ *****************************************************************/
+
+
+/* --- INLINES --- */
+em.rfc2119 { 
+    text-transform:     lowercase;
+    font-variant:       small-caps;
+    font-style:         normal;
+    color:              #900;
+}
+
+h1 acronym, h2 acronym, h3 acronym, h4 acronym, h5 acronym, h6 acronym, a acronym,
+h1 abbr, h2 abbr, h3 abbr, h4 abbr, h5 abbr, h6 abbr, a abbr {
+    border: none;
+}
+
+dfn {
+    font-weight:    bold;
+}
+
+a.internalDFN {
+    color:  inherit;
+    border-bottom:  1px solid #99c;
+    text-decoration:    none;
+}
+
+a.externalDFN {
+    color:  inherit;
+    border-bottom:  1px dotted #ccc;
+    text-decoration:    none;
+}
+
+a.bibref {
+    text-decoration:    none;
+}
+
+code {
+    color:  #ff4500;
+}
+
+
+/* --- WEB IDL --- */
+pre.idl {
+    border-top: 1px solid #90b8de;
+    border-bottom: 1px solid #90b8de;
+    padding:    1em;
+    line-height:    120%;
+}
+
+pre.idl::before {
+    content:    "WebIDL";
+    display:    block;
+    width:      150px;
+    background: #90b8de;
+    color:  #fff;
+    font-family:    initial;
+    padding:    3px;
+    font-weight:    bold;
+    margin: -1em 0 1em -1em;
+}
+
+.idlType {
+    color:  #ff4500;
+    font-weight:    bold;
+    text-decoration:    none;
+}
+
+/*.idlModule*/
+/*.idlModuleID*/
+/*.idlInterface*/
+.idlInterfaceID, .idlDictionaryID {
+    font-weight:    bold;
+    color:  #005a9c;
+}
+
+.idlSuperclass {
+    font-style: italic;
+    color:  #005a9c;
+}
+
+/*.idlAttribute*/
+.idlAttrType, .idlFieldType, .idlMemberType {
+    color:  #005a9c;
+}
+.idlAttrName, .idlFieldName, .idlMemberName {
+    color:  #ff4500;
+}
+.idlAttrName a, .idlFieldName a, .idlMemberName a {
+    color:  #ff4500;
+    border-bottom:  1px dotted #ff4500;
+    text-decoration: none;
+}
+
+/*.idlMethod*/
+.idlMethType {
+    color:  #005a9c;
+}
+.idlMethName {
+    color:  #ff4500;
+}
+.idlMethName a {
+    color:  #ff4500;
+    border-bottom:  1px dotted #ff4500;
+    text-decoration: none;
+}
+
+/*.idlParam*/
+.idlParamType {
+    color:  #005a9c;
+}
+.idlParamName {
+    font-style: italic;
+}
+
+.extAttr {
+    color:  #666;
+}
+
+/*.idlConst*/
+.idlConstType {
+    color:  #005a9c;
+}
+.idlConstName {
+    color:  #ff4500;
+}
+.idlConstName a {
+    color:  #ff4500;
+    border-bottom:  1px dotted #ff4500;
+    text-decoration: none;
+}
+
+/*.idlException*/
+.idlExceptionID {
+    font-weight:    bold;
+    color:  #c00;
+}
+
+.idlTypedefID, .idlTypedefType {
+    color:  #005a9c;
+}
+
+.idlRaises, .idlRaises a.idlType, .idlRaises a.idlType code, .excName a, .excName a code {
+    color:  #c00;
+    font-weight:    normal;
+}
+
+.excName a {
+    font-family:    monospace;
+}
+
+.idlRaises a.idlType, .excName a.idlType {
+    border-bottom:  1px dotted #c00;
+}
+
+.excGetSetTrue, .excGetSetFalse, .prmNullTrue, .prmNullFalse, .prmOptTrue, .prmOptFalse {
+    width:  45px;
+    text-align: center;
+}
+.excGetSetTrue, .prmNullTrue, .prmOptTrue { color:  #0c0; }
+.excGetSetFalse, .prmNullFalse, .prmOptFalse { color:  #c00; }
+
+.idlImplements a {
+    font-weight:    bold;
+}
+
+dl.attributes, dl.methods, dl.constants, dl.fields, dl.dictionary-members {
+    margin-left:    2em;
+}
+
+.attributes dt, .methods dt, .constants dt, .fields dt, .dictionary-members dt {
+    font-weight:    normal;
+}
+
+.attributes dt code, .methods dt code, .constants dt code, .fields dt code, .dictionary-members dt code {
+    font-weight:    bold;
+    color:  #000;
+    font-family:    monospace;
+}
+
+.attributes dt code, .fields dt code, .dictionary-members dt code {
+    background:  #ffffd2;
+}
+
+.attributes dt .idlAttrType code, .fields dt .idlFieldType code, .dictionary-members dt .idlMemberType code {
+    color:  #005a9c;
+    background:  transparent;
+    font-family:    inherit;
+    font-weight:    normal;
+    font-style: italic;
+}
+
+.methods dt code {
+    background:  #d9e6f8;
+}
+
+.constants dt code {
+    background:  #ddffd2;
+}
+
+.attributes dd, .methods dd, .constants dd, .fields dd, .dictionary-members dd {
+    margin-bottom:  1em;
+}
+
+table.parameters, table.exceptions {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    margin: 0.5em 0;
+    width:  100%;
+}
+table.parameters { border-bottom:  1px solid #90b8de; }
+table.exceptions { border-bottom:  1px solid #deb890; }
+
+.parameters th, .exceptions th {
+    color:  #fff;
+    padding:    3px 5px;
+    text-align: left;
+    font-family:    initial;
+    font-weight:    normal;
+    text-shadow:    #666 1px 1px 0;
+}
+.parameters th { background: #90b8de; }
+.exceptions th { background: #deb890; }
+
+.parameters td, .exceptions td {
+    padding:    3px 10px;
+    border-top: 1px solid #ddd;
+    vertical-align: top;
+}
+
+.parameters tr:first-child td, .exceptions tr:first-child td {
+    border-top: none;
+}
+
+.parameters td.prmName, .exceptions td.excName, .exceptions td.excCodeName {
+    width:  100px;
+}
+
+.parameters td.prmType {
+    width:  120px;
+}
+
+table.exceptions table {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    width:  100%;
+}
+
+/* --- TOC --- */
+.toc a {
+    text-decoration:    none;
+}
+
+a .secno {
+    color:  #000;
+}
+
+/* --- TABLE --- */
+table.simple {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    border-bottom:  3px solid #005a9c;
+}
+
+.simple th {
+    background: #005a9c;
+    color:  #fff;
+    padding:    3px 5px;
+    text-align: left;
+}
+
+.simple th[scope="row"] {
+    background: inherit;
+    color:  inherit;
+    border-top: 1px solid #ddd;
+}
+
+.simple td {
+    padding:    3px 10px;
+    border-top: 1px solid #ddd;
+}
+
+.simple tr:nth-child(even) {
+    background: #f0f6ff;
+}
+
+/* --- DL --- */
+.section dd > p:first-child {
+    margin-top: 0;
+}
+
+.section dd > p:last-child {
+    margin-bottom: 0;
+}
+
+.section dd {
+    margin-bottom:  1em;
+}
+
+.section dl.attrs dd, .section dl.eldef dd {
+    margin-bottom:  0;
+}
+
+/* --- EXAMPLES --- */
+pre.example {
+    border-top: 1px solid #ff4500;
+    border-bottom: 1px solid #ff4500;
+    padding:    1em;
+    margin-top: 1em;
+}
+
+pre.example::before {
+    content:    "Example";
+    display:    block;
+    width:      150px;
+    background: #ff4500;
+    color:  #fff;
+    font-family:    initial;
+    padding:    3px;
+    font-weight:    bold;
+    margin: -1em 0 1em -1em;
+}
+
+/* --- EDITORIAL NOTES --- */
+.issue {
+    padding:    1em;
+    margin: 1em 0em 0em;
+    border: 1px solid #f00;
+    background: #ffc;
+}
+
+.issue::before {
+    content:    "Issue";
+    display:    block;
+    width:  150px;
+    margin: -1.5em 0 0.5em 0;
+    font-weight:    bold;
+    border: 1px solid #f00;
+    background: #fff;
+    padding:    3px 1em;
+}
+
+.note {
+    margin: 1em 0em 0em;
+    padding:    1em;
+    border: 2px solid #cff6d9;
+    background: #e2fff0;
+}
+
+.note::before {
+    content:    "Note";
+    display:    block;
+    width:  150px;
+    margin: -1.5em 0 0.5em 0;
+    font-weight:    bold;
+    border: 1px solid #cff6d9;
+    background: #fff;
+    padding:    3px 1em;
+}
+
+/* --- Best Practices --- */
+div.practice {
+    border: solid #bebebe 1px;
+    margin: 2em 1em 1em 2em;
+}
+
+span.practicelab {
+    margin: 1.5em 0.5em 1em 1em;
+    font-weight: bold;
+    font-style: italic;
+}
+
+span.practicelab   { background: #dfffff; }
+
+span.practicelab {
+    position: relative;
+    padding: 0 0.5em;
+    top: -1.5em;
+}
+
+p.practicedesc {
+    margin: 1.5em 0.5em 1em 1em;
+}
+
+@media screen {
+    p.practicedesc {
+        position: relative;
+        top: -2em;
+        padding: 0;
+        margin: 1.5em 0.5em -1em 1em;
+    }
+}
+
+/* --- SYNTAX HIGHLIGHTING --- */
+pre.sh_sourceCode {
+  background-color: white;
+  color: black;
+  font-style: normal;
+  font-weight: normal;
+}
+
+pre.sh_sourceCode .sh_keyword { color: #005a9c; font-weight: bold; }           /* language keywords */
+pre.sh_sourceCode .sh_type { color: #666; }                            /* basic types */
+pre.sh_sourceCode .sh_usertype { color: teal; }                             /* user defined types */
+pre.sh_sourceCode .sh_string { color: red; font-family: monospace; }        /* strings and chars */
+pre.sh_sourceCode .sh_regexp { color: orange; font-family: monospace; }     /* regular expressions */
+pre.sh_sourceCode .sh_specialchar { color: 	#ffc0cb; font-family: monospace; }  /* e.g., \n, \t, \\ */
+pre.sh_sourceCode .sh_comment { color: #A52A2A; font-style: italic; }         /* comments */
+pre.sh_sourceCode .sh_number { color: purple; }                             /* literal numbers */
+pre.sh_sourceCode .sh_preproc { color: #00008B; font-weight: bold; }       /* e.g., #include, import */
+pre.sh_sourceCode .sh_symbol { color: blue; }                            /* e.g., *, + */
+pre.sh_sourceCode .sh_function { color: black; font-weight: bold; }         /* function calls and declarations */
+pre.sh_sourceCode .sh_cbracket { color: red; }                              /* block brackets (e.g., {, }) */
+pre.sh_sourceCode .sh_todo { font-weight: bold; background-color: #00FFFF; }   /* TODO and FIXME */
+
+/* Predefined variables and functions (for instance glsl) */
+pre.sh_sourceCode .sh_predef_var { color: #00008B; }
+pre.sh_sourceCode .sh_predef_func { color: #00008B; font-weight: bold; }
+
+/* for OOP */
+pre.sh_sourceCode .sh_classname { color: teal; }
+
+/* line numbers (not yet implemented) */
+pre.sh_sourceCode .sh_linenum { display: none; }
+
+/* Internet related */
+pre.sh_sourceCode .sh_url { color: blue; text-decoration: underline; font-family: monospace; }
+
+/* for ChangeLog and Log files */
+pre.sh_sourceCode .sh_date { color: blue; font-weight: bold; }
+pre.sh_sourceCode .sh_time, pre.sh_sourceCode .sh_file { color: #00008B; font-weight: bold; }
+pre.sh_sourceCode .sh_ip, pre.sh_sourceCode .sh_name { color: #006400; }
+
+/* for Prolog, Perl... */
+pre.sh_sourceCode .sh_variable { color: #006400; }
+
+/* for LaTeX */
+pre.sh_sourceCode .sh_italics { color: #006400; font-style: italic; }
+pre.sh_sourceCode .sh_bold { color: #006400; font-weight: bold; }
+pre.sh_sourceCode .sh_underline { color: #006400; text-decoration: underline; }
+pre.sh_sourceCode .sh_fixed { color: green; font-family: monospace; }
+pre.sh_sourceCode .sh_argument { color: #006400; }
+pre.sh_sourceCode .sh_optionalargument { color: purple; }
+pre.sh_sourceCode .sh_math { color: orange; }
+pre.sh_sourceCode .sh_bibtex { color: blue; }
+
+/* for diffs */
+pre.sh_sourceCode .sh_oldfile { color: orange; }
+pre.sh_sourceCode .sh_newfile { color: #006400; }
+pre.sh_sourceCode .sh_difflines { color: blue; }
+
+/* for css */
+pre.sh_sourceCode .sh_selector { color: purple; }
+pre.sh_sourceCode .sh_property { color: blue; }
+pre.sh_sourceCode .sh_value { color: #006400; font-style: italic; }
+
+/* other */
+pre.sh_sourceCode .sh_section { color: black; font-weight: bold; }
+pre.sh_sourceCode .sh_paren { color: red; }
+pre.sh_sourceCode .sh_attribute { color: #006400; }
+
+</style><link href="http://www.w3.org/StyleSheets/TR/W3C-WG-NOTE" rel="stylesheet" type="text/css" charset="utf-8"></head><body style="display: inherit; "><div class="head"><p><a href="http://www.w3.org/"><img width="72" height="48" src="http://www.w3.org/Icons/w3c_home" alt="W3C"></a></p><h1 class="title" id="title">Web Application Privacy Best Practices</h1><h2 id="w3c-working-group-note-03-july-2012"><acronym title="World Wide Web Consortium">W3C</acronym> Working Group Note 03 July 2012</h2><dl><dt>This version:</dt><dd><a href="http://www.w3.org/TR/2012/NOTE-app-privacy-bp-20120703/">http://www.w3.org/TR/2012/NOTE-app-privacy-bp-20120703/</a></dd><dt>Latest published version:</dt><dd><a href="http://www.w3.org/TR/app-privacy-bp/">http://www.w3.org/TR/app-privacy-bp/</a></dd><dt>Latest editor's draft:</dt><dd><a href="http://dev.w3.org/2009/dap/privacy-practices/">http://dev.w3.org/2009/dap/privacy-practices/</a></dd><dt>Previous version:</dt><dd><a href="http://www.w3.org/TR/2011/WD-app-privacy-bp-20110804/">http://www.w3.org/TR/2011/WD-app-privacy-bp-20110804/</a></dd><dt>Editor:</dt><dd><span>Frederick Hirsch</span>, <a href="http://www.nokia.com/">Nokia</a></dd>
+</dl><p class="copyright"><a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 2012 <a href="http://www.w3.org/"><acronym title="World Wide Web Consortium">W3C</acronym></a><sup>®</sup> (<a href="http://www.csail.mit.edu/"><acronym title="Massachusetts Institute of Technology">MIT</acronym></a>, <a href="http://www.ercim.eu/"><acronym title="European Research Consortium for Informatics and Mathematics">ERCIM</acronym></a>, <a href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. <acronym title="World Wide Web Consortium">W3C</acronym> <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply.</p><hr></div>
+    <div id="abstract" class="introductory section"><h2>Abstract</h2><p>
+      This document describes privacy best practices for web
+      applications, including those that might use device 
+      APIs.
+    </p></div><div id="sotd" class="introductory section"><h2>Status of This Document</h2><p><em>This section describes the status of this document at the time of its publication. Other documents may supersede this document. A list of current <acronym title="World Wide Web Consortium">W3C</acronym> publications and the latest revision of this technical report can be found in the <a href="http://www.w3.org/TR/"><acronym title="World Wide Web Consortium">W3C</acronym> technical reports index</a> at http://www.w3.org/TR/.</em></p>
+      <p>
+        This document outlines privacy best practices for web
+        applications that may rely upon device APIs. These web
+        application practices impact the user of the web application
+        but are not directly related to the API definition itself, but
+        rather the context of the use of those APIs by the web
+        application.
+      </p>
+      <p>Since the last publication of this document, a new best practice
+        related to "active consent" has been added (best practice 6),
+"informed consent" is noted in an existing practice (best practice
+        3), various editorial wording changes have been made, and the
+        practices have also been renumbered to accomodate the addition
+        of the new practice. 
+        A <a href="WG-NOTE-diff.html">red-line showing the changes since the
+          previous publication</a> is available. 
+      </p>
+    <p>This document was published by the <a href="http://www.w3.org/2009/dap/">Device APIs Working Group</a> as a Working Group Note. If you wish to make comments regarding this document, please send them to <a href="mailto:public-device-apis@w3.org">public-device-apis@w3.org</a> (<a href="mailto:public-device-apis-request@w3.org?subject=subscribe">subscribe</a>, <a href="http://lists.w3.org/Archives/Public/public-device-apis/">archives</a>). All feedback is welcome.</p><p>Publication as a Working Group Note does not imply endorsement by the <acronym title="World Wide Web Consortium">W3C</acronym> Membership. This is a draft document and may be updated, replaced or obsoleted by other documents at any time. It is inappropriate to cite this document as other than work in progress.</p><p>This document was produced by a group operating under the <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 <acronym title="World Wide Web Consortium">W3C</acronym> Patent Policy</a>. <acronym title="World Wide Web Consortium">W3C</acronym> maintains a <a href="http://www.w3.org/2004/01/pp-impl/43696/status" rel="disclosure">public list of any patent disclosures</a> made in connection with the deliverables of the group; that page also includes instructions for disclosing a patent. An individual who has actual knowledge of a patent which the individual believes contains <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential Claim(s)</a> must disclose the information in accordance with <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section 6 of the <acronym title="World Wide Web Consortium">W3C</acronym> Patent Policy</a>.</p></div><div id="toc" class="section"><h2 class="introductory">Table of Contents</h2><ul class="toc"><li class="tocline"><a href="#introduction" class="tocxref"><span class="secno">1. </span>Introduction</a></li><li class="tocline"><a href="#privacybydesign" class="tocxref"><span class="secno">2. </span>Privacy By Design</a></li><li class="tocline"><a href="#usercentric" class="tocxref"><span class="secno">3. </span>User Centric Design</a></li><li class="tocline"><a href="#data-minimization" class="tocxref"><span class="secno">4. </span>Minimize collection and
+      transmission of personal data</a></li><li class="tocline"><a href="#data-confidentiality" class="tocxref"><span class="secno">5. </span>Maintain the confidentiality of personal data</a></li><li class="tocline"><a href="#access-log" class="tocxref"><span class="secno">6. </span>Control and log access</a></li><li class="tocline"><a href="#bp-summary" class="tocxref"><span class="secno">7. </span>Best Practices Summary</a></li><li class="tocline"><a href="#references" class="tocxref"><span class="secno">A. </span>References</a><ul class="toc"><li class="tocline"><a href="#normative-references" class="tocxref"><span class="secno">A.1 </span>Normative references</a></li><li class="tocline"><a href="#informative-references" class="tocxref"><span class="secno">A.2 </span>Informative references</a></li></ul></li></ul></div> <!-- abstract -->
+
+    
+
+    <div id="introduction" class="section">
+      <!--OddPage--><h2><span class="secno">1. </span>Introduction</h2>
+      <p>
+        This document outlines good privacy practices for web
+        applications, including those that might use 
+        device APIs. This continues the work on privacy best practices
+        in section 3.3.1 on "User Awareness and Control"  Mobile Web Application Best Practices [<cite><a class="bibref" rel="biblioentry" href="#bib-MWABP">MWABP</a></cite>]. It does not repeat the privacy principles and
+        requirements documented in the Device API Privacy Requirements Note
+        [<cite><a class="bibref" rel="biblioentry" href="#bib-DAP-PRIVACY-REQS">DAP-PRIVACY-REQS</a></cite>] which should also be consulted.
+      </p>
+    </div>
+    <div id="privacybydesign" class="section">
+      <!--OddPage--><h2><span class="secno">2. </span>Privacy By Design</h2>
+      <p>
+        The principles of "Privacy by Design" should be reflected in the
+        web application design and implementation, including the use
+        of device APIs. 
+        These are enumerated below and in more detail in the reference
+      [<cite><a class="bibref" rel="biblioentry" href="#bib-PRIVACY-BY-DESIGN">PRIVACY-BY-DESIGN</a></cite>].</p> 
+      <div class="practice">
+        <p>
+        <span id="bp-privacy-by-design" class="practicelab">Best Practice 1: Follow "Privacy By Design" principles</span>.</p>
+        <p class="practicedesc">
+          Proactively consider privacy, make preservation of
+          privacy the default, including privacy in a
+          user-centric and transparent design without making
+          tradeoffs against privacy for other features as
+          privacy is possible along with other functionality.
+        </p>
+        <p>These principles include the following:</p>
+        <ol>
+          <li>Proactive not Reactive; Preventative not Remedial</li>
+          <li>Privacy as the Default Setting</li>
+          <li>Privacy Embedded into Design</li>
+          <li> Full Functionality — Positive-Sum, not Zero-Sum</li>
+          <li>End-to-End Security — Full Lifecycle Protection</li>
+          <li>Visibility and Transparency — Keep it Open</li>
+          <li>Respect for User Privacy — Keep it User-Centric</li>
+        </ol>
+      </div>
+      </div>
+    <div id="usercentric" class="section">
+      <!--OddPage--><h2><span class="secno">3. </span>User Centric Design</h2>
+      <p>Privacy should be user centric, giving the user understanding
+      and control over use of their personal data.</p>
+      <div class="practice">
+        <p><span id="bp-user-driven" class="practicelab">Best Practice 2: Enable the user to make informed decisions about
+            sharing their personal information with a service.
+        </span></p>
+        <p class="practicedesc">
+          The end user should have enough information about a service
+          and how it will use their personal information to make an
+          informed decision on whether to share information with that service. 
+          This should include understanding of the data to be shared,
+          clarity about how long data will be kept 
+          and information with whom it will be shared (and for what purpose).
+        </p>
+      </div>
+      <div class="practice">
+        <p><span id="bp-choices-in-context" class="practicelab">Best Practice 3: Enable the user to make decisions at the
+        appropriate time with the correct contextual information.
+        </span></p> 
+        <p class="practicedesc">
+          The user should have the opportunity to decide whether to
+          share information (and what to share) at the time it is
+          needed. This is necessary as the decision can depend on the
+          context, including the details of what the user is trying to
+          accomplish, the details of that task, and differences in how
+          the service will operate, use and share data.
+        </p>
+        <p>The Web Application should make sure that consent is "informed
+          consent" and provide necessary privacy notice and other information at
+          the time user consent is required, either through action or
+          other means.</p> 
+<!--         <p class="practicedesc"> -->
+<!--           Examples are the presentation of a "picker" -->
+<!--           interface to the user for selecting contacts fields of -->
+<!--           potential contacts returned from a find operation in -->
+<!--           the contacts  API [[CONTACTS-API]], or the selection -->
+<!--           of a file in  -->
+<!--           response to HTML5 <code>&lt;input type="file"&gt;</code> markup -->
+<!--           [[HTML5]].  In each of these cases the user makes a -->
+<!--           decision of what to share in the context of their -->
+<!--           current activity and indicates that decision through -->
+<!--           the selection process. -->
+<!--         </p> -->
+<!--         <p class="practicedesc"> -->
+<!--           Another similar example is -->
+<!--           drag and drop in HTML5 where the user clearly indicates a -->
+<!--           desired sharing of information. -->
+<!--         </p> -->
+<!--         <p class="practicedesc"> -->
+<!--           These are examples of granting permission implicitly -->
+<!--         through action.</p> -->
+      </div>
+      <div class="practice">
+        <p><span id="bp-sp-choices" class="practicelab">Best Practice 4: When learning user privacy
+        decisions and providing defaults, allow the user to easily view and
+        change their previous decisions.
+        </span></p> 
+        <p class="practicedesc">
+          A service may learn and remember personal information of the
+         user in order to improve a service. One example is
+         remembering a billing address; another example might be
+         remembering 
+         payment information. When doing so the service should make it
+         clear to the user which information is retained and how it is
+         used. It should give the user an opportunity to correct or remove
+         the information.
+        </p>
+      </div>
+      <div class="practice">
+        <p><span id="bp-usability" class="practicelab">Best Practice 5: Focus on usability and avoid needless prompting.
+        </span></p> 
+        <p class="practicedesc">
+          Focusing on usability should improve a service as well as
+          making it easier for the user to understand and control use of their
+          personal information. Minimize use of modal dialogs as they
+          harm the user experience and many users will not understand how to
+          respond to prompts, instead making a choice that enables them to
+          continue their work
+          [<cite><a class="bibref" rel="biblioentry" href="#bib-GEOLOCATION-PRIVACY">GEOLOCATION-PRIVACY</a></cite>].
+        </p>
+      </div>
+      <div class="practice">
+        <p><span id="bp-active-consent" class="practicelab">Best Practice 6: Active consent should be freely given, for
+          specific data,  and be informed.
+        </span></p> 
+        <p class="practicedesc">
+          Active consent is where user action is
+          taken to also give permission, avoiding the need for consent
+          dialogs. Such active consent should be freely given, for
+          specific data,  and be informed. Thus the user should be able
+          to cancel the operation, know which data is shared, and have
+          adequate information at the time of the action regarding the
+          intended use of the data [<cite><a class="bibref" rel="biblioentry" href="#bib-CONSENT-EU-WP187">CONSENT-EU-WP187</a></cite>]. The web
+          application should provide the user with information on
+          intended use in conjunction with device API usage. 
+        </p>
+        <p>
+          Examples of active consent include selecting 
+          contact fields to share, electing to create a picture by
+          clicking on the camera shutter, and so on.
+          Active consent can improve usability
+          and be less disruptive than consent dialogs, and can also
+          meet privacy requirements if appropriate criteria are met.
+        </p>
+      </div>
+      <div class="practice">
+        <p><span id="bp-clarity" class="practicelab">Best Practice 7: Be clear and
+        transparent to users regarding 
+        potential privacy concerns.
+        </span></p>
+        <p class="practicedesc">
+          The end user should understand if information is being used
+          by the service itself or being shared with a third
+          party, especially when third party services are
+          involved in a "mashup".
+        </p>
+      </div>
+      <div class="practice">
+        <p><span id="bp-clarify-one-shot-or-repeated" class="practicelab">Best Practice 8: Be clear as to whether information is
+        needed on a one-time basis or is necessary for a period of
+        time and for how long.
+        </span></p>
+        <p class="practicedesc">
+          The end user should understand whether information collected is
+          for a single use or will be retained and have an impact over time.
+        </p>
+      </div>
+    </div>
+    <div id="data-minimization" class="section">
+      <!--OddPage--><h2><span class="secno">4. </span>Minimize collection and
+      transmission of personal data</h2> 
+        <p>Review the data and how it is structured and used, minimizing
+        the amount and detail of data required to provide a service.
+        </p>
+        <div class="practice">
+          <p><span id="bp-data-granularity" class="practicelab">Best Practice 9: Request the minimum number of data
+          items at the 
+          minimum level of detail needed to provide a service.</span></p> 
+          <p class="practicedesc">
+            As an example, an address book entry is not the
+            natural level of granularity as the user may wish to
+            share various individual address
+            book fields independently. Thus the natural level of
+            granularity in an address book is a field and no
+            more than the necessary fields should be provided in
+            response to 
+            an address book entry request.
+          </p>
+        </div>
+        <div class="practice">
+          <p><span id="bp-data-retention" class="practicelab">Best Practice 10: 
+          Retain the minimum amount of data at the minimum level of detail for
+          the minimum amount of time needed.
+          Consider potential misuses of retained data and
+          possible countermeasures.
+          </span></p> 
+          <p class="practicedesc">
+            As an example, retaining user payment information
+            entails the risk of this information being stolen and
+            misused. Perhaps it does not need to be retained but
+            if it is (with user permission) perhaps it should be
+            encrypted (to give one possible countermeasure).
+          </p>
+
+        </div>
+    </div>
+    <div id="data-confidentiality" class="section">
+      <!--OddPage--><h2><span class="secno">5. </span>Maintain the confidentiality of personal data</h2> 
+      <div class="practice">
+        <p><span id="bp-use-https" class="practicelab">Best Practice 11: 
+        Maintain the confidentiality of user data in
+        transmission, for example using <code>HTTPS</code> for
+        transport rather than <code>HTTP</code>.
+        </span></p> 
+        <p class="practicedesc">
+          Use of <code>HTTPS</code> can provide confidentiality of
+          personal data in 
+          transport when an appropriate cipher suite is
+          required.  This should be done for sensitive personal
+          information unless confidentiality can be assured by other means.
+        </p> 
+      </div>
+      <div class="practice">
+        <p><span id="bp-secure-storage" class="practicelab">Best Practice 12: 
+        Maintain the confidentiality of user data in
+        storage.
+        </span></p> 
+        <p class="practicedesc">
+          The confidentiality of personal information should be
+          maintained  when in storage, to prevent inadvertent or
+          malicious loss (e.g. break in to a server, theft of backups
+          or other threats).
+        </p> 
+      </div>
+    </div>
+    <div id="access-log" class="section">
+      <!--OddPage--><h2><span class="secno">6. </span>Control and log access</h2> 
+        <div class="practice">
+          <p><span id="bp-audit-log" class="practicelab">Best Practice 13: Control and log access to data.</span></p> 
+          <p class="practicedesc">
+            Control access to information through access controls and
+            log access.
+          </p>
+        </div>
+    </div>	
+    <div id="bp-summary" class="section"><!--OddPage--><h2><span class="secno">7. </span>Best Practices Summary</h2><ul><li><a href="#bp-privacy-by-design">Best Practice 1</a>: Follow "Privacy By Design" principles</li><li><a href="#bp-user-driven">Best Practice 2</a>: Enable the user to make informed decisions about
+            sharing their personal information with a service.
+        </li><li><a href="#bp-choices-in-context">Best Practice 3</a>: Enable the user to make decisions at the
+        appropriate time with the correct contextual information.
+        </li><li><a href="#bp-sp-choices">Best Practice 4</a>: When learning user privacy
+        decisions and providing defaults, allow the user to easily view and
+        change their previous decisions.
+        </li><li><a href="#bp-usability">Best Practice 5</a>: Focus on usability and avoid needless prompting.
+        </li><li><a href="#bp-active-consent">Best Practice 6</a>: Active consent should be freely given, for
+          specific data,  and be informed.
+        </li><li><a href="#bp-clarity">Best Practice 7</a>: Be clear and
+        transparent to users regarding 
+        potential privacy concerns.
+        </li><li><a href="#bp-clarify-one-shot-or-repeated">Best Practice 8</a>: Be clear as to whether information is
+        needed on a one-time basis or is necessary for a period of
+        time and for how long.
+        </li><li><a href="#bp-data-granularity">Best Practice 9</a>: Request the minimum number of data
+          items at the 
+          minimum level of detail needed to provide a service.</li><li><a href="#bp-data-retention">Best Practice 10</a>: 
+          Retain the minimum amount of data at the minimum level of detail for
+          the minimum amount of time needed.
+          Consider potential misuses of retained data and
+          possible countermeasures.
+          </li><li><a href="#bp-use-https">Best Practice 11</a>: 
+        Maintain the confidentiality of user data in
+        transmission, for example using <code>HTTPS</code> for
+        transport rather than <code>HTTP</code>.
+        </li><li><a href="#bp-secure-storage">Best Practice 12</a>: 
+        Maintain the confidentiality of user data in
+        storage.
+        </li><li><a href="#bp-audit-log">Best Practice 13</a>: Control and log access to data.</li></ul></div> 
+  
+
+
+<div id="references" class="appendix section"><!--OddPage--><h2><span class="secno">A. </span>References</h2><div id="normative-references" class="section"><h3><span class="secno">A.1 </span>Normative references</h3><p>No normative references.</p></div><div id="informative-references" class="section"><h3><span class="secno">A.2 </span>Informative references</h3><dl class="bibliography"><dt id="bib-CONSENT-EU-WP187">[CONSENT-EU-WP187]</dt><dd>WP189, <a href="http://ec.europa.eu/justice/policies/privacy/docs/wpdocs/2011/wp187_en.pdf"><cite>Opinion 15/2011 on the definition of consent</cite></a>. EU Article 29 Data Protection Working Party, 01197/11/EN WP187. 13 July 2011. URL: <a href="http://ec.europa.eu/justice/policies/privacy/docs/wpdocs/2011/wp187_en.pdf">http://ec.europa.eu/justice/policies/privacy/docs/wpdocs/2011/wp187_en.pdf</a>
+</dd><dt id="bib-DAP-PRIVACY-REQS">[DAP-PRIVACY-REQS]</dt><dd>Alissa Cooper, Frederick Hirsch, John Morris. <a href="http://www.w3.org/TR/2010/NOTE-dap-privacy-reqs-20100629/"><cite>Device API Privacy Requirements</cite></a> 29 June 2010. W3C Note URL: <a href="http://www.w3.org/TR/2010/NOTE-dap-privacy-reqs-20100629/">http://www.w3.org/TR/2010/NOTE-dap-privacy-reqs-20100629/</a> 
+</dd><dt id="bib-GEOLOCATION-PRIVACY">[GEOLOCATION-PRIVACY]</dt><dd>Marcos Cáceres <a href="http://www.w3.org/2010/api-privacy-ws/papers/privacy-ws-21.pdf"><cite>Privacy of Geolocation Implementations</cite></a>, "W3C Workshop on Privacy for Advanced Web APIs" paper, 12/13 July 2010. URL: <a href="http://www.w3.org/2010/api-privacy-ws/papers/privacy-ws-21.pdf">http://www.w3.org/2010/api-privacy-ws/papers/privacy-ws-21.pdf</a>
+</dd><dt id="bib-MWABP">[MWABP]</dt><dd>Adam Connors; Bryan Sullivan. <a href="http://www.w3.org/TR/2010/REC-mwabp-20101214/">Mobile Web Application Best Practices.</a> 14 December 2010. W3C Recommendation. URL: <a href="http://www.w3.org/TR/2010/REC-mwabp-20101214/">http://www.w3.org/TR/2010/REC-mwabp-20101214/</a> 
+</dd><dt id="bib-PRIVACY-BY-DESIGN">[PRIVACY-BY-DESIGN]</dt><dd>Ann Cavoukian, PhD. <a href="http://www.ipc.on.ca/images/Resources/7foundationalprinciples.pdf"><cite>Privacy By Design: The 7 Foundational Principles</cite></a>. August 2009, revised January 2011. URL: <a href="http://www.ipc.on.ca/images/Resources/7foundationalprinciples.pdf">http://www.ipc.on.ca/images/Resources/7foundationalprinciples.pdf</a>
+</dd></dl></div></div></body></html>

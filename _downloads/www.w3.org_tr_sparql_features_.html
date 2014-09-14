@@ -1,0 +1,1476 @@
+<!-- http://www.w3.org/TR/sparql-features/ -->
+<?xml version="1.0" ?><!--*- nxml -*--><!DOCTYPE html  PUBLIC '-//W3C//DTD XHTML 1.0 Strict//EN'  'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd'>
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>SPARQL New Features and Rationale</title>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+    <style type="text/css">
+      .editsection { display: none; }
+    </style>
+    <style type="text/css">
+	pre.data {
+	  background-color:#F9F9F9;
+	  border:1px dashed #2F6FAB;
+	  color:black;
+	  line-height:1.1em;
+	  padding:1em;
+	}
+	.note {
+		color: red;
+		font-weight: bold;
+	}
+</style>
+    <link href="http://www.w3.org/StyleSheets/TR/W3C-WD" rel="stylesheet" type="text/css"/>
+  
+<script type="text/javascript">/*<![CDATA[*/
+/*
+	Written by Jonathan Snook, http://www.snook.ca/jonathan
+	Add-ons by Robert Nyman, http://www.robertnyman.com
+	Author says "The credit comment is all it takes, no license. Go crazy with it!:-)"
+	From http://www.robertnyman.com/2005/11/07/the-ultimate-getelementsbyclassname/
+*/
+
+function getElementsByClassName(oElm, strTagName, oClassNames){
+	var arrElements = (! (! (strTagName == "*") || ! (oElm.all)))? oElm.all : oElm.getElementsByTagName(strTagName);
+	var arrReturnElements = new Array();
+	var arrRegExpClassNames = new Array();
+	if(typeof oClassNames == "object"){
+		for(var i=0; !(i>=oClassNames.length); i++){ /*>*/
+			arrRegExpClassNames.push(new RegExp("(^|\s)" + oClassNames[i].replace(/\-/g, "\-") + "(\s|$)"));
+		}
+	}
+	else{
+		arrRegExpClassNames.push(new RegExp("(^|\s)" + oClassNames.replace(/\-/g, "\-") + "(\s|$)"));
+	}
+	var oElement;
+	var bMatchesAll;
+	for(var j=0; !(j>=arrElements.length); j++){ /*>*/
+		oElement = arrElements[j];
+		bMatchesAll = true;
+		for(var k=0; !(k>=arrRegExpClassNames.length); k++){ /*>*/
+			if(!arrRegExpClassNames[k].test(oElement.className)){
+				bMatchesAll = false;
+				break;
+			}
+		}
+		if(bMatchesAll){
+			arrReturnElements.push(oElement);
+		}
+	}
+	return (arrReturnElements)
+}
+
+function set_display_by_class(el, cls, newValue) {
+   var e = getElementsByClassName(document, el, cls);
+   if (e != null) {
+      for (var i=0; !(i>=e.length); i++) {
+        e[i].style.display = newValue;
+      }
+   }
+}
+
+function set_display_by_id(id, newValue) {
+   var e = document.getElementById(id);
+   if (e != null) {
+     e.style.display = newValue;
+   }
+}
+/*]]>*/
+</script>
+ 
+
+  </head>
+  <body>
+  
+    <div class="head">
+      
+      <a href="http://www.w3.org/"><img alt="W3C" height="48" src="http://www.w3.org/Icons/w3c_home" width="72"/></a><h1 id="title" style="clear:both">SPARQL <span id="short-title">New Features and Rationale</span></h1>
+      
+      <h2 id="W3C-doctype">W3C Working Draft 2 July 2009</h2>
+      
+      
+      <dl>
+	<dt>This version:</dt>
+	<dd><a href="http://www.w3.org/TR/2009/WD-sparql-features-20090702/" id="this-version-url">http://www.w3.org/TR/2009/WD-sparql-features-20090702/</a></dd>
+	
+	<dt>Latest version:</dt>
+	<dd><a href="http://www.w3.org/TR/sparql-features/">http://www.w3.org/TR/sparql-features/</a></dd>
+	
+	<!-- dt>Previous version:</dt>
+	     <dd><a href="http://www.w3.org/TR/2008/WD-sparql-features-20090702/">http://www.w3.org/TR/2008/WD-sparql-features-20090702/</a></dd -->
+      </dl>
+      
+      <dl><dt>Editors:</dt><dd><a href="http://www.kjetil.kjernsmo.net/">Kjetil Kjernsmo</a>, <a href="http://www.computas.com/">Computas AS</a></dd>
+      
+      <dd><a href="http://apassant.net">Alexandre Passant</a>, <a
+      href="http://deri.ie">DERI Galway at the National University of
+      Ireland, Galway, Ireland</a></dd>
+      </dl>
+      
+      <!-- p>This document @@may someday be@@ available in these non-normative formats: <a >PDF version</a>.</p -->
+      
+      <hr/>
+
+      <p class="copyright"><a
+      href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a>
+      &copy; 2009 <a href="http://www.w3.org/"><acronym title="World
+      Wide Web Consortium">W3C</acronym></a><sup>&reg;</sup> (<a
+      href="http://www.csail.mit.edu/"><acronym title="Massachusetts
+      Institute of Technology">MIT</acronym></a>, <a
+      href="http://www.ercim.org/"><acronym title="European Research
+      Consortium for Informatics and Mathematics">ERCIM</acronym></a>,
+      <a href="http://www.keio.ac.jp/">Keio</a>), All Rights
+      Reserved. W3C <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>,
+      <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a>
+      and <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document
+      use</a> rules apply.</p>
+      
+    </div>
+    <hr/>
+    <h2><a id="abstract" name="abstract">Abstract</a></h2>
+    
+    <div>
+      SPARQL is a query language for RDF data on the Semantic Web with
+      formally defined meaning. This document is a simple introduction
+      to the new features of the language, including an explanation of
+      its differences with respect to the previous SPARQL Query Language 
+      Recommendation [<a href="#sparql10">SPARQL/Query 1.0</a>]. It also
+      presents the requirements that have motivated the design of the
+      main new features, and their rationale from a theoretical and
+      implementation perspective.
+    </div>
+
+    <h2 class="no-toc no-num">
+      <a id="status" name="status">Status of this Document</a>
+      
+    </h2>
+    
+    <h4 class="no-toc no-num" id="may-be">May Be Superseded</h4>
+    
+    <p>This is a First Public Working Draft of a feature requirement documents
+    for the continued SPARQL language development. This document is expected to change in response to public input and working group decisions.</p>
+
+
+    <p><em>This section describes the status of this document at the
+    time of its publication. Other documents may supersede this
+    document. A list of current W3C publications and the latest
+    revision of this technical report can be found in the <a
+    href="http://www.w3.org/TR/">W3C technical reports index</a> at
+    http://www.w3.org/TR/.</em></p>
+
+    
+    
+    <!-- no eventStatusExtra -->
+    
+    <!-- no statusExtra -->
+
+
+    <!-- h4 class="no-toc no-num" id="status-changes">Summary of Changes</h4>
+    
+    <div>
+ 
+      <p>This Working Draft has undergone several changes since the version
+      of 02 December 2008</p>
+      <ul>
+	<li>The new features are described in a more friendly syntax which
+	improves their readability.</li>
+	<li>Examples are now also given as RDF graphs</li>
+	<li>The new section "Other Design Choices and Rationale" approaches
+	SPARQL  syntax and backward compatibility</li>
+	<li>Significant editing makes it more compact and clear.</li>
+      </ul> 
+    </div -->
+
+
+
+    <h4 class="no-toc no-num" id="please">Comments are solicited</h4>
+    
+
+    <p>
+
+      The <a class="http"
+      href="http://www.w3.org/2001/sw/DataAccess/">SPARQL Working
+      Group</a> seeks public feedback on this Working Draft.  Please
+      send your comments to <a class="mailto"
+      href="mailto:public-rdf-dawg-comments@w3.org"
+      shape="rect">public-rdf-dawg-comments@w3.org</a> (<a
+      class="http"
+      href="http://lists.w3.org/Archives/Public/public-rdf-dawg-comments/"
+      shape="rect">public archive</a>).  If possible, please offer
+      specific changes to the text that would address your concern.
+    </p>
+    
+
+   
+    <h4 class="no-toc no-num" id="no-endorsement">No Endorsement</h4>
+    
+    <p><em>Publication as a Working Draft does not imply endorsement
+    by the W3C Membership. This is a draft document and may be
+    updated, replaced or obsoleted by other documents at any time. It
+    is inappropriate to cite this document as other than work in
+    progress.</em></p>
+    
+    <h4 class="no-toc no-num" id="patents">Patents</h4>
+    
+    <p><em>This document was produced by a group operating under the
+    <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5
+    February 2004 W3C Patent Policy</a>. This document is informative
+    only.  W3C maintains a <a
+    href="http://www.w3.org/2004/01/pp-impl/35463/status"
+    rel="disclosure">public list of any patent disclosures</a> made in
+    connection with the deliverables of the group; that page also
+    includes instructions for disclosing a patent. An individual who
+    has actual knowledge of a patent which the individual believes
+    contains <a
+    href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential
+    Claim(s)</a> must disclose the information in accordance with <a
+    href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">
+    section 6 of the W3C Patent Policy</a>.</em></p>
+
+    <hr title="Separator After Status Section"/>
+    
+    
+    <table class="toc" id="toc" summary="Contents"><tbody><tr><td><div id="toctitle"><h2>Table of Contents</h2></div>
+    
+    <ul>
+      <li class="toclevel-1">
+	<a href="#Introduction"><span class="tocnumber">1</span> <span class="toctext">Introduction</span></a>
+	<ul>
+    <li class="toclevel-3"><a href="#Introduction_features"><span class="tocnumber">1.1</span> <span class="toctext">List of Features</span></a></li>
+    <li class="toclevel-3"><a href="#Introduction_goals"><span class="tocnumber">1.2</span> <span class="toctext">Structure of the document</span></a></li>
+  </ul>
+	
+      </li>
+      <li class="toclevel-1">
+	<a href="#language"><span class="tocnumber">2</span> <span class="toctext">SPARQL/Query 1.1</span></a>
+	<ul>
+	  <li class="toclevel-2">
+	    <a href="#Aggregates"><span class="tocnumber">2.1</span> <span class="toctext">Aggregate functions</span></a>
+	    <ul>
+	      <li class="toclevel-3"><a href="#Aggregates_motivations"><span class="tocnumber">2.1.1</span> <span class="toctext">Motivations</span></a></li>
+	      <li class="toclevel-3"><a href="#Aggregates_description"><span class="tocnumber">2.1.2</span> <span class="toctext">Description</span></a></li>
+	      <li class="toclevel-3"><a href="#Aggregates_syntax"><span class="tocnumber">2.1.3</span> <span class="toctext">Existing implementation(s)</span></a></li>
+	      <li class="toclevel-3"><a href="#Aggregates_discussion"><span class="tocnumber">2.1.4</span> <span class="toctext">Related discussions</span></a></li>
+	      <li class="toclevel-3"><a href="#Aggregates_status"><span class="tocnumber">2.1.5</span> <span class="toctext">Status</span></a></li>
+	    </ul>
+	  </li>
+	 <li class="toclevel-2">
+	    <a href="#Subqueries"><span class="tocnumber">2.2</span> <span class="toctext">Subqueries</span></a>
+	    <ul>
+	      <li class="toclevel-3"><a href="#Subqueries_motivations"><span class="tocnumber">2.2.1</span> <span class="toctext">Motivations</span></a></li>
+	      <li class="toclevel-3"><a href="#Subqueries_description"><span class="tocnumber">2.2.2</span> <span class="toctext">Description</span></a></li>
+	      <li class="toclevel-3"><a href="#Subqueries_syntax"><span class="tocnumber">2.2.3</span> <span class="toctext">Existing implementation(s)</span></a></li>
+	      <li class="toclevel-3"><a href="#Subqueries_discussion"><span class="tocnumber">2.2.4</span> <span class="toctext">Related discussions</span></a></li>
+	      <li class="toclevel-3"><a href="#Subqueries_status"><span class="tocnumber">2.2.4</span> <span class="toctext">Status</span></a></li>
+	    </ul>
+	  </li>
+	<li class="toclevel-2">
+	    <a href="#Negation"><span class="tocnumber">2.3</span> <span class="toctext">Negation</span></a>
+	    <ul>
+	      <li class="toclevel-3"><a href="#Negation_motivations"><span class="tocnumber">2.3.1</span> <span class="toctext">Motivations</span></a></li>
+	      <li class="toclevel-3"><a href="#Negation_description"><span class="tocnumber">2.3.2</span> <span class="toctext">Description</span></a></li>
+	      <li class="toclevel-3"><a href="#Negation_syntax"><span class="tocnumber">2.3.3</span> <span class="toctext">Existing implementation(s)</span></a></li>
+	      <li class="toclevel-3"><a href="#Negation_discussion"><span class="tocnumber">2.3.4</span> <span class="toctext">Related discussions</span></a></li>
+	      <li class="toclevel-3"><a href="#Negation_status"><span class="tocnumber">2.3.5</span> <span class="toctext">Status</span></a></li>
+	    </ul>
+	  </li>
+	<li class="toclevel-2">
+	    <a href="#Project_expressions"><span class="tocnumber">2.4</span> <span class="toctext">Project expressions</span></a>
+	    <ul>
+	      <li class="toclevel-3"><a href="#Project_expressions_motivations"><span class="tocnumber">2.4.1</span> <span class="toctext">Motivations</span></a></li>
+	      <li class="toclevel-3"><a href="#Project_expressions_description"><span class="tocnumber">2.4.2</span> <span class="toctext">Description</span></a></li>
+	      <li class="toclevel-3"><a href="#Project_expressions_syntax"><span class="tocnumber">2.4.3</span> <span class="toctext">Existing implementation(s)</span></a></li>
+	      <li class="toclevel-3"><a href="#Project_expressions_discussion"><span class="tocnumber">2.4.4</span> <span class="toctext">Related discussions</span></a></li>
+	      <li class="toclevel-3"><a href="#Project_expressions_status"><span class="tocnumber">2.4.5</span> <span class="toctext">Status</span></a></li>
+	    </ul>
+	  </li>
+	  <li class="toclevel-2">
+	    <a href="#Language_syntax"><span class="tocnumber">2.5</span> <span class="toctext">Query language syntax</span></a>
+	    <ul>
+	      <li class="toclevel-3"><a href="#Language_syntax_motivations"><span class="tocnumber">2.5.1</span> <span class="toctext">Motivations</span></a></li>
+	      <li class="toclevel-3"><a href="#Language_syntax_description"><span class="tocnumber">2.5.2</span> <span class="toctext">Description</span></a></li>
+	      <!-- li class="toclevel-3"><a href="#Language_syntax_syntax"><span class="tocnumber">2.5.3</span> <span class="toctext">Existing implementation(s)</span></a></li>
+	      <li class="toclevel-3"><a href="#Language_syntax_discussion"><span class="tocnumber">2.5.4</span> <span class="toctext">Related discussions</span></a></li -->
+	      <li class="toclevel-3"><a href="#Language_syntax_status"><span class="tocnumber">2.5.5</span> <span class="toctext">Status</span></a></li>
+	    </ul>
+	  </li>	
+     	<li class="toclevel-2">
+	    <a href="#Property_paths"><span class="tocnumber">2.6</span> <span class="toctext">Property paths</span></a>
+	    <ul>
+	      <li class="toclevel-3"><a href="#Property_paths_motivations"><span class="tocnumber">2.6.1</span> <span class="toctext">Motivations</span></a></li>
+	      <li class="toclevel-3"><a href="#Property_paths_description"><span class="tocnumber">2.6.2</span> <span class="toctext">Description</span></a></li>
+	      <!-- li class="toclevel-3"><a href="#Property_paths_syntax"><span class="tocnumber">2.6.3</span> <span class="toctext">Existing implementation(s)</span></a></li>
+	      <li class="toclevel-3"><a href="#Property_paths_discussion"><span class="tocnumber">2.6.4</span> <span class="toctext">Related discussions</span></a></li -->
+	      <li class="toclevel-3"><a href="#Property_paths_status"><span class="tocnumber">2.6.5</span> <span class="toctext">Status</span></a></li>
+	    </ul>
+	  </li>	
+	<li class="toclevel-2">
+	    <a href="#Commonly_used_functions"><span class="tocnumber">2.7</span> <span class="toctext">Commonly used SPARQL functions</span></a>
+	    <ul>
+	      <li class="toclevel-3"><a href="#Commonly_used_functions_motivations"><span class="tocnumber">2.7.1</span> <span class="toctext">Motivations</span></a></li>
+	      <li class="toclevel-3"><a href="#Commonly_used_functions_description"><span class="tocnumber">2.7.2</span> <span class="toctext">Description</span></a></li>
+	      <!-- li class="toclevel-3"><a href="#Commonly_used_functions_syntax"><span class="tocnumber">2.7.3</span> <span class="toctext">Existing implementation(s)</span></a></li>
+	      <li class="toclevel-3"><a href="#Commonly_used_functions_discussion"><span class="tocnumber">2.7.4</span> <span class="toctext">Related discussions</span></a></li -->
+	      <li class="toclevel-3"><a href="#Commonly_used_functions_status"><span class="tocnumber">2.7.5</span> <span class="toctext">Status</span></a></li>
+	    </ul>
+	  </li>
+	<li class="toclevel-2">
+	    <a href="#Basic_federated_query"><span class="tocnumber">2.8</span> <span class="toctext">Basic federated query</span></a>
+	    <ul>
+	      <li class="toclevel-3"><a href="#Basic_federated_query_motivations"><span class="tocnumber">2.8.1</span> <span class="toctext">Motivations</span></a></li>
+	      <li class="toclevel-3"><a href="#Basic_federated_query_description"><span class="tocnumber">2.8.2</span> <span class="toctext">Description</span></a></li>
+	      <!-- li class="toclevel-3"><a href="#Basic_federated_query_syntax"><span class="tocnumber">2.8.3</span> <span class="toctext">Existing implementation(s)</span></a></li>
+	      <li class="toclevel-3"><a href="#Basic_federated_query_discussion"><span class="tocnumber">2.8.4</span> <span class="toctext">Related discussions</span></a></li -->
+	      <li class="toclevel-3"><a href="#Basic_federated_query_status"><span class="tocnumber">2.8.5</span> <span class="toctext">Status</span></a></li>
+	    </ul>
+	  </li>
+	</ul>
+      </li>
+	 <li class="toclevel-1">
+	    <a href="#Service_description"><span class="tocnumber">3</span> <span class="toctext">Service description</span></a>
+	    <ul>
+	      <li class="toclevel-2"><a href="#Service_description_motivations"><span class="tocnumber">3.1</span> <span class="toctext">Motivations</span></a></li>
+	      <li class="toclevel-2"><a href="#Service_description_description"><span class="tocnumber">3.2</span> <span class="toctext">Description</span></a></li>
+	      <li class="toclevel-2"><a href="#Service_description_syntax"><span class="tocnumber">3.3</span> <span class="toctext">Existing implementation(s)</span></a></li>
+	      <li class="toclevel-2"><a href="#Service_description_discussion"><span class="tocnumber">3.4</span> <span class="toctext">Related discussions</span></a></li>
+	      <li class="toclevel-2"><a href="#Service_description_status"><span class="tocnumber">3.5</span> <span class="toctext">Status</span></a></li>
+	    </ul>
+	  </li>
+
+
+
+      <li class="toclevel-1">
+	<a href="#sparql-update"><span class="tocnumber">4</span> <span class="toctext">Update</span></a>
+	<ul>
+	  <li class="toclevel-2">
+	    <a href="#Update"><span class="tocnumber">4.1</span> <span class="toctext">The SPARQL/Update 1.0 Language</span></a>
+	    <ul>
+	      <li class="toclevel-3"><a href="#Update_motivations"><span class="tocnumber">4.1.1</span> <span class="toctext">Motivations</span></a></li>
+	      <li class="toclevel-3"><a href="#Update_description"><span class="tocnumber">4.1.2</span> <span class="toctext">Description</span></a></li>
+	      <li class="toclevel-3"><a href="#Update_syntax"><span class="tocnumber">4.1.3</span> <span class="toctext">Existing implementation(s)</span></a></li>
+	      <li class="toclevel-3"><a href="#Update_discussion"><span class="tocnumber">4.1.4</span> <span class="toctext">Related discussions</span></a></li>
+	      <li class="toclevel-3"><a href="#Update_status"><span class="tocnumber">4.1.5</span> <span class="toctext">Status</span></a></li>
+	    </ul>
+	  </li>
+	  <li class="toclevel-2">
+	    <a href="#protocol-update"><span class="tocnumber">4.2</span> <span class="toctext">Protocol enhancements for update</span></a>
+	    <ul>
+	      <li class="toclevel-3"><a href="#protocol-update_motivations"><span class="tocnumber">4.2.1</span> <span class="toctext">Motivations</span></a></li>
+	      <li class="toclevel-3"><a href="#protocol-update_description"><span class="tocnumber">4.2.2</span> <span class="toctext">Description</span></a></li>
+	      <li class="toclevel-3"><a href="#protocol-update_syntax"><span class="tocnumber">4.2.3</span> <span class="toctext">Existing implementation(s)</span></a></li>
+	      <li class="toclevel-3"><a href="#protocol-update_discussion"><span class="tocnumber">4.2.4</span> <span class="toctext">Related discussions</span></a></li>
+	      <li class="toclevel-3"><a href="#protocol-update_status"><span class="tocnumber">4.2.5</span> <span class="toctext">Status</span></a></li>
+	    </ul>
+	  </li>
+	</ul>
+      </li>
+      <li class="toclevel-1">
+	<a href="#Entailment"><span class="tocnumber">5</span> <span class="toctext">Entailment</span></a>
+	<ul>
+	  <li class="toclevel-2"><a href="#Entailment_motivations"><span class="tocnumber">5.1</span> <span class="toctext">Motivations</span></a></li>
+	  <li class="toclevel-2"><a href="#Entailment_description"><span class="tocnumber">5.2</span> <span class="toctext">Description</span></a></li>
+	  <!-- li class="toclevel-2"><a href="#Entailment_syntax"><span class="tocnumber">5.3</span> <span class="toctext">Existing implementation(s)</span></a></li>
+	  <li class="toclevel-2"><a href="#Entailment_discussion"><span class="tocnumber">5.4</span> <span class="toctext">Related discussions</span></a></li -->
+	  <li class="toclevel-2"><a href="#Entailment_status"><span class="tocnumber">5.5</span> <span class="toctext">Status</span></a></li>
+	</ul>
+      </li>
+
+<!--
+      <li class="toclevel-1">
+	<a href="#usecases"><span class="tocnumber">5</span> <span class="toctext">Use cases</span></a>
+	<ul>
+	  <li class="toclevel-2"><a href="#UC1"><span class="tocnumber">5.1</span> <span class="toctext">Use-case 1: blabla</span></a></li>
+	  <li class="toclevel-2"><a href="#UC2"><span class="tocnumber">5.2</span> <span class="toctext">Use-case 2: blabla</span></a></li>
+	  <li class="toclevel-2"><a href="#UC3"><span class="tocnumber">5.3</span> <span class="toctext">Use-case 3: blabla</span></a></li>
+	</ul>
+      </li>
+    -->
+      <li class="toclevel-1"><a href="#acknowledgments"><span class="tocnumber">6</span> <span class="toctext">Acknowledgments</span></a></li>
+      <li class="toclevel-1"><a href="#references"><span class="tocnumber">7</span> <span class="toctext">References</span></a></li>
+    </ul>
+    
+    
+    </td></tr></tbody></table><script type="text/javascript"> if (window.showTocToggle) { var tocShowText = "show"; var tocHideText = "hide"; showTocToggle(); } </script>
+    <p><br/>
+    </p>
+
+    <h2 id="Introduction"> <span class="mw-headline">1
+    Introduction </span></h2> 
+    
+    <p>This document provides an overview of
+      the main new features of SPARQL and their rationale. 
+      This is an update to SPARQL adding several 
+      <a href="http://www.w3.org/2009/sparql/wiki/index.php?title=FeatureProposal&amp;oldid=744">new features</a>
+       that have been <a href="http://www.w3.org/2009/sparql/meeting/2009-05-06#Feature_decision">agreed</a> by the SPARQL WG.  
+       These language features were determined 
+       based on real applications and user and tool-developer experience. 
+    </p>
+    
+  <h3 id="Introduction_features"><span class="mw-headline">1.1 List of Features</span></h3>
+  
+  <p>
+    The following features <a href="http://www.w3.org/2009/sparql/wiki/index.php?title=FeatureProposal&amp;oldid=744"> 
+      have been agreed by the SPARQL WG</a>. 
+      These features have been grouped into 
+      Required and Time-permitting features as follows. 
+  </p>
+  
+  <dl>
+    <dt>Required features</dt>
+    <dd>
+      <ul>
+        <li><a href="#Aggregates">Aggregate functions</a></li>
+        <li><a href="#Subqueries">Subqueries</a></li>
+        <li><a href="#Negation">Negation</a></li>
+        <li><a href="#Project_expressions">Project expressions</a></li>
+        <li><a href="#Update">Update</a></li>
+        <li><a href="#Service_description">Service description</a></li>
+      </ul>
+    </dd>
+    <dt>Time-permitting features</dt>
+    <dd>
+      <ul>
+        <li><a href="#Entailment">BGP extensions for entailment regimes (OWL flavors, RDFS, RIF)</a></li>
+        <li><a href="#Property_paths">Property paths</a></li>
+        <li><a href="#Commonly_used_functions">Commonly used SPARQL functions (e.g. string manipulation functions)</a></li>
+        <li><a href="#Basic_federated_query">Basic federated query</a></li>
+        <li><a href="#Language_syntax">Query language syntax (Commas in select lists, IN/BETWEEN operator)</a></li>
+      </ul>      
+    </dd>    
+  </dl>
+  
+  <h3 id="Introduction_goals"><span class="mw-headline">1.2 Goals and structure of the document</span></h3>
+    
+    <p>
+      In the remainder of this document we will 
+      present the new features according to the 
+      nomenclature <a href="http://www.w3.org/2009/sparql/meeting/2009-05-06#resolution_3">agreed</a>
+      by the Working Group:
+    </p>
+<ul>
+  <li><a href="#language">SPARQL/Query 1.1</a>: referring to the SPARQL Query Language</li>
+  <li><a href="#sparql-update">SPARQL/Update 1.0</a>: referring to the SPARQL Update Language</li>
+</ul>
+
+<p>Each feature is described in a common pattern as follows:
+</p>
+<dl>
+<dt>Motivations</dt><dd>a brief sentence explaining why the new feature was added</dd>
+<dt>Description</dt><dd>a more complete description of the feature</dd>
+<dt>Existing implementation(s)</dt><dd>a list of existing implementations for the proposed feature and example syntax used in the implementation</dd>
+<dt>Related discussions</dt><dd>links to related discussions of the WG regarding the feature (mainly issues raised) and</dd>
+<dt>Status</dt><dd>the status of the feature, i.e. either required or time-permitting.</dd>
+</dl>
+
+<p class="note">
+  This current working draft details only one required features, but
+  motivation and a description is also provided for the
+  time-permitting features.
+</p>
+  
+  <h2 id="language"><span class="mw-headline">2 SPARQL/Query 1.1</span></h2>
+
+  <h3 id="Aggregates"><span class="mw-headline">2.1: Aggregate functions </span></h3>
+  
+  <h4 id="Aggregates_motivations"><span class="mw-headline">2.1.1 Motivations</span></h4>
+  
+  <p>
+    Aggregate functions allow operations such as counting, numerical
+    min/max/average and so on, by operating over columns of results.
+    They are currently not taken into account in SPARQL and then require
+    additional scripting to parse query results and get these informations, 
+    e.g. the number of triples that satisfy a particular statement.
+    Hence, a language extension is needed.
+  </p>
+
+  <h4 id="Aggregates_description"><span class="mw-headline">2.1.2 Description</span></h4>
+
+  <p>
+    In SPARQL/Query 1.0 (original SPARQL), query patterns yield a
+    solution set (effectively a table of solutions) from which certain
+    columns are projected and returned as the result of the
+    query. Aggregates provides the ability to partition a solution set
+    into one or more groups based on rows that share specified values,
+    and then to create a new solution set which contains one row per
+    aggregated group. Each solution in this new aggregate solution set
+    may contain either variables whose values are constant throughout
+    the group or aggregate functions that can be applied to the rows
+    in a group to yield a single value. Common aggregate functions
+    include COUNT, SUM, MIN, and MAX.  
+  </p>
+  <p>
+    Aggregate functions are commonly required to perform a slew of
+    application and data-analysis tasks, such as:
+  </p>
+  <ul>
+    <li> Determining the number of distinct resources that satisfy certain criteria
+    </li>
+    <li> Calculating the average exam score of students grouped by school district
+    </li>
+    <li> Summing the campaign contributions of donors, grouped by postal code and political party
+  </li></ul>
+  <p>
+    Applications can typically take a SPARQL/Query 1.0 solution set
+    and calculate aggregate values themselves. Enabling SPARQL engines
+    to calculate aggregates, however, results in moving work from the
+    application to the SPARQL engine, and will usually result in
+    significantly smaller solution sets being returned to the
+    application.
+</p>
+
+  <h4 id="Aggregates_syntax"><span class="mw-headline">2.1.3 Existing
+  implementation</span></h4> 
+
+  <p>
+    The following systems are known by the WG at the time of publication
+    to support one or more aggregate functions:
+  </p>
+  
+  <ul>
+    <li> Garlik's JXT implements COUNT() and AVG()
+    </li>
+    <li> Dave Beckett's Redland implements COUNT()
+    </li>
+    <li> ARQ <a href="http://jena.sourceforge.net/ARQ/group-by.html"
+    class="external text"
+    title="http://jena.sourceforge.net/ARQ/group-by.html">implements</a>
+    COUNT() and SUM() with syntax like <tt>(COUNT(*) AS&nbsp;?c)</tt> to
+    fit with expressions.  Bare <tt>COUNT(*)</tt> allowed.
+    </li>
+    <li> Open Anzo's Glitter engine implements AVG(), COUNT(), SUM(), MIN(), MAX(). 
+    </li>
+    <li> Virtuoso implements AVG(), COUNT(), SUM(), MIN(), MAX(),
+    user-defined aggregates such as VECTOR_AGG or XML tree
+    constructors. Appropriate GROUP BY clause is composed
+    automatically, if missing in the original query.  
+    </li>
+    <li>ARC <a class="http"
+    href="http://arc.semsol.org/docs/v2/sparql+">supports</a>
+    <tt>COUNT</tt>, <tt>MAX</tt>, <tt>MIN</tt>, <tt>AVG</tt>, and
+    <tt>SUM</tt>. </li>
+    
+  </ul>
+  <p>
+    Several aggregate functions are widely implemented, and
+    implementations tend to <a href="#Project_expressions">project out
+    results</a> like for example:
+  </p>
+
+<pre class="data">SELECT COUNT(?person) AS ?alices
+WHERE {
+ &nbsp;?person&nbsp;:name "Alice" .
+}
+</pre>
+<p>return the number of times the a triple of the form _&nbsp;:name "Alice" appears in the source data.
+</p>
+<pre class="data">SELECT AVG(?value) AS ?average
+WHERE {
+ &nbsp;?good a&nbsp;:Widget&nbsp;;
+       &nbsp;:value&nbsp;?value .
+}
+</pre>
+
+
+
+
+  <h4 id="Aggregates_discussion"><span
+  class="mw-headline">2.1.4 Related discussions</span></h4>
+
+  <p>
+    Related issues raised by the WG:
+  </p>
+  <ul>
+	<li>[<a href="http://www.w3.org/2009/sparql/track/issues/11">ISSUE 11</a>]: Implicit vs explicit GROUPing</li>
+	<li>[<a href="http://www.w3.org/2009/sparql/track/issues/12">ISSUE 12</a>]: Presence and syntactic detail of HAVING clause</li>
+	<li>[<a href="http://www.w3.org/2009/sparql/track/issues/13">ISSUE 13</a>]: Subqueries in HAVING analogous to subqueries in FILTERs</li>
+	<li>[<a href="http://www.w3.org/2009/sparql/track/issues/14">ISSUE 14</a>]: Which aggregates to include</li>
+	<li>[<a href="http://www.w3.org/2009/sparql/track/issues/15">ISSUE 15</a>]: Extensibility of aggregate functions</li>
+	<li>[<a href="http://www.w3.org/2009/sparql/track/issues/16">ISSUE 16</a>]: Dealing with aggregates over mixed datatypes</li>
+  </ul>
+
+  <h4 id="Aggregates_status"><span class="mw-headline">2.1.5 Status</span></h4>
+
+  <p>
+    This feature is considered as <b>Required</b> by the WG.
+  </p>
+
+
+  <h3 id="Subqueries"><span class="mw-headline">2.2: Subqueries</span></h3>
+  <h4 id="Subqueries_motivations"><span class="mw-headline">2.2.1 Motivations</span></h4>
+  
+  <p>
+    It is sometimes necessary to nest the results of a query within
+    another query.  It currently requires to get the results of a
+    first query, parse them with dedicated scripts, and then launch
+    the second query.  The Subquery feature would allow to do such
+    nesting in a single SPARQL query.
+  </p>
+  
+  <h4 id="Subqueries_description"><span class="mw-headline">2.2.2 Description</span></h4>
+  
+  <p>
+      In SPARQL/Query 1.0 (original SPARQL), to nest the result of a
+      first query into another one, one has to rely on dedicated
+      script(s) and run separate queries.  For instance, to identify
+      all the people that Alice knows and a single name for each of
+      them, the following script should be done (in PHP, assuming the
+      <code>do_query</code> function allows to run a SPARQL query and
+      get the results as an array of PHP objects)
+  </p>
+    
+  <pre class="data">$query = "
+SELECT ?person WHERE {
+ :Alice :knows ?person .
+}";
+$res = do_query($query);  
+foreach ($res as $r) {
+  $person = $r->person->value;
+  $query = "SELECT ?name WHERE {
+    ?person foaf:name ?name .
+  } LIMIT 1";    
+}
+  </pre>
+  
+  <p>
+    The Subquery feature will provide a way to nest the results of a query within another query.
+    That feature could be used, for instance, in the following use cases:
+  </p>
+  <ul>
+    <li>Identifying the 10th latest blog posts created in a weblog, with a single author name for each</li>
+    <li>Retrieving a list of people with their friends, having only one friend name for each</li> 
+    <li>Limit the number of distinct results retrieved based on the number of resources rather than the number of solutions.</li> 
+  </ul>
+  <p>
+    The query form of subqueries has not yet been decided by the WG (see <a href="#Subqueries_discussion">issues below</a>).
+  </p>
+    
+  <h4 id="Subqueries_syntax"><span class="mw-headline">2.2.3 Existing implementation(s)</span></h4>
+  
+  <p>
+    The following implementations are known by the WG at the time of
+    publication to provide a way to run subqueries:
+  </p>
+  
+    <ul>
+      <li>Virtuoso <a
+      href="http://www.openlinksw.com/weblog/oerling/?id=1296">supports</a>
+      both scalar subqueries (in all places where a variable name may
+      occur) and subqueries as derived tables.</li>
+      <li>ARQ includes support for <a
+      href="http://jena.sourceforge.net/ARQ/sub-select.html">nested
+      SELECTs</a></li>
+    </ul>
+
+  <p>
+    For instance, the following query is possible in ARQ, and is equivalent to the script mentioned before.
+  </p>
+  
+  <pre class="data">SELECT ?person ?name WHERE {
+  :Alice foaf:knows ?person .
+  { 
+    SELECT ?name WHERE { 
+      ?person foaf:name ?name 
+    } LIMIT 1 
+  }
+}
+</pre>
+  
+  
+  <h4 id="Subqueries_discussion"><span class="mw-headline">2.2.4 Related discussions</span></h4>
+
+    <p>
+    Related issues raised by the WG:
+  </p>
+
+  <ul>
+	<li>[<a href="http://www.w3.org/2009/sparql/track/issues/3">ISSUE 3</a>]: Subquery syntax (e.g. mandatory curly braces)</li>
+	<li>[<a href="http://www.w3.org/2009/sparql/track/issues/4">ISSUE 4</a>]: What is the variable scope between main queries and subqueries?</li>
+	<li>[<a href="http://www.w3.org/2009/sparql/track/issues/5">ISSUE 5</a>]: ASK queries in FILTERs?</li>
+	<li>[<a href="http://www.w3.org/2009/sparql/track/issues/6">ISSUE 6</a>]: SELECT queries in FILTERs?</li>
+	<li>[<a href="http://www.w3.org/2009/sparql/track/issues/7">ISSUE 7</a>]: CONSTRUCT &amp; DESCRIBE queries in FROM [NAMED]?</li>
+	<li>[<a href="http://www.w3.org/2009/sparql/track/issues/8">ISSUE 8</a>]: What determines the RDF dataset for subqueries?</li>
+	<li>[<a href="http://www.w3.org/2009/sparql/track/issues/9">ISSUE 9</a>]: SELECT queries in graph patterns?</li>
+	<li>[<a href="http://www.w3.org/2009/sparql/track/issues/10">ISSUE 10</a>]: ASK queries in graph patterns?</li>
+  </ul>
+
+  <h4 id="Subqueries_status"><span class="mw-headline">2.2.5 Status</span></h4>
+
+  <p>
+    This feature is considered as <b>Required</b> by the WG.
+  </p>
+
+
+  <h3 id="Negation"><span class="mw-headline">2.3: Negation</span></h3>
+
+  <h4 id="Negation_motivations"><span class="mw-headline">2.3.1 Motivations</span></h4>
+
+  <p>
+    In SPARQL/Query 1.0 (original SPARQL), <i>Negation by failure</i>
+    is possible by combining <code>OPTIONAL</code>,
+    <code>FILTER</code> and <code>!BOUND</code>. It is yet difficult
+    to write and can be a burden for learning and using SPARQL.
+    Hence, dedicated language constructs for expressing negation are
+    desired, as users requested, which the WG agrees with.
+  </p>
+
+  <h4 id="Negation_description"><span class="mw-headline">2.3.2 Description</span></h4>
+  
+  <p>
+    Various tasks, such as data validation and social network
+    analysis, can require the checking of whether certain triples do
+    or don't exist in the graph. Checking the absence of triples is a
+    form of negation, called <i>Negation by failure</i> (since it
+    checks if a pattern does not match, and not if it does not exist
+    following the open-world assumption) and is already possible in
+    SPARQL/Query 1.0 (original SPARQL), using <code>FILTER</code>,
+    <code>OPTIONAL</code> and <code>!BOUND()</code>, as follows (to
+    retrieve the <code>?name</code> of <code>?x</code> for which no
+    <code>foaf:knows</code> value exists, i.e. identify the name of
+    people who do not know anyone).
+  </p>
+  
+  <pre class="data">PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+SELECT ?name
+WHERE { ?x foaf:givenName  ?name .
+	OPTIONAL { ?x foaf:knows ?who } .
+	FILTER (!BOUND(?who)) 
+} </pre>
+
+  <p>
+    Yet, this is not very intuitive to write and learn for users nor
+    does it cater for efficient implementations of negation. Hence,
+    the Negation feature to be included will provide the support for
+    testing the absence of a match to a query pattern. Negation can be
+    used in the following use cases:
+  </p>
+  <ul>
+    <li>Identify all people that do not know someone or do not have a particular skill</li>
+    <li>Identifying any content that has not been assigned a reviewer in a particular review process</li>
+    <li>Identify customers that did not buy a particular object</li>
+  </ul>
+  <p>
+    The feature would introduce a new operator into the algebra or a new function for filters. 
+    Any existing queries do not use these operators and are therefore unaffected.
+  </p>
+      
+  <h4 id="Negation_syntax"><span class="mw-headline">2.3.3 Existing implementation(s)</span></h4>
+  
+  <p>
+    The following implementations are known by the WG at the time of
+    publication to support <i>Negation by failure</i>:
+  </p>
+  <ul>
+    <li><a href="http://search.cpan.org/dist/RDF-Query/">RDF::Query</a> uses an <code>UNSAID</code> keyword, 
+      that was proposed during the first SPARQL WG but 
+      <a href="http://www.w3.org/2001/sw/DataAccess/issues#unsaid">not addressed at that time</a></li>
+    <li>The SeRQL query language [<a href="#serql">SeRQL</a>]  provides a 
+        <a href="http://www.openrdf.org/doc/sesame2/users/ch09.html#d0e2194"><code>MINUS</code></a> 
+      operator</li>
+    <li>ARQ supports <a href="http://jena.sourceforge.net/ARQ/negation.html">negation</a> thanks to <code>NOT EXISTS</code> operator (<code>UNSAID</code>) being an alias for it</li>
+    <li>SQL provides a <code>NOT EXISTS</code> operator to identify table without a given record</li>
+  </ul>
+    
+  <p>
+   The following example uses SeRQL's <code>MINUS</code> syntax to find the names
+   of all people that do not know anyone, in a similar way to the
+   previous query
+
+  </p>
+      
+  <pre class="data">
+SELECT x
+  FROM {x} foaf:givenName {name}
+MINUS
+SELECT x
+  FROM {x} foaf:givenName {name} ;
+    foaf:knows {who}
+USING NAMESPACE foaf = &lt;http://xmlns.com/foaf/0.1/&gt;
+</pre>
+ 
+  <p>
+    The following example uses the UNSAID syntax:
+  </p>
+
+  <pre class="data">    
+  PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/>
+  SELECT ?x
+  WHERE { ?x foaf:givenName ?name
+          UNSAID { ?x foaf:knows ?who }
+        }
+  </pre>
+
+
+  <h4 id="Negation_discussion"><span class="mw-headline">2.3.4 Related discussions</span></h4>
+
+    <p>
+    Related issues raised by the WG:
+  </p>
+
+  <ul>
+	<li>[<a href="http://www.w3.org/2009/sparql/track/issues/29">ISSUE 29</a>]: Should negation be done via a binary operator on subqueries, a binary operator within graph patterns, or a filter+subquery?</li>
+  </ul>
+
+
+  <h4 id="Negation_status"><span class="mw-headline">2.3.5 Status</span></h4>
+
+  <p>
+    This feature is considered as <b>Required</b> by the WG.
+  </p>
+
+
+  <h3 id="Project_expressions"><span class="mw-headline">2.4: Project expressions </span></h3>
+  <h4 id="Project_expressions_motivations"><span class="mw-headline">2.4.1 Motivations</span></h4>
+
+  <p>
+   Being able to return the values of expressions over result
+   bindings, rather than just RDF terms in the store.
+  </p>
+
+  <h4 id="Project_expressions_description"><span class="mw-headline">2.4.2 Description</span></h4>
+
+  <p>
+    In SPARQL/Query 1.0 (original SPARQL), projection queries (SELECT
+    queries) may only project out variables bound in the
+    query. Because variables can only be bound via triple pattern
+    matching, there is no way to project out values that are not
+    matched in the underlying RDF data set. Projecting expressions
+    represents the ability for SPARQL SELECT queries to project any
+    SPARQL expression, rather than only variables. A projected
+    expression might be a variable, a constant URI, a constant
+    literal, or an arbitrary expression (including function calls) on
+    variables and constants. Functions could include both SPARQL
+    built-in functions and extension functions supported by an
+    implementation.
+  </p>
+  <p>
+    There are many use cases that motivate the ability to project
+    expressions rather than just variables in SPARQL queries. In
+    general, the motivation is to return values that do not occur in
+    the graphs that comprise a query's RDF data set. Specific examples
+    include:
+  </p>
+
+  <ul>
+    <li> Returning the total cost of an order's line item as the
+    product of two variables:&nbsp;?unit_cost *&nbsp;?quantity
+    </li>
+    <li> Use SPARQL accessors to find the languages used in a dataset: LANG(?o)
+    </li>
+    <li> Returning computed values, such as the current day of the week: ex:dayOfTheWeek(ex:Today())
+    </li>
+    <li> Performing simple string parsing: ex:substring(?url, 8, ex:length(?url))
+    </li>
+  </ul>
+
+  <p class="note">
+    TODO: More mention should be made of the connection with
+    subqueries, as the two can be used together to answer many
+    usecases.
+  </p>
+
+  <!-- p>
+    This feature is necessary for projecting the results of aggregate functions.
+  </p -->
+
+  <h4 id="Project_expressions_syntax"><span class="mw-headline">2.4.3 Existing implementation(s)</span></h4>
+
+  <p>
+    The following systems are known by the WG at the time of publication
+    to support some uses of project expressions:
+  </p>
+  <ul>
+    <li> Garlik's JXT (though doesn't do CONSTRUCT)
+    </li>
+    <li> Dave Beckett's Redland-based storage engines
+    </li>
+    <li> <a href="http://jena.sourceforge.net/ARQ/select_expr.html"
+	    class="external text"
+	    title="http://jena.sourceforge.net/ARQ/select_expr.html">In ARQ</a>
+    with a slightly different syntax (AS is part of the () expression).
+    </li>
+    <li> In <a href="http://openanzo.org" class="external text"
+    title="http://openanzo.org">Open Anzo's</a> Glitter SPARQL engine,
+    with the same syntax as ARQ
+    </li>
+    <li> Virtuoso, syntax is (expression) AS&nbsp;?alias, the clause
+    "as&nbsp;?alias" is optional so parentheses around expression are
+    required.
+    </li>
+    <li> <a href="http://xsparql.deri.org" class="external text"
+	    title="http://xsparql.deri.org">XSPARQL</a> allows XPath/XQuery
+    functions to be used as expressions in CONSTRUCTs as in the example
+    above.
+    </li>
+  </ul>
+
+  
+  <p>We wish to find names, and whether the person is over 18.
+  </p>
+
+<pre class="data"> SELECT&nbsp;?name (?age &gt; 18) AS over18
+ WHERE {
+  &nbsp;?person&nbsp;:name&nbsp;?name&nbsp;;
+          &nbsp;:age&nbsp;?age .
+ }
+</pre>
+<p>Another example, we wish to find the full name of everyone who is interested in trees.
+</p>
+<pre class="data"> PREFIX foaf: &lt;<a href="http://xmlns.com/foaf/0.1/" class="external free" title="http://xmlns.com/foaf/0.1/">http://xmlns.com/foaf/0.1/</a>&gt;
+
+ PREFIX&nbsp;: &lt;<a href="http://www.example.org/" class="external free" title="http://www.example.org/">http://www.example.org/</a>&gt;
+ 
+ SELECT fn:string-join(?givenName, ' ',&nbsp;?surname) AS&nbsp;?fullName
+ WHERE {
+  &nbsp;?person foaf:givenname&nbsp;?givenName&nbsp;;
+           foaf:surname&nbsp;?surname&nbsp;;
+           foaf:interest&nbsp;:trees .
+ }
+</pre>
+<p>
+  This example has made use of a concatenation function from <a
+  href="http://www.w3.org/2009/sparql/docs/features/#xpathfo"
+  class="external text"
+  title="http://www.w3.org/2009/sparql/docs/features/#xpathfo">XPath-Functions</a>. Which
+  functions will be available for value construction in SPARQL is an
+  open issue that will be dealt with on a time-permitting basis.
+</p>
+<p>
+  To return an RDF graph where the first and family names are
+  concatenated to a full name we can use a query similar to the SELECT
+  example from the previous query as a <a
+  href="http://www.w3.org/2009/sparql/docs/features/#Subqueries"
+  class="external text"
+  title="http://www.w3.org/2009/sparql/docs/features/#Subqueries">subquery</a>
+  and use a project expression like this:
+</p>
+<pre class="data"> PREFIX foaf: &lt;<a href="http://xmlns.com/foaf/0.1/" class="external free" title="http://xmlns.com/foaf/0.1/">http://xmlns.com/foaf/0.1/</a>&gt;
+ CONSTRUCT {&nbsp;?x foaf:name&nbsp;?fullName }
+ WHERE {
+   { SELECT fn:string-join(?gn, " ",&nbsp;?sn) AS&nbsp;?fullName
+     WHERE { foaf:givenname&nbsp;?gn&nbsp;; foaf:surname&nbsp;?sn . } }
+ }
+
+</pre>
+<p class="note">TODO: It should be established whether any implementations support both subqueries and fn:string-join()
+</p>
+
+
+  <h4 id="Project_expressions_discussion"><span class="mw-headline">2.4.4 Related discussions</span></h4>
+
+  <p>
+    The WG has noted that project expressions
+  </p>
+  <ul>
+    <li>is an important way to access the result of 
+    <a href="#Aggregates">aggregate functions</a>,
+    </li>
+    <li>can be used to resolve [<a href="http://www.w3.org/2009/sparql/track/issues/4">ISSUE 4</a>] concerning the variable scope between main queries and subqueries.</li>
+  </ul>
+    
+  <h4 id="Project_expressions_status"><span class="mw-headline">2.4.5 Status</span></h4>
+
+  <p>
+    This feature is considered as <b>Required</b> by the WG.
+  </p>
+
+<h3 id="Language_syntax">2.5 Query language syntax</h3>
+
+<h4 id="Language_syntax_motivations">2.5.1 Motivation</h4>
+<p>
+  Certain limitations of the SPARQL/Query 1.0 language syntax cause 
+  unnecessary barriers for learning and using SPARQL.
+</p>
+
+
+
+<h4 id="Language_syntax_description">2.5.2 Description</h4>
+<p>
+  Time-permitting, the SPARQL Working Group will consider extending 
+  SPARQL/Query's syntax to include:
+</p>
+<ul>
+  <li>Commas between variables and expressions within a SELECT list</li>
+  <li>IN and BETWEEN operators to abbreviate disjunction and
+  comparisons within FILTER expressions</li>
+</ul>
+
+  <h4 id="Language_syntax_status"><span class="mw-headline">2.5.5 Status</span></h4>
+
+  <p>
+    This feature is considered as <b>time-permitting</b> only by the WG.
+  </p>
+
+<h3 id="Property_paths">2.6 Property paths</h3>
+
+<h4 id="Property_paths_motivations">2.6.1 Motivation</h4>
+
+<p>
+  Many classes of query over RDF graphs require searching data structures 
+  that are hierarchical and involve arbitrary-length paths through the 
+  graphs. Examples include:
+</p>
+<ul>
+  <li>Retrieving all the elements of an RDF collection (structured as a 
+  linked list)</li>
+  <li>Retrieve all of the names of people linked to me transitively via 
+  the ex:mother and ex:father relationships (i.e. all my known ancestors)</li>
+  <li>What are all of the direct and indirect superclasses of a given 
+  owl:Class?</li>
+</ul>
+
+<h4 id="Property_paths_description">2.6.2 Description</h4>
+<p>
+SPARQL/Query 1.0 can express queries over fixed-length paths within RDF 
+graphs. SPARQL/Query 1.0 can also express queries over arbitrary but 
+bounded-length paths via repeated UNION constructs. SPARQL/Query 1.0 
+cannot express queries that require traversing hierarchical structures 
+via unbounded, arbitrary-length paths.
+</p>
+<p>
+Time-permitting, the SPARQL Working Group will define the syntax and 
+semantics of property paths, a mechanism for expressing arbitrary-length 
+paths of predicates within SPARQL triple patterns.
+</p>
+
+  <h4 id="Property_paths_status"><span class="mw-headline">2.6.5 Status</span></h4>
+
+  <p>
+    This feature is considered as <b>time-permitting</b> only by the WG.
+  </p>
+
+<h3 id="Commonly_used_functions">2.7 Commonly Used SPARQL Functions</h3>
+
+<h4 id="Commonly_used_functions_motivations">2.7.1 Motivation</h4>
+<p>
+  Many SPARQL implementations support functions beyond those required by 
+  the SPARQL/Query 1.0 specification. There is little to no 
+  interoperability between the names and semantics of these functions for 
+  common tasks such as string manipulation.
+</p>
+<h4 id="Commonly_used_functions_description">2.7.2 Description</h4>
+<p>
+  Time-permitting, the SPARQL WG will define URIs and semantics for a set 
+  of functions commonly supported by existing SPARQL implementations.
+</p>
+<p>
+  See Working Group issue: ISSUE-2 - 
+  http://www.w3.org/2009/sparql/tracker/issues/2
+</p>
+
+  <h4 id="Commonly_used_functions_status"><span class="mw-headline">2.7.5 Status</span></h4>
+
+  <p>
+    This feature is considered as <b>time-permitting</b> only by the WG.
+  </p>
+
+<h3 id="Basic_federated_query">2.8 Basic Federated Query</h3>
+
+<h4 id="Basic_federated_query_motivations">2.8.1 Motivation</h4>
+
+<p>
+  SPARQL is a concise query language to retrieve and join information from 
+  multiple RDF graphs via a single query. In many cases, the different RDF 
+  graphs are stored behind distinct SPARQL endpoints.
+</p>
+
+<h4 id="Basic_federated_query_description">2.8.2 Description</h4>
+<p>
+  Federated query is the ability to take a query and provide solutions 
+  based on information from many different sources. It is a hard problem 
+  in its most general form and is the subject of continuing (and 
+  continuous) research. A building block is the ability to have one query 
+  be able to issue a query on another SPARQL endpoint during query execution.
+</p>
+<p> 
+  Time-permitting, the SPARQL Working Group will define the syntax and 
+  semantics for handling a basic class of federated queries in which the 
+  SPARQL endpoints to use in executing portions of the query are 
+  explicitly given by the query author.
+</p>
+
+  <h4 id="Basic_federated_query_status"><span class="mw-headline">2.8.5 Status</span></h4>
+
+  <p>
+    This feature is considered as <b>time-permitting</b> only by the WG.
+  </p>
+
+
+  <h3 id="Service_description"><span class="mw-headline">3: Service description </span></h3>
+
+  <h4 id="Service_description_motivations"><span class="mw-headline">3.1 Motivations</span></h4>
+  
+  <p>
+    Given the variety of SPARQL implementations, and differences in datasets and extension functions, a method of discovering a SPARQL endpoint's capabilities and summary information of its data in a machine-readable way is needed. 
+  </p>
+  
+  <h4 id="Service_description_description"><span class="mw-headline">3.2 Description</span></h4>
+  
+  <p>
+  Many SPARQL implementations support a variety of SPARQL extensions 
+  (many proposed here for standardization), extension functions (for use in FILTERs), 
+  and different entailment regimes. Moreover, the differences in datasets provided 
+  by SPARQL endpoints is often hard to grasp without some existing knowledge of 
+  the underlying data. This proposal suggests that these differences may be 
+  described by the endpoints themselves, detailing both (1) the capabilities of 
+  the endpoint and (2) the data contained in the endpoint.
+  </p>
+<!--
+  Such a service description mechanism might be implemented in several ways. Three options are:
+
+      * Introducing new SPARQL syntax for requesting the description
+      * Adding this information to a SPARQL protocol query response (e.g. in an HTTP header field)
+      * Having this information available as a named graph (where the graph name is related or equal to the endpoint's URI) 
+
+  Some servers may support SPARQL requests via protocols other than HTTP, notably ODBC, UDBC, IODBC and JDBC. Service descriptions are useful even for that "closed" environments, improvind interoperability and reducing risk of misconfiguration. While these protocols are out of scope of the spec, a non-normative part may recommend a uniform way of requesting service escriptions, such as a recommended name and the signature of a procedure to call for fetching the description.
+-->
+  <p>
+    The Service description features can be used in the following uses-cases:
+  </p>
+  <ul>
+    <li>Check the entailment regime supported by a SPARQL endpoint before running a query</li>
+    <li>Check if an RDF store contains instance of particular class to see if it is worth running a query over it</li>
+    <li>Check if an RDF store supports a particular extension function</li>
+  </ul>
+  
+  <h4 id="Service_description_syntax"><span class="mw-headline">3.3 Existing implementation(s)</span></h4>
+  
+  <p>
+    The following services are known by the WG at the time of
+    publication to support the Service description feature
+  </p>
+  <ul>
+    <li>RDF::Query provides service descriptions (based primarily on the <a href="http://darq.sourceforge.net/">DARQ</a> and <a href="http://www.w3.org/2001/sw/DataAccess/proto-wd/saddle.html">SADDLE</a> vocabularies) referenced in the HTTP response headers of a query</li>
+    <li>Virtuoso has support for DBPedia <a href="http://semanticweb.org/wiki/VoiD">VoiD</a> data using a special default-graph of &lt;http://dbpedia.org/stats/void#&gt;, which can be queried using the SPARQL endpoint. <!--Virtuoso also can provede access to multiple "storages" via same web service endpoint: "storage" is a named set of named RDF data sources; each RDF data source is either "traditional" Quad Store or an RDF View. One of storages can be used for self-description of the database without any technical difficulties. Right now the configuration of RDF storage is kept as an RDF graph and configuration of storages is made by SPARUL operations over that graph; that graph could be extended to keep any additional data for the service description.--></li>
+    <li>Garlik's JXT implements something similar to this feature, differences from as described are, the MIME header is <code>"X-Endpoint-Description:"</code> and the URI given is relative to the endpoint: <code>/description</code>.</li>
+    <!-- It is desirable to make the description relative as the server does not necesarily know it's routable address from the p.o.v. of the HTTP client.-->
+  </ul>
+  
+  <p>
+    The following service description is an example of what is provided when querying 
+    powered by RDF::Query using <code>about=1</code> HTTP parameters, e.g. 
+    <code>http://example.org/sparql?about=1</code>.
+  </p>
+  
+  <pre class="data">
+@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .
+@prefix sd: &lt;http://darq.sf.net/dose/0.1#&gt; .
+@prefix saddle: &lt;http://www.w3.org/2005/03/saddle/#&gt; .
+@prefix sparql: &lt;http://kasei.example/2008/04/sparql#&gt; .
+@prefix void: &lt;http://rdfs.org/ns/void#&gt; .
+[] a sd:Service ;
+  rdfs:label "SPARQL Endpoint for example.org" ;
+  sd:url &lt;http://example.org/sparql&gt; ;
+  sd:totalTriples 12729 ;
+  saddle:queryLanguage [ rdfs:label "SPARQL" ; saddle:spec &lt;http://www.w3.org/TR/rdf-sparql-query/&gt; ] ;
+  saddle:queryLanguage [ rdfs:label "RDQL" ; saddle:spec &lt;http://www.w3.org/Submission/RDQL/&gt; ] ;
+  saddle:resultFormat [
+    rdfs:label "SPARQL Query Results XML" ;
+    saddle:mediaType "application/sparql-results+xml" ;
+    saddle:spec &lt;http://www.w3.org/TR/rdf-sparql-XMLres/
+  ] ;
+  saddle:resultFormat [
+  	rdfs:label "RDF/XML" ;
+  	saddle:mediaType "application/rdf+xml" ;
+  	saddle:spec &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+  ] ;
+  saddle:resultFormat [
+		rdfs:label "SPARQL Query Results JSON" ;
+		saddle:mediaType "application/sparql-results+json" ;
+  	saddle:spec &lt;http://www.w3.org/TR/rdf-sparql-json-res/&gt;
+  ] ;
+  
+  sparql:extensionFunction &lt;java:com.hp.hpl.jena.query.function.library.sha1sum&gt; ;
+  sparql:extensionFunction &lt;java:com.ldodds.sparql.Distance&gt; ;
+
+  sparql:sparqlExtension &lt;http://kasei.example/2008/04/sparql-extension/service&gt; ;
+  sparql:sparqlExtension &lt;http://kasei.example/2008/04/sparql-extension/unsaid&gt; ;
+  sparql:sparqlExtension &lt;http://kasei.example/2008/04/sparql-extension/federate_bindings&gt; .
+</pre>    
+        
+  <h4 id="Service_description_discussion"><span class="mw-headline">3.4 Related discussions</span></h4>
+
+  <p>
+    The serviceDescription issue was <a href="http://www.w3.org/2001/sw/DataAccess/issues#serviceDescription">previously postponed by the DAWG</a>. 
+  </p>
+  
+  <h4 id="Service_description_status"><span class="mw-headline">3.5 Status</span></h4>
+
+  <p>
+    This feature is considered as <b>Required</b> by the WG.
+  </p>
+
+<!--
+  <h3 id="Property_paths"><span class="mw-headline">2.6: Property paths</span></h3>
+
+  <h4 id="Property_paths_motivations"><span class="mw-headline">2.6.1 Motivations</span></h4>
+  <h4 id="Property_paths_description"><span class="mw-headline">2.6.2 Description</span></h4>
+  <h4 id="Property_paths_syntax"><span class="mw-headline">2.6.3 Existing implementation(s)</span></h4>
+  <h4 id="Property_paths_discussion"><span class="mw-headline">2.6.4 Related discussions</span></h4>
+
+  <h4 id="Property_paths_status"><span class="mw-headline">2.6.5 Status</span></h4>
+
+  <p>
+    This feature is considered as <b>Time-permitting</b> by the WG.
+  </p>
+
+  <h3 id="Commonly_used_functions"><span class="mw-headline">2.7: Commonly used SPARQL functions</span></h3>
+
+  <h4 id="Commonly_used_functions_motivations"><span class="mw-headline">2.7.1 Motivations</span></h4>
+  <h4 id="Commonly_used_functions_description"><span class="mw-headline">2.7.2 Description</span></h4>
+  <h4 id="Commonly_used_functions_syntax"><span class="mw-headline">2.7.3 Existing implementation(s)</span></h4>
+  <h4 id="Commonly_used_functions_discussion"><span class="mw-headline">2.7.4 Related discussions</span></h4>
+
+  <h4 id="Property_paths_status"><span class="mw-headline">2.7.5 Status</span></h4>
+
+  <p>
+    This feature is considered as <b>Time-permitting</b> by the WG.
+  </p>
+
+  <h3 id="Basic_federated_query"><span class="mw-headline">2.8: Basic federated query</span></h3>
+
+  <h4 id="Basic_federated_query_motivations"><span class="mw-headline">2.8.1 Motivations</span></h4>
+  <h4 id="Basic_federated_query_description"><span class="mw-headline">2.8.2 Description</span></h4>
+  <h4 id="Basic_federated_query_syntax"><span class="mw-headline">2.8.3 Existing implementation(s)</span></h4>
+  <h4 id="Basic_federated_query_discussion"><span class="mw-headline">2.8.4 Related discussions</span></h4>
+
+  <h4 id="Basic_federated_query_status"><span class="mw-headline">2.8.5 Status</span></h4>
+
+  <p>
+    This feature is considered as <b>Time-permitting</b> by the WG.
+  </p>
+-->
+  
+  <h2 id="sparql-update"><span class="mw-headline">4 Update</span></h2>
+  
+  <p class="note">
+    The Working Group has resolved to specify a SPARQL/Update language,
+    but may also pursue a HTTP based graph update via the
+    protocol. This issue is orthogonal to the SPARQL/Update
+    language. Whether or not there will be a concrete mapping between
+    SPARQL/Update and HTTP based graph update is currently under
+    discussion in the working group.
+  </p>
+
+  <h3 id="Update"><span class="mw-headline">4.1: SPARQL/Update 1.0 Language</span></h3>
+
+  <h4 id="Update_motivations"><span class="mw-headline">4.1.1 Motivations</span></h4>
+  <p>
+    To change an RDF graph (either adding, updating or removing statements as well as adding 
+    statements from one graph to another or to the default graph of a triple store) one would 
+    currently have to use a programming language and one of several APIs. In other query
+    languages, notably SQL, there are mechanisms to change the data in
+    the database. To allow RDF graphs to be manipulated the same way and avoid using third-party APIs,
+    a language extension is needed.
+  </p>
+
+  <h4 id="Update_description"><span class="mw-headline">4.1.2 Description</span></h4>
+
+  <p>
+    This feature is a language extension to express updates to an RDF
+    graph or to an RDF store. As such, it uses the SPARQL in both
+    style and detail, reduces the learning curve for developers and
+    reduces implementation costs.
+  </p> 
+  <p>
+    The following facilities are expected to be provided by the
+    SPARQL/Update 1.0 language:
+  </p>
+  <ul>
+    <li>Insert new triples to an RDF graph.</li>
+    <li>Delete triples from an RDF graph.</li>
+    <li>Perform a group of update operations as a single action.</li>
+    <li>Create a new RDF Graph to a Graph Store.</li>
+    <li>Delete an RDF graph from a Graph Store.</li>
+  </ul>
+
+  <h4 id="Update_syntax"><span class="mw-headline">4.1.3 Existing implementation(s)</span></h4>
+
+  <p>
+    The [<a href="#sparul">SPARUL</a>] Member Submission, that
+    contains several examples, have been widely implemented and is
+    considered a starting point for the present work.
+  </p>
+
+  <p>
+    The two following examples illustrates some of the features:
+  </p>
+  <pre class="data">
+PREFIX dc: &lt;http://purl.org/dc/elements/1.1/>
+INSERT DATA
+{ &lt;http://example/book3> dc:title    "A new book" ;
+                         dc:creator  "A.N.Other" .
+}
+  </pre>
+
+  <pre class="data">
+DELETE { ?book ?p ?v }
+WHERE
+  {   ?book dc:date ?date . 
+       FILTER ( ?date &lt; "2000-01-01T00:00:00"^^xsd:dateTime ) 
+       ?book ?p ?v
+      } 
+  }   	
+  </pre>
+
+  <p>
+    The following systems are known by the WG to support the [<a
+    href="#sparul">SPARUL</a>] Member Submission at the time of
+    publication:
+  </p>
+  <ul>
+    <li>ARQ</li>
+    <li>Virtuoso</li>
+  </ul>
+  
+
+  <h4 id="Update_discussion"><span class="mw-headline">4.1.4 Related discussions</span></h4> 
+   
+    <p>
+    Related issues raised by the WG:
+  </p>
+
+  <ul>
+	<li>[<a href="http://www.w3.org/2009/sparql/track/issues/17">ISSUE 17</a>]: Minimal vs fully-fledged update language</li>
+	<li>[<a href="http://www.w3.org/2009/sparql/track/issues/18">ISSUE 18</a>]: Concurrency in SPARQL/Update</li>
+	<li>[<a href="http://www.w3.org/2009/sparql/track/issues/19">ISSUE 19</a>]: Security issues on SPARQL/Update</li>
+	<li>[<a href="http://www.w3.org/2009/sparql/track/issues/20">ISSUE 20</a>]: Graphs aware stores vs. quad stores for SPARQL/Update (empty graphs)</li>
+	<li>[<a href="http://www.w3.org/2009/sparql/track/issues/21">ISSUE 21</a>]: More complex update operations, e.g. CHANGE objects</li>
+	<li>[<a href="http://www.w3.org/2009/sparql/track/issues/22">ISSUE 22</a>]: Support of SOAP in SPARQL/Update</li>
+	<li>[<a href="http://www.w3.org/2009/sparql/track/issues/23">ISSUE 23</a>]: Content negotiation/switch for mediatype </li>
+	<li>[<a href="http://www.w3.org/2009/sparql/track/issues/24">ISSUE 24</a>]: Move data between graphs (select on one graph and insert into another... copy from/to)</li>
+	<li>[<a href="http://www.w3.org/2009/sparql/track/issues/25">ISSUE 25</a>]: Dynamic graph (variable) for INTO graph to update/modify </li>
+	<li>[<a href="http://www.w3.org/2009/sparql/track/issues/26">ISSUE 26</a>]: Conjunction of operation vs atomocity, transactions</li>
+	<li>[<a href="http://www.w3.org/2009/sparql/track/issues/27">ISSUE 27</a>]: Subqueries in Update operations, full expressivity</li>
+	<li>[<a href="http://www.w3.org/2009/sparql/track/issues/28">ISSUE 28</a>]: Entailment regimes vs. update?</li>
+  </ul>
+
+  <h4 id="Update_status"><span class="mw-headline">4.1.5 Status</span></h4>
+
+  <p>
+    This feature is considered as <b>Required</b> by the WG.
+  </p>
+
+  <h3 id="protocol-update"><span class="mw-headline">4.2 Protocol Enhancements for Update</span></h3>
+
+  <h4 id="protocol-update_motivations"><span class="mw-headline">4.2.1 Motivations</span></h4>
+  
+  <p>
+    By making it possible to update an RDF graph using RESTful HTTP
+    methods, it becomes possible to use either a SPARQL endpoint or a
+    plain Web server to update RDF data.
+  </p>
+
+  <h4 id="protocol-update_description"><span class="mw-headline">4.2.2 Description</span></h4>
+
+  <p>
+    It should be possible to manipulate RDF graphs using HTTP verbs,
+    notably PUT, POST and DELETE. By this, clients doesn't need to
+    know the SPARQL language to update graphs when it is not needed. 
+  </p>
+
+  <h4 id="protocol-update_syntax"><span class="mw-headline">4.2.3 Existing implementation(s)</span></h4>
+ 
+  <p>
+    The following systems are known by the WG at the time of
+    publication to support a RESTful update protocol.
+  </p>
+
+  <ul>
+    <li>Garlik's JXT supports HTTP PUT and DELETE.</li>
+    <li>IBM's Jazz Foundation supports graph update via a RESTful protocol.</li>
+  </ul>
+
+ <h4 id="protocol-update_discussion"><span class="mw-headline">4.2.4 Related discussions</span></h4>
+
+  <h4 id="protocol-update_status"><span class="mw-headline">4.2.5 Status</span></h4>
+
+  <p>
+    This feature is under discussion in the WG.
+  </p>
+
+
+<h2 id="Entailment">5 BGP extensions for entailment regimes</h2>
+
+<h3 id="Entailment_motivations">5.1 Motivation</h3>
+<p>
+Many software systems that support entailment regimes such as OWL 
+dialects and RDF Schema extend the semantics of SPARQL Basic Graph 
+Pattern matching to apply to entailments other than simple entailment. 
+The formal semantics of these SPARQL/Query extensions are not 
+standardized, and query writers cannot currently be guaranteed 
+interoperable behavior when working with multiple query engines that 
+extend SPARQL with the same entailment regime.
+</p>
+
+<h3 id="Entailment_description">5.2 Description</h3>
+<p>
+SPARQL/Query 1.0 defines a mechanism to adapt SPARQL to entailment 
+regimes beyond simple entailment by providing necessary conditions on 
+re-defining the meaning of SPARQL Basic Graph Pattern matching. 
+Time-permitting, the SPARQL WG will use the existing framework to define 
+the semantics of SPARQL queries for one or more of these entailment 
+frameworks:
+</p>
+<ul>
+  <li>
+    OWL 2 with both Direct and RDF Based Semantics, including OWL 2 profiles
+  </li>
+  <li>RDF Schema</li>
+  <li>Some dialects of RIF</li>
+</ul>
+
+
+<h3 id="Entailment_status">5.5 Status</h3>
+<p>
+  This feature is considered as <b>time-permitting</b> only by the WG.
+</p>
+
+
+<!--
+  <h2 id="usecases"><span class="mw-headline">5 Use-cases</span></h2>
+
+  <h3 id="UC1"><span class="mw-headline">5.1 Use-case 1</span></h3>
+  <h3 id="UC2"><span class="mw-headline">5.2 Use-case 2</span></h3>
+  <h3 id="UC3"><span class="mw-headline">5.3 Use-case 3</span></h3>
+-->
+  <h2 id="acknowledgments"> <span class="mw-headline">6  Acknowledgments </span></h2>
+
+  <p>The editors would like to thank the <a href="http://www.w3.org/2009/sparql/wiki">SPARQL 
+    Working Group</a> for their valuable input for this document.
+  </p>
+
+  <h2 id="references"> <span class="mw-headline">7  References </span></h2>
+
+	<dl>  
+	  <dt id="sparql10">[SPARQL/Query 1.0]</dt>
+	  <dd>SPARQL Query Language for RDF.
+	  Eric Prud'hommeaux, Andy Seaborne.
+	  W3C Recommendation 15 January 2008.
+	  <a href="http://www.w3.org/TR/rdf-sparql-query/">http://www.w3.org/TR/rdf-sparql-query/</a>
+	  </dd>
+	  
+	  <dt id="sparul">[SPARUL]</dt>
+	  <dd>SPARQL Update - A language for updating RDF graphs.
+	  Andy Seaborne, Geetha Manjunath, Chris Bizer, John Breslin, Souripriya Das, Ian Davis, Steve Harris, Kingsley Idehen, Olivier Corby, Kjetil Kjernsmo, Benjamin Nowack.  
+	  W3C Member Submission 15 July 2008.
+	  <a href="http://www.w3.org/Submission/2008/SUBM-SPARQL-Update-20080715/">http://www.w3.org/Submission/2008/SUBM-SPARQL-Update-20080715/</a>
+	  </dd>
+		
+	  <dt id="serql">[SeRQL]</dt>
+	  <dd>The SeRQL query language (revision 3.0). 
+	  2002-2008 Aduna B.V
+	  <a href="http://www.openrdf.org/doc/sesame2/users/ch09.html">http://www.openrdf.org/doc/sesame2/users/ch09.html</a>
+	  </dd>
+
+	  <dt id="xpathfo">[XPath-Functions]</dt>
+	  <dd>XQuery 1.0 and XPath 2.0 Functions and Operators, A.
+	  Malhotra, J. Melton, N. Walsh (Editors), W3C Recommendation,
+	  World Wide Web Consortium, 23 January 2007,
+	  <a href="http://www.w3.org/TR/2007/REC-xpath-functions-20070123/">http://www.w3.org/TR/2007/REC-xpath-functions-20070123/</a>. 
+    </dd>
+
+	
+	</dl>
+
+</body>
+</html>

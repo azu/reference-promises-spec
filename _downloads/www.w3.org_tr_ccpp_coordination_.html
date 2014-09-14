@@ -1,0 +1,1499 @@
+<!-- http://www.w3.org/TR/CCPP-COORDINATION/ -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <title>CC/PP Implementors Guide: Harmonization with Existing
+    Vocabularies and Content Transformation Heuristics</title>
+  <link rel="stylesheet" type="text/css"
+  href="http://www.w3.org/StyleSheets/TR/W3C-NOTE.css">
+</head>
+
+<div class="head">
+<a href="http://www.w3.org/"><img src="http://www.w3.org/Icons/w3c_home" alt="W3C" border="0"
+height="48" width="72" /></a> 
+
+<h1>CC/PP Implementors Guide: <br>
+Harmonization with Existing Vocabularies and Content Transformation
+Heuristics</h1>
+
+<h2>W3C Note 20 December 2001</h2>
+<dl>
+  <dt>This version:</dt>
+    <dd><a
+      href="http://www.w3.org/TR/2001/NOTE-CCPP-COORDINATION-20011220/">
+      http://www.w3.org/TR/2001/NOTE-CCPP-COORDINATION-20011220/</a></dd>
+  <dt>Latest version:</dt>
+    <dd><a
+      href="http://www.w3.org/TR/CCPP-COORDINATION/">http://www.w3.org/TR/CCPP-COORDINATION/</a></dd>
+<!--
+  <dt>This version:</dt>
+    <dd><a
+      href="http://www.w3.org/TR/2001/2001-09-13-NOTE-CCPP-COORDINATION/">http://www.w3.org/TR/2001/2001-09-11-NOTE-CCPP-COORDINATION/</a></dd> 
+-->
+  <dt>Editors:</dt>
+    <dd>Johan Hjelm, <a
+      href="mailto:johan.hjelm@nrj.ericsson.se">johan.hjelm@nrj.ericsson.se</a>,
+      Nippon Ericsson KK</dd>
+    <dd>Lalitha Suryanarayana, <a
+      href="mailto:lalitha@tri.sbc.com">lalitha@tri.sbc.com</a>, SBC
+      Technology Resources</dd>
+</dl>
+
+<p class="copyright"><a
+href="http://www.w3.org/Consortium/Legal/ipr-notice-20000612#Copyright">
+Copyright</a> &copy;2001 <a href="http://www.w3.org/"><abbr
+title="World Wide Web Consortium">W3C</abbr></a><sup>&reg;</sup> (<a
+href="http://www.lcs.mit.edu/"><abbr title="Massachusetts Institute of
+Technology">MIT</abbr></a>, <a href="http://www.inria.fr/"><abbr
+lang="fr" title="Institut National de Recherche en Informatique et
+Automatique">INRIA</abbr></a>, <a
+href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C <a
+href="http://www.w3.org/Consortium/Legal/ipr-notice-20000612#Legal_Disclaimer">liability</a>, 
+<a
+href="http://www.w3.org/Consortium/Legal/ipr-notice-20000612#W3C_Trademarks">trademark</a>,
+<a
+href="http://www.w3.org/Consortium/Legal/copyright-documents-19990405">document
+use</a> and <a
+href="http://www.w3.org/Consortium/Legal/copyright-software-19980720">software
+licensing</a> rules apply.</p> 
+</div>
+
+<hr>
+
+<h2><a name="abstract" ID="abstract"></a>Abstract</h2>
+
+<p>This document describes how existing vocabularies for different classes of
+devices and user agents can be used in CC/PP components, and how to create
+schemas that encapsulate existing vocabularies. It discusses the results of
+the coordination with the IETF CONNEG Working Group, as well as the WAP Forum
+UAPROF Working Group and several other groups, which have related activities.
+It contains a number of schemas and software examples which has been
+contributed voluntarily by individuals.</p>
+
+<p>It also gives an example of heuristics, which can be used to adapt content
+to a CC/PP profile, thus giving some guidelines for those who want to use
+CC/PP to implement content adaptation. It also serves to provide vocabulary
+and schema designers with key guidelines regarding extensions to existing
+vocabularies or development of new ones.</p>
+
+<h2><a name="status" ID="status"></a>Status of this document</h2>
+
+<p>This document is a Note made available by the World Wide Web Consortium
+(W3C) for discussion only. This indicates no endorsement of its content. This
+is the first public draft of this Note, and it is a work in progress,
+representing the current consensus of the CC/PP working group. Future updates
+and changes are likely.</p>
+
+<p>The working group is part of the <a
+href="http://www.w3.org/2001/di/">W3C Device Independence Activity.</a>
+Continued status of the work is reported on the <a
+href="http://www.w3.org/Mobile/CCPP/">CC/PP Working Group Home Page</a> (<a
+href="http://www.w3.org/Mobile/CCPP/Group/">Member-only link</a> ).</p>
+
+<p>This document incorporates suggestions resulting from reviews and active
+participation by members of the IETF CONNEG working group and the WAP Forum
+User Agent Profile Drafting Committee, as well as the FIPA. It also is also
+intended to be a "developers guide" that will help implementers in
+interpreting the CC/PP Specification, to the extent that this information is
+not covered in the CC/PP Specification.</p>
+
+<p>Please send comments and feedback to <a
+href="mailto:www-mobile@w3.org">www-mobile@w3.org.</a></p>
+
+<p>A list of current W3C Recommendations and other technical documents can be
+found at <a href="http://www.w3.org/TR/">http://www.w3.org/TR/</a> .</p>
+
+<h2><a name="toc" ID="toc"></a>Table of contents</h2>
+
+<h2><a name="Introduction" ID="Introduction"></a>1. Introduction</h2>
+
+<p>Using CC/PP is actually very simple. Based on a description of a device
+(or a requirement for a device), which is part of the request for a resource,
+you output a document that is formatted according to some heuristics which
+are contingent on that description and deliver it to the user.</p>
+
+<p>There are a number of vocabularies that can be used to describe device
+capabilities, user preferences, and other information related to the users
+delivery context. CC/PP provides a way of expressing such vocabularies in the
+<a href="http://www.w3.org/RDF/">W3C Resource Description Framework</a>, RDF,
+and describes how they could be organized to be transported and handled by
+user agents such as browsers in an efficient manner.</p>
+
+<p>This document also describes how the profile can be used to derive an
+optimized presentation. Since there can be an infinite number of possible
+heuristics for how device capabilities are matched with profiles, we try to
+describe how the author or owner of the content can select how a specific set
+of situational variables (device capabilities, user preferences) should be
+applied to create or adapt a document. In this document, an XSLT example is
+discussed. However, given a rules language, the heuristics could be expressed
+in that instead; it is also possible to write programs in other languages
+(PERL, C, Java, ECMAScript) that perform the adaptation.</p>
+
+<h3><a name="overview" id="overview"></a>1.1 Overview of CC/PP and vocabularies</h3>
+
+<p>The <a href="/TR/CCPP-struct-vocab">CC/PP Structure and Vocabularies Working Draft</a> describes how such vocabularies can be created and
+communicated to the origin server using the CC/PP framework. CC/PP in itself
+does not describe a vocabulary (although a simple demonstration vocabulary is
+provided in the Structure and Vocabularies working draft). This document
+describes a number of existing vocabularies, and how they can be conveyed as
+part of a CC/PP profile. It also discusses the harmonization that has taken
+place with other groups.</p>
+
+<p>The CC/PP specification contains a few vocabulary items.  However, it
+should be stressed that to the extent that they are not structural, they are
+there for illustration only. Other groups have been encouraged to create
+their own schemas for vocabularies, and have indeed done so, as the FIPA and
+UAPROF examples demonstrate.</p>
+
+<p>In principle, there is no limit on the number of vocabularies that can be
+created or used. In fact, RDF and XML namespaces allow for independent
+creation of interoperable vocabularies. Clearly, there can be no mandate that
+a specific set of vocabularies should be used. Nor can there be a mandate
+that a specific set of attributes within a vocabulary ought to be used within
+the context of an application. Schema interoperability, enabled by RDF and
+the use of XML namespaces, allows for the selection of any number of
+attributes within the context of a user agent profile, since it becomes
+possible to select any element that is present in a schema using the XML
+namespace mechanism.</p>
+
+<p>A vocabulary is analogous to a dictionary. It identifies all the possible
+attributes in a schema, which is similar to a database schema. A profile is
+an instance of the vocabulary. Different devices and user agents may refer to
+the same schema, support the same vocabulary, but communicate different
+profiles to the origin servers. Any vocabularies can be used in CC/PP,
+provided there is an RDF Schema for them, since this is required by the RDF
+processor.</p>
+
+<p>Writing vocabularies that conform to CC/PP is relatively easy. They have
+to be created as an RDF Schema, made available at a URI, and be usable in a
+component in the CC/PP framework. Vocabularies can be included in CC/PP using
+XML namespace. If a vocabulary is not written as an RDF Schema, and does not
+conform to the CC/PP component structure, it will not be possible to use in
+CC/PP.</p>
+
+<p>The device vocabulary defined in <a
+href="/TR/CCPP-struct-vocab/#Appendix_C">appendix C of the CC/PP
+specification</a> is not a mandatory
+part of the core CC/PP format specification, but is included in the
+specification for use by CC/PP-aware applications that may need to describe
+certain common features. Designers of CC/PP applications who need to describe
+such capabilities are encouraged to use this vocabulary rather than define
+new terms, in the interest of interoperability. This vocabulary is based in
+part on work done in the IETF Media Feature Registration (CONNEG) Working
+Group (which was closed in 2001) and on the vocabulary of the <a
+href="http://www.wapforum.org/">WAP Forum UAPROF working group</a>.</p>
+
+<h3><a name="what" id="what"></a>1.2 What is CC/PP?</h3>
+
+<p>CC/PP is, simply put, a data structure that lets you send device
+capabilities and other situational parameters from a client to a server. It
+can be included in a separate header in HTTP, and there are transports
+defined for other protocols. What happens when it gets to the server, and how
+it is created, is not discussed in the specification (but this document
+attempts to provide some guidance).</p>
+
+<p>CC/PP is organized in components. They are not fixed, and anyone can
+create components, as well as vocabularies.</p>
+
+<p>CC/PP contains a vocabulary for handling of structural items, such as how
+to append a proxy description to the description of a client (if, for
+instance, the proxy can provide services for the client - for instance, a
+transcoding proxy may add the languages it can transcode into to the
+languages that the client can accept).</p>
+
+<h3><a name="StructureOfDoc" ID="StructureOfDoc"></a></h3>
+
+<h2><a name="use-vocab" id="use-vocab"></a>2. Use of vocabularies in CC/PP</h2>
+
+<p>Creating new vocabularies for CC/PP is very easy, as described in section
+1.2. </p>
+
+<h3><a name="extend-vocab" id="extend-vocab"></a>2.1 Extending the Schema/Vocabulary</h3>
+
+<p>The WAP Forum has specified a core vocabulary and ways to extend that. The
+following text is taken from the document Guidelines for UAProf Vocabulary
+Extensions by Lalitha Suryanarayana, that outlines how the core vocabulary
+should be extended. While the example is from the UAProf vocabulary, the
+principle extends to the creation of any CC/PP vocabulary.</p>
+
+<p>The UAProf core vocabulary consists of five main components, each of which
+asserts a set of attributes (called CPI). The structure and layout
+constitutes a schema. The use of the XML namespace mechanism and RDF
+inherently provide UAProf with an extensibility mechanism. A profile can
+consist of attributes from multiple vocabularies. Extensions to the schema
+can be made, either by adding new attributes to an existing vocabulary or,
+creating a new standalone vocabulary. Which method should be followed is left
+to the schema designer.</p>
+
+<p>However, the following criteria serve as guidelines in helping make that
+determination (It is recommended that the set of attributes to be added is
+first identified and characterized):</p>
+<dl>
+  <dt>Are the new attributes generic enough to apply to all classes of
+  devices?</dt>
+    <dd>-If the answer is yes, you may want to include it in the core
+      vocabulary.</dd>
+    <dd>-Under such a scenario, next, determine whether some or all of the
+      new attributes fall into one or more of the existing components
+      (specified in the core vocabulary). If they do, ensure that the
+      attributes are not already part of the vocabulary in terms of
+      semantics. If they are not, you may wish to add these attributes to the
+      existing components. If however, the new attributes are essential to
+      the core vocabulary but cannot be added to existing components, you may
+      want to specify a new component (and attributes) for the core
+      vocabulary.</dd>
+    <dd>-When you create a new vocabulary, post a message to the <a
+      href="mailto:www-mobile@w3.org">www-mobile public discussion list</a>,
+      to see if anyone has created a vocabulary similar to yours. If someone
+      has solved your problem, then why solve it again?</dd>
+  <dt>On the other hand, if the attributes are application specific, and if
+  only an initial set of attributes has been identified to date (implying
+  that the list of attributes may grow over time), a separate vocabulary
+  might be most suitable for your application.</dt>
+    <dd>-The new vocabulary must be specified in RDF schema. The vocabulary
+      must be identified with an XML namespace.</dd>
+    <dd>-It is your responsibility to develop the schema, maintain it on an
+      ongoing basis, and make sure the namespace continues to exist.</dd>
+    <dd>-The attributes will not be part of the CC/PP vocabulary, and does
+      not have to be incorporated into any other specifications
+    documents.</dd>
+    <dd>-Be sure to make your vocabulary publicly available, not only for
+      purposes of implementation, but also, for new designers who may either
+      wish to leverage some of your work (attributes or components) as they
+      develop their vocabularies.
+      <p>-Remember that it has to be machine readable (i.e. accessible as a
+      file), since RDF processors will need to access the schema the first
+      time they encounter it.</p>
+    </dd>
+</dl>
+
+<h3><a id="conneg" name="conneg"></a>2.2 CONNEG</h3>
+
+<h4><a name="conneg-bg" id="conneg-bg"></a>2.2.1 Background</h4>
+
+<p>The CONNEG working group in the <a href="http://www.ietf.org">IETF</a> has
+defined a number of "media feature tags", which can be used to describe the
+optimal visual properties for the representation of a document (there are no
+tags for other media types than visual). The group, which was closed in 2000,
+also created a matching algebra for the media tags. The rationale for the
+work was to provide a number of Internet application protocols have a need to
+provide content negotiation for the resources with which they interact. A
+framework for such negotiation was created, part of which is a way to
+describe the range of media features which can be handled by the sender,
+recipient or document transmission format of a message. A format for a
+vocabulary of individual media features and procedures for feature
+registration are presented in RFC 2506, Media Feature Tag Registration
+Procedure.</p>
+
+<p>Appendix E.1 of the CC/PP specification provides a brief discussion
+the
+relationship to and use of CONNEG attributes. The following provides a more
+in-depth look into how to combine CONNEG with CC/PP [<a
+href="#Footnote1">FOOTNOTE1</a>].</p>
+
+<h4><a name="conneg-vocab" id="conneg-vocab"></a>2.2.2 The CONNEG vocabulary</h4>
+
+<p></p>
+<ul>
+  <li><em>Syntax</em>: The CONNEG syntax differs significantly from the CC/PP
+    syntax. Harmonization of the syntax is not reasonable, and is not
+    important if semantic compatibility is to be maintained, as automated
+    syntax mapping is quite easy. The XML syntax is important as the common
+    cross-application interchange format for RDF.)</li>
+  <li><em>Vocabulary</em>: The fundamental approach of CC/PP and CONNEG to
+    vocabulary definition is quite different, and in many cases will prove
+    difficult to reconcile (specifically: CC/PP regards feature matching
+    semantics as being a property of the attribute concerned; CONNEG does
+    not). Hopefully, future vocabularies will be defined using data types
+    with simple, attribute-independent matching semantics.</li>
+</ul>
+
+<h5><a name="use-conneg-vocab" id="use-conneg-vocab"></a>
+2.2.2.1 Using the Conneg vocabulary in CC/PP</h5>
+
+<p>The IETF has defined an IANA registry for media feature tags and a syntax
+for relational-style expressions using these to describe client and server
+media features. A small common vocabulary has been defined, which has been
+used as a basis for the CC/PP client common vocabulary. The IETF Internet fax
+Working Group has also created additional registrations to describe the
+capabilities of fax machines.</p>
+
+<p>RFC 2506 defines three kinds of media feature tags:<br>
+</p>
+<dl>
+  <dt>IETF tree</dt>
+    <dd>registered feature tags that are simple names, which are defined and
+      assigned under the auspices of the IETF standards process.</dd>
+  <dt>Global tree</dt>
+    <dd>registered feature tags that are simple names preceded by 'g.'. These
+      are defined by groups other than the IETF, but are registered with IANA
+      to ensure uniqueness of these names.</dd>
+  <dt>Unregistered</dt>
+    <dd>feature tags that consist of 'u.' followed by a slightly restricted
+      form of URI.</dd>
+</dl>
+
+<p>It is notable that the all three tag types provide unique names, which
+enables them to be mapped into the XML namespace mechanism. There is
+currently a proposal to create a URN namespace for IANA registries. This
+would create a mechanism to allow IANA-registered feature tags to be used
+directly as URIs in CC/PP expressions. Unregistered feature tags may be used
+in CC/PP expressions by stripping off the leading 'u.' and taking the
+resulting URI string. Thus, any feature tag registered per RFC 2506 would be
+available for use directly in a CC/PP profile. The registry here would help
+to provide a common reference point for features that are compatible with
+CONNEG-style matching semantics.</p>
+
+<p>A couple of Internet drafts have recently been published that may help us
+to overcome the disparity between CONNEG and CC/PP vocabularies. Using
+<a
+href="http://search.ietf.org/internet-drafts/draft-klyne-urn-ietf-conneg-01.txt">  
+http://search.ietf.org/internet-drafts/draft-klyne-urn-ietf-conneg-01.txt</a>
+(which uses <a
+href="http://search.ietf.org/internet-drafts/draft-mealling-iana-urn-02.txt">
+http://search.ietf.org/internet-drafts/draft-mealling-iana-urn-02.txt</a>)    
+enables the definition of a URI form for CONNEG media feature  tags that
+could be used in a CC/PP profile. This would change the namespace identifier
+used in appendix C of the CC/PP specification, which is non-normative.</p>
+
+<p>Currently, however, no XML representation of the Conneg vocabulary exists.
+It is out of the scope of this group to create such a representation, but any
+volunteer efforts are welcome. The registered media features can be
+found in
+the <a
+href="http://www.isi.edu/in-notes/iana/assignments/media-feature-tags">IANA
+Registry</a>.</p>
+
+<h3><a id="fipa" name="fipa"></a>2.3 FIPA</h3>
+
+<h4><a name="fipa-bg" id="fipa-bg"></a>2.3.1 Background</h4>
+
+<p>The Foundation For Intelligent Physical Agents, FIPA, has developed a
+device vocabulary. FIPA is an international organization that is dedicated to
+promoting the industry of intelligent agents by openly developing
+specifications supporting interoperability among agents and agent-based
+applications. <a href="http://www.fipa.org/specs/fipa00091/PC00091A.html">The
+Fipa-Device ontology</a> can be used by agents to pass profiles of devices to
+each other and validate them against the ontology.</p>
+
+<h4><a name="fipa-vocab" id="fipa-vocab"></a>2.3.2 The FIPA vocabulary</h4>
+
+<p>The FIPA ontology consists of a set of frames, which represent the classes
+of objects in the domain of discourse within the framework of the Fipa-Device
+ontology. The following terms are used to describe the objects of the
+domain:</p>
+<ul>
+  <li>Frame. This is the mandatory name of this entity that must be used to
+    represent each instance of this class.</li>
+  <li>Ontology. This is the name of the ontology, whose domain of discourse
+    includes the parameters described in the table.</li>
+  <li>Parameter. This is the mandatory name of a parameter of this frame.</li>
+  <li>Description. This is a natural language description of the semantics of
+    each parameter.</li>
+  <li>Presence. This indicates whether each parameter is mandatory or
+    optional.</li>
+  <li>Type. This is the type of the values of the parameter: Integer, Word,
+    String, URL, Term, Set or Sequence.</li>
+  <li>Reserved Values. This is a list of FIPA-defined constants that can
+    assume values for this parameter.</li>
+</ul>
+
+<h5>2.3.2.1 Using the FIPA vocabulary in CC/PP</h5>
+
+<p>Despite the differences in definition formats (FIPA defines
+functionalities in its own language, not in RDF Schema), the FIPA-device
+ontology could be used in a CC/PP profile. This can be accomplished in a
+similar fashion as with UAProf. So, if a client wants to inform a server that
+the device is fipa-compliant he can do so with CC/PP profile as follows:
+</p>
+<pre>&lt;?xml version="1.0"?&gt;
+&lt;rdf:RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:ccpp="http://www.w3.org/2000/07/04-ccpp#"
+     xmlns:fipa="http://www.fipa.org/profiles/device-20010202#"
+     xmlns:uaprof="http://www.wapforum.org/UAPROF/ccppschema-19991014#"&gt;
+&lt;rdf:Description rdf:about="http://www.foo.com/profiles/ProfileX"&gt;
+     &lt;ccpp:component&gt;
+       &lt;rdf:Description rdf:about="http://www.foo.com/TerminalHardware"&gt;
+            &lt;rdf:type rdf:resource="http://www.foo.com/Schema#HardwarePlatform" /&gt;
+               &lt;ccpp:Defaults rdf:resource="http://www.foo.com/profiles/hwproperties" /&gt;
+               &lt;fipa:compliancy&gt;true&lt;/fipa:compliancy&gt;
+           &lt;/rdf:Description&gt;
+         &lt;/ccpp:component&gt;
+         &lt;ccpp:component&gt;
+           &lt;rdf:Description rdf:about="http://www.foo.com/TerminalSoftware"&gt;
+            &lt;rdf:type rdf:resource="http://www.foo.com/Schema#SoftwarePlatform" /&gt;
+              &lt;ccpp:Defaults rdf:resource="http://www.foo.com/profiles/swproperties" /&gt;
+                &lt;fipa:ap-description&gt;FIPA-OS v2.1.1&lt;/fipa:ap-description&gt;
+          &lt;/rdf:Description&gt;
+         &lt;/ccpp:component&gt;
+         &lt;ccpp:component&gt;
+          &lt;rdf:Description rdf:about="http://www.foo.com/Browser"&gt;
+            &lt;rdf:type rdf:resource="http://www.foo.com/Schema#BrowserUA" /&gt;
+              &lt;ccpp:Defaults rdf:resource="http://www.foo.com/profiles/browserproperties" /&gt;
+                &lt;uaprof:BrowserName&gt;Internet Explorer&lt;/uaprof:BrowserName&gt;
+                &lt;uaprof:BrowserVersion&gt;5.0&lt;/uaprof:BrowserVersion&gt;
+           &lt;/rdf:Description&gt;
+         &lt;/ccpp:component&gt;
+  &lt;/rdf:Description&gt;
+&lt;/rdf:RDF&gt;</pre>
+
+<h3><a name="wap-uaprof" id="wap-uaprof"></a>2.4 WAP UAPROF</h3>
+
+<h4><a name="wap-uaprof-bg" id="wap-uaprof-bg"></a>2.4.1 Background</h4>
+
+<p>Simultaneously with the CC/PP work in the W3C, the <a
+href="http://www.wapforum.org">WAP Forum</a> initiated an activity to create a
+capabilities and preferences description system. It was decided to use the
+CC/PP framework, and create a vocabulary for WAP devices in that framework.
+The latest version, published as part of the WAP 2.0 release, is
+WAP-248-UAPROF-20010522, available from the <a
+href="http://www1.wapforum.org/tech/terms.asp?doc=WAP-174-UAProf-19991110-a.pdf">WAP
+Forum technical specifications page</a>.  The WAP Forum has also developed
+extensions to the CC/PP core vocabulary for specific applications such as
+multimedia messaging (MMS) and WAP Push.</p>
+
+<p>The WAP Forum UAPROF drafting committee has used CC/PP to create a custom
+vocabulary for mobile devices which conform to the WAP specification. It is
+used for render customized content based on the information sent in the
+profile, and to adapt content to the specific device with which the user
+accesses it.</p>
+
+<h4><a name="uaprof-vocab" id="uaprof-vocab"></a>2.4.2 The UAPROF vocabulary</h4>
+
+<p>The schema for WAP User Agent Profiles consists of description blocks for
+the following key components:<br>
+</p>
+<ul>
+  <li>HardwarePlatform: A collection of properties that adequately describe
+    the hardware characteristics of the terminal device. This includes, the
+    type of device, model number, display size, input and output methods,
+  etc.</li>
+  <li>SoftwarePlatform: A collection of attributes associated with the
+    operating environment of the device. Attributes provide information on
+    the operating system software, video and audio encoders supported by the
+    device, and user's preference on language.</li>
+  <li>BrowserUA: A set of attributes to describe the HTML browser
+  application</li>
+  <li>NetworkCharacteristics: Information about the network-related
+    infrastructure and environment such as bearer information. These
+    attributes can influence the resulting content, due to the variation in
+    capabilities and characteristics of various network infrastructures in
+    terms of bandwidth and device accessibility.</li>
+  <li>WapCharacteristics: A set of attributes pertaining to WAP capabilities
+    supported on the device. This includes details on the capabilities and
+    characteristics related to the WML Browser, Wireless Telephony
+    Application (WTA), etc.</li>
+  <li>PushCharacteristics: A set of attributes pertaining to Push specific
+    capabilities supported by the device. This includes details on supported
+    MIME-types, the maximum size of a push-message shipped to the device, the
+    number of possibly buffered push-messages on the device, etc. Additional
+    components can be added to the schema to describe capabilities pertaining
+    to other user agents such as an email application or hardware
+  extensions.</li>
+</ul>
+
+<h5>2.4.2.1 Using the UAPROF vocabulary in CC/PP</h5>
+
+<p>Below is an example CC/PP profile using the UAPROF vocabulary [UAPROF].
+The latest version of this specification is WAP-248-UAPROF-20010522.</p>
+<pre>&lt;?xml version="1.0"?&gt;
+&lt;rdf:RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+     xmlns:prf="http://www.wapforum.org/profiles/UAPROF/ccppschema-20010430#"&gt;
+         &lt;rdf:Description rdf:ID="MyDeviceProfile"&gt;
+                &lt;prf:component&gt;
+                   &lt;rdf:Description rdf:ID="HardwarePlatform"&gt;
+                        &lt;rdf:type rdf:resource="http://www.wapforum.org/profiles/UAPROF/ccppschema-20010430#HardwarePlatform"/&gt;
+                                &lt;prf:BluetoothProfile&gt;
+                                        &lt;rdf:Bag&gt;
+                                                &lt;rdf:li&gt;headset&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;dialup&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;lanaccess&lt;/rdf:li&gt;
+                                        &lt;/rdf:Bag&gt;
+                                &lt;/prf:BluetoothProfile&gt;
+                                &lt;prf:ScreenSize&gt;121x87&lt;/prf:ScreenSize&gt;
+                                &lt;prf:Model&gt;R999&lt;/prf:Model&gt;
+                                &lt;prf:InputCharSet&gt;
+                                        &lt;rdf:Bag&gt;
+                                                &lt;rdf:li&gt;ISO-8859-1&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;US-ASCII&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;UTF-8&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;ISO-10646-UCS-2&lt;/rdf:li&gt;
+                                         &lt;/rdf:Bag&gt;
+                                &lt;/prf:InputCharSet&gt;
+                                &lt;prf:ScreenSizeChar&gt;15x6&lt;/prf:ScreenSizeChar&gt;
+                                &lt;prf:BitsPerPixel&gt;2&lt;/prf:BitsPerPixel&gt;
+                                &lt;prf:ColorCapable&gt;No&lt;/prf:ColorCapable&gt;
+                                &lt;prf:TextInputCapable&gt;Yes&lt;/prf:TextInputCapable&gt;
+                                &lt;prf:ImageCapable&gt;Yes&lt;/prf:ImageCapable&gt;
+                                &lt;prf:Keyboard&gt;PhoneKeypad&lt;/prf:Keyboard&gt;
+                                &lt;prf:NumberOfSoftKeys&gt;0&lt;/prf:NumberOfSoftKeys&gt;
+                                &lt;prf:Vendor&gt;myprofileprovider&lt;/prf:Vendor&gt;
+                                &lt;prf:OutputCharSet&gt;
+                                        &lt;rdf:Bag&gt;
+                                                &lt;rdf:li&gt;ISO-8859-1&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;US-ASCII&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;UTF-8&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;ISO-10646-UCS-2&lt;/rdf:li&gt;
+                                        &lt;/rdf:Bag&gt;
+                                &lt;/prf:OutputCharSet&gt;
+                                &lt;prf:ScreenSizeChar&gt;15x6&lt;/prf:ScreenSizeChar&gt;
+                                &lt;prf:BitsPerPixel&gt;2&lt;/prf:BitsPerPixel&gt;
+                                &lt;prf:ColorCapable&gt;No&lt;/prf:ColorCapable&gt;
+                                &lt;prf:TextInputCapable&gt;Yes&lt;/prf:TextInputCapable&gt;
+                                &lt;prf:ImageCapable&gt;Yes&lt;/prf:ImageCapable&gt;
+                                &lt;prf:Keyboard&gt;PhoneKeypad&lt;/prf:Keyboard&gt;
+                                &lt;prf:NumberOfSoftKeys&gt;0&lt;/prf:NumberOfSoftKeys&gt;
+                                &lt;prf:Vendor&gt;myprofileprovider&lt;/prf:Vendor&gt;
+                                &lt;prf:OutputCharSet&gt;
+                                        &lt;rdf:Bag&gt;
+                                                &lt;rdf:li&gt;ISO-8859-1&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;US-ASCII&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;UTF-8&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;ISO-10646-UCS-2&lt;/rdf:li&gt;
+                                        &lt;/rdf:Bag&gt;
+                                &lt;/prf:OutputCharSet&gt;
+                                &lt;prf:SoundOutputCapable&gt;Yes&lt;/prf:SoundOutputCapable&gt;
+                                &lt;prf:StandardFontProportional&gt;Yes&lt;/prf:StandardFontProportional&gt;
+                        &lt;/rdf:Description&gt;
+                &lt;/prf:component&gt;
+                &lt;prf:component&gt;
+                        &lt;rdf:Description rdf:ID="SoftwarePlatform"&gt;
+                        &lt;rdf:type rdf:resource="http://www.wapforum.org/profiles/UAPROF/ccppschema-20010430#SoftwarePlatform"/&gt;
+                                &lt;prf:AcceptDownloadableSoftware&gt;No&lt;/prf:AcceptDownloadableSoftware&gt;
+                        &lt;/rdf:Description&gt;
+                &lt;/prf:component&gt;
+                &lt;prf:component&gt;
+                        &lt;rdf:Description rdf:ID="NetworkCharacteristics"&gt;
+                        &lt;rdf:type rdf:resource="http://www.wapforum.org/profiles/UAPROF/ccppschema-20010430#NetworkCharacteristics"/&gt;
+                                &lt;prf:SecuritySupport&gt;
+                                        &lt;rdf:Bag&gt;
+                                                &lt;rdf:li&gt;WTLS-1&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;WTLS-2&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;WTLS-3&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;signText&lt;/rdf:li&gt;
+                                        &lt;/rdf:Bag&gt;
+                                &lt;/prf:SecuritySupport&gt;
+                                &lt;prf:SupportedBearers&gt;
+                                        &lt;rdf:Bag&gt;
+                                                &lt;rdf:li&gt;TwoWaySMS&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;CSD&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;GPRS&lt;/rdf:li&gt;
+                                        &lt;/rdf:Bag&gt;
+                                &lt;/prf:SupportedBearers&gt;
+                                &lt;prf:SupportedBluetoothVersion&gt;1.1&lt;/prf:SupportedBluetoothVersion&gt;
+                        &lt;/rdf:Description&gt;
+                &lt;/prf:component&gt;
+                &lt;prf:component&gt;
+                        &lt;rdf:Description rdf:ID="BrowserUA"&gt;
+                        &lt;rdf:type rdf:resource="http://www.wapforum.org/profiles/UAPROF/ccppschema-20010430#BrowserUA"/&gt;
+                                &lt;prf:BrowserName&gt;Ericsson&lt;/prf:BrowserName&gt;
+                                &lt;prf:CcppAccept&gt;
+                                        &lt;rdf:Bag&gt;
+                                                &lt;rdf:li&gt;application/vnd.wap.wmlc&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;application/vnd.wap.wbxml&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;application/vnd.wap.wmlscriptc&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;application/vnd.wap.multipart.mixed&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;application/vnd.wap.multipart.form-data&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;text/vnd.wap.wml&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;text/vnd.wap.wmlscript&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;text/x-vCard&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;text/x-vCalendar&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;text/x-vMel&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;text/x-eMelody&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;image/vnd.wap.wbmp&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;image/gif&lt;/rdf:li&gt;
+                                        &lt;/rdf:Bag&gt;
+                                &lt;/prf:CcppAccept&gt;
+                                &lt;prf:CcppAccept-Charset&gt;
+                                        &lt;rdf:Bag&gt;
+                                                &lt;rdf:li&gt;US-ASCII&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;ISO-8859-1&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;UTF-8&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;ISO-10646-UCS-2&lt;/rdf:li&gt;
+                                        &lt;/rdf:Bag&gt;
+                                &lt;/prf:CcppAccept-Charset&gt;
+                                &lt;prf:CcppAccept-Encoding&gt;
+                                        &lt;rdf:Bag&gt;
+                                                &lt;rdf:li&gt;base64&lt;/rdf:li&gt;
+                                        &lt;/rdf:Bag&gt;
+                                &lt;/prf:CcppAccept-Encoding&gt;
+                                &lt;prf:FramesCapable&gt;No&lt;/prf:FramesCapable&gt;
+                                &lt;prf:TablesCapable&gt;Yes&lt;/prf:TablesCapable&gt;
+                        &lt;/rdf:Description&gt;
+                &lt;/prf:component&gt;
+                &lt;prf:component&gt;
+                        &lt;rdf:Description rdf:ID="WapCharacteristics"&gt;
+                        &lt;rdf:type rdf:resource="http://www.wapforum.org/profiles/UAPROF/ccppschema-20010430#WapCharacteristics"/&gt;
+                                &lt;prf:WapDeviceClass&gt;C&lt;/prf:WapDeviceClass&gt;
+                                &lt;prf:WapVersion&gt;2.0&lt;/prf:WapVersion&gt;
+                                &lt;prf:WmlVersion&gt;
+                                        &lt;rdf:Bag&gt;
+                                                &lt;rdf:li&gt;2.0&lt;/rdf:li&gt;
+                                        &lt;/rdf:Bag&gt;
+                                &lt;/prf:WmlVersion&gt;
+                                &lt;prf:WmlDeckSize&gt;3000&lt;/prf:WmlDeckSize&gt;
+                                &lt;prf:WmlScriptVersion&gt;
+                                        &lt;rdf:Bag&gt;
+                                                &lt;rdf:li&gt;1.2.1&lt;/rdf:li&gt;
+                                        &lt;/rdf:Bag&gt;
+                                &lt;/prf:WmlScriptVersion&gt;
+                                &lt;prf:WmlScriptLibraries&gt;
+                                        &lt;rdf:Bag&gt;
+                                                &lt;rdf:li&gt;Lang&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;Float&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;String&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;URL&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;WMLBrowser&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;Dialogs&lt;/rdf:li&gt;
+                                        &lt;/rdf:Bag&gt;
+                                &lt;/prf:WmlScriptLibraries&gt;
+                                &lt;prf:WtaiLibraries&gt;
+                                        &lt;rdf:Bag&gt;
+                                                &lt;rdf:li&gt;WTA.Public.makeCall&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;WTA.Public.sendDTMF&lt;/rdf:li&gt;
+                                                &lt;rdf:li&gt;WTA.Public.addPBEntry&lt;/rdf:li&gt;
+                                        &lt;/rdf:Bag&gt;
+                                &lt;/prf:WtaiLibraries&gt;
+                        &lt;/rdf:Description&gt;
+                &lt;/prf:component&gt;
+        &lt;/rdf:Description&gt;
+&lt;/rdf:RDF&gt; 
+The profile has been abbreviated. For the full profile, see the UAPROF specification.</pre>
+
+<h3><a name="other" id="other"></a>2.5 Other vocabularies</h3>
+
+<h3><a name="other-bg" id="other-bg"></a>2.5.1 Background</h3>
+
+<p>CC/PP can be used not just for metadata describing device capabilities and
+the users preferences for how they should be used, although that is the
+primary purpose. It is a general framework for information about the users
+situation, such as his position, the ambient conditions (e.g. weather,
+location, temperature, etc). While no such vocabularies have yet been
+developed, it can be foreseen that they will.</p>
+
+<p>From a philosophical standpoint, this adaptation is no different from
+formatting based on device capabilities. The users situation can be regarded
+as an additional input to the system (along with the request). This is
+especially true in mobile environments, where interactions and interaction
+times tend to be shorter than in the fixed environment [Schmidt].</p>
+
+<p>Using XML Namespace, it is possible to mix several vocabularies in one
+profile, to achieve a precise description not just of the user, but also of
+his situation (e.g. where he is, what temperature it is there, if the sun is
+shining, etc). This can then be used in the same way as a transformation to a
+specific device to create a personalized presentation.</p>
+
+<h3><a name="other-example" id="other-example"></a>2.5.2 An example vocabulary</h3>
+
+<p>For demonstration purposes, we have created a simple example vocabulary
+describing the weather at the users position. For brevity, it has only two
+CC/PP attributes: Sunny and raining. Note that the creation of such
+vocabularies can be done at the discretion of anyone who can create a URI,
+but to be accepted, we assume that it would be created by an industry body,
+representing a consensus about the properties and their values.</p>
+
+<p>Real weather descriptions contain far more data items and data types.</p>
+
+<h3><a name="use-example-vocab-ccpp" id="use-example-vocab-ccpp"></a>
+2.5.2.1 Using the example vocabulary in CC/PP</h3>
+<pre>&lt;?xml version='1.0'?&gt;
+&lt;rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:prf="http://www.example.org/TR/WD-profile-vocabulary#"
+xmlns:exp="http://weather.co.jp/RDF/exp-schema#"&gt;
+&lt;rdf:Description rdf:ID="MySituationProfile"&gt;
+    &lt;rdf:Description rdf:ID="MyDeviceProfile"&gt;
+                &lt;prf:component&gt;
+                        &lt;rdf:Description rdf:ID="HardwarePlatform"&gt;
+                        &lt;rdf:type rdf:resource="http://www.wapforum.org/profiles/UAPROF/ccppschema-20010430#HardwarePlatform"/&gt;
+                                &lt;prf:Vendor&gt;Ericsson&lt;/prf:Vendor&gt;
+                                &lt;prf:Model&gt;r380&lt;/prf:Model&gt;
+                                &lt;prf:Type&gt;PDA&lt;/prf:Type&gt;
+                                &lt;prf:ScreenSize&gt;800x600x24&lt;/prf:ScreenSize&gt;
+                                &lt;prf:CPU&gt;PPC&lt;/prf:CPU&gt;
+                                &lt;prf:Keyboard&gt;No&lt;/prf:Keyboard&gt;
+                                &lt;prf:Memory&gt;16MB&lt;/prf:Memory&gt;
+                                &lt;prf:Bluetooth&gt;Yes&lt;/prf:Bluetooth&gt;
+                                &lt;prf:Speaker&gt;Yes&lt;/prf:Speaker&gt;                        &lt;/rdf:Description&gt;
+                &lt;/prf:component&gt;
+                &lt;prf:component&gt;
+                        &lt;rdf:Description rdf:ID="SoftwarePlatform"&gt;
+                        &lt;rdf:type rdf:resource="http://www.wapforum.org/profiles/UAPROF/ccppschema-20010430#SoftwarePlatform"/&gt;
+                                &lt;prf:OS&gt;EPOC1.0&lt;/prf:OS&gt;
+                                &lt;prf:HTMLVersion&gt;4.0&lt;/prf:HTMLVersion&gt;
+                                &lt;prf:JavaScriptVersion&gt;4.0&lt;/prf:JavaScriptVersion&gt;
+                                &lt;prf:WAPVersion&gt;2.0&lt;/prf:WAPVersion&gt;
+                        &lt;/rdf:Description&gt;
+                &lt;/prf:component&gt;
+     &lt;/rdf:Description&gt;
+     &lt;rdf:Description rdf:ID="UserSituation"&gt;
+                &lt;prf:component&gt;
+                        &lt;rdf:Description rdf:ID="Weather"&gt;
+                        &lt;rdf:type rdf:resource="http://weather.co.jp/RDF#weather"/&gt;
+                                &lt;exp:Area&gt;Yokosuka&lt;/exp:Area&gt;
+                                &lt;exp:CloudCover&gt;Clear&lt;/exp:CloudCover&gt;
+                                &lt;exp:Sunshine&gt;Yes&lt;/exp:Sunshine&gt;
+                                &lt;exp:Temperature&gt;20&lt;/exp:Temperature&gt;
+                       &lt;/rdf:Description&gt;
+                &lt;/prf:component&gt;
+     &lt;/rdf:Description&gt;
+&lt;/rdf:Description&gt;
+&lt;/rdf:RDF&gt;</pre>
+
+<h3><a name="other-dev-desc" id="other-dev-desc"></a>
+2.5.3 Other device description vocabularies</h3>
+
+<p>Using the same approach as described in this chapter, it is possible to
+use vocabularies like Salutation, XML Media Queries, and XML Modules for
+content adaptation. The mapping of these into RDF Schemas has not been
+defined.</p>
+
+<h2><a name="heristics" id="heuristics"></a>3. Heuristics for content adaptation</h2>
+
+<p>A question the working group often gets asked is: How do I use CC/PP in my
+web server? The question is really: How can the server receiving a profile
+generate customized content?</p>
+
+<p>Using technologies developed by the W3C, there are two basic ways of
+creating adapted content: Client-based and server-based. These are similar to
+the HTTP agent-driven and server-driven forms of content negotiation, but
+differ in that the client-driven approach is assumed to take place entirely
+in the client. Note that the server-driven approach as described here can
+also take place in the client, provided it has an XSLT processor. However,
+for optimization reasons (e.g. in narrowband channels, such as the wireless
+environment), it is more efficient to send only the adapted information.
+There may also be security reasons to do this (i.e. not giving out too much
+content).</p>
+
+<p>The simplest way is to create a simple heuristic to tie the HTTP content
+negotiation to parameters from the profile. It is also possible to generate a
+style sheet, which is adapted to the device dynamically. The working group
+has not developed these heuristics, since they will depend on both the
+manufacturers, the server owners, and the content providers preferences. The
+rule sets will have to be defined separately, preferably in an RDF rules
+language or in terms of an ontology.</p>
+
+<p>The CC/PP working group decided not to tackle feature-independent profile
+matching. We hope and expectation that the ongoing DAML+OIL work will provide
+mechanisms that allow us to incorporate equivalent functionality into CC/PP,
+provided that vocabulary development is performed in a disciplined manner (as
+noted above).</p>
+
+<p>- Defaults, etc: CC/PP covers an important area not addressed by CONNEG;
+namely defaults. Also, proxy behavior descriptions and distributed profile
+descriptions. Reviewing the CC/PP design, with some benefit of hindsight,
+reinforces the view I previously held that such features should be
+incorporated at a layer which encapsulates any CONNEG-style feature
+expression. Specifically, CONNEG-style feature expressions should be
+contained within a CC/PP-style component, and that feature matching will take
+place only at the component level. A simple higher-level rule, such as
+requiring a match for every specified component, could define whether or not
+two complete profiles match or not. (Any asymmetry between client- and
+server-side features could be accommodated at this level.) This is a topic
+for future development, if required.</p>
+
+<p>As the user interaction changes, so will the need for presentation. As
+author, you will no longer be able to write content that assumes a single
+presentation model, since it may be presented in a totally different way from
+what you expected.</p>
+
+<p>In the abstract, the interaction of the user with the device consists of
+two functions: Presentation of data, and input of data. Presentation, in
+turn, breaks down into navigation and style.</p>
+
+<p>The input models of devices can be abstracted to a textual input format,
+irrespective of whether input is received from a keyboard, a keypad, voice
+recognition, character recognition (e.g. pen-based input) or other means. As
+yet, there are few non-textual, non-verbal input devices (such as cameras
+using image recognition). A special problem, which can be abstracted at a
+higher level, is presented by devices which use shortcut keys, macro keys,
+softkeys or other devices to represent a textual input as a shortcut. Menus
+can be seen as a special case of such devices.</p>
+
+<p>The styling of presentation of textual information today varies from no
+style at all (e.g. on pagers) to highly styled, graphical presentation (e.g.
+the web as it is usually presented). Abstracting the style to a higher level,
+instead of including it in the content, enables the insertion of different
+styles, using mechanisms such as CSS. Using CSS, style information can be
+handled quite independently of the device.</p>
+
+<p>When receiving information using a mobile or handheld device, however,
+traditional presentation formats tend to become irrelevant. Table layouts in
+fixed pixel widths adapted to a 21-inch screen become unusable on a device
+which has a screen that is one inch square. Instead of assisting it, the
+formatting tends to obscure the presentation of the information. Disabling
+style sheets is a simplistic way of achieving a presentation that is usable
+on a small-screen device (anecdotal evidence seems to point to screens having
+to be quarter-VGA before styling becomes relevant). Applying different
+styling methods, such as aural styles, is another way of representing the
+content.</p>
+
+<p>However, style is not the most difficult part. The navigation is the other
+aspect of the presentation, and the hardest to abstract from the device.
+Currently, navigation in web content is subsumed in the "desktop" paradigm of
+the personal computer. There is no way of structuring content in other ways
+than an infinite scroll (possibly as shorter sections of the infinite
+scroll), since the page model is seen as a property of the presentation in
+CSS.</p>
+
+<p>However, in devices with very small screens, as well as in voice-menu
+systems, alternative paradigms are emerging for navigation of content. In
+small-screen devices, the "deck of cards" paradigm of WML is emerging (if
+implemented as WML or using XHTML and CSS); in voice menus, an entire body of
+work exists to structure menus for natural interaction.</p>
+
+<p>Modeling all possible future presentation formats is not feasible,
+however. There are two possible ways to meet this: Either restrict
+presentation to a single set of devices, or model the navigation of your
+content in a device-independent way.</p>
+
+<p>Modelling the navigation in a device-independent way also lets you retain
+control over how it will be navigated on different devices. Navigation is
+actually a larger part of the user experience than the presentation, even
+though these tend to be mixed up in popular discussion.</p>
+
+<p>In the W3C CSS paradigm, the user has the ability to override the style
+presented by the service. This feature is intended to enable users who are
+not able to receive the style selected, e.g. users using assistive
+technologies to receive the content, to take part of the presentation. This
+means that the designer can never be assured that content is presented in the
+way it was designed on a device. On the other hand, the web has never been
+pixel-perfect, and presentation has always varied somewhat between devices
+and implementations.</p>
+
+<p>In traditional HTML presentations, content is not structured for other
+navigation formats at all. In this paper, we will discuss possible solutions
+to enable the navigation of different presentation paradigms in the same
+document, as well as the ability to insert different styles.</p>
+
+<p>Applying these technologies also enables the author to retain control over
+the navigation of the content (given that the presentation takes place on a
+device implementing CC/PP), as well as retaining some control over the
+styling. We contend that the most important part, however, is not the style,
+but the navigation. Users actually tend to ignore style information,
+frequently switching off images to enhance transmission speed, and ignoring
+advertisements.</p>
+
+<p>Different styles require different formatting of the content presentation,
+but different navigation paradigms require different formatting of the
+content itself. This can be accomplished in several different ways. One is to
+enable a customization engine to interact with the content at the client,
+another is to format the content according to the navigation paradigm in the
+origin server. Both ways imply that there will be a way for the content
+adaptation process to conduct the required filtering and formatting.</p>
+
+<p>In the case where the adaptation of content takes place at the client, the
+entire content set has to be transmitted to the client and the parts of it
+that are not required has to be discarded (alternatively, a set of programs
+could be transmitted which generates the content from data available at the
+client - this is speculative, however). The adaptation can be based on the
+CC/PP presented by the client. This is indeed one of the use cases for
+CC/PP.</p>
+
+<p>In the case where adaptation is done by the server, the content can be
+adapted using a transformation process, e.g. XSLT, applying different
+transformation sheets to the content depending on which CC/PP is received.</p>
+
+<p>For the author, controlling the transformation then comes down to two
+aspects: Controlling the selection of the transformation sheets, and the
+transformation of the content itself.</p>
+
+<p>Control over which transformation sheets are applied to the document
+depending on which CC/PP is received can be done using the document profile,
+which in essence is a reverse of the client profile, using the CC/PP
+framework. The author can determine which transformation sheet should be
+applied when a certain profile, or certain parameters of a profile, are used.
+This would entail creating a vocabulary for the selection process. Creating
+such a vocabulary could be part of the effort of the HTML working group to
+create a vocabulary describing XHTML modules, or a separate effort (e.g.
+spearheaded by a commercial vendor).</p>
+
+<p>To change the navigational paradigm for a document, however, it is not
+enough to change the formatting of the content. In the case of a small-screen
+device, the information will need to be filtered, if the user will not have
+to wade through enormous amounts of irrelevant information (if you think that
+this is not an issue, consider that a normal WAP telephone can take just
+about half a line of the text presented on a 15-inch screen). It goes without
+saying that browsing becomes extremely tiresome in this environment. Given
+that most users do not read the text (but scan it, <a
+href="http://www.useit.com/alertbox/9710a.html">according to Jacob
+Nielsen</a>), the salient features will have to be highlighted.</p>
+
+<p>Determining which features of the content are salient is the core of the
+poodle. To accomplish this, knowledge about the users goal for the
+interaction is required. In certain cases, the author can contribute to the
+setting of these goals, for instance in services where the interaction is
+tightly controlled, e.g. in forms. In other cases, where the goals for the
+interaction can be more ambiguous, this becomes a problem.</p>
+
+<p>As the content is filtered, navigational aids need to be inserted.
+Traditionally, navigational tools on the web include menus, navigation bars,
+and pointers (most frequently represented as icons). The web also has a
+navigation paradigm built into the browser.</p>
+
+<p>Enabling other navigation paradigms is possible if the content is
+formatted differently. For instance, the same content can be navigated with
+the card-and-deck paradigm of WML if it is reorganized. Content can be
+reformatted as WML if it is marked up as WML in advance. While it is possible
+to mark up content both as WML and HTML, for instance, it is not a pretty
+sight. And while the HTML browser will ignore the WML tags, the WML browser
+will not ignore the HTML. Then, there is the question of filtering out
+content that can not be displayed on the WML device. Rather, the content
+should be filtered into the target format from the start. This implies that
+the base markup could either contain multiple formats, or that the XSLT
+transformation sheets should contain transformation rules to enable the
+conversion of the generic element set to HTML, WML, VoiceML, or whatever the
+markup format should be. The selection of the transformation sheet can be
+done in several different ways, all implementation dependent.</p>
+
+<p>In the CC/PP working group, we are satisfying ourselves with allowing for
+a selection to take place based on the received CC/PP, but we do not attempt
+to mandate the mechanism by which this takes place (it could be a PERL
+programme which enabled the selection from a transformation sheet based on
+the received screen size and browser software, or it could be a rule base
+which acted on the profile and the document profile to compose a
+transformation sheet. It could be HTTP content negotiation. Determining the
+mechanism is out of the scope of our group).</p>
+
+<p>To enable the transformation sheet to filter and format the content
+appropriately for the navigation model of the device at hand, the content or
+the transformation sheet must contain a representation of the navigation
+model. This implies that a document which is device independent must contain
+all possible navigational models (the style is divorced from the content,
+since it is contained in a style sheet), or a subset of all possible
+navigational models for which the content is enabled.</p>
+
+<h3><a name="use-xslt" id="use-xslt"></a>
+3.1 Using XSLT to generate an appropriate presentation</h3>
+
+<p>There are a few prerequisites for content which is to be transformed in
+the way described in the previous section. One is that a transformation
+mechanism exists. For content which is written in XML, this is possible to
+achieve using XSLT; for content in HTML, no simple way exists to transform it
+into other formats, even if it follows the HTML 4.0 specification. There are
+too many parameters which can be interpreted differently. Then, there is the
+high percentage of erroneously encoded HTML pages (up to 60 %, according to
+some estimates). In summary, HTML content is not usable in transformations
+which enable the control over content in the manner that an author should
+expect. Separating the content from the navigation using transformation
+sheets as filters is a possibility that enables the same kind of device
+independence as for style; however, this is a chimaera. There seems to be no
+complete device independency, since preliminary investigations demonstrate
+that you have to retain at least some concept of the elements in the generic
+document to be able to filter them properly (which also seems to be true for
+style - in narrating the content as the generic format, you have to have some
+awareness of the way the style will represent it, to ensure that it is not
+misrepresented).</p>
+
+<p>So far, we have identified four different models for creating content
+which is independent of the display device:</p>
+
+<p>Including all possible markup in the document. Such a document will not
+display on some types of terminals without filtering, since the diverse kinds
+of markup will be rejected. It may be used as a generic document for
+filtering out the appropriate representations, however.</p>
+
+<p>Example: (...) &lt;body&gt; &lt;card&gt; &lt;p&gt;Some text here&lt;/p&gt;
+&lt;/card&gt; (...)</p>
+
+<p>This assumes that the different types of markup are clearly separated.
+Since the names overlap for certain elements and attributes without their
+functions being the same, however, a variation of this using namespace is
+possibly a better solution:</p>
+
+<p>(...) &lt;html:body&gt; &lt;wml:card&gt; &lt;html:p&gt;&lt;wml:p&gt;Some
+text here&lt;/wml:p&gt;&lt;/html:p&gt; &lt;/wml:card&gt; (...)</p>
+
+<p>A third way is to use a navigation modeling language like <a
+href="http://www.w3.org/TR/xdnl/">XDNL</a>. This essentially enables the
+creation of a leaf structure of nodes within the document. However, it does
+not in itself enable the filtering out and reordering of sections or chunks
+of a document, which may be necessary to prepare the document for a different
+navigational model.</p>
+
+<p>Another way of handling the same problem is to use Xpointer, as described
+in the W3C Note "<a href="http://www.w3.org/TR/annot/">Annotation of Web
+content for transcoding</a>". The advantage of this method is that it enables
+the markup to point into the document; essentially, a WML markup could shadow
+the HTML markup. It is possible to create a markup (or at least navigational
+markup) that is separated from the document itself. The document need not
+change. However, it requires a separate mechanism to apply to the
+transformation process.</p>
+
+<p>Which of these models will be selected will most likely depend on the
+preferences and predilections of the author, his technical environment, the
+end-device to be primarily used, etc. It is quite possible that other models
+are also used.</p>
+
+<p>The important thing is not which model is used, but that the
+transformation system understands which model is used in the document so it
+either can apply the appropriate mechanisms or defer the transformation (if
+it does not have the appropriate mechanism implemented). This negotiation
+need to take place between the transcoding entity and the origin server. In
+the CC/PP working group, we have tried to separate these logical functions
+and define ways to enable CC/PP to be used in this negotiation too; one
+crucial part here is the use of document profiles, which enables the author
+to define her preferences for the transformation mechanisms to be used, and
+declare the encoding used in the document.</p>
+
+<p>To transform a document using XSLT, you need a transformation sheet that
+is specific to the transformation you want to achieve. Therefore, we will not
+give any examples in this document. However, it is relatively easy to use
+variables from an external document, such as the CC/PP profile, to select the
+transformations that will be done. Technically, this may be easier to do by
+having three style sheets, one that selects the elements, one that comprise
+all the transformations, and another that is the result of the application of
+the first style sheet to the second, and which will be the style sheet that
+is actually used in transforming the document.</p>
+
+<h3><a name="adapt-jigswa" id="adapt-jigswa"></a>
+3.2 Adaptation of Jigsaw 2.1.2 to JBuilder4</h3>
+
+<p>This section was submitted by Holger Blasum of the University of
+Munich.</p>
+
+<h4><a name="import-data" id="import-data"></a>3.2.1 Import the data</h4>
+
+<p>To enable recursive directory import the open tool AllRecursive is
+included in the $JBUILDER/lib/ext path. Then $JIGSAW is added (JBuilder
+Project/Add Folder Recursively) into the new project's root.</p>
+
+<h4><a name="chnage-pro" id="change-pro"></a>
+3.2.2 Change Project/Project Properties</h4>
+
+<p>In Project/Project Properties/Run/Application Parameters write "-root
+$JIGSAW/Jigsaw", adapt source path (JBuilder Project/Project
+Properties/Paths/Source) to $JIGSAW/src/classes and $JIGSAW/Jigsaw. All
+$JIGSAW/classes libraries must be configured for JBuilder (JBuilder Project
+Properties/Paths/Required Libraries). Also set in Project/Project
+Properties/Paths set the output path to $JIGSAW/src/classes and the working
+directory to $JIGSAW/Jigsaw.</p>
+
+<h4><a name="run-jigswa" id="run-jigswa"></a>
+3.2.3 Run the Jigsaw installation script</h4>
+
+<p>In Project/Project Properties/Run/Application/Main Class set the Main
+Class to "Install". In the Jigsaw/Install.java file outcomment the block in
+lines 137-143 (cache directory). Then run. After compiling 1100+ files
+"Installation complete with 0 errors" will be written to stdout. Run Jigsaw
+proper In Project/Project Properties/Run/Application/Main Class now reset the
+Main Class to "org.w3c.jigsaw.Main". Then run.</p>
+
+<h4><a name="adapt-jigswa-ccpp" id="adapt-jigswa-ccpp"></a>
+3.2.4 Adaptation of Jigsaw to serve CC/PP extensions</h4>
+
+<p>Unpack $JIGSAW/Jigsaw/config/jigadmin.zip. In frames.p append the line
+"org.w3c.jigsaw.ccpp.CCPPFrame=frame". Repack jigadmin.zip. Start
+$JIGSAW/jigadmin/</p>
+
+<h4><a name="use-http-server" id="use-http-server"></a>3.2.5 Use http-server.</h4>
+
+<p>In Indexers/default/extensions/Add Resource choose FileResource,
+identifier "ccpp". Click onto the new resource, select "Edit Resource",
+choose "Add Frame" and add a CCPPFrame. Commit. Press the "Save to disk" icon
+on the panel below "http-server".</p>
+
+<h4><a name="test-jigswa-ccpp" id="test-jigswa-ccpp"></a>
+3.2.6 Test Jigsaw's CC/PP capability</h4>
+
+<p>First, create a file with a ccpp extension (eg "test.ccpp", any content)
+in $JIGSAW/Jigsaw/WWW. Then write a CC/PP client. For example, this will do
+the job:</p>
+<pre>import java.net.*; import java.io.*;  </pre>
+<pre>public class CCPPClient {
+         public static void main (String [] args) throws IOException {
+          Socket socket = new Socket (InetAddress.getByName("localhost"), 8001);
+          try {
+                 System.out.println ("socket = " + socket);
+                 BufferedReader in = new BufferedReader (new InputStreamReader
+                         (socket.getInputStream()));
+                 PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter
+                         (socket.getOutputStream())), true);
+                  //CC/PP request
+                 out.println("M-GET /test2.myccpp HTTP/1.1");
+                 out.println("Host: localhost");
+                 out.println("C-Man: \"http://www.w3.org/TR/NOTE-CCPPexchange\";ns=1");
+                 out.println("1-Profile:");
+                 out.println("Connection: C-Man, 1-Profile");
+                 out.println("\n");
+                  //CC/PP response
+                 String str;
+                 while ((str = in.readLine()) != null)
+                         System.out.println(str);
+          } finally {
+                 System.out.println ("closing...");
+                 socket.close();
+         }
+         }
+ }
+ </pre>
+
+<p></p>
+
+<p>It may take a while till the indexer has registered the test.ccpp file
+(you can check the associated frames in the Docs space of the http-server).
+Sometimes creating new files and restarting the jigadmin tool may help to
+speed up.</p>
+
+<h2><a name="exist-ccpp-impl" id="exist-ccpp-impl"></a>
+4. Existing CC/PP Implementations</h2>
+
+<p>There are a number of CC/PP implementations to date. Below is a listing of
+those which have been reported to the working group. Unfortunately, not all
+are available outside the companies or products in which they are used, and
+sometimes they may be part of discontinued products. Describing their
+features is outside the scope of this document; the user is encouraged to
+look them up and find out more.</p>
+
+<p>In some cases, they have been discussed on the working group mailing list.
+W3C members are encouraged to find out more by browsing the archives.</p>
+
+<table border="1">
+  <caption></caption>
+  <tbody>
+    <tr>
+      <td><em>Name of implementation</em></td>
+      <td><em>Originator</em></td>
+      <td><em>URI</em></td>
+      <td><em>Reported to working group</em></td>
+      <td><em>Open Source</em></td>
+    </tr>
+    <tr>
+      <td>Musashi</td>
+      <td>Ericsson Wasalab</td>
+      <td><a
+        href="http://www.w3.org/Mobile/CCPP/implday/#demo1">http://www.w3.org/Mobile/CCPP/implday/#demo1</a></td>
+      <td>November 15, 2000</td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <td>WAP Application Server</td>
+      <td>Ericsson</td>
+      <td><a
+        href="http://www.w3.org/Mobile/CCPP/implday/#demo1">http://www.w3.org/Mobile/CCPP/implday/#demo1</a></td>
+      <td>November 15, 2000</td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <td>Panda/Sasa</td>
+      <td>Kiniko Yasuda, Keio University</td>
+      <td><a
+        href="http://yax.tom.sfc.keio.ac.jp/panda/slidemaker/0011ccpp/Overview.html">http://yax.tom.sfc.keio.ac.jp/panda/slidemaker/0011ccpp/Overview.html</a></td>
+      <td>November 15, 2001</td>
+      <td>Yes</td>
+    </tr>
+    <tr>
+      <td>SBC/TRI Reference implementation</td>
+      <td>SBC/TRI</td>
+      <td><a
+        href="http://www.w3.org/Mobile/CCPP/implday/#demo1">http://www.w3.org/Mobile/CCPP/implday/#demo1</a></td>
+      <td>November 15, 2001</td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <td>Information Architects</td>
+      <td>Chris Woodrow, Information Architects</td>
+      <td><a
+        href="http://www.w3.org/Mobile/CCPP/implday/#demo1">http://www.w3.org/Mobile/CCPP/implday/#demo1</a></td>
+      <td>November 15, 2001</td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <td>W3C</td>
+      <td>Jigsaw Team</td>
+      <td><a
+      href="http://www.w3.org/Jigsaw/">http://www.w3.org/Jigsaw/</a></td>
+      <td>Nov. 15, 2000</td>
+      <td>Yes</td>
+    </tr>
+    <tr>
+      <td>University of Wales</td>
+      <td>Stuart Lewis</td>
+      <td><a href="http://www.ccpp.co.uk/">http://www.ccpp.co.uk/</a>, <a
+        href="http://users.aber.ac.uk/sdl/ccpp/cs39030.html">http://users.aber.ac.uk/sdl/ccpp/cs39030.html</a></td>
+      <td>July 26, 2001</td>
+      <td>Maybe</td>
+    </tr>
+    <tr>
+      <td>DELI</td>
+      <td>Mark Butler, Hewlett Packard Laboratories</td>
+      <td><a
+        href="http://www-uk.hpl.hp.com/people/marbut/">http://www-uk.hpl.hp.com/people/marbut/</a></td>
+      <td>Nov. 2, 2001</td>
+      <td>Yes</td>
+    </tr>
+  </tbody>
+</table>
+
+<p></p>
+
+<h2><a name="ack" id="ack"></a>5. Acknowledgements</h2>
+
+<p>The indispensable contributions from the members of the CC/PP working
+group to this document is gratefully acknowledged by the editors. Other
+commentators may not always have been as helpful, but we would never have
+made it without them.</p>
+
+<h2><a name="ref" id="ref"></a>6. References</h2>
+
+<p>[UAPROF] WAP User Agent Profiling Specification,
+http://www1.wapforum.org/tech/terms.asp?doc=WAP-248-UAProf-20010530-p.pdf</p>
+
+<p>[RFC 2506] Holtman, K., Mutz, A., and T. Hardie, "Media Feature Tag
+Registration Procedure", BCP 31, RFC 2506, March 1999.</p>
+
+<p>[RFC3023] "XML Media Types", RFC3023,. M. Murata, S. St.Laurent, D. Kohn,
+January 2001.URL: ftp://ftp.isi.edu/in-notes/rfc3023.txt</p>
+
+<p>[Schmidt] "Implicit Human Computer Interaction Through Context", Albrecht
+Schmidt, Mobile 99 workshop at the Interact 99 conference, Edinburgh,
+Scotland. <a
+href="http://www.dcs.gla.ac.uk/~mark/research/workshops/mobile99/papers/schmidt.ps">http://www.dcs.gla.ac.uk/~mark/research/workshops/mobile99/papers/schmidt.ps</a></p>
+
+<h2><a name="app" id="app"></a>7. Appendix</h2>
+
+<h3><a name="app-fipa" id="app-fipa"></a>A. Schema for FIPA</h3>
+
+<p>The FIPA has not defined an RDF schema, but uses the namespace tied to the
+URI http://www.fipa.org/profiles/device-20010202#. The schema in that
+location corresponds to the ontology presented in the specification.</p>
+
+<h3><a name="app-wap" id="app-wap"></a>B. Schema for WAP WAG UAPROF</h3>
+
+<p>A schema for the WAG UAPROF vocabulary is contained in the WAG UAPROF
+specification, available at
+http://www1.wapforum.org/tech/terms.asp?doc=WAP-174-UAProf-19991110-a.pdf</p>
+
+<h3><a name="app-syncml" id="app-syncml"></a>C. Schema for SyncML</h3>
+
+<!--
+<p>Note: This schema is available in machine readable form at
+http://www.w3.org/TR/2001/2001-08-31-NOTE-CCPP-COORDINATION-SynchML.rdfs</p>
+-->
+<pre>&lt;?xml version="1.0"?&gt;
+ &lt;rdf:RDF
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xmlns:sync="http://www.syncml.org/docs/syncml_devinf_v101_20010615#"&gt;
+&lt;rdf:Description rdf:ID="Component"&gt;
+&lt;rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/&gt;
+&lt;rdfs:subClassOf rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/&gt;
+&lt;rdfs:label&gt;component&lt;/rdfs:label&gt;
+&lt;/rdf:Description&gt;
+&lt;rdf:Description rdf:ID="component"&gt;
+&lt;rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Property"/&gt;
+&lt;rdfs:label&gt;component&lt;/rdfs:label&gt;
+    &lt;rdfs:comment&gt;
+      The component attribute links the various components to the root node (profile).
+    &lt;/rdfs:comment&gt;
+&lt;/rdf:Description&gt;
+&lt;rdf:Description rdf:ID="defaults"&gt;
+&lt;rdfs:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Property"/&gt;
+&lt;rdfs:domain rdf:resource="#DevInf"/&gt;
+&lt;rdfs:domain rdf:resource="#DataStore"/&gt;
+&lt;rdfs:domain rdf:resource="#CTCap"/&gt;
+&lt;/rdf:Description&gt;
+&lt;rdf:Description rdf:ID="DevInf"&gt;
+&lt;rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/&gt;
+&lt;rdfs:subClassOf
+ rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/&gt;
+&lt;rdfs:label&gt;DevInf&lt;/rdfs:label&gt;
+&lt;rdfs:comment&gt;
+ Attributes: VerDTD, Man?, Mod?, OEM?, FwV?, SwV?, HwV?, DevID, DevTyp, DataStore+, CTCap*, Ext* (for an explanation of the modifiers and allowed values, see the specification at http://www.syncml.org/docs/spec1-0-1.zip)
+&lt;/rdfs:comment&gt;
+&lt;/rdf:Description&gt;    
+&lt;rdf:Description rdf:ID="VerDTD"&gt;   
+&lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt; 
+&lt;rdfs:domain rdf:resource="#DevInf"/&gt;
+&lt;/rdf:Description&gt;   
+&lt;rdf:Description rdf:ID="Man"&gt; 
+&lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt;
+&lt;rdfs:domain rdf:resource="#DevInf"/&gt;
+&lt;/rdf:Description&gt;
+&lt;rdf:Description rdf:ID="Mod"&gt; 
+&lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt;
+&lt;rdfs:domain rdf:resource="#DevInf"/&gt;
+&lt;/rdf:Description&gt;   
+&lt;rdf:Description rdf:ID="OEM"&gt;  
+&lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt; 
+&lt;rdfs:domain rdf:resource="#DevInf"/&gt;
+&lt;/rdf:Description&gt;    
+&lt;rdf:Description rdf:ID="FwV"&gt;  
+&lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt; 
+&lt;rdfs:domain rdf:resource="#DevInf"/&gt;
+&lt;/rdf:Description&gt; 
+&lt;rdf:Description rdf:ID="SwV"&gt;
+&lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt; 
+&lt;rdfs:domain rdf:resource="#DevInf"/&gt;
+&lt;/rdf:Description&gt;   
+&lt;rdf:Description rdf:ID="HwV"&gt;  
+&lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt;  
+&lt;rdfs:domain rdf:resource="#DevInf"/&gt;
+&lt;/rdf:Description&gt;
+&lt;rdf:Description rdf:ID="DevID"&gt;   
+&lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt;  
+&lt;rdfs:domain rdf:resource="#DevInf"/&gt;
+&lt;/rdf:Description&gt;    
+&lt;rdf:Description rdf:ID="DevTyp"&gt; 
+&lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt; 
+&lt;rdfs:domain rdf:resource="#DevInf"/&gt;
+&lt;/rdf:Description&gt;    
+&lt;rdf:Description rdf:ID="DataStore"&gt;
+&lt;rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/&gt;
+&lt;rdfs:domain rdf:resource="#DevInf"/&gt;
+&lt;rdfs:subClassOf rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/&gt;
+&lt;rdfs:label&gt;DataStore&lt;/rdfs:label&gt;
+&lt;rdfs:comment&gt; 
+Attributes: SourceRef, DisplayName?, MaxGUIDSize?, Rx-Pref, Rx*, Tx-Pref, Tx*, DSMem?, SyncCap
+(for an explanation of the modifiers and allowed values, see the specification at http://www.syncml.org/docs/spec1-0-1.zip)
+&lt;/rdfs:comment&gt;
+&lt;/rdf:Description&gt;   
+&lt;rdf:Description rdf:ID="SourceRef"&gt;   
+&lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt; 
+&lt;rdfs:domain rdf:resource="#DataStore"/&gt;
+&lt;/rdf:Description&gt;   
+&lt;rdf:Description rdf:ID="DisplayName"&gt;
+&lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt; 
+&lt;rdfs:domain rdf:resource="#DataStore"/&gt;
+&lt;rdfs:domain rdf:resource="#CtCap"/&gt;
+&lt;/rdf:Description&gt; 
+&lt;rdf:Description rdf:ID="MaxGUIDSize"&gt; 
+&lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt; 
+&lt;rdfs:domain rdf:resource="#DataStore"/&gt;
+&lt;/rdf:Description&gt;   
+&lt;rdf:Description rdf:ID="Rx-Pref"&gt; 
+&lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt;
+&lt;rdfs:domain rdf:resource="#DataStore"/&gt;
+&lt;/rdf:Description&gt;    
+&lt;rdf:Description rdf:ID="Rx"&gt;
+&lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt;
+&lt;rdfs:domain rdf:resource="#DataStore"/&gt;
+&lt;/rdf:Description&gt; 
+&lt;rdf:Description rdf:ID="Tx-Pref"&gt;  
+&lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt;
+&lt;rdfs:domain rdf:resource="#DataStore"/&gt;
+&lt;/rdf:Description&gt;   
+&lt;rdf:Description rdf:ID="Tx"&gt;   
+&lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt; 
+&lt;rdfs:domain rdf:resource="#DataStore"/&gt;
+&lt;/rdf:Description&gt;
+&lt;rdf:Description rdf:ID="DSMem"&gt;
+&lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt;
+&lt;rdfs:domain rdf:resource="#DataStore"/&gt;
+&lt;/rdf:Description&gt;   
+&lt;rdf:Description rdf:ID="CTCap"&gt;
+&lt;rdf:type rdf:resource="http://www.w3.org/2000/01/rdf-schema#Class"/&gt;
+&lt;rdfs:domain rdf:resource="#DevInf"/&gt;
+&lt;rdfs:subClassOf rdf:resource="http://www.w3.org/2000/01/rdf-schema#Resource"/&gt;
+&lt;rdfs:label&gt;CTCap&lt;/rdfs:label&gt;
+&lt;rdfs:comment&gt;
+Attributes: ((CTType, (PropName, (ValEnum+ | (DataType, Size?))?,DisplayName?, (ParamName, (ValEnum+ | (DataType, Size?))?,DisplayName?)*)+)+)
+(for an explanation of the modifiers and allowed values, see the specification at http://www.syncml.org/docs/spec1-0-1.zip)
+&lt;/rdfs:comment&gt;
+&lt;/rdf:Description&gt;
+&lt;rdf:Description rdf:ID="CTType"&gt;  
+&lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt; 
+&lt;rdfs:domain rdf:resource="#CTCap"/&gt;
+&lt;rdfs:domain rdf:resource="#Rx"/&gt;
+&lt;rdfs:domain rdf:resource="#Rx-Pref"/&gt;
+&lt;rdfs:domain rdf:resource="#Tx"/&gt;
+&lt;rdfs:domain rdf:resource="#Tx-Pref"/&gt;
+&lt;/rdf:Description&gt; 
+&lt;rdf:Description rdf:ID="DataType"&gt;
+&lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt;
+&lt;rdfs:domain rdf:resource="#CTCap"/&gt;
+&lt;/rdf:Description&gt;
+&lt;rdf:Description rdf:ID="Size"&gt;
+&lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt;
+&lt;rdfs:domain rdf:resource="#CTCap"/&gt;
+&lt;/rdf:Description&gt;
+&lt;rdf:Description rdf:ID="PropName"&gt;
+&lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt;
+&lt;rdfs:domain rdf:resource="#CTCap"/&gt;
+&lt;/rdf:Description&gt;
+&lt;rdf:Description rdf:ID="ValEnum"&gt;
+&lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt; 
+&lt;rdfs:domain rdf:resource="#CTCap"/&gt;
+&lt;/rdf:Description&gt; 
+&lt;rdf:Description rdf:ID="ParamName"&gt;   
+&lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt;
+&lt;rdfs:domain rdf:resource="#CTCap"/&gt;
+&lt;/rdf:Description&gt;   
+&lt;rdf:Description rdf:ID="SyncCap"&gt;   
+&lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt; 
+&lt;rdfs:domain rdf:resource="#DataStore"/&gt;
+&lt;/rdf:Description&gt;    
+&lt;rdf:Description rdf:ID="Ext"&gt;  
+&lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt; 
+&lt;rdfs:domain rdf:resource="#DevInf"/&gt;
+&lt;/rdf:Description&gt;    
+&lt;rdf:Description rdf:ID="XNam"&gt;  
+&lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt; 
+&lt;rdfs:domain rdf:resource="#Ext"/&gt;
+&lt;/rdf:Description&gt;    
+&lt;rdf:Description rdf:ID="XVal"&gt; 
+&lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt; 
+&lt;rdfs:domain rdf:resource="#Ext"/&gt;
+&lt;/rdf:Description&gt;    
+&lt;rdf:Description rdf:ID="MaxMem"&gt;  
+&lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt; 
+&lt;rdfs:domain rdf:resource="#DsMem"/&gt;
+&lt;/rdf:Description&gt; 
+&lt;rdf:Description rdf:ID="MaxID"&gt;   
+&lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt;  
+&lt;rdfs:domain rdf:resource="#DsMem"/&gt;
+&lt;/rdf:Description&gt;  
+&lt;rdf:Description rdf:ID="VerCT"&gt;   
+&lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt;
+&lt;rdfs:domain rdf:resource="#Rx"/&gt;
+&lt;rdfs:domain rdf:resource="#Rx-Pref"/&gt;
+&lt;rdfs:domain rdf:resource="#Tx"/&gt;
+&lt;rdfs:domain rdf:resource="#Tx-Pref"/&gt; 
+&lt;/rdf:Description&gt;
+&lt;rdf:Description rdf:ID="SyncType"&gt;   
+&lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt;  
+&lt;rdfs:domain rdf:resource="#SyncCap"/&gt;
+&lt;/rdf:Description&gt;   
+&lt;/rdf:RDF&gt;</pre>
+
+<h3><a name="app-weather" id="weather"></a>D. Schema for weather</h3>
+<pre>&lt;?xml version="1.0"?&gt;
+&lt;rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"&gt;
+  &lt;rdf:Description rdf:ID="Date"&gt;
+  &lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt;
+  &lt;/rdf:Description&gt;
+  &lt;rdf:Description rdf:ID="Area"&gt;
+  &lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt;
+  &lt;/rdf:Description&gt;
+  &lt;rdf:Description rdf:ID="Situation"&gt;
+  &lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt;
+  &lt;/rdf:Description&gt; 
+  &lt;rdf:Description rdf:ID="Temperature"&gt;
+  &lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt;
+  &lt;/rdf:Description&gt;
+  &lt;rdf:Description rdf:ID="Wind_speed"&gt;
+  &lt;rdf:type rdf:resource="http://www.w3.org/TR/PR-rdf-syntax#Property" /&gt;
+ &lt;/rdf:Description&gt;
+&lt;/rdf:RDF&gt;</pre>
+
+<h3><a name="footnote" id="footnote"></a>Footnotes</h3>
+
+<p><a name="Footnote1" ID="Footnote1">1:</a> The chair of the CONNEG group
+and the principal editor have been members of the CC/PP working group during
+its existence, and have actively contributed to the work.</p>
+
+<hr>
+<p>
+<a href="http://validator.w3.org/check/referer"><img border="0"
+     src="http://www.w3.org/Icons/valid-html401"
+     alt="Valid HTML 4.01!" height="31" width="88"></a>
+<a href="http://www.w3.org/Style/CSS/Buttons/"><img
+src="/Style/CSS/Buttons/mwcos" 
+alt="Made with CSS" border="0" width="88" height="31" /></a></p>
+</body>
+</html>
+
+

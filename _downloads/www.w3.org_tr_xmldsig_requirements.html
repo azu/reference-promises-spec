@@ -1,0 +1,504 @@
+<!-- http://www.w3.org/TR/xmldsig-requirements -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/REC-html401/loose.dtd">
+<html>
+<head>
+  <title>XML-Signature Requirements</title>
+  <link rel="stylesheet" type="text/css" media="screen"
+  href="http://www.w3.org/StyleSheets/TR/W3C-WD.css">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+
+<div class="head">
+<p><a href="http://www.ietf.org"><img
+src="http://ietf.org/images/ietflogo2e.gif" alt="IETF Logo" border="0"
+height="48" width="92"></a> <a href="http://www.w3.org/"><img height="48"
+width="72" alt="W3C" src="http://www.w3.org/Icons/w3c_home"></a></p>
+
+<h1 class="notoc">XML-Signature Requirements</h1>
+
+<h2 class="notoc">W3C Working Draft 14-October-1999</h2>
+<dl>
+  <dt>This TR version:</dt>
+    <dd><a
+      href="http://www.w3.org/TR/1999/WD-xmldsig-requirements-19991014.html">http://www.w3.org/TR/1999/WD-xmldsig-requirements-19991014</a>
+      [<a
+      href="http://www.w3.org/TR/1999/draft-ietf-xmldsig-requirements-02">text</a>]</dd>
+    <dd><a
+      href="http://www.ietf.org/rfc/rfc2807.txt">http://www.ietf.org/rfc/rfc2807.txt</a></dd>
+  <dt>Latest version:</dt>
+    <dd><a
+      href="http://www.w3.org/TR/xmldsig-requirements">http://www.w3.org/TR/xmldsig-requirements</a></dd>
+  <dt>Previous TR version:</dt>
+    <dd><a
+      href="http://www.w3.org/1999/08/WD-xmldsig-requirements-990820.html">http://www.w3.org/1999/08/WD-xmldsig-requirements-990820</a></dd>
+    <dd>http://www.ietf.org/internet-drafts/draft-ietf-xmldsig-requirements-01.txt</dd>
+  <dt>Editor(s):</dt>
+    <dd><a href="http://www.w3.org/People/Reagle">Joseph Reagle</a> Jr. &lt;<a
+      href="mailto:reagle@w3.org">reagle@w3.org</a>&gt;</dd>
+</dl>
+
+<p class="copyright"><a
+href="http://www.w3.org/Consortium/Legal/ipr-notice.html#Copyright">Copyright</a>���1999
+<a href="http://www.ietf.org">The Internet Society</a> &amp; <a
+href="http://www.w3.org">W3C</a> (<a href="http://www.lcs.mit.edu">MIT</a>, <a
+href="http://www.inria.fr/">INRIA</a>, <a
+href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C <a
+href="http://www.w3.org/Consortium/Legal/ipr-notice.html#LegalDisclaimer">liability</a>,
+<a
+href="http://www.w3.org/Consortium/Legal/ipr-notice.html#W3CTrademarks">trademark</a>,
+<a href="http://www.w3.org/Consortium/Legal/copyright-documents.html">document
+use</a> and <a
+href="http://www.w3.org/Consortium/Legal/copyright-software.html">software
+licensing</a> rules apply.</p>
+<hr title="Separator from Header">
+</div>
+
+<h2 class="notoc"><a name="abstract">Abstract</a></h2>
+
+<p>This document lists the design principles, scope, and requirements for the
+XML Digital Signature specification. It includes requirements as they relate
+to the signature syntax, data model, format, cryptographic processing, and
+external requirements and coordination.</p>
+
+<h2 class="notoc"><a name="status">Status of this document</a></h2>
+
+<p class="status">This Working Draft of XML Signature Requirements is a very
+stable result of this Working Draft having been advanced through W3C Last
+Call. Relatively small changes have been made to clarify the stated
+requirements during that period. This document will now be advanced as an IETF
+Informational RFC.</p>
+
+<p>Please send comments to the editor &lt;<a
+href="mailto:reagle@w3.org">reagle@w3.org</a>&gt; and cc: the list &lt;<a
+href="mailto:w3c-ietf-xmldsig@w3.org">w3c-ietf-xmldsig@w3.org</a>&gt;.
+Publication as a Working Draft does not imply endorsement by the W3C
+membership. This is a draft document and may be updated, replaced or obsoleted
+by other documents at any time. It is inappropriate to cite W3C Drafts as
+other than "work in progress". A list of current W3C working drafts can be
+found at <a href="http://www.w3.org/TR">http://www.w3.org/TR</a></p>
+
+<div class="toc">
+<h2 class="notoc"><a name="toc">Table of Contents</a></h2>
+<ul class="toc">
+  <li class="tocline2"><a href="#intro" class="tocxref">1.
+  Introduction</a></li>
+  <li class="tocline2"><a href="#design-principles-scope" class="tocxref">2.
+    Design Principles and Scope</a></li>
+  <li class="tocline2"><a href="#requirements" class="tocxref">3.
+    Requirements</a>
+    <ul class="toc">
+      <li class="tocline3"><a href="#Model" class="tocxref">3.1. Signature
+        Data Model and Syntax</a></li>
+      <li class="tocline3"><a href="#Format" class="tocxref">3.2.
+      Format</a></li>
+      <li class="tocline3"><a href="#Cryptography" class="tocxref">3.3.
+        Cryptography and Processing</a></li>
+      <li class="tocline3"><a href="#Coordination" class="tocxref">3.4
+        Coordination</a></li>
+    </ul>
+  </li>
+  <li class="tocline2"><a href="#references" class="tocxref">4.
+  References</a></li>
+</ul>
+</div>
+
+<div class="div1">
+<h2>1. <a name="intro">Introduction</a></h2>
+
+<p>The XML 1.0 Recommendation [<a href="#XML">XML</a>] describes the syntax of
+a class of data objects called XML documents. The mission of this working
+group is to develop a XML syntax used for representing signatures on digital
+content and procedures for computing and verifying such signatures. Signatures
+will provide data integrity, authentication, and/or non-repudiatability.</p>
+
+<p>This document lists the design principles, scope, and requirements over
+three things: (1) the scope of work available to the WG, (2)� the XML
+signature specification, and (3) applications that implement the
+specification. It includes requirements as they relate to the signature
+syntax, data model, format, cryptographic processing, and external
+requirements and coordination. Those things that are required are designated
+as "must," those things that are optional are designated by "may," those
+things that are optional but recommended are designated as "should."</p>
+</div>
+
+<div class="div1">
+<h2>2. <a name="design-principles-scope">Design Principles and Scope</a></h2>
+<ol>
+  <li>The specification must describe how to sign digital content, and XML
+    content in particular. The XML syntax used to represent a signature (over
+    any content) is described as an XML-signature. [Charter]</li>
+  <li>XML-signatures are generated from a hash over the canonical form of a
+    signature manifest. (In this document we use the term manifest to mean a
+    collection of references to the objects being signed. The specifications
+    may use the terms manifest, package or other terms differently from this
+    document while still meeting this requirement.) The manifest must support
+    references to Web resources, the hash of the resource content (or its
+    canonicalized form), and (optionally) the resource content type. [Brown,
+    List(<a
+    href="http://lists.w3.org/Archives/Public/w3c-ietf-xmldsig/1999AprJun/0048.html">Solo</a>)]
+    Web resources are defined as any digital content that can be addressed
+    using the syntax of <a
+    href="http://www.w3.org/TR/1998/WD-xlink-19980303#addressing">XLink
+    locator</a> [XLink]).</li>
+  <li>The meaning of a signature is simple:� The XML-signature syntax
+    associates the content of resources listed in a manifest with a key via a
+    strong one-way transformation.
+    <ol>
+      <li>The XML-signature syntax must be extensible such that it can support
+        arbitrary application/trust semantics and assertion capabilities --
+        that can also be signed. [Charter(<a
+        href="http://www.w3.org/1999/05/XML-DSig-charter-990521.html#_Scope">Requirement1&amp;4</a>),
+        List(<a
+        href="http://lists.w3.org/Archives/Public/w3c-ietf-xmldsig/1999AprJun/0057.html">Bugbee</a>,
+        <a
+        href="http://lists.w3.org/Archives/Public/w3c-ietf-xmldsig/1999AprJun/0048.html">Solo</a>)]</li>
+      <li>The WG is not chartered to specify trust semantics, but syntax and
+        processing rules necessary for communicating signature validity
+        (authenticity, integrity and non-repudiation).� [Charter(<a
+        href="http://www.w3.org/1999/05/XML-DSig-charter-990521.html#_Scope">Requirement1</a>)]
+        At the Chairs' discretion and in order to test the extensibility of
+        the syntax, the WG may produce non-critical-path proposals defining
+        common semantics (e.g., manifest, package, timestamps, endorsement,
+        etc.) relevant to signed assertions about Web resources in a schema
+        definition [<a href="http://www.w3.org/XML">XML</a>, <a
+        href="#RDF">RDF</a>] or link type definition [<a
+        href="#xlink">XLink</a>].</li>
+    </ol>
+    <p class="comment">Comment: A more formal definition of a signed resource
+    is below. The notation is "definition(inputs):constraints" where
+    definition evaluates as true for the given inputs and specified
+    constraints.<br>
+    <br>
+    signed-resource(URI-of-resource, content, key, signature): (there was some
+    protocol message at a specific time such that "GET(URI-of-resource) =
+    content") AND (sign-doc(content, key, sig))<br>
+    <br>
+    sign-doc(content, key, signature): signature is the value of a strong
+    one-way transformation over content and key that yields content
+    integrity/validity and/or key non-repudiability</p>
+  </li>
+  <li>The specification must not specify methods of confidentiality though the
+    Working Group may report on the feasibility of such work in a future or
+    rechartered activity. [List(<a
+    href="http://lists.w3.org/Archives/Public/w3c-ietf-xmldsig/1999AprJun/0057.html">Bugbee</a>)]</li>
+  <li>The specification must only require the provision of key information
+    essential to checking the validity of the cryptographic signature. For
+    instance, identity and key recovery information might be of interest to
+    particular applications, but they are not within the class of required
+    information defined in this specification. [List(Reagle)]</li>
+  <li>The specification must define or reference <strong>at least one</strong>
+    method of canonicalizing and hashing the signature syntax (i.e., the
+    manifest and signature blocks). [Oslo] The specification must not specify
+    methods of canonicalizing resource content [Charter], though it may
+    specify security requirements over such methods. [Oslo] Such content is
+    normalized by specifying an appropriate content C14N (canonicalization)
+    algorithm [DOMHASH, XML-C14N]. Applications are expected to normalize
+    application specific semantics prior to handing data to a XML-signature
+    application or specify the necessary transformations for this process
+    within the signature.� [Charter]</li>
+  <li>XML-signature applications must be conformant with the specifications as
+    follows:
+    <ol>
+      <li>XML-namespaces [XML-namespaces] within its own signature syntax.
+        Applications may choose C14N algorithms which do or do not process
+        namespaces within XML content. For instance, some C14N algorithms may
+        opt to remove all namespace declarations, others may rewrite namespace
+        declarations to provide for context independent declarations within
+        every element.</li>
+      <li>XLink [Xlink] within its own signature syntax. For any resource
+        identification beyond simple URIs (without fragment IDs) or
+        fragmentIDs, applications must use XLink locators to reference signed
+        resources. Signature applications must not embed or expand XLink
+        references in signed content, though applications may choose C14N
+        algorithms which provide this feature.</li>
+      <li>XML-Pointers [XPointer] within its own signature syntax. If
+        applications reference/select parts of XML documents, they must use
+        XML-Pointer within an XLink locator.� [WS-list(<a
+        href="http://lists.w3.org/Archives/Public/w3c-xml-sig-ws/1999May/0000.html">1</a>)]</li>
+    </ol>
+    <p>The WG may specify security requirements that constrain the operation
+    of these dependencies to ensure consistent and secure signature generation
+    and operation. [Oslo]</p>
+  </li>
+  <li>XML-signatures must be developed as part of the broader Web design
+    philosophy of decentralization, URIs, Web data,
+    modularity/layering/extensibility, and assertions as statements about
+    statements. [Berners-Lee, WebData] In this context, existing cryptographic
+    provider (and infrastructure) primitives should be taken advantage of.
+    [List(<a
+    href="http://lists.w3.org/Archives/Public/w3c-ietf-xmldsig/1999AprJun/0033.html">Solo</a>)]</li>
+</ol>
+</div>
+
+<div class="div1">
+<h2>3. <a name="requirements">Requirements</a></h2>
+
+<h3>3.1 Signature Data <a name="Model">Model</a> and Syntax</h3>
+<ol>
+  <li>XML-signature data structures must be based on the RDF data model [RDF]
+    but need not use the RDF serialization syntax. [Charter]</li>
+  <li>XML-signatures apply to any resource addressable by a <a
+    href="http://www.w3.org/TR/1998/WD-xlink-19980303#addressing">locator</a>
+    -- including non-XML content. XML-signature referents are identified with
+    XML locators (URIs or fragments) within the manifest that refer to
+    external or internal resources (i.e., network accessible or within the
+    same XML document/package). [Berners-Lee, Brown, List(<a
+    href="http://lists.w3.org/Archives/Public/w3c-ietf-xmldsig/1999AprJun/0019.html">Vincent</a>),
+    WS, XFDL]</li>
+  <li>XML-signatures must be able to apply to�a part or totality of a XML
+    document.� [Charter, Brown]
+    <p class="comment">Comment: A related requirement under consideration is
+    requiring the specification to support the ability to indicate those
+    portions of a document one signs via exclusion of those portions one does
+    not wish to sign. This feature allows one to create signatures that have
+    document closure [List(Boyer(<a
+    href="http://lists.w3.org/Archives/Public/w3c-ietf-xmldsig/1999JulSep/0334.html">1</a>)],
+    retain ancestor information, and retain element order of non-continuous
+    regions that must be signed. We are considering implementing this
+    requirement via (1) a special <code>&lt;dsig:exclude&gt;</code> element,
+    (2) an exclude list accompanying the resource locator, or (3) the
+    XML-Fragment or XPointer specifications -- or a requested change to those
+    specifications if the functionality is not available. See List(Boyer(<a
+    href="http://lists.w3.org/Archives/Public/w3c-ietf-xmldsig/1999JulSep/0168.html">1</a>,<a
+    href="http://lists.w3.org/Archives/Public/w3c-ietf-xmldsig/1999JulSep/0188.html">2</a>))
+    for further discussion of this issue.</p>
+  </li>
+  <li>Multiple XML-signatures must be able to exist over the static content of
+    a Web resource given varied keys, content transormations, and algorithm
+    specifications (signature, hash, canonicalization, etc.). [Charter,
+  Brown]</li>
+  <li>XML-signatures are first class objects themselves and consequently must
+    be able to be referenced and signed. [Berners-Lee]</li>
+  <li class="discuss">The specification must permit the use of varied digital
+    signature and message authentication codes, such as symmetric and
+    asymmetric authentication schemes as well as dynamic agreement of keying
+    material. [Brown] Resource or algorithm identifier are a first class
+    objects, and must be addressable by a URI. [Berners-Lee]</li>
+  <li>XML-signatures must be able to apply to the original version of an
+    included/encoded resource. [WS-list (<a
+    href="http://lists.w3.org/Archives/Public/w3c-xml-sig-ws/1999Apr/0041.html">Brown/Himes</a>)]</li>
+</ol>
+
+<h3>3.2 <a name="Format">Format</a></h3>
+<ol>
+  <li>An XML-signature must be an XML element (as defined by <a
+    href="http://www.w3.org/TR/REC-xml#NT-element">production 39</a> of the
+    XML1.0 specification. [XML])</li>
+  <li class="discuss">When XML signatures are placed within a document the
+    operation must preserve�(1) the document's root element tag as root and
+    (2) the root's descendancy tree except for the addition of signature
+    element(s) in places permitted by the document's content model. For
+    example, an XML form, when signed, should still be recognizable as a XML
+    form to its application after it has been signed. [WS-summary]</li>
+  <li>XML-signature must provide a mechanism that facilitates the production
+    of composite documents -- by addition or deletion --� while preserving the
+    signature characteristics (integrity, authentication, and
+    non-repudiatability) of the consituent parts. [Charter, Brown, List(<a
+    href="http://lists.w3.org/Archives/Public/w3c-ietf-xmldsig/1999AprJun/0057.html">Bugbee</a>)]</li>
+  <li>An important use of XML-signatures will be detached Web signatures.
+    However, signatures may be embedded within or encapsulate XML or encoded
+    content. [Charter] This WG must specify a simple method of packaging and
+    encapsulation if no W3C Recommendation is available.</li>
+</ol>
+
+<h3>3.3 <a name="Cryptography">Cryptography</a> and <a
+name="Processing">Processing</a></h3>
+<ol>
+  <li>The specification must permit arbitrary cryptographic signature and
+    message authentication algorithms, symmetric and asymmetric authentication
+    schemes, and key agreement methods. [Brown]</li>
+  <li>The specification must specify at least one mandatory to implement
+    signature canonicalization, content canonicalization, hash, and signature
+    algorithm.</li>
+  <li class="discuss">In the event of redundant attributes within the XML
+    Signature syntax and�relevant cryptographic blobs, XML Signature
+    applications prefer the XML Signature semantics.
+    <p class="comment">Comment: Another possibility is that an error should be
+    generated, however it isn't where a conflict will be flagged between the
+    various function and application layers regardless.</p>
+  </li>
+  <li>The signature design and specification text must not permit implementers
+    to erroneously build weak implementations susceptible to common security
+    weaknesses (such as as downgrade or algorithm substitution attacks).</li>
+</ol>
+
+<h3>3.4 <a name="Coordination">Coordination</a></h3>
+<ol>
+  <li>The XML Signature specification should meet the requirements of the
+    following applications:
+    <ol>
+      <li>Internet Open Trading Protocol v1.0 [IOTP]</li>
+      <li>Financial Services Mark Up Language v2.0 [Charter]</li>
+      <li>At least one forms application [XFA, XFDL]</li>
+    </ol>
+  </li>
+  <li>To ensure that all requirements within this document are adequately
+    addressed, the XML Signature specification must be reviewed by a
+    designated member of the following communities:
+    <ol>
+      <li>XML Syntax Working Group: canonicalization dependencies.
+      [Charter]</li>
+      <li>XML Linking Working Group: signature referants. [Charter]</li>
+      <li>XML Schema Working Group: signature schema design. [Charter]</li>
+      <li>Metadata Coordination Group: data model design. [Charter]</li>
+      <li>W3C Internationalization Interest Group:� [AC Review]</li>
+      <li class="discuss">XML Package Working Group: signed content in/over
+        packages.</li>
+      <li class="discuss">XML Fragment Working Group: signing portions of XML
+        content.</li>
+    </ol>
+    <p class="comment">Comment: Members of the WG are very interested in
+    signing and processing XML fragments and packaged components. Boyer
+    asserts that [XML-fragment] does not "identify non-contiguous portions of
+    a document in such a way that the relative positions of the connected
+    components is preserved." Packaging is a capability critical to
+    XML-Signature applications, but it is clearly dependent on clear
+    trust/semantic definitions, package application requirements, and even
+    cache-like application requirements. It is not clear how this work will be
+    addressed.</p>
+  </li>
+</ol>
+</div>
+
+<div class="div1">
+<h2>4. <a name="references">References</a></h2>
+<dl>
+  <dt><a name="AC">AC</a> Review</dt>
+    <dd>Misha Wolf. "The Charter should include the I18N WG in the section on
+      'Coordination with Other Groups.'"</dd>
+    <dd><a
+      href="http://lists.w3.org/Archives/Team/xml-dsig-review/1999May/0007.html"><code>http://lists.w3.org/Archives/Team/xml-dsig-review/1999May/0007.html</code></a></dd>
+  <dt><a name="BL">Berners-Lee</a></dt>
+    <dd><a href="http://www.w3.org/DesignIssues/Axioms.html"><i>Axioms of Web
+      Architecture: URIs.</i></a><br>
+      <a
+      href="http://www.w3.org/DesignIssues/Axioms.html"><code>http://www.w3.org/DesignIssues/Axioms.html</code></a>
+      <br>
+      <em><a href="http://www.w3.org/DesignIssues/Architecture.html">Web
+      Architecture from 50,000 feet</a> </em><br>
+      <code><a
+      href="http://www.w3.org/DesignIssues/Architecture.html">http://www.w3.org/DesignIssues/Architecture.html</a></code></dd>
+  <dt><a name="BL">Brown</a>-XML-DSig</dt>
+    <dd><a
+      href="http://search.ietf.org/internet-drafts/draft-ietf-xmldsig-signature-00.txt">Internet
+      Draft. <i>Digital Signatures for XML</i></a><br>
+      <code><a
+      href="http://search.ietf.org/internet-drafts/draft-ietf-xmldsig-signature-00.txt">http://search.ietf.org/internet-drafts/draft-ietf-xmldsig-signature-00.txt</a></code></dd>
+  <dt><a name="Charter">Charter</a></dt>
+    <dd><a href="http://www.w3.org/1999/05/XML-DSig-charter-990521.html">XML
+      Signature (xmldsig) Charter.</a><br>
+      <code><a
+      href="http://www.w3.org/1999/05/XML-DSig-charter-990521.html">http://www.w3.org/1999/05/XML-DSig-charter-990521.html</a></code></dd>
+  <dt><a name="DOMHASH">DOMHASH</a></dt>
+    <dd>Internet Draft. <i>Digest Values for DOM (DOMHASH)</i><br>
+      <code>http://search.ietf.org/internet-drafts/draft-hiroshi-dom-hash-01.txt</code></dd>
+  <dt><a name="FSML">FSML</a></dt>
+    <dd><a href="http://www.echeck.org/library/ref/fsml-v1500a.pdf">FSML 1.5
+      Reference Specification</a>���</dd>
+    <dd><a
+      href="http://www.echeck.org/library/ref/fsml-v1500a.pdf"><code>http://www.echeck.org/library/ref/fsml-v1500a.pdf</code></a></dd>
+  <dt>Infoset-Req</dt>
+    <dd><a
+      href="http://www.w3.org/TR/1999/NOTE-xml-infoset-req-19990218.html"><i>XML
+      Information Set Requirements Note.</i></a><br>
+      <a
+      href="http://www.w3.org/TR/1999/NOTE-xml-infoset-req-19990218.html"><code>http://www.w3.org/TR/1999/NOTE-xml-infoset-req-19990218.html</code></a></dd>
+  <dt><a name="IOTP">IOTP</a></dt>
+    <dd>Internet Open Trading Protocol v1.0</dd>
+    <dd><code>http://www.ietf.org/internet-drafts/draft-ietf-trade-iotp-v1.0-protocol-04.txt</code></dd>
+  <dt><a name="IOTP-DSig">IOTP-DSig</a></dt>
+    <dd>Internet Draft. <i>Digital Signatures for the Internet Open Trading
+      Protocol</i></dd>
+    <dd><code>http://www.ietf.org/internet-drafts/draft-ietf-trade-iotp-v1.0-dsig-00.txt</code></dd>
+  <dt><a name="Oslo">Oslo</a></dt>
+    <dd><a href="http://www.w3.org/Signature/Minutes/990713-oslo.html">Minutes
+      of the XML Signature WG Sessions</a> at� <a
+      href="http://www.ietf.org/meetings/wg_agenda_45.html">IETF
+      face-to-face</a> meeting in Oslo.</dd>
+  <dt><a name="RDF">RDF</a></dt>
+    <dd><em><a href="http://www.w3.org/TR/1999/PR-rdf-schema-19990303">RDF
+      Schema</a></em></dd>
+    <dd><a
+      href="http://www.w3.org/TR/1999/PR-rdf-schema-19990303"><code>http://www.w3.org/TR/1999/PR-rdf-schema-19990303</code></a><br>
+      <em><a href="http://www.w3.org/TR/1999/REC-rdf-syntax-19990222/">RDF
+      Model and Syntax</a><br>
+      </em><a
+      href="http://www.w3.org/TR/1999/REC-rdf-syntax-19990222/"><code>http://www.w3.org/TR/1999/REC-rdf-syntax-19990222</code></a></dd>
+  <dt><a name="SignatureWG">Signature</a> WG List</dt>
+    <dd><a
+      href="http://lists.w3.org/Archives/Public/w3c-ietf-xmldsig/"><code>http://lists.w3.org/Archives/Public/w3c-ietf-xmldsig/</code></a></dd>
+  <dt><a name="URI">URI</a></dt>
+    <dd><a href="http://www.ietf.org/rfc/rfc2396.txt">Uniform Resource
+      Identifiers (URI): Generic Syntax</a></dd>
+    <dd><code><a
+      href="http://www.ietf.org/rfc/rfc2396.txt">http://www.ietf.org/rfc/rfc2396.txt</a></code></dd>
+  <dt><a name="WS">WS</a> (list, summary)</dt>
+    <dd><i>XML-DSig '99: The W3C Signed XML Workshop</i> <br>
+      <a
+      href="http://www.w3.org/DSig/signed-XML99/"><code>http://www.w3.org/DSig/signed-XML99/</code></a><br>
+      <a
+      href="http://www.w3.org/DSig/signed-XML99/summary.html"><code>http://www.w3.org/DSig/signed-XML99/summary.html</code></a></dd>
+  <dt>XLink</dt>
+    <dd><a href="http://www.w3.org/1999/07/WD-xlink-19990726">XML Linking
+      Language</a><br>
+      <a
+      href="http://www.w3.org/1999/07/WD-xlink-19990726">http://www.w3.org/1999/07/WD-xlink-19990726</a></dd>
+  <dt><a name="XML">XML</a></dt>
+    <dd><a href="http://www.w3.org/TR/1998/REC-xml-19980210"><i>Extensible
+      Markup Language (XML) Recommendation.</i></a><br>
+      <a
+      href="http://www.w3.org/TR/1998/REC-xml-19980210"><code>http://www.w3.org/TR/1998/REC-xml-19980210</code></a></dd>
+  <dt>XML-<a name="C14N">C14N</a></dt>
+    <dd><em><a
+      href="http://www.w3.org/TR/1999/NOTE-xml-canonical-req-19990605">XML
+      Canonicalization Requirements.</a></em><code> <br>
+      <a
+      href="http://www.w3.org/TR/1999/NOTE-xml-canonical-req-19990605">http://www.w3.org/TR/1999/NOTE-xml-canonical-req-19990605</a></code></dd>
+  <dt><a name="XFA">XFA</a></dt>
+    <dd><a href="http://www.w3.org/Submission/1999/05/">XML Forms Architecture
+      (XFA)</a><code><br>
+      <a
+      href="http://www.w3.org/Submission/1999/05/">http://www.w3.org/Submission/1999/05/</a></code></dd>
+  <dt><a name="XFDL">XFDL</a></dt>
+    <dd><a href="http://www.w3.org/Submission/1998/16/">Extensible Forms
+      Description Language (XFDL) 4.0</a></dd>
+    <dd><a
+      href="http://www.w3.org/Submission/1998/16/"><code>http://www.w3.org/Submission/1998/16/</code></a></dd>
+  <dt><a name="XML-Fragment">XML-Fragment</a></dt>
+    <dd><a
+      href="http://www.w3.org/1999/06/WD-xml-fragment-19990630.html">XML-Fragment
+      Interchange</a> <br>
+      <a
+      href="http://www.w3.org/1999/06/WD-xml-fragment-19990630.html">http://www.w3.org/1999/06/WD-xml-fragment-19990630.html</a></dd>
+  <dt>XML-namespaces</dt>
+    <dd><i><a
+      href="http://www.w3.org/TR/1999/REC-xml-names-19990114">Namespaces in
+      XML</a></i><br>
+      <a
+      href="http://www.w3.org/TR/1999/REC-xml-names-19990114"><code>http://www.w3.org/TR/1999/REC-xml-names-19990114</code></a></dd>
+  <dt><a name="XML-schema">XML-schema</a></dt>
+    <dd><em><a href="http://www.w3.org/1999/05/06-xmlschema-1/">XML Schema
+      Part 1: Structures</a></em><br>
+      <code><a
+      href="http://www.w3.org/1999/05/06-xmlschema-1/">http://www.w3.org/1999/05/06-xmlschema-1/</a></code><br>
+      <em><a href="http://www.w3.org/1999/05/06-xmlschema-2/">XML Schema Part
+      2: Datatypes</a> </em><br>
+      <code><a
+      href="http://www.w3.org/1999/05/06-xmlschema-2/">http://www.w3.org/1999/05/06-xmlschema-2/</a></code></dd>
+  <dt>XPointer</dt>
+    <dd><i><a href="http://www.w3.org/1999/07/WD-xptr-19990709">XML Pointer
+      Language (XPointer)</a></i><br>
+      <a
+      href="http://www.w3.org/1999/07/WD-xptr-19990709"><code>http://www.w3.org/1999/07/WD-xptr-19990709</code></a></dd>
+  <dt>WebData</dt>
+    <dd><a href="http://www.w3.org/1999/04/WebData">Web Architecture:
+      Describing and Exchanging Data.</a><br>
+      <a
+      href="http://www.w3.org/1999/04/WebData"><code>http://www.w3.org/1999/04/WebData</code></a></dd>
+</dl>
+</div>
+</body>
+</html>

@@ -1,0 +1,571 @@
+<!-- http://dev.w3.org/2009/dap/policy/Framework.html -->
+<!DOCTYPE html> 
+<html>
+  <head>
+    <title>Policy Framework for Device APIs</title> <meta http-equiv='Content-Type'
+    content='text/html;charset=utf-8'/> <script src='../ReSpec.js/js/respec.js'
+    class='remove'></script> <script class='remove'>
+      var respecConfig = { specStatus: "ED", 
+      shortName: "policy",
+      // publishDate: "2009-10-23", 
+      // previousPublishDate: "1977-03-15",
+      edDraftURI: "http://dev.w3.org/2009/dap/policy/Framework.html",
+      // lcEnd: "2009-08-05",
+      };
+    </script> <script src='../common/configPolicy.js' class='remove'></script>
+  </head>
+  <body>
+    <section id='abstract'>
+      This document specifies a policy framework for device APIs.
+    </section> <!-- abstract -->
+
+    <section id='introduction'>
+      <h2>Introduction</h2>
+      <p>
+	The policy framework described in this document is intended to be
+	applicable both to widgets and web applications (web site access to
+	Device APIs).
+      </p>
+   <p>
+      This security model is based on a clear
+      separation between the definition of the general framework and the creation
+      of specific trust and access policies. This allows the configured policies of
+      a web runtime to be adapted to the needs of different stakeholders at any
+      time during the lifecycle of a product. This includes, but is not limited
+      to, the embedding and configuration of web runtimes at manufacture as well
+      as post-sales installation of web runtimes.
+    </p> <p>
+      As a general high-level objective, it should be noted that the security
+      framework is intended to protect the device and its user from
+      web applications 
+      that pose a security risk from unintentional but undetected
+      implementation flaws 
+      as well as those that are malicious.
+    </p> <p>
+      The intention is that the framework, at the most general level,
+      allows a very 
+      wide range of policies to be represented (although manageability and
+      interoperability concerns require there to be a certain level of
+      similarity and 
+      compatibility in policy structure). However, the framework must permit
+      fine-grained security policies to be represented as well as
+      policies based on 
+      broad groupings of APIs and assignment of web applications to a 
+      small number of 
+      trust domains. For example, a fine-grained access policy is
+      necessary to grant 
+      or deny access to individual APIs for individual web applications.
+    </p> <p>
+      This framework is based on a very general model that governs
+      both trust domain access by <a href=#subject>subjects</a> 
+      to <a href=#resource>resources</a> based on a hierarchy
+      of <a href=#trust-policy>trust
+      policies</a>, access policies
+      and <a href=#policy-set>policy sets</a>, where each policy 
+      consists of a number of <a href=#rule>rules</a>.
+      A subject corresponds to an entity that may attempt security-relevant actions and represents a single identity. This identity can describe either a widget resource or a website. 
+      Resources are associated with the
+      API <a href=#feature>features</a>
+      and <a href=#device-capability>device capabilities</a> used to
+      access device features or services (e.g. the location module or
+      PIM database) that are being protected. 
+      Subjects and resources are characterised by a
+      number of defined <a href=#subject-attribute>subject
+      attributes</a> and <a href=#resource-attribute>resource
+      attributes</a>, respectively. A range of 
+      attributes is defined so that access policies can be expressed
+      based 
+      on a widget resource signer's identity, or an individual widget resource
+      identity, or the widget resource signature’s root certificate, or a website's
+      URL.
+      Therefore, the generality of this framework derives from the range of
+      attributes that are supported, as well as the flexible structure of policies and
+      policy sets in the security model.
+    </p> 
+	<p>The XACML Policy Profile for Device APIs specifies a profile of
+	  XACML 2.0 [[XACML20]] for the framework described in this document
+	  [[DAP-XACML-POLICY-PROFILE]].
+	</p>
+    </section> <!-- introduction -->
+      <section id="concepts">
+	<h2>Core Concepts</h2>
+    <section id="trust-domains">
+	<h2>Trust Domains</h2>
+	  <p>
+ Content properties such as content origin and
+signatures can be used to map to trust domains. 
+Trust policies may be used to specify these mappings. For example, a
+ policy 
+can specify the set of origin URLs corresponding to a trust domain, or
+ map a certificate associated with a widget signature to a trust
+ domain. 
+Trust domains may be assigned when content is installed or at run time.
+In the first case, the installer determines a
+trust domain from the trust engine and saves this securely to the
+installed content registry. When content is run, the runtime can retrieve
+the saved trust domain from the registry. In the second case, the runtime
+gets the trust domain directly from the trust engine when the content
+is run. In both cases, the runtime must maintain a reference to the trust
+domain associated with the content in such a way that the trust domain
+can be specified when requesting an access control decision.
+</p>
+<p>
+Trust domains can be based on origin, signatures or be "Untrusted", to
+list three common cases.</p>
+<p>
+Access control is a two step process. First the trust domain is
+determined, and then based on that trust domain the appropriate access
+control policy is used to make a policy decision.
+</p>
+</section>
+    <section id="features">
+	<h2>Features</h2>
+	  <p>
+A feature is a set of one or more capabilities that in combination
+forms a logical construct that may require access control.
+(or shall we define a feature in terms of high level methods).
+</p>
+<dl>
+<dt>
+<dfn id="feature">feature</dfn></dt>
+<dd> <p> A feature is the unit of expression of
+    dependencies by web applications. (This definition needs clarification).
+</p>
+</dd>
+</dl>
+<p>Feature dependencies are
+    expressed as an IRI. It is the responsibility of the author of the
+    feature in question to define the feature and any associated API,
+    and to advertise the corresponding IRI. It is also possible, using
+    standard IRI techniques, to create a family of IRIs so that the
+    feature definition is "parameterised". It is up to the author of
+    the feature definition to specify the valid usage and meaning of
+    the associated IRIs in this case. For widgets, features are
+    identified in the configuration document by
+    the <code>feature</code> element's <code>name</code> attribute
+    [[!WIDGETS]]. </p>
+<p>
+    An example of a feature IRI would be: TBD </p>
+     <div class="issue">
+	<p>Need to define: what constitutes a feature, how/where features
+    IRIs are defined, feature IRI examples. See BONDI A&amp;S document,
+    pages 31 and 32.</p></div> 
+</section>
+      <section id="capabilities">
+	<h2>Capabilities</h2>
+<dl>
+<dt>
+<dfn id="device-capability">device capability</dfn>
+<dd> <p> A device capability is a
+    device resource or device functionality
+that may require access control.
+</p>
+</dd>
+</dl>
+<p> 
+    Examples of device
+      capabilities are the ability to read a local file, or to discover
+    nearby Bluetooth devices, or to send an SMS message. Device
+    capabilities may be defined in a way that is independent of the
+    specific Device APIs that an application uses to access them. 
+          Although there are simple Device APIs that provide access only to
+          a single Device Capability,  there are also
+          more complex APIs that expose multiple Device Capabilities; examples
+          might include a camera API that provides the ability to geotag a photo
+          with the current location, or a messaging API that provides the
+          ability to access documents stored locally and attach them to outgoing
+          messages. Therefore, enabling or disabling access to a specific Device
+          Capability may not directly correspond to enabling or disabling
+          access to a single Device API interface.</p>
+<p>The paragraph above repeats material in the requirements document.</p>
+</section>
+</section>
+<section id="architecture">
+  <h2>Framework Architecture</h2>
+    <section id="layered-model">
+    <h3>Layered Model</h3>
+     <p>
+      A web application uses a mechanism specified in this document to gain access to (or bind to)
+      a JavaScript API by stating one or more features exposed by the JavaScript API. This access is given on a basis of the trust domain that has been assigned to the web application.
+      The implementation of the API, in turn, makes use of one or more device
+      capabilities, defined in terms of facilities that might be provided by APIs at
+      the device, platform or OS level, but without reference to any particular API.
+      Where a JavaScript API is defined within the this model, each function definition
+      specifies which feature it implements, and which device capabilities it uses.
+    </p> <p>
+      The mechanisms provided in this specification to bind to APIs, and to control access (both to
+      the features and the device capabilities exposed by them) are generic, and are
+      not themselves dependent on any particular set of JavaScript APIs. This
+      model envisages that these controls apply, irrespective of whether the APIs in
+      use are defined by DAP or any independent entity. <!-- This "layering” of
+      JavaScript APIs and mediating access control is illustrated in the figure below. -->
+    </p>
+    <section id="trust-domain-control-layer">
+    <h4>Trust Domain Control Layer</h4>
+      <p>
+	The trust domain control layer controls the assignment of the appropiate
+	trust domain to the web application via the relevant <strong><em><dfn id="trust-policy">trust policy</dfn></em></strong>. In
+	general, trust policies will select one trust domain or another
+	depending on the <a href=#subject-attribute>subject attributes</a> and <a href=#environment-attribute>environment attributes</a> that
+	identify the web application.
+      </p>
+    </section> <!-- trust domain control layer -->
+    <section id="api-access-control-layer">
+    <h4>JavaScript API Access Control Layer</h4>
+      <p>
+	The JavaScript API access control layer controls access
+	to JavaScript APIs exposed by the web runtime. Each <a href=#feature>feature</a> is
+	identified uniquely by IRI, and this security layer mediates access to
+	features on the basis of that
+	ID.
+      </p>
+    </section> <!-- API access control layer -->
+    <section id="device-capability-access-control-layer">
+    <h4>Device Capability Access Control Layer</h4>
+      <p>
+	The device capability access control layer controls
+	access to the underlying capabilities of the device when used from JavaScript
+	APIs. These device capabilities themselves are identified so that it is possible
+	to write security policies that control access to specific capabilities
+	independently of the JavaScript APIs used to access them.
+      </p>
+      <p>
+	For both JavaScript API and device capability access control layers, access permissions are guaranteed or restricted on a basis of  via <strong><em><dfn id="access-control-policy">access control policies</dfn></em></strong>. In general, access control policies will select the effect of a particular access request depending on the <a href=#resource-attribute>resources attributes</a> captured when the request happened.
+      </p>
+    </section> <!-- device capability access control layer -->
+    <section id=feature-capability-reqs>
+    <h4>Considerations</h4>
+      <p>
+	This explicit separation of features and their dependent device capabilities addresses a
+	number of significant requirements, as follows.
+      </p>
+      <ul>
+	<li><p><strong>Extensibility is an intrinsic part of the security model.</strong> It is expected that APIs will be defined and implemented
+	independently, and the nature of those APIs will not necessarily be known to the
+	author of a security policy. Therefore, if a security policy author wishes to
+	deny access to a specific device capability, then there must be a way of doing
+	this that is independent of the JavaScript API being used.</p></li>
+	<li><p><strong>The web runtime must only grant access to features that are
+	advertised as being dependencies of the web application.</strong> The access control system must ensure
+	that only requested features are accessible to the web
+	application. This requires that the access control system is able to
+	control access based on the ID of a Feature.</p></li>
+	<li><p><strong>There will not be a direct 1-1 correspondence between JavaScript APIs
+	and device capabilities.</strong> Although there will be simple JavaScript APIs that
+	provide access only to a single device capability, it must be expected that
+	there are also more complex APIs that expose multiple device capabilities;
+	examples might include a camera API that provides the ability to geotag a photo
+	with the current location, or a messaging API that provides the ability to
+	access documents stored locally and attach them to outgoing messages. Therefore,
+	enabling or disabling access to a specific device capability will not directly
+	correspond to enabling or disabling access to a single JavaScript API.</p></li>
+	<li><p><strong>Implementations of JavaScript APIs need not be as highly
+	trusted as the web runtime.</strong> Authors of access policies may require the ability to
+	control access to specific JavaScript APIs, or families of APIs, based on the
+	identity of the API (and not just the device capabilities it exposes), according
+	to the trustworthiness of the author of the API.</p></li>
+	<li><p><strong>It must be possible to represent both trust and access policies
+	portably.</strong> This implies that all identifiers used in a security
+	policy (both for features and for device capabilities) must be portably defined,
+	and not (for example) based on any platform-specific API names. This requires
+	that the identifiers for device capabilities are defined in a
+	platform-independent way. <!-- BONDI defines a set of these capabilities in
+	Appendix A.--></p></li>
+      </ul>	
+    </section> <!-- feature-caps requirements -->
+    </section> <!-- layer model -->
+    <section id="logical-model">
+    <h3>Logical Model</h3>
+     <p>
+      On the one hand, the trust domain control system explained in this
+      document, from a logical perspective, represents the system by which a web
+      application that attempts to access device capabilities using JavaScript
+      APIs, is assigned a trust or security domain. This trust domain will then
+      be used in subsequent access requests, simplifying the whole process. On
+      the other hand, the access control system, implementing a specific access
+      control policy, has the sole effect of making and enforcing an access
+      control decision in relation to each attempted access. (In order to make
+      that decision the access control system may request interactive
+      confirmation from the user, but this is invisible to the requesting web
+      application.)
+    </p> <p>
+      Both the trust and access control systems consist of a number of logically distinct
+      elements. <!-- Specific DAP requirements and interfaces are specified in terms of
+      these separate functional components. --> This logical breakdown and associated
+      terminology is adopted from  XACML [[XACML20]] and illustrated below.
+    </p>
+    <!-- ILLUSTRATION XACML DATAFLOW -->
+    <!-- <object type="image/svg+xml" data="dataflow.svg"> -->
+ <img src="dataflow.png" alt="graphical representation of the data flow" title="Security model, derived from XACML Specification Schema" width="595" height="454"/> <!-- </object> -->
+    <p>
+      The specified <strong>functional components</strong> are as follows:
+      <ul>
+      <li><p><strong>Policy Decision Point (PDP):</strong> for trust domain requests, the module that evaluates which trust domain should be assigned to a web application; for access requests, the module that evaluates whether or not a device API can be accessed by a web
+      application, based on the current policy.</p></li>
+      <li><p><strong>Policy Enforcement Point (PEP):</strong> for trust domain requests, the module that assigns a trust domain to a particular web application; for access requests, the module that allows or prevents access to device APIs.</p></li>
+      <li><p><strong>Policy Information Point (PIP):</strong> the module that gathers information to
+      be used by the PDP to evaluate a trust domain or an access control request. For trust domain requests, it
+      collects the subject attributes (i.e. how the web application was identified and
+      its associated security attributes), whereas for access requests, resource attributes (i.e. which device
+      API is being requested and using which parameters) and environment attributes (i.e.
+      status of the device) are collected.</p></li>
+      <li><p><strong>Policy Administration Point (PAP):</strong> the authority that
+      defines the policy. It could be a network operator, a terminal manufacturer, a
+      web runtime developer, an enterprise or a user at runtime. Policies can be
+      provided by the PAP in different ways, for instance using a preloaded file or
+      data structure, or a remote management mechanism (e.g. OMA DM [[OMA-DM]]).</p></li>
+      </ul>
+      <div class="issue">
+	<p>OMA DM reference missing?</p>
+	<p>Should we include this?: In the present phase, DAP does not define any specific external interface requirements for
+      the PAP, although this may be in scope for later phases. The security policy
+      itself is not defined by DAP, although a default policy may be recommended by
+      DAP at a future stage.</p></div> 
+    <p>
+      The functionality required in each of these components is
+      specified in terms of the following <strong>entities</strong>:
+<dl>
+<dt><dfn id="subject">subject</dfn></dt>
+<dd><p>the web application
+      that requires access to JavaScript APIs. Examples of subjects are websites
+      and widgets.</p>
+<p>An entity that may attempt 
+	  security-relevant actions and corresponds to a single
+	  "identity". (In practice, some web applications might
+	  have multiple identities – for example is a widget
+	  resource is signed by multiple signers – but for the
+	  purposes of this model, each access control query is
+	  considered to involve a single subject and hence a
+	  single identity.) </p>
+	  <p> The website identity type applies to all operations
+	  occurring in the execution of a remotely-hosted
+	  document, whether this is the top-level document of the
+	  website or is associated with some child browsing
+	  context (such as an iframe). </p>
+</dd>
+<dt><dfn id="subject-attribute">subject attribute</dfn></dt>
+<dd><p>Every subject is associated with a set of
+      attributes. Subject attributes allow the identification of the web
+      application that is attempting access to device capabilities using device
+      APIs. The identified web application is then assigned a trust domain
+      according to the appropriate trust policy. Subject attributes include
+      specific attributes that represent the identity of the web application
+      attempting access to a resource. Valid identity attributes include the
+      widget identifier URI for widgets and the URL for websites; other
+      identifiers may be supported. Subject attributes also include the
+      credentials used to verify the authenticity and integrity of the subject,
+      e.g. a TLS or code signing digital certificate. Other
+      credentials may be supported.</p>
+	  <p> All <strong><em>subject attributes</em></strong> are determined for the applicable
+	  application execution phases: widget-install, widget-instantiate.</p>
+</dd>
+<dt><dfn id="resource">resource</dfn></dt>
+<dd>	  <p>the resources that subjects may
+      request access to. The device features or services (e.g. the location
+      module or PIM database) are the actual resources that are being protected,
+      but from the point of view of the security framework these resources are
+      associated with the API Features and device capabilities used to access
+      them.</p>
+<p> The widget identity type applies to all operations
+	  associated with a widget resource, or occurring in the
+	  execution of a document belonging to a widget resource.
+	  </p> <p> Operations occurring in the execution of a
+	  remotely hosted document that has been loaded by a
+	  widget (for example in an iframe) use a 
+website identity. </p> 
+</dd>
+<dt><dfn id="resource-attribute">resource attribute</dfn></dt>
+<dd><p>Every resource is associated with a set of
+      attributes. Resource attributes include an identifier. Other attributes
+      may be associated with a resource, and these can include specific
+      parameters that are specified as part of the request when attempting
+      access. Resource attributes serve as input of access control
+      policies.</p>
+<p>	  The device features or services (e.g. the location module or PIM
+	  database) are the actual resources that are being protected, but from
+	  the point of view of the security framework these resources
+	  are associated with the API features and device capabilities used to
+	  access them.
+</dd>
+<dt><dfn id="environment-attribute">environment attribute</dfn></dt>
+<dd><p>The collection of device status and context
+      attributes that may be relevant to the circumstances of a resource access
+      attempt, but are not directly associated with either the subject or
+      resource. For example, environment attributes can include terminal
+      charging, network connection status, whether
+      roaming. Environment attributes serve as input of access control
+      policies.</p>
+	  <p>Attributes of the <em>environment</em> capture
+	  contextual information relating to the device or other
+	  circumstances of the access attempt. </p> 
+</dd>
+</dl>
+    </section> <!-- logical model -->
+      <section id="application-execution-phases">
+	<h3>Application Execution Phases</h3>
+	  <p>The <em>execution</em> phase of a web application
+	  reflects the state of that application at the time an
+	  associated trust domain or access control query is made. The defined
+	  execution phases are listed below. </p> <table> <caption> <dfn
+	  id="execution-phases-table">Execution Phases
+	  Table</dfn></caption> <thead> <tr> <th
+	  scope="col">Execution Phase</th> <th
+	  scope="col">Description</th> </tr> </thead> <tbody> <tr>
+	  <td>widget-install</td> <td>Applies to trust domain or access control queries made by a widget user agent during the
+	  processing of a widget resource as part of an
+	  installation or update operation.</td> </tr> <tr>
+	  <td>widget-instantiate</td> <td>Applies to trust domain or access control queries made by a widget user agent during the
+	  instantiation of a widget.</td> </tr> <tr>
+	  <td>website-bind</td> <td>Applies to access control
+	  queries made in response to a call to requestFeature()
+	  in the course of execution of a website</td> </tr> <tr>
+	  <td>invoke</td> <td>Applies to access control queries
+	  made in response to invocation of a JavaScript API in
+	  the course of execution of a web application</td> </tr>
+	  </tbody> </table>
+	   <div class="issue">
+      <p>Need to define "requestFeature()" ?</p>
+      <p>In BONDI, the requestFeature() API is itself a Feature. Websites have access to this API automatically and this is the sole means of expression of Feature dependencies by Websites.</p></div> 
+</section>
+</section>
+<section id="policy">
+  <h2>Policy</h2>
+  <p>
+</p>
+    <section id="policy-structure">
+    <h3>Policy Structure</h3>
+    <p>
+      Both trust domain and access control policies share the same
+      underlying structure. The policy in effect in any given context
+      is logically expressed as a collection of specific access
+      control <strong><em><dfn id="rule-dfn">rules</dfn></em></strong>. The
+      rules are organised into groups,
+      termed <strong><em><dfn id="policy-dfn">policies</dfn></em></strong>,
+      and these in turn are organised into groups
+      termed <strong><em><dfn id="policy-set">policy
+      sets</dfn></em></strong>. This structuring serves a number of
+      purposes: 
+    </p>
+    <ul>
+      <!-- <li><p>the rules that apply to a specific web application, or group of web applications, can be grouped together, which simplifies writing and maintaining the policy;</p></li> -->
+      <li><p>it helps organise the rules into groups that can be independently created and maintained, sometimes under different authority (and subject to differing degrees of control);</p></li>
+      <li><p>it provides a way of ensuring that the correct precedence is applied when processing rules. This makes some rules easier to write because their applicability is more narrowly scoped by their enclosing policy. More significantly, it ensures that security requirements determined by one authority are not wrongly overridden by rules provided by a subordinate authority.</p></li>
+    </ul>
+    <p>
+<dl>
+<dt><dt><dfn id="rule">rule</dfn></dt>
+<dd><p>Simplistically, each rule is specified by defining
+    a <strong><em><dfn id="condition">condition</dfn></em></strong>,
+    which is a set of statements which must be satisfied in order for
+    that particular rule to apply, and
+    an <strong><em><dfn id="effect">effect</dfn></em></strong> which
+    represents the rule's outcome – ie the trust domain for trust
+    domain requests and whether that rule indicates that the access
+    request should be permitted or not for access requests.  
+    </p></dd>
+</dl>
+    <!-- ILLUSTRATION POLICY LANGUAGE MODEL -->
+    <object type="image/svg+xml" data="languagemodel.svg">
+ <img src="languagemodel.png" alt="graphical representation of the XACML policy language model" title="DAP policy language model, derived from XACML  Specification Schema" width="250" /> </object>
+    </section> <!--policy structure -->
+  <section id="rule-processing">
+    <h3>Processing Rules</h3>
+    <p>
+     The following steps illustrate the logical processing required
+     when trust and access control policies are used to determine the
+     outcome of a particular access attempt: 
+    </p>
+    <section id="rule-processing-trust-policies">
+    <h4>Trust Processing Rules</h4>
+    <ul>
+      <li><p>The identity of the calling web
+      application, <a href=#subject>subject</a>, is known and is used
+      to determine the <a href=#subject-attribute>subject
+      attributes</a> for that web application;</p></li> 
+      <li><p>these <a href=#subject-attribute>subject attributes</a>
+      are embodied in the trust domain query which is evaluated in the
+      context of the top-level trust <a href=#policy-set>policy
+      set</a> associated with the
+      configured trust <a href=#policy>policy</a>;</p></li> 
+      <li><p>based on the subject attribute values presented in the
+      trust domain query, the <a href=#condition>conditions</a>
+      associated with each <a href=#rule>rule</a>
+      and <a href=Profile.html#target>target</a> can be evaluated, and the
+      applicable <a href=#rule>rules</a>, <a href=#policy>
+      policies</a> and <a href=#policy-set>trust policy sets</a>
+      can be determined;</p></li> 
+      <li><p>as a result of the evaluation of the trust policy
+      the <a href=#effect>effect</a> of each
+      applicable <a href=#rule>rule</a> is determined;</p></li> 
+      <li><p>based on the evaluated effect of each applicable rule,
+      the relevant combining rules are used to determine the policies,
+      policy sets and rules with precedence, which in turn determines
+      the overall effect of evaluating the access control
+      query. This <a href=#effect>effect</a> is represented by the
+      trust domain name that will be associated to the web application
+      in successive device API and capability access
+      requests.</p></li> 
+      </ul>
+      <div class="issue">
+	<p>We need to agree on what the output of a trust policy is: a
+	string (=name of the trust domain?), how will this string be
+	stored/managed?</p> 
+      </div>
+      <p>From a logical perspective, a trust domain query can be
+      evaluated when the necessary attribute values become
+      available. For widgets, a trust domain query will be evaluated
+      at installation time, when the subject attributes can be already
+      determined. 
+    </p>
+  </section>
+  <section id="rule-processing-access-policies">
+   <h4>Feature and Capability Processing Rules</h4>
+      <ul>
+      <li><p>When the application in question attempts an action
+      (attempts to invoke a JavaScript API, say). This identifies
+      the <a href=#resource>resource</a> and all
+      associated <a href=#resource-attribute>resource attributes</a>.
+</p></li> 
+      <li><p>the <a href=#environment-attribute>environment attributes</a> are also captured;</p></li>
+      <li><p>the set of resource and environment attribute values
+      captured is embodied in an <a href=Profile.html#query>access
+      query</a> which 
+      is evaluated in the context of the
+      top-level <a href=Profile.html#policy-set>access control
+      policy set</a> associated with the
+      configured <a href=#access-control-policy>access control
+      policy</a>;</p></li> 
+      <li><p>the access query also contains the name of the trust domain that has been assigned by the trust policy;</p></li>
+      <li><p>based on the trust domain name, resource and environment
+      attribute values presented in the query, the conditions
+      associated with each rule
+      and <a href=Profile.html#target>target</a> can be 
+      evaluated, and the
+      applicable <a href=#rule>rules</a>, <a href=#access-control-policy>access
+      control policies</a> and <a href=#policy-set>access
+      control policy sets</a> can be determined;</p></li> 
+      <li><p>the <a href=#effect>effect</a> of each 
+      applicable <a href=#rule>rule</a> is determined;</p></li> 
+      <li><p>based on the evaluated effect of each applicable rule, the relevant combining rules are used to determine the policies, policy sets and rules with precedence, which in turn determines the overall effect of evaluating the access control query;</p></li>
+      <li><p>if the effect requires the user to be prompted, this is done, and the results of the user’s decision are recorded where appropriate.</p></li></ul>
+  </section>
+<p>
+From a logical perspective, an access control query can be evaluated at any time between the point that the necessary attribute values become available and when the attempted operation is performed. In the case of a JavaScript API call for which arguments supplied to the call are designated resource attributes, the relevant attributes are only known once the API call has been made by the calling web application. However, in other cases the information may be known earlier. For example, if all feature requirements are stated in a widget configuration document, and none of the API access operations have conditions depending on API call parameters, then all access control queries may be evaluated fully at widget resource installation time.
+</p>
+    </section> <!-- rule processing -->
+</section> <!-- security framework-->
+<section class='conformance'>
+  <h2>Conformance</h2>
+    <p>
+	TBD
+    </p>
+</section>
+<section class='appendix'>
+  <h2>Acknowledgements</h2>
+    <p>
+    The editors would like to extend special thanks to Nokia, OMTP BONDI,
+    and PhoneGap for their contributions.
+    </p>
+</section>
+</body>
+</html>

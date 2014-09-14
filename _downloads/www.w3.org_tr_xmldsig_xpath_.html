@@ -1,0 +1,1220 @@
+<!-- http://www.w3.org/TR/xmldsig-xpath/ -->
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <title>XML Signature Streaming Profile of XPath 1.0</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    
+    
+   
+    
+    <style type="text/css">
+      td
+      {
+      vertical-align: top;
+      }
+      th
+      {
+      vertical-align: top;
+      }
+    </style>
+  <style>/*****************************************************************
+ * ReSpec 3 CSS
+ * Robin Berjon - http://berjon.com/
+ *****************************************************************/
+
+/* --- INLINES --- */
+em.rfc2119 { 
+    text-transform:     lowercase;
+    font-variant:       small-caps;
+    font-style:         normal;
+    color:              #900;
+}
+
+h1 acronym, h2 acronym, h3 acronym, h4 acronym, h5 acronym, h6 acronym, a acronym,
+h1 abbr, h2 abbr, h3 abbr, h4 abbr, h5 abbr, h6 abbr, a abbr {
+    border: none;
+}
+
+dfn {
+    font-weight:    bold;
+}
+
+a.internalDFN {
+    color:  inherit;
+    border-bottom:  1px solid #99c;
+    text-decoration:    none;
+}
+
+a.externalDFN {
+    color:  inherit;
+    border-bottom:  1px dotted #ccc;
+    text-decoration:    none;
+}
+
+a.bibref {
+    text-decoration:    none;
+}
+
+cite .bibref {
+    font-style: normal;
+}
+
+code {
+    color:  #ff4500;
+}
+
+
+/* --- --- */
+ol.algorithm { counter-reset:numsection; list-style-type: none; }
+ol.algorithm li { margin: 0.5em 0; }
+ol.algorithm li:before { font-weight: bold; counter-increment: numsection; content: counters(numsection, ".") ") "; }
+
+/* --- TOC --- */
+.toc a, .tof a {
+    text-decoration:    none;
+}
+
+a .secno, a .figno {
+    color:  #000;
+}
+
+ul.tof, ol.tof {
+    list-style: none outside none;
+}
+
+.caption {
+    margin-top: 0.5em;
+    font-style:   italic;
+}
+
+/* --- TABLE --- */
+table.simple {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    border-bottom:  3px solid #005a9c;
+}
+
+.simple th {
+    background: #005a9c;
+    color:  #fff;
+    padding:    3px 5px;
+    text-align: left;
+}
+
+.simple th[scope="row"] {
+    background: inherit;
+    color:  inherit;
+    border-top: 1px solid #ddd;
+}
+
+.simple td {
+    padding:    3px 10px;
+    border-top: 1px solid #ddd;
+}
+
+.simple tr:nth-child(even) {
+    background: #f0f6ff;
+}
+
+/* --- DL --- */
+.section dd > p:first-child {
+    margin-top: 0;
+}
+
+.section dd > p:last-child {
+    margin-bottom: 0;
+}
+
+.section dd {
+    margin-bottom:  1em;
+}
+
+.section dl.attrs dd, .section dl.eldef dd {
+    margin-bottom:  0;
+}
+</style><style>/* --- EXAMPLES --- */
+div.example-title {
+    min-width: 7.5em;
+    color: #b9ab2d;
+}
+div.example-title span {
+    text-transform: uppercase;   
+}
+aside.example, div.example, div.illegal-example {
+    padding: 0.5em;
+    margin: 1em 0;
+    position: relative;
+    clear: both;
+}
+div.illegal-example { color: red }
+div.illegal-example p { color: black }
+aside.example, div.example {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+    border-color: #e0cb52;
+    background: #fcfaee;    
+}
+
+aside.example div.example {
+    border-left-width: .1em;
+    border-color: #999;
+    background: #fff;
+}
+aside.example div.example div.example-title {
+    color: #999;
+}
+</style><style>/* HIGHLIGHTS */
+code.prettyprint {
+    color:  inherit;
+}
+
+/* this from google-code-prettify */
+.pln{color:#000}@media screen{.str{color:#080}.kwd{color:#008}.com{color:#800}.typ{color:#606}.lit{color:#066}.pun,.opn,.clo{color:#660}.tag{color:#008}.atn{color:#606}.atv{color:#080}.dec,.var{color:#606}.fun{color:red}}@media print,projection{.str{color:#060}.kwd{color:#006;font-weight:bold}.com{color:#600;font-style:italic}.typ{color:#404;font-weight:bold}.lit{color:#044}.pun,.opn,.clo{color:#440}.tag{color:#006;font-weight:bold}.atn{color:#404}.atv{color:#060}}ol.linenums{margin-top:0;margin-bottom:0}li.L0,li.L1,li.L2,li.L3,li.L5,li.L6,li.L7,li.L8{list-style-type:none}li.L1,li.L3,li.L5,li.L7,li.L9{background:#eee}
+</style><link rel="stylesheet" href="http://www.w3.org/StyleSheets/TR/W3C-WG-NOTE"><!--[if lt IE 9]><script src='http://www.w3.org/2008/site/js/html5shiv.js'></script><![endif]--></head>
+  <body><div class="head">
+  <p>
+    
+      <a href="http://www.w3.org/"><img width="72" height="48" src="http://www.w3.org/Icons/w3c_home" alt="W3C"></a>
+    
+  </p>
+  <h1 class="title" id="title">XML Signature Streaming Profile of XPath 1.0</h1>
+  
+  <h2 id="w3c-working-group-note-11-april-2013"><abbr title="World Wide Web Consortium">W3C</abbr> Working Group Note 11 April 2013</h2>
+  <dl>
+    
+      <dt>This version:</dt>
+      <dd><a href="http://www.w3.org/TR/2013/NOTE-xmldsig-xpath-20130411/">http://www.w3.org/TR/2013/NOTE-xmldsig-xpath-20130411/</a></dd>
+      <dt>Latest published version:</dt>
+      <dd><a href="http://www.w3.org/TR/xmldsig-xpath/">http://www.w3.org/TR/xmldsig-xpath/</a></dd>
+    
+    
+      <dt>Latest editor's draft:</dt>
+      <dd><a href="http://www.w3.org/2008/xmlsec/Drafts/xmldsig-xpath/">http://www.w3.org/2008/xmlsec/Drafts/xmldsig-xpath/</a></dd>
+    
+    
+    
+    
+    
+      <dt>Previous version:</dt>
+      <dd><a href="http://www.w3.org/TR/2012/CR-xmldsig-xpath-20120124/">http://www.w3.org/TR/2012/CR-xmldsig-xpath-20120124/</a></dd>
+    
+    
+    <dt>Editors:</dt>
+    <dd><span>Pratik Datta</span>, <span class="ed_mailto"><a href="mailto:pratik.datta@oracle.com">pratik.datta@oracle.com</a></span></dd>
+<dd><span>Frederick Hirsch</span>, <span class="ed_mailto"><a href="mailto:frederick.hirsch@nokia.com">frederick.hirsch@nokia.com</a></span></dd>
+<dd><span>Meiko Jensen</span>, <span class="ed_mailto"><a href="mailto:Meiko.Jensen@ruhr-uni-bochum.de">Meiko.Jensen@ruhr-uni-bochum.de</a></span></dd>
+
+    
+  </dl>
+  
+  
+  
+  
+    
+      <p class="copyright">
+        <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 
+        2013
+        
+        <a href="http://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>®</sup> 
+        (<a href="http://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>,
+        <a href="http://www.ercim.eu/"><abbr title="European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>,
+        <a href="http://www.keio.ac.jp/">Keio</a>, <a href="http://ev.buaa.edu.cn/">Beihang</a>), All Rights Reserved.
+        <abbr title="World Wide Web Consortium">W3C</abbr> <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>,
+        <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and
+        <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply.
+      </p>
+    
+  
+  <hr>
+</div>
+    <section id="abstract" class="introductory"><h2>Abstract</h2>
+      <p>This informative <abbr title="World Wide Web Consortium">W3C</abbr> Working Group Note describes 
+      a streamable profile of XPath 1.0
+      suitable for use 
+      with XML Signature 2.0. 
+      </p>
+    </section><section id="sotd" class="introductory"><h2>Status of This Document</h2>
+  
+    
+      
+        <p>
+          <em>This section describes the status of this document at the time of its publication. Other
+          documents may supersede this document. A list of current <abbr title="World Wide Web Consortium">W3C</abbr> publications and the latest revision
+          of this technical report can be found in the <a href="http://www.w3.org/TR/"><abbr title="World Wide Web Consortium">W3C</abbr> technical reports
+          index</a> at http://www.w3.org/TR/.</em>
+        </p>
+        
+        <p>The XML Security Working Group has agreed 
+        not to progress this XML Signature Streaming Profile of XPath 1.0
+        specification further as a Recommendation track document, electing
+        to publish it as an informative Working Group Note.  The Working Group has not performed interop testing on the
+        material in this document. </p>
+        <p>Other than publishing as a <abbr title="World Wide Web Consortium">W3C</abbr> Working Group Note, the only changes
+        since the last publication have been to update the abstract to
+        clarify the status and to  update the references (<a href="Overview_diff.html">diff</a>).</p>
+        <p>
+          This document was originally derived from material in an earlier
+          publication of XML Signature 2.0,  
+          see <a href="http://www.w3.org/TR/2010/WD-xmldsig-core2-20100304/#sec-XPath-2.0">http://www.w3.org/TR/2010/WD-xmldsig-core2-20100304/#sec-XPath-2.0</a>.
+        </p>
+    
+        <p>
+          This document was published by the <a href="http://www.w3.org/2008/xmlsec/">XML Security Working Group</a> as a Working Group Note.
+          
+          
+          If you wish to make comments regarding this document, please send them to 
+          <a href="mailto:public-xmlsec@w3.org">public-xmlsec@w3.org</a> 
+          (<a href="mailto:public-xmlsec-request@w3.org?subject=subscribe">subscribe</a>,
+          <a href="http://lists.w3.org/Archives/Public/public-xmlsec/">archives</a>).
+          
+          
+          
+          
+        All comments are welcome.
+        
+        
+          </p><p>
+            Publication as a Working Group Note does not imply endorsement by the <abbr title="World Wide Web Consortium">W3C</abbr> Membership.
+            This is a draft document and may be updated, replaced or obsoleted by other documents at 
+            any time. It is inappropriate to cite this document as other than work in progress.
+          </p>
+        
+        
+        <p>
+          
+            This document was produced by a group operating under the 
+            <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>.
+          
+          
+          
+            
+              <abbr title="World Wide Web Consortium">W3C</abbr> maintains a <a href="http://www.w3.org/2004/01/pp-impl/42458/status" rel="disclosure">public list of any patent disclosures</a> 
+            
+            made in connection with the deliverables of the group; that page also includes instructions for 
+            disclosing a patent. An individual who has actual knowledge of a patent which the individual believes contains
+            <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential Claim(s)</a> must disclose the
+            information in accordance with <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section
+            6 of the <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>.
+          
+          
+        </p>
+        
+      
+    
+  
+</section><section id="toc"><h2 class="introductory">Table of Contents</h2><ul class="toc"><li class="tocline"><a href="#sec-Introduction" class="tocxref"><span class="secno">1. </span>Introduction</a></li><li class="tocline"><a href="#sec-Streamable" class="tocxref"><span class="secno">2. </span>Streamable</a><ul class="toc"><li class="tocline"><a href="#sec-Streaming-Signatures" class="tocxref"><span class="secno">2.1 </span>Streaming for XML signatures</a></li><li class="tocline"><a href="#sec-One-Pass-Streaming" class="tocxref"><span class="secno">2.2 </span>Limitations with one-pass streaming</a></li></ul></li><li class="tocline"><a href="#sec-other-requirements" class="tocxref"><span class="secno">3. </span>Other requirements</a></li><li class="tocline"><a href="#sec-definition" class="tocxref"><span class="secno">4. </span>Definition of the Profile</a><ul class="toc"><li class="tocline"><a href="#sec-definition-toplevel" class="tocxref"><span class="secno">4.1 </span>Top level XPath expression</a></li><li class="tocline"><a href="#sec-definition-LocationPath" class="tocxref"><span class="secno">4.2 </span>LocationPaths</a></li><li class="tocline"><a href="#sec-definition-RestrictedPredicate" class="tocxref"><span class="secno">4.3 </span>Predicates</a></li></ul></li><li class="tocline"><a href="#sec-examples" class="tocxref"><span class="secno">5. </span>Examples of XPath expression that are part of this profile</a></li><li class="tocline"><a href="#sec-Algorithm" class="tocxref"><span class="secno">A. </span>Algorithm</a></li><li class="tocline"><a href="#references" class="tocxref"><span class="secno">B. </span>References</a><ul class="toc"><li class="tocline"><a href="#normative-references" class="tocxref"><span class="secno">B.1 </span>Normative references</a></li><li class="tocline"><a href="#informative-references" class="tocxref"><span class="secno">B.2 </span>Informative references</a></li></ul></li></ul></section>
+    
+    <section id="sec-Introduction">
+      <!--OddPage--><h2><span class="secno">1. </span>Introduction</h2>
+      <p>This document specifies a streamable profile of XPath 1.0
+      [<cite><a class="bibref" href="#bib-XPATH">XPATH</a></cite>] for use in XML 
+      Signature 2.0 [<cite><a class="bibref" href="#bib-XMLDSIG-CORE2">XMLDSIG-CORE2</a></cite>]. It is a proper subset of XPath 1.0, i.e. any XPath expression that is 
+      part of this subset is also a valid XPath 1.0 expression, and when evaluated using the streaming algorithm
+      mentioned here, produces exactly the same results as those produced by a regular DOM based XPath engine.
+      Although this XPath subset has been designed in the context of XML Signature 2.0, it is 
+      a general purpose subset and can be used in other contexts too.
+      </p>
+      <p>
+      The motivation for introducing this 
+      profile is outlined here. </p>
+      <p>XML Signature lets one
+      sign parts of the XML document. In 1.x version of XML Signature [<cite><a class="bibref" href="#bib-XMLDSIG-CORE1">XMLDSIG-CORE1</a></cite>],
+      the part to be signed can be identified  
+      in one of the following ways: 
+</p><ol>
+<li><p><b>ID based references</b> This is the simplest and the most popular mechanism. An ID attribute is added 
+to the element to be signed, and the signature refers to this element
+    by this ID. However this approach has certain 
+problems: 
+</p><ol style="list-style-type:lower-alpha">
+<li> the document needs to be changed to add the id, this may not be possible in all situations, 
+especially if the schema does not allow an ID attribute for that element. </li>
+<li> ID based references are subject
+to wrapping attacks, these attacks can be avoided by using XPath expressions.</li>
+<li> this mechanism can only sign complete subtrees, i.e. parts of a subtree cannot be excluded.</li>
+</ol>
+<p></p></li>
+<li><p><b>XPath Filter Transform</b> This is the original XPath mechanism in XML Signature 1.0. It solves the three 
+problems mentioned above, but it introduces new problems:
+</p><ol style="list-style-type:lower-alpha"><li>it is extremely inefficient, because the XPath needs to be 
+evaluated for every node of the document.</li> 
+<li>the XPath is not a "normal" XPath, because it has to be of the
+form of a boolean expression that is evaluated with
+every node as the context node. For example the XPath <code>//chapter/</code> (i.e. all <code>chapter</code>)
+descendants has to be expressed as <code>ancestor-or-self::chapter</code> (i.e. a boolean expression which evaluates 
+to true for a node, if that node has an ancestor call <code>chapter</code>). Not only is this very hard to understand
+, but also some XPaths cannot be expressed like this at all. For example it is not possible to express 
+<code>/book/chapter[3]</code> in this model.</li>
+</ol><p></p></li>
+<li><p><b>XPath Filter 2 Transform</b> This was introduced to solve the problems in above problems [<cite><a class="bibref" href="#bib-XMLDSIG-XPATH-FILTER2">XMLDSIG-XPATH-FILTER2</a></cite>]. However it has a few problems
+of its own:
+</p><ol style="list-style-type:lower-alpha"><li>although there are implementations of it, it was not popular because it is marked as optional to implement.</li>
+<li>it is not streamable in general, although some limited set may be streamable. Note ID based references are streamable.</li>
+</ol>
+<p></p></li>
+<li><p><b>XPointer</b> At the time the XML Signature 1.0 was written, XPointer supported a full XPath model,
+but it was still under development. Later on it split up into multiple specs, the full XPath support remained as a Working draft [<cite><a class="bibref" href="#bib-XPTR-XPOINTER">XPTR-XPOINTER</a></cite>],
+and only the XPointer element scheme [<cite><a class="bibref" href="#bib-XPTR-ELEMENT">XPTR-ELEMENT</a></cite>] became an
+    official <abbr title="World Wide Web Consortium">W3C</abbr> Recommendation. The XPointer 
+element scheme does not support generic XPaths, it only
+allows basic addressing of XML elements e.g. <code>element(/1/2)</code> identifies the 2nd child of the root element.
+</p><ol style="list-style-type:lower-alpha">
+<li>there are almost no implementations of XPointer with XPath, in fact the XML Signature specification actively discourages it.</li>
+<li>this mechanism can only sign complete subtrees, with no exclusions.</li>
+</ol>
+<p></p></li>
+</ol>
+      <p></p>
+      
+      <p>XML Signature 2.0, retains all 1.x mechanisms for backwards compatibility, but it introduces a new mechanism 
+      <code>&lt;ds2:Selection&gt;</code> which can be viewed as a very simplified form of XPath Filter 2 Transform. It 
+      consists of <code>URI</code> which can be used for ID based references and an <code>IncludedXPath</code> and <code>ExcludedXPath</code>
+      for inclusions and exclusions. The result of the selection is subtrees identified by included XPath, minus the subtrees 
+      identified by excluded XPath. These <code>IncludedXPath</code> and <code>ExcludedXPath</code> take a profile of XPath, and 
+      and it is this profile that this document describes.
+      </p>
+      <p>This 2.0 selection mechanism, has all the advantages of XPath Filter 2 transform, and additionally it is designed to
+      support streaming. However it does the restrict the kind 
+      of selection - only subtrees with one round of subtree exclusion can be selected. This restriction is required for high performance.
+      </p> 
+    </section>
+
+<section id="sec-Streamable">
+  <!--OddPage--><h2><span class="secno">2. </span>Streamable</h2>
+<p>The XPath profile defined in this document is streamable with single-pass pre-order XPath recognition.  This means 
+</p><ul>
+  <li><p>All the XPaths to be evaluated are known at the beginning of the one-pass.</p></li>
+  <li><p>It should be possible to evaluate these XPaths on large XML documents without having having to load the entire document into memory. 
+  The implementation should read the XML one chunk at a time, and do a single forward only pass over the document.</p></li>
+  
+  <li><p>More specifically, the XPath engine should work off a streaming XML parser. A streaming parser is a software module that reads the XML document, and 
+  constructs a stream of XML events like "beginElement", "text", "endElement" etc. [<cite><a class="bibref" href="#bib-XML-PARSER-STAX">XML-PARSER-STAX</a></cite>] is an example of a streaming parser. The
+  <a href="#sec-Algorithm">Algorithm Section</a> describes one
+  possible algorithm to evaluate this XPath subset with a streaming
+  parser. In this algorithm 
+ each of the XPaths is converted into a state machine
+  during initialization then as 
+ the XML input document is parsed with a streaming parser
+  the resultant XML events are fed as inputs into these state
+  machines. The state machines 
+  determine whether the current XML event is accepted by the XPath or not. </p></li>
+  
+  <li><p>The XPath itself might select a large portion of the document, or even the whole document. The result of the XPath evaluation 
+  should not be loaded all into memory if it is large. Instead it
+  should be pipelined to the processing stage. </p></li> 
+   
+  <li><p>The XML document may have very large text nodes. The XPath
+  engine should not be required to load such large nodes in their
+  entirety. Instead they should be split up into multiple text nodes, and processed one by one. </p></li> 
+
+</ul>
+<p></p>
+
+
+<section id="sec-Streaming-Signatures">
+ <h3><span class="secno">2.1 </span>Streaming for XML signatures</h3>
+
+<p>In the context of XML Signature, streaming is absolutely essential for XML gateways which need to perform XML Signature and Encryption 
+operations for messages on the wire. It is also important for performance sensitive applications; as streaming improves performance by conserving memory,
+which greatly reduces temporary memory allocation, resulting in far less memory garbage collection. 
+</p> 
+ 
+<p>For XML Signatures it is not only the XPath expressions that need
+to be evaluated in streaming, but the rest of the signature processing
+as well (e.g. canonicalization and digesting also need to be performed
+in streaming mode). For example a streaming Signature processor could
+compute 
+Reference 
+digests for 2.0 Signatures as follows:
+ </p><ul> 
+  <li><p>Initialize XPath engines for each of the <code>&lt;IncludedXPath&gt;</code> and <code>&lt;ExcludedXPath&gt;</code> for each <code>&lt;Reference&gt;</code>. </p> </li>
+  <li><p>Initialize a "Selector", "Canonicalizer" and a "Digestor" for each Reference and put them into a pipeline.
+    </p><ol>
+      <li><p>The "Selector" takes as input XML events generated by the Parser. It checks if the XML event is either a 
+      descendant of the subtree identified by the <code>&lt;Selection&gt;</code>'s <code>URI</code> attribute or accepted 
+      by the IncludedXPath engine and not accepted by the ExcludedXPath engine. Exclusions always trump Inclusions, and Exclusions also apply to 
+      ID references.
+      If the check passes, it passes on the 
+      XML event to the "Canonicalizer".  
+      <br>
+      Note a <code>&lt;Selection&gt;</code> can either contain the <code>URI</code> attribute or a <code>&lt;IncludedXPath&gt;</code> subelement, but not
+      both. But in either case it can optionally contain the <code>&lt;ExcludedXPath&gt;</code> subelement.</p> </li>
+      <li><p>The "Canonicalizer" inputs XML events passed on by the Selector, and emits byte arrays for each event, and sends them to the "Digestor".</p> </li>
+      <li><p>The "Digestor" takes byte arrays and computes a running digest.</p> </li>
+    </ol>
+  <p></p> </li>   
+  <li><p>Start parsing the current XML document using a streaming XML parser, and feed the XML events to each of the Reference processing pipelines.</p></li>
+  <li><p>At the end of parsing the pipelines will contain the computed digest for each Reference. Note the same XML event 
+  may be accepted by more than one Reference, and hence included is multiple digests.</p> </li>
+ </ul>
+
+<p>
+For simplicity the above steps make a simplifying assumption that all the <code>&lt;Reference&gt;</code>s have a 
+<code>&lt;Selection&gt;</code> of <code>Type="http://www.w3.org/2010/xmldsig2#xml"</code>, 
+and each of the 
+<code>&lt;Selection&gt;</code> <code>URI</code>s are same document references. If the <code>&lt;Selection&gt;</code> <code>URI</code>s 
+refer to external resource, the URI should be dereferenced to fetch the external XML document,
+and the XPaths be evaluated on this external document, instead of the current document.   
+</p>
+</section>
+
+<section id="sec-One-Pass-Streaming">
+ <h3><span class="secno">2.2 </span>Limitations with one-pass streaming</h3>
+
+<p>
+Note that it is not always possible to apply or verify XML Signatures in
+a one-pass streaming fashion. For instance, the verification of an
+enveloped signature requires an XPath for selection that matches an
+element that is located prior to the XML Signature itself (in document
+order). Hence, on signature verification, the selected elements are
+processed by the streaming parser before the selection XPath itself gets
+parsed. Example:
+</p>
+
+<div class="example"><div class="example-title"><span>Example 1</span></div><pre class="example highlight prettyprint"><span class="tag">&lt;Document&gt;</span><span class="pln">
+
+  </span><span class="tag">&lt;DataBlock1</span><span class="pln"> </span><span class="tag">/&gt;</span><span class="pln">
+
+  </span><span class="tag">&lt;Signature</span><span class="pln"> </span><span class="atn">xmlns</span><span class="pun">=</span><span class="atv">"http://www.w3.org/2000/09/xmldsig#"</span><span class="tag">&gt;</span><span class="pln">
+    </span><span class="tag">&lt;SignedInfo&gt;</span><span class="pln"> 
+      [...]
+      </span><span class="tag">&lt;Reference&gt;</span><span class="pln">
+        </span><span class="tag">&lt;Transforms&gt;</span><span class="pln">
+          </span><span class="tag">&lt;Transform</span><span class="pln"> </span><span class="atn">Algorithm</span><span class="pun">=</span><span class="atv">"http://www.w3.org/2010/xmldsig2#transform"</span><span class="tag">&gt;</span><span class="pln">
+            </span><span class="tag">&lt;dsig2:Selection</span><span class="pln"> </span><span class="atn">xmlns:dsig2</span><span class="pun">=</span><span class="atv">"http://www.w3.org/2010/xmldsig2#"</span><span class="pln">
+                 </span><span class="atn">type</span><span class="pun">=</span><span class="atv">"http://www.w3.org/2010/xmldsig2#xml"</span><span class="pln">  </span><span class="atn">URI</span><span class="pun">=</span><span class="atv">""</span><span class="pln"> </span><span class="tag">/&gt;</span><span class="pln">
+            [...]
+          </span><span class="tag">&lt;/Transform&gt;</span><span class="pln">
+        </span><span class="tag">&lt;/Transforms&gt;</span><span class="pln">
+        [...]
+      </span><span class="tag">&lt;/Reference&gt;</span><span class="pln">
+    </span><span class="tag">&lt;/SignedInfo&gt;</span><span class="pln">
+    [...]
+  </span><span class="tag">&lt;/Signature&gt;</span><span class="pln">  
+
+  </span><span class="tag">&lt;DataBlock2</span><span class="pln"> </span><span class="tag">/&gt;</span><span class="pln">
+
+</span><span class="tag">&lt;/Document&gt;</span></pre></div>
+
+<p>
+As can be seen, the XML Signature selects the whole document, hence all
+XML elements therein must be processed on signature verification.
+However, when parsing this document using a streaming approach, the
+verifying application might not know in advance which parts of the
+document are protected by the XML Signature. Hence, it will start
+parsing the document to extract the XPath expressions used for
+selection, but once it encounters that information, all the elements
+processed before have already been processed and dismissed (such as the
+&lt;Document&gt; and &lt;DataBlock1&gt; elements). Thus, these elements have not
+been digested, and hence there is no way to verify such an XML Signature
+in a one-pass streaming fashion.
+</p>
+
+<p>
+Note that this impossibility of one-pass streaming is not only affecting
+enveloping signatures. For instance, an XML Signature verification with
+a selection of
+
+</p><div class="example"><div class="example-title"><span>Example 2</span></div><pre class="example highlight prettyprint"><span class="tag">&lt;dsig2:Selection</span><span class="pln"> </span><span class="atn">type</span><span class="pun">=</span><span class="atv">"http://www.w3.org/2010/xmldsig2#xml"</span><span class="pln">
+   </span><span class="atn">xmlns:dsig2</span><span class="pun">=</span><span class="atv">"http://www.w3.org/2010/xmldsig2#"</span><span class="pln"> </span><span class="atn">URI</span><span class="pun">=</span><span class="atv">""</span><span class="pln"> </span><span class="tag">&gt;</span><span class="pln">
+   </span><span class="tag">&lt;dsig2:IncludedXPath&gt;</span><span class="pln"> //DataBlock1 </span><span class="tag">&lt;/dsig2:IncludedXPath&gt;</span><span class="pln">
+</span><span class="tag">&lt;/dsig2:Selection&gt;</span></pre></div>
+
+would have also failed due to the same issue, though not being an
+enveloped signature. The same holds for ID-based selection if the
+selected elements occur prior to the XML Signature in document order.
+<p></p>
+
+<p>
+These problems can be alleviated by doing the verification in two passes, the
+first pass merely scanning the document for the <code>&lt;Signature&gt;</code> and the second pass 
+actually evaluating the XPath , canonicalizing and computing the digest.  
+
+Applications that require pure one pass processing  <em class="rfc2119" title="SHOULD">SHOULD</em> avoid backward references of any kind.
+</p>
+</section>
+</section>
+
+<section id="sec-other-requirements">
+ <!--OddPage--><h2><span class="secno">3. </span>Other requirements</h2>
+<p>
+Apart from streaming, the XPath profile also needs to satisfy the following requirements:
+</p><ul>
+<li>  <p>
+The profile should produce results that are compatible with the C14N
+2.0 data model, i.e. it should 
+only result in element nodes or attribute nodes (but not xml: attribute and namespace
+ attributes). </p></li>
+<li><p>This XPath profile should include some of the known usages of XPath in XML Signatures.
+</p><ol>
+  <li>ebXML messages require a signature to exclude elements whose <code>@SOAP:actor</code> attribute matches
+  a certain value. Refer section 4.1.3 of [<cite><a class="bibref" href="#bib-EBXML-MSG">EBXML-MSG</a></cite>].</li>
+  <li>UK government specification requires signature to include the <code>GovTalkMessage/Body</code>  subtree, but exclude the 
+<code>GovTalkMessage/Body/IRevenvelope/IRHeader/IRmark</code>
+subtree [<cite><a class="bibref" href="#bib-HMRMC">HMRMC</a></cite>].</li> 
+</ol>
+<p></p></li>
+</ul>
+<p></p> 
+</section>
+   
+<section id="sec-definition">
+      <!--OddPage--><h2><span class="secno">4. </span>Definition of the Profile</h2>
+
+<p>
+
+The following tables define this XPath profile. It is a restricted version of grammar in [<cite><a class="bibref" href="#bib-XPATH">XPATH</a></cite>]. Although this grammar 
+appears to deviate from the [<cite><a class="bibref" href="#bib-XPATH">XPATH</a></cite>] grammar, it is in fact a 
+proper subset of  XPath 1.0, i.e. any XPath expression defined by this
+grammar is also a valid XPath 1.0 expression and  
+has exactly the same meaning as that defined by the XPath 1.0 specification.
+</p>
+
+<section id="sec-definition-toplevel">
+<h3><span class="secno">4.1 </span>Top level XPath expression</h3>
+  <table class="simple">
+    <thead>
+      <tr>
+        <th>
+          <p>Grammar</p>
+        </th>
+
+        <th>
+          <p>Explanation</p>
+        </th>
+      </tr>
+     </thead>
+     <tbody>
+      <tr>
+        <td>
+<pre><dfn id="dfn-xpath">XPath</dfn> ::=
+      (<a title="AbsoluteLocationPath" href="#dfn-absolutelocationpath" class="internalDFN">AbsoluteLocationPath</a> '|' )* <a title="AbsoluteLocationPath" href="#dfn-absolutelocationpath" class="internalDFN">AbsoluteLocationPath</a>
+</pre>
+        </td>
+        <td>
+          At the top level it is union of absolute locationPaths. e.g. <code>/a/b | //a[@c]</code>. 
+          <p>
+          Note: [<cite><a class="bibref" href="#bib-XPATH">XPATH</a></cite>] allows a generic
+          Expr in top level, e.g  <code>count(/a/b) + string-length(/a)</code> is a perfectly valid XPath 1.0 expression, but these are not allowed 
+          in this subset. That's because the whole goal of this subset is to select a set of subtrees, identified by subtree root elements. E.g. 
+          the XPath <code>/a/b</code> returns all <code>b</code> child elements of the top level element <code>a</code>. But when this XPath
+          expression is used in 
+          an <code>IncludedXPath</code> in XML Signature 2.0, it means not only these <code>b</code> elements, but all <code>b</code>'s descendants 
+          as well are to be selected for signing.
+          </p><p>
+          Relative Location Paths e.g. <code>../../a</code> are currently not allowed, This is because relative would be most useful 
+          in Enveloped signatures in which the signature is contained inside the element to be signed. In such a situation, 
+          the relative signature XPath would need to use the ancestor axis to reach the element to be signed, however the ancestor axis is not streamable. 
+        </p></td>
+      </tr>
+    
+  </tbody>
+</table>
+</section>
+
+<section id="sec-definition-LocationPath">
+<h3><span class="secno">4.2 </span>LocationPaths</h3>
+      
+  <table class="simple">
+    <thead>
+      <tr>
+        <th>
+          <p>Grammar</p>
+        </th>
+
+        <th>
+          <p>Explanation</p>
+        </th>
+      </tr>
+     </thead>
+     <tbody>
+    <tr>
+     <td>
+<pre>      
+<dfn id="dfn-absolutelocationpath">AbsoluteLocationPath</dfn> ::=  
+       '/' <a title="RelativeLocationPath" href="#dfn-relativelocationpath" class="internalDFN">RelativeLocationPath</a>? 
+     | <a title="AbbreviatedAbsoluteLocationPath" href="#dfn-abbreviatedabsolutelocationpath" class="internalDFN">AbbreviatedAbsoluteLocationPath</a>
+
+<dfn id="dfn-relativelocationpath">RelativeLocationPath</dfn> ::= 
+       <a title="Step" href="#dfn-step" class="internalDFN">Step</a> 
+     | <a title="RelativeLocationPath" href="#dfn-relativelocationpath" class="internalDFN">RelativeLocationPath</a> '/' <a title="Step" href="#dfn-step" class="internalDFN">Step</a>
+     | <a title="AbbreviatedRelativeLocationPath" href="#dfn-abbreviatedrelativelocationpath" class="internalDFN">AbbreviatedRelativeLocationPath</a>
+
+<dfn id="dfn-abbreviatedabsolutelocationpath">AbbreviatedAbsoluteLocationPath</dfn> ::=  
+       '//' <a title="RelativeLocationPath" href="#dfn-relativelocationpath" class="internalDFN">RelativeLocationPath</a>
+
+<dfn id="dfn-abbreviatedrelativelocationpath">AbbreviatedRelativeLocationPath</dfn> ::=  
+       <a title="RelativeLocationPath" href="#dfn-relativelocationpath" class="internalDFN">RelativeLocationPath</a> '//' <a title="Step" href="#dfn-step" class="internalDFN">Step</a>
+</pre>
+    </td>
+    <td>
+    An absolute location path starts with a slash and has consists of one or many "steps" separated by slash. e.g. <code>/a/b</code>.
+    Double slashes are also allowed, they are short for <code>/descendant-or-self::node()/</code>.
+    </td>
+   </tr>
+   <tr>
+     <td>
+<pre>
+<dfn id="dfn-step">Step</dfn> ::= 
+      <a title="AxisSpecifier" href="#dfn-axisspecifier" class="internalDFN">AxisSpecifier</a> <a title="NameTest" href="#dfn-nametest" class="internalDFN">NameTest</a> <a title="RestrictedPredicate" href="#dfn-restrictedpredicate" class="internalDFN">RestrictedPredicate</a>*
+    | <a title="AbbreviatedStep">AbbreviatedStep</a>
+   
+
+<dfn id="dfn-axisspecifier">AxisSpecifier</dfn> ::=  
+      <a title="AxisName" href="#dfn-axisname" class="internalDFN">AxisName</a> '::' 
+    | <a title="AbbreviatedAxisSpecifier" href="#dfn-abbreviatedaxisspecifier" class="internalDFN">AbbreviatedAxisSpecifier</a>
+
+<dfn id="dfn-abbreviatedaxisspecifier">AbbreviatedAxisSpecifier</dfn> ::= 
+       '@'?
+
+<dfn id="dfn-axisname">AxisName</dfn> ::= 
+      'attribute' 
+    | 'child' 
+    | 'descendant' 
+    | 'descendant-or-self' 
+    | 'following' 
+    | 'following-sibling' 
+    | 'self'
+    
+<dfn id="dfn-nametest">NameTest</dfn> ::= 
+      '*' 
+    | <a title="NCName">NCName</a> ':' '*' 
+    | <a title="QName">QName</a>
+   
+</pre>
+  </td>
+  <td>
+  A Step consists of an AxisSpecifier a NameTest, and zero or more predicates. The AxisSpecifier allows only forward axes; all the backward axes
+   <code>ancestor</code>, <code>ancestor-or-self</code>,  
+   <code>parent</code>, <code>preceding</code>, <code>preceding-sibling</code> are not streamable, and hence not allowed.
+   The <code>namespace</code> is also not streamable, so it is disallowed too.
+   <p>
+   Examples of allowed Steps : <code>b[2]</code>, <code>*</code>, <code>following::chapter</code>.
+   </p><p>
+   This Step is a restricted form of the Step in XPath 1.0 in two aspects. First it only allows a restricted set of Predicate expressions
+   that use attributes only, this restriction is described in the next section; and second it doesn't allow NodeTests. 
+   e.g. <code>child::text()</code> is not an allowed Step. This is because some predicates involving text nodes are not streamable.
+   </p><p>
+    Consider
+   this Step <code>child::text()[contains(.,"foo")]</code>, it selects all child text nodes that contain the string "foo". But as mentioned
+   earlier, text nodes can be extremely long, so a streaming XPath processor will be processing text nodes in chunks. The "foo" substring may be 
+   present at the very end of a large text node, so when the streaming XPath processor encounters the "foo", it would have already gotten past all 
+   previous chunks of this text node, and with streaming there is no way to rewind back to the beginning of this text node.
+   </p><p>
+   Because of this possibility of large text nodes, this XPath subset eliminates all mechanisms of selecting text nodes, either directly 
+   or through other mechanisms e.g. string-value.
+   </p><p>
+   Although the <code>node()</code> is not allowed, <code>//</code> which is an abbreviation for <code>/descendant-or-self::node()/</code>
+   is still allowed, because <code>//</code> always need to be followed by Step, so it cannot be used to select text nodes.
+  </p></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section id="sec-definition-RestrictedPredicate">
+<h3><span class="secno">4.3 </span>Predicates</h3>
+Although this XPath subset allows predicates, with all kinds of arithmetic, relational and boolean operators, including functions and variables, 
+these predicates are restricted to only referring to the attributes of the current element.
+So an XPath expression like <code>/a/b[c/d]</code> is not allowed. 
+<p>
+These kinds of XPath expressions cannot be streamed in general, e.g. in the
+ <code>/a/b[c/d]</code> 'b' may have a lot of children, with 'c' being the last one. To determine if 'b' is included or not, the XPath processor
+ needs to traverse through all the children of 'b', searching for the existence of 'c'. By the time it finds 'c', all the previous children of 'b' 
+ have already been passed, and there is no way to rewind back to beginning of 'b'.
+ 
+</p><table class="simple">
+   <thead>
+      <tr>
+        <th>
+          <p>Grammar</p>
+        </th>
+
+        <th>
+          <p>Explanation</p>
+        </th>
+      </tr>
+     </thead>
+<tbody>
+<tr>
+  <td>
+
+<pre><dfn id="dfn-restrictedpredicate">RestrictedPredicate</dfn> ::= 
+     '[' <a title="AttributeExpr" href="#dfn-attributeexpr" class="internalDFN">AttributeExpr</a> ']'
+
+<dfn id="dfn-attributeexpr">AttributeExpr</dfn> ::= 
+      <a title="OrExpr" href="#dfn-orexpr" class="internalDFN">OrExpr</a>
+
+<dfn id="dfn-orexpr">OrExpr</dfn> ::= 
+      <a title="AndExpr" href="#dfn-andexpr" class="internalDFN">AndExpr</a> 
+    | <a title="OrExpr" href="#dfn-orexpr" class="internalDFN">OrExpr</a> 'or' <a title="AndExpr" href="#dfn-andexpr" class="internalDFN">AndExpr</a>
+
+<dfn id="dfn-andexpr">AndExpr</dfn> ::= 
+      <a title="EqualityExpr" href="#dfn-equalityexpr" class="internalDFN">EqualityExpr</a> 
+    | <a title="AndExpr" href="#dfn-andexpr" class="internalDFN">AndExpr</a> 'and' <a title="EqualityExpr" href="#dfn-equalityexpr" class="internalDFN">EqualityExpr</a>
+
+<dfn id="dfn-equalityexpr">EqualityExpr</dfn> ::= 
+      <a title="RelationalExpr" href="#dfn-relationalexpr" class="internalDFN">RelationalExpr</a>
+    | <a title="EqualityExpr" href="#dfn-equalityexpr" class="internalDFN">EqualityExpr</a> '=' <a title="RelationalExpr" href="#dfn-relationalexpr" class="internalDFN">RelationalExpr</a>
+    | <a title="EqualityExpr" href="#dfn-equalityexpr" class="internalDFN">EqualityExpr</a> '!=' <a title="RelationalExpr" href="#dfn-relationalexpr" class="internalDFN">RelationalExpr</a>
+    
+<dfn id="dfn-relationalexpr">RelationalExpr</dfn> ::= 
+      <a title="AdditiveExpr" href="#dfn-additiveexpr" class="internalDFN">AdditiveExpr</a>
+    | <a title="RelationalExpr" href="#dfn-relationalexpr" class="internalDFN">RelationalExpr</a> '&lt;' <a title="AdditiveExpr" href="#dfn-additiveexpr" class="internalDFN">AdditiveExpr</a>
+    | <a title="RelationalExpr" href="#dfn-relationalexpr" class="internalDFN">RelationalExpr</a> '&gt;' <a title="AdditiveExpr" href="#dfn-additiveexpr" class="internalDFN">AdditiveExpr</a>
+    | <a title="RelationalExpr" href="#dfn-relationalexpr" class="internalDFN">RelationalExpr</a> '&lt;=' <a title="AdditiveExpr" href="#dfn-additiveexpr" class="internalDFN">AdditiveExpr</a>
+    | <a title="RelationalExpr" href="#dfn-relationalexpr" class="internalDFN">RelationalExpr</a> '&gt;=' <a title="AdditiveExpr" href="#dfn-additiveexpr" class="internalDFN">AdditiveExpr</a>
+
+<dfn id="dfn-additiveexpr">AdditiveExpr</dfn> ::=
+      <a title="MultiplicativeExpr" href="#dfn-multiplicativeexpr" class="internalDFN">MultiplicativeExpr</a>
+    | <a title="AdditiveExpr" href="#dfn-additiveexpr" class="internalDFN">AdditiveExpr</a> '+' <a title="MultiplicativeExpr" href="#dfn-multiplicativeexpr" class="internalDFN">MultiplicativeExpr</a>
+    | <a title="AdditiveExpr" href="#dfn-additiveexpr" class="internalDFN">AdditiveExpr</a> '-' <a title="MultiplicativeExpr" href="#dfn-multiplicativeexpr" class="internalDFN">MultiplicativeExpr</a>
+    
+<dfn id="dfn-multiplicativeexpr">MultiplicativeExpr</dfn> ::= 
+      <a title="UnaryExpr" href="#dfn-unaryexpr" class="internalDFN">UnaryExpr</a>
+    | <a title="MultiplicativeExpr" href="#dfn-multiplicativeexpr" class="internalDFN">MultiplicativeExpr</a> <a title="MultiplyOperator">MultiplyOperator</a> <a title="UnaryExpr" href="#dfn-unaryexpr" class="internalDFN">UnaryExpr</a>
+    | <a title="MultiplicativeExpr" href="#dfn-multiplicativeexpr" class="internalDFN">MultiplicativeExpr</a> 'div' <a title="UnaryExpr" href="#dfn-unaryexpr" class="internalDFN">UnaryExpr</a>
+    | <a title="MultiplicativeExpr" href="#dfn-multiplicativeexpr" class="internalDFN">MultiplicativeExpr</a> 'mod' <a title="UnaryExpr" href="#dfn-unaryexpr" class="internalDFN">UnaryExpr</a>
+
+<dfn id="dfn-unaryexpr">UnaryExpr</dfn> ::= 
+      <a title="PrimaryExpr" href="#dfn-primaryexpr" class="internalDFN">PrimaryExpr</a>
+    | <a title="AttributeReference" href="#dfn-attributereference" class="internalDFN">AttributeReference</a>
+    | '-' <a title="UnaryExpr" href="#dfn-unaryexpr" class="internalDFN">UnaryExpr</a>
+
+<dfn id="dfn-attributereference">AttributeReference</dfn> ::=  
+      'attribute' '::' <a title="NameTest" href="#dfn-nametest" class="internalDFN">NameTest</a>
+    | '@' <a title="NameTest" href="#dfn-nametest" class="internalDFN">NameTest</a>
+
+</pre>
+ </td>
+ <td>
+ An AttributeExpression is an expression involving arithmetic, boolean and relational operators. It can only involve AttributeReferences or PrimaryExprs.
+ <p>
+ An AttributeReference is reference to an attribute of the current element. e.g. <code>@title</code>.
+ </p></td>
+ </tr>
+ <tr>
+ <td>
+<pre> 
+<dfn id="dfn-primaryexpr">PrimaryExpr</dfn> ::= 
+      <a title="VariableReference" href="#dfn-variablereference" class="internalDFN">VariableReference</a>
+    | '(' <a title="AttributeExpr" href="#dfn-attributeexpr" class="internalDFN">AttributeExpr</a> ')'
+    | <a title="Literal" href="#dfn-literal" class="internalDFN">Literal</a>
+    | <a title="Number" href="#dfn-number" class="internalDFN">Number</a>
+    | <a title="FunctionCall" href="#dfn-functioncall" class="internalDFN">FunctionCall</a>
+
+
+<dfn id="dfn-literal">Literal</dfn> ::= '"' [^"]* '"' | "'" [^']* "'"
+
+<dfn id="dfn-number">Number</dfn> ::= <a title="Digits" href="#dfn-digits" class="internalDFN">Digits</a> ('.' <a title="Digits" href="#dfn-digits" class="internalDFN">Digits</a>?)?  | '.' <a title="Digits" href="#dfn-digits" class="internalDFN">Digits</a>
+
+<dfn id="dfn-digits">Digits</dfn> ::= [0-9]+
+ 
+<dfn id="dfn-functioncall">FunctionCall</dfn> ::= 
+      <a title="FunctionName" href="#dfn-functionname" class="internalDFN">FunctionName</a> '(' ( <a title="Argument" href="#dfn-argument" class="internalDFN">Argument</a> ( ',' <a title="Argument" href="#dfn-argument" class="internalDFN">Argument</a> )* )? ')'
+
+<dfn id="dfn-argument">Argument</dfn> ::= <a title="AttributeExpr" href="#dfn-attributeexpr" class="internalDFN">AttributeExpr</a>
+
+<dfn id="dfn-functionname">FunctionName</dfn> ::= <a title="QName">QName</a> - <a title="NodeType">NodeType</a>
+
+<dfn id="dfn-variablereference">VariableReference</dfn> ::= '$' <a title="QName">QName</a>
+
+
+</pre>
+  </td>
+        <td>
+A PrimaryExpr is either a literal e.g. <code>"foo"</code> or a number e.g. <code>23</code> or a variable reference e.g. <code>$var1</code> 
+or a function call e.g. <code>sum(23, $price)</code>. It can also be a complete AttributeReference.
+<p>
+node(), comment(), text(), processing-instruction()  are reserved names, and cannot be used for naming functions.
+        </p></td>
+      </tr>
+
+      <tr>
+        <td>
+          Node set functions
+
+          <ul>
+     
+            <li>
+              position()
+            </li>
+
+            <li>
+              count(nodeset)
+            </li>
+
+            <li>
+        local-name(nodeset)
+            </li>
+
+      <li>
+        namespace-uri(nodeset)
+            </li>
+
+            <li>
+        name(nodeset)
+            </li>
+          </ul>
+
+          String functions
+
+          <ul class="ul1">
+            <li>
+        string(object?)
+            </li>
+
+            <li>
+        concat(string, string, string*)
+            </li>
+
+            <li>
+        starts-with(string, string)
+            </li>
+
+            <li>
+        contains(string, string)
+            </li>
+
+            <li>
+        substring-before(string, string)
+            </li>
+
+            <li>
+        substring-after(string, string)
+            </li>
+
+            <li>
+        substring(string, number, number)
+            </li>
+
+            <li>
+        string-length(string?)
+            </li>
+
+            <li>
+        normalize-space(string?)
+            </li>
+          </ul>
+
+          Boolean functions
+
+          <ul class="ul1">
+            <li>
+              boolean(object)
+            </li>
+
+            <li>
+              true()
+            </li>
+
+            <li>
+              false()
+            </li>
+
+            <li>
+              lang(string)
+            </li>
+          </ul>
+
+          Number functions
+
+          <ul class="ul1">
+            <li>
+              number(object?)
+            </li>
+
+            <li>
+              sum(node-set)
+            </li>
+
+            <li>
+              floor(number)
+            </li>
+
+            <li>
+              ceiling(number)
+            </li>
+
+            <li>
+              round(number)
+            </li>
+          </ul>
+        </td>
+
+        <td>
+          <p>Note:</p>
+          
+          <p>All of these functions are only allowed inside a predicate. 
+          </p>
+          
+          <p>A predicate's
+          expression can only involve attribute nodes of the current element.  Functions can also be
+          used inside this expression, but this function's arguments also have to be expressions involving 
+          attribute nodes. There is no way to use elements, text nodes comments and processing instructions in predicate expressions.</p>
+
+          <p>The "string-value" of an attribute node is the attributes value. This XPath subset is designed in such a way that "string-value" only
+          need to be evaluated on attribute nodes, never on elements, text nodes or others. </p>
+
+          <p>The <code>last()</code> function is not supported because that involves backtracking, streaming 
+          parsers cannot do that.</p>
+
+          <p>String, number and boolean functions are all supported. However the no argument forms of <code>string()</code>, 
+            <code>string-length()</code> and <code>normalize-space()</code> are not supported, because they involve computing a string-value
+            of the current node, and this is not streamable as it involves looking ahead to collecting all descendant text nodes. 
+            Also as mentioned before some text nodes can be very large, and cannot be loaded all at once into memory. </p>
+            
+           <p>The no argument forms of <code>local-name()</code>, <code>namespace-uri()</code> and <code>name()</code> are 
+           allowed. For example <code>/a/*[local-name()="foo"]</code> selects all "foo" children of "a" regardless of namespace. </p> 
+
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</section>
+
+<p>
+Note: The descendant and related axes can be exploited by a denial of service attacks. See section 
+"XPath selection that causes denial of service in streaming mode" in [<cite><a class="bibref" href="#bib-XMLDSIG-BESTPRACTICES">XMLDSIG-BESTPRACTICES</a></cite>]. 
+</p>
+
+</section>
+
+<section id="sec-examples">
+<!--OddPage--><h2><span class="secno">5. </span>Examples of XPath expression that are part of this profile</h2>
+<p>This sections explains the profile with some XPath expressions that are part of this
+profile and some that aren't.
+</p>
+
+<p> All the XPath examples below are based on the following XML document. </p>
+<div class="example"><div class="example-title"><span>Example 3</span></div><pre class="example highlight prettyprint"><span class="tag">&lt;book&gt;</span><span class="pln">
+  </span><span class="tag">&lt;foreword&gt;</span><span class="pln">
+  </span><span class="tag">&lt;/foreword&gt;</span><span class="pln">
+  
+  </span><span class="tag">&lt;chapter</span><span class="pln"> </span><span class="atn">type</span><span class="pun">=</span><span class="atv">"preface"</span><span class="tag">&gt;</span><span class="pln">
+  </span><span class="tag">&lt;/chapter&gt;</span><span class="pln">
+
+  </span><span class="tag">&lt;chapter&gt;</span><span class="pln">
+    </span><span class="tag">&lt;title&gt;</span><span class="pln">Hybridism</span><span class="tag">&lt;/title&gt;</span><span class="pln">
+  </span><span class="tag">&lt;/chapter&gt;</span><span class="pln">
+
+  </span><span class="tag">&lt;chapter&gt;</span><span class="pln">
+  </span><span class="tag">&lt;/chapter&gt;</span><span class="pln">
+
+</span><span class="tag">&lt;/book&gt;</span></pre></div>
+
+<p>Examples of XPath expression that are included in the profile.
+</p>
+	<table class="simple">
+		<tbody><tr>
+			<th style="text-align:center">#</th>
+			<th style="text-align:center">Example</th>
+			<th style="text-align:center">Description</th>
+			<th style="text-align:center">XML Dsig 2.0</th>
+		</tr>
+		<tr>
+			<td>1</td>
+			<td><code>/book/chapter</code></td>
+			<td>all <code>chapter</code> children of <code>book</code></td>
+			<td>Y</td>
+		</tr>
+		<tr>
+			<td>2</td>
+			<td><code>/book/chapter[3]</code></td>
+			<td>third <code>chapter</code> child of <code>book</code> </td>
+			<td>Y</td>
+		</tr>
+		<tr>
+			<td>3</td>
+			<td><code>/book/chapter[@type="preface"]</code></td>
+			<td>all <code>chapter</code> children of <code>book</code> that have a <code>type</code> attribute with value <code>preface</code></td>
+			<td>Y</td>
+		</tr>
+		<tr>
+			<td>4</td>
+			<td><code>/book/chapter[@type="preface"][1]</code></td>
+			<td>the first <code>chapter</code> child of <code>book</code> that has a <code>title</code> attribute with
+			value preface.</td>
+			<td>Y</td>
+		</tr>
+		<tr>
+			<td>5</td>
+			<td><code>/book/chapter[2]/title[1]</code></td>
+			<td>the first <code>title</code> child of the second <code>chapter</code> child of <code>book</code>.</td>
+			<td>Y</td>
+		</tr>
+		<tr>
+			<td>6</td>
+			<td><code>/book/chapter[contains(@type,"pre")]</code></td>
+			<td>all <code>chapter</code> children of <code>book</code> that have an attribute
+			<code>type</code> whose value contains the string "pre".</td>
+			<td>Y</td>
+		</tr>
+		<tr>
+			<td>7</td>
+			<td><code>/child::book/child::chapter[contains(attribute::type,"pre")]</code></td>
+			<td>non abbreviated form of the above</td>
+			<td>Y</td>
+		</tr>
+		<tr>
+			<td>8</td>
+			<td><code>/book/chapter[position() mod 2 != 0]</code></td>
+			<td><code>chapter</code> children of <code>book</code> whose position is an odd number, 
+			i.e. the odd numbered chapters of the book.</td>
+			<td>Y</td>
+		</tr>
+		<tr>
+			<td>9</td>
+			<td><code>/book/chapter[position() mod 2 != 0][@type="preface"]</code></td>
+			<td>all the odd numbered chapters whose <code>type</code> is "preface".</td>			
+			<td>Y</td>
+		</tr>
+		<tr>
+			<td>10</td>
+			<td><code>//chapter</code></td>
+			<td>all <code>chapter</code> descendants</td>
+			<td>Y</td>
+		</tr>
+		<tr>
+			<td>11</td>
+			<td><code>/book/chapter | /book/foreword </code></td>
+			<td>all the <code>chapter</code> children of <code>book</code> and all the <code>foreword</code> children of book.</td>
+			<td>Y</td>
+		</tr>
+		<tr>
+			<td>12</td>
+			<td><code>//* </code></td>
+			<td>all the element nodes in the document.</td>
+			<td>Y<br>Note: when this is used to identify a selection in XML Dsig 2.0, it is exactly
+			equivalent to  "/*" which select only the document root element.</td>
+		</tr>
+</tbody></table>
+
+<p>These are examples of XPath expressions that are NOT included in the profile.</p>
+<table class="simple">
+		<tbody><tr>
+			<th style="text-align:center">#</th>
+			<th style="text-align:center">Example</th>
+			<th style="text-align:center">Description</th>
+			<th style="text-align:center">XML Dsig 2.0</th>
+		</tr>
+		<tr>
+			<td>1</td>
+			<td><code>/book/chapter[title="Hybridism"]</code></td>
+			<td>all <code>chapter</code> children of <code>book</code> that have a <code>title</code> sub element with value <code>Hybridism</code></td>
+			<td>N<br>expressions can only involve attributes</td>
+		</tr>
+		<tr>
+			<td>2</td>
+			<td><code>(/book)/chapter</code></td>
+			<td>Evaluate the (/book) expression and set that to the context node, and get the chapter child
+			of that context node.</td>
+			<td>N<br>the top level expression cannot have parenthesis or any other operators except the union operator "|"</td>
+		</tr>
+		<tr>
+			<td>3</td>
+			<td><code>count(/book/chapter)</code></td>
+			<td>count the number of <code>chapter</code> children of <code>book</code> </td>
+			<td>N<br></td>
+		</tr>
+		<tr>
+			<td>4</td>
+			<td><code>chapter</code></td>
+			<td>all <code>chapter</code> element children of context node.</td>
+			<td>N<br>relative location paths not allowed.</td>
+		</tr>
+		<tr>
+			<td>5</td>
+			<td><code>.</code></td>
+			<td>The context node.</td>
+			<td>N<br>relative location paths are not allowed.</td>
+		</tr>
+		<tr>
+			<td>6</td>
+			<td><code>/book/chapter/title/ancestor-or-self::chapter</code></td>
+			<td>the <code>chapter</code> ancestor of <code>/book/chapter/title</code>.</td>
+			<td>N<br>Only child, descendant and self axes are allowed.</td>
+		</tr>
+		<tr>
+			<td>7</td>
+			<td><code>/book/chapter/title/text()</code></td>
+			<td>the text child of <code>/book/chapter/title</code>.</td>
+			<td>N<br>text, comment and processing-instructions cannot be selected.</td>
+		</tr>
+		<tr>
+			<td>8</td>
+			<td><code>id("i1")</code></td>
+			<td>elements that have ID, whose value is "i1".</td>
+			<td>N<br>Functions are only allowed inside predicates, and also the <code>id()</code> function is not part of this subset.</td>
+		</tr>
+		<tr>
+			<td>9</td>
+			<td><code>/book[chapter/title]</code></td>
+			<td>the <code>book</code> element if it has a <code>chapter/title</code> grandchild.</td>
+			<td>N<br>only attributes are allowed in predicates.</td>
+		</tr>
+		<tr>
+			<td>10</td>
+			<td><code>/book/*[local-name(self::node()) = "chapter"]</code></td>
+			<td>the children of <code>book</code> element whose local name is "chapter".</td>
+			<td>N<br>Only attributes are allowed in predicates.</td>
+		</tr>
+		<tr>
+			<td>11</td>
+			<td><code>/book/chapter[2]/node()</code></td>
+			<td>all the child elements of the second <code>chapter</code> of the <code>book</code>.</td>
+			<td>N<br>node() test is not allowed, because it can select text nodes too.</td>
+		</tr>
+		<tr>
+			<td>12</td>
+			<td><code>/book/chapter or /book/foreword</code></td>
+			<td>boolean result is true, i.e. either of the location paths evaluate to non empty.</td>
+			<td>N<br>or operator is not allowed at top level. Top level expression can only be union 
+			of location paths.</td>
+		</tr>
+</tbody></table>
+</section>
+
+<section id="sec-Algorithm" class="appendix">
+  <!--OddPage--><h2><span class="secno">A. </span>Algorithm</h2>
+  
+<p>This section outlines an algorithm for a Streaming XPath engine that can execute this XPath subset. It is 
+NOT NORMATIVE.
+</p>
+
+<p> A streaming XML Parser e.g. [<cite><a class="bibref" href="#bib-XML-PARSER-STAX">XML-PARSER-STAX</a></cite>] which will produce events like StartElement, EndElement, TextNode etc. This event stream will be 
+the input for the XPath engine. The StartElement event includes all the attributes in that element. An streaming XML Parser may break up a large text node
+into multiple TextNode events. </p>
+
+<ol>
+<li>Split up the union expression by <code>"|"</code>.   i.e.  
+break up the  <code>locationPath | locationPath | .. </code>  into individual 
+location paths.</li>
+
+<li>For each location XPath create a state machine.</li>
+
+<li>Drive the state machines using the events.</li>
+
+
+</ol>
+
+</section>
+
+
+
+
+
+<section id="references" class="appendix"><!--OddPage--><h2><span class="secno">B. </span>References</h2><p>Dated references below are to the latest known or appropriate edition of the referenced work.  The referenced works may be subject to revision, and conformant implementations may follow, and are encouraged to investigate the appropriateness of following, some or all more recent editions or replacements of the works cited. It is in each case implementation-defined which  editions are supported.</p><section id="normative-references"><h3><span class="secno">B.1 </span>Normative references</h3><dl class="bibliography"><dt id="bib-XPATH">[XPATH]</dt><dd>James Clark; Steven DeRose. <a href="http://www.w3.org/TR/1999/REC-xpath-19991116/"><cite>XML Path Language (XPath) Version 1.0</cite></a>. 16 November 1999. W3C Recommendation. URL: <a href="http://www.w3.org/TR/1999/REC-xpath-19991116/">http://www.w3.org/TR/1999/REC-xpath-19991116/</a>
+</dd></dl></section><section id="informative-references"><h3><span class="secno">B.2 </span>Informative references</h3><dl class="bibliography"><dt id="bib-EBXML-MSG">[EBXML-MSG]</dt><dd>Ian Jones; Brian Gibb; David Fischer. <a href="https://www.oasis-open.org/committees/download.php/272/ebMS_v2_0.pdf"><cite> OASIS ebXML Message Service Specification</cite></a> 1 April 2002. URL: <a href="https://www.oasis-open.org/committees/download.php/272/ebMS_v2_0.pdf">https://www.oasis-open.org/committees/download.php/272/ebMS_v2_0.pdf</a>
+</dd><dt id="bib-HMRMC">[HMRMC]</dt><dd><a href="http://www.hmrc.gov.uk/softwaredevelopers/index.htm"><cite>HM Revenue and customs</cite></a> Her Majesty's Revenue and Customs. URL: <a href="http://www.hmrc.gov.uk/softwaredevelopers/index.htm">http://www.hmrc.gov.uk/softwaredevelopers/index.htm</a> <br> Sample response message with XML signature: <a href="http://www.hmrc.gov.uk/ebu/responsemessages.pdf">http://www.hmrc.gov.uk/ebu/responsemessages.pdf</a>
+</dd><dt id="bib-XML-PARSER-STAX">[XML-PARSER-STAX]</dt><dd>Christopher Fry. <a href="http://jcp.org/en/jsr/detail?id=173"><cite>JSR 173: Streaming API for XML for Java Specification</cite></a> 8th October 2003. v1.0  URL: <a href="http://jcp.org/en/jsr/detail?id=173">http://jcp.org/en/jsr/detail?id=173</a>
+</dd><dt id="bib-XMLDSIG-BESTPRACTICES">[XMLDSIG-BESTPRACTICES]</dt><dd>Pratik Datta; Frederick Hirsch. <a href="http://www.w3.org/TR/2013/NOTE-xmldsig-bestpractices-20130411/"><cite>XML Signature Best Practices</cite></a>. 11 April 2013. W3C Working Group Note. URL: <a href="http://www.w3.org/TR/2013/NOTE-xmldsig-bestpractices-20130411/">http://www.w3.org/TR/2013/NOTE-xmldsig-bestpractices-20130411/</a>
+</dd><dt id="bib-XMLDSIG-CORE1">[XMLDSIG-CORE1]</dt><dd>D. Eastlake; J. Reagle; D. Solo; F. Hirsch; T. Roessler; K. Yiu. <a href="http://www.w3.org/TR/2013/REC-xmldsig-core1-20130411/"><cite>XML Signature Syntax and Processing Version 1.1</cite></a>. 11 April 2013. W3C Recommendation. URL: <a href="http://www.w3.org/TR/2013/REC-xmldsig-core1-20130411/">http://www.w3.org/TR/2013/REC-xmldsig-core1-20130411/</a>
+</dd><dt id="bib-XMLDSIG-CORE2">[XMLDSIG-CORE2]</dt><dd>D. Eastlake; J. Reagle; D. Solo; F. Hirsch; T. Roessler; K. Yiu; P. Datta; S. Cantor. <a href="http://www.w3.org/TR/2013/NOTE-xmldsig-core2-20130411/"><cite>XML Signature Syntax and Processing Version 2.0</cite></a>. 11 April 2013. W3C Working Group Note. URL: <a href="http://www.w3.org/TR/2013/NOTE-xmldsig-core2-20130411/">http://www.w3.org/TR/2013/NOTE-xmldsig-core2-20130411/</a>
+</dd><dt id="bib-XMLDSIG-XPATH-FILTER2">[XMLDSIG-XPATH-FILTER2]</dt><dd>Merlin Hughes; John Boyer; Joseph Reagle. <a href="http://www.w3.org/TR/2002/REC-xmldsig-filter2-20021108/"><cite>XML-Signature XPath Filter 2.0</cite></a>. 8 November 2002. W3C Recommendation. URL: <a href="http://www.w3.org/TR/2002/REC-xmldsig-filter2-20021108/">http://www.w3.org/TR/2002/REC-xmldsig-filter2-20021108/</a>
+</dd><dt id="bib-XPTR-ELEMENT">[XPTR-ELEMENT]</dt><dd>Norman Walsh et al. <a href="http://www.w3.org/TR/2003/REC-xptr-element-20030325/"><cite>XPointer element() Scheme</cite></a>. 25 March 2003. W3C Recommendation. URL: <a href="http://www.w3.org/TR/2003/REC-xptr-element-20030325/">http://www.w3.org/TR/2003/REC-xptr-element-20030325/</a>
+</dd><dt id="bib-XPTR-XPOINTER">[XPTR-XPOINTER]</dt><dd>Ron Daniel Jr; Eve Maler; Steven DeRose. <a href="http://www.w3.org/TR/2002/WD-xptr-xpointer-20021219/"><cite>XPointer xpointer() Scheme</cite></a>. 19 December 2002. W3C Working Draft. URL: <a href="http://www.w3.org/TR/2002/WD-xptr-xpointer-20021219/">http://www.w3.org/TR/2002/WD-xptr-xpointer-20021219/</a>
+</dd></dl></section></section></body></html>

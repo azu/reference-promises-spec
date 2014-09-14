@@ -1,0 +1,1215 @@
+<!-- http://www.w3.org/TR/selectors-api2/ -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+
+<html lang=en-US>
+ <head profile="http://dublincore.org/documents/2008/08/04/dc-html/ ">
+  <meta content="text/html;charset=UTF-8" http-equiv=Content-Type>
+  <title>Selectors API Level 2</title>
+
+  <link href="http://purl.org/dc/terms/" rel=schema.dcterms>
+  <link href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright"
+   rel=dcterms.rights>
+  <meta content="Selectors API Level 2" name=dcterms.title>
+  <meta content=text name=dcterms.type>
+  <meta content=2013-10-17 name=dcterms.issued>
+  <meta content="Lachlan Hunt" name=dcterms.creator>
+  <meta content=W3C name=dcterms.publisher>
+  <meta content="http://www.w3.org/TR/2013/NOTE-selectors-api2-20131017/"
+   name=dcterms.identifier>
+  <style type="text/css">
+	pre.idl { border:solid thin; background:#eee; color:#000; padding:0.5em }
+	pre.idl :link, pre.idl :visited { color:inherit; background:transparent }
+
+	div.example { border-left:double; padding-left:1em }
+	dfn { font-style:normal; font-weight:bolder }
+	em.ct { font-style:normal; font-weight:normal; font-variant:small-caps }
+	p.note {  margin-left:2em; color:green; font-style:italic; font-weight:bold }
+	p.note:before { content:"Note: " }
+	.issue { padding:.5em; border:solid red }
+	.issue:before { content:"Issue: " }
+	code { color:#FF4500; }
+	code :link, code :visited { color:inherit }
+	</style>
+  <link href="http://www.w3.org/StyleSheets/TR/W3C-WG-NOTE" rel=stylesheet
+   type="text/css">
+
+ <body>
+  <div class=head>
+   <p><a href="http://www.w3.org/"><img alt=W3C height=48
+    src="http://www.w3.org/Icons/w3c_home" width=72></a>
+
+   <h1 id=title>Selectors API Level 2</h1>
+   <!-- "DOM Selectors" was not acceptable. "DOM Level 4 Selectors" and
+		conforming to the DOM specification template (if there is such a thing) is
+		just silly so we got stuck with this weird name. -->
+
+   <h2 class="no-num no-toc" id=W3C-doctype>W3C Working Group Note 17 October 2013</h2>
+
+   <dl>
+    <dt>This Version:
+
+    <dd><a
+     href="http://www.w3.org/TR/2013/NOTE-selectors-api2-20131017/">http://www.w3.org/TR/2013/NOTE-selectors-api2-20131017/</a>
+
+    <dt>Latest Editor's Draft:
+
+    <dd><a
+     href="http://dev.w3.org/2006/webapi/selectors-api2/">http://dev.w3.org/2006/webapi/selectors-api2/</a>
+
+    <dt>Latest Version:
+
+    <dd><a
+     href="http://www.w3.org/TR/selectors-api2/">http://www.w3.org/TR/selectors-api2/</a>
+
+    <dt>Previous Version:
+
+    <dd><a
+     href="http://www.w3.org/TR/2012/WD-selectors-api2-20120628/">http://www.w3.org/TR/2012/WD-selectors-api2-20120628/</a>
+
+    <dt>Editor:
+
+    <dd><a href="http://lachy.id.au/">Lachlan Hunt</a>;
+     Invited Expert;      
+     <a href="mailto:lachlan.hunt@lachy.id.au">lachlan.hunt@lachy.id.au</a>&gt;
+   </dl>
+
+   <p class=copyright><a
+    href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a>
+    © 2013 <a href="http://www.w3.org/"><acronym
+    title="World Wide Web Consortium">W3C</acronym></a><sup>®</sup> (<a
+    href="http://www.csail.mit.edu/"><acronym
+    title="Massachusetts Institute of Technology">MIT</acronym></a>, <a
+    href="http://www.ercim.eu/"><acronym
+    title="European Research Consortium for Informatics and Mathematics">ERCIM</acronym></a>,
+    <a href="http://www.keio.ac.jp/">Keio</a>,
+    <a href="http://ev.buaa.edu.cn/">Beihang</a>), All Rights Reserved. W3C <a
+    href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>,
+    <a
+    href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a>
+    and <a
+    href="http://www.w3.org/Consortium/Legal/copyright-documents">document
+    use</a> rules apply.
+  </div>
+
+  <hr>
+
+  <h2 class="no-num no-toc" id=abstract>Abstract</h2>
+
+  <p>Selectors, which are widely used in CSS, are patterns that match against
+   elements in a tree structure <a href="#SELECTORS4"
+   rel=biblioentry>[SELECTORS4]<!--{{!SELECTORS4}}--></a><a href="#CSS21"
+   rel=biblioentry>[CSS21]<!--{{CSS21}}--></a>. The Selectors API
+   specification defines methods for retrieving <a
+   href="#element"><code>Element</code></a> nodes from the <abbr
+   title="Document Object Model">DOM</abbr> by matching against a group of
+   selectors, and for testing if a given element matches a particular
+   selector. It is often desirable to perform DOM operations on a specific
+   set of elements in a document. These methods simplify the process of
+   acquiring and testing specific elements, especially compared with the more
+   verbose techniques defined and used in the past.
+
+  <h2 class="no-num no-toc" id=sotd>Status of this Document</h2>
+
+  <p><em>This section describes the status of this document at the time of
+   its publication. Other documents may supersede this document. A list of
+   current W3C publications and the latest revision of this technical report
+   can be found in the <a href="http://www.w3.org/TR/">W3C technical reports
+   index</a> at http://www.w3.org/TR/.</em>
+
+  <p>This is the 17 October 2013 Working Group Note of "Selectors API Level 2". The W3C
+   Membership and other interested parties are invited to review the document
+   and send comments to <a
+   href="mailto:www-dom@w3.org">www-dom@w3.org</a> (<a
+   href="http://lists.w3.org/Archives/Public/www-dom/">public
+   archive</a>) with <kbd>[selectors-api]</kbd> in the subject.
+
+  <p>This document was developed by the <a
+   href="http://www.w3.org/2008/webapps/">Web Applications Working Group</a>.
+   This Working Group will <em>not</em> advance this Working Group Note to Recommendation
+   Status.
+
+  <p><strong>Note: the Web Applications Working Group is no longer actively 
+   working on this specification. However, its features will be included in the 
+   DOM4 specification that is being developed by the HTML Working Group. 
+   Implementors should be aware that this specification is not stable.
+   Implementors who are not taking part in the discussions are likely
+   to find the specification changing out from under them in incompatible
+   ways. Vendors interested in implementing this specification
+   should
+   join the aforementioned mailing list and take part in the discussions.
+   </strong>
+
+  <p>Publication as a Working Group Note does not imply endorsement by the W3C
+   Membership. This is a draft document and may be updated, replaced or
+   obsoleted by other documents at any time. It is inappropriate to cite this
+   document as other than work in progress.
+
+  <p>This document was produced by a group operating under the <a
+   href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February
+   2004 W3C Patent Policy</a>. W3C maintains a <a
+   href="http://www.w3.org/2004/01/pp-impl/42538/status"
+   rel=disclosure>public list of any patent disclosures</a> made in
+   connection with the deliverables of the group; that page also includes
+   instructions for disclosing a patent. An individual who has actual
+   knowledge of a patent which the individual believes contains <a
+   href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential
+   Claim(s)</a> must disclose the information in accordance with <a
+   href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section
+   6 of the W3C Patent Policy</a>.
+
+  <h2 class="no-num no-toc" id=toc>Table of Contents</h2>
+  <!--begin-toc-->
+
+  <ul class=toc>
+   <li><a href="#introduction"><span class=secno>1. </span>Introduction</a>
+    <ul class=toc>
+     <li><a href="#examples"><span class=secno>1.1. </span>Examples</a>
+    </ul>
+
+   <li><a href="#conformance"><span class=secno>2. </span>Conformance
+    Requirements</a>
+    <ul class=toc>
+     <li><a href="#terminology"><span class=secno>2.1. </span>Terminology and
+      Conventions</a>
+    </ul>
+
+   <li><a href="#interoperability"><span class=secno>3.
+    </span>Interoperability Considerations</a>
+    <ul class=toc>
+     <li><a href="#extensibility"><span class=secno>3.1.
+      </span>Extensibility</a>
+    </ul>
+
+   <li><a href="#security"><span class=secno>4. </span>Security
+    Considerations</a>
+
+   <li><a href="#privacy"><span class=secno>5. </span>Privacy Considerations
+    </a>
+
+   <li><a href="#the-apis"><span class=secno>6. </span>The APIs</a>
+    <ul class=toc>
+     <li><a href="#interface-definitions"><span class=secno>6.1.
+      </span>Interface Definitions</a>
+
+     <li><a href="#findelements"><span class=secno>6.2. </span>Finding
+      Elements with Selectors</a>
+
+     <li><a href="#findelements-relative"><span class=secno>6.3.
+      </span>Finding Elements with Relative Selectors</a>
+
+     <li><a href="#matchtesting"><span class=secno>6.4. </span>Matching
+      Elements</a>
+
+     <li><a href="#grammar"><span class=secno>6.5. </span>Grammar</a>
+
+     <li><a href="#processing-selectors"><span class=secno>6.6.
+      </span>Processing Selectors</a>
+
+     <li><a href="#processing-reference-nodes"><span class=secno>6.7.
+      </span>Processing Reference Nodes</a>
+
+     <li><a href="#resolving-namespaces"><span class=secno>6.8.
+      </span>Resolving Namespaces</a>
+    </ul>
+
+   <li><a href="#examples0"><span class=secno>7. </span>Examples</a>
+
+   <li class=no-num><a href="#references">References</a>
+    <ul class=toc>
+     <li class=no-num><a href="#normative-references">Normative
+      references</a>
+
+     <li class=no-num><a href="#informative-references">Informative
+      references</a>
+    </ul>
+
+   <li class=no-num><a href="#acknowledgements">Acknowledgements</a>
+  </ul>
+  <!--end-toc-->
+
+  <h2 id=introduction><span class=secno>1. </span>Introduction</h2>
+
+  <p><em>This section is non-normative.</em>
+
+  <p>This specification provides methods for selecting and testing elements
+   based on whether or not they match a given selector. With these methods,
+   it is easier to match a set of <a href="#element"><code>Element</code></a>
+   nodes based on specific criteria, than having to subsequently filter the
+   result of calling other methods like <code>getElementsByTagName()</code>.
+
+  <h3 id=examples><span class=secno>1.1. </span>Examples</h3>
+
+  <p><em>This section is non-normative.</em>
+
+  <p>Some ECMAScript <a href="#ECMA-262-5.1"
+   rel=biblioentry>[ECMA-262-5.1]<!--{{ECMA-262-5.1}}--></a> examples:
+
+  <div class=example>
+   <p>This is an example table written in HTML5.
+
+   <pre>&lt;table id="score">
+  &lt;thead>
+    &lt;tr>
+      &lt;th>Test
+      &lt;th>Result
+  &lt;tfoot>
+    &lt;tr>
+      &lt;th>Average
+      &lt;td>82%
+  &lt;tbody>
+    &lt;tr>
+      &lt;td>A
+      &lt;td>87%
+    &lt;tr>
+      &lt;td>B
+      &lt;td>78%
+    &lt;tr>
+      &lt;td>C
+      &lt;td>81%
+&lt;/table></pre>
+
+   <p>In order to obtain the cells containing the results in the table, which
+    might be done, for example, to plot the values on a graph, there are at
+    least two approaches that may be taken. Using only the APIs from DOM
+    Level 2, it requires a script like the following that iterates through
+    each <code>tr</code> within each <code>tbody</code> in the
+    <code>table</code> to find the second cell of each row.
+
+   <pre>var table = document.getElementById("score");
+var groups = table.tBodies;
+var rows = null;
+var cells = [];
+
+for (var i = 0; i &lt; groups.length; i++) {
+  rows = groups[i].rows;
+  for (var j = 0; j &lt; rows.length; j++) {
+    cells.push(rows[j].cells[1]);
+  }
+}</pre>
+
+   <p>Alternatively, using the <code
+    title=document-selectallelements>querySelectorAll()</code> method, that
+    script becomes much more concise.
+
+   <pre>var cells = document.querySelectorAll("#score&gt;tbody&gt;tr&gt;td:nth-of-type(2)");</pre>
+
+   <p>Note that the script operates on the DOM and works independently from
+    the syntax used to create the document. Thus this script will also work
+    correctly for an equivalent table created from well-formed XHTML instead
+    of HTML, or dynamically created and inserted into a document using DOM
+    APIs.
+  </div>
+
+  <h2 id=conformance><span class=secno>2. </span>Conformance Requirements</h2>
+
+  <p>All diagrams, examples and notes in this specification are
+   non-normative, as are all sections explicitly marked non-normative.
+   Everything else in this specification is normative.
+
+  <p>The key words <em class=ct>must</em>, <em class=ct>must not</em>, <em
+   class=ct>should</em>, <em class=ct>may</em> and <em
+   class=ct>recommended</em> in the normative parts of this document are to
+   be interpreted as described in RFC 2119 <a href="#RFC2119"
+   rel=biblioentry>[RFC2119]<!--{{!RFC2119}}--></a>.
+
+  <p>The following conformance classes are defined (and considered) by this
+   specification:
+
+  <dl>
+   <dt><dfn id=conforming-user-agent>conforming user agent</dfn>
+
+   <dd>A user agent that implements the interfaces described in this
+    specification and conforms to all <em class=ct>must</em>-level criteria
+    that apply to implementations.
+
+   <dt><dfn id=conforming-application>conforming application</dfn>
+
+   <dd>An application that uses the interfaces defined in this specification
+    and conforms to all <em class=ct>must</em>-level criteria that apply to
+    applications.
+  </dl>
+
+  <h3 id=terminology><span class=secno>2.1. </span>Terminology and
+   Conventions</h3>
+
+  <p>The terminology used in this specification is that from Selectors <a
+   href="#SELECTORS4" rel=biblioentry>[SELECTORS4]<!--{{!SELECTORS4}}--></a>,
+   including:
+
+  <ul>
+   <li>The term <dfn id=contextual-reference-element-set>contextual reference
+    element set</dfn>.
+  </ul>
+
+  <p>The following features are defined in the DOM4 specification <a
+   href="#DOM" rel=biblioentry>[DOM]<!--{{!DOM}}--></a>:
+
+  <ul>
+   <li><dfn id=document title=dom-document><code>Document</code></dfn>
+    interface.
+
+   <li><dfn id=documentfragment><code>DocumentFragment</code></dfn>
+    interface.
+
+   <li><dfn id=element><code>Element</code></dfn> interface.
+
+   <li><dfn id=nodelist><code>NodeList</code></dfn> interface.
+
+   <li>The term <dfn id=tree title=concept-tree>tree</dfn>.
+
+   <li>The term <dfn id=tree-order title=concept-tree-order>tree order</dfn>.
+
+   <li>The term <dfn id=context-object>context object</dfn>.
+
+   <li>The term <dfn id=collection title=concept-collection>collection</dfn>.
+  </ul>
+
+  <p>Conformance requirements phrased as algorithms or specific steps <em
+   class=ct>may</em> be implemented in any manner, so long as the end result
+   is equivalent.
+
+  <p>The IDL used in this specification uses the syntax defined in Web IDL <a
+   href="#DOM-BINDINGS"
+   rel=biblioentry>[DOM-BINDINGS]<!--{{!DOM-BINDINGS}}--></a>.
+
+  <p>The construction "<code>Foo</code> object", where <code>Foo</code> is
+   actually an interface, is sometimes used instead of the more accurate
+   "object implementing the <code>Foo</code> interface".
+
+  <h2 id=interoperability><span class=secno>3. </span>Interoperability
+   Considerations</h2>
+
+  <p><em>This section is non-normative.</em>
+
+  <p>Some implementations might have different levels of support for
+   Selectors. If some implementations lack support for some selectors, then
+   the use of such selectors will result in those implementations failing to
+   return the expected results. Authors are advised to check for the DOM
+   Exceptions thrown by these APIs and provide a fallback for graceful
+   degradation.
+
+  <h3 id=extensibility><span class=secno>3.1. </span>Extensibility</h3>
+
+  <p><em>This section is non-normative.</em>
+
+  <p>Extensions of the APIs defined in this specification are <em>strongly
+   discouraged</em>. Implementors, Working Groups and other interested
+   parties should discuss extensions on a relevant public forum, such as <a
+   href="mailto:public-webapps@w3.org">public-webapps@w3.org</a>.
+
+  <h2 id=security><span class=secno>4. </span>Security Considerations</h2>
+
+  <p>It is expected that implementing this specification introduces no new
+   security risks for users.
+
+  <p>If, at any time, the implementation detects a situation which would
+   violate security policies, the implementation <em class=ct>may</em> abort
+   and raise a security exception. If any other error condition occurs which
+   is not covered directly by this or any other relevant specification, the
+   implementation <em class=ct>may</em> abort and raise an appropriate,
+   language-binding-specific or implementation-specific exception.
+
+  <h2 id=privacy><span class=secno>5. </span>Privacy Considerations</h2>
+
+  <p>History theft is a potential privacy issue because the
+   <code>:visited</code> pseudo-class in Selectors <a href="#SELECTORS4"
+   rel=biblioentry>[SELECTORS4]<!--{{!SELECTORS4}}--></a> allows authors to
+   query which links have been visited.
+
+  <p class=note>This is not a new problem, as it can already be exploited
+   using existing CSS and DOM APIs, such as <code>getComputedStyle()</code>
+   <a href="#DOM-LEVEL-2-STYLE"
+   rel=biblioentry>[DOM-LEVEL-2-STYLE]<!--{{DOM-LEVEL-2-STYLE}}--></a>.
+
+  <div class=example>
+   <p>In this example, <var>vlinks</var> will acquire a list of links that
+    the user has visited. The author can then obtain the URIs and potentially
+    exploit this knowledge.
+
+   <pre>var vlinks = document.querySelectorAll(":visited");
+for (var i = 0; i &lt; vlinks.length; i++) {
+  doSomethingEvil(vlinks[i].href);
+}</pre>
+  </div>
+
+  <p>As <a href="http://www.w3.org/TR/selectors4/#link">defined in
+   <cite>Selectors</cite></a> (<a href="#SELECTORS4"
+   rel=biblioentry>[SELECTORS4]<!--{{!SELECTORS4}}--></a>, section 7.2), user
+   agents <em class=ct>may</em> treat all links as unvisited links. It is <em
+   class=ct>recommended</em> that implementations behave consistently with
+   other uses of Selectors supported by the user agent.
+
+  <h2 id=the-apis><span class=secno>6. </span>The APIs</h2>
+
+  <p>The term <dfn id=first>first</dfn> used in the definitions of the
+   methods defined in this specification means <em>first in <a
+   href="#tree-order" title=concept-tree-order>tree order</a></em>. The term
+   <dfn id=subtrees>subtrees</dfn> refers to the set of elements that are
+   descendants of the specified <a href="#context-object">context object</a>.
+   The term <dfn id=matching-element-node>matching <code>Element</code>
+   node</dfn> refers to an <a href="#element"><code>Element</code></a> node
+   that matches the <a href="#selector-string">selector string</a>
+   (<var>selectors</var>) that was passed to the method, according to the
+   rules for matching elements defined in Selectors <a href="#SELECTORS4"
+   rel=biblioentry>[SELECTORS4]<!--{{!SELECTORS4}}--></a>.
+
+  <h3 id=interface-definitions><span class=secno>6.1. </span>Interface
+   Definitions</h3>
+
+  <pre class=idl>partial interface <a href="#document"
+   title=dom-document>Document</a> {
+  Element?  <a href="#queryselector"
+   title=queryselector>querySelector</a>(DOMString selectors);
+  NodeList  <a
+   href="#queryselectorall"
+   title=queryselectorall>querySelectorAll</a>(DOMString selectors);
+
+  Element?  <a
+   href="#find"
+   title=find1>find</a>(DOMString selectors, optional (Element or sequence&lt;Node&gt;)? refNodes);
+  NodeList  <a
+   href="#findall"
+   title=findall>findAll</a>(DOMString selectors, optional (Element or sequence&lt;Node&gt;)? refNodes);
+};
+
+partial interface <a
+   href="#documentfragment">DocumentFragment</a> {
+  Element?  <a
+   href="#queryselector"
+   title=queryselector>querySelector</a>(DOMString selectors);
+  NodeList  <a
+   href="#queryselectorall"
+   title=queryselectorall>querySelectorAll</a>(DOMString selectors);
+
+  Element?  <a
+   href="#find"
+   title=find1>find</a>(DOMString selectors, optional (Element or sequence&lt;Node&gt;)? refNodes);
+  NodeList  <a
+   href="#findall"
+   title=findall>findAll</a>(DOMString selectors, optional (Element or sequence&lt;Node&gt;)? refNodes);
+};
+
+partial interface <a
+   href="#element">Element</a> {
+  Element?  <a href="#queryselector"
+   title=queryselector>querySelector</a>(DOMString selectors);
+  NodeList  <a
+   href="#queryselectorall"
+   title=queryselectorall>querySelectorAll</a>(DOMString selectors);
+
+  Element?  <a
+   href="#find" title=find1>find</a>(DOMString selectors);
+  NodeList  <a
+   href="#findall" title=findall>findAll</a>(DOMString selectors);
+
+  boolean   <a
+   href="#matches"
+   title=matches>matches</a>(DOMString selectors, optional (Element or sequence&lt;Node&gt;)? refNodes);
+};
+</pre>
+
+  <h3 id=findelements><span class=secno>6.2. </span>Finding Elements with
+   Selectors</h3>
+
+  <p>The <var>selectors</var> argument for the <a
+   href="#queryselector"><code>querySelector</code></a> and <a
+   href="#queryselectorall"><code>querySelectorAll</code></a> methods accepts
+   a <a href="#selector-string">selector string</a>.
+
+  <p>The <dfn id=queryselector
+   title=queryselector><code>querySelector()</code></dfn> methods on the <a
+   href="#document"><code title=dom-document>Document</code></a>, <a
+   href="#documentfragment"><code>DocumentFragment</code></a>, and <a
+   href="#element"><code>Element</code></a> interfaces <em class=ct>must</em>
+   return the <a href="#first">first</a> matching <a
+   href="#element"><code>Element</code></a> node within the <a
+   href="#subtrees">subtrees</a> of the <a href="#context-object">context
+   object</a>. If there is no matching <a
+   href="#element"><code>Element</code></a>, the method <em
+   class=ct>must</em> return <code>null</code>.
+
+  <p>The <dfn id=queryselectorall
+   title=queryselectorall><code>querySelectorAll()</code></dfn> methods on
+   the <a href="#document"><code title=dom-document>Document</code></a>, <a
+   href="#documentfragment"><code>DocumentFragment</code></a>, and <a
+   href="#element"><code>Element</code></a> interfaces <em class=ct>must</em>
+   return a <a href="#nodelist"><code>NodeList</code></a> containing all of
+   the matching <a href="#element"><code>Element</code></a> nodes within the
+   <a href="#subtrees">subtrees</a> of the <a href="#context-object">context
+   object</a>, in <a href="#tree-order" title=concept-tree-order>tree
+   order</a>. If there are no matching nodes, the method <em
+   class=ct>must</em> return an empty <a
+   href="#nodelist"><code>NodeList</code></a>.
+
+  <p>When either <a href="#queryselector"><code>querySelector</code></a> or
+   <a href="#queryselectorall"><code>querySelectorAll</code></a> are invoked,
+   the implementation <em class=ct>must</em> follow these steps:
+
+  <ol>
+   <li>
+    <p>Let <var>reference nodes</var> be the result of running the algorithm
+     to <a href="#determine-contextual-reference-nodes">determine contextual
+     reference nodes</a>.
+
+   <li>
+    <p>Let <var>parsed selector</var> be the result of running the algorithm
+     to <a href="#parse-a-selector">parse a selector</a> with
+     <var>selectors</var>, <var>relative</var> and <var>reference nodes</var>
+     as the input.
+
+   <li>
+    <p>The implementation must then run the algorithm to <a
+     href="#evaluate-a-selector">evaluate a selector</a> against element
+     nodes in the specified <a href="#tree" title=concept-tree>tree</a> or <a
+     href="#subtrees">subtrees</a> using <var>parsed selector</var> as the
+     selector and <var>reference nodes</var> as the <a
+     href="#contextual-reference-element-set">contextual reference element
+     set</a>, as needed to return the required result for the invoked method.
+  </ol>
+
+  <p>The <a href="#nodelist"><code>NodeList</code></a> object returned by the
+   <code>querySelectorAll()</code> method <em class=ct>must</em> be static
+   (<a href="#DOM" rel=biblioentry>[DOM]<!--{{!DOM}}--></a>, section 8).
+
+  <h3 id=findelements-relative><span class=secno>6.3. </span>Finding Elements
+   with Relative Selectors</h3>
+
+  <p>The <var>selectors</var> argument for the <a href="#find"><code
+   title=find1>find</code></a> and <a
+   href="#findall"><code>findAll</code></a> methods accepts a <a
+   href="#relative-selector-string">relative selector string</a>.
+
+  <p>The optional <var>refNodes</var> argument specifies zero or more nodes
+   to be included in the <a
+   href="#contextual-reference-element-set">contextual reference element
+   set</a>.
+
+  <p>The <dfn id=find title=find1><code>find()</code></dfn> methods on the <a
+   href="#document"><code title=dom-document>Document</code></a>, <a
+   href="#documentfragment"><code>DocumentFragment</code></a>, and <a
+   href="#element"><code>Element</code></a> interfaces <em class=ct>must</em>
+   return the <a href="#first">first</a> matching <a
+   href="#element"><code>Element</code></a> node from the <a href="#tree"
+   title=concept-tree>tree</a> within which the <a
+   href="#context-object">context object</a> is located. If there is no
+   matching <a href="#element"><code>Element</code></a>, the method <em
+   class=ct>must</em> return <code>null</code>.
+
+  <p>The <dfn id=findall title=findall><code>findAll()</code></dfn> methods
+   on the <a href="#document"><code title=dom-document>Document</code></a>,
+   <a href="#documentfragment"><code>DocumentFragment</code></a>, and <a
+   href="#element"><code>Element</code></a> interfaces <em class=ct>must</em>
+   return a <code>?</code> [collection] containing all of the matching <a
+   href="#element"><code>Element</code></a> nodes from the <a href="#tree"
+   title=concept-tree>tree</a> within which the <a
+   href="#context-object">context object</a> is located. If there is no
+   matching <a href="#element"><code>Element</code></a>, the method <em
+   class=ct>must</em> return an empty <code>?</code> [collection].
+
+  <p>When either <a href="#find"><code title=find1>find</code></a> or <a
+   href="#findall"><code>findAll</code></a> is invoked, the implementation
+   <em class=ct>must</em> follow these steps:
+
+  <ol>
+   <li>
+    <p>Let <var>reference nodes</var> be the result of running the algorithm
+     to <a href="#determine-contextual-reference-nodes">determine contextual
+     reference nodes</a> using <var>refNodes</var> as the input, if provided.
+
+   <li>
+    <p>Let the <a href="#scope-flag">scope flag</a> be true.
+
+   <li>
+    <p>Let <var>parsed selector</var> be the result of running the algorithm
+     to <a href="#parse-a-relative-selector">parse a relative selector</a>
+     with <var>selectors</var>, <var>relative</var> and <var>reference
+     nodes</var> as the input.
+
+   <li>
+    <p>The implementation must then run the algorithm to <a
+     href="#evaluate-a-selector">evaluate a selector</a> against element
+     nodes in the specified <a href="#tree" title=concept-tree>tree</a> using
+     <var>parsed selector</var> as the selector and <var>reference
+     nodes</var> as the <a
+     href="#contextual-reference-element-set">contextual reference element
+     set</a>, as needed to return the required result for the invoked method.
+  </ol>
+
+  <h3 id=matchtesting><span class=secno>6.4. </span>Matching Elements</h3>
+
+  <p>The <var>selectors</var> argument for the <a
+   href="#matches"><code>matches</code></a> method accepts a <a
+   href="#relative-selector-string">relative selector string</a>.
+
+  <p>The optional <var>refNodes</var> argument specifies zero or more nodes
+   to be included in the <a
+   href="#contextual-reference-element-set">contextual reference element
+   set</a>.
+
+  <p>The <dfn id=matches title=matches><code>matches()</code></dfn> method on
+   the <a href="#element"><code>Element</code></a> interface <em
+   class=ct>must</em> return true if the <a href="#context-object">context
+   object</a> is a <a href="#matching-element-node">matching
+   <code>Element</code> node</a>. Otherwise, the method <em
+   class=ct>must</em> return false.
+
+  <p>When the method is invoked, the implementation must follow these steps:
+
+  <ol>
+   <li>
+    <p>Let <var>reference nodes</var> be the result of running the algorithm
+     to <a href="#determine-contextual-reference-nodes">determine contextual
+     reference nodes</a> using <var>refNodes</var> as the input, if provided.
+
+   <li>
+    <p>Let the <a href="#scope-flag">scope flag</a> be false.
+
+   <li>
+    <p>Let <var>parsed selector</var> be the result of running the algorithm
+     to <a href="#parse-a-relative-selector">parse a relative selector</a>
+     with <var>selectors</var> and <var>reference nodes</var> as the input.
+
+   <li>
+    <p>The implementation must then run the algorithm to <a
+     href="#evaluate-a-selector">evaluate a selector</a> against the <a
+     href="#context-object">context object</a> using <var>parsed
+     selector</var> as the selector and <var>reference nodes</var> as the <a
+     href="#contextual-reference-element-set">contextual reference element
+     set</a>.
+  </ol>
+
+  <h3 id=grammar><span class=secno>6.5. </span>Grammar</h3>
+
+  <p>A <dfn id=selector-string>selector string</dfn> is a list of one or more
+   <a href="http://dev.w3.org/csswg/selectors4/#complex">complex
+   selectors</a> (<a href="#SELECTORS4"
+   rel=biblioentry>[SELECTORS4]<!--{{!SELECTORS4}}--></a>, section 3.1) that
+   <em class=ct>may</em> be surrounded by whitespace and matches the
+   <code>dom_selectors_group</code> production.
+
+  <p>A <dfn id=relative-selector-string>relative selector string</dfn> is a
+   list of one or more <a href="#relative-selector"
+   title="relative selector">relative selectors</a> that matches the
+   <code>dom_relative_selectors_group</code> production.
+
+  <p>A <dfn id=relative-selector>relative selector</dfn> is a <a
+   href="http://dev.w3.org/csswg/selectors4/#complex">complex selector</a>
+   (<a href="#SELECTORS4"
+   rel=biblioentry>[SELECTORS4]<!--{{!SELECTORS4}}--></a>, section 3.1) that
+   <em class=ct>may</em> be preceded by a combinator, and matches the
+   <code>dom_relative_selector</code> production. Implementations <em
+   class=ct>must not</em> allow a <a href="#relative-selector">relative
+   selector</a> to begin with a descendant combinator (a space).
+
+  <pre>
+dom_selectors_group
+  : S* [ selectors_group ] S*
+  ;
+<!-- Omit S* from the beginning of this because "[... | S+ ]?" is included already by "[ combinator ]?" -->
+dom_relative_selectors_group
+  : S* [ dom_relative_selector [ COMMA S* dom_relative_selector ]* ] S*
+  ;
+
+dom_relative_selector
+  /* Note that this cannot begin with a descendant combinator */
+  : [ combinator ]? selector
+  ;
+</pre>
+
+  <p>The productions for <code>selectors_group</code>,
+   <code>combinator</code> and <code>selector</code> are defined in Selectors
+   4 (<a href="#SELECTORS4"
+   rel=biblioentry>[SELECTORS4]<!--{{!SELECTORS4}}--></a>, section 16.1).
+   These groups of selectors <em class=ct>should not</em> use <a
+   href="#namespace-prefix-needs-to-be-resolved"
+   title=need-to-resolve>namespace prefixes that need to be resolved</a>.
+
+  <p class=note>Implementers are advised that if <code>null</code> or
+   <code>undefined</code> are passed as the value of the <var>selectors</var>
+   parameter, they are to be handled as defined in WebIDL <a
+   href="#DOM-BINDINGS"
+   rel=biblioentry>[DOM-BINDINGS]<!--{{!DOM-BINDINGS}}--></a>. Authors are
+   advised to avoid passing these values.
+
+  <p class=note>Authors are advised that while the use of pseudo-elements in
+   selectors is permitted, they will not match any elements in the document,
+   and thus would not result in any elements being returned. Therefore,
+   authors are advised to avoid the use of pseudo-elements in selectors that
+   are passed to the methods defined in this specification.
+
+  <h3 id=processing-selectors><span class=secno>6.6. </span>Processing
+   Selectors</h3>
+
+  <p>The <dfn id=scope-flag>scope flag</dfn> is set to "true" when finding
+   elements. It is set to "false" when matching elements. This flag is used
+   to determine whether <code>:scope</code> is always included when there are
+   reference nodes, or only when required due to a selector beginning with a
+   combinator.
+
+  <p>The steps to <dfn id=parse-a-selector>parse a selector</dfn> are as
+   follows:
+
+  <ol>
+   <li>
+    <p>Let <var>selectors</var> be the <a href="#selector-string">selector
+     string</a> or <a href="#relative-selector-string">relative selector
+     string</a> input to this algorithm.
+
+   <li>
+    <p>Let <var>reference nodes</var> be the reference nodes input to this
+     algorithm.
+
+   <li>
+    <p>Let <var>result</var> be the group of selectors returned as a result
+     of parsing the <var>selectors</var> according to the grammar for
+     <code>dom_selectors_group</code> defined above.
+
+   <li>
+    <p>If <var>result</var> is <a
+     href="http://www.w3.org/TR/css3-selectors/#Conformance">invalid</a> (<a
+     href="#SELECTORS4"
+     rel=biblioentry>[SELECTORS4]<!--{{SELECTORS4}}--></a>, section 3.8), <a
+     href="http://www.w3.org/TR/dom/#concept-throw">throw a
+     <code>SyntaxError</code> exception</a> (<a href="#DOM"
+     rel=biblioentry>[DOM]<!--{{!DOM}}--></a>, section 3.1) and abort this
+     algorithm.
+
+   <li>Return <var>result</var>.
+  </ol>
+
+  <p>The steps to <dfn id=parse-a-relative-selector>parse a relative
+   selector</dfn> are as follows:
+
+  <ol>
+   <li>
+    <p>If <var>selectors</var> matches the grammar for
+     <code>dom_relative_selectors_group</code>, let <var>selectors
+     group</var> be the group of selectors returned as a result of parsing
+     the <var>selectors</var> according to the grammar for
+     <code>dom_relative_selectors_group</code> defined above.
+
+   <li>
+    <p>Otherwise, <a href="http://www.w3.org/TR/dom/#concept-throw">throw a
+     <code>SyntaxError</code> exception</a> (<a href="#DOM"
+     rel=biblioentry>[DOM]<!--{{!DOM}}--></a>, section 3.1) and abort this
+     algorithm.
+
+   <li>
+    <p>Let <var>result</var> be an initially empty group of selectors.
+
+   <li>
+    <p>For each <a href="#relative-selector"><var>relative selector</var></a>
+     in <var>selectors group</var>:
+
+    <ol>
+     <li>
+      <p>If the <a href="#relative-selector"><var>relative selector</var></a>
+       begins with a combinator, then prepend the simple selector
+       "<code>:scope</code>" to the <a
+       href="#relative-selector"><var>relative selector</var></a>.
+
+     <li>
+      <p>Otherwise, if the <var>reference nodes</var> is an empty collection,
+       do nothing.
+
+     <li>
+      <p>Otherwise, if any compound selector within <a
+       href="#relative-selector"><var>relative selector</var></a> includes a
+       functional pseudo-class that accepts a selector as its parameter, and
+       which contains the "<code>:scope</code>" pseudo-class anywhere within
+       it, then do nothing.
+
+     <li>
+      <p>Otherwise, if the <a href="#relative-selector"><var>relative
+       selector</var></a> includes :scope within any compound or simple
+       selector, then do nothing.
+
+     <li>
+      <p>Otherwise, if the <a href="#scope-flag">scope flag</a> is false,
+       then do nothing.
+
+     <li>
+      <p>Otherwise, prepend the simple selector "<code>:scope</code>" and a
+       descendant combinator ('<code> </code>') to the <a
+       href="#relative-selector"><var>relative selector</var></a>.
+
+     <li>
+      <p>Add <a href="#relative-selector"><var>relative selector</var></a> to
+       <var>result</var>.
+    </ol>
+
+   <li>Return <var>result</var>.
+  </ol>
+
+  <p>The steps to <dfn id=evaluate-a-selector>evaluate a selector</dfn> are
+   as follows:
+
+  <ol>
+   <li>
+    <p>Let <var title="">element</var> be the element being evaluated.
+
+   <li>
+    <p>Let <var>selector group</var> be the selector input into this
+     algotihm.
+
+   <li>
+    <p>Let <var>reference nodes</var> be the reference nodes input into this
+     algorithm.
+
+   <li>
+    <p>For the purpose of evaluating the <code>:scope</code> pseudo-class,
+     the <a href="#contextual-reference-element-set">contextual reference
+     element set</a> contains all <a href="#element"><code>Element</code></a>
+     nodes contained within <var>reference nodes</var>.
+
+   <li>
+    <p>If any selector in <var>selector group</var> matches <var
+     title="">element</var>, return true. Otherwise, return false.
+  </ol>
+
+  <p>Selectors are evaluated against a given element in the context of the
+   entire DOM tree in which the element is located.
+
+  <p>If the user agent also supports some level of CSS, the implementation
+   <em class=ct>should</em> support the same set of selectors in both these
+   APIs and CSS.
+
+  <h3 id=processing-reference-nodes><span class=secno>6.7. </span>Processing
+   Reference Nodes</h3>
+
+  <p>The steps to <dfn id=determine-contextual-reference-nodes>determine
+   contextual reference nodes</dfn> are as follows:
+
+  <ol>
+   <li>
+    <p>Let <var>input</var> be the value that is being processed, if
+     provided.
+
+   <li>
+    <p>Let <var>result</var> be an initially empty collection of <a
+     href="#element"><code>Element</code></a> nodes.
+
+   <li>
+    <p>If the <var>input</var> was provided, then:
+
+    <ol>
+     <li>
+      <p>If <var>input</var> is an <a
+       href="#element"><code>Element</code></a> node, then append that <a
+       href="#element"><code>Element</code></a> to the <var>result</var>
+       collection.
+
+     <li>
+      <p>If <var>input</var> is a sequence of <code>Node</code> objects, then
+       iterate through the sequence and append each <a
+       href="#element"><code>Element</code></a> node contained within it to
+       the <var>result</var> collection.
+
+     <li>
+      <p>If <var>input</var> is <code>null</code>, then do nothing.
+
+      <p class=note>This leaves the result collection empty.
+    </ol>
+
+   <li>
+    <p>Otherwise, if <var>input</var> was omitted, then:
+
+    <ol>
+     <li>
+      <p>If the <a href="#context-object">context object</a> is an <a
+       href="#element"><code>Element</code></a> node, then append that <a
+       href="#element"><code>Element</code></a> to the <var>result</var>
+       collection.
+    </ol>
+
+   <li>
+    <p>Return <var>result</var>.
+  </ol>
+
+  <p class=note>The result may still be an empty collection at the end of
+   that process.
+
+  <p class=note>If the refNodes parameter was passed a sequence containing
+   objects other than <code>Node</code> objects, then a
+   <code>TypeError</code> will be thrown <a href="#DOM-BINDINGS"
+   rel=biblioentry>[DOM-BINDINGS]<!--{{!DOM-BINDINGS}}--></a>.
+
+  <h3 id=resolving-namespaces><span class=secno>6.8. </span>Resolving
+   Namespaces</h3>
+
+  <p>If the group of selectors include <a
+   href="#namespace-prefix-needs-to-be-resolved"
+   title=need-to-resolve>namespace prefixes that need to be resolved</a>, the
+   implementation <em class=ct>must</em> <a
+   href="http://www.w3.org/TR/dom/#concept-throw">throw a
+   <code>SyntaxError</code> exception</a> (<a href="#DOM"
+   rel=biblioentry>[DOM]<!--{{!DOM}}--></a>, section 3.1).
+
+  <p class=note>This specification does not provide support for resolving
+   arbitrary namespace prefixes. However, support for a namespace prefix
+   resolution mechanism may be considered for inclusion in a future version
+   of this specification.
+
+  <p>A <dfn id=namespace-prefix-needs-to-be-resolved
+   title=need-to-resolve>namespace prefix needs to be resolved</dfn> if the
+   namespace component is neither empty (e.g. <code>|div</code>),
+   representing the null namespace, or an asterisk (e.g. <code>*|div</code>),
+   representing any namespace. Since the asterisk or empty namespace prefix
+   do not need to be resolved, implementations that support the namespace
+   syntax in Selectors <em class=ct>must</em> support these. <a
+   href="#SELECTORS4" rel=biblioentry>[SELECTORS4]<!--{{!SELECTORS4}}--></a>
+
+  <h2 id=examples0><span class=secno>7. </span>Examples</h2>
+
+  <p class=issue>Add more examples illustrating the use of the reference node
+   and :scope selector, as well as the find() and matches() methods.
+
+  <div class=example>
+   <p>The following examples make use of this sample XHTML document.
+
+   <pre>&lt;html xmlns="http://www.w3.org/1999/xhtml">
+  &lt;head>
+    &lt;title&gt;Selectors API Example&lt;/title&gt;
+  &lt;/head>
+  &lt;body>
+    &lt;div id="foo"&gt;
+      &lt;p class="warning"&gt;This is a sample warning&lt;/p&gt;
+      &lt;p class="error"&gt;This is a sample error&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div id="bar"&gt;
+      &lt;p&gt;...&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/body>
+&lt;/html></pre>
+
+   <p>The methods accept a group of selectors (comma separated) as the
+    argument. The following example would select all <code>p</code> elements
+    in the document that have a class of either "<code>error</code>" or
+    "<code>warning</code>".
+
+   <pre>var alerts = document.querySelectorAll("p.warning, p.error");</pre>
+
+   <p>The <code title=document-selectelement>querySelector()</code> methods
+    also accept a group of selectors and they will return the first element
+    (if any) that matches any of the selectors in the group.
+
+   <pre>var x = document.querySelector("#foo, #bar");</pre>
+
+   <p><var>x</var> would contain the first element in the document with an ID
+    of either <code>foo</code> or <code>bar</code>, or <code>null</code> if
+    there is no such element. In the sample document above, it would select
+    the <code>div</code> element with the ID of <code>foo</code> because it
+    is first in <span>tree order</span>. The order of the selectors used in
+    the parameter has no effect and would have the same result if the order
+    were reversed, as in:
+
+   <pre>var x = document.querySelector("#bar, #foo");</pre>
+
+   <p>The methods can also be invoked on elements. In the following example,
+    assume the event handler is registered on an element, and thus the method
+    is invoked on the target element of the event.
+
+   <pre>function handle(evt) {
+  var x = evt.target.querySelector("span");
+  ...
+  // Do something with x
+}</pre>
+
+   <p>Even though the method is invoked on an element, selectors are still
+    evaluated in the context of the entire document. In the following
+    example, the method will still match the <code>div</code> element's child
+    <code>p</code> element, even though the <code>body</code> element is not
+    a descendant of the <code>div</code> element itself.
+
+   <pre>var div = document.getElementById("bar");
+var p = div.querySelector("body p");</pre>
+
+   <p>Given this sample fragment that contains a list as a navigation menu:
+
+   <pre>&lt;ul class="nav"&gt;
+  &lt;li&gt;&lt;a href="/"&gt;Home&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="/products"&gt;Products&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="/about"&gt;About&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</pre>
+
+   <p>The following example selects all the <code>li</code> elements and
+    demonstrates how to iterate through the collection in a <a
+    href="#nodelist"><code>NodeList</code></a>.
+
+   <pre>var lis = document.querySelectorAll("ul.nav&gt;li");
+for (var i = 0; i &lt; lis.length; i++) {
+  process(lis.item(i));
+}</pre>
+
+   <p>In ECMAScript, the language binding also allows <a
+    href="#nodelist"><code>NodeList</code></a>s to be addressed using the
+    array notation, so that loop could be rewritten like this:
+
+   <pre>for (var i = 0; i &lt; lis.length; i++) {
+  process(lis[i]);
+}</pre>
+
+   <p>Since the <a href="#nodelist"><code>NodeList</code></a> objects
+    returned by these methods are not live, changes to the DOM do not affect
+    the content of the list. Consider the <code>process()</code> function
+    called in the previous examples is defined as follows:
+
+   <pre>function process(elmt) {
+  elmt.parentNode.removeChild(elmt);
+}</pre>
+
+   <p>This would cause each selected element to be removed from the DOM, but
+    each element will remain in the <a
+    href="#nodelist"><code>NodeList</code></a>. If the list were a live <a
+    href="#nodelist"><code>NodeList</code></a>, removing an item from the DOM
+    would also remove the element from the list and adjust the indexes of
+    subsequent elements. That would have adverse effects upon the loop
+    because not all selected elements would be processed.
+
+   <p>In documents comprising elements from multiple namespaces, it's
+    possible that some elements from different namespaces share the same
+    local name. Since this API does not natively support a namespace
+    resolution mechanism for selectors, obtaining a list of such elements
+    from a specific namespace, excluding all others, requires additional
+    processing to filter the result. The following example illustrates a
+    document containing <code>video</code> elements from both the SVG and
+    XHTML namespaces.
+
+   <pre>&lt;svg id=&quot;svg1&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;
+               xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;
+  &lt;video id=&quot;svgvideo1&quot; xlink:href=&quot;myvideo.ogg&quot; width=&quot;320&quot; height=&quot;240&quot;/&gt;
+  &lt;foreignObject width=&quot;100&quot; height=&quot;100&quot;&gt;
+    &lt;video id=&quot;htmlvideo1&quot; src=&quot;myvideo.ogg&quot; xmlns=&quot;http://www.w3.org/1999/xhtml&quot;&gt;No video1&lt;/video&gt;
+  &lt;/foreignObject&gt;
+&lt;/svg&gt;</pre>
+
+   <p>The following script demonstrates how to first select the
+    <code>video</code> elements and then filter out the unwanted elements
+    based on their namespace.
+
+   <pre>var elms = document.querySelectorAll("svg video");
+var result = new Array();
+var svgns = "http://www.w3.org/2000/svg"
+
+for(var i = 0; i &lt; elms.length; i++) {
+  if(elms[i].namespaceURI == svgns) {
+    result.push(elms[i]);
+  }
+}</pre>
+  </div>
+
+  <h2 class=no-num id=references>References</h2>
+
+  <h3 class=no-num id=normative-references>Normative references</h3>
+  <!--begin-normative-->
+  <!-- Sorted by label -->
+
+  <dl class=bibliography>
+   <dt style="display: none"><!-- keeps the doc valid if the DL is empty -->
+    <!---->
+
+   <dt id=DOM>[DOM]
+
+   <dd>Anne van Kesteren; Aryeh Gregor; Ms2ger. <a
+    href="http://www.w3.org/TR/2012/WD-dom-20120405/"><cite>DOM4.</cite></a>
+    5 April 2012. W3C Working Draft. (Work in progress.) URL: <a
+    href="http://www.w3.org/TR/2012/WD-dom-20120405/">http://www.w3.org/TR/2012/WD-dom-20120405/</a>
+   </dd>
+   <!---->
+
+   <dt id=DOM-BINDINGS>[DOM-BINDINGS]
+
+   <dd>Cameron McCormack. <a
+    href="http://www.w3.org/TR/2012/CR-WebIDL-20120419/"><cite>Web
+    IDL.</cite></a> 19 April 2012. W3C Candidate Recommendation. (Work in
+    progress.) URL: <a
+    href="http://www.w3.org/TR/2012/CR-WebIDL-20120419/">http://www.w3.org/TR/2012/CR-WebIDL-20120419/</a>
+   </dd>
+   <!---->
+
+   <dt id=RFC2119>[RFC2119]
+
+   <dd>S. Bradner. <a href="http://www.ietf.org/rfc/rfc2119.txt"><cite>Key
+    words for use in RFCs to Indicate Requirement Levels.</cite></a> Internet
+    RFC 2119. URL: <a
+    href="http://www.ietf.org/rfc/rfc2119.txt">http://www.ietf.org/rfc/rfc2119.txt</a>
+   </dd>
+   <!---->
+
+   <dt id=SELECTORS4>[SELECTORS4]
+
+   <dd>Elika J. Etemad. <a
+    href="http://www.w3.org/TR/2012/WD-selectors4-20120823/"><cite>Selectors
+    Level 4.</cite></a> 23 August 2012. W3C Working Draft. (Work in
+    progress.) URL: <a
+    href="http://www.w3.org/TR/2012/WD-selectors4-20120823/">http://www.w3.org/TR/2012/WD-selectors4-20120823/</a>
+   </dd>
+   <!---->
+  </dl>
+  <!--end-normative-->
+
+  <h3 class=no-num id=informative-references>Informative references</h3>
+  <!--begin-informative-->
+  <!-- Sorted by label -->
+
+  <dl class=bibliography>
+   <dt style="display: none"><!-- keeps the doc valid if the DL is empty -->
+    <!---->
+
+   <dt id=CSS21>[CSS21]
+
+   <dd>Bert Bos; et al. <a
+    href="http://www.w3.org/TR/2011/REC-CSS2-20110607"><cite>Cascading Style
+    Sheets Level 2 Revision 1 (CSS 2.1) Specification.</cite></a> 7 June
+    2011. W3C Recommendation. URL: <a
+    href="http://www.w3.org/TR/2011/REC-CSS2-20110607">http://www.w3.org/TR/2011/REC-CSS2-20110607</a>
+   </dd>
+   <!---->
+
+   <dt id=DOM-LEVEL-2-STYLE>[DOM-LEVEL-2-STYLE]
+
+   <dd>Chris Wilson; Philippe Le Hégaret; Vidur Apparao. <a
+    href="http://www.w3.org/TR/2000/REC-DOM-Level-2-Style-20001113"><cite>Document
+    Object Model (DOM) Level 2 Style Specification.</cite></a> 13 November
+    2000. W3C Recommendation. URL: <a
+    href="http://www.w3.org/TR/2000/REC-DOM-Level-2-Style-20001113">http://www.w3.org/TR/2000/REC-DOM-Level-2-Style-20001113</a>
+   </dd>
+   <!---->
+
+   <dt id=ECMA-262-5.1>[ECMA-262-5.1]
+
+   <dd><a
+    href="http://www.ecma-international.org/publications/standards/Ecma-262.htm"><cite>ECMAScript
+    Language Specification, Edition 5.1.</cite></a> June 2011. ISO/IEC
+    16262:2011. URL: <a
+    href="http://www.ecma-international.org/publications/standards/Ecma-262.htm">http://www.ecma-international.org/publications/standards/Ecma-262.htm</a>
+   </dd>
+   <!---->
+  </dl>
+  <!--end-informative-->
+
+  <h2 class=no-num id=acknowledgements>Acknowledgements</h2>
+
+  <p>The editors would like to thank to the following people who have
+   contributed to this specification (ordered on first name):
+
+  <p>Adam van den Hoven, Alan Gresley, Alex Russell, Arthur Barstow, Aryeh
+   Gregor, Björn Höhrmann, Boris Zbarsky, Cameron McCormack, Charles
+   McCathieNevile, Chris Wilson, Christophe Jolif, Daniel Glazman, Daniel
+   Schierbeck, Dave Massy, David "liorean" Andersson, David Greenspan, David
+   Håsäther, Dean Jackson, Doug Schepers, Erik Dahlström, Francois Remy,
+   Hallvord R. M. Steen, Henri Sivonen, Ian Hickson, Ivan Enderlin, Jean-Yves
+   Bitterlich, Jim Ley, João Eiras, John Resig, Jon Ferraiolo, Jonas
+   Sicking, Jorgen Horstink, Kang-Hao (Kenny) Lu, Karl Dubost, Kartikaya
+   Gupta, L. David Baron, Maciej Stachowiak, Magnus Kristiansen, Marat
+   Tanalin, Martijn, Masataka Yakura, Mihai Sucan, Mohamed Zergaoui, Nicholas
+   C. Zakas, Nicolas Mendoza, Norbert Lindenberg, Philip Taylor, Robert
+   Sayre, Robin Berjon, Sander, Sergey Ilinsky, Simon Pieters, Steven
+   Pemberton, Stewart Brodie Tab Atkins Jr., Tarquin Wilton-Jones, Travis
+   Leithead, and William J. Edney
+
+  <p>Special thanks to Anne van Kesteren, the original editor of Selectors
+   API Level 1.
+
+  <p>Thanks to all those who have helped to improve this specification by
+   sending suggestions and corrections.

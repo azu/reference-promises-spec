@@ -1,0 +1,1315 @@
+<!-- http://www.w3.org/TR/xmlsec-reqs/ -->
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>XML Security 1.1 Requirements and Design Considerations</title>
+    <!--         <script src="../../../dap-dev/ReSpec.js/js/respec.js" -->
+    <!--                 class="remove"></script> -->
+    
+    <style>/*****************************************************************
+ * ReSpec 3 CSS
+ * Robin Berjon - http://berjon.com/
+ *****************************************************************/
+
+/* --- INLINES --- */
+em.rfc2119 { 
+    text-transform:     lowercase;
+    font-variant:       small-caps;
+    font-style:         normal;
+    color:              #900;
+}
+
+h1 acronym, h2 acronym, h3 acronym, h4 acronym, h5 acronym, h6 acronym, a acronym,
+h1 abbr, h2 abbr, h3 abbr, h4 abbr, h5 abbr, h6 abbr, a abbr {
+    border: none;
+}
+
+dfn {
+    font-weight:    bold;
+}
+
+a.internalDFN {
+    color:  inherit;
+    border-bottom:  1px solid #99c;
+    text-decoration:    none;
+}
+
+a.externalDFN {
+    color:  inherit;
+    border-bottom:  1px dotted #ccc;
+    text-decoration:    none;
+}
+
+a.bibref {
+    text-decoration:    none;
+}
+
+cite .bibref {
+    font-style: normal;
+}
+
+code {
+    color:  #ff4500;
+}
+
+
+/* --- --- */
+ol.algorithm { counter-reset:numsection; list-style-type: none; }
+ol.algorithm li { margin: 0.5em 0; }
+ol.algorithm li:before { font-weight: bold; counter-increment: numsection; content: counters(numsection, ".") ") "; }
+
+/* --- TOC --- */
+.toc a, .tof a {
+    text-decoration:    none;
+}
+
+a .secno, a .figno {
+    color:  #000;
+}
+
+ul.tof, ol.tof {
+    list-style: none outside none;
+}
+
+.caption {
+    margin-top: 0.5em;
+    font-style:   italic;
+}
+
+/* --- TABLE --- */
+table.simple {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    border-bottom:  3px solid #005a9c;
+}
+
+.simple th {
+    background: #005a9c;
+    color:  #fff;
+    padding:    3px 5px;
+    text-align: left;
+}
+
+.simple th[scope="row"] {
+    background: inherit;
+    color:  inherit;
+    border-top: 1px solid #ddd;
+}
+
+.simple td {
+    padding:    3px 10px;
+    border-top: 1px solid #ddd;
+}
+
+.simple tr:nth-child(even) {
+    background: #f0f6ff;
+}
+
+/* --- DL --- */
+.section dd > p:first-child {
+    margin-top: 0;
+}
+
+.section dd > p:last-child {
+    margin-bottom: 0;
+}
+
+.section dd {
+    margin-bottom:  1em;
+}
+
+.section dl.attrs dd, .section dl.eldef dd {
+    margin-bottom:  0;
+}
+</style><style>/* --- EXAMPLES --- */
+div.example-title {
+    min-width: 7.5em;
+    color: #b9ab2d;
+}
+div.example-title span {
+    text-transform: uppercase;   
+}
+aside.example, div.example, div.illegal-example {
+    padding: 0.5em;
+    margin: 1em 0;
+    position: relative;
+    clear: both;
+}
+div.illegal-example { color: red }
+div.illegal-example p { color: black }
+aside.example, div.example {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+    border-color: #e0cb52;
+    background: #fcfaee;    
+}
+
+aside.example div.example {
+    border-left-width: .1em;
+    border-color: #999;
+    background: #fff;
+}
+aside.example div.example div.example-title {
+    color: #999;
+}
+</style><style>/* HIGHLIGHTS */
+code.prettyprint {
+    color:  inherit;
+}
+
+/* this from google-code-prettify */
+.pln{color:#000}@media screen{.str{color:#080}.kwd{color:#008}.com{color:#800}.typ{color:#606}.lit{color:#066}.pun,.opn,.clo{color:#660}.tag{color:#008}.atn{color:#606}.atv{color:#080}.dec,.var{color:#606}.fun{color:red}}@media print,projection{.str{color:#060}.kwd{color:#006;font-weight:bold}.com{color:#600;font-style:italic}.typ{color:#404;font-weight:bold}.lit{color:#044}.pun,.opn,.clo{color:#440}.tag{color:#006;font-weight:bold}.atn{color:#404}.atv{color:#060}}ol.linenums{margin-top:0;margin-bottom:0}li.L0,li.L1,li.L2,li.L3,li.L5,li.L6,li.L7,li.L8{list-style-type:none}li.L1,li.L3,li.L5,li.L7,li.L9{background:#eee}
+</style><link rel="stylesheet" href="http://www.w3.org/StyleSheets/TR/W3C-WG-NOTE"><!--[if lt IE 9]><script src='http://www.w3.org/2008/site/js/html5shiv.js'></script><![endif]--></head>
+  <body><div class="head">
+  <p>
+    
+      <a href="http://www.w3.org/"><img width="72" height="48" src="http://www.w3.org/Icons/w3c_home" alt="W3C"></a>
+    
+  </p>
+  <h1 class="title" id="title">XML Security 1.1 Requirements and Design Considerations</h1>
+  
+  <h2 id="w3c-working-group-note-11-april-2013"><abbr title="World Wide Web Consortium">W3C</abbr> Working Group Note 11 April 2013</h2>
+  <dl>
+    
+      <dt>This version:</dt>
+      <dd><a href="http://www.w3.org/TR/2013/NOTE-xmlsec-reqs-20130411/">http://www.w3.org/TR/2013/NOTE-xmlsec-reqs-20130411/</a></dd>
+      <dt>Latest published version:</dt>
+      <dd><a href="http://www.w3.org/TR/xmlsec-reqs/">http://www.w3.org/TR/xmlsec-reqs/</a></dd>
+    
+    
+      <dt>Latest editor's draft:</dt>
+      <dd><a href="http://www.w3.org/2008/xmlsec/Drafts/xmlsec-reqs/">http://www.w3.org/2008/xmlsec/Drafts/xmlsec-reqs/</a></dd>
+    
+    
+    
+    
+    
+      <dt>Previous version:</dt>
+      <dd><a href="http://www.w3.org/TR/2013/NOTE-xmlsec-reqs-20130124/">http://www.w3.org/TR/2013/NOTE-xmlsec-reqs-20130124/</a></dd>
+    
+    
+    <dt>Editors:</dt>
+    <dd><span>Frederick Hirsch</span>, Nokia</dd>
+<dd><span>Thomas Roessler</span>, <abbr title="World Wide Web Consortium">W3C</abbr></dd>
+
+    
+  </dl>
+  
+  
+  
+  
+    
+      <p class="copyright">
+        <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 
+        2013
+        
+        <a href="http://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>®</sup> 
+        (<a href="http://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>,
+        <a href="http://www.ercim.eu/"><abbr title="European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>,
+        <a href="http://www.keio.ac.jp/">Keio</a>, <a href="http://ev.buaa.edu.cn/">Beihang</a>), All Rights Reserved.
+        <abbr title="World Wide Web Consortium">W3C</abbr> <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>,
+        <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and
+        <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply.
+      </p>
+    
+  
+  <hr>
+</div>
+    <section id="abstract" class="introductory"><h2>Abstract</h2><p>
+      This Note summarizes scenarios, design decisions, and
+      requirements for 
+      the XML Signature and Canonical XML specifications, to
+      guide ongoing <abbr title="World Wide Web Consortium">W3C</abbr> 
+      work to revise these specifications.
+      
+    </p></section><section id="sotd" class="introductory"><h2>Status of This Document</h2>
+  
+    
+      
+        <p>
+          <em>This section describes the status of this document at the time of its publication. Other
+          documents may supersede this document. A list of current <abbr title="World Wide Web Consortium">W3C</abbr> publications and the latest revision
+          of this technical report can be found in the <a href="http://www.w3.org/TR/"><abbr title="World Wide Web Consortium">W3C</abbr> technical reports
+          index</a> at http://www.w3.org/TR/.</em>
+        </p>
+        
+      <p>Changes since the previous publication include updates to the
+      references  (<a href="Overview_diff.html">diff</a>).</p> 
+    
+        <p>
+          This document was published by the <a href="http://www.w3.org/2008/xmlsec/">XML Security Working Group</a> as a Working Group Note.
+          
+          
+          If you wish to make comments regarding this document, please send them to 
+          <a href="mailto:public-xmlsec@w3.org">public-xmlsec@w3.org</a> 
+          (<a href="mailto:public-xmlsec-request@w3.org?subject=subscribe">subscribe</a>,
+          <a href="http://lists.w3.org/Archives/Public/public-xmlsec/">archives</a>).
+          
+          
+          
+          
+        All comments are welcome.
+        
+        
+          </p><p>
+            Publication as a Working Group Note does not imply endorsement by the <abbr title="World Wide Web Consortium">W3C</abbr> Membership.
+            This is a draft document and may be updated, replaced or obsoleted by other documents at 
+            any time. It is inappropriate to cite this document as other than work in progress.
+          </p>
+        
+        
+        <p>
+          
+            This document was produced by a group operating under the 
+            <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>.
+          
+          
+          
+            
+              <abbr title="World Wide Web Consortium">W3C</abbr> maintains a <a href="http://www.w3.org/2004/01/pp-impl/42458/status" rel="disclosure">public list of any patent disclosures</a> 
+            
+            made in connection with the deliverables of the group; that page also includes instructions for 
+            disclosing a patent. An individual who has actual knowledge of a patent which the individual believes contains
+            <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential Claim(s)</a> must disclose the
+            information in accordance with <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section
+            6 of the <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>.
+          
+          
+        </p>
+        
+      
+    
+  
+</section><section id="toc"><h2 class="introductory">Table of Contents</h2><ul class="toc"><li class="tocline"><a href="#Introduction" class="tocxref"><span class="secno">1. </span>Introduction</a></li><li class="tocline"><a href="#principles" class="tocxref"><span class="secno">2. </span>Principles</a></li><li class="tocline"><a href="#scenarios" class="tocxref"><span class="secno">3. </span>Requirements and Design Options</a><ul class="toc"><li class="tocline"><a href="#widget-security" class="tocxref"><span class="secno">3.1 </span>Widget Security</a><ul class="toc"><li class="tocline"><a href="#use-cases" class="tocxref"><span class="secno">3.1.1 </span>Use Cases</a></li><li class="tocline"><a href="#requirements" class="tocxref"><span class="secno">3.1.2 </span>Requirements</a></li><li class="tocline"><a href="#design" class="tocxref"><span class="secno">3.1.3 </span>Design</a></li></ul></li><li class="tocline"><a href="#derived-keys" class="tocxref"><span class="secno">3.2 </span>Derived Keys</a><ul class="toc"><li class="tocline"><a href="#use-cases-and-background" class="tocxref"><span class="secno">3.2.1 </span>Use Cases and Background</a></li><li class="tocline"><a href="#use-of-derived-keys-in-existing-ws--specifications" class="tocxref"><span class="secno">3.2.2 </span>Use Of Derived Keys in Existing WS-* Specifications</a><ul class="toc"><li class="tocline"><a href="#ws-trust-version-1.3" class="tocxref"><span class="secno">3.2.2.1 </span>WS-Trust Version 1.3:</a></li><li class="tocline"><a href="#ws-securitypolicy-1.2" class="tocxref"><span class="secno">3.2.2.2 </span>WS-SecurityPolicy 1.2:</a></li><li class="tocline"><a href="#ws-secureconversation-1.3" class="tocxref"><span class="secno">3.2.2.3 </span>WS-SecureConversation 1.3:</a></li></ul></li><li class="tocline"><a href="#solution-requirements" class="tocxref"><span class="secno">3.2.3 </span>Solution Requirements</a><ul class="toc"><li class="tocline"><a href="#use-in-existing-specifications-r1" class="tocxref"><span class="secno">3.2.3.1 </span>Use in existing specifications (R1)</a></li><li class="tocline"><a href="#no-external-dependencies-r2" class="tocxref"><span class="secno">3.2.3.2 </span>No external dependencies (R2)</a></li><li class="tocline"><a href="#continued-use-of-existing-derivation-methods-r3" class="tocxref"><span class="secno">3.2.3.3 </span>Continued use of existing derivation methods (R3)</a></li><li class="tocline"><a href="#future-proof-with-regards-to-key-lengths-r4" class="tocxref"><span class="secno">3.2.3.4 </span>Future-proof with regards to key lengths (R4)</a></li><li class="tocline"><a href="#referential-flexibility-r5" class="tocxref"><span class="secno">3.2.3.5 </span>Referential flexibility (R5)</a></li></ul></li><li class="tocline"><a href="#existing-specifications-vs.-requirements" class="tocxref"><span class="secno">3.2.4 </span>Existing Specifications vs. Requirements</a></li><li class="tocline"><a href="#design-options" class="tocxref"><span class="secno">3.2.5 </span> Design Options</a><ul class="toc"><li class="tocline"><a href="#create-a-ds-derivedkeytype-type-modeled-after-the-xenc-encryptedkeytype." class="tocxref"><span class="secno">3.2.5.1 </span>Create a ds:DerivedKeyType type modeled after the
+            xenc:EncryptedKeyType.
+            </a></li></ul></li></ul></li><li class="tocline"><a href="#algorithms" class="tocxref"><span class="secno">3.3 </span>Algorithm security and interoperability</a><ul class="toc"><li class="tocline"><a href="#algorithm-fundamentals" class="tocxref"><span class="secno">3.3.1 </span>Fundamentals</a></li><li class="tocline"><a href="#algorithm-requirements" class="tocxref"><span class="secno">3.3.2 </span>Requirements</a><ul class="toc"><li class="tocline"><a href="#algorithm-sha" class="tocxref"><span class="secno">3.3.2.1 </span>Address SHA security concerns, recognize RSA
+            de-facto use.</a></li><li class="tocline"><a href="#algorithm-dsawithsha1-guidance" class="tocxref"><span class="secno">3.3.2.2 </span>Revise guidance for DSAwithSHA1</a></li><li class="tocline"><a href="#algorithm-suiteb" class="tocxref"><span class="secno">3.3.2.3 </span>Add Suite B algorithm support</a></li></ul></li><li class="tocline"><a href="#algorithm-eckeyvalue-design" class="tocxref"><span class="secno">3.3.3 </span>Suite B Elliptic Curve Key Value Design
+          (ECKeyValue)</a><ul class="toc"><li class="tocline"><a href="#algorithm-eckeyvalue-issues" class="tocxref"><span class="secno">3.3.3.1 </span>RFC 4050 issues in XML Signature context</a></li><li class="tocline"><a href="#algorithm-eckeyvalue-proposal" class="tocxref"><span class="secno">3.3.3.2 </span>Proposed Solution to RFC 4050 issues in XML Signature context</a></li></ul></li></ul></li><li class="tocline"><a href="#correct-issues" class="tocxref"><span class="secno">3.4 </span>Correct known issues</a><ul class="toc"><li class="tocline"><a href="#issueserial" class="tocxref"><span class="secno">3.4.1 </span>Limitations associated with <code>X509IssueSerial</code></a></li><li class="tocline"><a href="#RetrievalMethod" class="tocxref"><span class="secno">3.4.2 </span>Simplify access to <code>ds:KeyInfo</code></a></li><li class="tocline"><a href="#DEREncodedKeyValue" class="tocxref"><span class="secno">3.4.3 </span>XML <code>KeyValue</code> type interoperability</a></li><li class="tocline"><a href="#OCSPResponse" class="tocxref"><span class="secno">3.4.4 </span>Support OCSP use case</a></li></ul></li></ul></li><li class="tocline"><a href="#thanks" class="tocxref"><span class="secno">4. </span>Acknowledgments</a></li><li class="tocline"><a href="#references" class="tocxref"><span class="secno">A. </span>References</a><ul class="toc"><li class="tocline"><a href="#informative-references" class="tocxref"><span class="secno">A.1 </span>Informative references</a></li></ul></li></ul></section>
+    
+    <section id="Introduction">
+      <!--OddPage--><h2><span class="secno">1. </span>Introduction</h2>
+      <p>
+        This use case and requirements document is intended to
+        summarize use   
+        cases and requirements driving revisions to XML Signature
+        2nd Edition [<cite><a class="bibref" href="#bib-XMLDSIG-CORE">XMLDSIG-CORE</a></cite>],  XML Encryption [<cite><a class="bibref" href="#bib-XMLENC-CORE">XMLENC-CORE</a></cite>],  
+        and Canonical XML 1.1 [<cite><a class="bibref" href="#bib-XML-C14N11">XML-C14N11</a></cite>]. It is not intended
+        to define all   
+        possible use cases for these Recommendations, but rather
+        to provide   
+        rationale for decisions leading to XML Signature 1.1, XML
+        Encryption   
+        1.1, XML Signature Properties and XML Security Generic
+        Hybrid Ciphers. 
+      </p>
+      <p>
+        This document outlines general principles and use cases
+        leading to 
+        requirements and offers some design options. It
+        elaborates on principles and updates requirements  
+        expressed for the original XML Security work including
+        original requirements documents (e.g. [<cite><a class="bibref" href="#bib-XML-CANONICAL-REQ">XML-CANONICAL-REQ</a></cite>], and
+        [<cite><a class="bibref" href="#bib-XMLDSIG-REQUIREMENTS">XMLDSIG-REQUIREMENTS</a></cite>]).
+        This document also reflects material from a  <abbr title="World Wide Web Consortium">W3C</abbr> workshop on
+        next steps for XML 
+        Security [<cite><a class="bibref" href="#bib-XMLSEC-NEXTSTEPS-2007">XMLSEC-NEXTSTEPS-2007</a></cite>] and position papers
+        associated with the workshop, including
+        [<cite><a class="bibref" href="#bib-XMLDSIG-COMPLEXITY">XMLDSIG-COMPLEXITY</a></cite>], [<cite><a class="bibref" href="#bib-XMLDSIG-SEMANTICS">XMLDSIG-SEMANTICS</a></cite>], and
+        [<cite><a class="bibref" href="#bib-XMLDSIG-THOMPSON">XMLDSIG-THOMPSON</a></cite>].
+        </p><p>
+        Design options were documented early on to provide a
+        starting point with the expectation that specifications
+        developed to meet the requirements could subsequently differ
+        in design choices.Thus the design choices in this document
+        should be viewed as historical information.
+      </p> 
+    </section>
+    <section id="principles">
+      <!--OddPage--><h2><span class="secno">2. </span>Principles</h2>
+      <p>
+        The following design principles will be used to guide further
+        development of XML Security, including XML Signature, XML Encryption
+        and Canonical XML. These principles are intended to encourage
+        consistent design decisions, to provide insight
+        into design rationale and to anchor discussions on requirements and
+        design. This list includes items from the original requirements for
+        XML Signature 
+        [<cite><a class="bibref" href="#bib-XMLDSIG-REQUIREMENTS">XMLDSIG-REQUIREMENTS</a></cite>]
+        as well as general principles from EXI
+        [<cite><a class="bibref" href="#bib-EXI">EXI</a></cite>]. Listed in alphabetical order:
+      </p>
+      <dl>
+        <dt>
+          Backward compatible:
+        </dt>
+        <dd>
+          <p>Backward compatibility should not be
+          broken unnecessarily. Versioning should be clearly
+          considered. Consideration must be given, for example, for
+          interoperability with the First and Second Editions of XML
+          Signature 
+          [<cite><a class="bibref" href="#bib-XMLDSIG-CORE">XMLDSIG-CORE</a></cite>].
+          </p>
+        </dd>
+        <dt>
+          Consistent with the Web Architecture:
+        </dt>
+        <dd>
+          <p>XML Security must be consistent with the Web
+          Architecture [<cite><a class="bibref" href="#bib-WEBARCH">WEBARCH</a></cite>].
+          </p> 
+        </dd>
+        <dt>
+          Efficient:
+        </dt>
+        <dd>
+          <p>XML Security should enable efficient implementations, in
+          order to remove barriers to adoption and use. 
+          </p>
+        </dd>
+        <dt>
+          Meet common requirements, enable extensibility:
+        </dt>
+        <dd>
+          <p>One of primary objectives of XML Signature is to support a
+          wide variety of use cases requiring digital signatures,
+          including situations requiring multiple signatures,
+          counter-signatures, and signatures including multiple items
+          to be included in a signature. 
+          Extensibility should be possible, but by default
+          options should be constrained when the flexibility is not
+          needed. 
+          </p>
+        </dd>
+        <dt>
+          Minimal: 
+        </dt>
+        <dd>
+          <p>To reach the broadest set of applications, reduce the
+          security threat footprint and improve efficiency, simple,
+          elegant approaches are preferred to large, analytical or
+          complex ones. 
+          </p>
+        </dd>
+        <dt>
+          Pragmatic:
+        </dt>
+        <dd>
+          <p>Recognize pragmatic issues, including recognizing that
+          software might be implemented in layers, with a security
+          layer independent of an application layer.
+          </p>
+        </dd>
+        <dt>
+          Reuse Existing Open Standards
+        </dt>
+        <dd>
+          <p>Existing open standards should be reused where possible,
+          as long as other principles can be met. 
+          </p>
+        </dd>
+        <dt>
+          Secure:
+        </dt>
+        <dd>
+          <p> XML Security should  adhere to security best practices,
+          and minimize the opportunities for threats based on XML
+          Security mechanisms. 
+          </p>
+        </dd>
+        <dt>
+          XML Interoperable:
+        </dt>
+        <dd>
+          <p> XML Security must integrate well with existing XML
+          technologies,  be compatible with the XML Information Set
+          [<cite><a class="bibref" href="#bib-XML-INFOSET">XML-INFOSET</a></cite>],  in order to maintain
+          interoperability with 
+          existing and prospective XML specifications.  
+          </p>
+        </dd>
+        <dt>
+          XML Signatures are First Class Objects:
+        </dt>
+        <dd>
+          <p>XML Signatures should themselves be self-describing first
+          class XML objects 
+          [<cite><a class="bibref" href="#bib-XMLDSIG-REQUIREMENTS">XMLDSIG-REQUIREMENTS</a></cite>]. This means that XML
+          Signatures can be referenced via URI and used in   
+          other operations. For example, an XML Signature may be signed or  
+          encrypted, or referred to in a statement  (such as an RDF
+          statement).  
+          </p>
+        </dd>
+      </dl>
+    </section>
+    <section id="scenarios">
+      <!--OddPage--><h2><span class="secno">3. </span>Requirements and Design Options</h2>
+      <p> 
+        This section outlines the motivation, requirements and design  
+        considerations for  XML Security  1.1.
+      </p>
+      <section id="widget-security">
+        <h3><span class="secno">3.1 </span>Widget Security</h3>
+        <section id="use-cases">
+          <h4><span class="secno">3.1.1 </span>Use Cases</h4>
+          <p>
+            Widgets may require signing for integrity protection and source  
+            authentication. This signing of a Widget package may be provided  
+            using  XML Signature.
+          </p>
+        </section>
+        <section id="requirements">
+          <h4><span class="secno">3.1.2 </span>Requirements</h4>
+          <p>
+            Provide the ability to sign and verify a widget package
+            using XML    
+            Signature. Enable the use of SHA-256 to  support
+            sufficient security. 
+            Support the use of properties in a XML Signature,
+            including  Profile,    
+            Role, and Identifier properties to enable interoperable 
+            interpretation  of signatures. See the Widget Signature
+            specification   
+            for a summary of  requirements 
+            [<cite><a class="bibref" href="#bib-WIDGETS-DIGSIG">WIDGETS-DIGSIG</a></cite>].   
+          </p>
+        </section>
+        <section id="design">
+          <h4><span class="secno">3.1.3 </span>Design</h4>
+          <p>
+            Define generic widget properties. See XML Signature Properties  
+            [<cite><a class="bibref" href="#bib-XMLDSIG-PROPERTIES">XMLDSIG-PROPERTIES</a></cite>].
+          </p>
+        </section>
+      </section>
+      <section id="derived-keys">
+        <h3><span class="secno">3.2 </span>Derived Keys</h3>
+        <section id="use-cases-and-background">
+          <h4><span class="secno">3.2.1 </span>Use Cases and Background</h4>
+          <p>
+            Several open specifications make use of derived keys,
+            e.g. RSA Laboratories' PKCS #5 v2.0 [<cite><a class="bibref" href="#bib-PKCS5">PKCS5</a></cite>] and OASIS'
+            WS-SecureConversation Version 1.3
+            [<cite><a class="bibref" href="#bib-WS-SECURECONVERSATION13">WS-SECURECONVERSATION13</a></cite>]. These derived keys are used 
+            for a variety of purposes 
+            including encryption and message authentication, and the purpose of
+            key derivation itself is typically a combination of a
+            desire to expand 
+            a given, but limited, set of key material and prudent security
+            practices of limiting use (exposure) of such key material.
+          </p>
+          <p>
+            Contrary to the situation in the ASN.1-based world (e.g. S/MIME
+            [<cite><a class="bibref" href="#bib-SMIME">SMIME</a></cite>]), there is currently a lack of general
+            support in the core XML 
+            Security specifications, XML Signature and XML Encryption,
+            for derived 
+            keys. Amendment 1 of the aforementioned PKCS #5 v2.0 Amendment 1
+            [<cite><a class="bibref" href="#bib-PKCS5">PKCS5</a></cite>]
+            adds support for derived keys only in the context of
+            password-based cryptography. Other XML-based open
+            specifications have 
+            similar limitations (see below). This means that an originator of an
+            XML document or message cannot generally make use of key derivation
+            in a standardized manner when performing cryptographic operations on
+            that document.
+          </p>
+        </section>
+        <section id="use-of-derived-keys-in-existing-ws--specifications">
+          <h4><span class="secno">3.2.2 </span>Use Of Derived Keys in Existing WS-* Specifications</h4>
+          <section>
+            <p>This section outlines the use of derived keys with Web Services
+            specifications related to Web Services Security [<cite><a class="bibref" href="#bib-WS-SECURITY11">WS-SECURITY11</a></cite>].
+            </p>
+            <h5 id="web-services-security-usernametoken-profile-version-1.1">Web Services Security: UsernameToken Profile Version 1.1</h5>
+            <p>
+              This specification [<cite><a class="bibref" href="#bib-WSS-USERNAME11">WSS-USERNAME11</a></cite>] describes a key
+              derivation technique for passwords using salt and
+              iteration count (PKCS #5 PBKDF1). It does not allow use
+              of PBKDF2, which is the recommended method to derive
+              keys from passwords in PKCS #5 v2.0. Initial key
+              material cannot be referenced other than with
+              wsu:Id. The key length will always be 160 bits. 
+            </p>
+          </section>
+          <section id="ws-trust-version-1.3">
+            <h5><span class="secno">3.2.2.1 </span>WS-Trust Version 1.3:</h5>
+            <p>
+              Ws-Trust Version 1.3 [<cite><a class="bibref" href="#bib-WS-TRUST13">WS-TRUST13</a></cite>] describes key
+              derivation through a combination of entropies from both
+              parties. The key is never sent on the wire. The key is
+              never referenced directly (but further key material is
+              derived from it). WS-Trust provides one specific method
+              to derive keys which builds on the P_hash (P_SHA-1)
+              function from TLS. 
+            </p>
+          </section>
+          <section id="ws-securitypolicy-1.2">
+            <h5><span class="secno">3.2.2.2 </span>WS-SecurityPolicy 1.2:</h5>
+            <p>
+              WS-SecurityPolicy Version 1.2 
+              [<cite><a class="bibref" href="#bib-WS-SECURITYPOLICY12">WS-SECURITYPOLICY12</a></cite>]
+              really only specifies whether
+              derived keys shall be used or not but may also specify
+              the algorithm 
+              to derive keys. The specification also identifies when derived key
+              tokens shall appear in message headers (header
+              layout). WS-SecurityPolicy relies on WS-SecureConversation for the
+              definition of derived keys, key derivation methods and
+              derived key token format.  
+            </p>
+          </section>
+          <section id="ws-secureconversation-1.3">
+            <h5><span class="secno">3.2.2.3 </span>WS-SecureConversation 1.3:</h5>
+            <p>
+              This specification [<cite><a class="bibref" href="#bib-WS-SECURECONVERSATION13">WS-SECURECONVERSATION13</a></cite>] defines
+              the wsc:DerivedKeyTokenType token 
+              type. The derived key token can be used to derive keys
+              from any other 
+              token that contains keys. The key derivation algorithm specified
+              builds on the P_hash (P_SHA-1) function from TLS, just as the
+              algorithm in the Web Service Security UsernameToken Profile
+              document. Citing from the specification: "The
+              <code>&lt;wsc:DerivedKeyToken&gt;</code> 
+              element is used to indicate that the key for a specific
+              reference is 
+              generated from the function. This is so that explicit
+              security tokens, 
+              secrets, or key material need not be exchanged as
+              often." (This latter 
+              seems dubious since the DerivedKeyToken still needs to
+              be exchanged.) 
+              Further: "Basically, a signature or encryption
+              references a 
+              <code>&lt;wsc:DerivedKeyToken&gt;</code> in the
+              <code>&lt;wsse:Security&gt;</code> header that, in turn, 
+              references the
+              <code>&lt;wsc:SecurityContextToken&gt;</code>." The
+              derived key token does 
+              not support references using key identifiers or key names. All
+              references <em class="rfc2119" title="MUST">MUST</em> use an ID (to a wsu:Id attribute) or a
+              URI reference 
+              to the <code>&lt;wsc:Identifier&gt;</code> element in
+              the Security Context Token. 
+            </p>
+          </section>
+        </section>
+        <section id="solution-requirements">
+          <h4><span class="secno">3.2.3 </span>Solution Requirements</h4>
+          <section id="use-in-existing-specifications-r1">
+            <h5><span class="secno">3.2.3.1 </span>Use in existing specifications (R1)</h5>
+            <p>
+              A derived key type shall be possible to use in those
+              situations where existing specifications make use of ad-hoc
+              derived keys or needs a derived key type
+            </p>
+            <p>
+              The motivation for this requirement is that any XML Security
+              definition shall be generic enough that there shall be no need to
+              continue with "point" solutions for derived keys;
+              i.e. it shall cover 
+              existing and foreseeable uses.
+            </p>
+          </section>
+          <section id="no-external-dependencies-r2">
+            <h5><span class="secno">3.2.3.2 </span>No external dependencies (R2)</h5>
+            <p>
+              A derived key type shall enable the simple use of
+              derived keys with 
+              XML Signature or XML Encryption -using applications, and shall not
+              require import of non-<abbr title="World Wide Web Consortium">W3C</abbr> developed specifications with complex
+              security tokens.
+            </p>
+            <p>
+              The motivation for this is that basic use of XML Signature or XML
+              Encryption should not require use of externally defined security
+              tokens or other security specification elements.
+            </p>
+          </section>
+          <section id="continued-use-of-existing-derivation-methods-r3">
+            <h5><span class="secno">3.2.3.3 </span>Continued use of existing derivation methods (R3)</h5>
+            <p>
+              An XML Security derived key type shall allow for
+              existing methods to 
+              derive keys; i.e. it shall be possible to use already
+              specified key 
+              derivation methods with the new derived key type.
+            </p>
+            <p>
+              This requirement is based on the assumptions that
+              implementations may 
+              want to continue with already chosen key derivation schemes.
+            </p>
+          </section>
+          <section id="future-proof-with-regards-to-key-lengths-r4">
+            <h5><span class="secno">3.2.3.4 </span>Future-proof with regards to key lengths (R4)</h5>
+            <p>
+              A derived key type shall allow for arbitrary derived key lengths.
+            </p>
+          </section>
+          <section id="referential-flexibility-r5">
+            <h5><span class="secno">3.2.3.5 </span>Referential flexibility (R5)</h5>
+            <p>
+              A derived key type shall allow for referencing using any
+              referencing 
+              method in use today for other key types used in XMLDsig or XMLEnc.
+            </p>
+            <p>
+              A derived key type shall allow for forward
+              referencing with reference lists as recommended by WS-I
+              BSP [<cite><a class="bibref" href="#bib-WSI-BSP10">WSI-BSP10</a></cite>]. 
+            </p>
+          </section>
+        </section>
+        <section id="existing-specifications-vs.-requirements">
+          <h4><span class="secno">3.2.4 </span>Existing Specifications vs. Requirements</h4>
+          <p>
+            Evaluating the existing specifications against the
+            requirements gives 
+            the following result:
+          </p>
+          <p>UsernameToken Profile:</p>
+          <ul>
+            <li>
+              <p>R1: Not met (method specified in UsernameToken
+              profile is ad-hoc for 
+              UsernameToken specifically) 
+              </p>
+            </li>
+            <li>
+              <p>R2: Not met (method requires use of UsernameToken
+              profile)</p> 
+            </li>
+            <li>
+              <p>R3: Not met (UsernameToken profile mandates use of specified
+              mechanism)
+              </p>
+            </li>
+            <li>
+              <p>R4: Not met (Only accept length of 160 bits)</p>
+            </li>
+            <li>
+              <p>R5: Not met (No referencing with KeyName or
+              KeyIdentifier and no 
+              <code>&lt;referenceList&gt;</code> element)
+              </p>
+            </li>
+          </ul>
+          <p>WS-Trust:</p>
+          <ul>
+            <li>
+              <p>R1: N/A (WS-Trust does not define a derived key
+              type per se; only a 
+              method to derive keys)
+              </p>
+            </li>
+            <li>
+              <p>R2: N/A</p>
+            </li>
+            <li>
+              <p>R3: Meets (Through use of URI to identify method
+              and extensibility)</p> 
+            </li>
+            <li>
+              <p>R4: Meets</p>
+            </li>
+            <li>
+              <p>R5: Meets (Choice of STS on how to identify key)</p>
+            </li>
+          </ul>
+          <p>WS-SecurityPolicy:</p>
+          <ul>
+            <li>
+              <p>R1: N/A (WS-SecurityPolicy does not define a
+              derived key type)</p> 
+            </li>
+            <li>
+              <p>R2: N/A</p>
+            </li>
+            <li>
+              <p>R3: Meets (Through the use of URIs to identify key derivation
+              methods and schema extensibility)
+              </p>
+            </li>
+            <li>
+              <p>R4: Meets</p>
+            </li>
+            <li>
+              <p>R5: N/A</p>
+            </li>
+          </ul>
+          <p>WS-SecureConversation:</p>
+          <ul>
+            <li>
+              <p>R1: Meets</p>
+            </li>
+            <li>
+              <p>R2: Does not meet.</p>
+            </li>
+            <li>
+              <p>R3: Meets (may use the <code>&lt;Properties&gt;</code> element to carry parameters for
+              other key derivation methods.
+              </p>
+            </li>
+            <li>
+              <p>R4: Meets</p>
+            </li>
+            <li>
+              <p>R5: Does not meet as referencing can only be done to a
+              <code>&lt;wsse:SecurityTokenReference&gt;</code></p>
+            </li>
+          </ul>
+        </section>
+        <section id="design-options">
+          <h4><span class="secno">3.2.5 </span> Design Options</h4>
+          <section id="create-a-ds-derivedkeytype-type-modeled-after-the-xenc-encryptedkeytype.">
+            <h5><span class="secno">3.2.5.1 </span>Create a ds:DerivedKeyType type modeled after the
+            xenc:EncryptedKeyType.
+            </h5>
+            <p>
+              In this design option, the new
+              <code>DerivedKeyType</code> is modeled after the 
+              <code>xenc:EncryptedKeyType</code>. A *possible* outline of such a
+              type could be: 
+            </p>
+            <div class="example"><div class="example-title"><span>Example 1</span></div><pre class="example highlight prettyprint"><span class="typ">Outline</span><span class="pln"> of possible </span><span class="typ">DerivedKeyType</span><span class="pln"> schema definition
+
+</span><span class="pun">&lt;</span><span class="pln">element name</span><span class="pun">=</span><span class="str">"DerivedKey"</span><span class="pln"> type</span><span class="pun">=</span><span class="str">"xmlsec:DerivedKeyType"</span><span class="pun">/&gt;</span><span class="pln">
+</span><span class="pun">&lt;</span><span class="pln">complexType name</span><span class="pun">=</span><span class="str">"DerivedKeyType"</span><span class="pun">&gt;</span><span class="pln">
+</span><span class="str">&lt;sequence&gt;</span><span class="pln">
+</span><span class="pun">&lt;</span><span class="pln">element name</span><span class="pun">=</span><span class="str">"KeyDerivationMethod"</span><span class="pln"> 
+type</span><span class="pun">=</span><span class="str">"xmlsec:KeyDerivationMethodType"</span><span class="pln"> minOccurs</span><span class="pun">=</span><span class="str">"0"</span><span class="pun">/&gt;</span><span class="pln">
+</span><span class="pun">&lt;</span><span class="pln">element </span><span class="kwd">ref</span><span class="pun">=</span><span class="str">"xenc:ReferenceList"</span><span class="pln"> minOccurs</span><span class="pun">=</span><span class="str">"0"</span><span class="pun">/&gt;</span><span class="pln">
+</span><span class="pun">&lt;</span><span class="pln">element name</span><span class="pun">=</span><span class="str">"CarriedKeyName"</span><span class="pln"> type</span><span class="pun">=</span><span class="str">"string"</span><span class="pln"> minOccurs</span><span class="pun">=</span><span class="str">"0"</span><span class="pun">/&gt;</span><span class="pln">
+</span><span class="pun">&lt;</span><span class="str">/sequence&gt;
+&lt;attribute name="Id" type="ID" use="optional"/</span><span class="pun">&gt;</span><span class="pln">
+</span><span class="pun">&lt;</span><span class="pln">attribute name</span><span class="pun">=</span><span class="str">"Type"</span><span class="pln"> type</span><span class="pun">=</span><span class="str">"anyURI"</span><span class="pln"> </span><span class="kwd">use</span><span class="pun">=</span><span class="str">"optional"</span><span class="pun">/&gt;</span><span class="pln">
+</span><span class="pun">&lt;</span><span class="str">/complexType&gt;
+
+&lt;complexType name="KeyDerivationMethodType"&gt;
+&lt;sequence&gt;
+&lt;any namespace="##other" minOccurs="0" maxOccurs="unbounded"/</span><span class="pun">&gt;</span><span class="pln">
+</span><span class="pun">&lt;</span><span class="str">/sequence&gt;
+&lt;attribute name="Algorithm" type="anyURI" use="required"/</span><span class="pun">&gt;</span><span class="pln">
+</span><span class="pun">&lt;/</span><span class="pln">complexType</span><span class="pun">&gt;</span></pre></div>                  
+            <p>
+              The proposal immediately meets requirements R2, R3 (any key derivation
+              method may be used, including the ones specified, e.g., in
+              WS-SecureConversation), R4 and R5. For R1 we have:
+            </p>
+            <p>
+              Username Token Profile: As the UsernameToken
+              Profile requires use of an 
+              existing procedure to derive keys, the proposal
+              cannot formally meet 
+              requirement R1. However, since the
+              UsernameTokenType is extensible, 
+              syntactically the requirement can be met since a
+              <code>&lt;ds:DerivedKey&gt;</code> 
+              element could be placed in lieu of the current
+              <code>&lt;salt&gt;</code> and
+              <code>&lt;iteration&gt;</code> 
+              elements.
+            </p>
+            <p>
+              WS-Trust: Use of derived keys in WS-Trust is
+              _implicit_, since the 
+              derived key is never sent. The derived keys may
+              be referenced by any 
+              available means in issued tokens and the
+              requester is only required to 
+              identify particular key derivation
+              methods. Since URIs are used for 
+              this (the <code>&lt;wst:ComputedKey&gt;</code>
+              element), any other key derivation method 
+              with a well-known URI may be used. Specifically,
+              one can also envision 
+              an STS returning a proof token containing a
+              <code>&lt;DerivedKey&gt;</code> element when 
+              there already is a shared key between the STS and a token
+              requester. And so, R1 is met.
+            </p>
+            <p>
+              WS-SecurityPolicy: Not affected by a new key
+              type. R1 is met. 
+            </p>
+            <p>
+              WS-SecureConversation: Use of derived keys in
+              WS-SecureConversation is 
+              typically based on the establishment of a
+              session context, from which 
+              specific keys are derived. The proposed
+              <code>&lt;xmlsec:DerivedKeyType&gt;</code> type
+              may be 
+              used in a similar fashion, although the
+              interactive nature of 
+              WS-SecureConversation (exchange of Nonces,
+              Labels) may still favor use 
+              of the existing DerivedKeyToken in this
+              context. But as a counterexample, a 
+              party that wishes to send data authenticated
+              with a key derived from a 
+              key established in the session, may do so using
+              the 
+              <code>&lt;xmlsec:DerivedKey&gt;</code> element
+              in the <code>&lt;ds:KeyInfo&gt;</code> element,
+              and the 
+              element may refer to a SecurityContextToken that
+              identifies the base 
+              key. This would, it seems, eliminate an absolute
+              need for a 
+              <code>&lt;wsc:DerivedKeyToken&gt;</code> (and
+              should be similar in nature as the "Implied 
+              Derived Key" option in
+              WS-SecureConversation). Also, the 
+              <code>&lt;wsc:DerivedKeyToken&gt;</code> implies
+              use of a particular key derivation 
+              algorithm (the <code>&lt;Label&gt;</code> and
+              <code>&lt;Nonce&gt;</code> elements) although it
+              does not 
+              require them. 
+            </p>
+            <p>
+              In summary, WS-Trust and WS-SecurityPolicy are
+              not directly affected 
+              by this proposal. UsernameToken profile could
+              use the proposal if the 
+              (artificial) requirement to only use the key
+              derivation method 
+              specified in the UsernameToken Profile document
+              was 
+              relaxed. WS-SecureConversation comes close in
+              establishing an 
+              alternative but the specification defines a
+              token primarily for use in 
+              interactive sessions based on a security context
+              and which is designed 
+              for a particular key derivation method. It also
+              seems strange to 
+              require use of such a token in more basic
+              XMLDsig or XMLEnc 
+              situations. Finally, the proposal seems to be
+              able to replace the 
+              DerivedKeyToken currently used in
+              WS-SecureConversation. 
+            </p>
+          </section>
+        </section>
+      </section>
+      <section id="algorithms">
+        <h3><span class="secno">3.3 </span>Algorithm security and interoperability</h3>
+        <section id="algorithm-fundamentals">
+          <h4><span class="secno">3.3.1 </span>Fundamentals</h4>
+          <p>
+            XML Signature specifies algorithm identifiers and
+            implementation 
+            requirements for algorithms related to various
+            aspects of signature 
+            processing, including digest and signature
+            algorithms. The algorithms 
+            listed in XML Signature, Second Edition date from
+            the original XML 
+            Signature Recommendation, published in 2002. Since
+            that time there have 
+            been new algorithms introduced to address security
+            risks associated with 
+            earlier algorithms (e.g. SHA-256 versus SHA-1),
+            changes in patent status 
+            related to algorithms (e.g. RSA signing no longer
+            has licensing 
+            requirements), and additional algorithms
+            introduced to meet additional 
+            requirements (Suite B algorithms  
+            [<cite><a class="bibref" href="#bib-SUITEB">SUITEB</a></cite>], [<cite><a class="bibref" href="#bib-ECC-ALGS">ECC-ALGS</a></cite>]).
+          </p>
+          <p>
+            In order to meet the principle of "Secure" and
+            "Pragmatic", new 
+            algorithm requirements should be met. 
+          </p>
+        </section>
+        <section id="algorithm-requirements">
+          <h4><span class="secno">3.3.2 </span>Requirements</h4>
+          <section id="algorithm-sha">
+            <h5><span class="secno">3.3.2.1 </span>Address SHA security concerns, recognize RSA
+            de-facto use.</h5> 
+            <p>
+              In order to address concerns related to potential
+              risks associated with 
+              SHA-1 
+              [<cite><a class="bibref" href="#bib-SHA-1-Collisions">SHA-1-Collisions</a></cite>], the following algorithm
+              requirements that update the SHA algorithm should
+              be met in XML Signature 1.1 and XML 
+              Encryption 1.1:
+            </p>
+            <ul>
+              <li>
+                <p>Digest:</p>
+                <p>SHA256 be required.</p>
+                <p>SHA384 and SHA512 optional.
+                </p>
+              </li>
+              <li>
+                <p>Mac:</p>
+                <p>HMAC-SHA256 recommended.</p>
+                <p>HMAC-SHA384 and
+                HMAC-SHA512 optional.
+                (Note these are Recommended in XML Signature 1.1.)
+                </p>
+              </li>
+              <li>
+                <p>Signature:</p>
+                <p>RSAwithSHA256 required.</p>
+                <p>RSAwithSHA384, RSAwithSHA512
+                optional.
+                </p>
+              </li>
+            </ul>
+          </section>
+          <section id="algorithm-dsawithsha1-guidance">
+            <h5><span class="secno">3.3.2.2 </span>Revise guidance for DSAwithSHA1</h5>
+            <p>
+              In order to discourage the use of DSAwithSHA1
+              but to continue to 
+              enable interoperability, the following algorithm
+              changes are 
+              requirements;
+            </p>
+            <ul>
+              <li>
+                <p>Signature:</p>
+                <p>Continue to require DSAwithSHA1 for
+                signature verification, 
+                but change DSAwithSHA1 to optional (from
+                required) for signature 
+                generation.
+                </p>
+              </li>
+            </ul>
+          </section>
+          <section id="algorithm-suiteb">
+            <h5><span class="secno">3.3.2.3 </span>Add Suite B algorithm support</h5>
+            <p>In order to:</p>
+            <ol>
+              <li>
+                <p>
+                  enable long term security for digital
+                  signatures (including in commercial
+                  contexts), 
+                </p>
+              </li>
+              <li>
+                <p>
+                  ensure that the XML Signature standard is
+                  cryptographically secure and makes use of
+                  the best current practices for digital 
+                  signature algorithms, and
+                </p>
+              </li>
+              <li>
+                <p>
+                  enable use of XML Signature technology in
+                  a wide variety of commercial and
+                  government applications, including those
+                  that require 
+                  Suite B
+                </p>
+              </li>
+            </ol>
+            elliptic curve algorithms are to be added to XML
+            Signature.  
+            <p>
+              The additional algorithm requirements are as follows:
+            </p>
+            <ul>
+              <li>
+                <p>Signature:</p>
+                <p>Require ECDSAwithSHA256.</p>
+                <p>ECDSAwithSHA1,
+                ECDSAwithSHA384, ECDSAwithSHA512 optional.
+                (Note ECDSAwithSHA1 is Discouraged in XML
+                Signature 1.1 due to 
+                concerns with SHA-1.)
+                </p>
+              </li>
+              <li>
+                <p>Define ECKeyValue element to enable
+                interoperable exchange of EC 
+                public key values in XML Signature context.
+                </p>
+              </li>
+              <li>
+                <p>Provide profile guidance for use of RFC 4050 
+                [<cite><a class="bibref" href="#bib-RFC4050">RFC4050</a></cite>]
+                when it
+                continues to be used in XML Signature
+                context but indicate preference 
+                for mechanism defined in XML Signature. 
+                </p>
+              </li>
+            </ul>
+            <p>
+              The last two requirements are discussed in
+              more detail in the 
+              following design section.
+            </p>
+          </section>
+        </section>
+        <section id="algorithm-eckeyvalue-design">
+          <h4><span class="secno">3.3.3 </span>Suite B Elliptic Curve Key Value Design
+          (ECKeyValue)</h4> 
+          <section id="algorithm-eckeyvalue-issues">
+            <h5><span class="secno">3.3.3.1 </span>RFC 4050 issues in XML Signature context</h5>
+            <p>
+              RFC 4050 is an informational RFC that defines
+              a method of representing 
+              ECDSA public keys and ECC curve parameters for
+              use with XML Signature, 
+              but it has some issues related to XML Signature:
+            </p>
+            <ul>
+              <li>
+                <p>The RFC 4050 definition of an
+                ECDSAKeyValue is larger than 
+                necessary.
+                </p>
+                <p>
+                  An ECDSAKeyValue is defined by the type
+                  ECPointType, which has 
+                  subelements X and Y. X and Y are defined
+                  as FieldParamsType which is an 
+                  abstract type. Separate derived types are
+                  defined for prime fields, 
+                  trinomial base fields, pentanomial base
+                  fields, and odd characteristic 
+                  extension fields.  In order to validate
+                  against the 4050 schema, one 
+                  must include the type attribute from the
+                  XML schema instance 
+                  namespace. This is not a significant
+                  problem but it does make the 
+                  public key larger than necessary.
+                </p>
+              </li>
+              <li>
+                <p>ECPointType definition is inconsistent
+                with ANSI X9.62 and RFC 3279.
+                </p>
+                <p> 
+                  ECPointType is reused in the definition of
+                  the ExplicitParamsType to 
+                  describe the base point of a curve. The field parameters are already
+                  included in the FieldParams element. The use of the FieldParamsType in
+                  the ECPointType definition appears to be a mistake in 4050. If you
+                  look at the ASN.1 definition for ECC public keys in RFC 3279 
+                  [<cite><a class="bibref" href="#bib-RFC3279">RFC3279</a></cite>]
+                  , ECPoint
+                  simply references the Point to Octet String conversion function in
+                  ANSI X9.62 (section A.5.6 in the 2005 version, section 4.3.6 in the
+                  1998 version). The conversion functions in X9.62 are not ASN.1
+                  specific and it appears they would be implemented as part of any ECC
+                  crypto library. It appears that RFC 4050 tried to avoid using any of
+                  the conversion functions in X9.62 but somehow mixed up the definitions
+                  between a field type and a field element. 
+                  
+                </p>
+              </li>
+              
+              <li>
+                <p>Limitation of the decimal type in XSD</p>
+                <p>
+                  RFC 4050 defines X and Y (at least for prime and odd characteristic
+                  extension fields) as xs:nonNegativeInteger which derives from the
+                  xs:decimal primitive type. However, XSD requires implementations to
+                  support only a maximum of 18 digits (see <a href="http://www.w3.org/TR/xmlschema-2/#decimal">section 3.2.3</a>
+                  in 
+                  [<cite><a class="bibref" href="#bib-XMLSCHEMA11-2">XMLSCHEMA11-2</a></cite>]
+                  ).
+                  It is possible to create an example requiring  77 and 78 digits for X
+                  and Y respectively. 
+                  This means that there is no guarantee that an RFC 4050 compliant
+                  ECDSAKeyValue element will actually validate against the RFC 4050 schema.
+                  
+                </p>
+              </li>
+              
+              <li>
+                <p>
+                  Collision between the RFC 4050 DTD and the XMLDSIG DTD
+                </p>
+                <p>
+                  Merging the  RFC 4050 DTD into the XMLDSIG DTD is a problem due to
+                  conflicting DTD definitions. In ECDSAKeyValue, Y is defined as follows:
+                </p>                           
+                <div class="example"><div class="example-title"><span>Example 2</span></div><pre class="example highlight prettyprint"><span class="typ">Definition</span><span class="pln"> of Y </span><span class="kwd">in</span><span class="pln"> </span><span class="typ">ECDSAKeyValue</span><span class="pln">
+
+</span><span class="pun">&lt;!</span><span class="pln">ELEMENT Y EMPTY</span><span class="pun">&gt;</span><span class="pln">
+</span><span class="pun">&lt;!</span><span class="pln">ATTLIST Y </span><span class="typ">Value</span><span class="pln"> CDATA </span><span class="com">#REQUIRED&gt;</span></pre></div>
+                
+                <p>However, DSAKeyValue defines Y as follows:</p>
+                
+                <div class="example"><div class="example-title"><span>Example 3</span></div><pre class="example highlight prettyprint"><span class="typ">Definition</span><span class="pln"> of Y </span><span class="kwd">in</span><span class="pln"> </span><span class="typ">DSAKeyValue</span><span class="pln">
+
+</span><span class="pun">&lt;!</span><span class="pln">ELEMENT Y </span><span class="pun">(</span><span class="com">#PCDATA) &gt;</span></pre></div>
+                
+                <p>ECDSAKeyValue also contains identical definition for elements SEED and
+                P as DSAKeyValue.
+                
+                </p>
+                
+                <p>It does not seem possible to scope the definition of Y
+                under a specific element in DTD.
+                
+                </p>
+              </li>
+              
+            </ul>
+            
+          </section>
+          
+          <section id="algorithm-eckeyvalue-proposal">
+            
+            <h5><span class="secno">3.3.3.2 </span>Proposed Solution to RFC 4050 issues in XML Signature context</h5>
+            
+            <p>
+              Because of these issues, a possible proposed solution is
+              for XML Signature 
+              1.1 to define a new ECPublicKey element in the ds namespace rather
+              than attempt to reuse the RFC 4050 ECDSAPublicKey elements. This new
+              element will be based on the ASN.1
+              definition ANSI X9.62 and RFC 3279. Changing the name of the element
+              to ECPublicKey means it can be also used in XML Encryption to
+              support ECDH.  (Note, XML Signature 1.1 defined
+              ECKeyValue instead).
+              
+            </p>
+            <p>
+              To maximize interoperability with existing RFC 4050 implementations,
+              we should also put a note in 1.1 to recommend implementations to
+              support a profile of RFC 4050. The profile will support only named prime
+              curves.
+              
+            </p>
+            
+          </section>
+
+        </section>
+      </section>
+      <section id="correct-issues">
+        <h3><span class="secno">3.4 </span>Correct known issues</h3>
+        <p>This section summarizes the motivation for new features
+        designed to 
+        address known issues. (This section of the requirements
+        document was written after the 
+        XML Signature 1.1 specification was updated in order to
+        record the rationale for the changes.)</p>            
+
+        <section id="issueserial">
+          <h4><span class="secno">3.4.1 </span>Limitations associated with <code>X509IssueSerial</code></h4>
+          <p>
+            The <code>X509IssuerSerialNumber</code> child element of
+            the <code>X509IssuerSerialType</code>
+            XML Schema type
+            was defined to be an integer 
+            holding an X.509 certificate serial number.
+            XML 
+            Schema validators may not support integer types with decimal
+            data exceeding 18 decimal digits [<cite><a class="bibref" href="#bib-XMLSCHEMA-2">XMLSCHEMA-2</a></cite>]
+            and this
+            maximum length has proven
+            insufficient as many Certificate Authorities issue
+            certificates with large random serial numbers that
+            exceed this 
+            limit. A
+            new element is defined in XML Signature 1.1 with a
+            different type definition, 
+            the <code>sig11:X509Digest</code> element, and a warning
+            that 
+            deployments that make use of
+            the <code>X509IssuerSerial</code> element 
+            should take care if schema validation is involved.
+          </p>
+        </section>
+        <section id="RetrievalMethod">
+          <h4><span class="secno">3.4.2 </span>Simplify access to <code>ds:KeyInfo</code></h4>
+          <p>
+            The <code>RetrievalMethod</code> is ambiguous about whether the result
+            is an element within <code>KeyInfo</code> or the  <code>KeyInfo</code>
+            element itself. It also supports the use of <code>ds:Transform</code>
+            adding complexity. The new <code>KeyInfoReference</code> element
+            removes the ambiguity by always referencing the  <code>KeyInfo</code>
+            element itself. It also is simpler in that it does not allow
+            any <code>ds:Transform</code> children.
+          </p>
+        </section>
+
+        <section id="DEREncodedKeyValue">
+          <h4><span class="secno">3.4.3 </span>XML <code>KeyValue</code> type interoperability</h4> 
+          <p>
+            XML Signature 1.1 defines XML formats to
+            convey key information in the <code>KeyValue</code> 
+            element. There are scenarios
+            where at least one of signer and/or verifier are not able to
+            serialize keys in those XML formats.
+            The <code>DEREncodedKeyValue</code> element has been
+            added to XML Signature 1.1 to support use
+            of other binary encodings. 
+          </p>
+        </section>
+        <section id="OCSPResponse">
+          <h4><span class="secno">3.4.4 </span>Support OCSP use case</h4>
+          <p>
+            It is sometimes useful to provide an OCSP
+            response along 
+            with an X.509 certificate. The <code>OCSPResponse</code>
+            element was 
+            added to <code>X509Data</code> to support this use case.
+          </p>
+        </section>
+      </section>
+    </section>
+    <section id="thanks">
+      <!--OddPage--><h2><span class="secno">4. </span>Acknowledgments</h2>
+      <p> Contributions received from the members of the XML Security Working
+      Group: Scott Cantor, Juan Carlos Cruellas, Pratik Datta, Gerald Edgar,
+      Ken Graf, Phillip Hallam-Baker, Brad Hill, Frederick Hirsch, Brian LaMacchia, Konrad Lanz, Hal Lockhart, Cynthia Martin, Rob
+      Miller, Sean Mullan, Shivaram Mysore, Magnus Nyström, Bruce Rich, Thomas
+      Roessler, Ed Simon, Chris Solc, John Wray,
+      Kelvin Yiu. 
+      </p>
+    </section>
+  
+
+<section id="references" class="appendix"><!--OddPage--><h2><span class="secno">A. </span>References</h2><p>Dated references below are to the latest known or appropriate edition of the referenced work.  The referenced works may be subject to revision, and conformant implementations may follow, and are encouraged to investigate the appropriateness of following, some or all more recent editions or replacements of the works cited. It is in each case implementation-defined which  editions are supported.</p><section id="informative-references"><h3><span class="secno">A.1 </span>Informative references</h3><dl class="bibliography"><dt id="bib-ECC-ALGS">[ECC-ALGS]</dt><dd>D. McGrew; K. Igoe; M. Salter. <a href="http://www.rfc-editor.org/rfc/rfc6090.txt"><cite>RFC 6090: Fundamental Elliptic Curve Cryptography Algorithms</cite></a>. February 2011. IETF Informational RFC. URL: <a href="http://www.rfc-editor.org/rfc/rfc6090.txt">http://www.rfc-editor.org/rfc/rfc6090.txt</a>
+</dd><dt id="bib-EXI">[EXI]</dt><dd>Takuki Kamiya; John Schneider. <a href="http://www.w3.org/TR/2009/CR-exi-20091208/"><cite>Efficient XML Interchange (EXI) Format 1.0</cite></a>. 8 December 2009. W3C Candidate Recommendation. URL: <a href="http://www.w3.org/TR/2009/CR-exi-20091208/">http://www.w3.org/TR/2009/CR-exi-20091208/</a>
+</dd><dt id="bib-PKCS5">[PKCS5]</dt><dd>B. Kaliski. <a href="http://www.ietf.org/rfc/rfc2898.txt"><cite>PKCS #5 v2.0: Password-Based Cryptography Standard</cite></a>. September 2000. IETF RFC 2898. URL: <a href="http://www.ietf.org/rfc/rfc2898.txt">http://www.ietf.org/rfc/rfc2898.txt</a>
+</dd><dt id="bib-RFC3279">[RFC3279]</dt><dd>W. Polk, R. Housley, L. Bassham. <a href="http://www.ietf.org/rfc/rfc3279.txt"><cite>Algorithmupdates and Identifiers for the Internet X.509 Public Key Infrastructure Certificate and Certificate Revocation List (CRL) Profile</cite></a>. April 2002. Internet RFC 3279. URL: <a href="http://www.ietf.org/rfc/rfc3279.txt">http://www.ietf.org/rfc/rfc3279.txt</a>
+</dd><dt id="bib-RFC4050">[RFC4050]</dt><dd>S. Blake-Wilson; G. Karlinger; T. Kobayashi; Y. Wang. <a href="http://www.ietf.org/rfc/rfc4050.txt"><cite>Using the Elliptic Curve Signature Algorithm (ECDSA) for XML Digital Signatures (RFC 4050)</cite></a>. April 2005. RFC. URL: <a href="http://www.ietf.org/rfc/rfc4050.txt">http://www.ietf.org/rfc/rfc4050.txt</a>
+</dd><dt id="bib-SHA-1-Collisions">[SHA-1-Collisions]</dt><dd>X. Wang, Y.L. Yin, H. Yu. <a href="http://people.csail.mit.edu/yiqun/SHA1AttackProceedingVersion.pdf"><cite>Finding Collisions in the Full SHA-1</cite></a>. In Shoup, V., editor, Advances in Cryptology - CRYPTO 2005, 25th Annual International Cryptology Conference, Santa Barbara, California, USA, August 14-18, 2005, Proceedings, volume 3621 of LNCS, pages 17–36. Springer, 2005. URL: <a href="http://people.csail.mit.edu/yiqun/SHA1AttackProceedingVersion.pdf">http://people.csail.mit.edu/yiqun/SHA1AttackProceedingVersion.pdf</a> (also published in <a href="http://www.springerlink.com/content/26vljj3xhc28ux5m/">http://www.springerlink.com/content/26vljj3xhc28ux5m/</a>)
+</dd><dt id="bib-SMIME">[SMIME]</dt><dd>B. Ramsdell. <a href="http://www.ietf.org/rfc/rfc3851.txt"><cite>S/MIME Version 3.1 Message Specification</cite></a>. July 2004. RFC 3851. URL: <a href="http://www.ietf.org/rfc/rfc3851.txt">http://www.ietf.org/rfc/rfc3851.txt</a>
+</dd><dt id="bib-SUITEB">[SUITEB]</dt><dd><a href="http://www.nsa.gov/ia/programs/suiteb_cryptography/"><cite>NSA Suite B Cryptography</cite></a>. URL: <a href="http://www.nsa.gov/ia/programs/suiteb_cryptography/">http://www.nsa.gov/ia/programs/suiteb_cryptography/</a> 
+</dd><dt id="bib-WEBARCH">[WEBARCH]</dt><dd>Norman Walsh; Ian Jacobs. <a href="http://www.w3.org/TR/2004/REC-webarch-20041215/"><cite>Architecture of the World Wide Web, Volume One</cite></a>. 15 December 2004. W3C Recommendation. URL: <a href="http://www.w3.org/TR/2004/REC-webarch-20041215/">http://www.w3.org/TR/2004/REC-webarch-20041215/</a>
+</dd><dt id="bib-WIDGETS-DIGSIG">[WIDGETS-DIGSIG]</dt><dd>M. Cáceres; P. Bayers; Stuart Knightley; F. Hirsch; M Priestley. <a href="http://www.w3.org/TR/widgets-digsig"><cite>Digital Signatures for Widgets</cite></a>. (Work in progress. ). URL: <a href="http://www.w3.org/TR/widgets-digsig">http://www.w3.org/TR/widgets-digsig</a>
+</dd><dt id="bib-WS-SECURECONVERSATION13">[WS-SECURECONVERSATION13]</dt><dd>A. Nadalin, M. Goodner, M. Gudgin, A. Barbir, H. Granqvist. <a href="https://www.oasis-open.org/standards#wssecconv1.3"><cite>WS-SecureConversation 1.3</cite></a>. OASIS Standard, 1 March 2007. URL: <a href="https://www.oasis-open.org/standards#wssecconv1.3">https://www.oasis-open.org/standards#wssecconv1.3</a> 
+</dd><dt id="bib-WS-SECURITY11">[WS-SECURITY11]</dt><dd>A. Nadalin, C. Kaler, R. Monzillo, P. Hallam-Baker. <a href="https://www.oasis-open.org/standards#wssv1.1"><cite>Web Services Security: SOAP Message Security 1.1 (WS-Security 2004)</cite></a>. OASIS Standard, 1 February 2006. URL: <a href="https://www.oasis-open.org/standards#wssv1.1">https://www.oasis-open.org/standards#wssv1.1</a> 
+</dd><dt id="bib-WS-SECURITYPOLICY12">[WS-SECURITYPOLICY12]</dt><dd>A. Nadalin, M. Goodner, M. Gudgin, A. Barbir, H. Granqvist. <a href="https://www.oasis-open.org/standards#wssecpolv1.2"><cite>WS-SecurityPolicy 1.2, OASIS Standard</cite></a>. 1 July 2007. URL: <a href="https://www.oasis-open.org/standards#wssecpolv1.2">https://www.oasis-open.org/standards#wssecpolv1.2</a> 
+</dd><dt id="bib-WS-TRUST13">[WS-TRUST13]</dt><dd>A. Nadalin, M. Goodner, M. Gudgin, A. Barbir, H. Granqvist.  <a href="https://www.oasis-open.org/standards#wstrustv1.3"><cite>WS-Trust 1.3</cite></a>. OASIS Standard, 19 March 2007. URL: <a href="https://www.oasis-open.org/standards#wstrustv1.3">https://www.oasis-open.org/standards#wstrustv1.3</a> 
+</dd><dt id="bib-WSI-BSP10">[WSI-BSP10]</dt><dd>M. McIntosh, M. Gudgin, K. S. Morrison, A. Barbir. <a href="http://www.ws-i.org/Profiles/BasicSecurityProfile-1.0.html"><cite>Basic Security Profile Version 1.0</cite></a>. WS-I Final Material, 30 March 2007. URL: <a href="http://www.ws-i.org/Profiles/BasicSecurityProfile-1.0.html">http://www.ws-i.org/Profiles/BasicSecurityProfile-1.0.html</a> 
+</dd><dt id="bib-WSS-USERNAME11">[WSS-USERNAME11]</dt><dd>A. Nadalin, C. Kaler, R. Monzillo, P. Hallam-Baker. <a href="https://www.oasis-open.org/committees/download.php/16782/wss-v1.1-spec-os-UsernameTokenProfile.pdf"><cite>Web Services Security UsernameToken Profile 1.1</cite></a>. OASIS Standard Specification, 1 February 2006. URL: <a href="https://www.oasis-open.org/committees/download.php/16782/wss-v1.1-spec-os-UsernameTokenProfile.pdf">https://www.oasis-open.org/committees/download.php/16782/wss-v1.1-spec-os-UsernameTokenProfile.pdf</a> 
+</dd><dt id="bib-XML-C14N11">[XML-C14N11]</dt><dd>John Boyer; Glenn Marcy. <a href="http://www.w3.org/TR/2008/REC-xml-c14n11-20080502/"><cite>Canonical XML Version 1.1</cite></a>. 2 May 2008. W3C Recommendation. URL: <a href="http://www.w3.org/TR/2008/REC-xml-c14n11-20080502/">http://www.w3.org/TR/2008/REC-xml-c14n11-20080502/</a>
+</dd><dt id="bib-XML-CANONICAL-REQ">[XML-CANONICAL-REQ]</dt><dd>James Tauber; Joel Nava. <a href="http://www.w3.org/TR/1999/NOTE-xml-canonical-req-19990605"><cite>XML Canonicalization Requirements</cite></a>. 5 June 1999. W3C Note. URL: <a href="http://www.w3.org/TR/1999/NOTE-xml-canonical-req-19990605">http://www.w3.org/TR/1999/NOTE-xml-canonical-req-19990605</a>
+</dd><dt id="bib-XML-INFOSET">[XML-INFOSET]</dt><dd>John Cowan; Richard Tobin. <a href="http://www.w3.org/TR/2004/REC-xml-infoset-20040204/"><cite>XML Information Set (Second Edition)</cite></a>. 4 February 2004. W3C Recommendation. URL: <a href="http://www.w3.org/TR/2004/REC-xml-infoset-20040204/">http://www.w3.org/TR/2004/REC-xml-infoset-20040204/</a>
+</dd><dt id="bib-XMLDSIG-COMPLEXITY">[XMLDSIG-COMPLEXITY]</dt><dd>Brad Hill. <a href="http://www.w3.org/2007/xmlsec/ws/papers/04-hill-isecpartners/"><cite>Complexity as the Enemy of Security: Position Paper for W3C Workshop on Next Steps for XML Signature and XML Encryption</cite></a>. 25-26 September. W3C Working Draft. URL: <a href="http://www.w3.org/2007/xmlsec/ws/papers/04-hill-isecpartners/">http://www.w3.org/2007/xmlsec/ws/papers/04-hill-isecpartners/</a>
+</dd><dt id="bib-XMLDSIG-CORE">[XMLDSIG-CORE]</dt><dd>Joseph Reagle et al. <a href="http://www.w3.org/TR/2008/REC-xmldsig-core-20080610/"><cite>XML Signature Syntax and Processing (Second Edition)</cite></a>. 10 June 2008. W3C Recommendation. URL: <a href="http://www.w3.org/TR/2008/REC-xmldsig-core-20080610/">http://www.w3.org/TR/2008/REC-xmldsig-core-20080610/</a>
+</dd><dt id="bib-XMLDSIG-PROPERTIES">[XMLDSIG-PROPERTIES]</dt><dd>Frederick Hirsch. <a href="http://www.w3.org/TR/2013/REC-xmldsig-properties-20130411/"><cite>XML Signature Properties</cite></a>. 11 April 2013. W3C Recommendation. URL: <a href="http://www.w3.org/TR/2013/REC-xmldsig-properties-20130411/">http://www.w3.org/TR/2013/REC-xmldsig-properties-20130411/</a>
+</dd><dt id="bib-XMLDSIG-REQUIREMENTS">[XMLDSIG-REQUIREMENTS]</dt><dd>Joseph Reagle Jr. <a href="http://www.w3.org/TR/1999/WD-xmldsig-requirements-19991014"><cite>XML-Signature Requirements</cite></a>. 14 October 1999. W3C Working Draft. URL: <a href="http://www.w3.org/TR/1999/WD-xmldsig-requirements-19991014">http://www.w3.org/TR/1999/WD-xmldsig-requirements-19991014</a>
+</dd><dt id="bib-XMLDSIG-SEMANTICS">[XMLDSIG-SEMANTICS]</dt><dd>Sebastian Gajek; Lijun Liao; and Jörg Schwenk. <a href="http://www.w3.org/2007/xmlsec/ws/papers/07-gajek-rub/"><cite> Towards a Semantic of XML Signature: Position Paper for W3C Workshop on Next Steps for XML Signature and XML Encryption </cite></a>. 25-26 September 2007. W3C Workshop. URL: <a href="http://www.w3.org/2007/xmlsec/ws/papers/07-gajek-rub/">http://www.w3.org/2007/xmlsec/ws/papers/07-gajek-rub/</a>
+</dd><dt id="bib-XMLDSIG-THOMPSON">[XMLDSIG-THOMPSON]</dt><dd>Henry Thompson. <a href="http://www.w3.org/2007/xmlsec/ws/papers/20-thompson/"><cite>Radical proposal for Vnext of XML Signature: Position Paper for W3C Workshop on Next Steps for XML Signature and XML Encryption</cite></a>. 26 September 2007. W3C Workshop. URL: <a href="http://www.w3.org/2007/xmlsec/ws/papers/20-thompson/">http://www.w3.org/2007/xmlsec/ws/papers/20-thompson/</a>
+</dd><dt id="bib-XMLENC-CORE">[XMLENC-CORE]</dt><dd>Donald Eastlake; Joseph Reagle. <a href="http://www.w3.org/TR/2002/REC-xmlenc-core-20021210/"><cite>XML Encryption Syntax and Processing</cite></a>. 10 December 2002. W3C Recommendation. URL: <a href="http://www.w3.org/TR/2002/REC-xmlenc-core-20021210/">http://www.w3.org/TR/2002/REC-xmlenc-core-20021210/</a>
+</dd><dt id="bib-XMLSCHEMA-2">[XMLSCHEMA-2]</dt><dd>Paul V. Biron; Ashok Malhotra. <a href="http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/"><cite>XML Schema Part 2: Datatypes Second Edition</cite></a>. 28 October 2004. W3C Recommendation. URL: <a href="http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/">http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/</a>
+</dd><dt id="bib-XMLSCHEMA11-2">[XMLSCHEMA11-2]</dt><dd>Henry S. Thompson et al. <a href="http://www.w3.org/TR/2012/REC-xmlschema11-2-20120405/"><cite>W3C XML Schema Definition Language (XSD) 1.1 Part 2: Datatypes</cite></a>. 5 April 2012. W3C Recommendation. URL: <a href="http://www.w3.org/TR/2012/REC-xmlschema11-2-20120405/">http://www.w3.org/TR/2012/REC-xmlschema11-2-20120405/</a>
+</dd><dt id="bib-XMLSEC-NEXTSTEPS-2007">[XMLSEC-NEXTSTEPS-2007]</dt><dd>Frederick Hirsch; Thomas Roessler. <a href="http://www.w3.org/2007/xmlsec/ws/report.html"><cite>Workshop Report W3C Workshop on Next Steps for XML Signature and XML Encryption</cite></a>. 25-26 September 2007. W3C Workshop Report. URL: <a href="http://www.w3.org/2007/xmlsec/ws/report.html">http://www.w3.org/2007/xmlsec/ws/report.html</a>
+</dd></dl></section></section></body></html>

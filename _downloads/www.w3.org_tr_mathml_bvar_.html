@@ -1,0 +1,685 @@
+<!-- http://www.w3.org/TR/mathml-bvar/ -->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!--
+<!DOCTYPE html PUBLIC "W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN" 
+"http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg-flat.dtd" [
+<!ENTITY % MATHML.prefixed "IGNORE" >
+]> 
+--><html>
+  <head>
+    <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Bound Variables in MathML</title>
+    <style type="text/css">
+code           { font-family: monospace; }
+
+div.constraint,
+div.issue,
+div.note,
+div.notice     { margin-left: 2em; }
+
+li p           { margin-top: 0.3em;
+                 margin-bottom: 0.3em; }
+
+div.exampleInner pre { margin-left: 1em;
+                       margin-top: 0em; margin-bottom: 0em}
+div.exampleOuter {border: 4px double gray;
+                  margin: 0em; padding: 0em}
+div.exampleInner { background-color: #d5dee3;
+                   border-top-width: 4px;
+                   border-top-style: double;
+                   border-top-color: #d3d3d3;
+                   border-bottom-width: 4px;
+                   border-bottom-style: double;
+                   border-bottom-color: #d3d3d3;
+                   padding: 4px; margin: 0em }
+div.exampleWrapper { margin: 4px }
+div.exampleHeader { font-weight: bold;
+                    margin: 4px}
+</style>
+    <link type="text/css" rel="stylesheet" href="http://www.w3.org/StyleSheets/TR/W3C-WG-NOTE.css">
+  </head>
+  <body>
+    <div class="head">
+      <p>
+        <a href="http://www.w3.org/"><img width="72" height="48" alt="W3C" src="http://www.w3.org/Icons/w3c_home"></a>
+      </p>
+      <h1>
+        <a id="title"></a>Bound Variables in MathML</h1>
+      <h2>
+        <a id="w3c-doctype"></a>W3C Working Group Note 10 November 2003</h2>
+      <dl>
+        <dt>This version:</dt>
+        <dd>
+          <a href="http://www.w3.org/TR/2003/NOTE-mathml-bvar-20031110/">http://www.w3.org/TR/2003/NOTE-mathml-bvar-20031110/</a>
+        </dd>
+        <dt>Latest version:</dt>
+        <dd>
+          <a href="http://www.w3.org/TR/mathml-bvar/">http://www.w3.org/TR/mathml-bvar/</a>
+        </dd>
+        <dt>Previous version:</dt>
+        <dd>
+          <span>This is the first version of this Note.</span>
+        </dd>
+        <dt>Editors:</dt>
+        <dd>Stan Devitt - Invited Expert, StratumTek</dd>
+        <dd>Michael Kohlhase, DFKI</dd>
+      </dl>
+      <p class="copyright">
+        <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a>&nbsp;&copy;&nbsp;2003&nbsp;<a href="http://www.w3.org/"><acronym title="World Wide Web Consortium">W3C</acronym></a><sup>&reg;</sup> (<a href="http://www.lcs.mit.edu/"><acronym title="Massachusetts Institute of Technology">MIT</acronym></a>, <a href="http://www.ercim.org/"><acronym title="European Research Consortium for Informatics and Mathematics">ERCIM</acronym></a>, <a href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a>, <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> and <a href="http://www.w3.org/Consortium/Legal/copyright-software">software licensing</a> rules apply.</p>
+    </div>
+    <hr>
+    <div>
+      <h2>
+        <a id="abstract"></a>Abstract</h2>
+      <p>This Note examines the treatment of bound variables in Content
+	MathML. Bound variables are central representational primitives in
+	mathematical languages. They allow one to express functions, quantification,
+	and operators with qualifiers. The first edition of the MathML 2.0
+	Recommendation <a href="#MathML2">[MathML2]</a> 
+        was somewhat vague about the identity conditions on bound
+	variables, and as a consequence Content MathML applications were left to guess
+	the exact meaning. This Note provides some of the rationale behind how this 
+	has been clarified in the second edition <a href="#MathML22e">[MathML22e]</a>.</p>
+    </div>
+    <div>
+      <h2>
+        <a id="status"></a>Status of this Document</h2>
+      <p>
+        <em> This section describes the status of this document at the
+		    time of its publication.  
+		    Other documents may supersede this document.
+		    A list of current W3C publications and the
+		    latest revision of this technical report can be found in the
+		    <a href="http://www.w3.org/TR/">W3C technical reports index</a>
+		    at http://www.w3.org/TR/.</em>
+      </p>
+      <p>This Note provides a self-contained explanation of bound
+      variables in Content MathML. It contains non-normative
+      interpretations of the MathML 2.0 Recommendation (Second Edition)
+      <a href="#MathML22e">[MathML22e]</a> and it provides guidelines for
+      representing mathematical objects in Content MathML.  Please
+      direct comments and report errors in this document to <a href="mailto:www-math@w3.org">www-math@w3.org</a>.</p>
+      <p>This document has been produced by the W3C Math Working
+	 Group as part of the <a href="http://www.w3.org/Math/">W3C
+	 Math Activity</a> (<a href="http://www.w3.org/Math/Activity">Activity
+	 statement</a>).  The goals of the Working Group are
+	 discussed in the <a href="http://www.w3.org/Math/Documents/Charter2001.html">
+	 Working Group Charter</a>.  A list of <a href="http://www.w3.org/TR/2003/REC-MathML2-20031021/appendixi.html">participants
+	 in the W3C Math Working Group</a> is available.</p>
+      <p>Publication as a Working Group Note does not imply
+	 endorsement by the W3C Membership. This is a draft document
+	 and may be updated, replaced or obsoleted by other documents
+	 at any time. It is inappropriate to cite this document as
+	 other than work in progress. Patent disclosures relevant to
+	 this Note may be found on the Math Working Group's <a href="http://www.w3.org/Math/Disclosures">patent disclosure
+	 page</a>.</p>
+    </div>
+    <div class="toc">
+      <h2>
+        <a id="contents"></a>Table of Contents</h2>
+      <p class="toc">1 <a href="#top">Introduction</a>
+        <br>
+2 <a href="#problem">The problem</a>
+        <br>
+3 <a href="#background">
+	    Background on bound variables in logics and mathematical foundations
+	  </a>
+        <br>
+4 <a href="#analysis">Analysis</a>
+        <br>
+5 <a href="#proposal">Using definitionURL for Bound Variable Identification.</a>
+        <br>
+&nbsp;&nbsp;&nbsp;&nbsp;5.1 <a href="#why-defURL">Why definitionURL?</a>
+        <br>
+&nbsp;&nbsp;&nbsp;&nbsp;5.2 <a href="#why-not-defURL">Clarifying the Role of definitionURL in MathML</a>
+        <br>
+6 <a href="#N40030A">Conclusion</a>
+        <br>
+      </p>
+      <h3>
+        <a id="appendices"></a>Appendices</h3>
+      <p class="toc">A <a href="#N400311">Bibliography</a>
+        <br>
+B <a href="#appdx-A">Definitions of Equality</a>
+        <br>
+      </p>
+    </div>
+    <hr>
+    <div class="body">
+      <div class="div1">
+        <h2>
+          <a id="top"></a>1 Introduction</h2>
+        <p>Bound variables are central representational primitives in
+	mathematical languages. They allow one to express functions, quantification,
+	and operators with qualifiers. The first edition of the MathML 2.0
+	Recommendation <a href="#MathML2">[MathML2]</a> was vague about the identity conditions on bound
+	variables.  For example, all examples in that Recommendation use simple 
+	<code>ci</code> elements, for which there is never any doubt when
+	an instance of the bound variable is the same as the defining
+	occurrence.  In fact, the question of identity only seriously arises 
+	when one starts to use more elaborate presentations inside of the <code>ci</code> 
+	elements.  <a href="http://www.w3.org/TR/2003/REC-MathML2-20031021/chapter4.html">Content MathML</a> 
+	applications were left trying to decide
+	when two presentations are equal, possibly in the presence of 
+	heavy use of <code>semantics</code> tags and/or styling attributes.  
+	How extensively could a <code>ci</code> element be modified (even for 
+	presentational purposes) without changing it mathematically?</p>
+        <p>The safe answer to this question was "not at all", but 
+      there were legitimate examples where at very least one 
+      of the presentations needed to be changed for expository purposes 
+	while retaining the mathematical identity.  Furthermore, the first edition of the
+	MathML 2.0 Recommendation <a href="#MathML2">[MathML2]</a> did not elaborate on this point.</p>
+        <p>This Note investigates the recognition of instances of bound variables and
+	shows how existing mechanisms for dealing with semantics can be used
+	to make such identifications explicit without depending on the direct
+	comparison of the presentational markup.  This is the approach that has been used to
+	clarify the notion of identity of bound variables in the second edition  
+	of the MathML 2.0 Recommendation <a href="#MathML22e">[MathML22e]</a>.</p>
+      </div>
+      <div class="div1">
+        <h2>
+          <a id="problem"></a>2 The problem</h2>
+        <p>When complex <a href="http://www.w3.org/TR/2003/REC-MathML2-20031021/chapter3.html">Presentation MathML</a> annotations
+	      are used, the association of a particular instance of a <a href="http://www.w3.org/TR/2003/REC-MathML2-20031021/chapter4.html#contm.ci">ci</a>
+	      with its defining occurrence in the <a href="http://www.w3.org/TR/2003/REC-MathML2-20031021/chapter4.html#contm.bvar">bvar</a>
+	      element can be difficult to establish, and the first edition of the MathML 2.0 Recommendation
+	      <a href="#MathML2">[MathML2]</a> did not specify a way to do so.
+	      Note that a strict definition of identity based solely on the XML structure
+	      (possibly based on the XML Information Set) would be too restrictive.
+      </p>
+        <p>In most purely Content MathML cases (including all the examples 
+	in the the first edition of the MathML 2.0 Recommendation <a href="#MathML2">[MathML2]</a>) 
+	there is no problem; the content of the <a href="http://www.w3.org/TR/2003/REC-MathML2-20031021/chapter4.html#contm.bvar">bvar</a> element 
+	is a single <a href="http://www.w3.org/TR/2003/REC-MathML2-20031021/chapter4.html#contm.ci">ci</a>, 
+	whose content is just a simple character string.  There is little doubt that 
+	any <code>ci</code> in the body of the <a href="http://www.w3.org/TR/2003/REC-MathML2-20031021/chapter4.html#contm.apply">apply</a> element 
+	that have the same name after whitespace normalizations is bound by the <code>bvar</code> declaration. 
+</p>
+        <div class="exampleInner">
+          <pre>
+&lt;apply&gt;
+  &lt;int/&gt;
+  &lt;bvar&gt;&lt;ci&gt;x&lt;/ci&gt;&lt;/bvar&gt;
+  &lt;interval&gt;&lt;cn&gt;0&lt;/cn&gt;&lt;cn&gt;1&lt;/cn&gt;&lt;/interval&gt;
+  &lt;apply&gt;
+    &lt;/plus&gt;  
+    &lt;apply&gt;&lt;power/&gt;&lt;ci&gt;x&lt;/ci&gt;&lt;cn&gt;2&lt;/cn&gt;&lt;/apply&gt;
+    &lt;apply&gt;&lt;times/&gt;&lt;cn&gt;2&lt;/cn&gt;&lt;ci&gt;x&lt;/ci&gt;&lt;/apply&gt;
+    &lt;cn&gt;5&lt;/cn&gt;
+  &lt;/apply&gt;
+&lt;/apply&gt;
+</pre>
+        </div>
+        <p>However, the Recommendation does allow arbitrary Presentation MathML inside a 
+	<code>ci</code>,
+	  element and this feature is often used for variables with 
+	  sub/superscripts, or variables in different font families. In these cases, 
+          it becomes less clear which variables are bound by the 
+	  <code>bvar</code> declaration. For example a simple color change might be used
+	  to draw attention to one of the instances of a bound variable as in the 
+	  following variant of the the above example.
+</p>
+        <div class="exampleInner">
+          <pre>
+&lt;apply&gt;
+  &lt;int/&gt;
+  &lt;bvar&gt;
+    &lt;ci&gt;
+      &lt;mstyle color="red"&gt;
+	&lt;msub&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mn&gt;2&lt;/mn&gt;&lt;/msub&gt;
+      &lt;/mstyle&gt;
+    &lt;/ci&gt;
+  &lt;/bvar&gt;
+  &lt;interval&gt;&lt;cn&gt;0&lt;/cn&gt;&lt;cn&gt;1&lt;/cn&gt;&lt;/interval&gt;
+  &lt;apply&gt;
+    &lt;/plus&gt;  
+    &lt;apply&gt;&lt;power/&gt;&lt;ci&gt;&lt;msub&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mn&gt;2&lt;/mn&gt;&lt;/msub&gt;&lt;/ci&gt;&lt;cn&gt;2&lt;/cn&gt;&lt;/apply&gt;
+    &lt;apply&gt;&lt;times/&gt;&lt;cn&gt;2&lt;/cn&gt;&lt;ci&gt;&lt;msub&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mn&gt;2&lt;/mn&gt;&lt;/msub&gt;&lt;/ci&gt;&lt;/apply&gt;
+    &lt;cn&gt;5&lt;/cn&gt;
+  &lt;/apply&gt;
+&lt;/apply&gt;
+</pre>
+        </div>
+        <p>The goal is to clarify how to use presentational information
+	  on bound variables without losing track of their essential role as 
+	  bound variables.</p>
+      </div>
+      <div class="div1">
+        <h2>
+          <a id="background"></a>3 
+	    Background on bound variables in logics and mathematical foundations
+	  </h2>
+        <p>The problem of handling bound variables has been studied extensively in
+	    logic and the foundations of mathematics in the last one hundred years. In fact
+	    the handling of bound variables was the main contribution of Frege's
+	    treatment of first-order logic that is the basis for the set-theoretic
+	    foundation of mathematics. This section defines the terminology that
+	    will be used in the rest of this document.
+	    </p>
+        <p>
+		    A variable is called a [<a title="bound variable" id="bv">Definition</a>: <b>bound variable</b>] in an expression of the form
+	      
+		O <em>x</em>.B[<em>x</em>]
+			, if 
+	      
+		<em>O</em>
+	      is a binding operator. We use
+	      
+	      B[<em>x</em>]
+	      for an expression (called the [<a title="body" id="body">Definition</a>: <b>body</b>]) that may contain the
+	      identifier 
+	      
+		<em>x</em>. The occurrence of
+	      
+		<em>x</em> directly after
+	      
+the operator <em>O</em> is called the [<a title="declaring" id="declaring">Definition</a>: <b>declaring occurence</b>]
+and those in the body are called the [<a title="bound occurrence" id="bound">Definition</a>: <b>bound occurrences</b>].
+          </p>
+        <p>In first-order logic (and all other foundations of mathematics), bound
+	    variables have two crucial properties:</p>
+        <ul>
+          <li>
+            <p>
+		    [<a title="BVI" id="bvi">Definition</a>: 
+		    <b>Bound Variable Identity</b>
+	    	   ]
+	      Bound variables (BVI) are declared by the quantifier (or
+	      generally the binding operator such as a sum, product, limit,...) and all
+		other occurrences of the bound variable are just references to this
+		"declaring" occurrence. Outside the scope of the binding
+		operators, bound variables are invisible.</p>
+          </li>
+          <li>
+            <p>[<a title="BVN" id="bvn">Definition</a>:  <b>Bound Variable Names</b> 
+			    ]
+			    A bound variable name (BVN) is provided for the traditional symbolic
+		presentation. This allows for a linearized (formula-like)
+		representation of the functional dependency in formula-trees, as in
+	      
+		</p>
+            <p> For all <em>x</em>. <em>x</em> &gt; 1 &rarr; <em>x</em><sup>2</sup> &gt; <em>x</em>
+            </p>
+            <p>To be consistent with the logical requirement that names are
+		essentially irrelevant outside their scope, the rule of
+		<b>alphabetic renaming</b> allows one to systematically rename bound
+		variables. In particular, the expression above is mathematically
+		equivalent to
+	      
+</p>
+            <p> For all <em>y</em>. <em>y</em> &gt; 1 &rarr; <em>y</em><sup>2</sup> &gt; <em>y</em>
+            </p>
+          </li>
+        </ul>
+        <p>Both bound variable identity (<a title="BVI" href="#bvi">BVI</a>) and
+	    bound variable names (<a title="BVN" href="#bvn">BVN</a>)
+	    are essential aspects of bound variables. </p>
+        <p> Bound variable identity provides the semantical essence of bound variables. There are
+	      formulations of mathematics without (explicit) bound variables
+	      (Category theory, combinatory logic, De Bruijn Indices), but they are
+	      usually hard for humans to understand.
+          </p>
+        <p> Bound variable names help humans understand the formulae involved. In fact, un-intuitive  
+	      renaming can render complex formulae unintelligible. This is also
+	      the main reason why the variable-free logics mentioned above have
+	      remained theoretical tools rather than communication
+	      devices.
+          </p>
+      </div>
+      <div class="div1">
+        <h2>
+          <a id="analysis"></a>4 Analysis</h2>
+        <p>In the first edition of MathML 2.0 <a href="#MathML2">[MathML2]</a>
+	   Content MathML only explicitly supported a
+           <a title="BVN" href="#bvn">BVN</a>-based 
+	    representation of bound variables (only the Presentation MathML <code>ci</code>
+	    content could be used for identification). As a consequence, it was
+	    difficult to decide the identity question, a resolution of which 
+	   was needed for formal treatment of Content MathML formulae/objects.</p>
+        <p>This is not a problem in most cases, where names are simple. However, when names involve
+		  complex (Presentation MathML) objects, the <a title="BVN" href="#bvn">BVN</a>-based 
+		  specification potentially leaves open
+		  the issue of when a <a title="bound variable" href="#bv">bound occurrence</a> refers to a
+	    <a title="bound variable" href="#bv">declaring occurrence</a> -- the central
+	    question to be resolved in order to decode the meaning of the expression.</p>
+        <p>There are really only a few sensible choices for identifying
+	    a bound variable with its defining occurrence.  They include:
+	    </p>
+        <ul>
+          <li>
+            <p>
+              <em>XML-Infoset-equality</em>: two Presentation
+		  MathML names are equal, if and only if their infosets are. This criterion
+		  is probably best supported by XML. 
+		  (See <a href="#appdx-A">appendix A</a> and a general discussion of equality)</p>
+          </li>
+          <li>
+            <p>
+              <em>Explicit links</em>: introducing some specific link to the declaring
+		  occurrence or the binding operator (such as used in the
+		  <a href="http://helm.cs.unibo.it">HELM</a> project). </p>
+          </li>
+        </ul>
+        <p> The <em>XML-Infoset-equality</em> approach is impractical for complicated presentations 
+		where the whole issue of equivalence of presentations becomes as complicated as the issue 
+            of equivalence of images.  This <a title="BVN" href="#bvn">BVN</a>-based 
+	    identification schema leads at best to computationally expensive equality notions. 
+	    </p>
+        <p> However, explicit links back to the defining occurrence of a bound variable 
+		    can provide an optional alternative identification schema especially for use in the more 
+		    difficult cases.
+	    These links make the bound variable identification (<a title="BVI" href="#bvi">BVI</a>) explicit
+	    and the implemenation makes natural and intuitive use of existing machinery in MathML.
+	    The advantages of such an approach include:</p>
+        <dl>
+          <dt class="label">
+            <em>specification:</em>
+          </dt>
+          <dd>
+            <p>By design, presentation is permitted in Content MathML in only two rather 
+		  controlled ways. It may occur (much like an image) inside a
+		  <code>ci</code> element, or it may be tied in via the <code>semantics</code> 
+		  element. The troublesome case is the content of <code>ci</code>. 
+		  The view taken when this was introduced was that such 
+		  presentation was analogous to embedding an image.  
+		  It was to be an indecomposable token. Anything more complicated 
+		  was to be done using semantics tags. By analogy with images, 
+		 two <code>ci</code> elements are equal just if they are essentially
+		 identical which may formally defined by equality of the <code>src</code> attributes.
+		  Expecting <code>ci</code> elements with two completely different
+		  presentation contents (albeit visually indistinguishable) to be
+		  equivalent would be the same as  expecting images in two different
+		  files and/or formats to be identical. Short of 
+		  "decomposing" the objects and doing some potentially
+		  complicated analysis, equivalence could not possibly be 
+		  determined.</p>
+          </dd>
+          <dt class="label">
+            <em>computation:</em>
+          </dt>
+          <dd>
+            <p>When there is a need to transform Content MathML
+			representation into other content formats, the binding relation of the bound variables 
+			must be identified.
+		  In a
+		  <a title="BVN" href="#bvn">BVN</a>-based approach, this entails the need
+		  to compute the equivalence of variable names as Presentation MathML
+		  representations. The sophisticated equality tests that may be needed here are not very
+		  well-supported by XML tools - some sort of specialized XML diff program appears to be 
+		  implied. Thus, there are too many factors such This is a serious problem the adoption of
+		  Content MathML in more formal settings.</p>
+          </dd>
+          <dt class="label">
+            <em>compatibility:</em>
+          </dt>
+          <dd>
+            <p>OpenMath <a href="#OpenMath">[OpenMath]</a> is based on a <a title="BVI" href="#bvi">BVI</a>-based
+		  approach; <code>OMV</code> elements are empty, they do not have names.</p>
+          </dd>
+        </dl>
+      </div>
+      <div class="div1">
+        <h2>
+          <a id="proposal"></a>5 Using <code>definitionURL</code> for Bound Variable Identification.</h2>
+        <p> Compatibility with existing applications is important.  Thus the solution
+		must augment the existing <a title="BVN" href="#bvn">BVN</a>-based
+          treatment of bound variables  with a 
+          <a title="BVI" href="#bvi">BVI</a>-based treatment that allows the user 
+          to make the identity condition of bound variables clear, where it is 
+          not obvious from the name alone.</p>
+        <p>This can be accomplished through the use of the <code>definitionURL</code> attribute on the 
+	  <a title="bound occurrence" href="#bound">bound </a><code>ci</code> 
+	  element to point to the <a title="declaring" href="#declaring">declaring</a> instance
+	  as identified by the <code>bvar</code> element, as in the following example</p>
+        <div class="exampleInner">
+          <pre>&lt;lambda&gt;
+  &lt;bvar&gt;
+    &lt;ci id="the-boundvar"&gt;complex presentation&lt;/ci&gt;
+  &lt;/bvar&gt;
+  &lt;apply&gt;
+    &lt;plus/&gt;
+    &lt;ci definitionURL="#the-boundvar"&gt;complex presentation&lt;/ci&gt;
+    &lt;ci definitionURL="#the-boundvar"&gt;complex presentation&lt;/ci&gt;
+  &lt;/apply&gt;
+&lt;/lambda&gt;</pre>
+        </div>
+        <p>Instead of computing whether "complex presentation" is
+	identical in each occurrence, it is only necessary to check whether the
+	<code>definitionURL</code> point to the same declared <code>ci</code>. The
+	content of the <code>definitionURL</code> is a URI, which has well-understood
+	identity conditions (URIs are the basis of the Web).</p>
+        <p>Of course, use of this <a title="BVI" href="#bvi">BVI</a>-based approach to
+	  bound variables is a strictly optional way of clarifying bound variable semantics.</p>
+        <div class="div2">
+          <h3>
+            <a id="why-defURL"></a>5.1 Why <code>definitionURL</code>?</h3>
+          <p>The <a href="http://www.w3.org/TR/2003/REC-MathML2-20031021/chapter4.html#id.4.3.2">definitionURL</a> attribute is used in Content MathML to point to the
+	    (external) definition of an operator. The relevant part of the Recommendation is 
+	    4.3.2.3, where it says</p>
+          <p>
+            "
+              <em><code>definitionURL</code> [...] points to an external definition of the
+	      semantics of the symbol or construct being declared. The value is
+	      a URL or URI that should point to some kind of definition. This
+	      definition overrides the MathML default semantics. [...]</em>
+            "
+          </p>
+          <p>The main statement here is that the value of the <code>definitionURL</code>
+	  attribute is a URI points to a <em>definition</em> of the semantics of the
+	  element. In the foundation of mathematics it is an accepted fact that
+	  bound variables behave just like symbols/constants, only that the
+	  scope (and definition) of bound variables are more local than
+	  symbols/constants. In fact most foundational systems treat the
+	  symbols/constants as bound at the theory level. There is a very clear
+	  understanding that the declaring instance (in MathML the <code>bvar</code>
+	  element) behaves like the (local) definition of the symbol. In fact
+	  many modern foundational systems make this a key design decision.</p>
+          <p>Using <code>definitionURL</code> is conformant to the current DTD and content
+	    grammar.</p>
+        </div>
+        <div class="div2">
+          <h3>
+            <a id="why-not-defURL"></a>5.2 Clarifying the Role of <code>definitionURL</code> in MathML</h3>
+          <p>One sometimes sees Content MathML representations like the following one.
+</p>
+          <div class="exampleInner">
+            <pre>&lt;declare definitionURL=".../formalpowerseries"&gt;&lt;ci&gt;F&lt;/ci&gt;&lt;/declare&gt;
+&lt;apply&gt;
+  &lt;set/&gt;
+  &lt;bvar&gt;&lt;ci&gt;F&lt;/ci&gt;&lt;/bvar&gt;
+  &lt;condition&gt;
+    &lt;apply&gt;
+      &lt;in/&gt;
+      &lt;ci&gt;F&lt;/ci&gt;
+      &lt;csymbol definitionURL="XXX"&gt;My Special Formal PSeries&lt;/csymbol&gt;
+    &lt;/apply&gt;
+  &lt;/condition&gt;
+  &lt;ci&gt;x&lt;/ci&gt;
+&lt;/apply&gt;</pre>
+          </div>
+          <p>
+	Here the <code>declare</code> element is used to give the bound variable
+	<code>ci</code> element a <code>definitionURL</code> to attribute a property to a
+	MathML element (in this case being a formal power series), possibly to allow
+	presentation algorithms may make use of this extra knowledge to display the
+	<code>ci</code>s in a different manner.</p>
+          <p>This of course
+	conflicts with the use of <code>definitionURL</code> as recommended above, since
+	then one cannot possibly use <code>definitionURL</code> to refer back to the
+	defining instance of the bvar, and at the same time to the external definition
+	of the special formal power series.</p>
+          <p>This example is somewhat contrived in that the <code>definitionURL</code> 
+         is being used in the spirit of a type declaration.  
+         In some sense, this example actually reflects a misunderstanding 
+	 of the <code>definitionURL</code> attribute. The <code>definitionURL</code> 
+         is supposedly reserved for "Definitions", i.e. for
+	statements that fix the meaning of an element (possibly up to isomorphism).</p>
+          <p>No matter how the points are argued, the example represents a legitimate 
+	 authoring need and must be accommodated in some manner.  The only conflict
+	comes when one tries to use the <a title="BVI" href="#bvi">BVI</a> style of 
+	linking bound variables.  Fortunately, in that case,  it is a prime candidate 
+ 	for the typing through the use of the new general typing
+	mechanism for Content MathML <span><a href="#MathMLTypes">[MathMLTypes]</a>, </span>
+	so no functionality is lost: the above example can be re-represented 
+	explicitly by
+</p>
+          <div class="exampleInner">
+            <pre>&lt;declare&gt;
+  &lt;ci definitionURL="#the-bvar"&gt;F&lt;/ci&gt;
+  &lt;semantics&gt;
+    &lt;ci definitionURL="#the-bvar"&gt;F&lt;/ci&gt;
+    &lt;annotation-xml definitionURL="types.html#type_of"&gt;
+      &lt;csymbol definitionURL=".../formalpowerseries"/&gt;
+    &lt;/annotation-xml&gt;
+  &lt;/semantics&gt;
+&lt;/declare&gt;
+&lt;apply&gt;
+  &lt;set/&gt;
+  &lt;bvar&gt;&lt;ci id="the-bvar"&gt;F&lt;/ci&gt;&lt;/bvar&gt;
+  &lt;condition&gt;
+    &lt;apply&gt;
+      &lt;in/&gt;
+      &lt;ci definitionURL="#the-bvar"&gt;F&lt;/ci&gt;
+      &lt;csymbol definitionURL="XXX"&gt;My Special Formal PSeries&lt;/csymbol&gt;
+    &lt;/apply&gt;
+  &lt;/condition&gt;
+  &lt;ci&gt;x&lt;/ci&gt;
+&lt;/apply&gt;</pre>
+          </div>
+          <p>
+	The declare merely associates the <code>ci</code>
+        element with an appropriate semantics tag which provides the type and
+	all is well.  Note that in this case, the <code>ci</code> element that is the 
+	first child of the <code>declare</code> element  also links back to the
+        <code>ci</code> element in the <code>bvar</code> element. Clearly, the
+	<code>definitionURL</code> attribute on the <code>ci</code> element in the first
+	child of the <code>declare</code> element restricts the substitution to those
+	<code>ci</code> that carry a matching <code>definitionURL</code>
+	attribute. Without this, the substitution would have affected other
+	<code>&lt;ci&gt; F &lt;/ci&gt;</code> elements outside the scope of the
+      top <code>apply</code> element shown in the example, but inside the <code>math</code>
+      element that governs the scope of the <code>declare</code>.
+      </p>
+        </div>
+      </div>
+      <div class="div1">
+        <h2>
+          <a id="N40030A"></a>6 Conclusion</h2>
+        <p> This Note provides guidelines for representing mathematical objects containing 
+	bound variables in Content MathML. The Note represents the current consensus 
+	in the Math Working Group of the World Wide Web Consortium (W3C), but is not normative.
+      </p>
+      </div>
+    </div>
+    <div class="back">
+      <div class="div1">
+        <h2>
+          <a id="N400311"></a>A Bibliography</h2>
+        <dl>
+          <dt class="label">
+            <a id="MathMLTypes"></a>MathMLTypes</dt>
+          <dd>
+	  Stan Devitt, Michael Kohlhase;
+          <em>Structured Types in MathML 2.0</em>W3C Note 2003.
+	  (<a href="http://www.w3.org/TR/2003/NOTE-mathml-types-20031110/">http://www.w3.org/TR/2003/NOTE-mathml-types-20031110/</a>) 
+        </dd>
+          <dt class="label">
+            <a id="MathML2"></a>MathML2</dt>
+          <dd>David Carlisle, Patrick Ion, Robert Miner, Nico
+	  Poppelier,
+	  <em>Mathematical Markup Language (MathML) Version 2.0</em>
+	  W3C Recommendation 21 February, 2001
+	  (<a href="http://www.w3.org/TR/2002/WD-MathML2-20021219/">http://www.w3.org/TR/2002/WD-MathML2-20021219/</a>)
+	</dd>
+          <dt class="label">
+            <a id="MathML22e"></a>MathML22e</dt>
+          <dd>David Carlisle, Patrick Ion, Robert Miner, Nico
+	  Poppelier,
+	  <em>Mathematical Markup Language (MathML) Version 2.0 (2nd Edition)</em>
+	  W3C Recommendation 21 October, 2003
+	  (<a href="http://www.w3.org/TR/2003/REC-MathML2-20031021/">http://www.w3.org/TR/2003/REC-MathML2-20031021/</a>)
+	</dd>
+          <dt class="label">
+            <a id="OpenMath"></a>OpenMath</dt>
+          <dd>O. Caprotti, D. P. Carlisle, A. Cohen (editors); 
+		<em>The OpenMath Standard, February, 2000</em>
+		  (<a href="http://www.openmath.org/standard">http://www.openmath.org/standard</a>)
+	</dd>
+        </dl>
+      </div>
+      <div class="div1">
+        <h2>
+          <a id="appdx-A"></a>B Definitions of Equality</h2>
+        <p>The definition of equality of expressions for purposes of 
+      <code>bvar</code> and <code>declare</code> is not discussed in version 2.0 of the 
+      Recommendation beyond noting that the content of <code>ci</code>
+      elements is treated much like an image of the formula and
+      then systematically basing all examples on a very simple
+      notion of equality of the element content as ASCII strings.
+      While this is a very simple example of XML information set
+      equality, there are a number of different definitions that
+      strictly speaking could not be ruled out.
+      This could be one of many plausible criteria, including:
+    </p>
+        <ul>
+          <li>
+            <p>
+              <em>string equality</em>: two Presentation
+	  MathML names are equal, iff their string values (just throw
+	  away all element contributions) are. This is the simplest
+	  criterion computationally, but it confuses
+  </p>
+            <div class="exampleInner">
+              <pre>&lt;math&gt;
+  &lt;msup&gt;
+    &lt;mi&gt;x&lt;/mi&gt;
+    &lt;mn&gt;2&lt;/mn&gt;
+  &lt;/msup&gt;
+&lt;/math&gt;</pre>
+            </div>
+            <p>and</p>
+            <div class="exampleInner">
+              <pre>&lt;math&gt;
+  &lt;msub&gt;
+    &lt;mi&gt;x&lt;/mi&gt;
+    &lt;mn&gt;2&lt;/mn&gt;
+  &lt;/msub&gt;
+&lt;/math&gt;</pre>
+            </div>
+            <p>which both have the string value <code>x2</code>.</p>
+          </li>
+          <li>
+            <p>
+              <em>XML-Infoset-equality</em>: two Presentation
+	  MathML names are equal, if and only if their infosets are. This criterion
+	  is probably best supported by XML, among the non-trivial
+	  ones.</p>
+          </li>
+          <li>
+            <p>
+              <em>MathML-Infoset equality</em>: two Presentation
+	  MathML names are equal, if and only if their infosets are equal after 
+	  whitespace-normalizing <code>text</code> node content. This is
+	  the equality that is suggested for MathML token
+	  elements.</p>
+          </li>
+          <li>
+            <p>
+              <em>observational equality</em>: two Presentation MathML names
+	  are equal, if and only if their recommended rendering (according to the
+	  MathML specification) are equal. This is probably the most
+	  adequate one (after all <a title="BVI" href="#bvi">BVN</a>
+	  approaches are geared towards humans), but this is very hard to
+	  compute and even specify unambiguously.</p>
+          </li>
+        </ul>
+        <p>For purposes of this Note, the notion of
+      equality has generally been based on XML information sets after white space normalization.
+      Roughly speaking, this means that if all attributes that are present 
+      have the same value as strings, and recursively, the element content 
+      is the same the same, then the objects are identical.
+    </p>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,940 @@
+<!-- http://www.w3.org/TeamSubmission/2008/SUBM-n3-20080114/ -->
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="generator" content="HTML Tidy for Mac OS X (vers 1st December 2004), see www.w3.org, emacs, and ericP's hands" />
+    <title>Notation3 (N3): A readable RDF syntax</title>
+    <link rel="stylesheet" type="text/css" href="di.css" />
+    <style type="text/css">
+      /*<![CDATA[*/
+.issue	{ border: thin solid #FFAA88;
+	  background-color: #FFE8E8;
+	  margin: 1em 4em 1em 0em ; 
+          }
+.note { background-color: #dfd;}
+.boilerplate { color: #888;}
+      
+      /*]]>*/
+    </style>
+    <link rel="stylesheet" type="text/css" href="http://www.w3.org/StyleSheets/TR/W3C-Team-SUBM" />
+  </head>
+  <body lang="en">
+<div class="head">
+
+  <p><a href="http://www.w3.org/"><img height="48" width="72" alt="W3C" src="http://www.w3.org/Icons/w3c_home"/></a> 
+     <a href="http://www.w3.org/TeamSubmission/"><img height="48" width="211" alt="W3C Team Submission" src="http://www.w3.org/Icons/team_subm"/></a></p>
+
+    <h1 id="main">Notation3 (N3): A readable RDF syntax</h1>
+<h2>W3C Team Submission 14 January 2008</h2>
+
+  <dl>
+<dt>This version:</dt>
+<dd><a href="http://www.w3.org/TeamSubmission/2008/SUBM-n3-20080114/">http://www.w3.org/TeamSubmission/2008/SUBM-n3-20080114/</a></dd>
+<dt>Latest version:</dt>
+<dd><a href="http://www.w3.org/TeamSubmission/n3/">http://www.w3.org/TeamSubmission/n3/</a></dd>
+    <dt>Authors:</dt>
+    <dd><a href="/People/Berners-Lee/">Tim Berners-Lee</a>, W3C<br />
+<a href="/People/Connolly/">Dan Connolly</a>, W3C</dd>
+  </dl>
+<p class="copyright"><a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> &copy; 2008 <a href="http://www.w3.org/"><acronym title="World Wide Web Consortium">W3C</acronym></a><sup>&reg;</sup> (<a href="http://www.csail.mit.edu/"><acronym title="Massachusetts Institute of Technology">MIT</acronym></a>, <a href="http://www.ercim.org/"><acronym title="European Research Consortium for Informatics and Mathematics">ERCIM</acronym></a>, <a href="http://www.keio.ac.jp/">Keio</a>), All Rights Reserved. W3C <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>, <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply.</p>
+</div>
+
+<hr title="Separator for header" />
+<div>
+  <h2 class="notoc"><a id="abstract" name="abstract">Abstract</a></h2>
+  <p>The Resource Description Framework
+  (<abbr title="Resource Description Framework">RDF</abbr>) is a 
+  general-purpose language for representing information in the Web.</p>
+
+  <p>This document defines <em>Notation 3</em> (also known as <em>N3</em>),
+   an assertion and logic language which is a superset of <a>RDF</a>. 
+   N3 extends the RDF datamodel by adding formulae 
+  (literals which are graphs themselves), variables, 
+  logical implication, and functional predicates, 
+  as well as providing an textual syntax alternative to RDF/XML.</p>
+</div>
+<div>
+    <h2><a id="status" name="status">Status of This Document</a></h2>
+
+<p><em>This section describes the status of this document at the time of its publication. Other documents may supersede this document. A list of current W3C publications can be found in the <a href="http://www.w3.org/TR/">W3C technical reports index</a>  at http://www.w3.org/TR/.</em></p>
+
+<p>
+This January 2008
+<a href="http://www.w3.org/TeamSubmission/">W3C Team Submission</a>,
+with its linked grammars and test suites,
+defines the N3 language. It is the product of
+experience with working code since 2000, and much discusssion in secifically the
+W3C RDF Interest Group and Semantic Web Interest Groups.
+It may be put into W3C note form, or even Recommendation track form, in the future.
+There is a large amount of implementation with N3 and its subsets.
+There also a large number of tests.
+However, the test suite has not been completely vaidated against the grammar.
+</p>
+
+<p class="boilerplate">By publishing this document, Tim Berners-Lee and
+Dan Connolly have made a formal submission to W3C for discussion.
+Publication of this document by W3C indicates no endorsement of its content by W3C,
+nor that W3C has, is, or will be allocating any resources to the issues addressed by it.
+This document is not the product of a chartered W3C group, but is published as
+potential input to the W3C Process. Please consult the
+<a href="/TeamSubmission">complete list of
+acknowledged W3C Team Submissions</a>.</p>
+
+  </div>
+<hr />
+
+<div class="toc">
+  <h2><a id="contents" name="contents">Table of Contents</a></h2>
+  
+<ol class="tocx">
+<li><a href="#intro">Introduction</a></li>
+<li><a href="#grammar">Grammar</a><ol>
+  <li><a href="#encoding">Encoding</a></li>
+  <li><a href="#mimetype">MIME type text/rdf+n3; charset=utf-8</a><ol>
+    <li><a href="#charset">MIME parameter: charset</a></li>
+    <li><a href="#frag">Fragment identifier syntax and semantics</a></li>
+  </ol></li>
+</ol></li>
+<li><a href="#syntax">Syntax details</a><ol>
+  <li><a href="#whitespace">Whitespace</a></li>
+  <li><a href="#base">Base URI</a><ol>
+    <li><a href="#ex1">Example</a></li>
+  </ol></li>
+  <li><a href="#namespaces">Namespaces</a></li>
+  <li><a href="#keywords">@keywords</a></li>
+  <li><a href="#strings">Strings</a></li>
+  <li><a href="#escaping">String escaping</a></li>
+</ol></li>
+<li><a href="#semantics">Semantics</a><ol>
+  <li><a href="#shorthand">Shorthand for common predicates</a></li>
+  <li><a href="#bnodes">Blank nodes</a><ol>
+    <li><a href="#underscore">Underscore namespace</a></li>
+    <li><a href="#anonbnode">Square bracket blank node syntax</a></li>
+    <li><a href="#path">Paths</a></li>
+</ol></li>
+  <li><a href="#Quoting">Formulae</a><ol>
+    <li><a href="#ex2">Example:</a></li>
+</ol></li>
+  <li><a href="#Quantifica">Quantification</a></li>
+  <li><a href="#lists">Lists</a></li>
+</ol></li>
+<li><a href="#numbers">Notes on Numbers</a><ol>
+  <li><a href="#booleans">Boolean literals</a></li>
+</ol></li>
+<li><a href="#subsets">Appendix: N3 Subsets</a><ol>
+  <li><a href="#ack" class="note">Acknowledgements</a></li>
+</ol></li>
+</ol>
+
+<h3><a id="appendices" name="appendices">Appendices</a></h3>
+
+<ol class="tocx">
+<li><a href="#chlog" class="note">Appendix: Change History</a></li>
+<li><a href="#References">References</a><ol>
+  <li><a href="#ref-norm">Normative</a></li>
+  <li><a href="#ref-inform" class="note">Non-normative</a></li>
+</ol></li>
+</ol>
+</div>
+    <h2 id="intro" class="note">Introduction</h2>
+    <p>This is the specification of the Notation3 language, of internet Media Type
+text/rdf+n3.
+Normative parts of the specification are <span>thus</span>. 
+<span class="note">Non-normative parts and comments thus</span>.
+    </p>
+    
+<p class="note">This is a language which is a compact and readable alternative
+to RDF's XML syntax, but also is extended to allow greater
+expressiveness. It has subsets, one of which is RDF 1.0 equivalent,
+and one of which is RDF plus a form of RDF rules.</p>
+<p class="note">This document is a specification of the language
+suitable for those familiar with the general concepts. The
+developer learning N3 is invited to try the <a href=
+"/2000/10/swap/doc/Overview.html">A tutorial</a>, while
+implementers looking for for a particular detail of the definition
+of the logic are steered toward the <a href="/DesignIssues/N3Logic">operational
+semantics.</a> There is also a list of <a href="/DesignIssues/N3Resources">other
+N3 resources</a>.</p>
+<p class="note">This language has ben developed in the context of the Semantic
+Web Interest Group. Comments on this document should be sent to
+public-cwm-talk@w3.org</p>
+<p class="note">The aims of the language are</p>
+<ul class="note">
+<li>to optimize expression of data and logic in the same
+language,</li>
+<li>to allow RDF to be expressed,</li>
+<li>to allow rules to be integrated smoothly with RDF,</li>
+<li>to allow quoting so that statements about statements can be
+made, and</li>
+<li>to be as readable, natural, and symmetrical as possible.</li>
+</ul>
+<p class="note">The language achieves these with the following features:</p>
+<ul class="note">
+<li>URI abbreviation using prefixes which are bound to a namespace
+(using @prefix) a bit like in XML,</li>
+<li>Repetition of another object for the same subject and predicate
+using a comma ","</li>
+<li>Repetition of another predicate for the same subject using a
+semicolon ";"</li>
+<li>Bnode syntax with a certain properties just put the properties
+between [ and ]</li>
+<li>Formulae allowing N3 graphs to be quoted within N3 graphs using
+{ and }</li>
+<li>Variables and quantification to allow rules, etc to be
+expressed</li>
+<li>A simple and consistent grammar.</li>
+</ul>
+<h2 id="grammar">Grammar</h2>
+<p>The grammar of N3 is defined by a context free grammar:</p>
+<ul>
+<li><a href="../../../2000/10/swap/grammar/n3.n3">Context-free grammar in N3</a>
+</li>
+</ul>
+
+<p class="note">
+While this obviously provides a bootstrap problem for implementers,
+it is a common format one would expect N3 developers to share.
+Non-authoritative generated copies of the same grammar are provided
+in the following dialects:
+</p> 
+<table border="1">
+<tbody>
+<tr>
+<td><a href="../../../2000/10/swap/grammar/n3.n3">N3</a> 
+</td>
+<td><a href="../../../2000/10/swap/grammar/n3.rdf">RDF/XML</a></td>
+<td><a href="../../../2000/10/swap/grammar/n3-ietf.txt">EBNF as used in XML 1.1</a></td>
+<td><a href="../../../2000/10/swap/grammar/n3-report.html">HTML</a></td>
+<td><a href="../../../2000/10/swap/grammar/n3-selectors.n3-yacc.y">yacc</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="tests">Test Suite</h3>
+
+<p>The N3 test suite provides a check for implementers.</p>
+<ul>
+<li><a href="http://www.w3.org/2000/10/swap/test/n3/">Test suite space</a>
+</li>
+</ul>
+
+<p class="issue">
+The work of validating the grammar and test suite against each other
+is not complete.</p>
+
+<h3 id="encoding">Encoding</h3>
+<p>N3 files are encoded in UTF-8 (See <a href=
+"http://www.ietf.org/rfc/rfc2279.txt">RFC2279</a>), in normalized
+in <a href=
+"http://www.unicode.org/unicode/reports/tr15/">Normalization
+Form</a> C. The language is defined in terms of a sequence of
+Unicode characters.</p>
+<p class="note">(Implementations may chose to implement using 8-bit
+bytes, passing bytes &gt;7F transparently, but this will not allow
+them to check the validity of embedded non-ASCII characters.
+Note
+also that some systems internally use UTF-16 encoding
+which uses 16 bits as a rule, but allows full 20-bit unicode code points to be
+encoded as two 16-bit units. This may be a suitable
+implementation for a system which passes such characters without
+counting them or breaking apart strings of them. A full 32 unicode
+implementation would normally be preferable.)</p>
+
+<p class="note">The exact set of unicode character to be allowed in
+(a) literal strings or (b) identifiers may need to be revised if
+the unicode specification is revised in unanticipated ways in the
+future)</p>
+
+<h3 id="mimetype">MIME type text/n3; charset=utf-8</h3>
+<p>This document defines, in the linked grammar, the allowable
+syntax and, for documents of valid syntax, the meaning, of a
+document in the [proposed] <code>text/rdf+n3</code> MIME type
+(Internet Content Type). It also defines the fragment identifier
+syntax and semantics.</p>
+<p>As the type is in the text tree, agents which do not understand
+it will and should display it as text for human consumption.</p>
+<h4 id="charset">MIME parameter: charset</h4>
+<p>This MIME type is used with a <em>charset</em> parameter: the
+encoding is always <em>utf-8.</em> The only occasion that the
+encoding can be omitted is when it happens (and is guaranteed by
+the sender) that all of the unicode characters in the file are in
+fact that subset which is the 7-bit ASCII set. This is because the
+default encoding for types in the text/* tree is ASCII.</p>
+
+
+
+<h4 id="frag">Fragment identifier syntax and semantics</h4>
+<p>The fragment identifier part of a URI where the rest of the URI
+is that of an information resource which has a representation in N3
+is used to identify any thing whatever, abstract or concrete.</p>
+<p>The N3 representation may give information about that thing by
+including its URI as one of the terms in a statement.</p>
+<p>The fragment identifier syntax should match the syntax for the
+part of a qname after the colon. The qname syntax can be used
+within the document to refer to the thing the full URI identifies.</p>
+<p class="note">It is good practice to use URIs of this form to
+identify things, and to ensure that the N3 document which is served
+to the inquirer contains useful information which the publisher of
+the information, and owner of the URI, considers relevant, useful
+and interesting to any agent (human or machine) dereferencing the
+URI. It is good practice to include statements relating the thing
+to other things, also identified by URIs. The use of URIs whose
+part before the hash sign is a different information resource
+constitutes a form of link, leading an agent to possibly dereference
+the other URI and gain more information.</p>
+<h2 id="syntax">Syntax details</h2>
+<p class="note">This section describes the syntax which is not
+given by the grammar. If a parser is generated automatically from
+the grammar, the tokenizer must be written to take the following
+into account.</p>
+<h3 id="whitespace">Whitespace</h3>
+<p>Tokenizing and white space is not specified in the grammar for
+simplicity. White space must be inserted whenever the following
+token could start with a character which could extend the preceding
+token. Whitespace may not be inserted within a token, except that
+it may be freely added and removed whitespace within a URI between
+angle brackets. This allows complex URIs to be broken onto several
+lines, which in turn allows N3 to be sent for example of email
+systems in which a limited line length.</p>
+<p>All URIs are quoted with angle brackets. Whitespace within the
+&lt;&gt; is to be ignored. Whitespace may therefore be used on
+output to split a long URI between lines.</p>
+<h3 id="base">Base URI</h3>
+<p>The <em><strong>@base</strong></em> directive sets the base 
+URI to be used for the parsing of relative URIs.
+It takes, itself, a relative URI, so it can be used to 
+change the base URI relative to the previous one.
+</p>
+<h4 id="ex1">Example</h4>
+<pre>
+@base  &lt;http://example.org/products/>.
+...
+@base  &lt;prod123/>.
+...
+@base  &lt;../>.
+
+</pre>
+<p>Note that if files are to be concatenated, the base URI
+of one may adversely affect parsing of another, unless @base is avoided, or
+used consistently with absolute URIs.
+</p>
+<h3 id="namespaces">Namespaces</h3>
+<p>The <em><strong>@prefix</strong></em> directive binds a prefix
+to a namespace URI. It indicates that a qualified name (qname) with
+that prefix will thereafter be a shorthand for a URI consisting of
+the concatenation of the namespace identifier and the bit of the
+qname to the right of the (only allowed) colon.</p>
+<p>The namespace prefix may be empty, in which case the qname
+starts with a colon. This is known as the default namespace. The
+empty prefix "" is by default , bound to "#" -- the local namespace of the file.
+The parser behaves as though there were a</p>
+<pre>@prefix : &lt;#>.
+</pre>
+<p>just before the file. This
+means that <code>&lt;#foo&gt;</code> can be written
+<code>:foo</code> and using <code>@keywords</code> one can reduce
+that to <code>foo</code>.</p>
+<h3 id="keywords">@keywords</h3>
+<p>Keywords are a very limited set of alphanumeric strings which
+are in the grammar prefixed by an at sign "@".</p>
+<p class="note">Qnames using the default namespace which has an
+empty prefix start with a colon. The language becomes more readable
+when keywords and/or qnames can be written without the at sign or
+colon prefix, but clearly one cannot do both.</p>
+<p class="note">In many languages similar to N3, there is a risk of
+ambiguity as to whether a naked alphanumeric string is a keyword
+or an identifier. Serious version management problems occur when
+new keywords are added to a language, changing things which were
+identifiers into keywords. N3 is designed to be extended in the
+future, and possibly branched into specific languages such as query
+languages. For this reason, an N3 document can declare which
+keywords it uses without the at sign. This allows N3 to be extended
+without the danger that existing documents be incorrectly
+interpreted by future systems, or future documents by existing
+systems.</p>
+<p>If no @keywords directive is given, qualified names all have
+colons, and unquoted alphanumerics are all keywords. Only the
+keywords <code>is</code>, <code>of</code>, and <code>a</code> may
+be used naked.</p>
+<p>If the <strong>@keywords</strong> directive is given, the
+keywords given will thereafter be recognized without a "@" prefix,
+and anything else is a local name in the default namespace. Any
+keyword may still be given, even if not in the keyword list, by
+prefixing it with "@". Because keywords are declared in this way,
+we will have the freedom later to make extensions to the syntax
+using new keywords without fear of ambiguity. However, the
+tokenizer has to be aware of the <code>@keywords</code>
+setting.  The grammar is written as without reference to the keywords
+system at all, on the assumption that the string has been preprocessed
+by a keyword processor to put a "@" on all keywords and a ":" on all
+qnames in the default namespace.</p>
+
+<h3 id="strings">Strings</h3>
+<p>The """value""" string form is used simply for multi-line values
+or values containing quote marks.</p>
+<p class="note">The Unicode sets have been defined to be compatible
+with those used in XML 1.1.  Unicode has changed over the years,
+and the intention of this specification would be to change
+if necessary. However, it is understood that the character ranges in the
+grammar should be stable even though   the introduction of a few new code
+points into the Unicode system.
+</p>
+<h3 id="escaping">String escaping</h3>
+<p>Escaping in strings uses the same conventions as <a href=
+"http://www.python.org/doc/current/ref/strings.html">Python
+strings</a> except for a \U extension introduced by NTriples spec.
+N3 strings represent ordered sequences of Unicode characters.</p>
+<p>Some escapes (\a, \b, \f, \v) should be avoided because the
+corresponding characters are not allowed in RDF.</p>
+<table style="border-collapse: collapse; text-align: center; " border=
+"1">
+<thead>
+<tr class="tableheader">
+<th align="left"><b>Escape Sequence</b>&nbsp;</th>
+<th align="left"><b>Meaning</b>&nbsp;</th>
+</tr>
+</thead>
+<tbody valign="baseline">
+<tr>
+<td align="left" valign="baseline">
+<code>\<var>newline</var></code></td>
+<td align="left">Ignored</td>
+</tr>
+<tr>
+<td align="left" valign="baseline"><code>\\</code></td>
+<td align="left">Backslash (<code>\</code>)</td>
+</tr>
+<tr>
+<td align="left" valign="baseline"><code>\'</code></td>
+<td align="left">Single quote (<code>'</code>)</td>
+</tr>
+<tr>
+<td align="left" valign="baseline"><code>\"</code></td>
+<td align="left">Double quote (<code>"</code>)</td>
+</tr>
+<tr>
+<td align="left" valign="baseline"><code>\n</code></td>
+<td align="left">ASCII Linefeed (LF)</td>
+</tr>
+<tr>
+<td align="left" valign="baseline"><code>\r</code></td>
+<td align="left">ASCII Carriage Return (CR)</td>
+</tr>
+<tr>
+<td align="left" valign="baseline"><code>\t</code></td>
+<td align="left">ASCII Horizontal Tab (TAB)</td>
+</tr>
+<tr>
+<td><code>\u<var>hhhh</var></code></td>
+<td>character in BMP with Unicode value U+<var>hhhh</var></td>
+</tr>
+<tr>
+<td><code>\U00<var>hhhhhh</var></code></td>
+<td>character in plane 1-16 with Unicode value
+U+<var>hhhhhh</var></td>
+</tr>
+</tbody>
+</table>
+<p>In N3, the double quote character is used for strings. The
+single quote character is reserved for future use. The single quote
+character does not need to be escaped in an N3 string.</p>
+<p class="note">**RDF and N3 are defined in terms of characters,
+not bytes. Therefore, the \ooo and \xhh escapes are not used.</p>
+<p>The hexadecimal digit as in unicode escapes are UPPERCASE. This
+is designed to match the <a href=
+"/TR/rdf-testcases/#ntrip_strings">NTriples strings</a>.</p>
+<h2 id="semantics">Semantics</h2>
+<p class="note">This section describes the meaning of the
+productions in the grammar</p>
+<p>An N3 document encodes a set of statements, and its meaning is
+the conjunction of the meaning of the statements.</p>
+
+<p>The statement of the form <code>x p y.</code> asserts that the
+relation p holds between x and y. The semantics of statements,
+where they are valid RDF statements, are those described in the RDF
+abstract syntax document [RDFAS].</p>
+<p class="note">When p is identified by a URI, and that URI when
+dereferenced in the Web gives some information, that information
+may in practice be used to determine more information about the
+semantics of the statement.</p>
+<p>In property lists, the semicolon <em>;</em> is shorthand for
+repeating the subject. In object lists <em>,</em> is shorthand for
+repeating the verb.</p>
+<h3 id="shorthand">Shorthand for common predicates</h3>
+<p>For three URIs commonly used as predicates, N3 provides a
+special shorthand syntax. This may only be used in the predicate
+position in a statement. The RDF type predicate shorthand is the
+keyword <code>a</code>. (This needs no @ sign, unless @keyword is
+given and it is not in the keyword list.)</p>
+<table>
+<tr>
+<th>Shorthand</th>
+<th>stands for</th>
+</tr>
+<tr>
+<td><code>a</code></td>
+<td>
+<code>&lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt;</code></td>
+</tr>
+<tr>
+<td><code>=</code></td>
+<td><code>&lt;http://www.w3.org/2002/07/owl#sameAs&gt;</code></td>
+</tr>
+<tr>
+<td><code>=&gt;</code></td>
+<td>
+<code>&lt;http://www.w3.org/2000/10/swap/log#implies&gt;</code></td>
+</tr>
+<tr>
+<td><code>&lt;=</code></td>
+<td>
+<code>&lt;http://www.w3.org/2000/10/swap/log#implies&gt;</code> but in
+  the inverse direction</td>
+</tr>
+</table>
+<h3 id="bnodes">Blank nodes</h3>
+<p>There are several ways in N3 of representing a blank, or unnamed
+node: the underscore namespace, the square bracket syntax, and the
+path syntax.</p>
+<h4 id="underscore">Underscore namespace</h4>
+
+<p>N3 allows has a special _: namespace prefix. An identifier of such
+a form (e.g. <code>_:a17</code>)
+represents an blank node. The name a17 is only used 
+in the serialization to connect different mentionings of the same node.
+There is no commitment to it as a name.
+It may not be used as a URI. A serialization which uses arbitrary
+different node identifiers is completely equivalent, as is
+one which uses the other blank node syntaxes below for the same data.
+</p>
+
+<p>When formulae are nested, _: blank nodes syntax used to only identify
+blank node in the formula it occurs directly in.
+It is an arbitrary temporary name for a symbol which is
+existentially quantified within the current formula (not the whole
+file). They can only be used within a single formula, and not
+within nested formulae.</p>
+
+<p class="note">This is the one blank node syntax
+available even in the NTriples minimal subset of N3.</p>
+
+
+<h4 id="anonbnode">Square bracket blank node syntax</h4>
+<p><code>[ pl ]</code> means <em>x</em>, where there exists some
+<em>x</em> such that x has properties in the property list
+<code>pl</code>. For example,</p>
+<p><code>[ :firstname "Ora" ] dc:wrote [ dc:title "Moby Dick" ] .</code></p>
+<p>is a statement which would be means in math</p>
+<p>exists x, y . firstname(x, "Ora") &amp; dc:wrote(x,y) &amp;
+dc:title (y, "Moby Dick")</p>
+<p>or in english "Some person who has a first name Ora wrote a book
+entitled "Moby Dick". Note <strong>not</strong> "<em>the</em> book"
+or "<em>the</em> person".</p>
+<p>This can equally well be written</p>
+<p>[x:firstname "Ora" ; dc:wrote [dc:title "Moby Dick" ]] .</p>
+<p>or</p>
+<p>[] x:firstname "Ora" ; dc:wrote [dc:title "Moby Dick" ].</p>
+<p>The [] maybe read loosely as "something".</p>
+<h4 id="path">Paths</h4>
+<p>These are just shorthand. <em>x</em>!<em>p</em> means [ is
+<em>p</em> of <em>x</em> ] in the above anonymous node notation.
+You can read it as "x's p". This is a little reminiscent of the "."
+in object oriented programming "object.slot" syntax.</p>
+
+<p>The reverse traversal, <em>x</em>^<em>p</em> means [ <em>p</em>
+<em>x</em> ] . For either forward or backward traversal, <em>p</em>
+is a property, and <em>x</em> can be a whole path with both ! and ^
+in it.</p>
+<p><em>Example:</em></p>
+<p><code>:joe!fam:mother!loc:office!loc:zip</code> Joe's mother's
+office's zipcode</p>
+<p><code>:joe!fam:mother^fam:mother</code> Anyone whose mother is
+Joe's mother.</p>
+<h3 id="Quoting">Formulae</h3>
+<p>An RDF document parses to a set of statements, or graph. However
+RDF itelf has no datatype allowing a graph as a literal value. N3
+extends RDF allows a graph itself to be referred to within the
+language, where it is known as a <dfn>formula</dfn>. A {
+statementlist } is a formula whose meaning is the the logical
+conjunction (equivalent to syntactic juxtaposition) of the
+statements in the list. It is a set, as the same statement occuring
+more than once has no meaning. It is unordered set.</p>
+<h4 id="ex2">Example:</h4>
+<pre>
+{ [ x:firstname  "Ora" ] dc:wrote [ dc:title  "Moby Dick" ] } a n3:falsehood .
+</pre>
+<p>This claims that the expression in {braces} is false - that
+there is nothing called Ora which wrote anything titled "Moby
+Dick".</p>
+<p>A formula is considered, like a literal string, to be defined
+only by its contents.</p>
+<h3 id="Quantifica">Quantification</h3>
+<p>Apart from the set of statements, a formula also has a set of
+URIs of symbols which are universally quantified, and a set of URIs
+of symbols which are existentially quanitified. Variables are then
+in general symbols which have been quantified. There is a also a
+shorthand syntax ?x which is the same as :x except that it implies
+that x is universally quantified not in the formula but in its
+parent formula</p>
+<p>The semantics of a formula are than the contents are quoted.
+Variable substitution <strong>does</strong> recursively take place
+within a formula, but substitution of equals does
+<strong>not</strong>. The variable substitution is used for example
+when formulae are used for rules, and patch file formats. See the
+<a href="/2000/10/swap/doc/Rules">tutorial introduction</a> to
+rules.</p>
+<p>Certain propoerties may, by their semantics, allow the
+propagataion of substitution of equals, by agents which are aware
+of that semantics. So for example, if the statement { F ex:or G }
+is true, where F and G are formulae, then it ise useful to define a
+disjunction operator ex:or such that if a = b, then it is also true
+that { F ex:or G' } where G' is the result or substituiting b for a
+in G.</p>
+<p>The <code>@forAll</code> directives declare variables which are
+universally quantified: the formula is true for any value of the
+variable. Similarly, <code>@forSome</code> gives an existential
+quantification: there exists some value of the variable for which
+the formula is true. (Note also that the blank node notations above
+all introduce
+introduce a blank node, which is an unnamed existential
+variable)</p>
+<pre>
+@forSome &lt;#g&gt;. &lt;#g&gt; &lt;#loves&gt; &lt;#you&gt;
+</pre>
+<p>is equivalent to</p>
+<pre>
+[ &lt;#loves&gt; &lt;#you&gt; ] .
+</pre>
+<p>If both universal and existential quantification are specified
+for the same formula, then the scope of the universal
+quantification is outside the scope of the existentials:</p>
+<pre>
+@forAll &lt;#h&gt;. @forSome &lt;#g&gt;. &lt;#g&gt; &lt;#loves&gt; &lt;#h&gt; .
+</pre>
+<p>means</p>
+<pre>
+for all h<br />
+   for some g<br />
+     g loves h
+</pre>
+<p>("Every has someone who loves them" rather than "Somebody loves
+everybody")</p>
+<p>which you might think of as</p>
+<p>&forall;h(&exist;g(loves(g,h))</p>
+<h3 id="lists">Lists</h3>
+<p>
+Notation3 in practice uses lists frequently, as ordered containers,
+as argument lists to Nary functions, and so on. Implementations may
+treat <em>list</em> as a data type rather than just a ladder of rdf:first
+and rdf:rest properties. The use of rdf:first and rdf:rest can be
+regarded as a reification of the list datatype.<br />
+This use of lists requires more axioms than are actually defined in
+the RDF specification.</p>
+<ol>
+<li>All lists exist. The statement <span style=
+"font-family: monospace;">[rdf:first &lt;a&gt;; rdf:rest
+rdf:nil].</span> carries no information in that the list ( ,a&gt; )
+exists and this expression carries no new information about
+it.</li>
+<li>A list has only one rdf:first. rdf:first is functional. If the
+same thing has rdf:first arcs from it, they must be to nodes which
+are RDF equivalent - are the same RDF node.</li>
+<li>Lists are the same RDF node if they have the same the:first and
+the same rdf:rest.</li>
+</ol>
+
+<p>This may seem obvious when you think of a list as a datatype.
+Occasionally people express surprise that statements like the one
+above which have a list as a subject but no information about it
+disappear when loaded into an N3 store.</p>
+<h2 id="numbers">Notes on Numbers</h2>
+<p>The BNF syntax above describes the syntax for various literal
+productions. These syntax strings identify values which are members
+of various classes of number. The BNF productions should not be
+confused with the relationship between number classes. In the
+syntax, integer, rational and real productions are distinct. When
+it comes to the values they represent, all integers are also
+rational numbers, and all nationals are also real numbers.</p>
+<p>There is no distinction between the rationals 1.0 and 1/1 and
+the the integer 1. The semantics of rational numbers are true to normal
+mathematical equality.</p>
+<p>The issue of reals is more complicated, as any real literal is
+necessary approximate. So while there is a real number which is
+equal to the rationals 1 or 1/3, reals do not support this
+comparison. (See XML Schema Datatypes)</p>
+<h3 id="booleans">Boolean literals</h3>
+<p>The words <code>true</code> and <code>false</code> are boolean
+literals.</p>
+<h2 id="subsets">Appendix: N3 Subsets</h2>
+<p>For various purposes it is useful to define limited subsets of
+the language. These are defined in terms of N3 by grammar.</p>
+<p><a href="/TR/rdf-testcases/#ntriples">NTriples</a> is an
+<em>extremely</em> constrained language which uses hardly any
+syntactic sugar at all: it is optimized for reading by scripts, and
+comparing using text tools. It just allows one triple on each line.
+It was designed for the RDF test suite parser reference output.</p>
+<p class="issue">[The RDF test suite format is not committed to be
+an exact subset of N3, and currently (2004) specified uses a
+\uXXXX form for encoding unicode characters in URIs, in variance
+with N3, and the IRI drafts which use %XX encoding of utf-8.
+Currently this output option is a --n3=u flag in cwm].</p>
+
+<p class="note"><a href=
+"http://www.dajobe.org/2004/01/turtle/">Turtle</a>
+is another subset, for only expressing RDF. It is like n3-rdf below
+except that it does not have the path syntax.
+It is a subejct of a searate document.
+</p>
+<p class="issue">
+The fact that the turtle language is a subset of the N3 language 
+has not been checked from the grammars.
+</p>
+<p>Grammars for N3 subsets are linked below.</p>
+<table border="1">
+<caption>BNF grammar descriptions of N3</caption>
+<tbody>
+<tr>
+<td>N3 the full language</td>
+<td><a href="/2000/10/swap/grammar/n3.n3">N3</a></td>
+<td>RDF/XML</td>
+<td><a href="/2000/10/swap/grammar/n3-report.html">HTML</a></td>
+<td><a href="/2000/10/swap/grammar/n3-selectors.n3-yacc.y">yacc</a></td>
+</tr>
+<tr>
+<td>N3-rdf (under development). This is an N3 language which is
+constrained so that only correct RDF graphs can be defined. This is
+all you need for data.</td>
+<td><a href="/2000/10/swap/grammar/n3-rdf.n3">N3</a></td>
+<td>RDF/XML</td>
+<td><a href=
+"/2000/10/swap/grammar/n3rdf-report.html">HTML</a></td>
+<td></td>
+</tr>
+<tr>
+<td>N3-rules (under development). This subset allows {} only for
+making rules like {...} =&gt;{...}, to be equivalent to various
+other rule languages out there.</td>
+<td><a href="/2000/10/swap/grammar/n3-rules.n3">N3</a></td>
+<td>RDF/XML</td>
+<td><a href=
+"/2000/10/swap/grammar/n3rules-report.html">HTML</a></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="/DesignIssues/N3QL.html">N3-QL</a> (under development) Restrictions
+very similar to N3-Rules</td>
+<td>N3</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table border="1">
+<caption>Comparison of N3 subsets</caption>
+<tbody>
+<tr>
+<td><em>Feature</em></td>
+<td>Expresses RDF 1.0</td>
+<td>@prefix
+<p>[], ; a</p>
+</td>
+<td>Collections</td>
+<td>Numeric literals</td>
+<td>Literal subj</td>
+<td>RDF Path</td>
+<td>Rules</td>
+<td>Formulae</td>
+</tr>
+<tr>
+<td><em>syntax</em>:</td>
+<td></td>
+<td></td>
+<td>(&lt;a&gt; &lt;b&gt;)</td>
+<td>2</td>
+<td>7 a n:prime.</td>
+<td>x!y^z</td>
+<td>{?x}=&gt;{?x}</td>
+<td>{} @forAll</td>
+</tr>
+<tr>
+<td>NTriples</td>
+<td>y</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a href=
+"http://www.dajobe.org/2004/01/turtle/">Turtle</a></td>
+<td>y</td>
+<td>y</td>
+<td>y</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>N3 RDF</td>
+<td>y</td>
+<td>y</td>
+<td>y</td>
+<td>y</td>
+<td>y</td>
+<td>y</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>N3 Rules</td>
+<td>y plus</td>
+<td>y</td>
+<td>y</td>
+<td>y</td>
+<td>y</td>
+<td>y</td>
+<td>y</td>
+<td></td>
+</tr>
+<tr>
+<td>N3</td>
+<td>y plus</td>
+<td>y</td>
+<td>y</td>
+<td>y</td>
+<td>y</td>
+<td>y</td>
+<td>y</td>
+<td>y</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ack" class="note">Acknowledgements</h3>
+<p class="note">Sean Palmer and other
+folks on irc://openprojects.net/rdfig and later
+irc://openprojects.net/swig suggested many things and reviewed new
+ideas (and scrapped old ones!). Yosi Scharf created the parser test
+suites and worked on consistency between grammar, test suites and
+code. Thanks to all implementers on N3 software in all countries
+and langauges!</p>
+<hr />
+
+<div class='note'>
+<h2 id="issues">Historical Notes</h2>
+<h3 id="hist_numbers">Numbers</h3>
+<p class="note">Whilst complex numbers (with integer, rational or
+real parts) are a reasonable class to add, it is not seen as a
+priority at the moment.</p>
+
+<p class="note">The literal syntax for decimals as 1.0 as opposed
+to double length reals as 1.0e0 or 1e0 was decided in coordination
+with the DAWG working group in January 2006.</p>
+
+<h3 id="hist_bool">Boolean truth values</h3>
+
+<p class="note">They were added to Notation3 in 2006-02 in
+discussion with the SPARQL language developers, the Data Access
+Working Group. Note that no existing documents will have used a
+naked true or false word, without a <code>@keyword</code> statement
+which would make it clear that they were not to be treated as
+keywords. Furthermore any old parser encountering true or false
+naked or in a @keywords statement would throw an error,
+so misunderstanding is avoided</p>
+
+<h3 id="hist_mime">Mime Type History</h3>
+
+<p class="note">[The type application/n3 was applied for in 2002 and again
+in 2006.  The IETF-W3C liaison meeting established that the
+mime type would be formally awarded when the N3 specification was
+in a 'published' form. In the mean time, it should be used
+ as part of the point of N3 is to be human readable,
+and so the text tree is indicated. The application for text/rdf+n3
+within the IANA registry is pending as of 2006-02 as IANA #5004.
+While registration is pending, applications should use the proposed
+type in anticipation of registration, <strong>not</strong> an x- type.]</p>
+
+<p class="note">
+In 2008-01, this specification was submitted as a W3C Team Submission.
+Some discussion of the mime type occured, in hich the consesnsus appeared to
+be that text/n3 was preferable to text/rdf+n3, and so that change was adopted.
+</p>
+<p class="note">
+In 2008-01, there was some discussion also as to whether the encopding parameter
+really was likely to be used in practical systems.
+That general IETF architecture is outside the scope of the document.
+</p>
+
+</div>
+
+
+<h2 id="chlog" class="note">Appendix: Change History</h2>
+<dl class="note">
+<dt>2007/10</dt>
+ <dd>@base introduced, and @prefix clarified.</dd>
+<dt>2006/03</dt>
+<dd><a href="/DesignIssues/N3Resources">N3Resources</a> document split from this
+one.</dd>
+<dt>2006/03</dt>
+<dd>The \ooo and \xhh escapes from dprocated to removed.</dd>
+<dt>2006/01</dt>
+<dd>Added decimal literals, and true and false, in coordination
+with SPARQL.</dd>
+<dt>2004/03</dt>
+<dd>The empty prefix is now bound by default to &lt;#&gt;</dd>
+<dt>2003/03</dt>
+<dd>Added literal numbers</dd>
+<dt>2003/02</dt>
+<dd>Added @forall @forsome</dd>
+<dt>2001/04/10</dt>
+<dd>Removed \a, \b, \f, \v because they are not allowed in XML.
+Changed "ASCII character" to "byte" for \ooo and \xhh.
+(duerst)</dd>
+<dt>2000/12/29</dt>
+<dd>Switched from bind to @prefix. Code still support sbind.
+<p>Added ( node node ...) list shorthand, as code now reads and
+writes it.</p>
+<p>Added a little about self-describing documents.</p>
+</dd>
+</dl>
+<hr />
+<h2 id="References">References</h2>
+<h3 id="ref-norm">Normative</h3>
+<p>[RDFAS] <a href="/TR/rdf-concepts/"><em>Resource Description
+Framework (RDF): Concepts and Abstract Syntax</em> W3C
+Recommendation 10 February 2004</a></p>
+<p>[UTF8] <a href="http://www.ietf.org/rfc/rfc2279.txt">F. Yergeau,
+<em>UTF-8, a transformation format of ISO 10646</em>, IETF,
+RFC2279</a></p>
+<p>[UNF] <a href=
+"http://www.unicode.org/unicode/reports/tr15/">Mark Davis, Martin
+D&uuml;rst, <em>Unicode Normalization Forms</em></a> , Unicode
+Consortium: Unicode Standard Annex #15</p>
+<h3 id="ref-inform" class="note">Informative</h3>
+<div  class="note">
+<p>[NT]<a href=
+"http://www.w3.org/TR/2004/REC-rdf-testcases-20040210/">Jan Grant,
+David Beckett <em>RDF Test Cases</em></a> W3C Recommendation,
+Section 3: "NTriples"</p>
+<p>[BECK] D. Beckett, <a href=
+"http://www.dajobe.org/2003/11/new-syntaxes-rdf/paper.html">
+New Syntaxes for RDF</a> summarizes the state of the art as of
+2004.</p>
+<p>[TURT] David Becket, <a href=
+"http://www.dajobe.org/2004/01/turtle/"><em>Turtle - Terse RDF
+Triple Language</em></a></p>
+<p>[N3QL] <a href="/DesignIssues/N3QL.html">N3QL</a>, a draft proposal for an RDF
+query language.</p>
+<p>[TUT]<a href="/2000/10/swap/doc/Overview.html">A
+tutorial</a></p>
+<p>[OPSEM]<a href="/DesignIssues/N3Logic"><em>Notation 3 Logic</em></a> An
+operational semantics for N3.</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,2608 @@
+<!-- http://www.w3.org/TR/webdriver/ -->
+<!DOCTYPE html><html lang="en" dir="ltr"><head>
+    <title>WebDriver</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+    <style type="text/css">
+    /* --- WEB IDL --- */
+pre.IDL {
+    border-top: 1px solid #90b8de;
+    border-bottom: 1px solid #90b8de;
+    padding:    1em;
+    line-height:    120%;
+}
+
+pre.IDL::before {
+    content:    "WebIDL";
+    display:    block;
+    width:      150px;
+    background: #90b8de;
+    color:  #fff;
+    font-family:    initial;
+    padding:    3px;
+    font-weight:    bold;
+    margin: -1em 0 1em -1em;
+}
+
+code a:visited, code a:link {
+  color:  #ff4500;
+}
+
+.stability {
+  position: fixed;
+  bottom: 0;
+  left: 0; right: 0;
+  margin: 0 auto 0 auto;
+  width: 52%;
+  background: maroon; color: yellow;
+  -webkit-border-radius: 1em 1em 0 0;
+  -moz-border-radius: 1em 1em 0 0;
+  border-radius: 1em 1em 0 0;
+  -moz-box-shadow: 0 0 1em #500;
+  -webkit-box-shadow: 0 0 1em #500;
+  box-shadow: 0 0 1em red;
+  padding: 0.5em 1em;
+  text-align: center;
+}
+.stability strong {
+  display: block;
+}
+.stability input {
+  -moz-appearance: none; -webkit-appearance: none; margin: 0; 
+  border: 0; padding: 0.25em 0.5em; background: transparent; color: black;
+  position: absolute; top: -0.5em; right: 0; font: 1.25em sans-serif; text-align: center;
+}
+.stability input:hover {
+  color: white;
+  text-shadow: 0 0 2px black;
+}
+.stability input:active {
+  padding: 0.3em 0.45em 0.2em 0.55em;
+}
+.stability :link, .stability :visited,
+.stability :link:hover, .stability :visited:hover {
+  background: transparent;
+  color: white;
+}
+    </style>
+
+    <!-- 
+      === NOTA BENE ===
+      For the three scripts below, if your spec resides on dev.w3 you can check them
+      out in the same tree and use relative links so that they'll work offline,
+     -->
+    
+  <style>/*****************************************************************
+ * ReSpec 3 CSS
+ * Robin Berjon - http://berjon.com/
+ *****************************************************************/
+
+/* --- INLINES --- */
+em.rfc2119 { 
+    text-transform:     lowercase;
+    font-variant:       small-caps;
+    font-style:         normal;
+    color:              #900;
+}
+
+h1 acronym, h2 acronym, h3 acronym, h4 acronym, h5 acronym, h6 acronym, a acronym,
+h1 abbr, h2 abbr, h3 abbr, h4 abbr, h5 abbr, h6 abbr, a abbr {
+    border: none;
+}
+
+dfn {
+    font-weight:    bold;
+}
+
+a.internalDFN {
+    color:  inherit;
+    border-bottom:  1px solid #99c;
+    text-decoration:    none;
+}
+
+a.externalDFN {
+    color:  inherit;
+    border-bottom:  1px dotted #ccc;
+    text-decoration:    none;
+}
+
+a.bibref {
+    text-decoration:    none;
+}
+
+cite .bibref {
+    font-style: normal;
+}
+
+code {
+    color:  #ff4500;
+}
+
+
+/* --- --- */
+ol.algorithm { counter-reset:numsection; list-style-type: none; }
+ol.algorithm li { margin: 0.5em 0; }
+ol.algorithm li:before { font-weight: bold; counter-increment: numsection; content: counters(numsection, ".") ") "; }
+
+/* --- TOC --- */
+.toc a, .tof a {
+    text-decoration:    none;
+}
+
+a .secno, a .figno {
+    color:  #000;
+}
+
+ul.tof, ol.tof {
+    list-style: none outside none;
+}
+
+.caption {
+    margin-top: 0.5em;
+    font-style:   italic;
+}
+
+/* --- TABLE --- */
+table.simple {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    border-bottom:  3px solid #005a9c;
+}
+
+.simple th {
+    background: #005a9c;
+    color:  #fff;
+    padding:    3px 5px;
+    text-align: left;
+}
+
+.simple th[scope="row"] {
+    background: inherit;
+    color:  inherit;
+    border-top: 1px solid #ddd;
+}
+
+.simple td {
+    padding:    3px 10px;
+    border-top: 1px solid #ddd;
+}
+
+.simple tr:nth-child(even) {
+    background: #f0f6ff;
+}
+
+/* --- DL --- */
+.section dd > p:first-child {
+    margin-top: 0;
+}
+
+.section dd > p:last-child {
+    margin-bottom: 0;
+}
+
+.section dd {
+    margin-bottom:  1em;
+}
+
+.section dl.attrs dd, .section dl.eldef dd {
+    margin-bottom:  0;
+}
+</style><style>/* --- ISSUES/NOTES --- */
+div.issue-title, div.note-title {
+    padding-right:  1em;
+    min-width: 7.5em;
+    color: #b9ab2d;
+}
+div.issue-title { color: #e05252; }
+div.note-title { color: #52e052; }
+div.issue-title span, div.note-title span {
+    text-transform: uppercase;
+}
+div.note, div.issue {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+.note > p:first-child, .issue > p:first-child { margin-top: 0 }
+.issue, .note {
+    padding: .5em;
+    border-left-width: .5em;
+    border-left-style: solid;
+}
+div.issue, div.note {
+    padding: 0.5em;
+    margin: 1em 0;
+    position: relative;
+    clear: both;
+}
+span.note, span.issue { padding: .1em .5em .15em; }
+
+.issue {
+    border-color: #e05252;
+    background: #fbe9e9;
+}
+.note {
+    border-color: #52e052;
+    background: #e9fbe9;
+}
+
+
+</style><style>/* --- WEB IDL --- */
+pre.idl {
+    border-top: 1px solid #90b8de;
+    border-bottom: 1px solid #90b8de;
+    padding:    1em;
+    line-height:    120%;
+}
+
+pre.idl::before {
+    content:    "WebIDL";
+    display:    block;
+    width:      150px;
+    background: #90b8de;
+    color:  #fff;
+    font-family:    initial;
+    padding:    3px;
+    font-weight:    bold;
+    margin: -1em 0 1em -1em;
+}
+
+.idlType {
+    color:  #ff4500;
+    font-weight:    bold;
+    text-decoration:    none;
+}
+
+/*.idlModule*/
+/*.idlModuleID*/
+/*.idlInterface*/
+.idlInterfaceID, .idlDictionaryID, .idlCallbackID, .idlEnumID {
+    font-weight:    bold;
+    color:  #005a9c;
+}
+a.idlEnumItem {
+    color:  #000;
+    border-bottom:  1px dotted #ccc;
+    text-decoration: none;
+}
+
+.idlSuperclass {
+    font-style: italic;
+    color:  #005a9c;
+}
+
+/*.idlAttribute*/
+.idlAttrType, .idlFieldType, .idlMemberType {
+    color:  #005a9c;
+}
+.idlAttrName, .idlFieldName, .idlMemberName {
+    color:  #ff4500;
+}
+.idlAttrName a, .idlFieldName a, .idlMemberName a {
+    color:  #ff4500;
+    border-bottom:  1px dotted #ff4500;
+    text-decoration: none;
+}
+
+/*.idlMethod*/
+.idlMethType, .idlCallbackType {
+    color:  #005a9c;
+}
+.idlMethName {
+    color:  #ff4500;
+}
+.idlMethName a {
+    color:  #ff4500;
+    border-bottom:  1px dotted #ff4500;
+    text-decoration: none;
+}
+
+/*.idlParam*/
+.idlParamType {
+    color:  #005a9c;
+}
+.idlParamName, .idlDefaultValue {
+    font-style: italic;
+}
+
+.extAttr {
+    color:  #666;
+}
+
+/*.idlConst*/
+.idlConstType {
+    color:  #005a9c;
+}
+.idlConstName {
+    color:  #ff4500;
+}
+.idlConstName a {
+    color:  #ff4500;
+    border-bottom:  1px dotted #ff4500;
+    text-decoration: none;
+}
+
+/*.idlException*/
+.idlExceptionID {
+    font-weight:    bold;
+    color:  #c00;
+}
+
+.idlTypedefID, .idlTypedefType {
+    color:  #005a9c;
+}
+
+.idlRaises, .idlRaises a.idlType, .idlRaises a.idlType code, .excName a, .excName a code {
+    color:  #c00;
+    font-weight:    normal;
+}
+
+.excName a {
+    font-family:    monospace;
+}
+
+.idlRaises a.idlType, .excName a.idlType {
+    border-bottom:  1px dotted #c00;
+}
+
+.excGetSetTrue, .excGetSetFalse, .prmNullTrue, .prmNullFalse, .prmOptTrue, .prmOptFalse {
+    width:  45px;
+    text-align: center;
+}
+.excGetSetTrue, .prmNullTrue, .prmOptTrue { color:  #0c0; }
+.excGetSetFalse, .prmNullFalse, .prmOptFalse { color:  #c00; }
+
+.idlImplements a {
+    font-weight:    bold;
+}
+
+dl.attributes, dl.methods, dl.constants, dl.fields, dl.dictionary-members {
+    margin-left:    2em;
+}
+
+.attributes dt, .methods dt, .constants dt, .fields dt, .dictionary-members dt {
+    font-weight:    normal;
+}
+
+.attributes dt code, .methods dt code, .constants dt code, .fields dt code, .dictionary-members dt code {
+    font-weight:    bold;
+    color:  #000;
+    font-family:    monospace;
+}
+
+.attributes dt code, .fields dt code, .dictionary-members dt code {
+    background:  #ffffd2;
+}
+
+.attributes dt .idlAttrType code, .fields dt .idlFieldType code, .dictionary-members dt .idlMemberType code {
+    color:  #005a9c;
+    background:  transparent;
+    font-family:    inherit;
+    font-weight:    normal;
+    font-style: italic;
+}
+
+.methods dt code {
+    background:  #d9e6f8;
+}
+
+.constants dt code {
+    background:  #ddffd2;
+}
+
+.attributes dd, .methods dd, .constants dd, .fields dd, .dictionary-members dd {
+    margin-bottom:  1em;
+}
+
+table.parameters, table.exceptions {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    margin: 0.5em 0;
+    width:  100%;
+}
+table.parameters { border-bottom:  1px solid #90b8de; }
+table.exceptions { border-bottom:  1px solid #deb890; }
+
+.parameters th, .exceptions th {
+    color:  #fff;
+    padding:    3px 5px;
+    text-align: left;
+    font-family:    initial;
+    font-weight:    normal;
+    text-shadow:    #666 1px 1px 0;
+}
+.parameters th { background: #90b8de; }
+.exceptions th { background: #deb890; }
+
+.parameters td, .exceptions td {
+    padding:    3px 10px;
+    border-top: 1px solid #ddd;
+    vertical-align: top;
+}
+
+.parameters tr:first-child td, .exceptions tr:first-child td {
+    border-top: none;
+}
+
+.parameters td.prmName, .exceptions td.excName, .exceptions td.excCodeName {
+    width:  100px;
+}
+
+.parameters td.prmType {
+    width:  120px;
+}
+
+table.exceptions table {
+    border-spacing: 0;
+    border-collapse:    collapse;
+    width:  100%;
+}
+</style><link rel="stylesheet" href="http://www.w3.org/StyleSheets/TR/W3C-WD"></head>
+  <body><div class="head">
+  <p>
+    
+      <a href="http://www.w3.org/"><img width="72" height="48" src="http://www.w3.org/Icons/w3c_home" alt="W3C"></a>
+    
+  </p>
+  <h1 class="title" id="title">WebDriver</h1>
+  
+  <h2 id="w3c-working-draft-12-march-2013"><abbr title="World Wide Web Consortium">W3C</abbr> Working Draft 12 March 2013</h2>
+  <dl>
+    
+      <dt>This version:</dt>
+      <dd><a href="http://www.w3.org/TR/2013/WD-webdriver-20130312/">http://www.w3.org/TR/2013/WD-webdriver-20130312/</a></dd>
+      <dt>Latest published version:</dt>
+      <dd><a href="http://www.w3.org/TR/webdriver/">http://www.w3.org/TR/webdriver/</a></dd>
+    
+    
+      <dt>Latest editor's draft:</dt>
+      <dd><a href="http://dvcs.w3.org/hg/webdriver/raw-file/default/webdriver-spec.html">http://dvcs.w3.org/hg/webdriver/raw-file/default/webdriver-spec.html</a></dd>
+    
+    
+    
+    
+    
+      <dt>Previous version:</dt>
+      <dd><a href="http://www.w3.org/TR/2013/WD-webdriver-20130117/">http://www.w3.org/TR/2013/WD-webdriver-20130117/</a></dd>
+    
+    
+    <dt>Editors:</dt>
+    <dd><a href="http://www.rocketpoweredjetpants.com/">Simon Stewart</a>, <a href="http://www.facebook.com/">Facebook</a></dd>
+<dd><a href="http://www.theautomatedtester.co.uk/">David Burns</a>, <a href="http://www.mozilla.org/">Mozilla</a></dd>
+
+    
+  </dl>
+  
+  
+  
+  
+    
+      <p class="copyright">
+        <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Copyright">Copyright</a> © 
+        2013
+        
+        <a href="http://www.w3.org/"><abbr title="World Wide Web Consortium">W3C</abbr></a><sup>®</sup> 
+        (<a href="http://www.csail.mit.edu/"><abbr title="Massachusetts Institute of Technology">MIT</abbr></a>,
+        <a href="http://www.ercim.eu/"><abbr title="European Research Consortium for Informatics and Mathematics">ERCIM</abbr></a>,
+        <a href="http://www.keio.ac.jp/">Keio</a>, <a href="http://ev.buaa.edu.cn/">Beihang</a>), All Rights Reserved.
+        <abbr title="World Wide Web Consortium">W3C</abbr> <a href="http://www.w3.org/Consortium/Legal/ipr-notice#Legal_Disclaimer">liability</a>,
+        <a href="http://www.w3.org/Consortium/Legal/ipr-notice#W3C_Trademarks">trademark</a> and
+        <a href="http://www.w3.org/Consortium/Legal/copyright-documents">document use</a> rules apply.
+      </p>
+    
+  
+  <hr>
+</div>
+
+<section id="abstract" class="introductory"><h2>Abstract</h2>
+<p>This specification defines the WebDriver API, a platform and language-neutral interface and associated wire protocol that allows programs or scripts to introspect into, and control the behaviour of, a web browser. The WebDriver API is primarily intended to allow developers to write tests that automate a browser from a separate controlling process, but may also be implemented in such a way as to allow in-browser scripts to control a — possibly separate — browser.</p>
+
+<p>The WebDriver API is defined by a wire protocol and a set of interfaces to discover and manipulate DOM elements on a page, and to control the behaviour of the containing browser.</p>
+
+<p>This specification also includes a normative reference serialisation (to JSON over HTTP) of the interface's invocations and responses that are to be used by browser vendors to ensure interoperability.</p>
+</section><section id="sotd" class="introductory"><h2>Status of This Document</h2>
+  
+    
+      
+        <p>
+          <em>This section describes the status of this document at the time of its publication. Other
+          documents may supersede this document. A list of current <abbr title="World Wide Web Consortium">W3C</abbr> publications and the latest revision
+          of this technical report can be found in the <a href="http://www.w3.org/TR/"><abbr title="World Wide Web Consortium">W3C</abbr> technical reports
+          index</a> at http://www.w3.org/TR/.</em>
+        </p>
+        
+<p>If you wish to make comments regarding this document, please email feedback to <a href="mailto:public-browser-tools-testing@w3.org">public-browser-tools-testing@w3.org</a>. All feedback is welcome, and the editors will read and consider all feedback.</p>
+
+<p>This specification is still under active development and may not be stable. Any implementors who are not actively participating in the preparation of this specification may find unexpected changes occurring. It is suggested that any implementors join the WG for this specification. Despite not being stable, it should be noted that this specification is strongly based on an existing Open Source project — <a href="http://selenium.googlecode.com/">Selenium WebDriver</a> — and the existing implementations of the API defined within that project.</p>
+
+        <p>
+          This document was published by the <a href="http://www.w3.org/testing/browser/">Browser Testing and Tools Working Group</a> as a Working Draft.
+          
+            This document is intended to become a <abbr title="World Wide Web Consortium">W3C</abbr> Recommendation.
+          
+          
+          If you wish to make comments regarding this document, please send them to 
+          <a href="mailto:public-browser-tools-testing@w3.org">public-browser-tools-testing@w3.org</a> 
+          (<a href="mailto:public-browser-tools-testing-request@w3.org?subject=subscribe">subscribe</a>,
+          <a href="http://lists.w3.org/Archives/Public/public-browser-tools-testing/">archives</a>).
+          
+          
+          
+          
+        All comments are welcome.
+        
+        
+          </p><p>
+            Publication as a Working Draft does not imply endorsement by the <abbr title="World Wide Web Consortium">W3C</abbr> Membership.
+            This is a draft document and may be updated, replaced or obsoleted by other documents at 
+            any time. It is inappropriate to cite this document as other than work in progress.
+          </p>
+        
+        
+        <p>
+          
+            This document was produced by a group operating under the 
+            <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/">5 February 2004 <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>.
+          
+          
+          
+            
+              <abbr title="World Wide Web Consortium">W3C</abbr> maintains a <a href="https://www.w3.org/2004/01/pp-impl/49799/status" rel="disclosure">public list of any patent disclosures</a> 
+            
+            made in connection with the deliverables of the group; that page also includes instructions for 
+            disclosing a patent. An individual who has actual knowledge of a patent which the individual believes contains
+            <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#def-essential">Essential Claim(s)</a> must disclose the
+            information in accordance with <a href="http://www.w3.org/Consortium/Patent-Policy-20040205/#sec-Disclosure">section
+            6 of the <abbr title="World Wide Web Consortium">W3C</abbr> Patent Policy</a>.
+          
+          
+        </p>
+        
+      
+    
+  
+</section><section id="toc"><h2 class="introductory">Table of Contents</h2><ul class="toc"><li class="tocline"><a href="#introduction" class="tocxref"><span class="secno">1. </span>Introduction</a><ul class="toc"><li class="tocline"><a href="#intended-audience" class="tocxref"><span class="secno">1.1 </span>Intended Audience</a></li><li class="tocline"><a href="#relationship-of-webdriver-api-and-existing-specifications" class="tocxref"><span class="secno">1.2 </span>Relationship of WebDriver API and Existing Specifications</a></li><li class="tocline"><a href="#naming-the-two-sides-of-the-api" class="tocxref"><span class="secno">1.3 </span>Naming the Two Sides of the API</a></li><li class="tocline"><a href="#conformance-requirements" class="tocxref"><span class="secno">1.4 </span>Conformance Requirements</a><ul class="toc"><li class="tocline"><a href="#conformance-classes" class="tocxref"><span class="secno">1.4.1 </span>Conformance Classes</a></li></ul></li></ul></li><li class="tocline"><a href="#commands-and-responses" class="tocxref"><span class="secno">2. </span>Commands and Responses</a><ul class="toc"><li class="tocline"><a href="#command-1" class="tocxref"><span class="secno">2.1 </span>Command</a></li><li class="tocline"><a href="#response-1" class="tocxref"><span class="secno">2.2 </span>Response</a></li><li class="tocline"><a href="#processing-additional-fields-on-commands-and-responses" class="tocxref"><span class="secno">2.3 </span>Processing Additional Fields on Commands and Responses</a></li><li class="tocline"><a href="#status-codes" class="tocxref"><span class="secno">2.4 </span>Status Codes</a></li><li class="tocline"><a href="#handling-of-status-codes-at-the-local-end" class="tocxref"><span class="secno">2.5 </span>Handling of Status Codes at the Local End</a></li></ul></li><li class="tocline"><a href="#browser-capabilities" class="tocxref"><span class="secno">3. </span>Browser Capabilities</a><ul class="toc"><li class="tocline"><a href="#capabilities" class="tocxref"><span class="secno">3.1 </span>Capabilities</a><ul class="toc"><li class="tocline"><a href="#attributes" class="tocxref"><span class="secno">3.1.1 </span>Attributes</a></li><li class="tocline"><a href="#methods" class="tocxref"><span class="secno">3.1.2 </span>Methods</a></li></ul></li><li class="tocline"><a href="#mutablecapabilities" class="tocxref"><span class="secno">3.2 </span>MutableCapabilities</a><ul class="toc"><li class="tocline"><a href="#methods-1" class="tocxref"><span class="secno">3.2.1 </span>Methods</a></li></ul></li></ul></li><li class="tocline"><a href="#sessions" class="tocxref"><span class="secno">4. </span>Sessions</a><ul class="toc"><li class="tocline"><a href="#creating-a-session" class="tocxref"><span class="secno">4.1 </span>Creating a Session</a><ul class="toc"><li class="tocline"><a href="#capability-names" class="tocxref"><span class="secno">4.1.1 </span>Capability Names</a><ul class="toc"><li class="tocline"><a href="#platform-names" class="tocxref"><span class="secno">4.1.1.1 </span>Platform Names</a></li></ul></li><li class="tocline"><a href="#error-handling" class="tocxref"><span class="secno">4.1.2 </span>Error Handling</a></li><li class="tocline"><a href="#remote-end-matching-of-capabilities" class="tocxref"><span class="secno">4.1.3 </span>Remote End Matching of Capabilities</a></li></ul></li></ul></li><li class="tocline"><a href="#navigation" class="tocxref"><span class="secno">5. </span>Navigation</a><ul class="toc"><li class="tocline"><a href="#page-load-strategies-1" class="tocxref"><span class="secno">5.1 </span>Page Load Strategies</a></li><li class="tocline"><a href="#navigation-commands" class="tocxref"><span class="secno">5.2 </span>Navigation Commands</a><ul class="toc"><li class="tocline"><a href="#invalid-ssl-certificates" class="tocxref"><span class="secno">5.2.1 </span>Invalid SSL Certificates</a></li></ul></li><li class="tocline"><a href="#detecting-when-to-handle-commands" class="tocxref"><span class="secno">5.3 </span>Detecting When to Handle Commands</a></li></ul></li><li class="tocline"><a href="#controlling-windows" class="tocxref"><span class="secno">6. </span>Controlling Windows</a><ul class="toc"><li class="tocline"><a href="#defining-window-and-frame" class="tocxref"><span class="secno">6.1 </span>Defining "window" and "frame"</a></li><li class="tocline"><a href="#window-handles" class="tocxref"><span class="secno">6.2 </span>Window Handles</a></li><li class="tocline"><a href="#iterating-over-windows" class="tocxref"><span class="secno">6.3 </span>Iterating Over Windows</a></li><li class="tocline"><a href="#closing-windows" class="tocxref"><span class="secno">6.4 </span>Closing Windows</a></li><li class="tocline"><a href="#resizing-and-positioning-windows" class="tocxref"><span class="secno">6.5 </span>Resizing and Positioning Windows</a></li><li class="tocline"><a href="#scaling-the-content-of-windows" class="tocxref"><span class="secno">6.6 </span>Scaling the Content of Windows</a></li></ul></li><li class="tocline"><a href="#where-commands-are-handled" class="tocxref"><span class="secno">7. </span>Where Commands Are Handled</a><ul class="toc"><li class="tocline"><a href="#default-content-1" class="tocxref"><span class="secno">7.1 </span>Default Content</a></li><li class="tocline"><a href="#switching-windows" class="tocxref"><span class="secno">7.2 </span>Switching Windows</a></li><li class="tocline"><a href="#switching-frames" class="tocxref"><span class="secno">7.3 </span>Switching Frames</a></li><li class="tocline"><a href="#switching-to-hosted-shadow-doms" class="tocxref"><span class="secno">7.4 </span>Switching to Hosted Shadow DOMs</a></li></ul></li><li class="tocline"><a href="#running-without-window-focus" class="tocxref"><span class="secno">8. </span>Running Without Window Focus</a></li><li class="tocline"><a href="#elements" class="tocxref"><span class="secno">9. </span>Elements</a><ul class="toc"><li class="tocline"><a href="#attributes-1" class="tocxref"><span class="secno">9.1 </span>Attributes</a></li><li class="tocline"><a href="#lists-of-webelements" class="tocxref"><span class="secno">9.2 </span>Lists of WebElements</a></li><li class="tocline"><a href="#element-location-strategies" class="tocxref"><span class="secno">9.3 </span>Element Location Strategies</a><ul class="toc"><li class="tocline"><a href="#css-selectors" class="tocxref"><span class="secno">9.3.1 </span>CSS Selectors</a></li><li class="tocline"><a href="#ecmascript" class="tocxref"><span class="secno">9.3.2 </span>ECMAScript</a></li><li class="tocline"><a href="#element-id" class="tocxref"><span class="secno">9.3.3 </span>Element ID</a></li><li class="tocline"><a href="#link-text" class="tocxref"><span class="secno">9.3.4 </span>Link Text</a></li><li class="tocline"><a href="#partial-link-text" class="tocxref"><span class="secno">9.3.5 </span>Partial Link Text</a></li><li class="tocline"><a href="#xpath" class="tocxref"><span class="secno">9.3.6 </span>XPath</a></li></ul></li></ul></li><li class="tocline"><a href="#reading-element-state" class="tocxref"><span class="secno">10. </span>Reading Element State</a><ul class="toc"><li class="tocline"><a href="#determining-visibility" class="tocxref"><span class="secno">10.1 </span>Determining Visibility</a></li><li class="tocline"><a href="#determining-whether-a-webelement-is-selected" class="tocxref"><span class="secno">10.2 </span>Determining Whether a WebElement Is Selected</a></li><li class="tocline"><a href="#reading-attributes-and-properties" class="tocxref"><span class="secno">10.3 </span><span class="formerLink"></span>Reading Attributes and Properties</a></li><li class="tocline"><a href="#rendering-text" class="tocxref"><span class="secno">10.4 </span>Rendering Text</a></li></ul></li><li class="tocline"><a href="#executing-javascript" class="tocxref"><span class="secno">11. </span>Executing Javascript</a><ul class="toc"><li class="tocline"><a href="#javascript-command-parameters" class="tocxref"><span class="secno">11.1 </span>Javascript Command Parameters</a><ul class="toc"><li class="tocline"><a href="#attributes-2" class="tocxref"><span class="secno">11.1.1 </span>Attributes</a></li></ul></li><li class="tocline"><a href="#synchronous-javascript-execution" class="tocxref"><span class="secno">11.2 </span>Synchronous Javascript Execution</a></li><li class="tocline"><a href="#asynchronous-javascript-execution" class="tocxref"><span class="secno">11.3 </span>Asynchronous Javascript Execution</a></li><li class="tocline"><a href="#reporting-errors" class="tocxref"><span class="secno">11.4 </span>Reporting Errors</a></li></ul></li><li class="tocline"><a href="#cookies" class="tocxref"><span class="secno">12. </span>Cookies</a><ul class="toc"><li class="tocline"><a href="#cookie" class="tocxref"><span class="secno">12.1 </span>Cookie</a><ul class="toc"><li class="tocline"><a href="#attributes-3" class="tocxref"><span class="secno">12.1.1 </span>Attributes</a></li></ul></li></ul></li><li class="tocline"><a href="#timeouts-1" class="tocxref"><span class="secno">13. </span>Timeouts</a><ul class="toc"></ul></li><li class="tocline"><a href="#user-input" class="tocxref"><span class="secno">14. </span>User Input</a><ul class="toc"><li class="tocline"><a href="#interactable-elements" class="tocxref"><span class="secno">14.1 </span>Interactable elements</a></li><li class="tocline"><a href="#low-level-commands" class="tocxref"><span class="secno">14.2 </span>Low Level Commands</a><ul class="toc"><li class="tocline"><a href="#mouse" class="tocxref"><span class="secno">14.2.1 </span>Mouse</a></li><li class="tocline"><a href="#keyboard" class="tocxref"><span class="secno">14.2.2 </span>Keyboard</a><ul class="toc"><li class="tocline"><a href="#ime" class="tocxref"><span class="secno">14.2.2.1 </span>IME</a></li></ul></li><li class="tocline"><a href="#touch" class="tocxref"><span class="secno">14.2.3 </span>Touch</a></li></ul></li><li class="tocline"><a href="#high-level-commands" class="tocxref"><span class="secno">14.3 </span>High Level Commands</a><ul class="toc"><li class="tocline"><a href="#clicking" class="tocxref"><span class="secno">14.3.1 </span>Clicking</a><ul class="toc"><li class="tocline"><a href="#methods-2" class="tocxref"><span class="secno">14.3.1.1 </span>Methods</a></li></ul></li><li class="tocline"><a href="#typing-keys" class="tocxref"><span class="secno">14.3.2 </span>Typing keys</a><ul class="toc"><li class="tocline"><a href="#methods-3" class="tocxref"><span class="secno">14.3.2.1 </span>Methods</a></li></ul></li></ul></li></ul></li><li class="tocline"><a href="#modal-dialogs" class="tocxref"><span class="secno">15. </span>Modal Dialogs</a><ul class="toc"><li class="tocline"><a href="#window.alert-prompt-and-confirm" class="tocxref"><span class="secno">15.1 </span>window.alert, prompt and confirm</a></li><li class="tocline"><a href="#modal-windows" class="tocxref"><span class="secno">15.2 </span>Modal Windows</a></li></ul></li><li class="tocline"><a href="#screenshots" class="tocxref"><span class="secno">16. </span>Screenshots</a><ul class="toc"><li class="tocline"><a href="#methods-4" class="tocxref"><span class="secno">16.1 </span>Methods</a></li><li class="tocline"><a href="#current-window" class="tocxref"><span class="secno">16.2 </span>Current Window</a></li><li class="tocline"><a href="#element" class="tocxref"><span class="secno">16.3 </span>Element</a></li></ul></li><li class="tocline"><a href="#handling-non-html-content" class="tocxref"><span class="secno">17. </span>Handling non-HTML Content</a><ul class="toc"><li class="tocline"><a href="#svg" class="tocxref"><span class="secno">17.1 </span>SVG</a></li><li class="tocline"><a href="#working-with-accessibility-apis" class="tocxref"><span class="secno">17.2 </span>Working with Accessibility APIs</a></li></ul></li><li class="tocline"><a href="#extending-the-protocol" class="tocxref"><span class="secno">18. </span>Extending the Protocol</a><ul class="toc"><li class="tocline"><a href="#vendor-specific-extensions" class="tocxref"><span class="secno">18.1 </span>Vendor-specific Extensions</a></li><li class="tocline"><a href="#extending-the-json-http-protocol" class="tocxref"><span class="secno">18.2 </span>Extending the JSON/HTTP Protocol</a></li></ul></li><li class="tocline"><a href="#command-summary" class="tocxref"><span class="secno">A. </span>Command Summary</a></li><li class="tocline"><a href="#capabilities-1" class="tocxref"><span class="secno">B. </span>Capabilities</a></li><li class="tocline"><a href="#command-format" class="tocxref"><span class="secno">C. </span>Command Format</a></li><li class="tocline"><a href="#thread-safety" class="tocxref"><span class="secno">D. </span>Thread Safety</a></li><li class="tocline"><a href="#logging" class="tocxref"><span class="secno">E. </span>Logging</a></li><li class="tocline"><a href="#mapping-to-http-and-json" class="tocxref"><span class="secno">F. </span>Mapping to HTTP and JSON</a></li><li class="tocline"><a href="#acknowledgements" class="tocxref"><span class="secno">G. </span>Acknowledgements</a></li><li class="tocline"><a href="#references" class="tocxref"><span class="secno">H. </span>References</a><ul class="toc"><li class="tocline"><a href="#normative-references" class="tocxref"><span class="secno">H.1 </span>Normative references</a></li><li class="tocline"><a href="#informative-references" class="tocxref"><span class="secno">H.2 </span>Informative references</a></li></ul></li></ul></section>
+
+
+<section id="introduction">
+  <!--OddPage--><h2><span class="secno">1. </span>Introduction</h2>
+  <p>The WebDriver API aims to provide a synchronous API that can be used for a variety of use cases, though
+  it is primarily designed to support automated testing of web apps.</p>
+  <section id="intended-audience">
+    <h3><span class="secno">1.1 </span>Intended Audience</h3>
+    <p>This specification is intended for implementors of the WebDriver API. It is not intended as light bed
+    time reading.</p>
+  </section>
+  <section id="relationship-of-webdriver-api-and-existing-specifications">
+    <h3><span class="secno">1.2 </span>Relationship of WebDriver API and Existing Specifications</h3>
+    <p>Where possible and appropriate, the WebDriver API references existing specifications. For example, the
+    list of boolean attributes for elements is drawn from the 
+    <a href="http://dev.w3.org/html5/spec/Overview.html">HTML5 specification</a>. When references are made, this
+    specification will link to the relevant sections.</p>
+  </section>
+  
+  <section id="naming-the-two-sides-of-the-api">
+    <h3><span class="secno">1.3 </span>Naming the Two Sides of the API</h3>
+    
+    <p>The WebDriver API can be thought of as a client/server process. However, implementation details can mean that this terminology becomes confusing. For this reason, the two sides of the API are called the "local" and the "remote" ends.</p>
+    <dl>
+      <dt><dfn id="local-end">Local</dfn></dt>
+      <dd>The user-facing API. <code><a href="#command-1">Command</a></code> objects are sent and <code><a href="#response">Response</a></code> objects are
+      consumed by the local end of the WebDriver API. It can be thought of as
+      being "local" to the user of the API.</dd>
+      
+      <dt><dfn id="remote-end">Remote</dfn></dt>
+      <dd>The implementation of the user-facing API. <code><a href="#command-1">Command</a></code> objects are
+      consumed and <code><a href="#response">Response</a></code> objects are sent by the remote end of the WebDriver
+      API. The implementation of the remote end may be on a machine remote from
+      the user of the local end.</dd>
+      
+    </dl>
+    
+    <p>There is no requirement that the local and remote ends be in different processes. The IDL given in this specification and summarized in Appendix XXXX <em class="rfc2119" title="SHOULD">SHOULD</em> be used as the basis for any conforming local end implementation.</p>
+  </section>
+  
+  <section id="conformance-requirements">
+    <h3><span class="secno">1.4 </span>Conformance Requirements</h3>
+    
+    <p>All diagrams, examples, and notes in this specification are non-normative, as are all sections explicitly marked non-normative. Everything else in this specification is normative.</p>
+    
+    <p>The key words "<em class="rfc2119" title="MUST">MUST</em>", "<em class="rfc2119" title="MUST NOT">MUST NOT</em>", "<em class="rfc2119" title="REQUIRED">REQUIRED</em>", "<em class="rfc2119" title="SHOULD">SHOULD</em>", "<em class="rfc2119" title="SHOULD NOT">SHOULD NOT</em>", "<em class="rfc2119" title="RECOMMENDED">RECOMMENDED</em>", "<em class="rfc2119" title="MAY">MAY</em>", and "<em class="rfc2119" title="OPTIONAL">OPTIONAL</em>" in the normative parts of this document are to be interpreted as described in [<cite><a class="bibref" href="#bib-RFC2119">RFC2119</a></cite>]. The key word "OPTIONALLY" in the normative parts of this document is to be interpreted with the same normative meaning as "<em class="rfc2119" title="MAY">MAY</em>" and "<em class="rfc2119" title="OPTIONAL">OPTIONAL</em>".</p>
+    
+    <p>Conformance requirements phrased as algorithms or specific steps may be implemented in any manner, so long as the end result is equivalent.</p>
+
+    <p>The IDL fragments in this specification must be interpreted as required for conforming IDL fragments, as described in the Web IDL specification [<cite><a class="bibref" href="#bib-WEBIDL">WEBIDL</a></cite>].</p>
+    
+    <section id="conformance-classes">
+      <h4><span class="secno">1.4.1 </span>Conformance Classes</h4>
+      
+      <p>This specification describes the conformance criteria for both local (relevant to creating bindings for languages) and remote end implementations (relevant to browser vendors and server implementors). A final conformance class — <dfn id="intermediate-node">intermediate node</dfn> — is also specified. These represent those nodes situated between the local and remote ends.</p>
+    </section>
+  </section>
+</section>
+<section id="commands-and-responses">
+  <!--OddPage--><h2><span class="secno">2. </span>Commands and Responses</h2>
+  <p>The communication between the remote and local ends is performed via Command and Response objects. How these are encoded and transmitted between the remote and local ends is left undefined.</p>
+
+	<p>Although the encoding and transport mechanism is left undefined in this specification, implementors of the remote end <em class="rfc2119" title="MUST">MUST</em> provide an implementation suitable for acting as the server-side of the JSON and HTTP protocol defined in <a href="#mapping-to-http-and-json">Appendix F</a>. This <em class="rfc2119" title="MAY">MAY</em> take the form of a standalone executable that translates the JSON over HTTP protocol to the encoding and transport mechanism used by the remote end.</p>
+
+  <section id="command-1">
+    <h3><span class="secno">2.1 </span>Command</h3>
+    
+<pre class="IDL">interface <dfn id="command" title="command">Command</dfn> {  
+  attribute DOMString <code><a href="#command-name">name</a></code>;
+  attribute dictionary <code><a href="#command-parameters">parameters</a></code>;
+  attribute DOMString <code><a href="#sessionid">sessionId</a></code>;
+};
+</pre>
+
+    <p>A command represents a call to a remote end to the <a href="#sessions">session</a> identified by the <code><a href="#sessionid">sessionId</a></code> attribute. By default, the <code><a href="#sessionid">sessionId</a></code> is null. The only time the null value is a valid <code><a href="#sessionid">sessionId</a></code> is before a call to <code><a href="#creating-a-session">newSession</a></code>. The name of the command to execute is held in the <dfn id="command-name" title="command-name">name</dfn>, and this <em class="rfc2119" title="MUST">MUST</em> be handled case-sensitively. It defaults to the null value. The <dfn id="command-parameters" title="command-name">parameters</dfn> attribute is a map of named parameters to objects representing the value of the parameter. The default value is an empty array and this field <em class="rfc2119" title="MUST NOT">MUST NOT</em> be null.</p>
+
+  </section>
+  <section id="response-1">
+    <h3><span class="secno">2.2 </span>Response</h3>
+
+<pre class="IDL">interface <dfn id="response" title="response">Response</dfn> {
+  readonly attribute DOMString <code><a href="#sessionid">sessionId</a></code>;
+  readonly attribute DOMString <code><a href="#response-status">status</a></code>;
+  readonly attribute object <code><a href="#response-value">value</a></code>;
+};
+</pre>
+
+    <p>A Response represents the value returned from the remote end of the WebDriver API after executing a Command from the session identified by the <code><a href="#sessionid">sessionId</a></code> attribute. The default value for the <code><a href="#sessionid">sessionId</a></code> <em class="rfc2119" title="MUST">MUST</em> be the <code><a href="#sessionid">sessionId</a></code> used in the <code><a href="#command">Command</a></code> that this is a response to, unless the <code><a href="#command">Command</a></code>'s <code><a href="#sessionid">sessionId</a></code> was the null value, in which case a unique <code><a href="#sessionid">sessionId</a></code> <em class="rfc2119" title="MUST">MUST</em> be assigned (see <code><a href="#creating-a-session">newSession</a></code> for how this is achieved).</p>
+
+    <p>Each Response has a <code><dfn id="response-status" title="response-status">status</dfn></code> that indicates the success or failure of the method. Anything other than "<code><a href="#status-success">success</a></code>" indicates a failure. Each command lists the status strings it can return in the section of this specification in which it is defined, but the normative list of expected statuses is given below in the <a href="#status-codes">Status Codes</a> section. This list <em class="rfc2119" title="MAY">MAY</em> be extended by implementors of the specification, provided they follow the guidelines about <a href="#extending-the-protocol">extending the protocol</a>.</p>
+
+    <p>The meat of the <code><a href="#response">Response</a></code> is in the <code><dfn id="response-value" title="response-value">value</dfn></code> attribute. It's type is determined by the <code><a href="#command">Command</a></code> that has been executed. In this specification, each command definition will make clear what the expected return type is. The default value is the null value. In the case where the status indicates failure, the value is commonly the error text explaining the cause of the problem.</p>
+
+    <div class="note"><div class="note-title"><span>Note</span></div><p class="">In the case where a failure is indicated and the language used for implementing the local end supports throwing exceptions, the value is often used as the exception's message.</p></div>
+
+    <p>There is no requirement that implementations of <code><a href="#command">Command</a></code> and <code><a href="#response">Response</a></code> exhibit any behaviour: they <em class="rfc2119" title="MAY">MAY</em> be simple data structures. Reading of values <em class="rfc2119" title="MUST">MUST</em> be idempotent, and writing any particular value <em class="rfc2119" title="MUST NOT">MUST NOT</em> cause any other values on the <code><a href="#command">Command</a></code> or <code><a href="#response">Response</a></code> to change.</p>
+  </section>
+  
+  <section id="processing-additional-fields-on-commands-and-responses">
+    <h3><span class="secno">2.3 </span>Processing Additional Fields on Commands and Responses</h3>
+    
+    <p>Any <code><a href="#command-1">Command</a></code> or <code><a href="#response">Response</a></code> <em class="rfc2119" title="MAY">MAY</em> contain additional fields than those listed above. The content of fields <em class="rfc2119" title="MUST">MUST</em> be maintained, unaltered by any <a href="#intermediate-node">intermediate nodes</a>. There is no requirement to maintain the ordering of fields.</p>
+    
+    <div class="note"><div class="note-title"><span>Note</span></div><div class="">
+      <p>This requirement exists to allow for extension of the protocol, and to allow implementors to decorate Commands and Responses with additional information, perhaps giving context to a series of messages or providing security information.</p>
+    </div></div>
+  </section>
+  
+  <section id="status-codes">
+    <h3><span class="secno">2.4 </span>Status Codes</h3>
+    <p>The WebDriver API indicates the success or failure of a command invocation via <code><a href="#response-status">Response.status</a></code>. The following values are used and have the following meanings.</p>
+    
+    <table class="simple">
+      <tbody><tr>
+        <th>Status Code</th>
+        <th>Detail</th>
+      </tr>
+      <tr>
+        <td><dfn id="status-element-not-selectable">element not selectable</dfn></td>
+        <td>An attempt was made to select an element that cannot be selected.</td>
+      </tr>      
+      <tr>
+        <td><dfn id="status-element-not-visible">element not visible</dfn></td>
+        <td>An element command could not be completed because the element is not visible on the page.</td>
+      </tr>
+      <tr>
+        <td><dfn id="status-ime-engine-activation-failed">ime engine activation failed</dfn></td>
+        <td>An IME engine could not be started.</td>
+      </tr>
+      <tr>
+        <td><dfn id="status-ime-not-available">ime not available</dfn></td>
+        <td>IME was not available.</td>
+      </tr>
+      <tr>
+        <td><dfn id="status-invalid-cookie-domain">invalid cookie domain</dfn></td>
+        <td>An illegal attempt was made to set a cookie under a different domain than the current page.</td>
+      </tr>
+      <tr>
+        <td><dfn id="status-invalid-element-coordinates">invalid element coordinates</dfn></td>
+        <td>The coordinates provided to an interactions operation are invalid.</td>
+      </tr>
+      <tr>
+        <td><dfn id="status-invalid-element-state">invalid element state</dfn></td>
+        <td>An element command could not be completed because the element is in an invalid state (e.g. attempting to click an element that is no longer attached to the DOM).</td>
+      </tr>
+      <tr>
+        <td><dfn id="status-invalid-selector">invalid selector</dfn></td>
+        <td>Argument was an invalid selector (e.g. XPath/CSS).</td>
+      </tr>
+      <tr>
+        <td><dfn id="status-javascript-error">javascript error</dfn></td>
+        <td>An error occurred while executing user supplied JavaScript.</td>
+      </tr>
+      <tr>
+        <td><dfn id="status-move-target-out-of-bounds">move target out of bounds</dfn></td>
+        <td>The target for mouse interaction is not in the browser's viewport and cannot be brought into that viewport.</td>
+      </tr>
+      <tr>
+        <td><dfn id="status-no-such-alert">no such alert</dfn></td>
+        <td>An attempt was made to operate on a modal dialog when one was not open.</td>
+      </tr>
+      <tr>
+        <td><dfn id="status-no-such-dom">no such dom</dfn></td>
+        <td>An attempt was made to switch to a hosted Shadow DOM that does not exist.</td>
+      </tr>
+      <tr>
+        <td><dfn id="status-no-such-element">no such element</dfn></td>
+        <td>An element could not be located on the page using the given search parameters.</td>
+      </tr>
+      <tr>
+        <td><dfn id="status-no-such-frame">no such frame</dfn></td>
+        <td>A request to switch to a frame could not be satisfied because the frame could not be found.</td>
+      </tr>
+      <tr>
+        <td><dfn id="status-no-such-window">no such window</dfn></td>
+        <td>A request to switch to a different window could not be satisfied because the window could not be found.</td>
+      </tr>
+      <tr>
+        <td><dfn id="status-script-timeout">script timeout</dfn></td>
+        <td>A script did not complete before its timeout expired.</td>
+      </tr>
+      <tr>
+        <td><dfn id="status-session-not-created">session not created</dfn></td>
+        <td>A new session could not be created.</td>
+      </tr>
+      <tr>
+        <td><dfn id="status-stale-element-reference">stale element reference</dfn></td>
+        <td>An element command failed because the referenced element is no longer attached to the DOM.</td>
+      </tr>
+      <tr>
+        <td><dfn id="status-success">success</dfn></td>
+        <td>The command executed successfully.</td>
+      </tr>
+      <tr>
+        <td><dfn id="status-timeout">timeout</dfn></td>
+        <td>An operation did not complete before its timeout expired.</td>
+      </tr>
+      <tr>
+        <td><dfn id="status-unable-to-set-cookie">unable to set cookie</dfn></td>
+        <td>A request to set a cookie's value could not be satisfied.</td>
+      </tr>
+      <tr>
+        <td><dfn id="status-unexpected-alert-open">unexpected alert open</dfn></td>
+        <td>A modal dialog was open, blocking this operation.</td>
+      </tr>
+      <tr>
+        <td><dfn id="status-unknown-command">unknown command</dfn></td>
+        <td>A command could not be executed because the remote end is not aware of it.</td>
+      </tr>
+      <tr>
+        <td><dfn id="status-unknown-error">unknown error</dfn></td>
+        <td>An unknown error occurred in the remote end while processing the command.</td>
+      </tr>
+      <tr>
+        <td><dfn id="status-unsupported-operation">unsupported operation</dfn></td>
+        <td>Indicates that a command that should have executed properly cannot be supported for some reason.</td>
+      </tr>
+    </tbody></table>
+    </section>
+    
+    <section id="handling-of-status-codes-at-the-local-end">
+    <h3><span class="secno">2.5 </span>Handling of Status Codes at the Local End</h3>
+    
+    <p>Status codes are returned from the <a href="#remote-end">remote end</a> to the <a href="#local-end">local end</a>. The <a href="#local-end">local end</a> <em class="rfc2119" title="SHOULD">SHOULD</em> convert these into a form appropriate for the implementation language. For example, in C the status codes might be converted to constant integer values, whereas in Java various exceptions could be thrown.</p>
+    
+    <p>Implementations of the <a href="#local-end">local end</a> written in languages that support exceptions <em class="rfc2119" title="SHOULD">SHOULD</em> make use of an exception hierarchy rooted on a <code>WebDriverException</code> (or similarly named base exception class). Where references to <code>WebDriverException</code> are made in this specification, we are referring to this local end conversion of status codes to local end exceptions.</p>
+    
+    <div class="note"><div class="note-title"><span>Note</span></div><p class="">The reason for this is to allow users of the local end to easily handle the all expected failure modes of a local WebDriver implementation by catching the <code>WebDriverException</code>.</p></div>
+      
+     <div class="note"><div class="note-title"><span>Note</span></div><p class="">It is strongly recommended that the <code>WebDriverException</code> contain as much diagnostic information as possible, including version numbers and details about the remote end. This is because experience suggests that when reporting errors from tests using WebDriver, users will simply cut-and-paste a stack trace of an exception. Adding this information to the exception makes the task of debugging problems considerably easier.</p></div>
+  </section>
+</section>
+<section id="browser-capabilities">
+  <!--OddPage--><h2><span class="secno">3. </span>Browser Capabilities</h2>
+  <p>Different browsers support different levels of various specifications. For example, some support SVG or the [<cite><a class="bibref" href="#bib-SELECTORS-API">SELECTORS-API</a></cite>], but only browsers that implement [<cite><a class="bibref" href="#bib-WEBSTORAGE">WEBSTORAGE</a></cite>] will support <a href="http://www.w3.org/TR/2009/WD-webstorage-20090910/#the-localstorage-attribute">LocalStorage</a>. The WebDriver API provides a mechanism to query the supported capabilities of a browser. Each broad area of functionality within the WebDriver API has an associated capability string. Whether a particular capability <em class="rfc2119" title="MUST">MUST</em> or <em class="rfc2119" title="MAY">MAY</em> be supported — as well as fallback mechanisms for handling those cases where a capability is not supported — is discussed where the capability string is defined.</p>
+  
+  <section id="capabilities">
+    <h3><span class="secno">3.1 </span>Capabilities</h3>
+  <pre class="idl"><span class="idlInterface" id="idl-def-Capabilities">interface <span class="idlInterfaceID">Capabilities</span> {
+<span class="idlAttribute">    readonly attribute <span class="idlAttrType"><a>dictionary</a></span> <span class="idlAttrName"><a href="#widl-Capabilities-capabilities">capabilities</a></span>;</span>
+<span class="idlMethod">    <span class="idlMethType"><a>boolean</a></span>                           <span class="idlMethName"><a href="#widl-Capabilities-has-boolean-DOMString-capabilityName">has</a></span> (<span class="idlParam"><span class="idlParamType"><a>DOMString</a></span> <span class="idlParamName">capabilityName</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType">(<a>DOMString</a> or <a>boolean</a> or <a>number</a>)?</span> <span class="idlMethName"><a href="#widl-Capabilities-get-DOMString-boolean-number-DOMString-capabilityName">get</a></span> (<span class="idlParam"><span class="idlParamType"><a>DOMString</a></span> <span class="idlParamName">capabilityName</span></span>);</span>
+};</span></pre><section id="attributes"><h4><span class="secno">3.1.1 </span>Attributes</h4><dl class="attributes"><dt id="widl-Capabilities-capabilities"><code>capabilities</code> of type <span class="idlAttrType"><a>dictionary</a></span>, readonly</dt><dd>The underlying collection of capabilities, represented as a dictionary mapping strings to values which may be
+    of type <code>boolean</code>, <code>numerical</code> or <code>DOMString</code>. The default value is an empty dictionary.</dd></dl></section><section id="methods"><h4><span class="secno">3.1.2 </span>Methods</h4><dl class="methods"><dt id="widl-Capabilities-get-DOMString-boolean-number-DOMString-capabilityName"><code>get</code></dt><dd>Get the value of the key matching capabilityName in the underlying <code>capabilities</code> or <code>null</code> if no value is defined.<table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">capabilityName</td><td class="prmType"><code><a>DOMString</a></code></td><td class="prmNullFalse">✘</td><td class="prmOptFalse">✘</td><td class="prmDesc"></td></tr></table><div><em>Return type: </em><code>(<a>DOMString</a> or <a>boolean</a> or <a>number</a>)</code>, nullable</div></dd><dt id="widl-Capabilities-has-boolean-DOMString-capabilityName"><code>has</code></dt><dd>Queries the underlying <code>capabilities</code> to see whether the
+    value is set. This <em class="rfc2119" title="MUST">MUST</em> return true if the capabilities contain a key with
+    the given <code>capabilityName</code> and the value of that key is defined.
+    If the value is a boolean, this function <em class="rfc2119" title="MUST">MUST</em> return that boolean value. If
+    the value is <code>null</code>, an empty string or a 0 then this method <em class="rfc2119" title="MUST">MUST</em> return
+    false.<table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">capabilityName</td><td class="prmType"><code><a>DOMString</a></code></td><td class="prmNullFalse">✘</td><td class="prmOptFalse">✘</td><td class="prmDesc"></td></tr></table><div><em>Return type: </em><code><a>boolean</a></code></div></dd></dl></section>
+  <p>A <code>Capabilities</code> instance <em class="rfc2119" title="MUST">MUST</em> be immutable. If a mutable <code>Capabilities</code> instance is required, then the <code>MutableCapabilities</code> <em class="rfc2119" title="MUST">MUST</em> be used instead.</p>
+
+  <div class="note"><div class="note-title"><span>Note</span></div><p class="">The "has" method is designed to provide a quick boolean check on whether or not a particular capability is set and can be used in an "if" statement in many languages. The "get" method returns the exact value. In the case of boolean values, this will be the same result as if "truthy" values are used (that is: <code>get('falseValue')</code> and <code>get('unsetValue')</code> are both false).</p></div>
+</section>
+<section id="mutablecapabilities">
+  <h3><span class="secno">3.2 </span>MutableCapabilities</h3>
+  <pre class="idl"><span class="idlInterface" id="idl-def-MutableCapabilities">interface <span class="idlInterfaceID">MutableCapabilities</span> : <span class="idlSuperclass"><a href="#idl-def-Capabilities" class="idlType"><code>Capabilities</code></a></span> {
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span> <span class="idlMethName"><a href="#widl-MutableCapabilities-set-void-DOMString-capabilityName-DOMString-boolean-number-value">set</a></span> (<span class="idlParam"><span class="idlParamType"><a>DOMString</a></span> <span class="idlParamName">capabilityName</span></span>, <span class="idlParam"><span class="idlParamType">(<a>DOMString</a> or <a>boolean</a> or <a>number</a>)?</span> <span class="idlParamName">value</span></span>);</span>
+};</span></pre><section id="methods-1"><h4><span class="secno">3.2.1 </span>Methods</h4><dl class="methods"><dt id="widl-MutableCapabilities-set-void-DOMString-capabilityName-DOMString-boolean-number-value"><code>set</code></dt><dd>Set the value of the given <code>capabilityName</code> to the given <code>value</code>. If the value is not a boolean, numerical type, a DOMString or the null value a <code>WebDriverException</code> <em class="rfc2119" title="SHOULD">SHOULD</em> be thrown.<table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">capabilityName</td><td class="prmType"><code><a>DOMString</a></code></td><td class="prmNullFalse">✘</td><td class="prmOptFalse">✘</td><td class="prmDesc"></td></tr><tr><td class="prmName">value</td><td class="prmType"><code>(<a>DOMString</a> or <a>boolean</a> or <a>number</a>)</code></td><td class="prmNullTrue">✔</td><td class="prmOptFalse">✘</td><td class="prmDesc"></td></tr></table><div><em>Return type: </em><code><a>void</a></code></div></dd></dl></section>
+
+  <p>In the case where the local and remote end are in the same process, it <em class="rfc2119" title="SHOULD">SHOULD</em> be acceptable to use other types with the <code>set</code> method. If this is allowed, the value <em class="rfc2119" title="MUST">MUST</em> be serialized to one of the acceptable types (boolean, numerical type, a string or the null value) before being sent out of process (such as transmitting from the local to the remote end). If this serialization is not possible, a <code>WebDriverException</code> <em class="rfc2119" title="MUST">MUST</em> be thrown.</p>
+
+  <div class="note"><div class="note-title"><span>Note</span></div><div class="">
+	<p>As an example, perhaps the browser being automated supports user profiles. This may be modelled in code as a "Profile" object, leading to code such as:</p>
+	<pre class="code">		profile = Profile("some/user/directory")
+		capabilities = MutableCapabilities()
+		capabilities.set('profile', profile)
+		driver = RemoteDriver(capabilities)
+    </pre>
+
+    <p>In this example, the profile represents a directory on the local disk. One way to serialize this would be to zip the contents of this profile and then encode it using base64 to allow it to be passed as a string.</p>
+  </div></div>
+</section>
+
+<!-- TODO: can we use a language's natural hash or dictionary type as a capabilities object? -->
+
+</section>
+<section id="sessions">
+  <!--OddPage--><h2><span class="secno">4. </span>Sessions</h2>
+  <p>Non-normative summary: A session is equivalent to a single instantiation of a particular browser, including all
+  child windows. The WebDriver API gives each session a unique ID stored as an opaque string that can be used to differentiate one
+  session from another, allowing multiple browsers to be controlled on the same machine if needed, and allowing
+  sessions to be routed via a multiplexer. This ID is sent with every <code><a href="#command-1">Command</a></code> and returned with every 
+  <code><a href="#response">Response</a></code> and is stored on the <dfn id="sessionid" title="sessionid">sessionId</dfn> field.</p>
+  <section id="creating-a-session">
+    <h3><span class="secno">4.1 </span>Creating a Session</h3>
+    <p>The process for successfully creating a session <em class="rfc2119" title="MUST">MUST</em> be:</p>
+    <ol>
+      <li>The local end creates a new <code><a href="#capabilities">Capabilities</a></code> or <code><a href="#mutablecapabilities">MutableCapabilities</a></code> instance describing the desired capabilities
+      for the session. The Capabilities object <em class="rfc2119" title="MUST">MUST</em> be defined but <em class="rfc2119" title="MAY">MAY</em> be empty.</li>
+      <li>The local end <em class="rfc2119" title="MUST">MUST</em> create a new <code><a href="#command-1">Command</a></code> with the "name" being "newSession" and the "parameters" containing an
+      entry named "desiredCapabilities" with the value set to the Capabilities instance from the previous step. An optional
+      "requiredCapabilities" entry <em class="rfc2119" title="MAY">MAY</em> also be created and populated with a Capabilities instance. The "sessionId" fields
+      <em class="rfc2119" title="SHOULD">SHOULD</em> be left empty.</li>
+      <li>The <code><a href="#command-1">Command</a></code> is transmitted to the remote end.</li>
+      <li>The remote end <em class="rfc2119" title="MUST">MUST</em> examine the "requiredCapabilities" parameter if specified, <em class="rfc2119" title="SHOULD">SHOULD</em> examine the "desiredCapabilities" parameter, and <em class="rfc2119" title="MUST">MUST</em> create a new session matching as many of the Capabilities as
+      possible.
+      How the new session is created depends on the implementation of this specification. 
+        <ul>
+          <li>If any of the "requiredCapabilities" cannot be fulfilled by the new session, the remote end <em class="rfc2119" title="MUST">MUST</em> quit the session and return the
+            <code><a href="#status-session-not-created">session not created</a></code> error code. The sessionId of the Response object <em class="rfc2119" title="MUST">MUST</em> be left as the default value unless the Command had the sessionId set, in which case that value <em class="rfc2119" title="MUST">MUST</em> be used. The error message <em class="rfc2119" title="SHOULD">SHOULD</em> list all unmet required capabilities though only a single required capability <em class="rfc2119" title="MUST">MUST</em> be given.</li>
+          <li>If a capability is listed in both the requiredCapabilities and desiredCapabilities, the value in the requiredCapabilities <em class="rfc2119" title="MUST">MUST</em> be used.</li>
+          </ul>
+      </li>
+      <li>The session <em class="rfc2119" title="MUST">MUST</em> be assigned a <code><a href="#sessionid">sessionId</a></code> which <em class="rfc2119" title="MUST">MUST</em> be unique for each session (a UUID <em class="rfc2119" title="SHOULD">SHOULD</em> be used). Generating the sessionId
+      <em class="rfc2119" title="MAY">MAY</em> occur before the session is created. If the Command object had the "sessionId" field set, this <em class="rfc2119" title="MAY">MAY</em> be
+      discarded in favour of the freshly generated sessionId. Because of this, it is
+      recommended that sessionId generation be done on the remote end. If the sessionId has already been used, a Response <em class="rfc2119" title="MUST">MUST</em> be sent with the status 
+      code set to <code><a href="#status-session-not-created">session not created</a></code> and the value being an explanation that the sessionId has previously been used.</li>
+      <li>The remote end <em class="rfc2119" title="MUST">MUST</em> create a new <code><a href="#response">Response</a></code> object, with the following fields <em class="rfc2119" title="MUST">MUST</em> be set to: 
+      <ul>
+        <li>"sessionId": the <code>sessionId</code> associated with this session.</li>
+        <li><a id="create-session-value"></a>"value": a Capabilities instance. The keys of this Capabilities instance <em class="rfc2119" title="MUST">MUST</em> be the strings given in each of the supported capabilities as defined in the relevant sections of this specification. Supported functionality <em class="rfc2119" title="MUST">MUST</em> be included in this Capabilities instance, while unsupported functionality <em class="rfc2119" title="MAY">MAY</em> be omitted.</li>
+        <li>"status": the <code><a href="#status-success">success</a></code> error code.</li>
+      </ul></li>
+      <li>The Response is returned to the local end.</li>
+    </ol>
+    <p>There is no requirement for the local end to validate that some or all of the fields sent on the <code><a href="#capabilities">Capabilities</a></code> associated with the <code><a href="#command-1">Command</a></code> match those returned in the <code><a href="#response">Response</a></code>.</p>
+
+    <p>As stated, when returning the <a href="#create-session-value">value of the <code></code></a><code><a href="#response">Response</a></code>, the remote end <em class="rfc2119" title="MUST">MUST</em> include the capability names and values of all supported capabilities from this specification. They <em class="rfc2119" title="MAY">MAY</em> also include any additional capability names and values of supported capabilities implemented independently of this specification. Local ends <em class="rfc2119" title="MAY">MAY</em> choose to ignore this additional information. <a href="#intermediate-node">Intermediate nodes</a> between the local and remote ends <em class="rfc2119" title="MAY">MAY</em> interpret the capabilities being returned.</p>
+
+    <p>If the <code>browserName</code> is given as a desired capability and omitted from the required capabilities, and the returned <code>browserName</code> value does not match the requested one, local ends <em class="rfc2119" title="SHOULD">SHOULD</em> issue a warning to the user. How this warning is issued is undefined, but one implementation could be a log message. In this particular case, local ends <em class="rfc2119" title="MAY">MAY</em> chose to change the <code>Response</code>'s status code to <code><a href="#status-session-not-created">session not created</a></code>, and modify the value to explain the cause, including the value originally returned as the <code>browserName</code> capability. If this is done, the local end <em class="rfc2119" title="MUST">MUST</em> ensure that the remote end quits the session.</p>
+
+    <section id="capability-names">
+      <h4><span class="secno">4.1.1 </span>Capability Names</h4>
+      <p>The following keys <em class="rfc2119" title="SHOULD">SHOULD</em> be used in the Capabilities instances. They all default to the null string.</p>
+      <dl>
+        <dt><a id="capability-browserName"></a><span class="capability-browserName">browserName</span></dt>
+        <dd>The name of the desired browser as a string.</dd>
+        <dt><a id="capability-browserVersion"></a><span class="capability-browserVersion">browserVersion</span></dt>
+        <dd>The version number of the browser, given as a string.</dd>
+        <dt><a id="capability-platformName"></a><span class="capability-platformName">platformName</span></dt>
+        <dd>The OS that the browser is running on, matching any of the platform names given below.</dd>
+        <dt><a id="capability-platformVersion"></a><span class="capability-platformVersion">platformVersion</span></dt>
+        <dd>The version of the OS that the browser is running on as a string.</dd>
+      </dl>
+
+      <section id="platform-names">
+        <h5><span class="secno">4.1.1.1 </span>Platform Names</h5>
+        <p>The following platform names are defined and <em class="rfc2119" title="MUST">MUST</em> be used, case sensitively, for the "platformName" unless the actual platform being used is not given in this list:</p>
+        <ul>
+          <li>ANDROID</li>
+          <li>IOS</li>
+          <li>LINUX</li>
+          <li>MAC</li>
+          <li>UNIX</li>
+          <li>WINDOWS</li>
+        </ul>
+        <p>In addition "ANY" <em class="rfc2119" title="MAY">MAY</em> be used to indicate the underlying OS is either unknown or does not matter.</p>
+
+        <p>Implementors <em class="rfc2119" title="MAY">MAY</em> add additional platform names. Until these are standardized, these <em class="rfc2119" title="MUST">MUST</em> follow the conventions outlined in <a href="#extending-the-protocol">extending the protocol</a> section with the exception that the vendor prefix <em class="rfc2119" title="SHOULD">SHOULD</em> omit the leading "-" character.</p><p>
+
+        </p><div class="note"><div class="note-title"><span>Note</span></div><p class="">For example, Mozilla's Firefox OS could be described as either "-MOZ-FIREFOXOS" or "MOZ-FIREFOX". The latter makes it easier for local ends to specify an enum of supported platforms and is therefore recommended in this case.</p></div>
+
+        <!-- TODO: Add section on comparing platforms -->
+
+      </section>
+    </section>
+    <section id="error-handling">
+      <h4><span class="secno">4.1.2 </span>Error Handling</h4>
+      <p>The following status codes <em class="rfc2119" title="MUST">MUST</em> be returned by the "newSession" command:</p>
+      <dl>
+        <dt><code><a href="#status-success">success</a></code></dt>
+        <dd>The session was successfully created. The "value" field of the <code><a href="#response">Response</a></code> <em class="rfc2119" title="MUST">MUST</em> contain a <code><a href="#capabilities">Capabilities</a></code> object describing the session.</dd>
+        <dt><code><a href="#status-timeout">timeout</a></code></dt>
+        <dd>The new session could not be created within the time allowed for command execution on the remote end. This
+        time <em class="rfc2119" title="MAY">MAY</em> be infinite (in which case this status won't be seen). The "value" field of the Response <em class="rfc2119" title="SHOULD">SHOULD</em> contain a string explaining that a timeout has
+        occurred, but it <em class="rfc2119" title="MAY">MAY</em> be left as the null value or filled with the empty string.</dd>
+        <dt><code><a href="#status-unknown-error">unknown error</a></code></dt>
+        <dd>An unhandled error of some sort has occurred. The "value" field of the Response <em class="rfc2119" title="SHOULD">SHOULD</em> contain a more detailed
+        description of the error as a string.</dd>
+      </dl>
+    </section>
+    <section id="remote-end-matching-of-capabilities">
+      <h4><span class="secno">4.1.3 </span>Remote End Matching of Capabilities</h4>
+      <p>This section is non-normative.</p>
+      <p>The suggested order for comparing keys in the Capabilities instance when creating a session is:</p>
+      <ol>
+        <li>browserName</li>
+        <li>browserVersion</li>
+        <li>platform</li>
+        <li>platformVersion</li>
+      </ol>
+      <p>For all comparisons, if the key is missing (as determined by a call to Capability.has() returning "false"), that particular criteria shall not factor into the
+      comparison.</p>
+    </section>
+  </section>
+</section>
+<section id="navigation">
+<!--OddPage--><h2><span class="secno">5. </span>Navigation</h2>
+  
+<p>Almost all usages of the WebDriver API begin by navigating to a particular URL. This section not only describes the commands used for navigation, but also describes when commands must be processed.</p>
+
+<p>All WebDriver implementations <em class="rfc2119" title="MUST">MUST</em> support navigating between different HTTP domains and between HTTPS and HTTP domains if the underlying browser supports this.</p>
+
+<section id="page-load-strategies-1">
+<h3 id="page-load-strategies"><span class="secno">5.1 </span>Page Load Strategies</h3>
+
+<table class="simple">
+  <tbody><tr>
+    <th>Capability Name</th><th>Type</th>
+  </tr>
+  <tr>
+    <td>pageLoadingStrategy</td><td>DOMString</td>
+  </tr>
+</tbody></table>
+
+<p>It is possible to request a particular strategy be used for detecting when the next command should be processed by a remote end implementation by modifying the page load strategy that is used. The following are the expected values that <em class="rfc2119" title="MAY">MAY</em> be used when creating a new session:</p>
+
+<dl>
+  <dt>conservative</dt>
+  <dd>The remote end <em class="rfc2119" title="MUST">MUST</em> wait until all frames and iframes in the window currently being used to process commands
+  that contain an HTML document are at <a href="http://dev.w3.org/html5/spec/single-page.html#current-document-readiness">document.readyState</a> equals 'complete' and there are no outstanding HTTP requests, other than those caused by XMLHttpRequests. If a frame or iframe does not contain an HTML document, the remote end <em class="rfc2119" title="SHOULD">SHOULD</em> wait until all HTTP traffic to that frame is complete. Put in non-normative terms, this implies that the "onload" event has fired on every frame.</dd>
+
+  <dt>normal</dt>
+  <dd>The remote end <em class="rfc2119" title="MUST">MUST</em> wait until the "<code>document.readyState</code>" of the frame currently handling commands equals "<code>complete</code>", or there are no more outstanding network requests other than XMLHttpRequests.</dd>
+
+  <dt>eager</dt>
+  <dd>The remote end <em class="rfc2119" title="MUST">MUST</em> wait until the "<code>document.readyState</code>" of frame currently handling equals "<code>interactive</code>" or "<code>complete</code>", or there are no more outstanding network requests.</dd>
+  
+  <dt>none</dt>
+  <dd>The remote end does not do any checks to see if a page load is currently active.</dd>
+</dl>
+
+<p>All WebDriver implementations <em class="rfc2119" title="MUST">MUST</em> support the <code>normal</code> and <code>eager</code> modes and <em class="rfc2119" title="SHOULD">SHOULD</em> support the <code>conservative</code> and <code>none</code> modes. If no page loading strategy is chosen, then <code>normal</code> <em class="rfc2119" title="MUST">MUST</em> be the default.
+In addition, implementors <em class="rfc2119" title="MAY">MAY</em> add additional page loading strategies.</p>
+</section>
+
+<section id="navigation-commands">
+<h3><span class="secno">5.2 </span>Navigation Commands</h3>
+
+<div class="note"><div class="note-title"><span>Note</span></div><p class="">Conformance tests for this section can be found in the <a href="http://dvcs.w3.org/hg/webdriver-test">webdriver-test module</a> under the "navigation" folder.</p></div>
+
+<table class="simple">
+	<tbody><tr>
+		<td>Command Name</td>
+		<td>get</td>
+	</tr>
+	<tr>
+		<td>Parameters</td>
+		<td>"url" {DOMString} The URL to be navigated to.</td>
+	</tr>
+	<tr>
+	    <td>Return Value</td>
+	    <td>None</td>
+	</tr>
+	<tr>
+	    <td>Errors</td>
+	    <td><code><a href="#status-timeout">timeout</a></code> if the page load takes too long <a href="#timeouts">as specified by the timeouts</a>.</td>
+	</tr>
+</tbody></table>
+
+<p>The "get" command is used to cause the browser to navigate to a new location, and is named after the HTTP verb. From a user's point of view, this is as if they have entered the "url" into the URL bar. When the command returns is based on the <a href="#page-load-strategies">page load strategy</a> that the user has selected with the following exceptions when the strategy is not "none":
+
+</p><ul>
+    <li>HTTP redirects <em class="rfc2119" title="MUST">MUST</em> be automatically followed without responding to the command.</li>
+    <li>When a page contains a META tag with the "http-equiv" attribute set to "refresh", a response <em class="rfc2119" title="MUST">MUST</em> be returned if the timeout is greater than 1 second and the other criteria for determining whether a page is loaded are met. When the refresh period is 1 second or less and the page loading strategy is "normal" or "conservative" implementations <em class="rfc2119" title="MUST">MUST</em> wait for the refresh to complete before responding.</li>
+    <li>If any modal dialog box, such as those opened by on <code>window.onbeforeunload</code> or <code>window.alert</code>, is opened at any point in the page load, a response <em class="rfc2119" title="MUST">MUST</em> be sent.</li>
+    <li>If a 401 response is seen by the browser, a response <em class="rfc2119" title="MUST">MUST</em> be sent. That is, if BASIC, DIGEST, NTLM or similar authentication is required, the page load is assumed to be complete. This does not include FORM-based authentication.</li>
+</ul>    
+
+<section id="invalid-ssl-certificates">
+<h4><span class="secno">5.2.1 </span>Invalid SSL Certificates</h4>
+
+<table class="simple">
+  <tbody><tr><td>Capability Name</td><td>Type</td></tr>
+  <tr><td><a id="capability-securessl"></a><span class="capability-securessl">secureSsl</span></td><td>boolean</td></tr>
+</tbody></table>
+
+
+<p>WebDriver implementations <em class="rfc2119" title="MUST">MUST</em> support users accessing sites served via HTTPS. Access to those sites using self-signed or invalid certificates, and where the certificate does not match the serving domain <em class="rfc2119" title="MUST">MUST</em> be the same as if the HTTPS was configured properly.</p>
+
+<div class="note"><div class="note-title"><span>Note</span></div><p class="">The reason for this is that implementations of this spec are often used for testing. It's a sorry fact that many QA engineers and testers are asked to verify that apps work on sites that have insecure HTTPS configurations</p></div>
+</section>
+
+<p>The exception to requirement is if the <code><a href="#capabilities">Capabilities</a></code> used to initialize has the WebDriver session had the capability <code>secureSsl</code> set to true. In this case, implementations <em class="rfc2119" title="MAY">MAY</em> choose to make accessing a site with bad HTTPS configurations cause a <code>WebDriverException</code> to be thrown. Remote end implementations <em class="rfc2119" title="MUST">MUST</em> return an <code><a href="#status-unknown-error">unknown error</a></code> status in this case. If this is the case, the <code><a href="#capabilities">Capabilities</a></code> describing the session <em class="rfc2119" title="MUST">MUST</em> also set the <code>secureSsl</code> capability to "true".
+
+</p></section>
+
+<section id="detecting-when-to-handle-commands">
+<h3><span class="secno">5.3 </span>Detecting When to Handle Commands</h3>
+
+<p>Commands <em class="rfc2119" title="MUST">MUST</em> only be processed when the <span id="page-loading-strategies">page loading strategy</span> being used indicates that page loading is complete.</p>
+
+<p>If a remote end receives a new <code>Command</code> for a session while still waiting to finish an existing <code>Command</code> for that session it <em class="rfc2119" title="MAY">MAY</em> choose to queue the command for execution as soon as possible, it <em class="rfc2119" title="MAY">MAY</em> throw a <code>WebDriverException</code> or it <em class="rfc2119" title="MAY">MAY</em> leave the remote end in an inconsistent state. Because of this, local ends <em class="rfc2119" title="SHOULD NOT">SHOULD NOT</em> attempt to send a new <code>Command</code> to a session until the previous <code>Command</code> has returned.</p>
+</section>
+</section>
+<section id="controlling-windows">
+  <!--OddPage--><h2><span class="secno">6. </span>Controlling Windows</h2>
+
+  <section id="defining-window-and-frame">
+    <h3><span class="secno">6.1 </span>Defining "window" and "frame"</h3>
+
+    <p>Within this specification, a window equates to [<cite><a class="bibref" href="#bib-HTML5">HTML5</a></cite>]'s <a href="http://www.w3.org/TR/html5/browsers.html#top-level-browsing-context">top level browsing context</a>. Put another way, within this spec browser tabs are counted as separate windows.</p>
+
+    <p><strong>TODO: define "frame"</strong></p>
+  </section>
+
+  <section id="window-handles">
+    <h3><span class="secno">6.2 </span>Window Handles</h3>
+
+    <p>Each window has a "window handle" associated with it. This is an opaque string which <em class="rfc2119" title="MUST">MUST</em> uniquely identify the window within the session and <em class="rfc2119" title="MUST NOT">MUST NOT</em> be "current". This <em class="rfc2119" title="MAY">MAY</em> be a UUID. The "getWindowHandle" command can be used to obtain the window handle for the window that commands are currently acting upon:</p>
+
+    <table class="simple">
+      <tbody><tr>
+        <td>Command Name</td>
+        <td>getWindowHandle</td>
+      </tr>
+      <tr>
+        <td>Parameters</td>
+        <td>None</td>
+      </tr>
+      <tr>
+        <td>Return Value</td>
+        <td>{DOMString} The opaque string which uniquely identifies this window within the session.</td>
+      </tr>
+    </tbody></table>
+  </section>
+
+  <section id="iterating-over-windows">
+    <h3><span class="secno">6.3 </span>Iterating Over Windows</h3>
+
+    <table class="simple">
+      <tbody><tr>
+        <td>Command Name</td>
+        <td>getWindowHandles</td>
+      </tr>
+      <tr>
+        <td>Parameters</td>
+        <td>None</td>
+      </tr>
+      <tr>
+        <td>Return Value</td>
+        <td>{DOMString[]} An array containing a window handle for every open window in this session.</td>
+      </tr>
+    </tbody></table>
+
+    <p>This array of returned strings <em class="rfc2119" title="MUST">MUST</em> contain a handle for every window associated with the browser session and no others. For each returned window handle the javascript expression "window.top.closed" (or equivalent) <em class="rfc2119" title="MUST">MUST</em> evaluate to false at the time the command is being executed.</p>
+
+    <p>The ordering of the array elements is not defined, but <em class="rfc2119" title="MAY">MAY</em> be determined by iterating over each top level browser window and returning the tabs within that window before iterating over the tabs of the next top level browser window. For example, in the diagram below, the window handles should be returned as the handles for: win1tab1, win1tab2, win2.</p>
+
+    <img src="example-windows.png" alt="Two top level windows. The first window has two tabs, lablled win1tab1 and win1tab2. The second window has only one tab labelled win2">
+
+    <div class="note"><div class="note-title"><span>Note</span></div><p class="">This implies that the correct way to determine whether or not a particular interaction with the browser opens a new window is done by obtaining the set of window handles before the interaction is performed and comparing with the set after the action is performed.</p></div>
+  </section>
+
+  <section id="closing-windows">
+    <h3><span class="secno">6.4 </span>Closing Windows</h3>
+
+    <table class="simple">
+      <tbody><tr>
+        <td>Command Name</td>
+        <td>close</td>
+      </tr>
+      <tr>
+        <td>Parameters</td>
+        <td>None</td>
+      </tr>
+      <tr>
+        <td>Return Value</td>
+        <td>None</td>
+      </tr>
+    </tbody></table>
+
+    <p>The close command closes the window that commands are currently being sent to. If this means that a call to get the list of window handles would return an empty list, then this close command <em class="rfc2119" title="MUST">MUST</em> be the equivalent of calling "quit". That is, if the final window of a session is closed, then the session quits.</p>
+
+    <p>Once the window has closed, future commands <em class="rfc2119" title="MUST">MUST</em> return a status code of <code><a href="#status-no-such-window">no such window</a></code> until a new window is selected for receiving commands.</p>
+  </section>
+
+  <section id="resizing-and-positioning-windows">
+    <h3><span class="secno">6.5 </span>Resizing and Positioning Windows</h3>
+
+    <table class="simple">
+      <tbody><tr>
+        <td>Command Name</td>
+        <td>setWindowSize</td>
+      </tr>
+      <tr>
+        <td>Parameters</td>
+        <td>"windowHandle" {DOMString} The handle referring to the window to resize.<br>
+          "width" {number} The new window width in pixels.<br>
+          "height" {number} The new window height in pixels.
+        </td>
+      </tr>
+      <tr>
+        <td>Return Value</td>
+        <td>None</td>
+      </tr>
+      <tr>
+        <td>Errors</td>
+        <td><code><a href="#status-unsupported-operation">unsupported operation</a></code> if the window could not be resized.</td>
+      </tr>
+    </tbody></table>
+
+    <table class="simple">
+      <tbody><tr>
+        <td>Command Name</td>
+        <td>getWindowSize</td>
+      </tr>
+      <tr>
+        <td>Parameters</td>
+        <td>"windowHandle" {DOMString} The handle referring to the window to resize.
+        </td>
+      </tr>
+      <tr>
+        <td>Return Value</td>
+        <td>An object with two keys:<br>
+          "width" {number} The width of the specified window in pixels.<br>
+          "height" {number} The height of the specified window in pixels.<br>
+        </td>
+      </tr>
+    </tbody></table>
+
+    <table class="simple">
+      <tbody><tr>
+        <td>Command Name</td>
+        <td>maximizeWindow</td>
+      </tr>
+      <tr>
+        <td>Parameters</td>
+        <td>"windowHandle" {DOMString} The handle referring to the window to resize.
+        </td>
+      </tr>
+      <tr>
+        <td>Return Value</td>
+        <td>None</td>
+      </tr>
+      <tr>
+        <td>Errors</td>
+        <td><code><a href="#status-unsupported-operation">unsupported operation</a></code> if the window could not be resized.</td>
+      </tr>
+    </tbody></table>
+
+    <table class="simple">
+      <tbody><tr>
+        <td>Command Name</td>
+        <td>fullscreenWindow</td>
+      </tr>
+      <tr>
+        <td>Parameters</td>
+        <td>"windowHandle" {DOMString} The handle referring to the window to resize.
+        </td>
+      </tr>
+      <tr>
+        <td>Return Value</td>
+        <td>None</td>
+      </tr>
+      <tr>
+        <td>Errors</td>
+        <td><code><a href="#status-unsupported-operation">unsupported operation</a></code> if the window could not be resized.</td>
+      </tr>
+    </tbody></table>
+
+    <p>Each of these commands accept the window handles returned by "<code>getWindowHandles</code>" and "<code>getWindowHandle</code>". In addition, the window handle may be "<code>current</code>", in which case the window that commands are currently being handled by <em class="rfc2119" title="MUST">MUST</em> be acted upon.</p>
+
+    <p>The "<code>width</code>" and "<code>height</code>" values refer to the javascript "<code>window.outerheight</code>" and "<code>window.outerwidth</code>" properties. For those browsers that do not support these properties, these represent the height and width of the whole browser window including window chrome and window resizing borders/handles.</p>
+
+    <p>After <code>setWindowSize</code>, the browser window <em class="rfc2119" title="MUST NOT">MUST NOT</em> be in the maximised state.</p>
+
+    <p>After  <code>maximizeWindow</code>, the browser window <em class="rfc2119" title="MUST">MUST</em> be left as if the maximise button had been pressed if, and only if, the window manager of the OS supports this concept; it is not sufficient to leave the window "restored", but with the full screen dimensions.</p>
+
+    <p>After <code>fullscreenWindow</code>, the browser window <em class="rfc2119" title="MUST">MUST</em> be in full-screen mode. For those operating systems that support the concept, this <em class="rfc2119" title="MUST">MUST</em> be equivalent to if the user requested the window be full screen. If the OS does not support the concept of full-screen, then this command is a synonym for "<code>maximizeWindow</code>".
+
+    </p><p>If a request is made to resize a window to a size which cannot be performed (e.g. the browser has a minimum, or fixed window size, or the operating system does not support resizing windows at all as is the case in many phone OSs), an <code><a href="#status-unsupported-operation">unsupported operation</a></code> status code <em class="rfc2119" title="MUST">MUST</em> be returned.</p>
+  </section>
+
+  <section id="scaling-the-content-of-windows">
+    <h3><span class="secno">6.6 </span>Scaling the Content of Windows</h3>
+
+    <p>TODO</p>
+  </section>
+
+</section>
+<section id="where-commands-are-handled">
+<!--OddPage--><h2><span class="secno">7. </span>Where Commands Are Handled</h2>
+  
+<p>Web applications can be composed of multiple windows and/or frames. For a normal user, the context in which an operation is performed is obvious: it's the window or frame that currently has OS focus and which has just received user input. The WebDriver API does not follow this convention. There is an expectation that many browsers using the WebDriver API may be used at the same time on the same machine. This section describes how WebDriver tracks which window or frame is currently the context in which commands are being executed.</p>
+    
+<section id="default-content-1">
+<h3><span class="secno">7.1 </span>Default Content</h3>
+
+<p>WebDriver's <dfn id="default-content">default content</dfn> is [<cite><a class="bibref" href="#bib-HTML5">HTML5</a></cite>]'s <a href="http://www.w3.org/TR/html5/browsers.html#top-level-browsing-context">top level browsing context</a> for the window that is currently receiving WebDriver commands.</p>
+
+<p>When a WebDriver instance is started and a single browser window is opened, the <a href="#default-content">default content</a> of that window is automatically selected for receiving further commands. If more than one window is opened when the session starts, then the user <em class="rfc2119" title="MUST">MUST</em> first select which window to act upon using the <code>switchToWindow</code> command. Until the user selects a window, all commands must return a status code of <code><a href="#status-no-such-window">no such window</a></code>.</p>
+
+</section>
+
+<section id="switching-windows">
+<h3><span class="secno">7.2 </span>Switching Windows</h3>
+
+<table class="simple">
+	<tbody><tr>
+		<td>Command Name</td>
+		<td>switchToWindow</td>
+	</tr>
+	<tr>
+		<td>Parameters</td>
+		<td>"name" {DOMString} The identifier used for a window.</td>
+	</tr>
+	<tr>
+	    <td>Return Value</td>
+	    <td>None</td>
+	</tr>
+	<tr>
+	    <td>Errors</td>
+	    <td><code><a href="#status-no-such-window">no such window</a></code> if no matching window can be found</td>
+	</tr>
+</tbody></table>
+
+<p>The "switchToWindow" command is used to select which window <em class="rfc2119" title="MUST">MUST</em> be used as the context for processing commands. In order to determine which window should be used for accepting commands, the "switchToWindow" command <em class="rfc2119" title="MUST">MUST</em> iterate over all windows. For each window, the following <em class="rfc2119" title="MUST">MUST</em> be compared — in this order — with the "name" parameter:
+    
+    </p><ol>
+        <li>A window handle, obtained from "getWindowHandles" or "getWindowHandle".</li>
+        <li>The window name, as defined when the window was opened (the value of "window.name")</li>
+        <li>The "id" attribute of the window.</li>
+    </ol>
+
+<p>If no windows match, then a "<code><a href="#status-no-such-window">no such window</a></code>" status code <em class="rfc2119" title="MUST">MUST</em> be returned, otherwise the "<a href="#default-content">default content</a>" of the first window to match will be selected for accepting commands.</p>
+
+</section>
+
+<section id="switching-frames">
+<h3><span class="secno">7.3 </span>Switching Frames</h3>
+
+<table class="simple">
+	<tbody><tr>
+		<td>Command Name</td>
+		<td>switchToFrame</td>
+	</tr>
+	<tr>
+		<td>Parameters</td>
+		<td>"id" {?(DOMString|number|!WebElement=)} The identifier used for a window.</td>
+	</tr>
+	<tr>
+	    <td>Return Value</td>
+	    <td>None</td>
+	</tr>
+	<tr>
+	    <td>Errors</td>
+	    <td><code><a href="#status-no-such-frame">no such frame</a></code> if no matching frame can be found</td>
+	</tr>
+</tbody></table>
+
+<p>The "switchToFrame" command is used to select which frame within a window <em class="rfc2119" title="MUST">MUST</em> be used as the context for handling future commands. All frame switching is taken from the current context from which commands are currently being handled. The "<code>id</code>" parameter can be one of a string, number of an element. WebDriver implementations <em class="rfc2119" title="MUST">MUST</em> determine which frame to select using the following algorithm:
+
+</p><ol>
+    <li>If the "id" is a number the current context is set to the equivalent of the JS expression "window.frames[n]" where "n" is the number and "window" is the DOM window represented by the current context.</li>
+    <li>If the "id" is null, the current context is set to the default context.</li>
+    <li>If the "id" is a string:
+        <ol>
+            <li>If the JS expression "window.frames[id]" evaluated in the current context returns a window, where "id" is the value of the the "id" parameter, the current context is set to that.</li>
+            <li>Otherwise for each value of "window.frames" (referred to as <code>win</code>):
+                <ol>
+                    <li>If <code>win</code> has a "name" property or attribute equal to the "id" parameter, this becomes the current context.</li>
+                    <li>If <code>win</code> has an "id" property or attribute equal to the "id" parameter, this becomes the current context.</li>
+                </ol>
+            </li>
+        </ol>
+    </li>
+    <li>If the "id" represents a <code>WebElement</code>, and the corresponding DOM element represents a FRAME or an IFRAME, and the WebElement is part of the current context, the "window" property of that DOM element becomes the current context.</li>
+</ol>
+
+<p>In all cases if no match is made a "<code><a href="#status-no-such-frame">no such frame</a></code>" status code <em class="rfc2119" title="MUST">MUST</em> be returned.</p>
+
+<p>If the indicated frame exists, frame switching <em class="rfc2119" title="MUST">MUST</em> succeed even if doing so would violate the normal security constraints in place within the Javascript sandbox.</p>
+
+</section>
+
+<section id="switching-to-hosted-shadow-doms">
+	<h3><span class="secno">7.4 </span>Switching to Hosted Shadow DOMs</h3>
+
+	<table class="simple">
+		<tbody><tr>
+			<th>Capability Name</th><th>Type</th>
+		</tr>
+		<tr>
+			<td><a id="capability-shadowDom"></a><span class="capability-shadowDom">shadowDom</span></td><td>boolean</td>
+		</tr>
+	</tbody></table>
+
+	<p>If a browser implements the Shadow DOM specification, it <em class="rfc2119" title="MUST">MUST</em> support the ability to access shadow subtrees. This is done using the switchToSubTree command:</p>
+
+	<table class="simple">
+		<tbody><tr>
+			<td>Command Name</td>
+			<td>switchToSubTree</td>
+		</tr>
+		<tr>
+			<td>Parameters</td>
+			<td>"element" {!WebElement=} The shadow host.<br>
+				"index" {int} The index of the shadow subtree. Defaults to 0.</td>
+		</tr>
+		<tr>
+	    	<td>Return Value</td>
+	   		<td>None</td>
+		</tr>
+		<tr>
+	    	<td>Errors</td>
+	    	<td><code><a href="#status-no-such-dom">no such dom</a></code> if the element is not a shadow host, or if the indexed shadow subtree does not exist.</td>
+		</tr>
+	</tbody></table>
+
+<p>When executing this command, Shadow DOM subtrees are indexed in the order that they were added to the host. That is, the "oldest" subtree is at index 0, and the "youngest" subtree at the highest sequentially numbered index.</p>
+
+<p>Where the Shadow DOM is supported, all commands in WebDriver <em class="rfc2119" title="MUST">MUST</em> operate on the currently selected Shadow DOM subtree unless the command itself declares otherwise.</p>
+</section>
+
+</section>
+<section id="running-without-window-focus">
+  <!-- TODO(simon): identify a better location for this -->
+  <!--OddPage--><h2><span class="secno">8. </span>Running Without Window Focus</h2>
+  <p>All browsers must comply with the <a href="http://www.w3.org/TR/html5/editing.html#focus">focus</a> section of
+  the [<cite><a class="bibref" href="#bib-HTML5">HTML5</a></cite>] spec. In particular, the requirement that the active element within a top-level browsing
+  context be independent of whether or not the top-level browsing context itself
+  has system focus <em class="rfc2119" title="MUST">MUST</em> be followed.</p>
+
+  <div class="note"><div class="note-title"><span>Note</span></div><p class="">This requirement is put in place to allow efficient machine
+  utilization when using the WebDriver API to control several browsers
+  independently on the same desktop</p></div>
+</section>
+<section id="elements">
+  <!--OddPage--><h2><span class="secno">9. </span>Elements</h2>
+  <p>One of the key abstractions of the WebDriver API is the 
+  <a href="#idl-def-WebElement" class="idlType"><code>WebElement</code></a> interface. Each instance of this interface represents an 
+  <a href="http://www.w3.org/TR/2012/WD-dom-20120105/#interface-element">Element</a> as defined in the
+  [<cite><a class="bibref" href="#bib-DOM4">DOM4</a></cite>] specification. Because the WebDriver API is designed to allow users to interact with apps as if
+  they were actual users, the capabilities offered by the 
+  <code>WebElement</code> interface are somewhat different from those offered by the DOM Element interface.</p>
+
+  <p>Each WebElement instance must have an ID, which is distinct from the value
+  of the DOM Element's "id" property. The ID for every WebElement representing the same
+  underlying DOM Element <em class="rfc2119" title="MUST">MUST</em> be the same. The IDs used to refer to different
+  underlying DOM Elements <em class="rfc2119" title="MUST">MUST</em> be unique within the session over the entire duration of the session.</p>
+
+  <div class="note"><div class="note-title"><span>Note</span></div><div class="">
+    <p>This requirement around WebElement IDs allows for efficient equality
+    checks when the WebDriver API is being used out of process.</p>
+  </div></div>
+
+  <pre class="idl"><span class="idlInterface" id="idl-def-WebElement">interface <span class="idlInterfaceID">WebElement</span> {
+<span class="idlAttribute">    readonly attribute <span class="idlAttrType"><a>DOMString</a></span> <span class="idlAttrName"><a href="#widl-WebElement-id">id</a></span>;</span>
+};</span></pre><section id="attributes-1"><h3><span class="secno">9.1 </span>Attributes</h3><dl class="attributes"><dt id="widl-WebElement-id"><code>id</code> of type <span class="idlAttrType"><a>DOMString</a></span>, readonly</dt><dd>The WebDriver ID of this particular element. This <em class="rfc2119" title="SHOULD">SHOULD</em> be a UUID.</dd></dl></section>
+
+  <p>This section of the specification covers finding elements. Later sections deal with querying and interacting with
+  these located elements. The primary interface used by the WebDriver API for locating elements is the 
+  <code>SearchContext</code>.</p>
+  <section id="lists-of-webelements">
+    <h3><span class="secno">9.2 </span>Lists of WebElements</h3>
+    
+    <p>The primary grouping of <a href="#idl-def-WebElement" class="idlType"><code>WebElement</code></a> instances is an <code>array</code> of <a href="#idl-def-WebElement" class="idlType"><code>WebElement</code></a> instances</p>
+    
+    <p>A reference to an WebElement is obtained via a SearchContext. The key
+    interfaces are:</p>
+  </section>
+  <section>
+    <pre class="idl"><span class="idlInterface" id="idl-def-Locator">interface <span class="idlInterfaceID">Locator</span> {
+<span class="idlAttribute">    readonly attribute <span class="idlAttrType"><a>DOMString</a></span> <span class="idlAttrName"><a href="#widl-Locator-strategy">strategy</a></span>;</span>
+<span class="idlAttribute">    readonly attribute <span class="idlAttrType"><a>DOMString</a></span> <span class="idlAttrName"><a href="#widl-Locator-value">value</a></span>;</span>
+};</span></pre><section><h4 id="attributes-4">Attributes</h4><dl class="attributes"><dt id="widl-Locator-strategy"><code>strategy</code> of type <span class="idlAttrType"><a>DOMString</a></span>, readonly</dt><dd>The name of the strategy that should be used to locate elements. The default value is the null value</dd><dt id="widl-Locator-value"><code>value</code> of type <span class="idlAttrType"><a>DOMString</a></span>, readonly</dt><dd>The value to pass to the element finding strategy. The default value is the null value.</dd></dl></section>
+  </section>
+  <section>
+    <pre class="idl"><span class="idlInterface" id="idl-def-SeachContext">interface <span class="idlInterfaceID">SeachContext</span> {
+<span class="idlMethod">    <span class="idlMethType"><a href="#idl-def-WebElement" class="idlType"><code>WebElement</code></a>[]</span> <span class="idlMethName"><a href="#widl-SeachContext-findElements-WebElement-Locator-locator">findElements</a></span> (<span class="idlParam"><span class="idlParamType"><a href="#idl-def-Locator" class="idlType"><code>Locator</code></a></span> <span class="idlParamName">locator</span></span>);</span>
+<span class="idlMethod">    <span class="idlMethType"><a href="#idl-def-WebElement" class="idlType"><code>WebElement</code></a></span>   <span class="idlMethName"><a href="#widl-SeachContext-findElement-WebElement-Locator-locator">findElement</a></span> (<span class="idlParam"><span class="idlParamType"><a href="#idl-def-Locator" class="idlType"><code>Locator</code></a></span> <span class="idlParamName">locator</span></span>);</span>
+};</span></pre><section><h4 id="methods-5">Methods</h4><dl class="methods"><dt id="widl-SeachContext-findElement-WebElement-Locator-locator"><code>findElement</code></dt><dd><table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">locator</td><td class="prmType"><code><a href="#idl-def-Locator" class="idlType"><code>Locator</code></a></code></td><td class="prmNullFalse">✘</td><td class="prmOptFalse">✘</td><td class="prmDesc"></td></tr></table><div><em>Return type: </em><code><a href="#idl-def-WebElement" class="idlType"><code>WebElement</code></a></code></div></dd><dt id="widl-SeachContext-findElements-WebElement-Locator-locator"><code>findElements</code></dt><dd><table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">locator</td><td class="prmType"><code><a href="#idl-def-Locator" class="idlType"><code>Locator</code></a></code></td><td class="prmNullFalse">✘</td><td class="prmOptFalse">✘</td><td class="prmDesc"></td></tr></table><div><em>Return type: </em><code><a href="#idl-def-WebElement" class="idlType"><code>WebElement</code></a>[]</code></div></dd></dl></section>
+  </section>
+
+  <section id="element-location-strategies">
+    <h3><span class="secno">9.3 </span>Element Location Strategies</h3>
+
+    <p>All element location strategies <em class="rfc2119" title="MUST">MUST</em> return elements in the order in which they appear in the current document.</p>
+    <section id="css-selectors">
+    <h4><span class="secno">9.3.1 </span>CSS Selectors</h4>
+      <table class="simple">
+        <tbody><tr>
+          <th>Capability Name</th>
+          <th>Type</th>
+        </tr>
+        <tr>
+          <td><a id="capability-cssSelectors"></a><span class="capability-cssSelectors">cssSelectors</span></td>
+          <td>boolean</td>
+        </tr>
+      </tbody></table>
+      <p>Strategy name: css selector</p>
+      <p>If a browser supports the 
+      <a href="http://dev.w3.org/2006/webapi/selectors-api/">CSS Selectors API</a> ([<cite><a class="bibref" href="#bib-SELECTORS-API">SELECTORS-API</a></cite>]) it <em class="rfc2119" title="MUST">MUST</em> support locating elements by
+      CSS Selector. If the browser does not support the browser CSS Selector spec it <em class="rfc2119" title="MAY">MAY</em> choose to implement locating
+      by this mechanism. If the browser can support locating elements by CSS Selector, it <em class="rfc2119" title="MUST">MUST</em> set the "cssSelector" capability to boolean true when responding to the <a href="#creating-a-session">"newSession" command</a>. Elements <em class="rfc2119" title="MUST">MUST</em> be returned in the same order as if "<code>querySelectorAll</code>" had been called with the <code>Locator</code>'s <code>value</code>. Compound selectors are allowed.</p>
+    </section>
+    <section id="ecmascript">
+      <h4><span class="secno">9.3.2 </span>ECMAScript</h4>
+      <p>Finding elements by ecmascript is covered in the <a href="#ecmascript">ecmascript part of this spec</a>.</p>
+    </section>
+    <section id="element-id">
+      <h4><span class="secno">9.3.3 </span>Element ID</h4>
+      <p>Strategy name: id</p>
+      <p>This strategy <em class="rfc2119" title="MUST">MUST</em> be supported by all WebDriver implementations.</p>
+      <p>The HTML5 specification ([<cite><a class="bibref" href="#bib-HTML5">HTML5</a></cite>]) states that <a href="http://www.w3.org/TR/html5/dom.html#the-id-attribute">element
+        IDs must be unique within their home subtree</a>. Sadly, this uniqueness
+      requirement is not always met. Consequently, this strategy is equally
+      valid for finding a single element or groups of elements. In the case of
+      finding a single WebElement, this <em class="rfc2119" title="MUST">MUST</em> be functionally identical to a call
+      to "<a href="http://www.w3.org/TR/2012/WD-dom-20120105/#dom-document-getelementbyid">document.getElementById()</a>"
+      from the Web DOM Core specification ([<cite><a class="bibref" href="#bib-DOM4">DOM4</a></cite>]). When finding multiple
+      elements, this is equivalent to an CSS query of "<code>#value</code>" where "value" is the ID being searched for with all "'" characters being properly escaped..</p>
+    </section>
+    <section id="link-text">
+      <h4><span class="secno">9.3.4 </span>Link Text</h4>
+      <p>Strategy name: link text</p>
+      <p>This strategy <em class="rfc2119" title="MUST">MUST</em> be supported by all WebDriver implementations. </p>
+      <p>This strategy <em class="rfc2119" title="MUST">MUST</em> return all <a href="http://www.w3.org/TR/html5/text-level-semantics.html#the-a-element">"a"</a> elements with visible text exactly and case sensitively equal to the term being searched for.</p>
+      <div class="note"><div class="note-title"><span>Note</span></div><div class="">
+	    <p>This is equivalent to:</p>
+	    <pre>		  elements = driver.find_elements(by = By.TAG_NAME, value = "a")
+		  result = []
+		  for element in elements:
+		    text = element.get_text()
+		    if text == search_term:
+		      result.append(element)
+		</pre>
+		<p>Where "search_term" is the link text being searched for, and "result" contains the list of elements to return.</p>
+	  </div></div>
+    </section>
+    <section id="partial-link-text">
+      <h4><span class="secno">9.3.5 </span>Partial Link Text</h4>
+      <p>Strategy name: partial link text</p>
+      <p>This strategy <em class="rfc2119" title="MUST">MUST</em> be supported by all WebDriver implementations.</p>
+      <p>This strategy is very similar to <a href="#link-text">link text</a>, but rather than matching the entire string, only a subset needs to match. That is, this <em class="rfc2119" title="MUST">MUST</em> return all <a href="http://www.w3.org/TR/html5/text-level-semantics.html#the-a-element">"a"</a> elements with visible text that partially or completely and case sensitively matches the term being searched for.</p>
+      <div class="note"><div class="note-title"><span>Note</span></div><div class="">
+	    <p>This is equivalent to:</p>
+	    <pre>		  elements = driver.find_elements(by = By.TAG_NAME, value = "a")
+		  result = []
+		  for element in elements:
+		    text = element.get_text()
+		    if text.find(seach_term) != -1:
+		      result.append(element)
+		</pre>
+		<p>Where "search_term" is the link text being searched for, and "result" contains the list of elements to return.</p>
+	  </div></div>
+    </section>
+    <section id="xpath">
+      <h4><span class="secno">9.3.6 </span>XPath</h4>
+      <p>Strategy name: xpath</p>
+      <p>All WebDriver implementations <em class="rfc2119" title="MUST">MUST</em> support finding elements by XPath 1.0 [<cite><a class="bibref" href="#bib-XPATH">XPATH</a></cite>] with the <a href="http://dev.w3.org/html5/spec/Overview.html#interactions-with-xpath-and-xslt">edits from section 3.3</a> of the [<cite><a class="bibref" href="#bib-HTML5">HTML5</a></cite>] specification made. If no native support is present in the browser, a pure JS implementation <em class="rfc2119" title="MAY">MAY</em> be used. When called, the returned values <em class="rfc2119" title="MUST">MUST</em> be equivalent of calling "<a href="http://www.w3.org/TR/DOM-Level-3-XPath/xpath.html#XPathEvaluator-evaluate">evaluate</a>" function from the DOM Level 3 XPath spec [<cite><a class="bibref" href="#bib-DOM-LEVEL-3-XPATH">DOM-LEVEL-3-XPATH</a></cite>] with the result type set to "<a href="http://www.w3.org/TR/DOM-Level-3-XPath/xpath.html#XPathResult-ORDERED-NODE-SNAPSHOT-TYPE">ORDERED_NODE_SNAPSHOT_TYPE</a> (7).</p>
+    </section>
+  </section>
+</section>
+<section id="reading-element-state">
+<!--OddPage--><h2><span class="secno">10. </span>Reading Element State</h2>
+  <section id="determining-visibility">
+    <h3><span class="secno">10.1 </span>Determining Visibility</h3>
+      <p>The following steps <em class="rfc2119" title="MUST">MUST</em> be used to determine if an element is visible to a user. This specification refers to this as the element being "shown".</p>
+      <ul>
+        <li>The element <em class="rfc2119" title="MUST">MUST</em> have a height and width greater than 0px.</li>
+        <li>The element <em class="rfc2119" title="MUST NOT">MUST NOT</em> be visible if that element, or any of its ancestors,
+        is hidden or has a CSS display property that is none.</li>
+        <li>The element <em class="rfc2119" title="MUST NOT">MUST NOT</em> be visible if there is a <a href="http://www.w3.org/TR/css3-transforms/">CSS3 Transform</a>
+        property that moves the element out of the viewport and can not be scrolled to.</li>
+        <li>OPTIONs and OPTGROUP elements are treated as special cases, they are considered shown if and only if the enclosing select element is visible.</li>
+        <li>MAP elements are shown if and only if the image it uses is visible. Areas within
+        a map are shown if the enclosing MAP is visible.</li>
+        <li>Any INPUT elements of "type=hidden" are not visible</li>
+        <li>Any NOSCRIPT elements <em class="rfc2119" title="MUST NOT">MUST NOT</em> be visible if Javascript is enabled.</li>
+        <li>The element <em class="rfc2119" title="MUST NOT">MUST NOT</em> be visible if any ancestor in the element's transitive closure of <a href="http://www.w3.org/TR/cssom-view/#offset-attributes">offsetParents</a> has a fixed size, and has the CSS style of "overflow:hidden", and the element's location is not within the fixed size of the parent.</li>
+      </ul>
+      
+    <div class="note"><div class="note-title"><span>Note</span></div><p class="">
+      Essentially, this attempts to model whether or not a user of the browser could possibly find a way to view the <code>WebElement</code> without resizing the browser window.
+    </p></div>
+    <table class="simple">
+      <tbody><tr>
+        <td>Command Name</td>
+        <td>isDisplayed</td>
+      </tr>
+      <tr>
+        <td>Parameters</td>
+        <td>"id" {DOMString} The ID of the WebElement on which to operate.
+        </td>
+      </tr>
+      <tr>
+        <td>Return Value</td>
+        <td>{boolean} Whether the element is shown.</td>
+      </tr>
+      <tr>
+        <td>Errors</td>
+        <td><code><a href="#status-stale-element-reference">stale element reference</a></code> if the element referenced is no longer attached to the DOM.</td>
+      </tr>
+    </tbody></table>
+  </section>
+  
+  <section id="determining-whether-a-webelement-is-selected">
+    <h3><span class="secno">10.2 </span>Determining Whether a WebElement Is Selected</h3>
+    <p>The remote end <em class="rfc2119" title="MUST">MUST</em> determine whether a <code>WebElement</code> is selected using the following algorithm:
+      </p><ol>
+          <li id="is_selectable">If the item is not "<code title="selectable">selectable</code>", the WebElement is not selected. A <dfn id="selectable" title="selectable">selectable</dfn> element is either an OPTION element or an INPUT element of type "<a href="http://www.w3.org/TR/html5/forms.html#checkbox-state-(type=checkbox)">checkbox</a>" or "<a href="http://www.w3.org/TR/html5/forms.html#radio-button-state-(type=radio)">radio</a>".</li> 
+          <li>If the DOM node represented by the WebElement is an OPTION element, the "<a href="http://www.w3.org/TR/html5/forms.html#concept-option-selectedness">selectedness</a>" of the element, as defined in [<cite><a class="bibref" href="#bib-HTML5">HTML5</a></cite>] determines whether the element is selected.</li>
+          <li>Otherwise, the value of the DOM node's "<a href="http://www.w3.org/TR/html5/forms.html#attr-input-checked">checked</a>" property determines whether the element is selected. This <em class="rfc2119" title="MUST">MUST</em> reflect the element's "<a href="http://www.w3.org/TR/html5/forms.html#concept-fe-checked">checkedness</a>" as defined in [<cite><a class="bibref" href="#bib-HTML5">HTML5</a></cite>].</li>
+      </ol>
+    <table class="simple">
+      <tbody><tr>
+        <td>Command Name</td>
+        <td>isSelected</td>
+      </tr>
+      <tr>
+        <td>Parameters</td>
+        <td>"id" {string} The ID of the WebElement on which to operate.
+        </td>
+      </tr>
+      <tr>
+        <td>Return Value</td>
+        <td>{boolean} Whether the element is selected, according to the above algorithm.</td>
+      </tr>
+      <tr>
+        <td>Errors</td>
+        <td><code><a href="#status-stale-element-reference">stale element reference</a></code> if the element referenced is no longer attached to the DOM.</td>
+      </tr>
+    </tbody></table>
+  </section>
+  
+  <section id="reading-attributes-and-properties">
+    <h3><span class="secno">10.3 </span><a id="attributes-and-properties"></a>Reading Attributes and Properties</h3>
+    <p>Although the [<cite><a class="bibref" href="#bib-HTML5">HTML5</a></cite>] spec is very clear about the difference between the properties and attributes of a DOM element, users are frequently confused between the two. Because of this, the WebDriver API offers a single command ("getElementAttribute") which covers the case of returning either of the value of a DOM element's property or attribute. If a user wishes to refer specifically to an attribute or a property, they should evaluate Javascript in order to be unambiguous. In this section, the "attribute" with name <code>name</code> shall refer to the result of calling the Javascript "getAttribute" function on the element, with the following exceptions:</p>
+    <ul>
+      <li>If, in the current rendering mode, the content attribute <code>name</code> reflects a boolean IDL attribute, as per <a href="http://www.whatwg.org/specs/web-apps/current-work/">the HTML specification</a>, the value <em class="rfc2119" title="MUST">MUST</em> be the string 'true' if that IDL attribute's value is true or the null value if the IDL attribute's value is false.</li>
+      <li>If the element is an OPTION element and <code>name</code> is "value" and there is no "value" attribute, then the text content of the OPTION element <em class="rfc2119" title="MUST">MUST</em> be returned, in accordance with [<cite><a class="bibref" href="#bib-HTML401">HTML401</a></cite>] spec, specifically the section on <a href="http://www.w3.org/TR/1999/REC-html401-19991224/interact/forms.html#adef-value-OPTION">pre-selected options</a>. The text content <em class="rfc2119" title="MUST">MUST</em> be the result of calling the "getElementText" command on the OPTION element.</li>
+      <li>If the element is selectable, and <code>name</code> is "selected", or the element is an INPUT element of type "checkbox" or "radio" and <code>name</code> is "checked", return the string 'true' if the element is selected, and the null value otherwise.</li>
+      <li>If <code>name</code> is "style", the value returned <em class="rfc2119" title="MUST">MUST</em> be <a href="http://dev.w3.org/csswg/cssom/#serialize-a-css-rule">serialized as defined</a> in the [<cite><a class="bibref" href="#bib-CSSOM-VIEW">CSSOM-VIEW</a></cite>] spec. Notably, css property names <em class="rfc2119" title="MUST">MUST</em> be cased the same as specified in in section 6.5.1 of the [<cite><a class="bibref" href="#bib-CSSOM-VIEW">CSSOM-VIEW</a></cite>] spec.
+        <ul>
+          <li>Consequently, it <em class="rfc2119" title="SHOULD">SHOULD</em> be equivalent to obtaining the "cssText" property, with the additional constraint that the same value <em class="rfc2119" title="MUST">MUST</em> be returned after a round trip through "executeScript". That is, the following pseudo-code <em class="rfc2119" title="MUST">MUST</em> be true (where "driver" is a WebDriver instance, and "element" is a WebElement):
+<pre class="code">var style = element.getAttribute('style');
+driver.executeScript('arguments[0].style = arguments[1]', element, style);
+var recovered = element.getAttribute('style');
+assertEquals(style, recovered);
+</pre>
+          </li>
+          <li>Color property values <em class="rfc2119" title="MUST">MUST</em> be standardized to rgba format, matching the regular expression: <code>rgba(\d+,\s*\d+,\s*\d+\s*(,\s*(1|0(\.\d+)?)))</code>.</li>
+        </ul></li>
+      <li>If the value is expected to be a URL (see the below table), return the property named <code>name</code>, i.e. a fully resolved URL. A non-normative set of these properties is given below:
+        <table class="simple">
+            <tbody><tr>
+                <th>Tag name</th>
+                <th>"name" value</th>
+            </tr>
+            <tr>
+                <td>A</td>
+                <td>href</td>
+            </tr>
+            <tr>
+                <td>IMG</td>
+                <td>src</td>
+            </tr>
+        </tbody></table>
+      </li>
+      <li>If <code>name</code> is in the below table, and the above stages have not yielded a defined, non-null value, the value of the aliased attribute in the table <em class="rfc2119" title="MUST">MUST</em> be used as the argument to a recursive call to <code>getElementAttribute</code>:
+      <table class="simple">
+        <tbody><tr>
+          <th>Original property name</th>
+          <th>Aliased property name</th>
+        </tr>
+        <tr>
+          <td>class</td>
+          <td>className</td>
+        </tr>
+        <tr>
+          <td>readonly</td>
+          <td>readOnly</td>
+        </tr>
+      </tbody></table></li>
+    </ul>
+    <div class="note"><div class="note-title"><span>Note</span></div><p class="">These aliases provide the commonly used names for element properties.</p></div>
+
+    <table class="simple">
+      <tbody><tr>
+        <td>Command Name</td>
+        <td>getElementAttribute</td>
+      </tr>
+      <tr>
+        <td>Parameters</td>
+        <td>"id" {DOMString} The ID of the WebElement on which to operate.<br>
+            "name" {DOMString} The name of the property of attribute to return.</td>
+      </tr>
+      <tr>
+          <td>Return Value</td>
+          <td>{DOMString|null} The value returned by the above algorithm, coerced to a nullable string, or null if no value is defined.</td>
+      </tr>
+      <tr>
+          <td>Errors</td>
+          <td><code><a href="#status-stale-element-reference">stale element reference</a></code> If the element is no longer attached to the DOM.</td>
+      </tr>
+    </tbody></table>
+  </section>
+  <section id="rendering-text">
+   <h3><span class="secno">10.4 </span>Rendering Text</h3>
+   <p>All WebDriver implementations <em class="rfc2119" title="MUST">MUST</em> support getting the <a href="#determining-visibility">visible</a> text of a <code>WebElement</code>, with excess whitespace compressed.</p>
+   
+<p>The following definitions are used in this section:
+    </p><dl>
+        <dt id="text.whitespace">Whitespace</dt>
+        <dd>Any text that matches the ECMAScript regular expression class <code>\s</code>.
+        
+        </dd><dt id="text.whitespace-nbsp">Whitespace excluding non-breaking spaces</dt>
+        <dd>Any text that matches the ECMAScript regular expression <code>[^\S\xa0]</code>
+            
+        </dd><dt id="text.blocklevel">Block level element</dt>
+        <dd>A block-level element is one which is not a table cell, and whose effective CSS display style is not in the set ['inline', 'inline-block', 'inline-table', 'none', 'table-cell', 'table-column', 'table-column-group']</dd>
+        
+        <dt id="text.horizontal">Horizontal whitespace characters</dt>
+        <dd>Horizontal whitespace characters are defined by the ECMAScript regular expression <code>[\x20\t\u2028\u2029]</code>.</dd>
+    </dl>
+
+<p>The expected return value is roughly what a text-only browser would display. This means that on browsers that support the Shadow DOM, this algorithm <em class="rfc2119" title="MUST">MUST</em> operate on the section of the rendered DOM underneath the DOM node represented by this WebElement. The algorithm for determining this text is as follows:</p>
+
+<p>Let <code>lines</code> equal an empty array. Then:
+</p><ol>  
+    <li><span id="text.1">For</span> each <code>child</code> of node, at time of execution, in order:
+        <ol>
+            <li>Get whitespace, text-transform, and then, if <code>child</code> is:
+                <ul>
+                    <li>a node which is not <a href="#determining-visibility">visible</a>, do nothing</li>
+                    <li>a [<cite><a class="bibref" href="#bib-DOM4">DOM4</a></cite>] <a href="http://www.w3.org/TR/2012/WD-dom-20120105/#interface-text">text node</a> let <code>text</code> equal the <code>nodeValue</code> property of <code>child</code>. Then:
+                        <ol>
+                            <li>Remove any zero-width spaces (\u200b), form feeds (\f) or vertical tab feeds (\v) from <code>text</code>.</li>
+                            <li>Canonicalize any recognized single newline sequence in <code>text</code> to a single newline (greedily matching <code>(\r\n|\r|\n)</code> to a single \n)</li>
+                            <li>If the parent's effective CSS whitespace style is 'normal' or 'nowrap' replace each newline (\n) in <code>text</code> with a single space character (\x20). If the parent's effective CSS whitespace style is 'pre' or 'pre-wrap' replace each <a href="#text.horizontal">horizontal whitespace character</a> with a non-breaking space character (\xa0). Otherwise replace each sequence of <a href="#text.horizontal">horizontal whitespace characters</a> except non-breaking spaces (\xa0) with a single space character</li>
+                            <li>Apply the parent's effective CSS text-transform style as per the <a href="http://www.w3.org/TR/CSS21/text.html#propdef-text-transform">CSS 2.1 specification</a> ([<cite><a class="bibref" href="#bib-CSS21">CSS21</a></cite>])</li>
+                            <li>If <code>last(lines)</code> ends with a space character and <code>text</code> starts with a space character, trim the first character of <code>text</code>.</li>
+                            <li>Append <code>text</code> to <code>last(lines)</code> in-place</li>
+                        </ol>
+                    </li>
+                    <li>an element which is <a href="#determining-visibility">visible</a>. If the element is a:
+                        <ul>
+                            <li>BR element: Push '' to <code>lines</code> and continue</li>
+                            <li><a href="#text.blocklevel">Block-level</a> element and if <code>last(lines)</code> is not '', push '' to <code>lines</code>.</li>
+                        </ul>
+                    And then recurse depth-first to <a href="#text.1">step 1</a> at the beginning of the algorithm with <code>child</code> set to the current element</li>
+                    <li>If element is a TD element, or the effective CSS display style is 'table-cell', and last(lines) is not '', and <code>last(lines)</code> does not end with whitespace append a single space character to <code>last(lines)</code> [Note: Most innerText implementations append a \t here]</li>
+                    <li>If element is a block-level element: push '' to <code>lines</code></li>
+                </ul>
+            </li>
+        </ol>
+    </li>
+    <li>The string <em class="rfc2119" title="MUST">MUST</em> then have the white space normalised as defined in the [<cite><a class="bibref" href="#bib-XPATH">XPATH</a></cite>] <a href="http://www.w3.org/TR/xpath/#function-normalize-space">normalize-space function</a> which is then returned.</li>
+</ol>
+
+</section>
+</section>
+<section id="executing-javascript">
+  <!--OddPage--><h2><span class="secno">11. </span>Executing Javascript</h2>
+  <div class="note"><div class="note-title"><span>Note</span></div><div class="">
+      <p>Open questions: What happens if a user's JS triggers a modal dialog?
+      Blocking seems like a reasonable idea, but there is an assumption that
+      WebDriver is not threadsafe.
+      
+      What happens to unhandled JS errors? Caused by a user's JS? Caused by JS
+      on a page? How does a user of the API obtain the list of errors? Is that
+      list cleared upon read?
+  </p></div></div>
+  
+  <p>If a browser supports JavaScript and JavaScript is enabled, it <em class="rfc2119" title="MUST">MUST</em> set the "javascriptEnabled" capability to true, and it <em class="rfc2119" title="MUST">MUST</em> support the execution of arbitrary JavaScript.</p>
+  <table class="simple">
+    <tbody><tr><th>Capability Name</th><th>Type</th></tr>
+    <tr><td><a id="capability-javascriptEnabled"></a><span class="capability-javascriptEnabled">javascriptEnabled</span></td><td>boolean</td></tr>
+  </tbody></table>
+  
+<section id="javascript-command-parameters">
+<h3><span class="secno">11.1 </span>Javascript Command Parameters</h3>
+      
+<p> The <code>Argument</code> type is defined as being <code>{(number|boolean|DOMString|WebElement|dictionary|Argument[])?}</code>
+      
+</p><pre class="idl"><span class="idlInterface" id="idl-def-JavascriptCommandParameters">interface <span class="idlInterfaceID">JavascriptCommandParameters</span> {
+<span class="idlAttribute">    readonly attribute <span class="idlAttrType"><a>DOMString</a></span>  <span class="idlAttrName"><a href="#widl-JavascriptCommandParameters-script">script</a></span>;</span>
+<span class="idlAttribute">    readonly attribute <span class="idlAttrType"><a>Argument</a>[]</span> <span class="idlAttrName"><a href="#widl-JavascriptCommandParameters-args">args</a></span>;</span>
+};</span></pre><section id="attributes-2"><h4><span class="secno">11.1.1 </span>Attributes</h4><dl class="attributes"><dt id="widl-JavascriptCommandParameters-args"><code>args</code> of type array of <span class="idlAttrType"><a>Argument</a></span>, readonly</dt><dd>The parameters to the function defined by <code>script</code>.</dd><dt id="widl-JavascriptCommandParameters-script"><code>script</code> of type <span class="idlAttrType"><a>DOMString</a></span>, readonly</dt><dd>The JavaScript to execute, in the form of a Function body.</dd></dl></section>          
+</section>
+
+<p>When executing Javascript, it <em class="rfc2119" title="MUST">MUST</em> be possible to reference the <code>args</code> parameter using the function's <code>arguments</code> object. The arguments <em class="rfc2119" title="MUST">MUST</em> be in the same order as defined in <code>args</code>. Each WebDriver implementation <em class="rfc2119" title="MUST">MUST</em> preprocess the values in <code>args</code> using the following algorithm:
+    
+</p><p id="JS-args-preprocess">For each index, <code>index</code> in <code>args</code>, if <code>args[index]</code> is...
+    </p><ol>
+        <li>a number, boolean, DOMString, or <code>null</code>, then let <code>args[index] = args[index]</code>.</li>
+        <li>an array, then recursively apply this algorithm to <code>args[index]</code> and assign the result to <code>args[index]</code>.</li>
+        <li>a dictionary, then recursively apply this algorithm to each value in <code>args[index]</code> and assign the result to <code>args[index]</code>.</li>
+        <li>a <a href="#elements">WebElement</a>, then:
+            <ol>
+                <li>If the element's ID does not represent a DOMElement, or it represents a DOMElement that is no longer attached to the document's tree, then the WebDriver implementation <em class="rfc2119" title="MUST">MUST</em> immediately abort the command and return a <code title="stale-element-reference"><a href="#status-stale-element-reference">stale element reference</a></code> error.</li>
+                <li>Otherwise, let <code>args[index]</code> be the underlying DOMElement.</li>
+            </ol>
+         </li>
+         <li>Otherwise WebDriver implementations <em class="rfc2119" title="MAY">MAY</em> throw an <code><a href="#status-unknown-error">unknown error</a></code> indicating the index of the unhandled parameter but <em class="rfc2119" title="SHOULD">SHOULD</em> attempt to convert the value into a dictionary.</li>
+     </ol>
+     
+  <section id="synchronous-javascript-execution">
+  <h3><span class="secno">11.2 </span>Synchronous Javascript Execution</h3>
+  
+  <table class="simple">
+    <tbody><tr>
+      <td>Command Name</td>
+      <td>executeScript</td>
+    </tr>
+    <tr>
+      <td>Parameters</td>
+      <td>"script" {DOMString} The script to execute.<br>
+          "args" {Argument[]} The script arguments.
+      </td>
+    </tr>
+    <tr>
+      <td>Return Value</td>
+      <td>{Argument} The value returned by the script, or null.</td>
+    </tr>
+    <tr>
+      <td>Errors</td>
+      <td>
+          <code><a href="#status-javascript-error">javascript error</a></code> if the executing script threw an exception.<br>
+          <code><a href="#status-stale-element-reference">stale element reference</a></code> if a WebElement referenced is no longer attached to the DOM.<br>
+          <code><a href="#status-unknown-error">unknown error</a></code> if an argument or the return value is of an unhandled type.
+      </td>
+    </tr>
+  </tbody></table>
+  
+  <p>When executing JavaScript, the WebDriver implementations <em class="rfc2119" title="MUST">MUST</em> use the following algorithm:
+  </p><ol>
+    <li>Let <code>window</code> be the <a href="http://www.w3.org/TR/Window/">Window</a> object for WebDriver's current <a href="#where-commands-are-handled">command context</a>.
+    </li><li>Let <code>script</code> be the DOMString from the command's <code>script</code> parameter.
+    </li><li>Let <code>fn</code> be the Function object created by executing <code>new Function(script);</code>
+    </li><li>Let <code>args</code> be the JavaScript array created by the pre-processing algorithm defined <a href="#JS-args-preprocess">above</a>.
+    </li><li>Invoke <code>fn.apply(window, args);</code>
+    </li><li>If step #5 threw, then:
+      <ol>
+        <li>Let <code>error</code> be the thrown value.
+        </li><li>Set the response's status <a href="#attributes-1">status</a> to <code><a href="#status-javascript-error">javascript error</a></code>.
+        </li><li>Set the response value to a dictionary, <code>dict</code>.
+        </li><li>If <code>error</code> is an Error, then set a "message" entry in <code>dict</code> whose value is the DOMString defined by <code>error.message</code>.
+        </li><li>Otherwise, set a "message" entry in <code>dict</code> whose value is the DOMString representation of <code>error</code>.
+      </li></ol>
+    </li><li>Otherwise:
+      <ol>
+        <li>Let <code>result</code> be the value returned by the function in step #5.
+        </li><li>Set the command's response <a href="#attributes-1">status</a> to <code><a href="#status-success">success</a></code>.
+        </li><li>Let <code>value</code> be the result of the following algorithm:
+          <ol>
+            <li>If <code>result</code> is:
+              <ol>
+                <li><code>undefined</code> or <code>null</code>, return <code> null</code>.
+                </li><li>a number, boolean, or DOMString, return <code>result</code>.
+                </li><li>a DOMElement, then return the corresponding WebElement for that DOMElement.
+                <!-- Should there be a recursion limit? -->
+                </li><li>an array or NodeList, then return the result of recursively applying this algorithm to <code>result</code>.
+                <!-- Should there be a limit? -->
+                </li><li>an object, then return the dictionary created by recursively applying this algorithm to each property in <code>result</code>.
+              </li></ol>
+          </li></ol>
+          </li><li>Set the response value to <code>value</code>.</li>
+      </ol>
+      </li><li>Return the response.</li>
+  </ol>
+  
+  </section>
+  <section id="asynchronous-javascript-execution">
+    <h3><span class="secno">11.3 </span>Asynchronous Javascript Execution</h3>
+    
+    <table class="simple">
+      <tbody><tr>
+        <td>Command Name</td>
+        <td>executeAsyncScript</td>
+      </tr>
+      <tr>
+        <td>Parameters</td>
+        <td>"script" {DOMString} The script to execute.<br>
+            "args" {Argument[]} The script arguments.
+        </td>
+      </tr>
+      <tr>
+        <td>Return Value</td>
+        <td>{Argument} The value returned by the script, or null.</td>
+      </tr>
+      <tr>
+        <td>Errors</td>
+        <td>
+            <code><a href="#status-javascript-error">javascript error</a></code> if the executing script threw an exception.<br>
+            <code><a href="#status-stale-element-reference">stale element reference</a></code> if a WebElement referenced is no longer attached to the DOM.<br>
+            Timeout if the callback is not called within the time specified by the <a href="#timeouts">"script" timeout</a>.<br>
+            <code><a href="#status-unknown-error">unknown error</a></code> if an argument or the return value is of an unhandled type.
+        </td>
+      </tr>
+    </tbody></table>
+    
+    
+    <p>When executing asynchronous JavaScript, the WebDriver implementation <em class="rfc2119" title="MUST">MUST</em> use the following algorithm:
+      </p><ol>
+        <li>Let <code>timeout</code> be the value of the last "script" <a href="#timeouts">timeout command</a>, or 0 if no such commands have been received.</li>
+        <li>Let <code>window</code> be the <a href="http://www.w3.org/TR/Window/">Window</a> object for WebDriver's current <a href="#where-commands-are-handled">command context</a>.</li>
+        <li>Let <code>script</code> be the DOMString from the command's <code>script</code> parameter.</li>
+        <li>Let <code>fn</code> be the Function object created by executing <code>new Function(script);</code></li>
+        <li>Let <code>args</code> be the JavaScript array created by the pre-processing algorithm defined <a href="#JS-args-preprocess">above</a>.</li>
+        <li>Let <code>callback</code> be a Function object pushed to the end of <code>args</code>.</li>
+        <li>Register a one-shot timer on <code>window</code> set to fire <code>timeout</code> milliseconds in the future.</li>
+        <li>Invoke <code>fn.apply(window, args);</code></li>
+        <li>If step #8 threw, then:
+            <ol>
+                <li>Let <code>error</code> be the thrown value.</li>
+                <li>Set the response <a href="#attributes-1">status</a> to <code><a href="#status-javascript-error">javascript error</a></code>.</li>
+                <li>Set the response value to a dictionary, <code>dict</code>.</li>
+                <li>If <code>error</code> is an Error, then set a "message" entry in <code>dict</code> whose value is the DOMString defined by <code>error.message</code>.</li>
+                <li>Otherwise, set a "message" entry in <code>dict</code> whose value is the DOMString representation of <code>error</code>.</li>
+              </ol>
+        </li>
+        <li>Otherwise, the WebDriver implementation <em class="rfc2119" title="MUST">MUST</em> wait for one of the following to occur:
+            <ol>
+                <li>if the timer from step #7 fires, the WebDriver implementation <em class="rfc2119" title="MUST">MUST</em> immediately set the response status to Timeout and return.</li>
+                <li>if the <code>window</code> fires an <code>unload</code> event, the WebDriver implementation <em class="rfc2119" title="MUST">MUST</em> immediately set the response status to JavascriptError and return with the error message set to "Javascript execution context no longer exists.".</li>
+                <li>if the <code>callback</code> function is invoked, then:
+                      <ol>
+                        <li>Let <code>result</code> be the first argument passed to <code>callback</code>.</li>
+                        <li>Set the command's response <a href="#attributes-1">status</a> to Success.</li>
+                        <li>Let <code>value</code> be the result of the following algorithm:
+                          <ol>
+                            <li>If <code>result</code> is:
+                              <ol>
+                                <li><code>undefined</code> or <code>null</code>, return <code> null</code>.</li>
+                                <li>a number, boolean, or DOMString, return <code>result</code>.</li>
+                                <li>a DOMElement, then return the corresponding WebElement for that DOMElement.</li>
+                                <!-- Should there be a recursion limit? -->
+                                <li>an array or NodeList, then return the result of recursively applying this algorithm to <code>result</code>. WebDriver implementations <em class="rfc2119" title="SHOULD">SHOULD</em> limit the recursion depth.</li>
+                                <!-- Should there be a limit? -->
+                                <li>an object, then return the dictionary created by recursively applying this algorithm to each property in <code>result</code>.</li>
+                              </ol>
+                             </li>
+                          </ol>
+                        </li>
+                        <li>Set the command's response value to <code>value</code>.</li>
+                      </ol>
+                    </li>
+                    <li>Return the response.</li>
+                  </ol>
+              </li>
+             </ol>
+  </section>
+  <section id="reporting-errors">
+    <h3><span class="secno">11.4 </span>Reporting Errors</h3>
+    <p></p>
+  </section>
+</section>
+<section id="cookies"> 
+  <!--OddPage--><h2><span class="secno">12. </span>Cookies</h2>
+  <p>This section describes the interaction with
+  <a href="http://www.w3.org/TR/DOM-Level-2-HTML/html.html#ID-8747038">cookies</a> 
+  as described in Web DOM Core Specification ([<cite><a class="bibref" href="#bib-DOM-LEVEL-2-CORE">DOM-LEVEL-2-CORE</a></cite>]). When retrieving 
+  and setting a cookie it <em class="rfc2119" title="MUST">MUST</em> be in the format of a <code>Cookie</code>.</p>
+  <section>
+  <p>Retrieving all cookies from the page:</p>
+  <table class="simple">
+    <tbody><tr>
+      <td>Command Name</td>
+      <td>getCookies</td>
+    </tr>
+    <tr>
+      <td>Parameters</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>Return Value</td>
+      <td>{DOMString[]} A list of ordinary cookies that are currently visible on the page.</td>
+    </tr>
+  </tbody></table>
+  
+  <p>Remote ends <em class="rfc2119" title="MUST">MUST</em> return all cookies that are available in <code>document.cookie</code> via Javascript. In addition, remote ends <em class="rfc2119" title="SHOULD">SHOULD</em> return any HTTP-Only cookies that are associated with the current page.</p>
+  
+  </section>
+  <section>
+  <p>Setting a cookie:</p>
+  <table class="simple">
+    <tbody><tr>
+      <td>Command Name</td>
+      <td>addCookie</td>
+      </tr>
+      <tr>
+        <td>Parameters</td>
+        <td>"cookie" {object} A <code>Cookie</code> defining the cookie to be added.
+        </td>
+      </tr>
+      <tr>
+        <td>Return Value</td>
+        <td>{object[]} A list of cookies in the <code>Cookie</code> format.</td>
+      </tr>
+      <tr>
+        <td>Throws</td>
+        <td><code><a href="#status-invalid-cookie-domain">invalid cookie domain</a></code> - If the cookie's domain is not visible from the current page.<br>
+            <code><a href="#status-unable-to-set-cookie">unable to set cookie</a></code> - If attempting to set a cookie on a page that does not support cookies (e.g. pages with mime-type text/plain).
+        </td>
+      </tr>
+    </tbody></table>
+  </section>
+
+  <section id="cookie">
+    <h3><span class="secno">12.1 </span>Cookie</h3>
+    <p>When returning Cookie objects, the server <em class="rfc2119" title="SHOULD">SHOULD</em> include all optional fields it is incapable of providing the information for.</p>
+    
+    <pre class="idl"><span class="idlInterface" id="idl-def-Cookie">interface <span class="idlInterfaceID">Cookie</span> {
+<span class="idlAttribute">             attribute <span class="idlAttrType"><a>DOMString</a></span> <span class="idlAttrName"><a href="#widl-Cookie-name">name</a></span>;</span>
+<span class="idlAttribute">             attribute <span class="idlAttrType"><a>DOMString</a></span> <span class="idlAttrName"><a href="#widl-Cookie-value">value</a></span>;</span>
+<span class="idlAttribute">             attribute <span class="idlAttrType"><a>DOMString</a></span> <span class="idlAttrName"><a href="#widl-Cookie-path">path</a></span>;</span>
+<span class="idlAttribute">             attribute <span class="idlAttrType"><a>DOMString</a></span> <span class="idlAttrName"><a href="#widl-Cookie-domain">domain</a></span>;</span>
+<span class="idlAttribute">             attribute <span class="idlAttrType"><a>number</a></span>    <span class="idlAttrName"><a href="#widl-Cookie-expiry">expiry</a></span>;</span>
+<span class="idlAttribute">             attribute <span class="idlAttrType"><a>boolean</a></span>   <span class="idlAttrName"><a href="#widl-Cookie-httpOnly">httpOnly</a></span>;</span>
+};</span></pre><section id="attributes-3"><h4><span class="secno">12.1.1 </span>Attributes</h4><dl class="attributes"><dt id="widl-Cookie-domain"><code>domain</code> of type <span class="idlAttrType"><a>DOMString</a></span></dt><dd>The domain the cookie is visible too. This <em class="rfc2119" title="SHOULD">SHOULD</em> be set or <em class="rfc2119" title="MUST">MUST</em> be the null value if unknown.</dd><dt id="widl-Cookie-expiry"><code>expiry</code> of type <span class="idlAttrType"><a>number</a></span></dt><dd>When the cookie expires, specified in seconds since midnight, January 1, 1970 UTC. This <em class="rfc2119" title="SHOULD">SHOULD</em> be set or <em class="rfc2119" title="MUST">MUST</em> be -1 if unknown.</dd><dt id="widl-Cookie-httpOnly"><code>httpOnly</code> of type <span class="idlAttrType"><a>boolean</a></span></dt><dd>True if this represents an HTTP-Only cookie, false otherwise.</dd><dt id="widl-Cookie-name"><code>name</code> of type <span class="idlAttrType"><a>DOMString</a></span></dt><dd>The name of the cookie. This <em class="rfc2119" title="MUST">MUST</em> be set.</dd><dt id="widl-Cookie-path"><code>path</code> of type <span class="idlAttrType"><a>DOMString</a></span></dt><dd>The cookie path. This <em class="rfc2119" title="SHOULD">SHOULD</em> be set or <em class="rfc2119" title="MUST">MUST</em> be the null value if unknown.</dd><dt id="widl-Cookie-value"><code>value</code> of type <span class="idlAttrType"><a>DOMString</a></span></dt><dd>The cookie value. This <em class="rfc2119" title="MUST">MUST</em> be set.</dd></dl></section>
+  </section>
+</section>
+<section id="timeouts-1">
+  <!--OddPage--><h2 id="timeouts"><span class="secno">13. </span>Timeouts</h2>
+  <p>This section describes how timeouts and implicit waits are handled within WebDriver</p>
+  <section>
+    <p>The "timeouts" command is used to set the value of a timeout that a command can execute
+     for.</p> 
+    <table class="simple">
+      <tbody><tr>
+        <td>Command Name</td>
+        <td>timeouts</td>
+      </tr>
+      <tr>
+        <td>Parameters</td>
+        <td>"type" {DOMString} The type of operation to set the timeout for. Valid values are: "implicit", "page load", "script"<br>
+            "ms" - {number} The amount of time, in milliseconds, that time-limited commands are permitted to run.
+        </td>
+      </tr>
+      <tr>
+        <td>Return Value</td>
+        <td>None</td>
+      </tr>
+      <tr>
+        <td>Errors</td>
+        <td>None</td>
+      </tr>
+    </tbody></table>
+    <ul>
+      <li>implicit - Set the amount of time the driver should wait when searching for elements. When searching for a single element, the driver should poll the page until an element is found or the timeout expires, whichever occurs first. When searching for multiple elements, the driver should poll the page until at least one element is found or the timeout expires, at which point it should return an empty list.<br>
+      If this command is never sent, the driver <em class="rfc2119" title="MUST">MUST</em> default to an implicit wait of 0ms.</li>
+      <li>page load - Set the amount of time the driver should wait before returning when the <a href="#page-load-strategies-1">page load stratgey</a> is not "<code>none</code>". If this limit is exceeded, the <code>get()</code> command <em class="rfc2119" title="MUST">MUST</em> return a "<code><a href="#status-timeout">timeout</a></code>" response status.</li>
+      <li>script - Set the amount of time the driver should wait when scripts are loading on to the page. </li>
+    </ul>
+  </section>
+</section>
+<section id="user-input">
+  <!--OddPage--><h2><span class="secno">14. </span>User Input</h2>
+  <p>The WebDriver API offers two ways of interacting with elements,
+  either with a set of low-level "do as I say" commands, or a
+  high-level "do as I mean" set of commands. The former are offered to
+  allow precise emulation of user input. The latter are offered as a
+  convenience to cover the common case, and can conceivably be
+  implemented on top of the lower level primitive operations.</p>
+
+  <section id="interactable-elements">
+    <h3 id="interactable"><span class="secno">14.1 </span>Interactable elements</h3>
+    <p>Some input actions require the element to be interactable. The following conditions must be met for the element to be considered interactable:
+    </p><ul>
+      <li>The element <em class="rfc2119" title="MUST">MUST</em> be visible, as defined in <a href="#determining-visibility">section 10.1</a>.</li>
+      <li>The element <em class="rfc2119" title="MUST NOT">MUST NOT</em> be disabled. "Disabled" is defined as:
+      <ul>
+        <li>If the current document is being processed as an HTML 4 document, the element <em class="rfc2119" title="MUST">MUST</em> be considered disabled if it does not support
+        the <a href="http://www.w3.org/TR/html401/interact/forms.html#adef-disabled">disabled</a>
+        attribute (according to the [<cite><a class="bibref" href="#bib-HTML401">HTML401</a></cite>] spec), or if the
+        disabled attribute is set in the case where that attribute is present.</li>
+        <li>If the currently loaded document is an HTML 5 document,
+          the element is
+          <a href="http://www.w3.org/TR/html401/interact/forms.html#adef-disabled">disabled</a>
+          as defined in the [<cite><a class="bibref" href="#bib-HTML5">HTML5</a></cite>] spec.</li>
+      </ul>
+      </li>
+    </ul>
+    </section>
+
+    <section id="low-level-commands">
+      <h3><span class="secno">14.2 </span>Low Level Commands</h3>
+      <p>The low level commands provide a mechanism for precisely stating how a user can interact with the browser. 
+
+    </p><p>Input events generated by the WebDriver API User <em class="rfc2119" title="SHOULD">SHOULD</em> indistinguishable from those generated by a real user
+    interacting with the browser. It is therefore recommended that
+    input events <em class="rfc2119" title="SHOULD NOT">SHOULD NOT</em> be generated at the DOM level using the
+    "<a href="http://www.w3.org/TR/dom/#dom-document-createevent">createEvent</a>"
+    API from [<cite><a class="bibref" href="#bib-DOM4">DOM4</a></cite>] or similar. The order of preference for methods to implement WebDriver's emulatation of user input is:</p>
+
+    <ol>
+      <li>Injection into the browser's event queue.</li>
+      <li>Sending OS-specific input messages to the browser's window. This has the disadvantage that the browser being automated may not be properly isolated from a user accidentally modifying input device state.</li>
+      <li>Use of Javascript to inject events at the DOM level.</li>
+      <li>Use of an OS-level accessibility API. The disadvantage of this method is that the browser's window must be focused. As a result, multiple tests cannot run in parallel.</li>
+    </ol>
+
+      <p>TODO: Describe the commands for basic control of keyboard and mouse.</p>
+      <section id="mouse">
+        <h4><span class="secno">14.2.1 </span>Mouse</h4>
+        <p>TODO: Ensure that this section mentions that mouse state <em class="rfc2119" title="MUST">MUST</em> be maintained if the page is not related and <em class="rfc2119" title="MAY">MAY</em> be maintained if the browser navigates to a new page.</p>
+        <p>TODO: Handle the case where the browser is on a mouse-less device (eg. mobile phone)
+      </p></section>
+      <section id="keyboard">
+        <h4><span class="secno">14.2.2 </span>Keyboard</h4>
+        <p></p>
+        <section id="ime">
+          <h5><span class="secno">14.2.2.1 </span>IME</h5>
+          <p></p>
+        </section>
+      </section>
+      <section id="touch">
+        <h4><span class="secno">14.2.3 </span>Touch</h4>
+        <p>TODO: Define capability to capture the concept that a browser supports touch events</p>
+      </section>
+    </section> <!-- low-level wire protocol commands -->
+
+    <section id="high-level-commands">
+    <h3><span class="secno">14.3 </span>High Level Commands</h3>
+    <p>These higher level commands <em class="rfc2119" title="SHOULD">SHOULD</em> be built on top of the low level commands, and implement a user friendly way of interacting with a page in a way that models common user expectations.
+
+    </p><section id="clicking">
+    <h4><span class="secno">14.3.1 </span>Clicking</h4>
+    <pre class="idl"><span class="idlInterface" id="idl-def-WebElement-1">partial interface <span class="idlInterfaceID">WebElement</span> {
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span> <span class="idlMethName"><a href="#widl-WebElement-click-void">click</a></span> ();</span>
+};</span></pre><section id="methods-2"><h5><span class="secno">14.3.1.1 </span>Methods</h5><dl class="methods"><dt id="widl-WebElement-click-void"><code>click</code></dt><dd>Click in the middle of the <code>WebElement</code> instance. The middle of the element is defined as the middle of the box returned by
+      calling <a href="http://www.w3.org/TR/cssom-view/#the-getclientrects-and-getboundingclientrect-methods">getBoundingClientRect</a>
+      on the underlying DOM Element, according to the [<cite><a class="bibref" href="#bib-CSSOM-VIEW">CSSOM-VIEW</a></cite>] spec. If
+      the element is outside the <a href="http://www.w3.org/TR/CSS21/visuren.html#viewport">viewport</a>
+      (according to the [<cite><a class="bibref" href="#bib-CSS21">CSS21</a></cite>] spec), the implementation <em class="rfc2119" title="SHOULD">SHOULD</em> bring the
+      element into view first. The implementation <em class="rfc2119" title="MAY">MAY</em> invoke scrollIntoView on
+      the underlying DOM Element. The element <em class="rfc2119" title="MUST">MUST</em> be visible, as defined in <a href="#determining-visibility">section 10.1</a>. See the note below for when the element is obscured by another element.
+      Exceptions:
+      <ul>
+        <li>Links (A elements): Clicking happens in the middle of the first
+        <a href="#determining-visibility">visible</a> bounding client rectangle. This is to overcome overflowing links where the middle of the bounding client rectangle does not actually fall on a clickable part of the link.</li>
+        <li>SELECT elements without the "multiple" attribute set.
+        Clicking on the select element <em class="rfc2119" title="SHOULD">SHOULD</em> open the drop down menu. The next
+        click, on any element, <em class="rfc2119" title="MUST">MUST</em> close this menu.</li>
+        <li>Clicking directly on an OPTION element (without clicking on the
+        parent SELECT element previously) <em class="rfc2119" title="MUST">MUST</em> open a selection menu, as if the
+        SELECT option was clicked first, then click on the OPTION before finally
+        closing the SELECT element's menu. The SELECT menu <em class="rfc2119" title="MUST">MUST</em> be closed
+        once the action is complete.</li>
+      </ul>
+      <p>The possible errors for this command:
+      </p><ul>
+        <li><code><a href="#status-stale-element-reference">stale element reference</a></code> if the given element is no longer attached to the DOM.</li>
+        <li><code><a href="#status-element-not-visible">element not visible</a></code> if the element is hidden and thus cannot be interacted with.</li>
+        <li><code><a href="#status-move-target-out-of-bounds">move target out of bounds</a></code> if the element cannot be scrolled into view.</li>
+      </ul>
+      <p>This command <em class="rfc2119" title="MUST">MUST</em> use either the mouse or touch mechanisms for
+      emulating the user input. In the case where the browser being automated
+      supports only mouse input or both mouse and touch input, the low-level
+      mouse mechanisms <em class="rfc2119" title="MUST">MUST</em> be used. If the browser only supports touch input,
+      the low level touch inputs <em class="rfc2119" title="MUST">MUST</em> be used.</p>
+      <div><em>No parameters.</em></div><div><em>Return type: </em><code><a>void</a></code></div></dd></dl></section>
+    <div class="note"><div class="note-title"><span>Note</span></div><p class="">As the goal is to emulate users as closely as possible, the
+    implementation <em class="rfc2119" title="SHOULD NOT">SHOULD NOT</em> allow clicking on elements that are obscured by
+    other elements. If the implementation forbids clicking on obscured elements,
+    an <code><a href="#status-element-not-visible">element not visible</a></code> response <em class="rfc2119" title="MUST">MUST</em> be returned and this <em class="rfc2119" title="SHOULD">SHOULD</em> have an
+    explantory message explaining the reason. The implementation <em class="rfc2119" title="SHOULD">SHOULD</em> try to
+    scroll the element into view, but in case it is fully obscured, it <em class="rfc2119" title="SHOULD
+    NOT">SHOULD
+    NOT</em> be clickable.</p></div>
+    </section>
+    <section id="typing-keys">
+    <h4><span class="secno">14.3.2 </span>Typing keys</h4>
+    <p>A requirement for key-based interaction with an element is that it is
+    <a href="#interactable">interactable</a>. Typing into an element is permitted if one of the following conditions is met:
+    </p><ul>
+      <li>The element is <a href="http://dev.w3.org/html5/spec/editing.html#focus">focusable</a> as defined in the editing section of the [<cite><a class="bibref" href="#bib-HTML5">HTML5</a></cite>] spec.</li>
+      <li>The element is allowed to be the <code>activeElement</code>. In
+      addition to focusable elements, this allows typing to the <code>BODY</code> element.</li>
+      <li>In an HTML5 document, the element is <a href="http://dev.w3.org/html5/spec/editing.html#attr-contenteditable">editable</a> as a result of having its <code>contentEditable</code> attribute set or the containing document is in <code>designMode</code>.</li>
+      <li>The underlying browser implementation would allow keyboard input to
+      directed to the element (eg. an HTML 4 document with a DIV marked as being
+      contentEditable)</li>
+    </ul>
+    <p>Prior to any keyboard interaction, an attempt to shift focus to the
+    element <em class="rfc2119" title="MUST">MUST</em> be attempted if the element does not currently have the focus. This is the case if one of the following
+    holds:
+    </p><ul>
+      <li>The element is not already the document's active element.</li>
+      <li>The owner document of the element to be interacted with is not the focused document.</li>
+    </ul>
+    <p>In case focusing is needed, the implementation <em class="rfc2119" title="MUST">MUST</em> follow the <a href="http://dev.w3.org/html5/spec/editing.html#focus-management"><b>focusing steps</b></a> as described in the focus management section of the [<cite><a class="bibref" href="#bib-HTML5">HTML5</a></cite>] spec. The focus <em class="rfc2119" title="MUST NOT">MUST NOT</em> leave the element at the end of the interaction, other than as a result of the interaction itself (i.e. when the tab key is sent).
+    </p>
+    <pre class="idl"><span class="idlInterface" id="idl-def-WebElement-2">partial interface <span class="idlInterfaceID">WebElement</span> {
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span> <span class="idlMethName"><a href="#widl-WebElement-clear-void">clear</a></span> ();</span>
+<span class="idlMethod">    <span class="idlMethType"><a>void</a></span> <span class="idlMethName"><a href="#widl-WebElement-sendKeys-void-stringArray-keysToSend">sendKeys</a></span> (<span class="idlParam"><span class="idlParamType"><a>string</a>[]</span> <span class="idlParamName">keysToSend</span></span>);</span>
+};</span></pre><section id="methods-3"><h5><span class="secno">14.3.2.1 </span>Methods</h5><dl class="methods"><dt id="widl-WebElement-clear-void"><code>clear</code></dt><dd>Clears the value of the element.<div><em>No parameters.</em></div><div><em>Return type: </em><code><a>void</a></code></div></dd><dt id="widl-WebElement-sendKeys-void-stringArray-keysToSend"><code>sendKeys</code></dt><dd>Sends a sequence of keyboard events representing the keys in the keysToSend parameter.
+      <p>Caret positioning: If focusing was needed, after following the focusing steps, the caret <em class="rfc2119" title="MUST">MUST</em> be positioned at the end of the text currently in the element. At the end of the interaction, the caret <em class="rfc2119" title="MUST">MUST</em> be positioned at the end of the typed text sequence, unless the keys sent position it otherwise (e.g. using the LEFT key).</p>
+      <p>There are four different types of keys that are emulated:
+      </p><ul>
+        <li>Character literals - lower-case symbols.</li>
+        <li>Uppercase letters and symbols requiring the SHIFT key for typing.</li>
+        <li>Modifier keys</li>
+        <li>Special keys</li>
+      </ul>The rest of this section details the values used to represent the different keys, as well as the expected behaviour for each key type.<table class="parameters"><tr><th>Parameter</th><th>Type</th><th>Nullable</th><th>Optional</th><th>Description</th></tr><tr><td class="prmName">keysToSend</td><td class="prmType"><code><a>string</a>[]</code></td><td class="prmNullFalse">✘</td><td class="prmOptFalse">✘</td><td class="prmDesc"></td></tr></table><div><em>Return type: </em><code><a>void</a></code></div></dd></dl></section>
+    <p>When emulating user input, the implementation <em class="rfc2119" title="MUST">MUST</em> generate
+    the same sequence of events that would have been produced if a real user was
+    sitting in front of the keyboard and typing the sequence of characters. In
+    cases where there is more than one way to type this sequence, the
+    implementation <em class="rfc2119" title="MUST">MUST</em> choose one of the valid ways. For example, typing <code>AB</code> may be achieved by:
+    </p><ul>
+      <li>Holding down the Shift key</li>
+      <li>Pressing the letter 'a'</li>
+      <li>Pressing the letter 'b'</li>
+      <li>Releasing the Shift key</li>
+    </ul>
+    Alternatively, it can be achieved by:
+    <ul>
+      <li>Holding down the Shift key</li>
+      <li>Pressing the letter 'a'</li>
+      <li>Releasing the Shift key</li>
+      <li>Holding down the Shift key</li>
+      <li>Pressing the letter 'b'</li>
+      <li>Releasing the Shift key</li>
+    </ul>
+    <p>Or by simply turning on the CAPS LOCK first.</p>
+    <p>
+    The implementation <em class="rfc2119" title="MAY">MAY</em> use the following algorithm to generate the events.
+    If the implementation is using a different algorithm, it <em class="rfc2119" title="MUST">MUST</em> adhere to the
+    requirements listed below.
+    </p><p>For each key, <var>key</var> in <var>keysToSend</var>, do
+    </p><ol>
+      <li>If <var>key</var> is a lower-case symbol:
+      <ol>
+        <li>If the Shift key is not pressed:
+        <ol>
+          <li>Generate a sequence of key-down, key-press and key-up events with
+          <var>key</var> as
+          the character to emulate</li>
+        </ol>
+        </li>
+        <li>else (The Shift key is pressed)
+        <ol>
+          <li>let <var>uppercaseKey</var> be the upper-case character matching
+          <var>key</var></li>
+          <li>Generate a sequence of key-down, key-press and key-up events with
+          <var>uppercaseKey</var> as the character to emulate</li>
+        </ol>
+        </li>
+      </ol>
+      </li>
+      <li>Else if <var>key</var> is an upper-case symbol:
+      <ol>
+        <li>If the Shift key is not pressed:
+        <ol>
+          <li>Generate a key-down event of the Shift key.
+          </li><li>Generate a sequence of key-down, key-press and key-up events with
+          <var>key</var> as
+          the character to emulate</li>
+          <li>Generate a key-up event of the Shift key.
+        </li></ol>
+        </li>
+        <li>else (The Shift key is pressed)
+        <ol>
+          <li>Generate a sequence of key-down, key-press and key-up events with
+          <var>key</var> as the character to emulate</li>
+        </ol>
+        </li>
+      </ol>
+      </li>
+      <li>Else if <var>key</var> represents a modifier key:
+      <ol>
+        <li>let <var>modifier</var> be the modifier key represented by
+        <var>key</var></li>
+        <li>If <var>modifier</var> is currently held down:
+        <ol><li>Generate a key-up event of <var>modifier</var></li></ol>
+        </li>
+        <li>Else:
+        <ol><li>Generate a key-down event of <var>modifier</var></li></ol>
+        </li>
+        <li>Maintain this key state and use it to modify the input until it is
+        pressed again.</li>
+      </ol>
+      </li>
+      <li>Else if <var>key</var> represents the NULL key:
+      <ol>
+        <li>Generate key-up events of all modifier keys currently held
+        down.</li>
+        <li>All modifier keys are now assumed to be released.</li>
+      </ol>
+      </li>
+      <li>Else if <var>key</var> represents a special key:
+      <ol>
+        <li>Translate <var>key</var> to the special key it represents</li>
+        <li>Generate a sequence of key-down, key-press and key-up events for the special key.</li>
+      </ol>
+      </li>
+    </ol>
+    <p>Once keyboard input is complete, an implicit <var>NULL</var> key is sent unless the
+    final character is the <var>NULL</var> key.</p>
+    <p> <!-- Pseudo-code --></p>
+    <p>Any implementation <em class="rfc2119" title="MUST">MUST</em> comply with these requirements:
+    </p><ul>
+      <li>For uppercase letters and symbols that require the Shift key to be
+      pressed, there are two options:
+      <ul>
+        <li>A single Shift key-down event is generated before the entire
+        sequence of uppercase letters.</li>
+        <li>Before each such letter or symbol, a Shift key-down event is
+        generated. After each letter or symbol, a Shift key-up event is
+        generated.</li>
+      </ul></li>
+      <li>A user-specified Shift press implies capitalization of all following
+      characters.</li>
+      <li>If a user-specified Shift press precedes uppercase letters and
+      symbols, a second Shift key-down event <em class="rfc2119" title="MUST NOT">MUST NOT</em> be generated. In that
+      case, a Shift key-up event <em class="rfc2119" title="MUST NOT">MUST NOT</em> be generated implicitly by the
+      implementation.</li>
+      <li>The <var>NULL</var> key releases all currently held down modifier keys.</li>
+      <li>The state of all modifier keys must be reset at the end of each
+      <code>sendKeys</code> call and the appropriate key-up events
+      generated</li>
+    </ul>
+    <p> <!-- Algorithm paragraph --></p>
+    <h4 id="character-types">Character types</h4>
+    <p>The <var>keysToSend</var> parameter contains a mix of printable
+    characters and pressable keys that aren't text. Pressable keys that aren't
+    text are stored in the Unicode PUA (Private Use Area) code points,
+    0xE000-0xF8FF. The following table describes the mapping between PUA and
+    key:
+    </p><table class="simple">
+      <tbody><tr>
+        <th>Key</th>
+        <th>Code</th>
+        <th>Type</th>
+      </tr>
+      <tr><td>NULL</td><td>\uE000</td><td>NULL</td></tr>
+      <tr><td>CANCEL</td><td>\uE001</td><td>Special key</td></tr>
+      <tr><td>HELP</td><td>\uE002</td><td>Special key</td></tr>
+      <tr><td>BACK_SPACE</td><td>\uE003</td><td>Special key</td></tr>
+      <tr><td>TAB</td><td>\uE004</td><td>Special key</td></tr>
+      <tr><td>CLEAR</td><td>\uE005</td><td>Special key</td></tr>
+      <tr><td>RETURN</td><td>\uE006</td><td>Special key</td></tr>
+      <tr><td>ENTER</td><td>\uE007</td><td>Special key</td></tr>
+      <tr><td>SHIFT</td><td>\uE008</td><td>Modifier</td></tr>
+      <tr><td>LEFT_SHIFT</td><td>\uE008</td><td>Modifier</td></tr>
+      <tr><td>CONTROL</td><td>\uE009</td><td>Modifier</td></tr>
+      <tr><td>LEFT_CONTROL</td><td>\uE009</td><td>Modifier</td></tr>
+      <tr><td>ALT</td><td>\uE00A</td><td>Modifier</td></tr>
+      <tr><td>LEFT_ALT</td><td>\uE00A</td><td>Modifier</td></tr>
+      <tr><td>PAUSE</td><td>\uE00B</td><td>Special key</td></tr>
+      <tr><td>ESCAPE</td><td>\uE00C</td><td>Special key</td></tr>
+      <tr><td>SPACE</td><td>\uE00D</td><td>Special key</td></tr>
+      <tr><td>PAGE_UP</td><td>\uE00E</td><td>Special key</td></tr>
+      <tr><td>PAGE_DOWN</td><td>\uE00F</td><td>Special key</td></tr>
+      <tr><td>END</td><td>\uE010</td><td>Special key</td></tr>
+      <tr><td>HOME</td><td>\uE011</td><td>Special key</td></tr>
+      <tr><td>LEFT</td><td>\uE012</td><td>Special key</td></tr>
+      <tr><td>ARROW_LEFT</td><td>\uE012</td><td>Special key</td></tr>
+      <tr><td>UP</td><td>\uE013</td><td>Special key</td></tr>
+      <tr><td>ARROW_UP</td><td>\uE013</td><td>Special key</td></tr>
+      <tr><td>RIGHT</td><td>\uE014</td><td>Special key</td></tr>
+      <tr><td>ARROW_RIGHT</td><td>\uE014</td><td>Special key</td></tr>
+      <tr><td>DOWN</td><td>\uE015</td><td>Special key</td></tr>
+      <tr><td>ARROW_DOWN</td><td>\uE015</td><td>Special key</td></tr>
+      <tr><td>INSERT</td><td>\uE016</td><td>Special key</td></tr>
+      <tr><td>DELETE</td><td>\uE017</td><td>Special key</td></tr>
+      <tr><td>SEMICOLON</td><td>\uE018</td><td>Special key</td></tr>
+      <tr><td>EQUALS</td><td>\uE019</td><td>Special key</td></tr>
+      <tr><td>NUMPAD0</td><td>\uE01A</td><td>Special key</td></tr>
+      <tr><td>NUMPAD1</td><td>\uE01B</td><td>Special key</td></tr>
+      <tr><td>NUMPAD2</td><td>\uE01C</td><td>Special key</td></tr>
+      <tr><td>NUMPAD3</td><td>\uE01D</td><td>Special key</td></tr>
+      <tr><td>NUMPAD4</td><td>\uE01E</td><td>Special key</td></tr>
+      <tr><td>NUMPAD5</td><td>\uE01F</td><td>Special key</td></tr>
+      <tr><td>NUMPAD6</td><td>\uE020</td><td>Special key</td></tr>
+      <tr><td>NUMPAD7</td><td>\uE021</td><td>Special key</td></tr>
+      <tr><td>NUMPAD8</td><td>\uE022</td><td>Special key</td></tr>
+      <tr><td>NUMPAD9</td><td>\uE023</td><td>Special key</td></tr>
+      <tr><td>MULTIPLY</td><td>\uE024</td><td>Special key</td></tr>
+      <tr><td>ADD</td><td>\uE025</td><td>Special key</td></tr>
+      <tr><td>SEPARATOR</td><td>\uE026</td><td>Special key</td></tr>
+      <tr><td>SUBTRACT</td><td>\uE027</td><td>Special key</td></tr>
+      <tr><td>DECIMAL</td><td>\uE028</td><td>Special key</td></tr>
+      <tr><td>DIVIDE</td><td>\uE029</td><td>Special key</td></tr>
+      <tr><td>F1</td><td>\uE031</td><td>Special key</td></tr>
+      <tr><td>F2</td><td>\uE032</td><td>Special key</td></tr>
+      <tr><td>F3</td><td>\uE033</td><td>Special key</td></tr>
+      <tr><td>F4</td><td>\uE034</td><td>Special key</td></tr>
+      <tr><td>F5</td><td>\uE035</td><td>Special key</td></tr>
+      <tr><td>F6</td><td>\uE036</td><td>Special key</td></tr>
+      <tr><td>F7</td><td>\uE037</td><td>Special key</td></tr>
+      <tr><td>F8</td><td>\uE038</td><td>Special key</td></tr>
+      <tr><td>F9</td><td>\uE039</td><td>Special key</td></tr>
+      <tr><td>F10</td><td>\uE03A</td><td>Special key</td></tr>
+      <tr><td>F11</td><td>\uE03B</td><td>Special key</td></tr>
+      <tr><td>F12</td><td>\uE03C</td><td>Special key</td></tr>
+      <tr><td>META</td><td>\uE03D</td><td>Special key</td></tr>
+      <tr><td>COMMAND</td><td>\uE03D</td><td>Special key</td></tr>
+      <tr><td>ZENKAKU_HANKAKU</td><td>\uE040</td><td>Special key</td></tr>
+    </tbody></table>
+    <p>The keys considered upper-case symbols are either defined by the current keyboard locale or are derived from the US 104 keys Windows keyboard layout, which are:
+    </p><ul>
+      <li>A - Z</li>
+      <li>!$^*()+{}:?|~@#%_\" &amp; &lt; &gt;</li>
+    </ul>
+    <p>When the user input is emulated natively (see note below), the implementation <em class="rfc2119" title="SHOULD">SHOULD</em> use the current keyboard locale to determine which symbols are upper case. In all other cases, the implementation <em class="rfc2119" title="MUST">MUST</em> use the US 104 key Windows keyboard layout to determine those symbols.</p>
+    <p>The state of the physical keyboard <em class="rfc2119" title="MUST NOT">MUST NOT</em> affect emulated user input.</p>
+    <h4 id="internationalized-input">Internationalized input</h4>
+    <p>Non-latin symbols: TBD</p>
+    <p>Complex scripts using Input Method Editor (IME): TBD</p>
+    </section> <!-- typing -->
+    </section> <!-- high-level APIs -->
+</section>
+<section id="modal-dialogs">
+  <!--OddPage--><h2><span class="secno">15. </span>Modal Dialogs</h2>
+    <p>This entire section should be considered non-normative</p>
+    <p>The remote end <em class="rfc2119" title="MUST">MUST</em> fail fast if any command is received while a modal
+      dialog is open, unless that command handles the dialog.</p>
+    <section id="window.alert-prompt-and-confirm">
+      <h3><span class="secno">15.1 </span>window.alert, prompt and confirm</h3>
+      <p></p>
+    </section>
+    <section id="modal-windows">
+      <h3><span class="secno">15.2 </span>Modal Windows</h3>
+      <p></p>
+    </section>
+</section>
+<section id="screenshots">
+  <!--OddPage--><h2><span class="secno">16. </span>Screenshots</h2>
+  <p>Screenshots are a powerful mechanism for providing information to users of WebDriver, particularly once a particular WebDriver instance has been disposed of. In different circumstances, users want different types of screenshot. Note that the WebDriver spec does not provide a mechanism for taking a screenshot of the entire screen.</p>
+
+  <p>In all cases, screenshots <em class="rfc2119" title="MUST">MUST</em> be returned as lossless PNG images encoded using Base64. Local ends <em class="rfc2119" title="MUST">MUST</em> provide the user with access to the PNG images without requiring the user to decode the Base64. This access <em class="rfc2119" title="MUST">MUST</em> be via at least one of a binary blob or a file.</p>
+
+  <p>All commands within this section are implemented using the "TakesScreenshot" interface:</p>
+  
+  <pre class="idl"><span class="idlInterface" id="idl-def-TakesScreenshot">interface <span class="idlInterfaceID">TakesScreenshot</span> {
+<span class="idlMethod">    <span class="idlMethType"><a>string</a></span> <span class="idlMethName"><a href="#widl-TakesScreenshot-takeScreenshot-string">takeScreenshot</a></span> ();</span>
+};</span></pre><section id="methods-4"><h3><span class="secno">16.1 </span>Methods</h3><dl class="methods"><dt id="widl-TakesScreenshot-takeScreenshot-string"><code>takeScreenshot</code></dt><dd>Take a screenshot as determined by the CommandName and return a lossless PNG encoded using Base64.<div><em>No parameters.</em></div><div><em>Return type: </em><code><a>string</a></code></div></dd></dl></section>
+
+  <section id="current-window">
+    <h3><span class="secno">16.2 </span>Current Window</h3>
+    <table class="simple">
+      <tbody><tr><th>Capability Name</th><th>Type</th></tr>
+      <tr><td><a id="capability-takesScreenshot"></a><span class="capability-takesScreenshot">takesScreenshot</span></td><td>boolean</td></tr>
+    </tbody></table>
+
+	<table class="simple">
+    <tbody><tr>
+	    <td>Command Name</td>
+	    <td>screenshot</td>
+	  </tr>
+	  <tr>
+	    <td>Parameters</td>
+	    <td>None</td>
+	  </tr>
+	  <tr>
+	    <td>Return Value</td>
+	    <td>{DOMString} A Base64 encoded, lossless PNG of the current window.</td>
+	  </tr>
+	  <tr>
+	    <td>Errors</td>
+	      <td>
+		    WebDriverException if the screenshot cannot be taken.
+	      </td>
+	    </tr>
+	</tbody></table>
+
+    <p>If this capability is supported, local end <em class="rfc2119" title="MUST">MUST</em> add the <code>TakesScreenshot</code> interface to the <code>WebDriver</code> interface.</p>
+
+    <p>This command will take a screenshot of the current window. Implementations of the remote end <em class="rfc2119" title="SHOULD">SHOULD</em> capture the entire DOM, even if this would require a user to scroll the browser window. That is, the returned PNG <em class="rfc2119" title="SHOULD">SHOULD</em> have the same width and height as returned by a call to <code>getSize</code> of the BODY element and <em class="rfc2119" title="MUST">MUST</em> contain all visible content on the page, and this <em class="rfc2119" title="SHOULD">SHOULD</em> be done without resizing the browser window. If the remote end is unable to capture the entire DOM, then the part of the DOM currently displayed in UI of the browser <em class="rfc2119" title="MUST">MUST</em> be captured without additional chrome such as scrollbars and browser chrome.</p>
+
+    <div class="note"><div class="note-title"><span>Note</span></div><div class="">
+      <p>One way to think of capturing the entire DOM is that the user has an infinitely large monitor and has resized the window to allow all content to be visible. One of those monitors would be very cool.</p>
+    </div></div>
+
+    <p>Nested frames <em class="rfc2119" title="MUST">MUST</em> be sized as if the user has resized the window to the dimensions of the PNG being returned. This often means that not all potentially visible content within the nested frames is captured.</p>
+
+    <p>Remote ends <em class="rfc2119" title="MUST NOT">MUST NOT</em> attempt to track changes in window size as the screenshot is being taken. In particular this means that in the case of a page that makes use of "infinite scrolling" (where an AJAX call is used to populate additional content as the user scrolls down) or in some other way resizes content as the window size is changed only the content that was originally contained in the DOM when the command is executed will be captured.</p>
+  </section>
+  
+  <section id="element">
+    <h3><span class="secno">16.3 </span>Element</h3>
+      <table class="simple">
+        <tbody><tr><th>Capability Name</th><th>Type</th></tr>
+        <tr><td><a id="capability-takesElementScreenshot"></a><span class="capability-takesElementScreenshot">takesElementScreenshot</span></td><td>boolean</td></tr>
+      </tbody></table>
+
+  	<table class="simple">
+        <tbody><tr>
+  	    <td>Command Name</td>
+  	    <td>takesElementScreenshot</td>
+  	  </tr>
+  	  <tr>
+  	    <td>Parameters</td>
+  	    <td>"id" {DOMString} The ID of the <code>WebElement</code> on which to operate.
+  	    </td>
+  	  </tr>
+  	  <tr>
+  	    <td>Return Value</td>
+  	    <td>{DOMString} A Base64 encoded, lossless PNG of the area contained within the <code>WebElement</code>'s clientBoundingRect.</td>
+  	  </tr>
+  	  <tr>
+  	    <td>Errors</td>
+  	      <td>
+  		    WebDriverException if the screenshot cannot be taken.
+  	      </td>
+  	    </tr>
+  	</tbody></table>
+  	
+  	<p>If this capability is supported, local end <em class="rfc2119" title="MUST">MUST</em> add the <code>TakesScreenshot</code> interface to the <code>WebElement</code> interface.</p>
+  	
+    <p>Remote ends <em class="rfc2119" title="SHOULD">SHOULD</em> take a screenshot of the area bounded by the clientBoundingRect of the DOM element represented by the <code>WebElement</code>, returning it as a Base64 encoded, lossless PNG. Local ends <em class="rfc2119" title="MUST">MUST</em> make the PNG available directly to the user as at least one of a binary blob or a file. If the remote end cannot capture the entire clientBoundingRect, they <em class="rfc2119" title="MUST">MUST</em> scroll as much of the element into the current browser viewport as possible and capture the maximum visible area without additional browser chrome.</p>
+    
+    <p>If the <code>WebElement</code> represents a FRAME or IFRAME element, this is equivalent of taking a screenshot of the frame's BODY element.</p>
+  </section>
+</section>
+<section id="handling-non-html-content">
+  <!--OddPage--><h2><span class="secno">17. </span>Handling non-HTML Content</h2>
+  <p>There is no requirement that WebDriver implementations handle non-HTML content. The remainder of this section is non-normative.</p>
+  
+  <section id="svg">
+    <h3><span class="secno">17.1 </span>SVG</h3>
+    
+    <p>TODO: describe how the SVG DOM maps to WebElement implementations.</p>
+  </section>
+  
+  <section id="working-with-accessibility-apis">
+    <h3><span class="secno">17.2 </span>Working with Accessibility APIs</h3>
+    
+    <p>Many accessibility APIs represent the UI as a series of nested nodes. It is possible to map these nodes to <code>WebElement</code> instances. In order to function properly, it is likely that additional element locating strategies will be required.</p>
+    
+    <div class="note"><div class="note-title"><span>Note</span></div><p class="">This is one way in which it might be possible to test mobile applications that marry a native wrapper around a series of HTML views.</p></div>
+  </section>
+</section>
+  <section id="extending-the-protocol">
+    <!--OddPage--><h2><span class="secno">18. </span>Extending the Protocol</h2>
+    <p></p>
+    <section id="vendor-specific-extensions">
+      <h3><span class="secno">18.1 </span>Vendor-specific Extensions</h3>
+      <p>The WebDriver protocol is designed to allow extension to meet vendor-specific needs, such as interacting with the chrome of a browser. Vendor-specific extensions are implemented by appending a prefix to the command name. This should be of the form:</p>
+      <pre>        '-' + vendor prefix + '-' + command name
+      </pre>
+      <p>For example: "<code>-o-open-bookmark</code>" or "<code>-moz-install-extension</code>".</p>
+      <p>It is guaranteed that no command name in this or future versions of the WebDriver specification will be prefixed with a leading dash.</p>
+      
+      <div class="note"><div class="note-title"><span>Note</span></div><div class="">
+        It is suggested that vendors use the same vendor identifier as in [<cite><a class="bibref" href="#bib-CSS21">CSS21</a></cite>] (notably, section <a href="http://www.w3.org/TR/CSS21/syndata.html#vendor-keywords">4.1.2.2</a>)
+      </div></div>
+    </section>
+    <section id="extending-the-json-http-protocol">
+      <h3><span class="secno">18.2 </span>Extending the JSON/HTTP Protocol</h3>
+      <p>This section is non-normative.</p>
+      <p>The wire protocol (see Appendix XXX) makes use of URLs to distinguish command names. When extending the protocol by adding new URLs, vendors should use their vendor prefix without additional characters to prevent any potential clashes with other implementations. This leads to URLs of the form: <code>http://host:port/session/somekey/<b>moz</b>/extension</code>.
+    </p></section>
+  </section>
+
+<section class="appendix" id="command-summary">
+  <!--OddPage--><h2><span class="secno">A. </span>Command Summary</h2>
+  
+  <p>This is an exhaustive list of the commands listed in this specification.</p>
+</section><section class="appendix" id="capabilities-1">
+  <!--OddPage--><h2><span class="secno">B. </span>Capabilities</h2>
+
+  <p>This section is non-normative.</p>
+
+  <p>Capabilities are used by WebDriver implementations to enumerate the parts of this specification that they support. They are also used when establishing a new session to descrive the required or desired capabilities. This appendix collects the capabilities mentioned in this spec into one place.</p>
+
+<ul>
+<li><a href="#capability-browserName">browserName</a></li>
+<li><a href="#capability-browserVersion">browserVersion</a></li>
+<li><a href="#capability-cssSelectors">cssSelectors</a></li>
+<li><a href="#capability-javascriptEnabled">javascriptEnabled</a></li>
+<li><a href="#capability-platformName">platformName</a></li>
+<li><a href="#capability-platformVersion">platformVersion</a></li>
+<li><a href="#capability-securessl">secureSsl</a></li>
+<li><a href="#capability-shadowDom">shadowDom</a></li>
+<li><a href="#capability-takesElementScreenshot">takesElementScreenshot</a></li>
+<li><a href="#capability-takesScreenshot">takesScreenshot</a></li>
+</ul>
+</section>    <section class="appendix" id="command-format">
+      <!--OddPage--><h2><span class="secno">C. </span>Command Format</h2>
+      <p>This is essentially the content at the start of the json wire protocol</p>
+    </section>
+
+    <section class="appendix" id="thread-safety">
+      <!--OddPage--><h2><span class="secno">D. </span>Thread Safety</h2>
+
+      <p>There is no requirement for local or remote implementations to be thread safe. Local ends <em class="rfc2119" title="SHOULD">SHOULD</em> support serialized access from multiple threads.</p>
+    </section>
+
+    <section class="appendix" id="logging">
+      <!--OddPage--><h2><span class="secno">E. </span>Logging</h2>
+      <p></p>
+    </section>
+    
+    <section class="appendix" id="mapping-to-http-and-json">
+      <!--OddPage--><h2><span class="secno">F. </span>Mapping to HTTP and JSON</h2>
+      <p></p>
+    </section>
+
+    <section class="appendix" id="acknowledgements">
+      <!--OddPage--><h2><span class="secno">G. </span>Acknowledgements</h2>
+      <p>
+        Many thanks to Robin Berjon for making our lives so much easier with his
+        cool tool. Thanks to Jason Leyba, Malcolm Rowe and Ross Patterson for proof reading and suggesting areas for improvement. Thanks to Jason Leyba, Eran Messeri and Daniel Wagner-Hall for contributing sections to this document.
+      </p>
+      </section>
+
+      <div style="display: none">
+        <p>These links are only here until we have fixed ReSpec.js to avoid
+        creating anchors to things that don't exist.</p>
+        <ul>
+          <li id="idl-def-void">idl-def-void</li>
+          <li id="idl-def-stringbooleannumber">idl-def-stringbooleannumber</li> 
+          <li id="idl-def-boolean">idl-def-boolean</li>          
+          <li id="idl-def-number">idl-def-number</li>        
+          <li id="idl-def-object">idl-def-object</li>     
+          <li id="idl-def-DOMString">idl-def-DOMString</li>  
+          <li id="idl-def-dictionary">idl-def-dictionary</li>    
+          <li id="idl-def-integer">idl-def-integer</li>    
+          <li id="idl-def-string">idl-def-string</li>  
+          <li id="idl-def-Argument">idl-def-Argument</li> 
+        </ul>
+      </div>
+  
+
+<section id="references" class="appendix"><!--OddPage--><h2><span class="secno">H. </span>References</h2><section id="normative-references"><h3><span class="secno">H.1 </span>Normative references</h3><dl class="bibliography"><dt id="bib-CSS21">[CSS21]</dt><dd>Bert Bos et al. <a href="http://www.w3.org/TR/CSS21/"><cite>Cascading Style Sheets, level 2 (CSS2) Specification</cite></a>. 07 June 2011. W3C Recommendation. URL: <a href="http://www.w3.org/TR/CSS21/">http://www.w3.org/TR/CSS21/</a>
+</dd><dt id="bib-CSSOM-VIEW">[CSSOM-VIEW]</dt><dd>Anne van Kesteren. <a href="http://www.w3.org/TR/2011/WD-cssom-view-20110804"><cite>CSSOM View Module</cite></a>. 4 August 2011. W3C Working Draft. URL: <a href="http://www.w3.org/TR/2011/WD-cssom-view-20110804">http://www.w3.org/TR/2011/WD-cssom-view-20110804</a>
+</dd><dt id="bib-DOM-LEVEL-2-CORE">[DOM-LEVEL-2-CORE]</dt><dd>Arnaud Le Hors et al. <a href="http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/"><cite>Document Object Model (DOM) Level 2 Core Specification</cite></a>. 13 November 2000. W3C Recommendation. URL: <a href="http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/">http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/</a>
+</dd><dt id="bib-DOM4">[DOM4]</dt><dd>Anne van Kesteren; Aryeh Gregor; Lachlan Hunt; Ms2ger. <a href="http://www.w3.org/TR/2012/WD-dom-20121206"><cite>DOM4</cite></a>. 6 December 2012. W3C Working Draft. URL: <a href="http://www.w3.org/TR/2012/WD-dom-20121206">http://www.w3.org/TR/2012/WD-dom-20121206</a>
+</dd><dt id="bib-HTML401">[HTML401]</dt><dd>David Raggett; Ian Jacobs; Arnaud Le Hors. <a href="http://www.w3.org/TR/1999/REC-html401-19991224"><cite>HTML 4.01 Specification</cite></a>. 24 December 1999. W3C Recommendation. URL: <a href="http://www.w3.org/TR/1999/REC-html401-19991224">http://www.w3.org/TR/1999/REC-html401-19991224</a>
+</dd><dt id="bib-HTML5">[HTML5]</dt><dd>Robin Berjon et al. <a href="http://www.w3.org/TR/html5/"><cite>HTML5</cite></a>. 17 December 2012. W3C Candidate Recommendation. URL: <a href="http://www.w3.org/TR/html5/">http://www.w3.org/TR/html5/</a>
+</dd><dt id="bib-RFC2119">[RFC2119]</dt><dd>S. Bradner. <a href="http://www.ietf.org/rfc/rfc2119.txt"><cite>Key words for use in RFCs to Indicate Requirement Levels.</cite></a> March 1997. Internet RFC 2119.  URL: <a href="http://www.ietf.org/rfc/rfc2119.txt">http://www.ietf.org/rfc/rfc2119.txt</a> 
+</dd><dt id="bib-SELECTORS-API">[SELECTORS-API]</dt><dd>Lachlan Hunt; Anne van Kesteren. <a href="http://www.w3.org/TR/2012/PR-selectors-api-20121213"><cite>Selectors API Level 1</cite></a>. 13 December 2012. W3C Proposed Recommendation. URL: <a href="http://www.w3.org/TR/2012/PR-selectors-api-20121213">http://www.w3.org/TR/2012/PR-selectors-api-20121213</a>
+</dd><dt id="bib-WEBIDL">[WEBIDL]</dt><dd>Cameron McCormack. <a href="http://www.w3.org/TR/2011/WD-WebIDL-20110927/"><cite>Web IDL</cite></a>. 27 September 2011. W3C Working Draft. URL: <a href="http://www.w3.org/TR/2011/WD-WebIDL-20110927/">http://www.w3.org/TR/2011/WD-WebIDL-20110927/</a>
+</dd><dt id="bib-WEBSTORAGE">[WEBSTORAGE]</dt><dd>Ian Hickson. <a href="http://www.w3.org/TR/2011/CR-webstorage-20111208"><cite>Web Storage</cite></a>. 08 December 2011. W3C Candidate Recommendation. URL: <a href="http://www.w3.org/TR/2011/CR-webstorage-20111208">http://www.w3.org/TR/2011/CR-webstorage-20111208</a>
+</dd><dt id="bib-XPATH">[XPATH]</dt><dd>James Clark; Steven DeRose. <a href="http://www.w3.org/TR/1999/REC-xpath-19991116/"><cite>XML Path Language (XPath) Version 1.0</cite></a>. 16 November 1999. W3C Recommendation. URL: <a href="http://www.w3.org/TR/1999/REC-xpath-19991116/">http://www.w3.org/TR/1999/REC-xpath-19991116/</a>
+</dd></dl></section><section id="informative-references"><h3><span class="secno">H.2 </span>Informative references</h3><dl class="bibliography"><dt id="bib-DOM-LEVEL-3-XPATH">[DOM-LEVEL-3-XPATH]</dt><dd>Ray Whitmer. <a href="http://www.w3.org/TR/2004/NOTE-DOM-Level-3-XPath-20040226"><cite>Document Object Model (DOM) Level 3 XPath Specification</cite></a>. 26 February 2004. W3C Note. URL: <a href="http://www.w3.org/TR/2004/NOTE-DOM-Level-3-XPath-20040226">http://www.w3.org/TR/2004/NOTE-DOM-Level-3-XPath-20040226</a>
+</dd></dl></section></section>
+<p class="stability" id="wip">
+<b>Warning:</b><br>
+ This is an older snapshot of the WebDriver spec. Implementors and
+ reviewers should instead read the
+ <a href="https://dvcs.w3.org/hg/webdriver/raw-file/default/webdriver-spec.html">latest editor's draft</a>,
+ which is up to date with the latest changes and bug fixes.
+  <input onclick="closeWarning(this.parentNode)" value="X" type="button">
+  <script>
+   function closeWarning(element) {
+     element.parentNode.removeChild(element);
+     var date = new Date();
+     date.setDate(date.getDate()+4);
+     document.cookie = 'hide-obsolescence-warning=1; expires=' + date.toGMTString();
+   }
+   function removeWIP () {
+       document.getElementById('wip').parentNode.removeChild(document.getElementById('wip'));
+   }
+   if (document.documentElement.getAttribute("data-wip") === "false") removeWIP();
+   if (getCookie('hide-obsolescence-warning') == '1') setTimeout(removeWIP, 2000);
+  </script>
+</body></html>
