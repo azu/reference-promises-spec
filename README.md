@@ -1,0 +1,95 @@
+# reference-promises-spec
+
+List of reference to (DOM|ES6) promises spec.
+
+----
+
+## Fetch Standard
+http://fetch.spec.whatwg.org/
+
+## ECMA-262 ECMAScript Language Specification, Edition 6
+http://people.mozilla.org/~jorendorff/es6-draft.html
+
+## Navigator interface in HTML5
+http://www.w3.org/html/wg/drafts/html/master/webappapis.html#navigator
+
+## Web API Design Cookbook
+http://www.w3.org/TR/api-design/
+
+## Manifest for web apps and bookmarks
+http://www.w3.org/TR/appmanifest/
+
+## Battery Status API
+http://www.w3.org/TR/battery-status/
+
+## CSS Font Loading Module Level 3
+http://www.w3.org/TR/css-font-loading-3/
+
+## CSV on the Web: Use Cases and Requirements
+http://www.w3.org/TR/csvw-ucr/
+
+## Network Service Discovery
+http://www.w3.org/TR/discovery-api/
+
+## Encrypted Media Extensions
+http://www.w3.org/TR/encrypted-media/
+
+## JSON-LD 1.0 Processing Algorithms and API
+http://www.w3.org/TR/json-ld-api/
+
+## Web NFC API
+http://www.w3.org/TR/nfc/
+
+## Push API
+http://www.w3.org/TR/push-api/
+
+## Quota Management API
+http://www.w3.org/TR/quota-api/
+
+## Service Workers
+http://www.w3.org/TR/service-workers/
+
+## Streams API
+http://www.w3.org/TR/streams-api/
+
+## Web Telephony API
+http://www.w3.org/TR/telephony/
+
+## WebCrypto Key Discovery
+http://www.w3.org/TR/webcrypto-key-discovery/
+
+## Web Cryptography API
+http://www.w3.org/TR/WebCryptoAPI/
+
+## Web MIDI API
+http://www.w3.org/TR/webmidi/
+
+## HTML
+http://www.whatwg.org/specs/web-apps/current-work/
+
+
+----
+
+
+## Develop
+
+```
+npm install
+npm run download
+grep "\bpromise" _downloads/* -l | xargs -I{} sed -n '1p' {} | xargs open
+# ...add manually filter .... > url_list.txt
+node index.js
+```
+
+
+## Contributing
+
+1. Fork it!
+2. Create your feature branch: `git checkout -b my-new-feature`
+3. Commit your changes: `git commit -am 'Add some feature'`
+4. Push to the branch: `git push origin my-new-feature`
+5. Submit a pull request :D
+
+## License
+
+MIT
