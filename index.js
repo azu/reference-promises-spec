@@ -4,23 +4,46 @@
  */
 "use strict";
 var fs = require("fs");
-var urlList = fs.readFileSync(__dirname + "/url_list.txt", "utf-8").trim();
-var biblio = require("./specref/biblio.json");
-var httpReg = /(http.*?)\s/i;
-var specObjects = urlList.split("\n").map(function (line) {
-    return (line.match(httpReg) || [])[1]
-}).map(function (URL) {
-    var object;
-    Object.keys(biblio).some(function (key) {
-        if (biblio[key].href === URL) {
-            object = biblio[key];
-            return true;
-        }
+function createSpecObjects() {
+    var httpReg = /(http.*?)\s/i;
+    var urlList = fs.readFileSync(__dirname + "/url_list.txt", "utf-8").trim();
+    var biblio = require("./specref/biblio.json");
+    return urlList.split("\n").map(function (line) {
+        return (line.match(httpReg) || [])[1]
+    }).map(function (URL) {
+        var object;
+        Object.keys(biblio).some(function (key) {
+            if (biblio[key].href === URL) {
+                object = biblio[key];
+                return true;
+            }
+        });
+        return object;
     });
-    return object;
-});
+}
+function createMarkdown(specObjects) {
+    return specObjects.map(function (object) {
+        return "## " + object.title + "\n" +
+            object.href + "\n";
+    }).join("\n");
+}
 
-specObjects.forEach(function (object) {
-    console.log("## " + object.title + "\n" +
-        object.href + "\n");
-});
+function replaceBody(text) {
+    // http://refiddle.com/refiddles/54166e4875622d4dfa6b0a00
+    var replaceTarget = /(\[#\].*\n)([\s|\S]*)(\n\[#\])/mg;
+    var README = fs.readFileSync(__dirname + "/README.md", "utf-8");
+    return README.replace(replaceTarget, function(all,begin,content,end){
+        return begin + text + end;
+    });
+}
+
+function writeREADME(text) {
+    fs.writeFileSync(__dirname + "/README.md", text)
+}
+
+(function main() {
+    var specObjects = createSpecObjects();
+    var markdownContent = createMarkdown(specObjects);
+    var rewrittenREADME = replaceBody(markdownContent);
+    writeREADME(rewrittenREADME);
+})();

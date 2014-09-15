@@ -1,9 +1,9 @@
 # reference-promises-spec
 
-List of reference to (DOM|ES6) promises spec.
+The List of reference to (DOM|ES6) promises spec.
 
 ----
-
+[#]: #<<HERE (Begin Generated)
 ## Fetch Standard
 http://fetch.spec.whatwg.org/
 
@@ -67,7 +67,7 @@ http://www.w3.org/TR/webmidi/
 ## HTML
 http://www.whatwg.org/specs/web-apps/current-work/
 
-
+[#]: #>>HERE (End Generated)
 ----
 
 
@@ -76,9 +76,9 @@ http://www.whatwg.org/specs/web-apps/current-work/
 ```
 npm install
 npm run download
-grep "\bpromise" _downloads/* -l | xargs -I{} sed -n '1p' {} | xargs open
+grep "\bpromise" _downloads/* -l | xargs -I{} sed -n '1p' {}
 # ...add manually filter .... > url_list.txt
-node index.js
+npm run update-readme
 ```
 
 
