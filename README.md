@@ -13,9 +13,6 @@ http://people.mozilla.org/~jorendorff/es6-draft.html
 ## Navigator interface in HTML5
 http://www.w3.org/html/wg/drafts/html/master/webappapis.html#navigator
 
-## Web API Design Cookbook
-http://www.w3.org/TR/api-design/
-
 ## Manifest for web apps and bookmarks
 http://www.w3.org/TR/appmanifest/
 
