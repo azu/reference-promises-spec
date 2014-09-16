@@ -83,7 +83,7 @@ grep "\bpromise" _downloads/* -l | xargs -I{} sed -n '1p' {}
 npm run update-readme
 ```
 
-- `url_list.txt` is pec list. These are  defined in biblio.json.
+- `url_list.txt` is spec list. These are  defined in biblio.json.
 - `exception_spec.json` is spec list. These are not defined in biblio.json.
 
 ## Contributing
