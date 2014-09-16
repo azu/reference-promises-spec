@@ -64,6 +64,9 @@ http://www.w3.org/TR/webmidi/
 ## HTML
 http://www.whatwg.org/specs/web-apps/current-work/
 
+## ImageBitmap interface in HTML5
+http://www.w3.org/html/wg/drafts/html/master/webappapis.html#imagebitmap
+
 [#]: #>>HERE (End Generated)
 ----
 
@@ -75,9 +78,13 @@ npm install
 npm run download
 grep "\bpromise" _downloads/* -l | xargs -I{} sed -n '1p' {}
 # ...add manually filter .... > url_list.txt
+# https://github.com/azu/reference-promises-spec/issues/2
+# `exception_spec.json` is spec list.these are not defined in biblio.json...
 npm run update-readme
 ```
 
+- `url_list.txt` is pec list. These are  defined in biblio.json.
+- `exception_spec.json` is spec list. These are not defined in biblio.json.
 
 ## Contributing
 

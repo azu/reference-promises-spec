@@ -4,9 +4,12 @@
  */
 "use strict";
 var fs = require("fs");
-function isNotNull(arg){
+function isNotNull(arg) {
     return arg != null;
 }
+/**
+ * @returns {Array}
+ */
 function createSpecObjects() {
     var httpReg = /(http.*?)\s/i;
     var urlList = fs.readFileSync(__dirname + "/url_list.txt", "utf-8").trim();
@@ -24,18 +27,32 @@ function createSpecObjects() {
         return object;
     }).filter(isNotNull);
 }
+/**
+ * @returns {Array}
+ */
+function createExceptionSpecObjects() {
+    var specObject = require("./exception_spec.json");
+    return Array.isArray(specObject) ? specObject : [];
+}
+/**
+ * @param specObjects
+ * @returns {string}
+ */
 function createMarkdown(specObjects) {
     return specObjects.map(function (object) {
         return "## " + object.title + "\n" +
-            object.href + "\n";
+        object.href + "\n";
     }).join("\n");
 }
-
+/**
+ * @param text
+ * @returns {string}
+ */
 function replaceBody(text) {
     // http://refiddle.com/refiddles/54166e4875622d4dfa6b0a00
     var replaceTarget = /(\[#\].*\n)([\s|\S]*)(\n\[#\])/mg;
     var README = fs.readFileSync(__dirname + "/README.md", "utf-8");
-    return README.replace(replaceTarget, function(all,begin,content,end){
+    return README.replace(replaceTarget, function (all, begin, content, end) {
         return begin + text + end;
     });
 }
@@ -45,7 +62,7 @@ function writeREADME(text) {
 }
 
 (function main() {
-    var specObjects = createSpecObjects();
+    var specObjects = createSpecObjects().concat(createExceptionSpecObjects());
     var markdownContent = createMarkdown(specObjects);
     var rewrittenREADME = replaceBody(markdownContent);
     writeREADME(rewrittenREADME);
