@@ -4,6 +4,9 @@
  */
 "use strict";
 var fs = require("fs");
+function isNotNull(arg){
+    return arg != null;
+}
 function createSpecObjects() {
     var httpReg = /(http.*?)\s/i;
     var urlList = fs.readFileSync(__dirname + "/url_list.txt", "utf-8").trim();
@@ -13,13 +16,13 @@ function createSpecObjects() {
     }).map(function (URL) {
         var object;
         Object.keys(biblio).some(function (key) {
-            if (biblio[key].href === URL) {
+            if (biblio[key].status !== 'NOTE' && biblio[key].href === URL) {
                 object = biblio[key];
                 return true;
             }
         });
         return object;
-    });
+    }).filter(isNotNull);
 }
 function createMarkdown(specObjects) {
     return specObjects.map(function (object) {
